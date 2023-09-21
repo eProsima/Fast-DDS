@@ -94,11 +94,13 @@ protected:
     friend class eprosima::fastdds::statistics::dds::DomainParticipantImpl;
 #endif // FASTDDS_STATISTICS
 
-    DataWriterImpl() :
-     history_(atts_,
-            500,
-            fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-            [](const InstanceHandle_t&){})
+    DataWriterImpl()
+        : history_(atts_,
+                500,
+                fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+                [](const InstanceHandle_t&)
+                {
+                })
     {
         gen_guid();
     }
@@ -123,16 +125,18 @@ protected:
     }
 
     DataWriterImpl(
-            PublisherImpl* ,
-            TypeSupport ,
-            Topic* ,
-            const DataWriterQos& ,
-            const fastrtps::rtps::EntityId_t& ,
-            DataWriterListener* listener = nullptr) :
-            history_(atts_,
-            500,
-            fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-            [](const InstanceHandle_t&){})
+            PublisherImpl*,
+            TypeSupport,
+            Topic*,
+            const DataWriterQos&,
+            const fastrtps::rtps::EntityId_t&,
+            DataWriterListener* listener = nullptr)
+        : history_(atts_,
+                500,
+                fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+                [](const InstanceHandle_t&)
+                {
+                })
     {
         gen_guid();
         static_cast<void>(listener);
@@ -156,7 +160,7 @@ public:
     }
 
     ReturnCode_t loan_sample(
-            void*& ,
+            void*&,
             LoanInitializationKind )
     {
         return ReturnCode_t::RETCODE_OK;
@@ -171,26 +175,26 @@ public:
     bool write(
             void* )
     {
-        return true;;
+        return true;
     }
 
     bool write(
-            void* ,
+            void*,
             fastrtps::rtps::WriteParams& )
     {
         return true;
     }
 
     ReturnCode_t write(
-            void* ,
+            void*,
             const InstanceHandle_t& )
     {
         return ReturnCode_t::RETCODE_OK;
     }
 
     ReturnCode_t write_w_timestamp(
-            void* ,
-            const InstanceHandle_t& ,
+            void*,
+            const InstanceHandle_t&,
             const fastrtps::Time_t& )
     {
         return ReturnCode_t::RETCODE_OK;
@@ -203,7 +207,7 @@ public:
     }
 
     InstanceHandle_t register_instance_w_timestamp(
-            void* ,
+            void*,
             const fastrtps::Time_t& )
     {
         return InstanceHandle_t();
@@ -218,9 +222,9 @@ public:
     }
 
     ReturnCode_t unregister_instance_w_timestamp(
-            void* ,
-            const InstanceHandle_t& ,
-            const fastrtps::Time_t& ,
+            void*,
+            const InstanceHandle_t&,
+            const fastrtps::Time_t&,
             bool  = false)
     {
         return ReturnCode_t::RETCODE_OK;
@@ -245,7 +249,6 @@ public:
         return fastrtps::rtps::InstanceHandle_t();
     }
 
-
     TypeSupport get_type() const
     {
         return TypeSupport();
@@ -258,8 +261,8 @@ public:
     }
 
     ReturnCode_t wait_for_acknowledgments(
-            void* ,
-            const InstanceHandle_t& ,
+            void*,
+            const InstanceHandle_t&,
             const fastrtps::Duration_t& )
     {
         return ReturnCode_t::RETCODE_OK;
@@ -313,7 +316,7 @@ public:
     }
 
     ReturnCode_t get_key_value(
-            void* ,
+            void*,
             const InstanceHandle_t& )
     {
         return ReturnCode_t::RETCODE_OK;
@@ -353,7 +356,6 @@ public:
         return ReturnCode_t::RETCODE_OK;
     }
 
-
     void filter_is_being_removed(
             const char*)
     {
@@ -361,7 +363,7 @@ public:
     }
 
     bool is_relevant(
-            const fastrtps::rtps::CacheChange_t& ,
+            const fastrtps::rtps::CacheChange_t&,
             const fastrtps::rtps::GUID_t&) const override
     {
         return true;
@@ -401,23 +403,22 @@ public:
     }
 
     static ReturnCode_t check_qos(
-        const ::eprosima::fastdds::dds::DataWriterQos&)
+            const ::eprosima::fastdds::dds::DataWriterQos&)
     {
         return ReturnCode_t::RETCODE_OK;
     }
 
-
     static ReturnCode_t check_qos_including_resource_limits(
-        const DataWriterQos& ,
-        const TypeSupport& )
+            const DataWriterQos&,
+            const TypeSupport& )
     {
         return fastrtps::types::ReturnCode_t::RETCODE_OK;
     }
 
     static void set_qos(
-        DataWriterQos& ,
-        const DataWriterQos& ,
-        bool )
+            DataWriterQos&,
+            const DataWriterQos&,
+            bool )
     {
 
     }

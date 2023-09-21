@@ -230,7 +230,8 @@ public:
     bool can_be_deleted() const;
 
 #ifdef FASTDDS_STATISTICS
-    bool get_monitoring_status(const uint32_t &status_id,
+    bool get_monitoring_status(
+            const uint32_t& status_id,
             statistics::rtps::DDSEntityStatus*& status,
             const fastrtps::rtps::GUID_t& entity_guid);
 #endif //FASTDDS_STATISTICS

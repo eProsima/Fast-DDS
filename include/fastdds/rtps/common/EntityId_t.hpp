@@ -69,7 +69,7 @@ namespace rtps {
 
 #ifdef FASTDDS_STATISTICS
 #define ENTITYID_MONITOR_SERVICE_WRITER 0x004000D2
-#endif
+#endif // ifdef FASTDDS_STATISTICS
 
 //!@brief Structure EntityId_t, entity id part of GUID_t.
 //!@ingroup COMMON_MODULE

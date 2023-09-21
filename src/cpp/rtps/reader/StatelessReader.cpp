@@ -491,7 +491,7 @@ void StatelessReader::change_read_by_user(
 #ifdef FASTDDS_STATISTICS
 
 bool StatelessReader::get_connections(
-        fastdds::statistics::rtps::ConnectionList &connection_list)
+        fastdds::statistics::rtps::ConnectionList& connection_list)
 {
     connection_list.reserve(matched_writers_.size());
 
@@ -527,7 +527,7 @@ bool StatelessReader::get_connections(
     return true;
 }
 
-#endif
+#endif // ifdef FASTDDS_STATISTICS
 
 bool StatelessReader::processDataMsg(
         CacheChange_t* change)

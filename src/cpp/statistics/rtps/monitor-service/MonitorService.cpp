@@ -32,22 +32,26 @@ namespace eprosima {
 namespace fastdds {
 namespace statistics {
 
-dds::IncompatibleQosStatus* to_fastdds_type(IncompatibleQoSStatus_s& incompatible_qos)
+dds::IncompatibleQosStatus* to_fastdds_type(
+        IncompatibleQoSStatus_s& incompatible_qos)
 {
     return reinterpret_cast<dds::IncompatibleQosStatus*>(&incompatible_qos);
 }
 
-dds::LivelinessChangedStatus* to_fastdds_type(LivelinessChangedStatus_s& liv_changed)
+dds::LivelinessChangedStatus* to_fastdds_type(
+        LivelinessChangedStatus_s& liv_changed)
 {
     return reinterpret_cast<dds::LivelinessChangedStatus*>(&liv_changed);
 }
 
-dds::LivelinessLostStatus* to_fastdds_type(LivelinessLostStatus_s& liv_lost)
+dds::LivelinessLostStatus* to_fastdds_type(
+        LivelinessLostStatus_s& liv_lost)
 {
     return reinterpret_cast<dds::LivelinessLostStatus*>(&liv_lost);
 }
 
-dds::DeadlineMissedStatus* to_fastdds_type(DeadlineMissedStatus_s& deadline_missed)
+dds::DeadlineMissedStatus* to_fastdds_type(
+        DeadlineMissedStatus_s& deadline_missed)
 {
     return reinterpret_cast<dds::DeadlineMissedStatus*>(&deadline_missed);
 }
@@ -77,9 +81,10 @@ MonitorService::MonitorService(
         EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not create the monitor service endpoint");
     }
 
-    event_.reset(new TimedEvent(event_service, [&](){
-        return spin_queue();
-    }, MIN_TIME_BETWEEN_PUBS_MS));
+    event_.reset(new TimedEvent(event_service, [&]()
+            {
+                return spin_queue();
+            }, MIN_TIME_BETWEEN_PUBS_MS));
 }
 
 MonitorService::~MonitorService()
@@ -138,7 +143,7 @@ bool MonitorService::enable_monitor_service()
         }
         else
         {
-            if(!changed_entities_.empty())
+            if (!changed_entities_.empty())
             {
                 event_->restart_timer();
                 timer_active_.store(true);
@@ -188,7 +193,8 @@ bool MonitorService::remove_local_entity(
     return true;
 }
 
-bool MonitorService::initialize_entity(const EntityId_t &entity_id)
+bool MonitorService::initialize_entity(
+        const EntityId_t& entity_id)
 {
     bool retcode = false;
 
@@ -238,7 +244,8 @@ bool MonitorService::push_entity_update(
         {
             if (entity_id != monitor_service_status_writer && status_id != PROXY && status_id != CONNECTION_LIST)
             {
-                EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Trying to update the status of an entity without previously initialize it");
+                EPROSIMA_LOG_ERROR(MONITOR_SERVICE,
+                        "Trying to update the status of an entity without previously initialize it");
             }
             else
             {
@@ -263,7 +270,7 @@ bool MonitorService::push_entity_update(
 bool MonitorService::write_status(
         const fastrtps::rtps::EntityId_t& entity_id,
         const std::bitset<STATUSES_SIZE>& changed_statuses,
-        const bool &entitiy_disposed)
+        const bool& entitiy_disposed)
 {
     if (!entitiy_disposed)
     {
@@ -278,7 +285,7 @@ bool MonitorService::write_status(
                 GUID_t local_entity_guid = {local_participant_guid_.guidPrefix, entity_id};
 
                 bool status_retrieved = true;
-                switch(i)
+                switch (i)
                 {
                     case PROXY:
                     {
@@ -286,7 +293,7 @@ bool MonitorService::write_status(
                         //! Depending on the entity type [Participant, Writer, Reader]
                         //! the size will be accordingly calculated
 
-                        if(!proxy_queryable_->get_serialized_proxy(local_entity_guid, &msg))
+                        if (!proxy_queryable_->get_serialized_proxy(local_entity_guid, &msg))
                         {
                             EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not retrieve the serialized entity");
                             status_retrieved = false;
@@ -306,7 +313,8 @@ bool MonitorService::write_status(
                         }
                         else
                         {
-                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not get entitiy connections list for " << local_entity_guid);
+                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE,
+                                    "Could not get entitiy connections list for " << local_entity_guid);
                             assert(false);
                         }
 
@@ -322,9 +330,12 @@ bool MonitorService::write_status(
                         IncompatibleQoSStatus_s incompatible_qos_status;
                         incompatible_qos_status.policies().resize(dds_entity_status->policies.size());
                         dds::QosPolicyCountSeq* qos_policy_countseq = &dds_entity_status->policies;
-                        incompatible_qos_status.policies() = *reinterpret_cast<QosPolicyCountSeq_s*>(qos_policy_countseq);
+                        incompatible_qos_status.policies() =
+                                *reinterpret_cast<QosPolicyCountSeq_s*>(qos_policy_countseq);
                         incompatible_qos_status.last_policy_id() = dds_entity_status->last_policy_id;
-                        incompatible_qos_status.total_count() = static_cast<dds::OfferedIncompatibleQosStatus*>(dds_entity_status)->total_count;
+                        incompatible_qos_status.total_count() =
+                                static_cast<dds::OfferedIncompatibleQosStatus*>(dds_entity_status)->
+                                        total_count;
 
                         data.incompatible_qos_status(std::move(incompatible_qos_status));
                         delete dds_entity_status;
@@ -341,10 +352,14 @@ bool MonitorService::write_status(
                     case LIVELINESS_LOST:
                     {
                         data.liveliness_lost_status(LivelinessLostStatus_s());
-                        DDSEntityStatus* liv_lost_status = static_cast<DDSEntityStatus*>(to_fastdds_type(data.liveliness_lost_status()));
-                        if (!status_queryable_.get_monitoring_status(local_entity_guid, LIVELINESS_LOST, liv_lost_status))
+                        DDSEntityStatus* liv_lost_status =
+                                static_cast<DDSEntityStatus*>(to_fastdds_type(
+                                    data.liveliness_lost_status()));
+                        if (!status_queryable_.get_monitoring_status(local_entity_guid, LIVELINESS_LOST,
+                                liv_lost_status))
                         {
-                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not retrieve the liveliness lost entity status ");
+                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE,
+                                    "Could not retrieve the liveliness lost entity status ");
                             status_retrieved = false;
                             assert(false);
                         }
@@ -354,10 +369,14 @@ bool MonitorService::write_status(
                     case LIVELINESS_CHANGED:
                     {
                         data.liveliness_changed_status(LivelinessChangedStatus_s());
-                        DDSEntityStatus* liv_changed_status = static_cast<DDSEntityStatus*>(to_fastdds_type(data.liveliness_changed_status()));
-                        if(!status_queryable_.get_monitoring_status(local_entity_guid, LIVELINESS_CHANGED, liv_changed_status))
+                        DDSEntityStatus* liv_changed_status =
+                                static_cast<DDSEntityStatus*>(to_fastdds_type(
+                                    data.liveliness_changed_status()));
+                        if (!status_queryable_.get_monitoring_status(local_entity_guid, LIVELINESS_CHANGED,
+                                liv_changed_status))
                         {
-                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not retrieve the liveliness changed entity status");
+                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE,
+                                    "Could not retrieve the liveliness changed entity status");
                             status_retrieved = false;
                             assert(false);
                         }
@@ -367,8 +386,11 @@ bool MonitorService::write_status(
                     case DEADLINE_MISSED:
                     {
                         data.deadline_missed_status(DeadlineMissedStatus_s());
-                        DDSEntityStatus* deadline_missed_status = static_cast<DDSEntityStatus*>(to_fastdds_type(data.deadline_missed_status()));
-                        if (!status_queryable_.get_monitoring_status(local_entity_guid, DEADLINE_MISSED, deadline_missed_status))
+                        DDSEntityStatus* deadline_missed_status =
+                                static_cast<DDSEntityStatus*>(to_fastdds_type(
+                                    data.deadline_missed_status()));
+                        if (!status_queryable_.get_monitoring_status(local_entity_guid, DEADLINE_MISSED,
+                                deadline_missed_status))
                         {
                             EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not retrieve the deadline missed entity status");
                             status_retrieved = false;
@@ -379,8 +401,10 @@ bool MonitorService::write_status(
                     case SAMPLE_LOST:
                     {
                         data.sample_lost_status(SampleLostStatus_s());
-                        DDSEntityStatus* sample_lost_status = static_cast<DDSEntityStatus*>(to_fastdds_type(data.sample_lost_status()));
-                        if(!status_queryable_.get_monitoring_status(local_entity_guid, SAMPLE_LOST, sample_lost_status))
+                        DDSEntityStatus* sample_lost_status =
+                                static_cast<DDSEntityStatus*>(to_fastdds_type(data.sample_lost_status()));
+                        if (!status_queryable_.get_monitoring_status(local_entity_guid, SAMPLE_LOST,
+                                sample_lost_status))
                         {
                             EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not retrieve the sample lost entity status");
                             status_retrieved = false;
@@ -433,11 +457,11 @@ bool MonitorService::write_status(
 
 bool MonitorService::add_change(
         MonitorServiceStatusData& status_data,
-        const bool &disposed)
+        const bool& disposed)
 {
     CacheChange_t* change = status_writer_->new_change(
-            type_.getSerializedSizeProvider(&status_data),
-            (disposed ? fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED : fastrtps::rtps::ALIVE));
+        type_.getSerializedSizeProvider(&status_data),
+        (disposed ? fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED : fastrtps::rtps::ALIVE));
 
     if (nullptr != change)
     {
@@ -493,12 +517,12 @@ bool MonitorService::create_endpoint()
     listener_ = new MonitorServiceListener(this);
 
     created = endpoint_creator_(&tmp_writer,
-            watts,
-            status_writer_payload_pool_,
-            status_writer_history_.get(),
-            listener_,
-            monitor_service_status_writer,
-            false);
+                    watts,
+                    status_writer_payload_pool_,
+                    status_writer_history_.get(),
+                    listener_,
+                    monitor_service_status_writer,
+                    false);
 
     if (created)
     {

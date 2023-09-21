@@ -29,7 +29,7 @@
 
 #ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyObserver.hpp>
-#endif
+#endif // ifdef FASTDDS_STATISTICS
 
 namespace eprosima {
 namespace fastrtps {

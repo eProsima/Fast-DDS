@@ -234,7 +234,7 @@ void PDPListener::onNewCacheChangeAdded(
             if (nullptr != parent_pdp_->getRTPSParticipant()->get_connections_observer())
             {
                 parent_pdp_->getRTPSParticipant()->get_connections_observer()->on_local_entity_connections_change(
-                        parent_pdp_->getRTPSParticipant()->getGuid());
+                    parent_pdp_->getRTPSParticipant()->getGuid());
             }
 #endif //FASTDDS_STATISTICS
 
@@ -253,7 +253,7 @@ void PDPListener::onNewCacheChangeAdded(
             if (nullptr != parent_pdp_->getRTPSParticipant()->get_connections_observer())
             {
                 parent_pdp_->getRTPSParticipant()->get_connections_observer()->on_local_entity_connections_change(
-                        parent_pdp_->getRTPSParticipant()->getGuid());
+                    parent_pdp_->getRTPSParticipant()->getGuid());
             }
 #endif //FASTDDS_STATISTICS
             reader->getMutex().lock();

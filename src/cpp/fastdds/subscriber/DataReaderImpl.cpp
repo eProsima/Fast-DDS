@@ -1029,7 +1029,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
 
 #ifdef FASTDDS_STATISTICS
 void DataReaderImpl::InnerDataReaderListener::notify_status_observer(
-        const uint32_t &status_id)
+        const uint32_t& status_id)
 {
     DomainParticipantImpl* pp_impl = data_reader_->subscriber_->get_participant_impl();
     auto statistics_pp_impl = static_cast<eprosima::fastdds::statistics::dds::DomainParticipantImpl*>(pp_impl);
@@ -1041,6 +1041,7 @@ void DataReaderImpl::InnerDataReaderListener::notify_status_observer(
         }
     }
 }
+
 #endif //FASTDDS_STATISTICS
 
 bool DataReaderImpl::on_data_available(

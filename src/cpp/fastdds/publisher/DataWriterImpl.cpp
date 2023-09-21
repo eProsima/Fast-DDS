@@ -1319,7 +1319,7 @@ void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
 
 #ifdef FASTDDS_STATISTICS
 void DataWriterImpl::InnerDataWriterListener::notify_status_observer(
-        const uint32_t &status_id)
+        const uint32_t& status_id)
 {
     DomainParticipantImpl* pp_impl = data_writer_->publisher_->get_participant_impl();
     auto statistics_pp_impl = static_cast<eprosima::fastdds::statistics::dds::DomainParticipantImpl*>(pp_impl);
@@ -1331,6 +1331,7 @@ void DataWriterImpl::InnerDataWriterListener::notify_status_observer(
         }
     }
 }
+
 #endif //FASTDDS_STATISTICS
 
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(

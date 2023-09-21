@@ -1242,12 +1242,12 @@ bool StatefulWriter::matched_reader_add(
     }
 
 #ifdef FASTDDS_STATISTICS
-        // notify monitor service so that the connectionlist for this entity
-        // could be updated
-        if (nullptr != mp_RTPSParticipant->get_connections_observer() && !m_guid.is_builtin())
-        {
-            mp_RTPSParticipant->get_connections_observer()->on_local_entity_connections_change(m_guid);
-        }
+    // notify monitor service so that the connectionlist for this entity
+    // could be updated
+    if (nullptr != mp_RTPSParticipant->get_connections_observer() && !m_guid.is_builtin())
+    {
+        mp_RTPSParticipant->get_connections_observer()->on_local_entity_connections_change(m_guid);
+    }
 #endif //FASTDDS_STATISTICS
 
     return true;
@@ -2165,11 +2165,11 @@ DeliveryRetCode StatefulWriter::deliver_sample_nts(
 #ifdef FASTDDS_STATISTICS
 
 bool StatefulWriter::get_connections(
-        fastdds::statistics::rtps::ConnectionList &connection_list)
+        fastdds::statistics::rtps::ConnectionList& connection_list)
 {
     connection_list.reserve(matched_local_readers_.size() +
-                            matched_datasharing_readers_.size() +
-                            matched_remote_readers_.size());
+            matched_datasharing_readers_.size() +
+            matched_remote_readers_.size());
 
     fastdds::statistics::Connection connection;
 
@@ -2215,11 +2215,15 @@ bool StatefulWriter::get_connections(
                     connection.used_locators().reserve(reader->locators_size());
 
                     std::vector<fastdds::statistics::detail::Locator_s> statistics_locators;
-                    std::for_each(loc_selector_entry->multicast.begin(), loc_selector_entry->multicast.end(), [&statistics_locators](const Locator_t& locator){
+                    std::for_each(loc_selector_entry->multicast.begin(), loc_selector_entry->multicast.end(),
+                    [&statistics_locators](const Locator_t& locator)
+                    {
                         statistics_locators.push_back(fastdds::statistics::to_statistics_type(locator));
                     });
 
-                    std::for_each(loc_selector_entry->unicast.begin(), loc_selector_entry->unicast.end(), [&statistics_locators](const Locator_t& locator){
+                    std::for_each(loc_selector_entry->unicast.begin(), loc_selector_entry->unicast.end(),
+                    [&statistics_locators](const Locator_t& locator)
+                    {
                         statistics_locators.push_back(fastdds::statistics::to_statistics_type(locator));
                     });
 
@@ -2237,7 +2241,7 @@ bool StatefulWriter::get_connections(
 
 }
 
-#endif
+#endif // ifdef FASTDDS_STATISTICS
 
 void StatefulWriter::add_gaps_for_holes_in_history_(
         RTPSMessageGroup& group)

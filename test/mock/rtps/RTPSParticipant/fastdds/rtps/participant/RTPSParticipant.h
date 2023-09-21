@@ -147,8 +147,8 @@ public:
     MOCK_CONST_METHOD0(disable_monitor_service, bool());
 
     MOCK_METHOD0(is_monitor_service_created, bool());
-    MOCK_METHOD1(create_monitor_service, fastdds::statistics::rtps::IStatusObserver*(
-        fastdds::statistics::rtps::IStatusQueryable&));
+    MOCK_METHOD1(create_monitor_service, fastdds::statistics::rtps::IStatusObserver* (
+                fastdds::statistics::rtps::IStatusQueryable&));
 
 #endif // FASTDDS_STATISTICS
 

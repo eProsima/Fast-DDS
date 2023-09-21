@@ -2865,27 +2865,31 @@ RTPSParticipantImpl::get_entity_connections(
 
             std::vector<fastdds::statistics::detail::Locator_s> statistic_locators;
             statistic_locators.reserve((*pit)->metatraffic_locators.multicast.size() +
-                                        (*pit)->metatraffic_locators.unicast.size());
+                    (*pit)->metatraffic_locators.unicast.size());
 
             std::for_each((*pit)->metatraffic_locators.multicast.begin(), (*pit)->metatraffic_locators.multicast.end(),
-                [&statistic_locators](const Locator_t& locator){
-                    statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
-                });
+                    [&statistic_locators](const Locator_t& locator)
+                    {
+                        statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
+                    });
 
             std::for_each((*pit)->metatraffic_locators.unicast.begin(), (*pit)->metatraffic_locators.unicast.end(),
-                [&statistic_locators](const Locator_t& locator){
-                    statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
-                });
+                    [&statistic_locators](const Locator_t& locator)
+                    {
+                        statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
+                    });
 
             std::for_each((*pit)->default_locators.multicast.begin(), (*pit)->default_locators.multicast.end(),
-                [&statistic_locators](const Locator_t& locator){
-                    statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
-                });
+                    [&statistic_locators](const Locator_t& locator)
+                    {
+                        statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
+                    });
 
             std::for_each((*pit)->default_locators.unicast.begin(), (*pit)->default_locators.unicast.end(),
-                [&statistic_locators](const Locator_t& locator){
-                    statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
-                });
+                    [&statistic_locators](const Locator_t& locator)
+                    {
+                        statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
+                    });
 
             connection.announced_locators(statistic_locators);
             connection.used_locators(statistic_locators);

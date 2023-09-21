@@ -649,7 +649,8 @@ PublisherListener* PublisherImpl::get_listener_for(
 }
 
 #ifdef FASTDDS_STATISTICS
-bool PublisherImpl::get_monitoring_status(const uint32_t &status_id,
+bool PublisherImpl::get_monitoring_status(
+        const uint32_t& status_id,
         statistics::rtps::DDSEntityStatus*& status,
         const fastrtps::rtps::GUID_t& entity_guid)
 {
@@ -657,7 +658,7 @@ bool PublisherImpl::get_monitoring_status(const uint32_t &status_id,
     std::vector<DataWriter*> writers;
     if (get_datawriters(writers))
     {
-        for (auto &writer : writers)
+        for (auto& writer : writers)
         {
             if (writer->guid() == entity_guid)
             {
@@ -671,11 +672,11 @@ bool PublisherImpl::get_monitoring_status(const uint32_t &status_id,
                     }
                     //! TODO
                     /*case statistics::INCONSISTENT_TOPIC:
-                    {
+                       {
                         writer->get_inconsistent_topic_status();
                         ret = true;
                         break;
-                    }*/
+                       }*/
                     case statistics::LIVELINESS_LOST:
                     {
                         writer->get_liveliness_lost_status(*static_cast<LivelinessLostStatus*>(status));
@@ -707,6 +708,7 @@ bool PublisherImpl::get_monitoring_status(const uint32_t &status_id,
 
     return ret;
 }
+
 #endif //FASTDDS_STATISTICS
 
 } // dds

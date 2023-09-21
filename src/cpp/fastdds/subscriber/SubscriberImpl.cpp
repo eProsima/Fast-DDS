@@ -666,7 +666,8 @@ bool SubscriberImpl::can_be_deleted() const
 }
 
 #ifdef FASTDDS_STATISTICS
-bool SubscriberImpl::get_monitoring_status(const uint32_t &status_id,
+bool SubscriberImpl::get_monitoring_status(
+        const uint32_t& status_id,
         statistics::rtps::DDSEntityStatus*& status,
         const fastrtps::rtps::GUID_t& entity_guid)
 {
@@ -674,7 +675,7 @@ bool SubscriberImpl::get_monitoring_status(const uint32_t &status_id,
     std::vector<DataReader*> readers;
     if (get_datareaders(readers) == ReturnCode_t::RETCODE_OK)
     {
-        for (auto &reader : readers)
+        for (auto& reader : readers)
         {
             if (reader->guid() == entity_guid)
             {
@@ -682,17 +683,18 @@ bool SubscriberImpl::get_monitoring_status(const uint32_t &status_id,
                 {
                     case statistics::INCOMPATIBLE_QOS:
                     {
-                        reader->get_requested_incompatible_qos_status(*static_cast<RequestedIncompatibleQosStatus*>(status));
+                        reader->get_requested_incompatible_qos_status(*static_cast<RequestedIncompatibleQosStatus*>(
+                                    status));
                         ret = true;
                         break;
                     }
                     //! TODO
                     /*case statistics::INCONSISTENT_TOPIC:
-                    {
+                       {
                         reader->get_inconsistent_topic_status();
                         ret = true;
                         break;
-                    }*/
+                       }*/
                     case statistics::LIVELINESS_CHANGED:
                     {
                         reader->get_liveliness_changed_status(*static_cast<LivelinessChangedStatus*>(status));
@@ -727,6 +729,7 @@ bool SubscriberImpl::get_monitoring_status(const uint32_t &status_id,
 
     return ret;
 }
+
 #endif //FASTDDS_STATISTICS
 
 } /* namespace dds */
