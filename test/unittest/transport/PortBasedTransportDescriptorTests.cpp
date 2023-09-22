@@ -59,6 +59,51 @@ public:
 
 };
 
+TEST_F(PortBasedTransportDescriptorTests, get_thread_config_for_port)
+{
+    // Add an entry to the user-defined settings map
+    PortBasedTransportDescriptor::ReceptionThreadsConfigMap set_settings;
+    set_settings[1234].scheduling_policy = 33;
+    set_settings[1234].priority = 33;
+    set_settings[1234].cpu_mask = 33;
+    set_settings[1234].stack_size = 33;
+
+    ASSERT_TRUE(reception_threads(set_settings));
+
+    // Check that the new entry can be retrieved
+    ASSERT_EQ(set_settings[1234], get_thread_config_for_port(1234));
+
+    // Check that the new entry is not the same as the default settings
+    ASSERT_NE(default_reception_threads(), get_thread_config_for_port(1234));
+
+    // Check that a non-existing entry is returns default settings
+    ASSERT_EQ(default_reception_threads(), get_thread_config_for_port(4321));
+}
+
+TEST_F(PortBasedTransportDescriptorTests, set_thread_config_for_port)
+{
+    // Set some initial config
+    PortBasedTransportDescriptor::ReceptionThreadsConfigMap set_settings;
+    set_settings[1234].scheduling_policy = 33;
+    set_settings[1234].priority = 33;
+    set_settings[1234].cpu_mask = 33;
+    set_settings[1234].stack_size = 33;
+    ASSERT_TRUE(reception_threads(set_settings));
+
+    // Check updating a config
+    ThreadSettings other_settings;
+    ASSERT_NE(set_settings[1234], other_settings);
+    ASSERT_TRUE(set_thread_config_for_port(1234, other_settings));
+    ASSERT_EQ(other_settings, get_thread_config_for_port(1234));
+
+    // Setting a new config
+    other_settings.priority += 1;
+    ASSERT_NE(set_settings[4321], other_settings);
+    ASSERT_TRUE(set_thread_config_for_port(4321, other_settings));
+    ASSERT_EQ(other_settings, get_thread_config_for_port(4321));
+    ASSERT_NE(other_settings, get_thread_config_for_port(1234));
+}
+
 TEST_F(PortBasedTransportDescriptorTests, get_default_reception_threads)
 {
     ASSERT_EQ(default_reception_threads_, default_reception_threads());
@@ -97,29 +142,8 @@ TEST_F(PortBasedTransportDescriptorTests, set_reception_threads)
 
     ASSERT_NE(initial_settings, set_settings);
 
-    reception_threads(set_settings);
+    ASSERT_TRUE(reception_threads(set_settings));
     ASSERT_EQ(set_settings, reception_threads());
-}
-
-TEST_F(PortBasedTransportDescriptorTests, get_thread_config_for_port)
-{
-    // Add an entry to the user-defined settings map
-    PortBasedTransportDescriptor::ReceptionThreadsConfigMap set_settings;
-    set_settings[1234].scheduling_policy = 33;
-    set_settings[1234].priority = 33;
-    set_settings[1234].cpu_mask = 33;
-    set_settings[1234].stack_size = 33;
-
-    reception_threads(set_settings);
-
-    // Check that the new entry can be retrieved
-    ASSERT_EQ(set_settings[1234], get_thread_config_for_port(1234));
-
-    // Check that the new entry is not the same as the default settings
-    ASSERT_NE(default_reception_threads(), get_thread_config_for_port(1234));
-
-    // Check that a non-existing entry is returns default settings
-    ASSERT_EQ(default_reception_threads(), get_thread_config_for_port(4321));
 }
 
 TEST_F(PortBasedTransportDescriptorTests, equal_operator)
@@ -140,7 +164,7 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         // default_reception_threads is different
         other.maxMessageSize = original_max_message_size;
         other.default_reception_threads(original_default_reception_thread_settings);
-        other.reception_threads(original_thread_reception_settings);
+        ASSERT_TRUE(other.reception_threads(original_thread_reception_settings));
         ASSERT_EQ(*this, other);
 
         ThreadSettings set_settings;
@@ -155,7 +179,7 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         // reception_threads is different
         other.maxMessageSize = original_max_message_size;
         other.default_reception_threads(original_default_reception_thread_settings);
-        other.reception_threads(original_thread_reception_settings);
+        ASSERT_TRUE(other.reception_threads(original_thread_reception_settings));
         ASSERT_EQ(*this, other);
 
         PortBasedTransportDescriptor::ReceptionThreadsConfigMap set_settings_map;
@@ -163,14 +187,14 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         set_settings_map[1234].priority = 33;
         set_settings_map[1234].cpu_mask = 33;
         set_settings_map[1234].stack_size = 33;
-        other.reception_threads(set_settings_map);
+        ASSERT_TRUE(other.reception_threads(set_settings_map));
         ASSERT_FALSE(*this == other);
     }
     {
         // Parent & default_reception_threads are different
         other.maxMessageSize = original_max_message_size;
         other.default_reception_threads(original_default_reception_thread_settings);
-        other.reception_threads(original_thread_reception_settings);
+        ASSERT_TRUE(other.reception_threads(original_thread_reception_settings));
         ASSERT_EQ(*this, other);
 
         other.maxMessageSize += 1;
@@ -188,7 +212,7 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         // Parent & reception_threads are different
         other.maxMessageSize = original_max_message_size;
         other.default_reception_threads(original_default_reception_thread_settings);
-        other.reception_threads(original_thread_reception_settings);
+        ASSERT_TRUE(other.reception_threads(original_thread_reception_settings));
         ASSERT_EQ(*this, other);
 
         other.maxMessageSize += 1;
@@ -198,7 +222,7 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         set_settings_map[1234].priority = 33;
         set_settings_map[1234].cpu_mask = 33;
         set_settings_map[1234].stack_size = 33;
-        other.reception_threads(set_settings_map);
+        ASSERT_TRUE(other.reception_threads(set_settings_map));
 
         ASSERT_FALSE(*this == other);
     }
@@ -206,7 +230,7 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         // default_reception_threads & reception_threads are different
         other.maxMessageSize = original_max_message_size;
         other.default_reception_threads(original_default_reception_thread_settings);
-        other.reception_threads(original_thread_reception_settings);
+        ASSERT_TRUE(other.reception_threads(original_thread_reception_settings));
         ASSERT_EQ(*this, other);
 
         ThreadSettings set_settings;
@@ -221,7 +245,7 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         set_settings_map[1234].priority = 33;
         set_settings_map[1234].cpu_mask = 33;
         set_settings_map[1234].stack_size = 33;
-        other.reception_threads(set_settings_map);
+        ASSERT_TRUE(other.reception_threads(set_settings_map));
 
         ASSERT_FALSE(*this == other);
     }
@@ -229,7 +253,7 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         // Parent, default_reception_threads, & reception_threads are different
         other.maxMessageSize = original_max_message_size;
         other.default_reception_threads(original_default_reception_thread_settings);
-        other.reception_threads(original_thread_reception_settings);
+        ASSERT_TRUE(other.reception_threads(original_thread_reception_settings));
         ASSERT_EQ(*this, other);
 
         other.maxMessageSize += 1;
@@ -246,7 +270,7 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         set_settings_map[1234].priority = 33;
         set_settings_map[1234].cpu_mask = 33;
         set_settings_map[1234].stack_size = 33;
-        other.reception_threads(set_settings_map);
+        ASSERT_TRUE(other.reception_threads(set_settings_map));
 
         ASSERT_FALSE(*this == other);
     }

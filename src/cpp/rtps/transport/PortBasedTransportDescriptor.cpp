@@ -48,6 +48,14 @@ const ThreadSettings& PortBasedTransportDescriptor::get_thread_config_for_port(
     return default_reception_threads_;
 }
 
+bool PortBasedTransportDescriptor::set_thread_config_for_port(
+        const uint32_t& port,
+        const ThreadSettings& thread_settings)
+{
+    reception_threads_[port] = thread_settings;
+    return true;
+}
+
 const ThreadSettings& PortBasedTransportDescriptor::default_reception_threads() const
 {
     return default_reception_threads_;
@@ -64,10 +72,11 @@ const PortBasedTransportDescriptor::ReceptionThreadsConfigMap& PortBasedTranspor
     return reception_threads_;
 }
 
-void PortBasedTransportDescriptor::reception_threads(
+bool PortBasedTransportDescriptor::reception_threads(
         const ReceptionThreadsConfigMap& reception_threads)
 {
     reception_threads_ = reception_threads;
+    return true;
 }
 
 } // namespace rtps

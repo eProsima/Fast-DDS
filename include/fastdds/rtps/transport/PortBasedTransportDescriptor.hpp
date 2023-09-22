@@ -79,18 +79,22 @@ public:
     virtual RTPS_DllAPI const ThreadSettings& get_thread_config_for_port(
             uint32_t port);
 
+    virtual RTPS_DllAPI bool set_thread_config_for_port(
+            const uint32_t& port,
+            const ThreadSettings& thread_settings);
+
     //! Returns the ThreadSettings for the default reception threads
-    virtual RTPS_DllAPI const ThreadSettings& default_reception_threads() const;
+    RTPS_DllAPI const ThreadSettings& default_reception_threads() const;
 
     //! Set the ThreadSettings for the default reception threads
     virtual RTPS_DllAPI void default_reception_threads(
             const ThreadSettings& default_reception_threads);
 
     //! Returns the ThreadSettings for the user-configured reception threads
-    virtual RTPS_DllAPI const ReceptionThreadsConfigMap& reception_threads() const;
+    RTPS_DllAPI const ReceptionThreadsConfigMap& reception_threads() const;
 
     //! Set the ThreadSettings for the user-configured reception threads
-    virtual RTPS_DllAPI void reception_threads(
+    virtual RTPS_DllAPI bool reception_threads(
             const ReceptionThreadsConfigMap& reception_threads);
 
 protected:
