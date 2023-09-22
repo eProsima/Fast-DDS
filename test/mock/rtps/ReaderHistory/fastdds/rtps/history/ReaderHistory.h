@@ -194,7 +194,7 @@ public:
             const_iterator c_it)
     {
         iterator it = m_changes.begin();
-        std::advance(it, std::distance<const_iterator>(it, c_it));
+        std::advance(it, std::distance<const_iterator>(m_changes.cbegin(), c_it));
         return it;
     }
 

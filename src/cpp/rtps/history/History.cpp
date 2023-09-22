@@ -264,7 +264,7 @@ History::iterator History::remove_iterator_constness(
         const_iterator c_it)
 {
     History::iterator it = changesBegin();
-    std::advance(it, std::distance<const_iterator>(it, c_it));
+    std::advance(it, std::distance<const_iterator>(m_changes.cbegin(), c_it));
     return it;
 }
 
