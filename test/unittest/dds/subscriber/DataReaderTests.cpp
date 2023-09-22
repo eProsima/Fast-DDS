@@ -3548,6 +3548,7 @@ TEST_F(DataReaderTests, CustomPoolCreation)
 // Check DataReaderQos inmutabilities
 TEST_F(DataReaderTests, UpdateInmutableQos)
 {
+    /* Test setup */
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
@@ -3564,6 +3565,7 @@ TEST_F(DataReaderTests, UpdateInmutableQos)
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(data_reader, nullptr);
 
+    /* Test actions */
     // Resource limits
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.resource_limits().max_samples = reader_qos.resource_limits().max_samples - 1;
@@ -3622,7 +3624,9 @@ TEST_F(DataReaderTests, UpdateInmutableQos)
     reader_qos.data_sharing().off();
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
-    // DataSharingQosPolicy has no API to set shm_direcory
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.data_sharing().automatic(".");
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.data_sharing().add_domain_id(static_cast<uint16_t>(12));
@@ -3638,6 +3642,7 @@ TEST_F(DataReaderTests, UpdateInmutableQos)
     reader_qos.data_sharing_listener_thread().priority = reader_qos.data_sharing_listener_thread().priority + 1;
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
+    /* Cleanup */
     participant->delete_contained_entities();
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
