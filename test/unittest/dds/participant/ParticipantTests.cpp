@@ -3000,6 +3000,11 @@ TEST(ParticipantTests, UpdatableDomainParticipantQos)
     pqos.transport().listen_socket_buffer_size = 262144;
     ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
 
+    // Check that the builtin_controllers_sender_thread can not be changed in an enabled participant
+    participant->get_qos(pqos);
+    pqos.builtin_controllers_sender_thread().cpu_mask = 1;
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
     // Check that the timed_events_thread can not be changed in an enabled participant
     participant->get_qos(pqos);
     pqos.timed_events_thread().cpu_mask = 1;
@@ -3010,12 +3015,15 @@ TEST(ParticipantTests, UpdatableDomainParticipantQos)
     pqos.discovery_server_thread().cpu_mask = 1;
     ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
 
+#if HAVE_SECURITY
     // Check that the security_log_thread can not be changed in an enabled participant
     participant->get_qos(pqos);
     pqos.security_log_thread().cpu_mask = 1;
     ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
 
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+#endif // if HAVE_SECURITY
+
 }
 
 /*
