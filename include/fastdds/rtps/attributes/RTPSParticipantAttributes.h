@@ -588,8 +588,10 @@ public:
     //! Thread settings for the discovery server thread
     fastdds::rtps::ThreadSettings discovery_server_thread;
 
+#if HAVE_SECURITY
     //! Thread settings for the security log thread
     fastdds::rtps::ThreadSettings security_log_thread;
+#endif // if HAVE_SECURITY
 
 private:
 
