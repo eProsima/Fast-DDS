@@ -925,7 +925,8 @@ public:
      * @brief This function returns a constant reference to member my_array_string
      * @return Constant reference to member my_array_string
      */
-    eProsima_user_DllExport const std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& my_array_string() const;
+    eProsima_user_DllExport const std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>,
+            5>& my_array_string() const;
 
     /*!
      * @brief This function returns a reference to member my_array_string
@@ -1022,7 +1023,7 @@ private:
     MyEnum m_my_enum{::A};
     std::vector<uint8_t> m_my_sequence_octet;
     std::vector<BasicStruct> m_my_sequence_struct;
-    std::array<std::array<std::array<char, 4>, 5>, 500> m_my_array_octet{0};
+    std::array<std::array<std::array<char, 4>, 5>, 500> m_my_array_octet{ {{ {{0}} }} };
     MyOctetArray500 m_my_octet_array_500{0};
     std::array<BasicStruct, 5> m_my_array_struct;
     std::map<uint8_t, int16_t> m_my_map_octet_short;
@@ -1034,7 +1035,7 @@ private:
     eprosima::fastcdr::fixed_string<500> m_my_large_string_8;
     std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5> m_my_array_string;
     MA3 m_multi_alias_array_42{::A};
-    std::array<MyMiniArray, 5> m_my_array_arrays{0};
+    std::array<MyMiniArray, 5> m_my_array_arrays { {{0}} };
     std::array<MySequenceLong, 23> m_my_sequences_array;
 
 };

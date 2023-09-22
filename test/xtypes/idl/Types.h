@@ -1829,7 +1829,7 @@ public:
 
 private:
 
-    std::array<std::array<int32_t, 2>, 2> m_my_array{0};
+    std::array<std::array<int32_t, 2>, 2> m_my_array { {{0}} };
 
 };
 /*!

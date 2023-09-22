@@ -1877,7 +1877,7 @@ public:
 
 private:
 
-    std::array<std::array<std::array<int32_t, 2>, 2>, 2> m_my_array{0};
+    std::array<std::array<std::array<int32_t, 2>, 2>, 2> m_my_array{ {{ {{0}} }} };
 
 };
 typedef std::array<std::array<int32_t, 2>, 2> MyArray;
@@ -1970,7 +1970,7 @@ public:
 
 private:
 
-    std::array<std::array<MyArray, 2>, 2> m_my_array_array{0};
+    std::array<std::array<MyArray, 2>, 2> m_my_array_array{ {{ {{ {{0}} }} }} };
 
 };
 /*!
@@ -2428,9 +2428,8 @@ public:
 
     eProsima_user_DllExport std::bitset<30> bitset() const;
 
-    eProsima_user_DllExport void bitset(const std::bitset<30>&);
-
-
+    eProsima_user_DllExport void bitset(
+            const std::bitset<30>&);
 
 private:
 
