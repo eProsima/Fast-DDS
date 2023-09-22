@@ -60,13 +60,40 @@ public:
     bool RTPS_DllAPI operator ==(
             const PortBasedTransportDescriptor& t) const;
 
+    /**
+     * @brief Get the ThreadSettings for a specific port
+     *
+     * This function first looks for the port-specific ThreadSettings in the user-configured
+     * reception threads map, i.e. the collection of ThreadSettings returned by @ref reception_threads().
+     * If the ThreadSettings are found within said map, then @ref get_thread_config_for_port(uint32_t) returns them;
+     * else it returns the default reception thread settings, i.e. the ThreadSettings returned by
+     * @ref default_reception_threads().
+     *
+     * @warning This function will return the default reception thread ThreadSettings when called with a non-default,
+     * non-user-configured port.
+     *
+     * @param port The port to which the returned ThreadSetting apply.
+     *
+     * @return The ThreadSettings for the given port.
+     */
+    virtual RTPS_DllAPI const ThreadSettings& get_thread_config_for_port(
+            uint32_t port);
+
     //! Returns the ThreadSettings for the default reception threads
     virtual RTPS_DllAPI const ThreadSettings& default_reception_threads() const;
+
+    //! Set the ThreadSettings for the default reception threads
+    virtual RTPS_DllAPI void default_reception_threads(
+            const ThreadSettings& default_reception_threads);
 
     //! Returns the ThreadSettings for the user-configured reception threads
     virtual RTPS_DllAPI const ReceptionThreadsConfigMap& reception_threads() const;
 
-private:
+    //! Set the ThreadSettings for the user-configured reception threads
+    virtual RTPS_DllAPI void reception_threads(
+            const ReceptionThreadsConfigMap& reception_threads);
+
+protected:
 
     //! Thread settings for the default reception threads
     ThreadSettings default_reception_threads_;

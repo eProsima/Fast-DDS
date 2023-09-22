@@ -16,8 +16,6 @@
 #define _FASTDDS_TRANSPORT_DESCRIPTOR_INTERFACE_H_
 
 #include <cstdint>
-#include <map>
-#include <string>
 #include <vector>
 
 #include <fastrtps/fastrtps_dll.h>

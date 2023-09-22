@@ -256,6 +256,9 @@ endif()
 
 include_directories(mock/)
 
+##########################
+# UDPv4 tests
+##########################
 add_executable(UDPv4Tests ${UDPV4TESTS_SOURCE})
 target_compile_definitions(UDPv4Tests PRIVATE
     BOOST_ASIO_STANDALONE
@@ -281,9 +284,44 @@ endif()
 add_gtest(UDPv4Tests SOURCES ${UDPV4TESTS_SOURCE})
 set(TRANSPORT_XFAIL_LIST XFAIL_UDP4)
 
+add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
+target_compile_definitions(test_UDPv4Tests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(test_UDPv4Tests PRIVATE
+    ${Asio_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
+    )
+target_link_libraries(test_UDPv4Tests GTest::gtest ${MOCKS})
+if(QNX)
+    target_link_libraries(test_UDPv4Tests socket)
+endif()
+if(MSVC OR MSVC_IDE)
+    target_link_libraries(test_UDPv4Tests ${PRIVACY} iphlpapi Shlwapi)
+else()
+    target_link_libraries(test_UDPv4Tests ${PRIVACY})
+endif()
+add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
+set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TEST_UDP4)
+
+##########################
+# IPv6 tests
+##########################
 option(DISABLE_UDPV6_TESTS "Disable UDPv6 tests because fails in some systems" OFF)
 
 if(NOT DISABLE_UDPV6_TESTS)
+    ##########################
+    # UDPv6 tests
+    ##########################
     add_executable(UDPv6Tests ${UDPV6TESTS_SOURCE})
     target_compile_definitions(UDPv6Tests PRIVATE
         BOOST_ASIO_STANDALONE
@@ -308,6 +346,9 @@ if(NOT DISABLE_UDPV6_TESTS)
     add_gtest(UDPv6Tests SOURCES ${UDPV6TESTS_SOURCE})
     set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_UDP6)
 
+    ##########################
+    # TCPv6 tests
+    ##########################
     add_executable(TCPv6Tests ${TCPV6TESTS_SOURCE})
     target_compile_definitions(TCPv6Tests PRIVATE
         BOOST_ASIO_STANDALONE
@@ -339,35 +380,9 @@ if(NOT DISABLE_UDPV6_TESTS)
     set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TCP6)
 endif()
 
-add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
-target_compile_definitions(test_UDPv4Tests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
-target_include_directories(test_UDPv4Tests PRIVATE
-    ${Asio_INCLUDE_DIR}
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
-    ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src/cpp
-    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
-    )
-target_link_libraries(test_UDPv4Tests GTest::gtest ${MOCKS})
-if(QNX)
-    target_link_libraries(test_UDPv4Tests socket)
-endif()
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(test_UDPv4Tests ${PRIVACY} iphlpapi Shlwapi)
-else()
-    target_link_libraries(test_UDPv4Tests ${PRIVACY})
-endif()
-add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
-set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TEST_UDP4)
-
+##########################
+# TCPv4 tests
+##########################
 add_executable(TCPv4Tests ${TCPV4TESTS_SOURCE})
 target_compile_definitions(TCPv4Tests PRIVATE
     BOOST_ASIO_STANDALONE
@@ -398,6 +413,9 @@ endif()
 add_gtest(TCPv4Tests SOURCES ${TCPV4TESTS_SOURCE})
 set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TCP4)
 
+##########################
+# SHM tests
+##########################
 if(IS_THIRDPARTY_BOOST_OK)
     add_executable(SharedMemTests ${SHAREDMEMTESTS_SOURCE})
 
@@ -447,3 +465,34 @@ if(ANDROID)
     set_property(TARGET SharedMemTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
     set_property(TARGET test_UDPv4Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
 endif()
+
+#####################################
+# PortBasedTransportDescriptor tests
+#####################################
+set(PORTBASED_TRANSPORTDESCRIPTOR_TESTS_SOURCES
+    PortBasedTransportDescriptorTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp)
+
+set(PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET PortBasedTransportDescriptorTests)
+
+add_executable(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
+    ${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_SOURCES})
+
+target_compile_definitions(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
+    PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG>)
+
+target_include_directories(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
+    PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_BINARY_DIR}/include)
+
+target_link_libraries(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
+    GTest::gtest
+    ${MOCKS})
+
+add_gtest(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
+    SOURCES
+    ${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_SOURCES})

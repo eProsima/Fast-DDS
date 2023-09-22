@@ -37,14 +37,37 @@ bool PortBasedTransportDescriptor::operator ==(
            this->reception_threads_ == t.reception_threads());
 }
 
+const ThreadSettings& PortBasedTransportDescriptor::get_thread_config_for_port(
+        uint32_t port)
+{
+    auto search = reception_threads_.find(port);
+    if (search != reception_threads_.end())
+    {
+        return search->second;
+    }
+    return default_reception_threads_;
+}
+
 const ThreadSettings& PortBasedTransportDescriptor::default_reception_threads() const
 {
     return default_reception_threads_;
 }
 
+void PortBasedTransportDescriptor::default_reception_threads(
+        const ThreadSettings& default_reception_threads)
+{
+    default_reception_threads_ = default_reception_threads;
+}
+
 const PortBasedTransportDescriptor::ReceptionThreadsConfigMap& PortBasedTransportDescriptor::reception_threads() const
 {
     return reception_threads_;
+}
+
+void PortBasedTransportDescriptor::reception_threads(
+        const ReceptionThreadsConfigMap& reception_threads)
+{
+    reception_threads_ = reception_threads;
 }
 
 } // namespace rtps
