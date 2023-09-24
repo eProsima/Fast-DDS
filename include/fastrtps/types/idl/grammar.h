@@ -267,7 +267,8 @@ struct base_type_spec : sor<
                            > {};
 struct fixed_pt_const_type : kw_fixed {};
 
-struct scoped_name : sor<seq<identifier, double_colon, scoped_name>, seq<double_colon, scoped_name>, identifier> {};
+struct scoped_name_tail : seq<double_colon, identifier> {};
+struct scoped_name : seq<opt<double_colon>, identifier, star<scoped_name_tail>> {};
 struct positive_int_const : sor<integer_literal, scoped_name> {};
 struct fixed_pt_type : seq<kw_fixed, open_ang_bracket, positive_int_const, comma, positive_int_const, close_ang_bracket> {};
 struct string_size : seq<one<'<'>, positive_int_const, one<'>'>> {};
@@ -295,7 +296,7 @@ struct declarators : seq<declarator, star<seq<comma, declarator>>> {};
 struct any_declarator : sor<array_declarator, simple_declarator> {};
 struct any_declarators : seq<any_declarator, star<seq<comma, any_declarator>>> {};
 struct type_declarator;
-struct typedef_dlc : seq<kw_typedef, type_declarator> {};
+struct typedef_dcl : seq<kw_typedef, type_declarator> {};
 struct native_dcl : seq<kw_native, simple_declarator> {};
 struct annotation_appl;
 struct enumerator : seq<star<annotation_appl>, identifier> {};
@@ -315,9 +316,9 @@ struct struct_def : seq<kw_struct, identifier, opt<inhertance>, open_brace, star
 struct struct_dcl : sor<struct_def, struct_forward_dcl> {};
 struct bitset_dcl;
 struct bitmask_dcl;
-struct constr_type_dlc : seq<star<annotation_appl>, sor<struct_dcl, union_dcl, enum_dcl, bitset_dcl, bitmask_dcl>> {};
-struct type_declarator : seq<sor<constr_type_dlc, template_type_spec, simple_type_spec>, opt<ws>, any_declarators> {};
-struct type_dcl : sor<constr_type_dlc, native_dcl, typedef_dlc> {};
+struct constr_type_dcl : seq<star<annotation_appl>, sor<struct_dcl, union_dcl, enum_dcl, bitset_dcl, bitmask_dcl>> {};
+struct type_declarator : seq<sor<constr_type_dcl, template_type_spec, simple_type_spec>, opt<ws>, any_declarators> {};
+struct type_dcl : sor<constr_type_dcl, native_dcl, typedef_dcl> {};
 struct const_dcl : seq<kw_const, const_type, opt<ws>, identifier, equal_op, const_expr> {};
 
 // ANNOTATIONS
@@ -327,7 +328,7 @@ struct annotation_appl : seq<TAO_PEGTL_KEYWORD("@"), scoped_name, opt<open_paren
 struct any_const_type : kw_any {};
 struct annotation_member_type : sor<const_type, any_const_type, scoped_name> {};
 struct annotation_member : seq<opt<ws>, annotation_member_type, opt<ws>, simple_declarator, opt<seq<kw_default, const_expr>>, semicolon> {};
-struct annotation_body : star<sor<annotation_member, seq<enum_dcl, semicolon>, seq<const_dcl, semicolon>, seq<typedef_dlc, semicolon>>> {};
+struct annotation_body : star<sor<annotation_member, seq<enum_dcl, semicolon>, seq<const_dcl, semicolon>, seq<typedef_dcl, semicolon>>> {};
 struct annotation_header : seq<kw_annotation, identifier> {};
 struct annotation_dcl : seq<annotation_header, open_brace, annotation_body, close_brace> {};
 

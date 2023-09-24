@@ -80,7 +80,7 @@ int main(
     idl::Context context04 = idl::parse(test04);
 
     std::string test05 =
-        R"(
+            R"(
         struct Test05
         {
             long my_long;
@@ -90,6 +90,19 @@ int main(
         };
     )";
     idl::Context context05 = idl::parse(test05);
+
+    std::string test06 =
+            R"(
+        struct Point {
+            float x;
+            float y;
+            float z;
+        };
+        typedef Point PointAlias;
+        typedef Point PointArrayOf10[ 10 /**/];
+        typedef PointAlias TwoDimPointArray[5][3];
+    )";
+    idl::Context context06 = idl::parse(test06);
 
     Log::Flush();
     Log::Reset();

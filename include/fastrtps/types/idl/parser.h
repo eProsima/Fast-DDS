@@ -408,6 +408,11 @@ struct action<identifier>
                 evaluated += evaluated.empty() ? elem : ";" + elem;
             }
         }
+        else if (state.count("alias"))
+        {
+            // save alias type and alias name into state["alias"]
+            state["alias"] += state["alias"].empty() ? in.string() : "," + in.string();
+        }
         else
         {
             // Keep the identifier for super-expression use
@@ -1034,6 +1039,7 @@ struct action<const_dcl>
         EPROSIMA_LOG_INFO(IDLPARSER, "Found const: " << name);
         module.create_constant(name, operands.back());
         operands.pop_back();
+        if (operands.empty())   evaluated.clear();
     }
 
 };
@@ -1096,6 +1102,7 @@ struct action<enum_dcl>
         module.enum_32(name, enum_type);
 
         state.erase("enum");
+        evaluated.clear();
     }
 
 };
@@ -1159,6 +1166,98 @@ struct action<struct_def>
         module.structure(std::move(const_cast<v1_3::DynamicType&>(*struct_type)));
 
         state.erase("struct");
+        evaluated.clear();
+    }
+
+};
+
+template<>
+struct action<kw_typedef>
+{
+    template<typename Input>
+    static void apply(
+        const Input& in,
+        Context* ctx,
+        std::map<std::string, std::string>& state,
+        std::string& evaluated,
+        std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        // Set state["alias"] to empty string to indicate the start of parsing alias
+        state["alias"] = "";
+    }
+
+};
+
+template<>
+struct action<fixed_array_size>
+{
+    template<typename Input>
+    static void apply(
+        const Input& in,
+        Context* ctx,
+        std::map<std::string, std::string>& state,
+        std::string& evaluated,
+        std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        if (state.count("alias") && !state["alias"].empty())
+        {
+            std::string str = in.string();
+
+            // Find the opening and closing brackets
+            size_t start_pos = str.find('[');
+            size_t end_pos = str.find(']');
+
+            // Extract the substring between the brackets and trim spaces
+            std::string size = str.substr(start_pos + 1, end_pos - start_pos - 1);
+            size.erase(0, size.find_first_not_of(" \t\n\r"));
+            size.erase(size.find_last_not_of(" \t\n\r") + 1);
+
+            state["alias"] += "," + size;
+        }
+    }
+
+};
+
+template<>
+struct action<typedef_dcl>
+{
+    template<typename Input>
+    static void apply(
+        const Input& in,
+        Context* ctx,
+        std::map<std::string, std::string>& state,
+        std::string& evaluated,
+        std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        Module& module = ctx->module();
+
+        std::stringstream ss(state["alias"]);
+        std::string name;
+        std::vector<uint32_t> sizes;
+        std::string size;
+
+        std::getline(ss, state["type"], ',');
+        std::getline(ss, name, ',');
+        while (std::getline(ss, size, ','))
+        {
+            sizes.push_back(std::stoi(size));
+        }
+
+        auto type = ctx->get_type(state);
+        if (sizes.empty())
+        {
+            module.create_alias(type, name);
+        }
+        else
+        {
+            v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
+            v1_3::DynamicTypeBuilder_ptr array_type_builder = factory.create_array_type(*type, sizes);
+            auto array_type = array_type_builder->build();
+
+            module.create_alias(array_type, name);
+        }
+
+        state.erase("alias");
     }
 
 };
@@ -1415,6 +1514,10 @@ private:
                 builder = factory.create_wstring_type();
             }
             type = builder->build();
+        }
+        else
+        {
+            type = context_->module().type(state["type"]);
         }
 
         return type;
