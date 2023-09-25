@@ -953,6 +953,17 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         if (disable_positive_acks_ && last_sequence_number_ == SequenceNumber_t())
         {
             last_sequence_number_ = change->sequenceNumber;
+            if ( !(ack_event_->getRemainingTimeMilliSec() > 0) ) 
+            {
+                // Restart ack_timer
+                auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
+                auto now = system_clock::now();
+                auto interval = source_timestamp - now + keep_duration_us_;
+                assert(interval.count() >= 0);
+
+                ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+                ack_event_->restart_timer(max_blocking_time);
+            }
         }
 
         // Restore in case a exception was launched by RTPSMessageGroup.
@@ -2057,16 +2068,23 @@ bool StatefulWriter::ack_timer_expired()
         {
             check_acked_status();
         }
-        last_sequence_number_++;
 
-        // Get the next cache change from the history
         CacheChange_t* change;
+        
+        do
+        {
+            last_sequence_number_++;
+        } while (!mp_history->get_change(
+                    last_sequence_number_,
+                    getGuid(),
+                    &change) && last_sequence_number_ < next_sequence_number());
 
         if (!mp_history->get_change(
                     last_sequence_number_,
                     getGuid(),
                     &change))
         {
+            // Stop ack_timer
             return false;
         }
 
