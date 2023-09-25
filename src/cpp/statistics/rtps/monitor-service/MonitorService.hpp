@@ -52,6 +52,11 @@ class SimpleQueryable : public IStatusQueryable
 
 public:
 
+    virtual ~SimpleQueryable()
+    {
+
+    }
+
     inline bool get_monitoring_status(
             const fastrtps::rtps::GUID_t&,
             const uint32_t&,
