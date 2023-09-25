@@ -131,14 +131,14 @@ History::iterator ReaderHistory::remove_change_nts(
         const_iterator removal,
         bool release)
 {
-    if ( mp_reader == nullptr || mp_mutex == nullptr)
+    if (mp_reader == nullptr || mp_mutex == nullptr)
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
                 "You need to create a Writer with this History before removing any changes");
-        return changesEnd();
+        return remove_iterator_constness(removal);
     }
 
-    if ( removal == changesEnd())
+    if (removal == changesEnd())
     {
         EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
         return changesEnd();

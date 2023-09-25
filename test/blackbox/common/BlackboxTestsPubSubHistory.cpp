@@ -1064,6 +1064,7 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
 {
     PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
+    auto transport = std::make_shared<UDPv4TransportDescriptor>();
 
     auto data = default_data300kb_data_generator();
     auto reader_data = data;
@@ -1072,6 +1073,7 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
             .history_depth(static_cast<int32_t>(data.size()))
             .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .disable_builtin_transport().add_user_transport_to_pparams(transport)
             .mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -1086,6 +1088,7 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
             .history_depth(1)
             .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .disable_builtin_transport().add_user_transport_to_pparams(transport)
             .mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(reader.isInitialized());
