@@ -74,7 +74,7 @@ History::iterator History::remove_change_nts(
 {
     if (nullptr == mp_mutex)
     {
-        return changesEnd();
+        return remove_iterator_constness(removal);
     }
 
     if (removal == changesEnd())
@@ -124,16 +124,30 @@ bool History::remove_change(
 #endif // if HAVE_STRICT_REALTIME
 
     const_iterator it = find_change_nts(ch);
-    const_iterator end_it = changesEnd();
 
-    if (it == end_it)
+    if (it == changesEnd())
     {
         EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY, "Trying to remove a change not in history");
         return false;
     }
 
-    // remove using the virtual method
-    return end_it != remove_change_nts(it, max_blocking_time);
+    // Dummy change just used to compare original change with change returned from remove_change_nts function
+    CacheChange_t dummy_change;
+    dummy_change.writerGUID = (*it)->writerGUID;
+    dummy_change.sequenceNumber = (*it)->sequenceNumber;
+
+    // Remove using the virtual method
+    History::iterator history_it = remove_change_nts(it, max_blocking_time);
+
+    // If remove_change_nts returns a valid iterator (not end()) and this is the same iterator means that it
+    // could not remove it so this function should fail
+    if (history_it != changesEnd() && matches_change(&dummy_change, *history_it))
+    {
+        EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY, "Failed to remove a change from history");
+        return false;
+    }
+
+    return true;
 }
 
 bool History::remove_all_changes()
@@ -244,6 +258,14 @@ bool History::get_earliest_change(
 
     *change = m_changes.front();
     return true;
+}
+
+History::iterator History::remove_iterator_constness(
+        const_iterator c_it)
+{
+    History::iterator it = changesBegin();
+    std::advance(it, std::distance<const_iterator>(m_changes.cbegin(), c_it));
+    return it;
 }
 
 } // namespace rtps

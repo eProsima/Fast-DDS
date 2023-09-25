@@ -185,10 +185,10 @@ History::iterator WriterHistory::remove_change_nts(
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
                 "You need to create a Writer with this History before removing any changes");
-        return changesEnd();
+        return remove_iterator_constness(removal);
     }
 
-    if ( removal == changesEnd())
+    if (removal == changesEnd())
     {
         EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
         return changesEnd();
@@ -212,7 +212,9 @@ History::iterator WriterHistory::remove_change_nts(
         return ret_val;
     }
 
-    return changesEnd();
+    EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY,
+            "Failed to inform the writer that a change is going to be removed by the history");
+    return remove_iterator_constness(removal);
 }
 
 bool WriterHistory::remove_change_g(

@@ -322,6 +322,18 @@ protected:
     RTPS_DllAPI virtual void do_release_cache(
             CacheChange_t* ch) = 0;
 
+    /**
+     * @brief Removes the constness of a const_iterator to obtain a regular iterator.
+     *
+     * This function takes a const_iterator as input and returns a regular iterator by removing the constness.
+     *
+     * @param c_it The const_iterator to remove constness from.
+     *
+     * @return An iterator with the same position as the input const_iterator.
+     */
+    History::iterator remove_iterator_constness(
+            const_iterator c_it);
+
 };
 
 } // namespace rtps
