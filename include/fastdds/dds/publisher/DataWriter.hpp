@@ -595,6 +595,10 @@ public:
     RTPS_DllAPI ReturnCode_t discard_loan(
             void*& sample);
 
+    RTPS_DllAPI ReturnCode_t write_loan(
+            void*& sample,
+            bool return_loan);
+
     /**
      * @brief Get the list of locators from which this DataWriter may send data.
      *

@@ -152,6 +152,10 @@ public:
     ReturnCode_t discard_loan(
             void*& sample);
 
+    ReturnCode_t write_loan(
+            void*& sample,
+            bool return_loan);
+
     /**
      * Write data to the topic.
      * @param data Pointer to the data

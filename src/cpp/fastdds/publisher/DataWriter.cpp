@@ -78,6 +78,13 @@ ReturnCode_t DataWriter::discard_loan(
     return impl_->discard_loan(sample);
 }
 
+ReturnCode_t DataWriter::write_loan(
+        void*& sample,
+        bool return_loan)
+{
+    return impl_->write_loan(sample, return_loan);
+}
+
 bool DataWriter::write(
         void* data)
 {

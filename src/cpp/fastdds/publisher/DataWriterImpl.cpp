@@ -520,6 +520,36 @@ ReturnCode_t DataWriterImpl::discard_loan(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t DataWriterImpl::write_loan(
+        void*& sample,
+        bool return_loan)
+{
+    if (return_loan)
+    {
+        ReturnCode_t ret_val = write(sample, HANDLE_NIL);
+        if (ReturnCode_t::RETCODE_OK == ret_val)
+        {
+            sample = nullptr;
+        }
+
+        return ret_val;
+    }
+
+    // Type should be plain and have space for the representation header
+    if (!type_->is_plain() || SerializedPayload_t::representation_header_size > type_->m_typeSize)
+    {
+        return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
+    }
+
+    // Writer should be enabled
+    if (nullptr == writer_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 bool DataWriterImpl::write(
         void* data)
 {
