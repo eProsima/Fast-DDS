@@ -102,10 +102,19 @@ static void configure_current_thread_scheduler(
     }
 }
 
+static void configure_current_thread_affinity(
+        uint32_t affinity_mask)
+{
+    thread_affinity_policy_data_t policy = { m_affinityMask };
+    pthread_t self_tid = pthread_self();
+    thread_policy_set(pthread_mach_thread_np(self_tid), THREAD_AFFINITY_POLICY, (thread_policy_t)&policy, 1);
+}
+
 void apply_thread_settings_to_current_thread(
         const fastdds::rtps::ThreadSettings& settings)
 {
     configure_current_thread_scheduler(settings.scheduling_policy, settings.priority);
+    configure_current_thread_affinity(settings.cpu_mask);
 }
 
 }  // namespace eprosima
