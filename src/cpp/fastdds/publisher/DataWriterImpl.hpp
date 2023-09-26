@@ -586,9 +586,22 @@ protected:
             void* data,
             PayloadInfo_t& payload);
 
-    bool check_and_remove_loan(
+    void add_written_loan(
+            void* data,
+            const PayloadInfo_t& payload);
+
+    void add_written_loan(
+            void* data,
+            const CacheChange_t& change);
+
+    void remove_loan(
             void* data,
             PayloadInfo_t& payload);
+
+    bool check_and_remove_loan(
+            void* data,
+            PayloadInfo_t& payload,
+            bool& was_written);
 
     /**
      * Remove internal filtering information about a reader.

@@ -82,7 +82,7 @@ public:
 
     bool add_loan(
             void* data,
-            PayloadInfo_t& payload)
+            const PayloadInfo_t& payload)
     {
         static_cast<void>(data);
         assert(data == payload.payload.data + SerializedPayload_t::representation_header_size);
@@ -478,7 +478,7 @@ ReturnCode_t DataWriterImpl::loan_sample(
         case LoanInitializationKind::CONSTRUCTED_LOAN_INITIALIZATION:
             if (!type_->construct_sample(sample))
             {
-                check_and_remove_loan(sample, payload);
+                remove_loan(sample, payload);
                 return_payload_to_pool(payload);
                 sample = nullptr;
                 return ReturnCode_t::RETCODE_UNSUPPORTED;
@@ -508,7 +508,8 @@ ReturnCode_t DataWriterImpl::discard_loan(
 
     // Remove sample from loans collection
     PayloadInfo_t payload;
-    if ((nullptr == sample) || !check_and_remove_loan(sample, payload))
+    bool was_written;
+    if ((nullptr == sample) || !check_and_remove_loan(sample, payload, was_written))
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
@@ -827,10 +828,16 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
 #endif // if HAVE_STRICT_REALTIME
 
     PayloadInfo_t payload;
-    bool was_loaned = check_and_remove_loan(data, payload);
+    bool was_written = false;
+    bool was_loaned = check_and_remove_loan(data, payload, was_written);
     if (was_loaned)
     {
-        // TODO: Check it was not already written
+        if (was_written)
+        {
+            logError(DATA_WRITER, "Trying to write loaned sample twice");
+            add_written_loan(data, payload);
+            return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
+        }
     }
     else
     {
@@ -875,7 +882,10 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
 
         if (added)
         {
-            // TODO(Miguel C): Keep the loan with an additional reference, and mark as already written
+            if (should_keep_loan)
+            {
+                add_written_loan(data, *ch);
+            }
         }
         else
         {
@@ -1871,10 +1881,34 @@ bool DataWriterImpl::add_loan(
     return loans_ && loans_->add_loan(data, payload);
 }
 
-bool DataWriterImpl::check_and_remove_loan(
+void DataWriterImpl::add_written_loan(
+        void* data,
+        const PayloadInfo_t& payload)
+{
+}
+
+void DataWriterImpl::add_written_loan(
+        void* data,
+        const CacheChange_t& change)
+{
+}
+
+void DataWriterImpl::remove_loan(
         void* data,
         PayloadInfo_t& payload)
 {
+    bool was_written;
+    bool was_loaned = check_and_remove_loan(data, payload, was_written);
+    assert(was_loaned);
+    static_cast<void>(was_loaned);
+}
+
+bool DataWriterImpl::check_and_remove_loan(
+        void* data,
+        PayloadInfo_t& payload,
+        bool& was_written)
+{
+    was_written = true;
     return loans_ && loans_->check_and_remove_loan(data, payload);
 }
 
