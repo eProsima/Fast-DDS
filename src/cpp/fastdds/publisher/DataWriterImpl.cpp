@@ -918,6 +918,11 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         return ReturnCode_t::RETCODE_OK;
     }
 
+    if (was_loaned)
+    {
+        add_loan(data, payload);
+    }
+
     return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
 }
 
