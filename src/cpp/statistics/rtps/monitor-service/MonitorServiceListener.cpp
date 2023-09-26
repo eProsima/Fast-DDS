@@ -36,9 +36,7 @@ bool MonitorServiceListener::on_local_entity_status_change(
         const fastrtps::rtps::GUID_t& guid,
         const uint32_t& id) const
 {
-    bool ret = false;
-    ret = monitor_srv_->push_entity_update(guid.entityId, id);
-    return ret;
+    return monitor_srv_->push_entity_update(guid.entityId, id);
 }
 
 bool MonitorServiceListener::on_local_entity_change(
@@ -62,23 +60,28 @@ bool MonitorServiceListener::on_local_entity_change(
 bool MonitorServiceListener::on_local_entity_connections_change(
         const fastrtps::rtps::GUID_t& guid) const
 {
-    bool ret = false;
-    ret = monitor_srv_->push_entity_update(guid.entityId, CONNECTION_LIST);
-    return ret;
+    return monitor_srv_->push_entity_update(guid.entityId, CONNECTION_LIST);
 }
 
 void MonitorServiceListener::onWriterMatched(
-        fastrtps::rtps::RTPSWriter* writer,
+        fastrtps::rtps::RTPSWriter*,
         fastrtps::rtps::MatchingInfo& info)
 {
-    static_cast<void>(writer);
-    static_cast<void>(info);
+    if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
+    {
+        EPROSIMA_LOG_INFO(MONITOR_SERVICE, "Status writer matched with " << info.remoteEndpointGuid);
+    }
+    else if (info.status == eprosima::fastrtps::rtps::REMOVED_MATCHING)
+    {
+        EPROSIMA_LOG_INFO(MONITOR_SERVICE, "Status writer unmatched with " << info.remoteEndpointGuid);
+    }
 }
 
 void MonitorServiceListener::onWriterChangeReceivedByAll(
         fastrtps::rtps::RTPSWriter* writer,
         fastrtps::rtps::CacheChange_t* change)
 {
+    //! Do nothing for the moment, no relevant info
     static_cast<void>(writer);
     static_cast<void>(change);
 }
