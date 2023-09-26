@@ -52,8 +52,8 @@
 TEST(AcknackQos, DDSEnableUpdatabilityOfPositiveAcksPeriodDDSLayer)
 {
     // This test checks the behaviour of disabling positive ACKs.
-    // It also checks that only the positive ACKs 
-    // period is updatable on run time through set_qos. 
+    // It also checks that only the positive ACKs
+    // period is updatable on run time through set_qos.
 
     PubSubWriter<HelloWorldPubSubType> publisher(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> subscriber(TEST_TOPIC_NAME);
@@ -76,7 +76,7 @@ TEST(AcknackQos, DDSEnableUpdatabilityOfPositiveAcksPeriodDDSLayer)
     // Check correct initialitation
     eprosima::fastdds::dds::DataWriterQos get_att = publisher.get_qos();
     EXPECT_TRUE(get_att.reliable_writer_qos().disable_positive_acks.enabled);
-    EXPECT_EQ(get_att.reliable_writer_qos().disable_positive_acks.duration, eprosima::fastrtps::Duration_t({1,0}));
+    EXPECT_EQ(get_att.reliable_writer_qos().disable_positive_acks.duration, eprosima::fastrtps::Duration_t({1, 0}));
 
     // Wait for discovery.
     publisher.wait_discovery();
@@ -106,15 +106,15 @@ TEST(AcknackQos, DDSEnableUpdatabilityOfPositiveAcksPeriodDDSLayer)
 
     // Update attributes on DDS layer
     eprosima::fastdds::dds::DataWriterQos w_att = publisher.get_qos();
-    w_att.reliable_writer_qos().disable_positive_acks.enabled = true; 
-    w_att.reliable_writer_qos().disable_positive_acks.duration = eprosima::fastrtps::Duration_t({2,0});
+    w_att.reliable_writer_qos().disable_positive_acks.enabled = true;
+    w_att.reliable_writer_qos().disable_positive_acks.duration = eprosima::fastrtps::Duration_t({2, 0});
 
     EXPECT_TRUE(publisher.set_qos(w_att));
 
     // Check that period has been changed in DataWriterQos
     get_att = publisher.get_qos();
     EXPECT_TRUE(get_att.reliable_writer_qos().disable_positive_acks.enabled);
-    EXPECT_EQ(get_att.reliable_writer_qos().disable_positive_acks.duration, eprosima::fastrtps::Duration_t({2,0}));
+    EXPECT_EQ(get_att.reliable_writer_qos().disable_positive_acks.duration, eprosima::fastrtps::Duration_t({2, 0}));
 
     data = default_helloworld_data_generator();
 
@@ -130,8 +130,8 @@ TEST(AcknackQos, DDSEnableUpdatabilityOfPositiveAcksPeriodDDSLayer)
     EXPECT_TRUE(publisher.waitForAllAcked(std::chrono::milliseconds(1200)));
 
     // Try to disable positive_acks
-    w_att.reliable_writer_qos().disable_positive_acks.enabled = false; 
-    
+    w_att.reliable_writer_qos().disable_positive_acks.enabled = false;
+
     // Check that is not possible to change disable_positive_acks on run time
-    EXPECT_FALSE(publisher.set_qos(w_att));    
+    EXPECT_FALSE(publisher.set_qos(w_att));
 }

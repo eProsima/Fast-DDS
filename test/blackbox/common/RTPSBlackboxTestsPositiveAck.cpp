@@ -26,8 +26,8 @@ using namespace eprosima::fastrtps::rtps;
 
 TEST(RTPSAck, EnableUpdatabilityOfPositiveAcksPeriodRTPSLayer)
 {
-    // This test checks that only the positive ACKs 
-    // period is updatable on run time on the RTPS Layer. 
+    // This test checks that only the positive ACKs
+    // period is updatable on run time on the RTPS Layer.
 
     RTPSAsSocketReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -36,7 +36,7 @@ TEST(RTPSAck, EnableUpdatabilityOfPositiveAcksPeriodRTPSLayer)
     reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
             add_to_multicast_locator_list(ip, global_port).
             disable_positive_acks(true).init();
-    
+
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
@@ -67,8 +67,8 @@ TEST(RTPSAck, EnableUpdatabilityOfPositiveAcksPeriodRTPSLayer)
     // Update attributes at RTPS layer
     WriterAttributes w_att;
     w_att.disable_positive_acks = true;
-    w_att.keep_duration = eprosima::fastrtps::Duration_t(2,0);
- 
+    w_att.keep_duration = eprosima::fastrtps::Duration_t(2, 0);
+
     writer.updateAttributes(w_att);
 
     data = default_helloworld_data_generator();
@@ -93,7 +93,7 @@ TEST(RTPSAck, EnableUpdatabilityOfPositiveAcksPeriodRTPSLayer)
 
     // Update attributes at RTPS layer
     w_att.disable_positive_acks = false;
- 
+
     writer.updateAttributes(w_att);
 
     // Check that positive_acks feature is not changed on run time

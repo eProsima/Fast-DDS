@@ -1890,7 +1890,8 @@ bool DataWriterImpl::can_qos_be_updated(
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "Data sharing configuration cannot be changed after the creation of a DataWriter.");
     }
-    if (to.reliable_writer_qos().disable_positive_acks.enabled != from.reliable_writer_qos().disable_positive_acks.enabled)
+    if (to.reliable_writer_qos().disable_positive_acks.enabled !=
+            from.reliable_writer_qos().disable_positive_acks.enabled)
     {
         updatable = false;
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,

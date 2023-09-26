@@ -291,10 +291,11 @@ public:
     }
 
     RTPSAsSocketWriter& disable_positive_acks_seconds(
-            bool disable, int32_t sec)
+            bool disable,
+            int32_t sec)
     {
         writer_attr_.disable_positive_acks = disable;
-        writer_attr_.keep_duration = eprosima::fastrtps::Duration_t(sec,0);
+        writer_attr_.keep_duration = eprosima::fastrtps::Duration_t(sec, 0);
         return *this;
     }
 
