@@ -270,9 +270,9 @@ bool MonitorService::push_entity_update(
 bool MonitorService::write_status(
         const fastrtps::rtps::EntityId_t& entity_id,
         const std::bitset<STATUSES_SIZE>& changed_statuses,
-        const bool& entitiy_disposed)
+        const bool& entity_disposed)
 {
-    if (!entitiy_disposed)
+    if (!entity_disposed)
     {
         for (size_t i = 0; i < changed_statuses.size(); i++)
         {
@@ -314,7 +314,7 @@ bool MonitorService::write_status(
                         else
                         {
                             EPROSIMA_LOG_ERROR(MONITOR_SERVICE,
-                                    "Could not get entitiy connections list for " << local_entity_guid);
+                                    "Could not get entity connections list for " << local_entity_guid);
                             assert(false);
                         }
 
@@ -491,7 +491,7 @@ bool MonitorService::create_endpoint()
 {
     EPROSIMA_LOG_INFO(MONITOR_SERVICE, "Creating Monitor Service endpoint");
 
-    //! Design improvemt: customize the endpoint attrs from a QoS
+    //! Design improvement: customize the endpoint attrs from a QoS
 
     bool created = false;
 

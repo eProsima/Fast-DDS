@@ -524,7 +524,7 @@ struct SampleValidator
 
     }
 
-    //! Avoid decalaring it as virtual
+    //! Avoid declaring it as virtual
     //! in order to correctly apply static_cast
     void validate(
             SampleInfo&,
