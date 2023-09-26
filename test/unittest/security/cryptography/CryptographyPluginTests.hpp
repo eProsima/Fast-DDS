@@ -318,11 +318,11 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
     KeyMaterial_AES_GCM_GMAC result;
     CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(result, &serialized);
     ASSERT_TRUE(
-        (base.transformation_kind == result.transformation_kind) &
-        (base.master_salt == result.master_salt) &
-        (base.sender_key_id == result.sender_key_id) &
-        (base.master_sender_key == result.master_sender_key) &
-        (base.receiver_specific_key_id == result.receiver_specific_key_id) &
+        (base.transformation_kind == result.transformation_kind) &&
+        (base.master_salt == result.master_salt) &&
+        (base.sender_key_id == result.sender_key_id) &&
+        (base.master_sender_key == result.master_sender_key) &&
+        (base.receiver_specific_key_id == result.receiver_specific_key_id) &&
         (base.master_receiver_specific_key == result.master_receiver_specific_key)
         );
 

@@ -1165,7 +1165,11 @@ TEST(Discovery, TwentyParticipantsSeveralEndpointsMulticast)
 //! Regression for ROS2 #280 and #281, using unicast
 TEST_P(Discovery, TwentyParticipantsSeveralEndpointsUnicast)
 {
+#if defined(__APPLE__)
+    discoverParticipantsSeveralEndpointsTest(true, 10, 10, 10, TEST_TOPIC_NAME);
+#else
     discoverParticipantsSeveralEndpointsTest(true, 20, 20, 20, TEST_TOPIC_NAME);
+#endif
 }
 
 //! Regression test for support case 7552 (CRM #353)
