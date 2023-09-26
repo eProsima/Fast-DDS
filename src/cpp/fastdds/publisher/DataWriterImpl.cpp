@@ -526,7 +526,7 @@ ReturnCode_t DataWriterImpl::write_loan(
 {
     if (return_loan)
     {
-        ReturnCode_t ret_val = write(sample, HANDLE_NIL);
+        ReturnCode_t ret_val = create_new_change(ALIVE, sample);
         if (ReturnCode_t::RETCODE_OK == ret_val)
         {
             sample = nullptr;
@@ -535,19 +535,8 @@ ReturnCode_t DataWriterImpl::write_loan(
         return ret_val;
     }
 
-    // Type should be plain and have space for the representation header
-    if (!type_->is_plain() || SerializedPayload_t::representation_header_size > type_->m_typeSize)
-    {
-        return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
-    }
-
-    // Writer should be enabled
-    if (nullptr == writer_)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
-
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    WriteParams wparams;
+    return create_new_change_with_params(ALIVE, sample, wparams, false);
 }
 
 bool DataWriterImpl::write(
@@ -818,7 +807,8 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         ChangeKind_t change_kind,
         void* data,
         WriteParams& wparams,
-        const InstanceHandle_t& handle)
+        const InstanceHandle_t& handle,
+        bool should_keep_loan)
 {
     // Block lowlevel writer
     auto max_blocking_time = steady_clock::now() +
@@ -836,8 +826,17 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
 
     PayloadInfo_t payload;
     bool was_loaned = check_and_remove_loan(data, payload);
-    if (!was_loaned)
+    if (was_loaned)
     {
+        // TODO: Check it was not already written
+    }
+    else
+    {
+        if (should_keep_loan)
+        {
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+
         if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload))
         {
             return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
@@ -872,7 +871,11 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             added = history_.add_pub_change(ch, wparams, lock, max_blocking_time);
         }
 
-        if (!added)
+        if (added)
+        {
+            // TODO(Miguel C): Keep the loan with an additional reference, and mark as already written
+        }
+        else
         {
             if (was_loaned)
             {
@@ -921,7 +924,8 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
 ReturnCode_t DataWriterImpl::create_new_change_with_params(
         ChangeKind_t changeKind,
         void* data,
-        WriteParams& wparams)
+        WriteParams& wparams,
+        bool should_keep_loan)
 {
     ReturnCode_t ret_code = check_new_change_preconditions(changeKind, data);
     if (!ret_code)
@@ -939,7 +943,7 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
         type_->getKey(data, &handle, is_key_protected);
     }
 
-    return perform_create_new_change(changeKind, data, wparams, handle);
+    return perform_create_new_change(changeKind, data, wparams, handle, should_keep_loan);
 }
 
 ReturnCode_t DataWriterImpl::create_new_change_with_params(
@@ -954,7 +958,7 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
         return ret_code;
     }
 
-    return perform_create_new_change(changeKind, data, wparams, handle);
+    return perform_create_new_change(changeKind, data, wparams, handle, false);
 }
 
 bool DataWriterImpl::remove_min_seq_change()

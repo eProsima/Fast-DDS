@@ -446,7 +446,8 @@ protected:
     ReturnCode_t create_new_change_with_params(
             fastrtps::rtps::ChangeKind_t kind,
             void* data,
-            fastrtps::rtps::WriteParams& wparams);
+            fastrtps::rtps::WriteParams& wparams,
+            bool should_keep_loan = false);
 
     /**
      *
@@ -494,7 +495,8 @@ protected:
             fastrtps::rtps::ChangeKind_t change_kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams,
-            const InstanceHandle_t& handle);
+            const InstanceHandle_t& handle,
+            bool should_keep_loan);
 
     static fastrtps::TopicAttributes get_topic_attributes(
             const DataWriterQos& qos,
