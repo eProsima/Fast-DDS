@@ -1832,7 +1832,7 @@ protected:
         cvEntitiesInfoList_.notify_all();
     }
 
-     PubSubWriter& operator =(
+    PubSubWriter& operator =(
             const PubSubWriter&) = delete;
 
     eprosima::fastdds::dds::DomainParticipant* participant_;

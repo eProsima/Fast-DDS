@@ -1143,7 +1143,13 @@ ReturnCode_t DataWriterImpl::set_qos(
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
-    set_qos(qos_, qos_to_set, !enabled);
+    set_qos(qos_, qos_to_set, enabled);
+    // Update times and positive_acks attributes
+    WriterAttributes w_att;
+    w_att.times = qos_.reliable_writer_qos().times;
+    w_att.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks.enabled;
+    w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
+    writer_->updateAttributes(w_att);
 
     if (enabled)
     {
@@ -1883,6 +1889,12 @@ bool DataWriterImpl::can_qos_be_updated(
         updatable = false;
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "Data sharing configuration cannot be changed after the creation of a DataWriter.");
+    }
+    if (to.reliable_writer_qos().disable_positive_acks.enabled != from.reliable_writer_qos().disable_positive_acks.enabled)
+    {
+        updatable = false;
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "Only the period of Positive ACKs can be changed after the creation of a DataWriter.");
     }
     return updatable;
 }

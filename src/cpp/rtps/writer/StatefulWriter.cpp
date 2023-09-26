@@ -1634,6 +1634,9 @@ void StatefulWriter::updatePositiveAcks(
     {
         keep_duration_us_ = std::chrono::nanoseconds {att.keep_duration.to_ns()};
     }
+    // Restart ack timer with new duration
+    ack_event_->update_interval_millisec(keep_duration_us_.count() * 1e-3);
+    ack_event_->restart_timer();
 }
 
 void StatefulWriter::updateTimes(

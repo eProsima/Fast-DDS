@@ -91,7 +91,7 @@ TEST(AcknackQos, DDSEnableUpdatabilityOfPositiveAcksPeriodDDSLayer)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     subscriber.block_for_all();
-    // Wait for all acked msgs and check time elapsed
+    // Wait for all acked msgs
     EXPECT_TRUE(publisher.waitForAllAcked(std::chrono::milliseconds(1200)));
 
     // Wait to disable timer because no new messages are sent
@@ -126,9 +126,8 @@ TEST(AcknackQos, DDSEnableUpdatabilityOfPositiveAcksPeriodDDSLayer)
     // Block reader until reception finished or timeout.
     subscriber.block_for_all();
     // Check that period has been correctly updated
-    EXPECT_FALSE(publisher.waitForAllAcked(std::chrono::seconds(1)));
+    EXPECT_FALSE(publisher.waitForAllAcked(std::chrono::milliseconds(1200)));
     EXPECT_TRUE(publisher.waitForAllAcked(std::chrono::milliseconds(1200)));
-    //EXPECT_TRUE(std::chrono::steady_clock::now() - start < std::chrono::milliseconds{2200});
 
     // Try to disable positive_acks
     w_att.reliable_writer_qos().disable_positive_acks.enabled = false; 
