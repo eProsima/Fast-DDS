@@ -447,6 +447,7 @@ protected:
             fastrtps::rtps::ChangeKind_t kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams,
+            bool should_be_loan = false,
             bool should_keep_loan = false);
 
     /**
@@ -496,6 +497,7 @@ protected:
             void* data,
             fastrtps::rtps::WriteParams& wparams,
             const InstanceHandle_t& handle,
+            bool should_be_loan,
             bool should_keep_loan);
 
     static fastrtps::TopicAttributes get_topic_attributes(

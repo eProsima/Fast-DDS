@@ -524,9 +524,11 @@ ReturnCode_t DataWriterImpl::write_loan(
         void*& sample,
         bool return_loan)
 {
+    WriteParams wparams{};
+
     if (return_loan)
     {
-        ReturnCode_t ret_val = create_new_change(ALIVE, sample);
+        ReturnCode_t ret_val = create_new_change_with_params(ALIVE, sample, wparams, true, false);
         if (ReturnCode_t::RETCODE_OK == ret_val)
         {
             sample = nullptr;
@@ -535,8 +537,7 @@ ReturnCode_t DataWriterImpl::write_loan(
         return ret_val;
     }
 
-    WriteParams wparams;
-    return create_new_change_with_params(ALIVE, sample, wparams, false);
+    return create_new_change_with_params(ALIVE, sample, wparams, true, true);
 }
 
 bool DataWriterImpl::write(
@@ -808,6 +809,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         void* data,
         WriteParams& wparams,
         const InstanceHandle_t& handle,
+        bool should_be_loan,
         bool should_keep_loan)
 {
     // Block lowlevel writer
@@ -832,7 +834,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     }
     else
     {
-        if (should_keep_loan)
+        if (should_be_loan)
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
@@ -930,6 +932,7 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
         ChangeKind_t changeKind,
         void* data,
         WriteParams& wparams,
+        bool should_be_loan,
         bool should_keep_loan)
 {
     ReturnCode_t ret_code = check_new_change_preconditions(changeKind, data);
@@ -948,7 +951,7 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
         type_->getKey(data, &handle, is_key_protected);
     }
 
-    return perform_create_new_change(changeKind, data, wparams, handle, should_keep_loan);
+    return perform_create_new_change(changeKind, data, wparams, handle, should_be_loan, should_keep_loan);
 }
 
 ReturnCode_t DataWriterImpl::create_new_change_with_params(
@@ -963,7 +966,7 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
         return ret_code;
     }
 
-    return perform_create_new_change(changeKind, data, wparams, handle, false);
+    return perform_create_new_change(changeKind, data, wparams, handle, false, false);
 }
 
 bool DataWriterImpl::remove_min_seq_change()
