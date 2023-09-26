@@ -422,6 +422,8 @@ protected:
 
     std::unique_ptr<LoanCollection> loans_;
 
+    std::unique_ptr<LoanCollection> written_loans_;
+
     fastrtps::rtps::GUID_t guid_;
 
     std::unique_ptr<ReaderFilterCollection> reader_filters_;

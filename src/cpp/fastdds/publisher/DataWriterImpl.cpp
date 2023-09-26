@@ -393,6 +393,11 @@ ReturnCode_t DataWriterImpl::check_delete_preconditions()
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
+    if (written_loans_ && !written_loans_->is_empty())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -1844,6 +1849,7 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
         if (type_->is_plain())
         {
             loans_.reset(new LoanCollection(config));
+            written_loans_.reset(new LoanCollection(config));
         }
     }
 
@@ -1855,6 +1861,7 @@ bool DataWriterImpl::release_payload_pool()
     assert(payload_pool_);
 
     loans_.reset();
+    written_loans_.reset();
 
     bool result = true;
 
@@ -1885,12 +1892,20 @@ void DataWriterImpl::add_written_loan(
         void* data,
         const PayloadInfo_t& payload)
 {
+    assert(written_loans_);
+    written_loans_->add_loan(data, payload);
 }
 
 void DataWriterImpl::add_written_loan(
         void* data,
         const CacheChange_t& change)
 {
+    assert(written_loans_);
+
+    PayloadInfo_t payload{};
+    // TODO(MiguelCompany): Keep additional reference to change's payload
+    // payload.copy_reference_from_change(change);
+    written_loans_->add_loan(data, payload);
 }
 
 void DataWriterImpl::remove_loan(
@@ -1908,8 +1923,15 @@ bool DataWriterImpl::check_and_remove_loan(
         PayloadInfo_t& payload,
         bool& was_written)
 {
+    bool ret_val = false;
     was_written = true;
-    return loans_ && loans_->check_and_remove_loan(data, payload);
+    ret_val = written_loans_ && written_loans_->check_and_remove_loan(data, payload);
+    if (!ret_val)
+    {
+        was_written = false;
+        ret_val = loans_&& loans_->check_and_remove_loan(data, payload);
+    }
+    return ret_val;
 }
 
 ReturnCode_t DataWriterImpl::check_datasharing_compatible(
