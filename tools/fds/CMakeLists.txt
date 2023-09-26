@@ -21,7 +21,7 @@ project(fast-discovery-server VERSION 1.0.1 LANGUAGES CXX)
 ###############################################################################
 
 if(NOT fastrtps_FOUND)
-    find_package(fastrtps REQUIRED)
+    find_package(fastrtps 2.12 REQUIRED)
 endif()
 
 # Check C++11

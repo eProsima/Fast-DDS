@@ -4,7 +4,7 @@ project(fuzz_processCDRMsg VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
-    find_package(fastcdr REQUIRED)
+    find_package(fastcdr 2 REQUIRED)
 endif()
 
 if(NOT foonathan_memory_FOUND)
@@ -12,7 +12,7 @@ if(NOT foonathan_memory_FOUND)
 endif()
 
 if(NOT fastrtps_FOUND)
-    find_package(fastrtps REQUIRED)
+    find_package(fastrtps 2.12 REQUIRED)
 endif()
 
 message(STATUS "Configuring fuzz_processCDRMsg...")
