@@ -30,9 +30,11 @@
 #include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
 #include <asio/socket_base.hpp>
-#include <asio/ssl/verify_context.hpp>
 #include <asio/steady_timer.hpp>
 #include <asio/system_error.hpp>
+#if TLS_FOUND
+#include <asio/ssl/verify_context.hpp>
+#endif // if TLS_FOUND
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/Log.hpp>
