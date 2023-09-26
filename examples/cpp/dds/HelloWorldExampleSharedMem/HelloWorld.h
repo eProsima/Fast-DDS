@@ -204,7 +204,7 @@ private:
 
     uint32_t m_index{0};
     std::string m_message;
-    std::array<char, 1048576> m_data{0};
+    std::array<char, 1048576> m_data;
 
 };
 

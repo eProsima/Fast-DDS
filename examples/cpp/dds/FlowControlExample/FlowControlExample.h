@@ -175,7 +175,7 @@ public:
 
 private:
 
-    std::array<char, 600000> m_message{0};
+    std::array<char, 600000> m_message;
     char m_wasFast{0};
 
 };
