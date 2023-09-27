@@ -1,0 +1,5 @@
+struct CustomPayloadPoolData
+{
+	unsigned long index;
+	string message;
+};
