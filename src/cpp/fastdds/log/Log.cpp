@@ -130,6 +130,14 @@ struct LogResources
         error_string_filter_.reset(new std::regex(filter));
     }
 
+    //! Sets thread configuration for the logging thread.
+    void SetThreadConfig(
+            const rtps::ThreadSettings& config)
+    {
+        static_cast<void>(config);
+        return;
+    }
+
     //! Returns the logging_ engine to configuration defaults.
     void Reset()
     {
@@ -437,6 +445,12 @@ void Log::SetErrorStringFilter(
         const std::regex& filter)
 {
     detail::get_log_resources()->SetErrorStringFilter(filter);
+}
+
+void Log::SetThreadConfig(
+        const rtps::ThreadSettings& config)
+{
+    detail::get_log_resources()->SetThreadConfig(config);
 }
 
 void LogConsumer::print_timestamp(

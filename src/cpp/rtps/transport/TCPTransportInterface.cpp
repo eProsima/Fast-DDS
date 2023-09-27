@@ -12,29 +12,59 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <rtps/transport/TCPTransportInterface.h>
+#include "TCPTransportInterface.h"
 
-#include <utility>
-#include <cstring>
 #include <algorithm>
+#include <cassert>
 #include <chrono>
+#include <cstring>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <string>
 #include <thread>
+#include <utility>
+#include <vector>
 
+#include <asio/executor_work_guard.hpp>
+#include <asio/io_context.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/socket_base.hpp>
 #include <asio/steady_timer.hpp>
+#include <asio/system_error.hpp>
+#if TLS_FOUND
+#include <asio/ssl/verify_context.hpp>
+#endif // if TLS_FOUND
+
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/LocatorSelector.hpp>
+#include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
+#include <fastdds/rtps/common/PortParameters.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/transport/SenderResource.h>
+#include <fastdds/rtps/transport/SocketTransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPTransportDescriptor.h>
+#include <fastdds/rtps/transport/TransportReceiverInterface.h>
+#include <fastrtps/config.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
-#include <rtps/transport/tcp/RTCPMessageManager.h>
-#include <rtps/transport/TCPSenderResource.hpp>
-#include <rtps/transport/TCPChannelResourceBasic.h>
-#include <rtps/transport/TCPAcceptorBasic.h>
-#if TLS_FOUND
-#include <rtps/transport/TCPChannelResourceSecure.h>
-#include <rtps/transport/TCPAcceptorSecure.h>
-#endif // if TLS_FOUND
+
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <utils/SystemInfo.hpp>
 #include <utils/threading.hpp>
+
+#include "tcp/RTCPHeader.h"
+#include "tcp/RTCPMessageManager.h"
+#include "TCPAcceptorBasic.h"
+#include "TCPChannelResourceBasic.h"
+#include "TCPSenderResource.hpp"
+#if TLS_FOUND
+#include "TCPAcceptorSecure.h"
+#include "TCPChannelResourceSecure.h"
+#endif // if TLS_FOUND
 
 using namespace std;
 using namespace asio;
@@ -92,6 +122,8 @@ TCPTransportDescriptor::TCPTransportDescriptor(
     , check_crc(t.check_crc)
     , apply_security(t.apply_security)
     , tls_config(t.tls_config)
+    , keep_alive_thread(t.keep_alive_thread)
+    , accept_thread(t.accept_thread)
 {
 }
 
@@ -117,6 +149,8 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator =(
     check_crc = t.check_crc;
     apply_security = t.apply_security;
     tls_config = t.tls_config;
+    keep_alive_thread = t.keep_alive_thread;
+    accept_thread = t.accept_thread;
     return *this;
 }
 
@@ -136,6 +170,8 @@ bool TCPTransportDescriptor::operator ==(
            this->check_crc == t.check_crc &&
            this->apply_security == t.apply_security &&
            this->tls_config == t.tls_config &&
+           this->keep_alive_thread == t.keep_alive_thread &&
+           this->accept_thread == t.accept_thread &&
            SocketTransportDescriptor::operator ==(t));
 }
 
