@@ -1903,8 +1903,7 @@ void DataWriterImpl::add_written_loan(
     assert(written_loans_);
 
     PayloadInfo_t payload{};
-    // TODO(MiguelCompany): Keep additional reference to change's payload
-    // payload.copy_reference_from_change(change);
+    payload.copy_reference_from_change(change);
     written_loans_->add_loan(data, payload);
 }
 

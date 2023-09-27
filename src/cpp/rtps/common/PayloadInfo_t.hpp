@@ -21,6 +21,7 @@
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 
 #include <cassert>
 
@@ -44,6 +45,7 @@ struct PayloadInfo_t
     void move_from_change(
             CacheChange_t& change)
     {
+        // This class must be empty
         assert(payload_owner == nullptr);
         assert(payload.data == nullptr);
         assert(payload.length == 0);
@@ -61,6 +63,7 @@ struct PayloadInfo_t
     void move_into_change(
             CacheChange_t& change)
     {
+        // Output change must be empty
         assert(change.payload_owner() == nullptr);
         assert(change.serializedPayload.data == nullptr);
         assert(change.serializedPayload.length == 0);
@@ -75,6 +78,39 @@ struct PayloadInfo_t
         payload.max_size = 0;
     }
 
+    void copy_reference_from_change(
+            const CacheChange_t& change)
+    {
+        // This class must be empty
+        assert(payload_owner == nullptr);
+        assert(payload.data == nullptr);
+        assert(payload.length == 0);
+
+        // Input change must have content
+        assert(change.payload_owner() != nullptr);
+        assert(change.serializedPayload.data != nullptr);
+        assert(change.serializedPayload.length > 0);
+
+        // Let the payload pool of the input change copy the payload.
+        // This will usually just increment the reference counter of the payload.
+        IPayloadPool* input_pool = const_cast<IPayloadPool*>(change.payload_owner());
+        SerializedPayload_t input_payload = change.serializedPayload;
+        CacheChange_t change_copy;
+        change_copy.copy_not_memcpy(&change);
+        input_pool->get_payload(input_payload, input_pool, change_copy);
+
+        // Pool and payload must not have been modified
+        assert(change.payload_owner() == input_pool);
+        assert(change.serializedPayload.data == input_payload.data);
+        assert(change.serializedPayload.length == input_payload.length);
+
+        // Reset the local variable, so the pointer is not free'd when going out of scope
+        input_payload.data = nullptr;
+        input_payload.length = 0;
+
+        // Keep the payload and owner
+        move_from_change(change_copy);
+    }
 };
 
 }  // namespace detail
