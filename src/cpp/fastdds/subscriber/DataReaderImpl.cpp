@@ -139,6 +139,7 @@ ReturnCode_t DataReaderImpl::enable()
 
     ReaderAttributes att;
 
+    // TODO(eduponz): Encapsulate this in QosConverters.cpp
     att.endpoint.durabilityKind = qos_.durability().durabilityKind();
     att.endpoint.endpointKind = READER;
     att.endpoint.reliabilityKind = qos_.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
@@ -158,7 +159,7 @@ ReturnCode_t DataReaderImpl::enable()
     att.matched_writers_allocation = qos_.reader_resource_limits().matched_publisher_allocation;
     att.expectsInlineQos = qos_.expects_inline_qos();
     att.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_ACKs.enabled;
-
+    att.data_sharing_listener_thread = qos_.data_sharing_listener_thread();
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
@@ -810,6 +811,7 @@ void DataReaderImpl::update_rtps_reader_qos()
         }
         ReaderQos rqos = qos_.get_readerqos(get_subscriber()->get_qos());
         subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos, filter_property);
+        // TODO(eduponz): RTPSReader attributes must be updated here
     }
 }
 
@@ -1562,6 +1564,12 @@ bool DataReaderImpl::can_qos_be_updated(
         updatable = false;
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "Positive ACKs QoS cannot be changed after the creation of a DataReader.");
+    }
+    if (!(to.data_sharing_listener_thread() == from.data_sharing_listener_thread()))
+    {
+        updatable = false;
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "data_sharing_listener_thread cannot be changed after the DataReader is enabled");
     }
     return updatable;
 }

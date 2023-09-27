@@ -19,10 +19,14 @@
 #ifndef _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
 #define _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
 
+#include <memory>
+#include <sstream>
+
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/PortParameters.h>
 #include <fastdds/rtps/common/Time_t.h>
@@ -31,10 +35,8 @@
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/utils/fixed_size_string.hpp>
-
-#include <memory>
-#include <sstream>
 
 namespace eprosima {
 
@@ -484,7 +486,8 @@ public:
                (this->useBuiltinTransports == b.useBuiltinTransports) &&
                (this->properties == b.properties) &&
                (this->prefix == b.prefix) &&
-               (this->flow_controllers == b.flow_controllers);
+               (this->flow_controllers == b.flow_controllers) &&
+               (this->builtin_controllers_sender_thread == b.builtin_controllers_sender_thread);
     }
 
     /**
@@ -575,6 +578,20 @@ public:
 
     //! Flow controllers.
     FlowControllerDescriptorList flow_controllers;
+
+    //! Thread settings for the builtin flow controllers sender threads
+    fastdds::rtps::ThreadSettings builtin_controllers_sender_thread;
+
+    //! Thread settings for the timed events thread
+    fastdds::rtps::ThreadSettings timed_events_thread;
+
+    //! Thread settings for the discovery server thread
+    fastdds::rtps::ThreadSettings discovery_server_thread;
+
+#if HAVE_SECURITY
+    //! Thread settings for the security log thread
+    fastdds::rtps::ThreadSettings security_log_thread;
+#endif // if HAVE_SECURITY
 
 private:
 

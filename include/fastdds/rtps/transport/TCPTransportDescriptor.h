@@ -15,9 +15,14 @@
 #ifndef _FASTDDS_TCP_TRANSPORT_DESCRIPTOR_H_
 #define _FASTDDS_TCP_TRANSPORT_DESCRIPTOR_H_
 
+#include <cstdint>
+#include <iostream>
+#include <string>
+#include <vector>
+
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
 #include <fastrtps/fastrtps_dll.h>
-#include <iostream>
 
 namespace eprosima {
 namespace fastdds {
@@ -264,6 +269,12 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
 
     //! Configuration of the TLS (Transport Layer Security)
     TLSConfig tls_config;
+
+    //! Thread settings for keep alive thread
+    ThreadSettings keep_alive_thread;
+
+    //! Thread settings for the accept connections thread
+    ThreadSettings accept_thread;
 
     //! Add listener port to the listening_ports list
     void add_listener_port(

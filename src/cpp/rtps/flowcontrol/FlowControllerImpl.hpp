@@ -9,6 +9,7 @@
 #include <unordered_map>
 
 #include "FlowController.hpp"
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
@@ -930,12 +931,13 @@ public:
     FlowControllerImpl(
             fastrtps::rtps::RTPSParticipantImpl* participant,
             const FlowControllerDescriptor* descriptor,
-            uint32_t async_index
-            )
+            uint32_t async_index,
+            ThreadSettings thread_settings)
         : participant_(participant)
         , async_mode(participant, descriptor)
         , participant_id_(0)
         , async_index_(async_index)
+        , thread_settings_(thread_settings)
     {
         if (nullptr != participant)
         {
@@ -1486,6 +1488,9 @@ private:
 
     uint32_t participant_id_ = 0;
     uint32_t async_index_ = 0;
+
+    //! Thread settings for the sender thread
+    ThreadSettings thread_settings_;
 };
 
 } // namespace rtps
