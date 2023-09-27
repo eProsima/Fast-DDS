@@ -29,7 +29,6 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <rtps/history/TopicPayloadPoolRegistry.hpp>
 
 
 using namespace eprosima::fastdds::dds;
