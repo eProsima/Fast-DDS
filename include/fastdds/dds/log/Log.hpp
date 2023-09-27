@@ -15,11 +15,13 @@
 #ifndef _FASTDDS_DDS_LOG_LOG_HPP_
 #define _FASTDDS_DDS_LOG_LOG_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
-#include <thread>
-#include <sstream>
 #include <atomic>
 #include <regex>
+#include <sstream>
+#include <thread>
+
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastrtps/fastrtps_dll.h>
 
 /**
  * eProsima log layer. Logging categories and verbosity can be specified dynamically at runtime.
@@ -130,6 +132,10 @@ public:
     //! Sets a filter that will pattern-match against the provided error string, dropping any unmatched categories.
     RTPS_DllAPI static void SetErrorStringFilter(
             const std::regex&);
+
+    //! Sets thread configuration for the logging thread.
+    RTPS_DllAPI static void SetThreadConfig(
+            const rtps::ThreadSettings&);
 
     //! Returns the logging engine to configuration defaults.
     RTPS_DllAPI static void Reset();

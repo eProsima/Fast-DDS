@@ -23,17 +23,16 @@
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
-
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
-
+#include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
@@ -2763,6 +2762,7 @@ public:
                (this->use_builtin_transports == b.use_builtin_transports) &&
                (this->send_socket_buffer_size == b.send_socket_buffer_size) &&
                (this->listen_socket_buffer_size == b.listen_socket_buffer_size) &&
+               (this->builtin_transports_reception_threads_ == b.builtin_transports_reception_threads_) &&
                QosPolicy::operator ==(b);
     }
 
@@ -2788,6 +2788,9 @@ public:
      * By default, 0.
      */
     uint32_t listen_socket_buffer_size;
+
+    //! Thread settings for the builtin transports reception threads
+    rtps::ThreadSettings builtin_transports_reception_threads_;
 };
 
 //! Qos Policy to configure the endpoint

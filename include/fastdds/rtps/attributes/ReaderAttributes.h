@@ -20,13 +20,11 @@
 #ifndef _FASTDDS_RTPS_ATTRIBUTES_READERATTRIBUTES_H_
 #define _FASTDDS_RTPS_ATTRIBUTES_READERATTRIBUTES_H_
 
-#include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/attributes/EndpointAttributes.h>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
-
-#include <functional>
 
 namespace eprosima {
 namespace fastrtps {
@@ -106,6 +104,9 @@ public:
 
     //! Define the allocation behaviour for matched-writer-dependent collections.
     ResourceLimitedContainerConfig matched_writers_allocation;
+
+    //! Thread settings for the data-sharing listener thread
+    fastdds::rtps::ThreadSettings data_sharing_listener_thread;
 };
 
 } /* namespace rtps */
