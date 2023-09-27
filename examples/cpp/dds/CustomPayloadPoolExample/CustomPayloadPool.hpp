@@ -52,22 +52,14 @@ public:
 
     bool get_payload(
             eprosima::fastrtps::rtps::SerializedPayload_t& data,
-            eprosima::fastrtps::rtps::IPayloadPool*& data_owner,
+            eprosima::fastrtps::rtps::IPayloadPool*& /*data_owner*/,
             eprosima::fastrtps::rtps::CacheChange_t& cache_change)
     {
-        unsigned char* payload;
-        if (data_owner != this)
-        {
-            // Reserve new memory for the payload buffer
-            payload = new unsigned char[data.length];
-            // Copy the data
-            memcpy(payload, data.data, data.length);
-        }
-        else
-        {
-            // Memory allocated by this same pool -> just copy pointer
-            payload = data.data;
-        }
+        // Reserve new memory for the payload buffer
+        unsigned char* payload = new unsigned char[data.length];
+
+        // Copy the data
+        memcpy(payload, data.data, data.length);
 
         // Tell the CacheChange who needs to release its payload
         cache_change.payload_owner(this);
