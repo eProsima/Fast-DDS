@@ -67,7 +67,7 @@ void StatisticsWriterImpl::on_sample_datas(
         const fastrtps::rtps::SampleIdentity& sample_identity,
         size_t num_sent_submessages)
 {
-    if (!are_statistics_writers_enabled(EventKind::SAMPLE_DATAS))
+    if (!are_statistics_writers_enabled(EventKindBits::SAMPLE_DATAS))
     {
         return;
     }
@@ -97,7 +97,7 @@ void StatisticsWriterImpl::on_data_generated(
 
 void StatisticsWriterImpl::on_data_sent()
 {
-    if (!are_statistics_writers_enabled(EventKind::DATA_COUNT))
+    if (!are_statistics_writers_enabled(EventKindBits::DATA_COUNT))
     {
         return;
     }
@@ -115,7 +115,7 @@ void StatisticsWriterImpl::on_data_sent()
     Data data;
     // note that the setter sets RESENT_DATAS by default
     data.entity_count(std::move(notification));
-    data._d(EventKind::DATA_COUNT);
+    data._d(EventKindBits::DATA_COUNT);
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
             {
@@ -126,7 +126,7 @@ void StatisticsWriterImpl::on_data_sent()
 void StatisticsWriterImpl::on_heartbeat(
         uint32_t count)
 {
-    if (!are_statistics_writers_enabled(EventKind::HEARTBEAT_COUNT))
+    if (!are_statistics_writers_enabled(EventKindBits::HEARTBEAT_COUNT))
     {
         return;
     }
@@ -139,7 +139,7 @@ void StatisticsWriterImpl::on_heartbeat(
     Data data;
     // note that the setter sets RESENT_DATAS by default
     data.entity_count(std::move(notification));
-    data._d(EventKind::HEARTBEAT_COUNT);
+    data._d(EventKindBits::HEARTBEAT_COUNT);
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
             {
@@ -149,7 +149,7 @@ void StatisticsWriterImpl::on_heartbeat(
 
 void StatisticsWriterImpl::on_gap()
 {
-    if (!are_statistics_writers_enabled(EventKind::GAP_COUNT))
+    if (!are_statistics_writers_enabled(EventKindBits::GAP_COUNT))
     {
         return;
     }
@@ -166,7 +166,7 @@ void StatisticsWriterImpl::on_gap()
     Data data;
     // note that the setter sets RESENT_DATAS by default
     data.entity_count(std::move(notification));
-    data._d(EventKind::GAP_COUNT);
+    data._d(EventKindBits::GAP_COUNT);
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
             {
@@ -182,7 +182,7 @@ void StatisticsWriterImpl::on_resent_data(
         return;
     }
 
-    if (!are_statistics_writers_enabled(EventKind::RESENT_DATAS))
+    if (!are_statistics_writers_enabled(EventKindBits::RESENT_DATAS))
     {
         return;
     }
@@ -214,7 +214,7 @@ void StatisticsWriterImpl::on_publish_throughput(
 
     if (payload > 0 )
     {
-        if (!are_statistics_writers_enabled(EventKind::PUBLICATION_THROUGHPUT))
+        if (!are_statistics_writers_enabled(EventKindBits::PUBLICATION_THROUGHPUT))
         {
             return;
         }

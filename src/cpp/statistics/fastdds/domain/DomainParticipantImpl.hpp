@@ -47,9 +47,6 @@ using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
-
-enum EventKind : uint32_t;
-
 namespace dds {
 
 class PublisherImpl;

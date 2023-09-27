@@ -22,6 +22,7 @@
 #include <fastrtps/types/TypeObjectHashId.h>
 
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
 
 #include <fastcdr/exceptions/BadParamException.h>
 using namespace eprosima::fastcdr::exception;
@@ -44,7 +45,8 @@ TypeObjectHashId::~TypeObjectHashId()
 {
 }
 
-TypeObjectHashId::TypeObjectHashId(const TypeObjectHashId &x)
+TypeObjectHashId::TypeObjectHashId(
+        const TypeObjectHashId& x)
 {
     m__d = x.m__d;
 
@@ -59,7 +61,8 @@ TypeObjectHashId::TypeObjectHashId(const TypeObjectHashId &x)
     }
 }
 
-TypeObjectHashId::TypeObjectHashId(TypeObjectHashId &&x)
+TypeObjectHashId::TypeObjectHashId(
+        TypeObjectHashId&& x)
 {
     m__d = x.m__d;
 
@@ -74,24 +77,8 @@ TypeObjectHashId::TypeObjectHashId(TypeObjectHashId &&x)
     }
 }
 
-TypeObjectHashId& TypeObjectHashId::operator=(const TypeObjectHashId &x)
-{
-    m__d = x.m__d;
-
-    switch (m__d)
-    {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
-            memcpy(m_hash, x.m_hash, 14);
-            break;
-        default:
-            break;
-    }
-
-    return *this;
-}
-
-TypeObjectHashId& TypeObjectHashId::operator=(TypeObjectHashId &&x)
+TypeObjectHashId& TypeObjectHashId::operator =(
+        const TypeObjectHashId& x)
 {
     m__d = x.m__d;
 
@@ -108,7 +95,26 @@ TypeObjectHashId& TypeObjectHashId::operator=(TypeObjectHashId &&x)
     return *this;
 }
 
-void TypeObjectHashId::_d(uint8_t __d) // Special case to ease... sets the current active member
+TypeObjectHashId& TypeObjectHashId::operator =(
+        TypeObjectHashId&& x)
+{
+    m__d = x.m__d;
+
+    switch (m__d)
+    {
+        case EK_COMPLETE:
+        case EK_MINIMAL:
+            memcpy(m_hash, x.m_hash, 14);
+            break;
+        default:
+            break;
+    }
+
+    return *this;
+}
+
+void TypeObjectHashId::_d(
+        uint8_t __d)                   // Special case to ease... sets the current active member
 {
     bool b = false;
     m__d = __d;
@@ -129,7 +135,10 @@ void TypeObjectHashId::_d(uint8_t __d) // Special case to ease... sets the curre
             break;
     }
 
-    if (!b) throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    if (!b)
+    {
+        throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    }
 
     m__d = __d;
 }
@@ -144,13 +153,15 @@ uint8_t& TypeObjectHashId::_d()
     return m__d;
 }
 
-void TypeObjectHashId::hash(const EquivalenceHash &_hash)
+void TypeObjectHashId::hash(
+        const EquivalenceHash& _hash)
 {
     memcpy(m_hash, _hash, 14);
     m__d = EK_COMPLETE;
 }
 
-void TypeObjectHashId::hash(EquivalenceHash &&_hash)
+void TypeObjectHashId::hash(
+        EquivalenceHash&& _hash)
 {
     memcpy(m_hash, _hash, 14);
     m__d = EK_COMPLETE;
@@ -200,63 +211,80 @@ EquivalenceHash& TypeObjectHashId::hash()
     return m_hash;
 }
 
-// TODO(Ricardo) Review
-size_t TypeObjectHashId::getCdrSerializedSize(const TypeObjectHashId& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    switch (data.m__d)
-    {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
-            current_alignment += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1); break;
-        default:
-            break;
-    }
-
-    return current_alignment - initial_alignment;
-}
-
-void TypeObjectHashId::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    scdr << m__d;
-
-    switch (m__d)
-    {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
-            for (int i = 0; i < 14; ++i)
-            {
-                scdr << m_hash[i];
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeObjectHashId::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    dcdr >> m__d;
-
-    switch (m__d)
-    {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
-            for (int i = 0; i < 14; ++i)
-            {
-                dcdr >> m_hash[i];
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-
-
 } // namespace types
 } // namespace fastrtps
+} // namespace eprosima
+
+namespace eprosima {
+namespace fastcdr {
+template<>
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::TypeObjectHashId& data,
+        size_t& current_alignment)
+{
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
+
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data._d(), current_alignment);
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_MINIMAL:
+            calculated_size += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1); break;
+        default:
+            break;
+    }
+
+    calculated_size += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return calculated_size;
+}
+
+template<>
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::TypeObjectHashId& data)
+{
+    scdr << data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_MINIMAL:
+            for (int i = 0; i < 14; ++i)
+            {
+                scdr << data.hash()[i];
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+template<>
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::TypeObjectHashId& data)
+{
+    dcdr >> data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_MINIMAL:
+            for (int i = 0; i < 14; ++i)
+            {
+                dcdr >> data.hash()[i];
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+} // namespace fastcdr
 } // namespace eprosima

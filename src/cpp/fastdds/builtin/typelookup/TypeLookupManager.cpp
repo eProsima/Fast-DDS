@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 
+#include <fastcdr/CdrSizeCalculator.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -544,7 +545,9 @@ bool TypeLookupManager::send_request(
     CacheChange_t* change = builtin_request_writer_->new_change(
         [&req]()
         {
-            return static_cast<uint32_t>(TypeLookup_Request::getCdrSerializedSize(req) + 4);
+            eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+            size_t current_alignment {0};
+            return static_cast<uint32_t>(calculator.calculate_serialized_size(req, current_alignment) + 4);
         },
         ALIVE);
 
@@ -564,7 +567,7 @@ bool TypeLookupManager::send_request(
         SerializedPayload_t payload;
         payload.max_size = change->serializedPayload.max_size - 4;
         payload.data = change->serializedPayload.data + 4;
-        if (valid && request_type_.serialize(&req, &payload))
+        if (valid && request_type_.serialize(&req, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION))
         {
             change->serializedPayload.length += payload.length;
             change->serializedPayload.pos += payload.pos;
@@ -585,7 +588,9 @@ bool TypeLookupManager::send_reply(
     CacheChange_t* change = builtin_reply_writer_->new_change(
         [&rep]()
         {
-            return static_cast<uint32_t>(TypeLookup_Reply::getCdrSerializedSize(rep) + 4);
+            eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+            size_t current_alignment {0};
+            return static_cast<uint32_t>(calculator.calculate_serialized_size(rep, current_alignment) + 4);
         },
         ALIVE);
 
@@ -605,7 +610,7 @@ bool TypeLookupManager::send_reply(
         SerializedPayload_t payload;
         payload.max_size = change->serializedPayload.max_size - 4;
         payload.data = change->serializedPayload.data + 4;
-        if (valid && reply_type_.serialize(&rep, &payload))
+        if (valid && reply_type_.serialize(&rep, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION))
         {
             change->serializedPayload.length += payload.length;
             change->serializedPayload.pos += payload.pos;

@@ -1,4 +1,9 @@
-#include "mutex_testing_tool/TMutex.hpp"
+#include <cassert>
+#include <chrono>
+#include <future>
+#include <gtest/gtest.h>
+
+#include <fastcdr/Cdr.h>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -14,12 +19,7 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastcdr/Cdr.h>
-
-#include <cassert>
-#include <future>
-#include <chrono>
-#include <gtest/gtest.h>
+#include "mutex_testing_tool/TMutex.hpp"
 
 #if defined(_WIN32)
 #define GET_PID _getpid
@@ -58,13 +58,13 @@ public:
         eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
         // Object that serializes the data.
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::Cdr::DDS_CDR);
+                eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
         payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Serialize encapsulation
         ser.serialize_encapsulation();
         //serialize the object:
         ser.serialize(sample->value_);
-        payload->length = (uint32_t)ser.getSerializedDataLength();
+        payload->length = (uint32_t)ser.get_serialized_data_length();
         return true;
     }
 
@@ -76,9 +76,7 @@ public:
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
         // Object that serializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::Cdr::DDS_CDR);     // Object that deserializes the data.
-        // Deserialize encapsulation.
+        eprosima::fastcdr::Cdr deser(fastbuffer);       // Deserialize encapsulation.
         deser.read_encapsulation();
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         //serialize the object:

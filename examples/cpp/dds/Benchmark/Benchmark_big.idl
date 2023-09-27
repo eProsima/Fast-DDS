@@ -1,5 +1,0 @@
-struct BenchMarkBig
-{
-	char data[8388608];
-	unsigned long index;
-};

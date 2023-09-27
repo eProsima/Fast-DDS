@@ -19,6 +19,7 @@ find_package(PythonInterp 3)
 ###############################################################################
 set(COMMON_SOURCE ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorld.cxx
     ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldTypeObject.cxx
     ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSized.cxx
     ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSizedPubSubTypes.cxx
     )

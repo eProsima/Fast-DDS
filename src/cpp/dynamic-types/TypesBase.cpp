@@ -16,64 +16,69 @@
  * @file TypesBase.cpp
  */
 
-#include <fastrtps/types/TypesBase.h>
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
-namespace fastrtps {
-
-using namespace rtps;
-
-namespace types {
-
-void MemberFlag::serialize(
-        eprosima::fastcdr::Cdr& cdr) const
+namespace fastcdr {
+template<>
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator&,
+        const eprosima::fastrtps::types::MemberFlag&,
+        size_t& current_alignment)
 {
-    //cdr << m_MemberFlag;
-    uint16_t bits = static_cast<uint16_t>(m_MemberFlag.to_ulong());
-    cdr << bits;
+    size_t calculated_size {2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2)};
+    current_alignment += calculated_size;
+    return calculated_size;
 }
 
-void MemberFlag::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
+template<>
+void serialize(
+        eprosima::fastcdr::Cdr& cdr,
+        const eprosima::fastrtps::types::MemberFlag& data)
 {
-    //cdr >> (uint16_t)m_MemberFlag;
-    uint16_t bits;
-    cdr >> bits;
-    m_MemberFlag = std::bitset<16>(bits);
+    cdr << data.bitset();
 }
 
-size_t MemberFlag::getCdrSerializedSize(
-        const MemberFlag&,
-        size_t current_alignment)
+template<>
+void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        eprosima::fastrtps::types::MemberFlag& data)
 {
-    return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    std::bitset<16> bitset;
+    cdr >> bitset;
+    data.bitset(bitset);
 }
 
-void TypeFlag::serialize(
-        eprosima::fastcdr::Cdr& cdr) const
+template<>
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator&,
+        const eprosima::fastrtps::types::TypeFlag&,
+        size_t& current_alignment)
 {
-    //cdr << m_TypeFlag;
-    uint16_t bits = static_cast<uint16_t>(m_TypeFlag.to_ulong());
-    cdr << bits;
+    size_t calculated_size {2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2)};
+    current_alignment += calculated_size;
+    return calculated_size;
 }
 
-void TypeFlag::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
+template<>
+void serialize(
+        eprosima::fastcdr::Cdr& cdr,
+        const eprosima::fastrtps::types::TypeFlag& data)
 {
-    //cdr >> (uint16_t)m_TypeFlag;
-    uint16_t bits;
-    cdr >> bits;
-    m_TypeFlag = std::bitset<16>(bits);
+    cdr << data.bitset();
 }
 
-size_t TypeFlag::getCdrSerializedSize(
-        const TypeFlag&,
-        size_t current_alignment)
+template<>
+void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        eprosima::fastrtps::types::TypeFlag& data)
 {
-    return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    std::bitset<16> bitset;
+    cdr >> bitset;
+    data.bitset(bitset);
 }
 
-} // namespace types
-} // namespace fastrtps
+} // namespace fastcdr
 } // namespace eprosima

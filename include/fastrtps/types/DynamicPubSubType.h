@@ -35,6 +35,14 @@ protected:
     MD5 m_md5;
     unsigned char* m_keyBuffer;
 
+    enum
+    {
+        FINAL,
+        APPENDABLE,
+        MUTABLE
+    }
+    extensibility_ {APPENDABLE};
+
 public:
 
     RTPS_DllAPI DynamicPubSubType();
@@ -59,11 +67,26 @@ public:
             bool force_md5 = false) override;
 
     RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(
-            void* data) override;
+            void* data) override
+    {
+        return getSerializedSizeProvider(data, fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+    }
+
+    RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(
+            void* data,
+            fastdds::dds::DataRepresentationId_t data_representation) override;
 
     RTPS_DllAPI bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+    {
+        return serialize(data, payload, fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+    }
+
+    RTPS_DllAPI bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            fastdds::dds::DataRepresentationId_t data_representation) override;
 
     RTPS_DllAPI void CleanDynamicType();
 

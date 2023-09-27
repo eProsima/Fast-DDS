@@ -19,8 +19,8 @@
 
 #include "TMutex.hpp"
 
-#include <array>
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <pthread.h>
 

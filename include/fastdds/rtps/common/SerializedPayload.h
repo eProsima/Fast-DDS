@@ -18,13 +18,15 @@
 
 #ifndef _FASTDDS_RTPS_SERIALIZEDPAYLOAD_H_
 #define _FASTDDS_RTPS_SERIALIZEDPAYLOAD_H_
-#include <fastrtps/fastrtps_dll.h>
-#include <fastdds/rtps/common/Types.h>
+
 #include <cstring>
 #include <new>
 #include <stdexcept>
 #include <stdint.h>
 #include <stdlib.h>
+
+#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/rtps/common/Types.h>
 
 /*!
  * @brief Maximum payload is maximum of UDP packet size minus 536bytes (RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE)

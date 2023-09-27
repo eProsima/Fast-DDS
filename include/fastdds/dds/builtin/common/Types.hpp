@@ -20,16 +20,17 @@
 #ifndef TYPES_HPP
 #define TYPES_HPP
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace rpc {
 
-using InstanceName = fastrtps::string_255;
+using InstanceName = fastcdr::string_255;
 
-enum RemoteExceptionCode_t {
+enum RemoteExceptionCode_t
+{
     REMOTE_EX_OK,
     REMOTE_EX_UNSUPPORTED,
     REMOTE_EX_INVALID_ARGUMENT,

@@ -13,7 +13,6 @@ typedef MyAliasEnum2 MyAliasEnum3;
 struct BasicStruct
 {
     boolean my_bool;
-    //byte my_byte;
     octet my_octet;
     short my_int16;
     long my_int32;
@@ -25,9 +24,9 @@ struct BasicStruct
     double my_float64;
     long double my_float128;
     char my_char;
-    wchar my_wchar;
+    //wchar my_wchar; //TODO(richiware) Remove when xtype 1.3. Also in DynamicComplexTypesTests.cpp.
     string my_string;
-    wstring my_wstring;
+    //wstring my_wstring; //TODO(richiware) Remove when xtype 1.3. Also in DynamicComplexTypesTests.cpp.
 };
 
 typedef octet MyOctetArray500[500];
@@ -53,9 +52,9 @@ struct ComplexStruct
     map<long, MyOctetArray500> my_map_long_octet_array_500;
     map<long, map<octet, BSAlias5> > my_map_long_lol_type;
     string<128> my_small_string_8;
-    wstring<64> my_small_string_16;
+    //wstring<64> my_small_string_16; //TODO(richiware) Remove when xtype 1.3
     string<500> my_large_string_8;
-    wstring<1024> my_large_string_16;
+    //wstring<1024> my_large_string_16; //TODO(richiware) Remove when xtype 1.3
     string<75> my_array_string[5][5];
     MA3 multi_alias_array_42;
     MyMiniArray my_array_arrays[5];
@@ -89,6 +88,6 @@ struct CompleteStruct
 
 struct KeyedStruct
 {
-    @Key octet key;
+    @key octet key;
     BasicStruct basic;
 };

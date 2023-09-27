@@ -15,15 +15,16 @@
 #ifndef TYPES_BASE_H
 #define TYPES_BASE_H
 
-#include <fastdds/rtps/common/Types.h>
-#include <bitset>
-#include <string>
-#include <map>
-#include <vector>
-#include <cctype>
 #include <algorithm>
+#include <bitset>
+#include <cctype>
+#include <map>
 #include <memory>
+#include <string>
 #include <type_traits>
+#include <vector>
+
+#include <fastdds/rtps/common/Types.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -270,7 +271,7 @@ operator !=(
 using ResponseCode = ReturnCode_t;
 
 typedef uint32_t MemberId;
-#define MEMBER_ID_INVALID 0X0FFFFFFF
+constexpr uint32_t MEMBER_ID_INVALID {0X0FFFFFFF};
 #define INDEX_INVALID UINT32_MAX
 
 const int32_t MAX_BITMASK_LENGTH = 64;
@@ -442,20 +443,30 @@ public:
         b ? m_MemberFlag.set(6) : m_MemberFlag.reset(6);
     }
 
-    void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
-    static size_t getCdrSerializedSize(
-            const MemberFlag&,
-            size_t current_alignment = 0);
-
     bool operator ==(
             const MemberFlag& other) const
     {
         return m_MemberFlag == other.m_MemberFlag;
+    }
+
+    std::bitset<16> bitset() const
+    {
+        std::string str_value;
+
+        str_value = m_MemberFlag.to_string() + str_value;
+
+        return std::bitset<16>(str_value);
+    }
+
+    void bitset(
+            const std::bitset<16>& bitset)
+    {
+        std::string str_value {bitset.to_string()};
+        size_t base_diff {0};
+        size_t last_post {std::string::npos};
+
+        base_diff += 16;
+        m_MemberFlag = std::bitset<16>(str_value.substr(str_value.length() - base_diff, last_post));
     }
 
 };
@@ -571,20 +582,30 @@ public:
         b ? m_TypeFlag.set(4) : m_TypeFlag.reset(4);
     }
 
-    void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
-    static size_t getCdrSerializedSize(
-            const TypeFlag&,
-            size_t current_alignment = 0);
-
     bool operator ==(
             const TypeFlag& other) const
     {
         return m_TypeFlag == other.m_TypeFlag;
+    }
+
+    std::bitset<16> bitset() const
+    {
+        std::string str_value;
+
+        str_value = m_TypeFlag.to_string() + str_value;
+
+        return std::bitset<16>(str_value);
+    }
+
+    void bitset(
+            const std::bitset<16>& bitset)
+    {
+        std::string str_value {bitset.to_string()};
+        size_t base_diff {0};
+        size_t last_post {std::string::npos};
+
+        base_diff += 16;
+        m_TypeFlag = std::bitset<16>(str_value.substr(str_value.length() - base_diff, last_post));
     }
 
 };

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.16.3)
+cmake_minimum_required(VERSION 3.22)
 
 project(DiscoveryServerExample VERSION 1 LANGUAGES CXX)
 
@@ -47,4 +47,3 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} fastrtps fastcdr fastdds::optionparser)
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION examples/cpp/dds/${PROJECT_NAME}/${BIN_INSTALL_DIR})
-

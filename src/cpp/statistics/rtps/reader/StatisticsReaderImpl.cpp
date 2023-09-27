@@ -65,7 +65,7 @@ void StatisticsReaderImpl::on_data_notify(
         const fastrtps::rtps::GUID_t& writer_guid,
         const fastrtps::rtps::Time_t& source_timestamp)
 {
-    if (!are_statistics_writers_enabled(EventKind::HISTORY2HISTORY_LATENCY))
+    if (!are_statistics_writers_enabled(EventKindBits::HISTORY2HISTORY_LATENCY))
     {
         return;
     }
@@ -96,7 +96,7 @@ void StatisticsReaderImpl::on_data_notify(
 void StatisticsReaderImpl::on_acknack(
         int32_t count)
 {
-    if (!are_statistics_writers_enabled(EventKind::ACKNACK_COUNT))
+    if (!are_statistics_writers_enabled(EventKindBits::ACKNACK_COUNT))
     {
         return;
     }
@@ -109,7 +109,7 @@ void StatisticsReaderImpl::on_acknack(
     Data data;
     // note that the setter sets RESENT_DATAS by default
     data.entity_count(notification);
-    data._d(EventKind::ACKNACK_COUNT);
+    data._d(EventKindBits::ACKNACK_COUNT);
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
             {
@@ -120,7 +120,7 @@ void StatisticsReaderImpl::on_acknack(
 void StatisticsReaderImpl::on_nackfrag(
         int32_t count)
 {
-    if (!are_statistics_writers_enabled(EventKind::NACKFRAG_COUNT))
+    if (!are_statistics_writers_enabled(EventKindBits::NACKFRAG_COUNT))
     {
         return;
     }
@@ -133,7 +133,7 @@ void StatisticsReaderImpl::on_nackfrag(
     Data data;
     // note that the setter sets RESENT_DATAS by default
     data.entity_count(notification);
-    data._d(EventKind::NACKFRAG_COUNT);
+    data._d(EventKindBits::NACKFRAG_COUNT);
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
             {
@@ -149,7 +149,7 @@ void StatisticsReaderImpl::on_subscribe_throughput(
 
     if (payload > 0 )
     {
-        if (!are_statistics_writers_enabled(EventKind::SUBSCRIPTION_THROUGHPUT))
+        if (!are_statistics_writers_enabled(EventKindBits::SUBSCRIPTION_THROUGHPUT))
         {
             return;
         }
@@ -170,7 +170,7 @@ void StatisticsReaderImpl::on_subscribe_throughput(
         Data data;
         // note that the setter sets PUBLICATION_THROUGHPUT by default
         data.entity_data(std::move(notification));
-        data._d(EventKind::SUBSCRIPTION_THROUGHPUT);
+        data._d(EventKindBits::SUBSCRIPTION_THROUGHPUT);
 
         for_each_listener([&data](const std::shared_ptr<IListener>& listener)
                 {

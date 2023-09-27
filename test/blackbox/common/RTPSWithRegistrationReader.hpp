@@ -575,6 +575,7 @@ private:
                     change->serializedPayload.length);
             eprosima::fastcdr::Cdr cdr(buffer);
 
+            cdr.read_encapsulation();
             cdr >> data;
 
             auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);

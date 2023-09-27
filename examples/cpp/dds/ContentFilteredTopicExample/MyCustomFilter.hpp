@@ -2,7 +2,9 @@
 #define _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTER_HPP_
 
 #include <fastcdr/Cdr.h>
+
 #include <fastdds/dds/topic/IContentFilter.hpp>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 //! Custom filter class
 //! It requieres two parameters 'low_mark_' and 'high_mark_'.
@@ -43,7 +45,7 @@ public:
         // Deserialize the `index` field from the serialized sample.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::Cdr::DDS_CDR);
+                eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
         // Deserialize encapsulation.
         deser.read_encapsulation();
         uint32_t index = 0;

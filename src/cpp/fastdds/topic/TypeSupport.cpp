@@ -17,10 +17,11 @@
  * @file TypeSupport.cpp
  */
 
-#include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-
 #include <fastcdr/exceptions/Exception.h>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 
 namespace eprosima {
@@ -44,12 +45,13 @@ ReturnCode_t TypeSupport::register_type(
 
 bool TypeSupport::serialize(
         void* data,
-        fastrtps::rtps::SerializedPayload_t* payload)
+        fastrtps::rtps::SerializedPayload_t* payload,
+        DataRepresentationId_t data_representation)
 {
     bool result = false;
     try
     {
-        result = get()->serialize(data, payload);
+        result = get()->serialize(data, payload, data_representation);
     }
     catch (eprosima::fastcdr::exception::Exception&)
     {

@@ -79,9 +79,9 @@ constexpr const char* SAMPLE_DATAS_TOPIC_ALIAS = "SAMPLE_DATAS_TOPIC";
 constexpr const char* PHYSICAL_DATA_TOPIC_ALIAS = "PHYSICAL_DATA_TOPIC";
 
 static constexpr uint32_t participant_statistics_mask =
-        EventKind::RTPS_SENT | EventKind::RTPS_LOST | EventKind::NETWORK_LATENCY |
-        EventKind::EDP_PACKETS | EventKind::PDP_PACKETS |
-        EventKind::PHYSICAL_DATA | EventKind::DISCOVERED_ENTITY;
+        EventKindBits::RTPS_SENT | EventKindBits::RTPS_LOST | EventKindBits::NETWORK_LATENCY |
+        EventKindBits::EDP_PACKETS | EventKindBits::PDP_PACKETS |
+        EventKindBits::PHYSICAL_DATA | EventKindBits::DISCOVERED_ENTITY;
 
 struct ValidEntry
 {

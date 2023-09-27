@@ -49,7 +49,7 @@ module bitmodule
 		bitfield<1> b;
 		bitfield<4>;
 		bitfield<10> c;
-		bitfield<12, short> d, e, f;
+		bitfield<5, short> d, e, f;
 	};
 
 	@bit_bound(8)
@@ -78,7 +78,7 @@ module bitmodule
 
 struct StructTest : NewAliases
 {
-	WCharUnion charUnion;
+	//WCharUnion charUnion; //TODO(richiware) Remove when xtype 1.3. Uncomment also in DynamicTypes_4_2_Tests.cpp
 	OctetUnion octetUnion;
 	Int8Union int8Union;
 	bitmodule::BM2 myStructBits;

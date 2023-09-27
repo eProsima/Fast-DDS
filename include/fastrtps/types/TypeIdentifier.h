@@ -33,13 +33,13 @@ namespace eprosima {
 
 namespace fastcdr {
 class Cdr;
-}
+} // namespace fastcdr
 
 namespace fastdds {
 namespace dds {
 class TypeConsistencyEnforcementQosPolicy;
-}
-}
+} // namespace dds
+} // namespace fastdds
 
 namespace fastrtps {
 namespace types {
@@ -109,14 +109,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    RTPS_DllAPI TypeIdentifier& operator=(
+    RTPS_DllAPI TypeIdentifier& operator =(
             const TypeIdentifier& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    RTPS_DllAPI TypeIdentifier& operator=(
+    RTPS_DllAPI TypeIdentifier& operator =(
             TypeIdentifier&& x);
 
     /*!
@@ -360,21 +360,25 @@ public:
      */
     RTPS_DllAPI ExtendedTypeDefn& extended_defn();
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::TypeIdentifier::getCdrSerializedSize()",
+            "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeIdentifier& data,
             size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::TypeIdentifier::serialize()",
+            "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
@@ -382,13 +386,16 @@ public:
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::TypeIdentifier::deserialize()",
+            "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /**
      * Equals
      * */
-    bool operator==(
+    bool operator ==(
             const TypeIdentifier& other) const;
 
     RTPS_DllAPI bool consistent(

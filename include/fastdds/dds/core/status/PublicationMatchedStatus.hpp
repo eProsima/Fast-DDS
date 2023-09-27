@@ -21,7 +21,7 @@
 
 #include <cstdint>
 #include <fastdds/dds/core/status/MatchedStatus.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/common/InstanceHandle.hpp>
 
 namespace eprosima {
 namespace fastdds {

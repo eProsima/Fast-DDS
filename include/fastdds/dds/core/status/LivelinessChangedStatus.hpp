@@ -19,8 +19,6 @@
 #ifndef _FASTDDS_DDS_QOS_LIVELINESSCHANGEDSTATUS_HPP_
 #define _FASTDDS_DDS_QOS_LIVELINESSCHANGEDSTATUS_HPP_
 
-#include <fastdds/dds/topic/TypeSupport.hpp>
-
 #include <fastdds/dds/common/InstanceHandle.hpp>
 
 namespace eprosima {

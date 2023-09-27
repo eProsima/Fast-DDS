@@ -12,12 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/exceptions/BadParamException.h>
+
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-#include <fastcdr/Cdr.h>
+
+#include "TypeObjectCdrAux.ipp"
 
 // The types in this file shall be serialized with XCDR encoding version 2
 namespace eprosima {
@@ -77,28 +81,20 @@ size_t CommonStructMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += StructMemberFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.member_type_id(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonStructMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_member_id;
-    scdr << m_member_flags;
-    scdr << m_member_type_id;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonStructMember::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_member_id;
-    dcdr >> m_member_flags;
-    dcdr >> m_member_type_id;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonStructMember::operator ==(
@@ -166,33 +162,20 @@ size_t CompleteMemberDetail::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.name().size()  + 1;
-    current_alignment += AppliedBuiltinMemberAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.ann_custom().size(); ++a)
-    {
-        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteMemberDetail::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_name;
-    scdr << m_ann_builtin;
-    scdr << m_ann_custom;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteMemberDetail::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_name;
-    dcdr >> m_ann_builtin;
-    dcdr >> m_ann_custom;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteMemberDetail::operator ==(
@@ -252,26 +235,24 @@ MinimalMemberDetail& MinimalMemberDetail::operator =(
 }
 
 size_t MinimalMemberDetail::getCdrSerializedSize(
-        const MinimalMemberDetail&,
+        const MinimalMemberDetail& data,
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalMemberDetail::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_name_hash;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalMemberDetail::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_name_hash;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalMemberDetail::operator ==(
@@ -334,25 +315,20 @@ size_t CompleteStructMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonStructMember::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteStructMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteStructMember::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteStructMember::operator ==(
@@ -416,25 +392,20 @@ size_t MinimalStructMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonStructMember::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += MinimalMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalStructMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalStructMember::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalStructMember::operator ==(
@@ -494,22 +465,20 @@ size_t AppliedBuiltinTypeAnnotations::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += AppliedVerbatimAnnotation::getCdrSerializedSize(data.verbatim(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void AppliedBuiltinTypeAnnotations::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_verbatim;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void AppliedBuiltinTypeAnnotations::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_verbatim;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool AppliedBuiltinTypeAnnotations::operator ==(
@@ -558,21 +527,24 @@ MinimalTypeDetail& MinimalTypeDetail::operator =(
 }
 
 size_t MinimalTypeDetail::getCdrSerializedSize(
-        const MinimalTypeDetail&,
+        const MinimalTypeDetail& data,
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalTypeDetail::serialize(
-        eprosima::fastcdr::Cdr&) const
+        eprosima::fastcdr::Cdr& scdr) const
 {
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalTypeDetail::deserialize(
-        eprosima::fastcdr::Cdr&)
+        eprosima::fastcdr::Cdr& dcdr)
 {
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalTypeDetail::consistent(
@@ -631,32 +603,20 @@ size_t CompleteTypeDetail::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += AppliedBuiltinTypeAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.ann_custom().size(); ++a)
-    {
-        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
-    }
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.type_name().size() + 1;
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteTypeDetail::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_ann_builtin;
-    scdr << m_ann_custom;
-    scdr << m_type_name;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteTypeDetail::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_ann_builtin;
-    dcdr >> m_ann_custom;
-    dcdr >> m_type_name;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteTypeDetail::operator ==(
@@ -727,25 +687,20 @@ size_t CompleteStructHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteStructHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_base_type;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteStructHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_base_type;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteStructHeader::operator ==(
@@ -809,25 +764,20 @@ size_t MinimalStructHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
-    current_alignment += MinimalTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalStructHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_base_type;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalStructHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_base_type;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalStructHeader::operator ==(
@@ -895,32 +845,20 @@ size_t CompleteStructType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += StructTypeFlag::getCdrSerializedSize(data.struct_flags(), current_alignment);
-    current_alignment += CompleteStructHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.member_seq().size(); ++a)
-    {
-        current_alignment += CompleteStructMember::getCdrSerializedSize(data.member_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteStructType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_struct_flags;
-    scdr << m_header;
-    scdr << m_member_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteStructType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_struct_flags;
-    dcdr >> m_header;
-    dcdr >> m_member_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteStructType::operator ==(
@@ -1051,32 +989,20 @@ size_t MinimalStructType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += StructTypeFlag::getCdrSerializedSize(data.struct_flags(), current_alignment);
-    current_alignment += MinimalStructHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.member_seq().size(); ++a)
-    {
-        current_alignment += MinimalStructMember::getCdrSerializedSize(data.member_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalStructType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_struct_flags;
-    scdr << m_header;
-    scdr << m_member_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalStructType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_struct_flags;
-    dcdr >> m_header;
-    dcdr >> m_member_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalStructType::operator ==(
@@ -1211,36 +1137,20 @@ size_t CommonUnionMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += UnionMemberFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_id(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.label_seq().size(); ++a)
-    {
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonUnionMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_member_id;
-    scdr << m_member_flags;
-    scdr << m_type_id;
-    scdr << m_label_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonUnionMember::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_member_id;
-    dcdr >> m_member_flags;
-    dcdr >> m_type_id;
-    dcdr >> m_label_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonUnionMember::operator ==(
@@ -1330,25 +1240,20 @@ size_t CompleteUnionMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonUnionMember::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteUnionMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteUnionMember::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteUnionMember::operator ==(
@@ -1412,25 +1317,20 @@ size_t MinimalUnionMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonUnionMember::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += MinimalMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalUnionMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalUnionMember::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalUnionMember::operator ==(
@@ -1494,25 +1394,20 @@ size_t CommonDiscriminatorMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += UnionDiscriminatorFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_id(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonDiscriminatorMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_member_flags;
-    scdr << m_type_id;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonDiscriminatorMember::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_member_flags;
-    dcdr >> m_type_id;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonDiscriminatorMember::operator ==(
@@ -1579,33 +1474,20 @@ size_t CompleteDiscriminatorMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonDiscriminatorMember::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += AppliedBuiltinTypeAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.ann_custom().size(); ++a)
-    {
-        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteDiscriminatorMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_ann_builtin;
-    scdr << m_ann_custom;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteDiscriminatorMember::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_ann_builtin;
-    dcdr >> m_ann_custom;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteDiscriminatorMember::operator ==(
@@ -1669,22 +1551,20 @@ size_t MinimalDiscriminatorMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonDiscriminatorMember::getCdrSerializedSize(data.common(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalDiscriminatorMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalDiscriminatorMember::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalDiscriminatorMember::operator ==(
@@ -1742,22 +1622,20 @@ size_t CompleteUnionHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteUnionHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteUnionHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteUnionHeader::operator ==(
@@ -1815,22 +1693,20 @@ size_t MinimalUnionHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += MinimalTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalUnionHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalUnionHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalUnionHeader::operator ==(
@@ -1900,36 +1776,20 @@ size_t CompleteUnionType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += UnionTypeFlag::getCdrSerializedSize(data.union_flags(), current_alignment);
-    current_alignment += CompleteUnionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += CompleteDiscriminatorMember::getCdrSerializedSize(data.discriminator(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.member_seq().size(); ++a)
-    {
-        current_alignment += CompleteUnionMember::getCdrSerializedSize(data.member_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteUnionType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_union_flags;
-    scdr << m_header;
-    scdr << m_discriminator;
-    scdr << m_member_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteUnionType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_union_flags;
-    dcdr >> m_header;
-    dcdr >> m_discriminator;
-    dcdr >> m_member_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteUnionType::operator ==(
@@ -2066,36 +1926,20 @@ size_t MinimalUnionType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += UnionTypeFlag::getCdrSerializedSize(data.union_flags(), current_alignment);
-    current_alignment += MinimalUnionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += MinimalDiscriminatorMember::getCdrSerializedSize(data.discriminator(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.member_seq().size(); ++a)
-    {
-        current_alignment += MinimalUnionMember::getCdrSerializedSize(data.member_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalUnionType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_union_flags;
-    scdr << m_header;
-    scdr << m_discriminator;
-    scdr << m_member_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalUnionType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_union_flags;
-    dcdr >> m_header;
-    dcdr >> m_discriminator;
-    dcdr >> m_member_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalUnionType::operator ==(
@@ -2224,25 +2068,20 @@ size_t CommonAnnotationParameter::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += AnnotationParameterFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.member_type_id(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonAnnotationParameter::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_member_flags;
-    scdr << m_member_type_id;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonAnnotationParameter::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_member_flags;
-    dcdr >> m_member_type_id;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonAnnotationParameter::operator ==(
@@ -2310,28 +2149,20 @@ size_t CompleteAnnotationParameter::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonAnnotationParameter::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.name().size() + 1;
-    current_alignment += AnnotationParameterValue::getCdrSerializedSize(data.default_value(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteAnnotationParameter::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_name;
-    scdr << m_default_value;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteAnnotationParameter::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_name;
-    dcdr >> m_default_value;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteAnnotationParameter::operator ==(
@@ -2400,28 +2231,20 @@ size_t MinimalAnnotationParameter::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonAnnotationParameter::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.name().size() + 1;
-    current_alignment += AnnotationParameterValue::getCdrSerializedSize(data.default_value(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalAnnotationParameter::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_name;
-    scdr << m_default_value;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalAnnotationParameter::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_name;
-    dcdr >> m_default_value;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalAnnotationParameter::operator ==(
@@ -2482,23 +2305,20 @@ size_t CompleteAnnotationHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 +
-            eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.annotation_name().size() + 1;
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteAnnotationHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_annotation_name;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteAnnotationHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_annotation_name;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteAnnotationHeader::operator ==(
@@ -2547,22 +2367,24 @@ MinimalAnnotationHeader& MinimalAnnotationHeader::operator =(
 }
 
 size_t MinimalAnnotationHeader::getCdrSerializedSize(
-        const MinimalAnnotationHeader&,
+        const MinimalAnnotationHeader& data,
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalAnnotationHeader::serialize(
-        eprosima::fastcdr::Cdr&) const
+        eprosima::fastcdr::Cdr& scdr) const
 {
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalAnnotationHeader::deserialize(
-        eprosima::fastcdr::Cdr&)
+        eprosima::fastcdr::Cdr& dcdr)
 {
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalAnnotationHeader::consistent(
@@ -2622,34 +2444,20 @@ size_t CompleteAnnotationType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += AnnotationTypeFlag::getCdrSerializedSize(data.annotation_flag(), current_alignment);
-    current_alignment += CompleteAnnotationHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.member_seq().size(); ++a)
-    {
-        current_alignment += CompleteAnnotationParameter::getCdrSerializedSize(data.member_seq().at(
-                            a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteAnnotationType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_annotation_flag;
-    scdr << m_header;
-    scdr << m_member_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteAnnotationType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_annotation_flag;
-    dcdr >> m_header;
-    dcdr >> m_member_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteAnnotationType::operator ==(
@@ -2721,35 +2529,20 @@ size_t MinimalAnnotationType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += AnnotationTypeFlag::getCdrSerializedSize(data.annotation_flag(), current_alignment);
-    current_alignment += MinimalAnnotationHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.member_seq().size(); ++a)
-    {
-        current_alignment +=
-                MinimalAnnotationParameter::getCdrSerializedSize(data.member_seq().at(a),
-                        current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalAnnotationType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_annotation_flag;
-    scdr << m_header;
-    scdr << m_member_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalAnnotationType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_annotation_flag;
-    dcdr >> m_header;
-    dcdr >> m_member_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalAnnotationType::operator ==(
@@ -2817,25 +2610,20 @@ size_t CommonAliasBody::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += AliasMemberFlag::getCdrSerializedSize(data.related_flags(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.related_type(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonAliasBody::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_related_flags;
-    scdr << m_related_type;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonAliasBody::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_related_flags;
-    dcdr >> m_related_type;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonAliasBody::operator ==(
@@ -2900,33 +2688,20 @@ size_t CompleteAliasBody::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonAliasBody::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += AppliedBuiltinMemberAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.ann_custom().size(); ++a)
-    {
-        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteAliasBody::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_ann_builtin;
-    scdr << m_ann_custom;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteAliasBody::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_ann_builtin;
-    dcdr >> m_ann_custom;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteAliasBody::operator ==(
@@ -2988,22 +2763,20 @@ size_t MinimalAliasBody::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonAliasBody::getCdrSerializedSize(data.common(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalAliasBody::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalAliasBody::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalAliasBody::operator ==(
@@ -3059,22 +2832,20 @@ size_t CompleteAliasHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteAliasHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteAliasHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteAliasHeader::operator ==(
@@ -3120,29 +2891,25 @@ MinimalAliasHeader& MinimalAliasHeader::operator =(
 }
 
 size_t MinimalAliasHeader::getCdrSerializedSize(
-        const MinimalAliasHeader&,
+        const MinimalAliasHeader& data,
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalAliasHeader::serialize(
-        eprosima::fastcdr::Cdr&) const
+        eprosima::fastcdr::Cdr& scdr) const
 {
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalAliasHeader::deserialize(
-        eprosima::fastcdr::Cdr&)
+        eprosima::fastcdr::Cdr& dcdr)
 {
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
-
-//bool MinimalAliasHeader::consistent(const MinimalAliasHeader&,
-//        const TypeConsistencyEnforcementQosPolicy&) const
-//{
-//    return true;
-//}
 
 CompleteAliasType::CompleteAliasType()
 {
@@ -3193,28 +2960,20 @@ size_t CompleteAliasType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += AliasTypeFlag::getCdrSerializedSize(data.alias_flags(), current_alignment);
-    current_alignment += CompleteAliasHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += CompleteAliasBody::getCdrSerializedSize(data.body(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteAliasType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_alias_flags;
-    scdr << m_header;
-    scdr << m_body;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteAliasType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_alias_flags;
-    dcdr >> m_header;
-    dcdr >> m_body;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteAliasType::operator ==(
@@ -3281,28 +3040,20 @@ size_t MinimalAliasType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += AliasTypeFlag::getCdrSerializedSize(data.alias_flags(), current_alignment);
-    current_alignment += MinimalAliasHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += MinimalAliasBody::getCdrSerializedSize(data.body(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalAliasType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_alias_flags;
-    scdr << m_header;
-    scdr << m_body;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalAliasType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_alias_flags;
-    dcdr >> m_header;
-    dcdr >> m_body;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalAliasType::operator ==(
@@ -3365,30 +3116,20 @@ size_t CompleteElementDetail::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += AppliedBuiltinMemberAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.ann_custom().size(); ++a)
-    {
-        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteElementDetail::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_ann_builtin;
-    scdr << m_ann_custom;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteElementDetail::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_ann_builtin;
-    dcdr >> m_ann_custom;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteElementDetail::operator ==(
@@ -3455,25 +3196,20 @@ size_t CommonCollectionElement::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionElementFlag::getCdrSerializedSize(data.element_flags(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonCollectionElement::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_element_flags;
-    scdr << m_type;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonCollectionElement::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_element_flags;
-    dcdr >> m_type;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonCollectionElement::operator ==(
@@ -3536,25 +3272,20 @@ size_t CompleteCollectionElement::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonCollectionElement::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteElementDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteCollectionElement::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteCollectionElement::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteCollectionElement::operator ==(
@@ -3614,22 +3345,20 @@ size_t MinimalCollectionElement::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonCollectionElement::getCdrSerializedSize(data.common(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalCollectionElement::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalCollectionElement::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalCollectionElement::operator ==(
@@ -3683,26 +3412,24 @@ CommonCollectionHeader& CommonCollectionHeader::operator =(
 }
 
 size_t CommonCollectionHeader::getCdrSerializedSize(
-        const CommonCollectionHeader&,
+        const CommonCollectionHeader& data,
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255  + 1;
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonCollectionHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_bound;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonCollectionHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_bound;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonCollectionHeader::operator ==(
@@ -3765,25 +3492,20 @@ size_t CompleteCollectionHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonCollectionHeader::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteCollectionHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteCollectionHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteCollectionHeader::operator ==(
@@ -3843,22 +3565,20 @@ size_t MinimalCollectionHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonCollectionHeader::getCdrSerializedSize(data.common(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalCollectionHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalCollectionHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalCollectionHeader::operator ==(
@@ -3924,39 +3644,20 @@ size_t CompleteSequenceType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    // FIXED_SIXE current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
-    current_alignment += CompleteCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
-
-    // STRING current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.str().size() + 1;
-    // SEQUENCE
-    /*
-       current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-       for(size_t a = 0; a < data.param_seq().size(); ++a)
-       {
-        current_alignment += AppliedAnnotationParameter::getCdrSerializedSize(data.param_seq().at(a), current_alignment);
-       }
-     */
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteSequenceType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_collection_flag;
-    scdr << m_header;
-    scdr << m_element;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteSequenceType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_collection_flag;
-    dcdr >> m_header;
-    dcdr >> m_element;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteSequenceType::operator ==(
@@ -4025,39 +3726,20 @@ size_t MinimalSequenceType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    // FIXED_SIXE current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
-    current_alignment += MinimalCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
-
-    // STRING current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.str().size() + 1;
-    // SEQUENCE
-    /*
-       current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-       for(size_t a = 0; a < data.param_seq().size(); ++a)
-       {
-        current_alignment += AppliedAnnotationParameter::getCdrSerializedSize(data.param_seq().at(a), current_alignment);
-       }
-     */
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalSequenceType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_collection_flag;
-    scdr << m_header;
-    scdr << m_element;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalSequenceType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_collection_flag;
-    dcdr >> m_header;
-    dcdr >> m_element;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalSequenceType::operator ==(
@@ -4118,26 +3800,20 @@ size_t CommonArrayHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.bound_seq().size(); ++a)
-    {
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonArrayHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_bound_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonArrayHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_bound_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonArrayHeader::operator ==(
@@ -4216,25 +3892,20 @@ size_t CompleteArrayHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonArrayHeader::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteArrayHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteArrayHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteArrayHeader::operator ==(
@@ -4294,22 +3965,20 @@ size_t MinimalArrayHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonArrayHeader::getCdrSerializedSize(data.common(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalArrayHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalArrayHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalArrayHeader::operator ==(
@@ -4375,28 +4044,20 @@ size_t CompleteArrayType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
-    current_alignment += CompleteArrayHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteArrayType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_collection_flag;
-    scdr << m_header;
-    scdr << m_element;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteArrayType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_collection_flag;
-    dcdr >> m_header;
-    dcdr >> m_element;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteArrayType::operator ==(
@@ -4465,28 +4126,20 @@ size_t MinimalArrayType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
-    current_alignment += MinimalArrayHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalArrayType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_collection_flag;
-    scdr << m_header;
-    scdr << m_element;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalArrayType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_collection_flag;
-    dcdr >> m_header;
-    dcdr >> m_element;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalArrayType::operator ==(
@@ -4559,31 +4212,20 @@ size_t CompleteMapType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
-    current_alignment += CompleteCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.key(), current_alignment);
-    current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteMapType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_collection_flag;
-    scdr << m_header;
-    scdr << m_key;
-    scdr << m_element;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteMapType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_collection_flag;
-    dcdr >> m_header;
-    dcdr >> m_key;
-    dcdr >> m_element;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteMapType::operator ==(
@@ -4658,31 +4300,20 @@ size_t MinimalMapType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
-    current_alignment += MinimalCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.key(), current_alignment);
-    current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalMapType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_collection_flag;
-    scdr << m_header;
-    scdr << m_key;
-    scdr << m_element;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalMapType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_collection_flag;
-    dcdr >> m_header;
-    dcdr >> m_key;
-    dcdr >> m_element;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalMapType::operator ==(
@@ -4749,25 +4380,20 @@ size_t CommonEnumeratedLiteral::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += EnumeratedLiteralFlag::getCdrSerializedSize(data.flags(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonEnumeratedLiteral::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_value;
-    scdr << m_flags;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonEnumeratedLiteral::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_value;
-    dcdr >> m_flags;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonEnumeratedLiteral::operator ==(
@@ -4830,25 +4456,20 @@ size_t CompleteEnumeratedLiteral::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonEnumeratedLiteral::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteEnumeratedLiteral::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteEnumeratedLiteral::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteEnumeratedLiteral::operator ==(
@@ -4912,25 +4533,20 @@ size_t MinimalEnumeratedLiteral::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonEnumeratedLiteral::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += MinimalMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalEnumeratedLiteral::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalEnumeratedLiteral::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalEnumeratedLiteral::operator ==(
@@ -4986,26 +4602,24 @@ CommonEnumeratedHeader& CommonEnumeratedHeader::operator =(
 }
 
 size_t CommonEnumeratedHeader::getCdrSerializedSize(
-        const CommonEnumeratedHeader&,
+        const CommonEnumeratedHeader& data,
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonEnumeratedHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_bit_bound;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonEnumeratedHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_bit_bound;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonEnumeratedHeader::operator ==(
@@ -5069,25 +4683,20 @@ size_t CompleteEnumeratedHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonEnumeratedHeader::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteEnumeratedHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteEnumeratedHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteEnumeratedHeader::operator ==(
@@ -5147,22 +4756,20 @@ size_t MinimalEnumeratedHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonEnumeratedHeader::getCdrSerializedSize(data.common(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalEnumeratedHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalEnumeratedHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalEnumeratedHeader::operator ==(
@@ -5228,35 +4835,20 @@ size_t CompleteEnumeratedType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += EnumTypeFlag::getCdrSerializedSize(data.enum_flags(), current_alignment);
-    current_alignment += CompleteEnumeratedHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.literal_seq().size(); ++a)
-    {
-        current_alignment +=
-                CompleteEnumeratedLiteral::getCdrSerializedSize(data.literal_seq().at(a),
-                        current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteEnumeratedType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_enum_flags;
-    scdr << m_header;
-    scdr << m_literal_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteEnumeratedType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_enum_flags;
-    dcdr >> m_header;
-    dcdr >> m_literal_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteEnumeratedType::operator ==(
@@ -5387,34 +4979,20 @@ size_t MinimalEnumeratedType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += EnumTypeFlag::getCdrSerializedSize(data.enum_flags(), current_alignment);
-    current_alignment += MinimalEnumeratedHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.literal_seq().size(); ++a)
-    {
-        current_alignment +=
-                MinimalEnumeratedLiteral::getCdrSerializedSize(data.literal_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalEnumeratedType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_enum_flags;
-    scdr << m_header;
-    scdr << m_literal_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalEnumeratedType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_enum_flags;
-    dcdr >> m_header;
-    dcdr >> m_literal_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalEnumeratedType::operator ==(
@@ -5541,25 +5119,20 @@ size_t CommonBitflag::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-    current_alignment += BitflagFlag::getCdrSerializedSize(data.flags(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonBitflag::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_position;
-    scdr << m_flags;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonBitflag::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_position;
-    dcdr >> m_flags;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonBitflag::operator ==(
@@ -5622,25 +5195,20 @@ size_t CompleteBitflag::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonBitflag::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteBitflag::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteBitflag::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteBitflag::operator ==(
@@ -5704,25 +5272,20 @@ size_t MinimalBitflag::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonBitflag::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += MinimalMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalBitflag::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalBitflag::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalBitflag::operator ==(
@@ -5778,26 +5341,24 @@ CommonBitmaskHeader& CommonBitmaskHeader::operator =(
 }
 
 size_t CommonBitmaskHeader::getCdrSerializedSize(
-        const CommonBitmaskHeader&,
+        const CommonBitmaskHeader& data,
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonBitmaskHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_bit_bound;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonBitmaskHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_bit_bound;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonBitmaskHeader::operator ==(
@@ -5865,33 +5426,20 @@ size_t CompleteBitmaskType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += BitmaskTypeFlag::getCdrSerializedSize(data.bitmask_flags(), current_alignment);
-    current_alignment += CompleteBitmaskHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.flag_seq().size(); ++a)
-    {
-        current_alignment += CompleteBitflag::getCdrSerializedSize(data.flag_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteBitmaskType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_bitmask_flags;
-    scdr << m_header;
-    scdr << m_flag_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteBitmaskType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_bitmask_flags;
-    dcdr >> m_header;
-    dcdr >> m_flag_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteBitmaskType::operator ==(
@@ -6022,33 +5570,20 @@ size_t MinimalBitmaskType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += BitmaskTypeFlag::getCdrSerializedSize(data.bitmask_flags(), current_alignment);
-    current_alignment += MinimalBitmaskHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.flag_seq().size(); ++a)
-    {
-        current_alignment += MinimalBitflag::getCdrSerializedSize(data.flag_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalBitmaskType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_bitmask_flags;
-    scdr << m_header;
-    scdr << m_flag_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalBitmaskType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_bitmask_flags;
-    dcdr >> m_header;
-    dcdr >> m_flag_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalBitmaskType::operator ==(
@@ -6183,31 +5718,20 @@ size_t CommonBitfield::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-    current_alignment += BitsetMemberFlag::getCdrSerializedSize(data.flags(), current_alignment);
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CommonBitfield::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_position;
-    scdr << m_flags;
-    scdr << m_bitcount;
-    scdr << m_holder_type;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CommonBitfield::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_position;
-    dcdr >> m_flags;
-    dcdr >> m_bitcount;
-    dcdr >> m_holder_type;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonBitfield::operator ==(
@@ -6275,25 +5799,20 @@ size_t CompleteBitfield::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonBitfield::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteBitfield::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteBitfield::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteBitfield::operator ==(
@@ -6357,25 +5876,20 @@ size_t MinimalBitfield::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonBitfield::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalBitfield::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_common;
-    scdr << m_name_hash;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalBitfield::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_common;
-    dcdr >> m_name_hash;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalBitfield::operator ==(
@@ -6443,25 +5957,20 @@ size_t CompleteBitsetHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteBitsetHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_base_type;
-    scdr << m_detail;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteBitsetHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_base_type;
-    dcdr >> m_detail;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteBitsetHeader::operator ==(
@@ -6518,22 +6027,20 @@ size_t MinimalBitsetHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalBitsetHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_base_type;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalBitsetHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_base_type;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalBitsetHeader::operator ==(
@@ -6598,33 +6105,20 @@ size_t CompleteBitsetType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += BitsetTypeFlag::getCdrSerializedSize(data.bitset_flags(), current_alignment);
-    current_alignment += CompleteBitsetHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.field_seq().size(); ++a)
-    {
-        current_alignment += CompleteBitfield::getCdrSerializedSize(data.field_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteBitsetType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_bitset_flags;
-    scdr << m_header;
-    scdr << m_field_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteBitsetType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_bitset_flags;
-    dcdr >> m_header;
-    dcdr >> m_field_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteBitsetType::operator ==(
@@ -6755,33 +6249,20 @@ size_t MinimalBitsetType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += BitsetTypeFlag::getCdrSerializedSize(data.bitset_flags(), current_alignment);
-    current_alignment += MinimalBitsetHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.field_seq().size(); ++a)
-    {
-        current_alignment += MinimalBitfield::getCdrSerializedSize(data.field_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalBitsetType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_bitset_flags;
-    scdr << m_header;
-    scdr << m_field_seq;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalBitsetType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_bitset_flags;
-    dcdr >> m_header;
-    dcdr >> m_field_seq;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalBitsetType::operator ==(
@@ -6894,22 +6375,24 @@ CompleteExtendedType& CompleteExtendedType::operator =(
 }
 
 size_t CompleteExtendedType::getCdrSerializedSize(
-        const CompleteExtendedType&,
+        const CompleteExtendedType& data,
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteExtendedType::serialize(
-        eprosima::fastcdr::Cdr&) const
+        eprosima::fastcdr::Cdr& scdr) const
 {
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteExtendedType::deserialize(
-        eprosima::fastcdr::Cdr&)
+        eprosima::fastcdr::Cdr& dcdr)
 {
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteExtendedType::consistent(
@@ -6950,22 +6433,24 @@ MinimalExtendedType& MinimalExtendedType::operator =(
 }
 
 size_t MinimalExtendedType::getCdrSerializedSize(
-        const MinimalExtendedType&,
+        const MinimalExtendedType& data,
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalExtendedType::serialize(
-        eprosima::fastcdr::Cdr&) const
+        eprosima::fastcdr::Cdr& scdr) const
 {
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalExtendedType::deserialize(
-        eprosima::fastcdr::Cdr&)
+        eprosima::fastcdr::Cdr& dcdr)
 {
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalExtendedType::consistent(
@@ -7020,25 +6505,20 @@ size_t TypeIdentifierTypeObjectPair::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_identifier(), current_alignment);
-    current_alignment += TypeObject::getCdrSerializedSize(data.type_object(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void TypeIdentifierTypeObjectPair::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_type_identifier;
-    scdr << m_type_object;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void TypeIdentifierTypeObjectPair::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_type_identifier;
-    dcdr >> m_type_object;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 TypeIdentifierPair::TypeIdentifierPair()
@@ -7086,25 +6566,20 @@ size_t TypeIdentifierPair::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_identifier1(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_identifier2(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void TypeIdentifierPair::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_type_identifier1;
-    scdr << m_type_identifier2;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void TypeIdentifierPair::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_type_identifier1;
-    dcdr >> m_type_identifier2;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 TypeIdentifierWithSize::TypeIdentifierWithSize()
@@ -7153,25 +6628,20 @@ size_t TypeIdentifierWithSize::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_id(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void TypeIdentifierWithSize::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_type_id;
-    scdr << m_typeobject_serialized_size;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void TypeIdentifierWithSize::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_type_id;
-    dcdr >> m_typeobject_serialized_size;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 TypeIdentifierWithDependencies::TypeIdentifierWithDependencies()
@@ -7224,34 +6694,20 @@ size_t TypeIdentifierWithDependencies::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifierWithSize::getCdrSerializedSize(data.typeid_with_size(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.dependent_typeids().size(); ++a)
-    {
-        current_alignment += TypeIdentifierWithSize::getCdrSerializedSize(data.dependent_typeids().at(
-                            a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void TypeIdentifierWithDependencies::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_typeid_with_size;
-    scdr << m_dependent_typeid_count;
-    scdr << m_dependent_typeids;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void TypeIdentifierWithDependencies::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_typeid_with_size;
-    dcdr >> m_dependent_typeid_count;
-    dcdr >> m_dependent_typeids;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7272,34 +6728,34 @@ CompleteTypeObject::CompleteTypeObject(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -7315,34 +6771,34 @@ CompleteTypeObject::CompleteTypeObject(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -7358,34 +6814,34 @@ CompleteTypeObject& CompleteTypeObject::operator =(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -7402,34 +6858,34 @@ CompleteTypeObject& CompleteTypeObject::operator =(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -7472,7 +6928,7 @@ const CompleteAliasType& CompleteTypeObject::alias_type() const
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             b = true;
             break;
         default:
@@ -7492,7 +6948,7 @@ CompleteAliasType& CompleteTypeObject::alias_type()
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             b = true;
             break;
         default:
@@ -7520,7 +6976,7 @@ const CompleteAnnotationType& CompleteTypeObject::annotation_type() const
 
     switch (m__d)
     {
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             b = true;
             break;
         default:
@@ -7541,7 +6997,7 @@ CompleteAnnotationType& CompleteTypeObject::annotation_type()
 
     switch (m__d)
     {
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             b = true;
             break;
         default:
@@ -7569,7 +7025,7 @@ const CompleteStructType& CompleteTypeObject::struct_type() const
 
     switch (m__d)
     {
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             b = true;
             break;
         default:
@@ -7590,7 +7046,7 @@ CompleteStructType& CompleteTypeObject::struct_type()
 
     switch (m__d)
     {
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             b = true;
             break;
         default:
@@ -7618,7 +7074,7 @@ const CompleteUnionType& CompleteTypeObject::union_type() const
 
     switch (m__d)
     {
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             b = true;
             break;
         default:
@@ -7639,7 +7095,7 @@ CompleteUnionType& CompleteTypeObject::union_type()
 
     switch (m__d)
     {
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             b = true;
             break;
         default:
@@ -7667,7 +7123,7 @@ const CompleteBitsetType& CompleteTypeObject::bitset_type() const
 
     switch (m__d)
     {
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             b = true;
             break;
         default:
@@ -7688,7 +7144,7 @@ CompleteBitsetType& CompleteTypeObject::bitset_type()
 
     switch (m__d)
     {
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             b = true;
             break;
         default:
@@ -7716,7 +7172,7 @@ const CompleteSequenceType& CompleteTypeObject::sequence_type() const
 
     switch (m__d)
     {
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             b = true;
             break;
         default:
@@ -7737,7 +7193,7 @@ CompleteSequenceType& CompleteTypeObject::sequence_type()
 
     switch (m__d)
     {
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             b = true;
             break;
         default:
@@ -7765,7 +7221,7 @@ const CompleteArrayType& CompleteTypeObject::array_type() const
 
     switch (m__d)
     {
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             b = true;
             break;
         default:
@@ -7786,7 +7242,7 @@ CompleteArrayType& CompleteTypeObject::array_type()
 
     switch (m__d)
     {
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             b = true;
             break;
         default:
@@ -7814,7 +7270,7 @@ const CompleteMapType& CompleteTypeObject::map_type() const
 
     switch (m__d)
     {
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             b = true;
             break;
         default:
@@ -7835,7 +7291,7 @@ CompleteMapType& CompleteTypeObject::map_type()
 
     switch (m__d)
     {
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             b = true;
             break;
         default:
@@ -7863,7 +7319,7 @@ const CompleteEnumeratedType& CompleteTypeObject::enumerated_type() const
 
     switch (m__d)
     {
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             b = true;
             break;
         default:
@@ -7884,7 +7340,7 @@ CompleteEnumeratedType& CompleteTypeObject::enumerated_type()
 
     switch (m__d)
     {
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             b = true;
             break;
         default:
@@ -7912,7 +7368,7 @@ const CompleteBitmaskType& CompleteTypeObject::bitmask_type() const
 
     switch (m__d)
     {
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             b = true;
             break;
         default:
@@ -7933,7 +7389,7 @@ CompleteBitmaskType& CompleteTypeObject::bitmask_type()
 
     switch (m__d)
     {
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             b = true;
             break;
         default:
@@ -7961,16 +7417,16 @@ const CompleteExtendedType& CompleteTypeObject::extended_type() const
 
     switch (m__d)
     {
-        case TK_ALIAS:
-        case TK_ANNOTATION:
-        case TK_STRUCTURE:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_UNION:
+        case eprosima::fastrtps::types::TK_BITSET:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_ARRAY:
+        case eprosima::fastrtps::types::TK_MAP:
+        case eprosima::fastrtps::types::TK_ENUM:
+        case eprosima::fastrtps::types::TK_BITMASK:
             break;
         default:
             b = true;
@@ -7991,16 +7447,16 @@ CompleteExtendedType& CompleteTypeObject::extended_type()
 
     switch (m__d)
     {
-        case TK_ALIAS:
-        case TK_ANNOTATION:
-        case TK_STRUCTURE:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_UNION:
+        case eprosima::fastrtps::types::TK_BITSET:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_ARRAY:
+        case eprosima::fastrtps::types::TK_MAP:
+        case eprosima::fastrtps::types::TK_ENUM:
+        case eprosima::fastrtps::types::TK_BITMASK:
             break;
         default:
             b = true;
@@ -8020,134 +7476,20 @@ size_t CompleteTypeObject::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    switch (data.m__d)
-    {
-        case TK_ALIAS:
-            current_alignment += CompleteAliasType::getCdrSerializedSize(data.alias_type(), current_alignment);
-            break;
-        case TK_ANNOTATION:
-            current_alignment +=
-                    CompleteAnnotationType::getCdrSerializedSize(data.annotation_type(), current_alignment);
-            break;
-        case TK_STRUCTURE:
-            current_alignment += CompleteStructType::getCdrSerializedSize(data.struct_type(), current_alignment);
-            break;
-        case TK_UNION:
-            current_alignment += CompleteUnionType::getCdrSerializedSize(data.union_type(), current_alignment);
-            break;
-        case TK_BITSET:
-            current_alignment += CompleteBitsetType::getCdrSerializedSize(data.bitset_type(), current_alignment);
-            break;
-        case TK_SEQUENCE:
-            current_alignment += CompleteSequenceType::getCdrSerializedSize(data.sequence_type(), current_alignment);
-            break;
-        case TK_ARRAY:
-            current_alignment += CompleteArrayType::getCdrSerializedSize(data.array_type(), current_alignment);
-            break;
-        case TK_MAP:
-            current_alignment += CompleteMapType::getCdrSerializedSize(data.map_type(), current_alignment);
-            break;
-        case TK_ENUM:
-            current_alignment +=
-                    CompleteEnumeratedType::getCdrSerializedSize(data.enumerated_type(), current_alignment);
-            break;
-        case TK_BITMASK:
-            current_alignment += CompleteBitmaskType::getCdrSerializedSize(data.bitmask_type(), current_alignment);
-            break;
-        default:
-            current_alignment += CompleteExtendedType::getCdrSerializedSize(data.extended_type(), current_alignment);
-            break;
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void CompleteTypeObject::serialize(
-        eprosima::fastcdr::Cdr& cdr) const
+        eprosima::fastcdr::Cdr& scdr) const
 {
-    cdr << m__d;
-
-    switch (m__d)
-    {
-        case TK_ALIAS:
-            cdr << m_alias_type;
-            break;
-        case TK_ANNOTATION:
-            cdr << m_annotation_type;
-            break;
-        case TK_STRUCTURE:
-            cdr << m_struct_type;
-            break;
-        case TK_UNION:
-            cdr << m_union_type;
-            break;
-        case TK_BITSET:
-            cdr << m_bitset_type;
-            break;
-        case TK_SEQUENCE:
-            cdr << m_sequence_type;
-            break;
-        case TK_ARRAY:
-            cdr << m_array_type;
-            break;
-        case TK_MAP:
-            cdr << m_map_type;
-            break;
-        case TK_ENUM:
-            cdr << m_enumerated_type;
-            break;
-        case TK_BITMASK:
-            cdr << m_bitmask_type;
-            break;
-        default:
-            cdr << m_extended_type;
-            break;
-    }
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void CompleteTypeObject::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
+        eprosima::fastcdr::Cdr& dcdr)
 {
-    cdr >> m__d;
-
-    switch (m__d)
-    {
-        case TK_ALIAS:
-            cdr >> m_alias_type;
-            break;
-        case TK_ANNOTATION:
-            cdr >> m_annotation_type;
-            break;
-        case TK_STRUCTURE:
-            cdr >> m_struct_type;
-            break;
-        case TK_UNION:
-            cdr >> m_union_type;
-            break;
-        case TK_BITSET:
-            cdr >> m_bitset_type;
-            break;
-        case TK_SEQUENCE:
-            cdr >> m_sequence_type;
-            break;
-        case TK_ARRAY:
-            cdr >> m_array_type;
-            break;
-        case TK_MAP:
-            cdr >> m_map_type;
-            break;
-        case TK_ENUM:
-            cdr >> m_enumerated_type;
-            break;
-        case TK_BITMASK:
-            cdr >> m_bitmask_type;
-            break;
-        default:
-            cdr >> m_extended_type;
-            break;
-    }
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteTypeObject::operator ==(
@@ -8157,25 +7499,25 @@ bool CompleteTypeObject::operator ==(
     {
         switch (m__d)
         {
-            case TK_ALIAS:
+            case eprosima::fastrtps::types::TK_ALIAS:
                 return m_alias_type == other.m_alias_type;
-            case TK_ANNOTATION:
+            case eprosima::fastrtps::types::TK_ANNOTATION:
                 return m_annotation_type == other.m_annotation_type;
-            case TK_STRUCTURE:
+            case eprosima::fastrtps::types::TK_STRUCTURE:
                 return m_struct_type == other.m_struct_type;
-            case TK_UNION:
+            case eprosima::fastrtps::types::TK_UNION:
                 return m_union_type == other.m_union_type;
-            case TK_BITSET:
+            case eprosima::fastrtps::types::TK_BITSET:
                 return m_bitset_type == other.m_bitset_type;
-            case TK_SEQUENCE:
+            case eprosima::fastrtps::types::TK_SEQUENCE:
                 return m_sequence_type == other.m_sequence_type;
-            case TK_ARRAY:
+            case eprosima::fastrtps::types::TK_ARRAY:
                 return m_array_type == other.m_array_type;
-            case TK_MAP:
+            case eprosima::fastrtps::types::TK_MAP:
                 return m_map_type == other.m_map_type;
-            case TK_ENUM:
+            case eprosima::fastrtps::types::TK_ENUM:
                 return m_enumerated_type == other.m_enumerated_type;
-            case TK_BITMASK:
+            case eprosima::fastrtps::types::TK_BITMASK:
                 return m_bitmask_type == other.m_bitmask_type;
             default:
                 return m_extended_type == other.m_extended_type;
@@ -8220,25 +7562,25 @@ bool CompleteTypeObject::consistent(
 
     switch (m__d)
     {
-        //case TK_ALIAS:
+        //case eprosima::fastrtps::types::TK_ALIAS:
         //    return m_alias_type.consistent(x.m_alias_type, consistency);
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             return m_annotation_type.consistent(x.m_annotation_type, consistency);
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             return m_struct_type.consistent(x.m_struct_type, consistency);
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             return m_union_type.consistent(x.m_union_type, consistency);
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             return m_bitset_type.consistent(x.m_bitset_type, consistency);
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             return m_sequence_type.consistent(x.m_sequence_type, consistency);
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             return m_array_type.consistent(x.m_array_type, consistency);
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             return m_map_type.consistent(x.m_map_type, consistency);
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             return m_enumerated_type.consistent(x.m_enumerated_type, consistency);
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             return m_bitmask_type.consistent(x.m_bitmask_type, consistency);
         default:
             return m_extended_type.consistent(x.m_extended_type, consistency);
@@ -8264,34 +7606,34 @@ MinimalTypeObject::MinimalTypeObject(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -8307,34 +7649,34 @@ MinimalTypeObject::MinimalTypeObject(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -8350,34 +7692,34 @@ MinimalTypeObject& MinimalTypeObject::operator =(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -8394,34 +7736,34 @@ MinimalTypeObject& MinimalTypeObject::operator =(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -8464,7 +7806,7 @@ const MinimalAliasType& MinimalTypeObject::alias_type() const
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             b = true;
             break;
         default:
@@ -8485,7 +7827,7 @@ MinimalAliasType& MinimalTypeObject::alias_type()
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             b = true;
             break;
         default:
@@ -8513,7 +7855,7 @@ const MinimalAnnotationType& MinimalTypeObject::annotation_type() const
 
     switch (m__d)
     {
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             b = true;
             break;
         default:
@@ -8534,7 +7876,7 @@ MinimalAnnotationType& MinimalTypeObject::annotation_type()
 
     switch (m__d)
     {
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             b = true;
             break;
         default:
@@ -8562,7 +7904,7 @@ const MinimalStructType& MinimalTypeObject::struct_type() const
 
     switch (m__d)
     {
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             b = true;
             break;
         default:
@@ -8583,7 +7925,7 @@ MinimalStructType& MinimalTypeObject::struct_type()
 
     switch (m__d)
     {
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             b = true;
             break;
         default:
@@ -8611,7 +7953,7 @@ const MinimalUnionType& MinimalTypeObject::union_type() const
 
     switch (m__d)
     {
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             b = true;
             break;
         default:
@@ -8632,7 +7974,7 @@ MinimalUnionType& MinimalTypeObject::union_type()
 
     switch (m__d)
     {
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             b = true;
             break;
         default:
@@ -8660,7 +8002,7 @@ const MinimalBitsetType& MinimalTypeObject::bitset_type() const
 
     switch (m__d)
     {
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             b = true;
             break;
         default:
@@ -8681,7 +8023,7 @@ MinimalBitsetType& MinimalTypeObject::bitset_type()
 
     switch (m__d)
     {
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             b = true;
             break;
         default:
@@ -8709,7 +8051,7 @@ const MinimalSequenceType& MinimalTypeObject::sequence_type() const
 
     switch (m__d)
     {
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             b = true;
             break;
         default:
@@ -8730,7 +8072,7 @@ MinimalSequenceType& MinimalTypeObject::sequence_type()
 
     switch (m__d)
     {
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             b = true;
             break;
         default:
@@ -8758,7 +8100,7 @@ const MinimalArrayType& MinimalTypeObject::array_type() const
 
     switch (m__d)
     {
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             b = true;
             break;
         default:
@@ -8779,7 +8121,7 @@ MinimalArrayType& MinimalTypeObject::array_type()
 
     switch (m__d)
     {
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             b = true;
             break;
         default:
@@ -8807,7 +8149,7 @@ const MinimalMapType& MinimalTypeObject::map_type() const
 
     switch (m__d)
     {
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             b = true;
             break;
         default:
@@ -8828,7 +8170,7 @@ MinimalMapType& MinimalTypeObject::map_type()
 
     switch (m__d)
     {
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             b = true;
             break;
         default:
@@ -8856,7 +8198,7 @@ const MinimalEnumeratedType& MinimalTypeObject::enumerated_type() const
 
     switch (m__d)
     {
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             b = true;
             break;
         default:
@@ -8877,7 +8219,7 @@ MinimalEnumeratedType& MinimalTypeObject::enumerated_type()
 
     switch (m__d)
     {
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             b = true;
             break;
         default:
@@ -8905,7 +8247,7 @@ const MinimalBitmaskType& MinimalTypeObject::bitmask_type() const
 
     switch (m__d)
     {
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             b = true;
             break;
         default:
@@ -8926,7 +8268,7 @@ MinimalBitmaskType& MinimalTypeObject::bitmask_type()
 
     switch (m__d)
     {
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             b = true;
             break;
         default:
@@ -8954,16 +8296,16 @@ const MinimalExtendedType& MinimalTypeObject::extended_type() const
 
     switch (m__d)
     {
-        case TK_ALIAS:
-        case TK_ANNOTATION:
-        case TK_STRUCTURE:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_UNION:
+        case eprosima::fastrtps::types::TK_BITSET:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_ARRAY:
+        case eprosima::fastrtps::types::TK_MAP:
+        case eprosima::fastrtps::types::TK_ENUM:
+        case eprosima::fastrtps::types::TK_BITMASK:
             break;
         default:
             b = true;
@@ -8984,16 +8326,16 @@ MinimalExtendedType& MinimalTypeObject::extended_type()
 
     switch (m__d)
     {
-        case TK_ALIAS:
-        case TK_ANNOTATION:
-        case TK_STRUCTURE:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_UNION:
+        case eprosima::fastrtps::types::TK_BITSET:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_ARRAY:
+        case eprosima::fastrtps::types::TK_MAP:
+        case eprosima::fastrtps::types::TK_ENUM:
+        case eprosima::fastrtps::types::TK_BITMASK:
             break;
         default:
             b = true;
@@ -9013,132 +8355,20 @@ size_t MinimalTypeObject::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    switch (data.m__d)
-    {
-        case TK_ALIAS:
-            current_alignment += MinimalAliasType::getCdrSerializedSize(data.alias_type(), current_alignment);
-            break;
-        case TK_ANNOTATION:
-            current_alignment += MinimalAnnotationType::getCdrSerializedSize(data.annotation_type(), current_alignment);
-            break;
-        case TK_STRUCTURE:
-            current_alignment += MinimalStructType::getCdrSerializedSize(data.struct_type(), current_alignment);
-            break;
-        case TK_UNION:
-            current_alignment += MinimalUnionType::getCdrSerializedSize(data.union_type(), current_alignment);
-            break;
-        case TK_BITSET:
-            current_alignment += MinimalBitsetType::getCdrSerializedSize(data.bitset_type(), current_alignment);
-            break;
-        case TK_SEQUENCE:
-            current_alignment += MinimalSequenceType::getCdrSerializedSize(data.sequence_type(), current_alignment);
-            break;
-        case TK_ARRAY:
-            current_alignment += MinimalArrayType::getCdrSerializedSize(data.array_type(), current_alignment);
-            break;
-        case TK_MAP:
-            current_alignment += MinimalMapType::getCdrSerializedSize(data.map_type(), current_alignment);
-            break;
-        case TK_ENUM:
-            current_alignment += MinimalEnumeratedType::getCdrSerializedSize(data.enumerated_type(), current_alignment);
-            break;
-        case TK_BITMASK:
-            current_alignment += MinimalBitmaskType::getCdrSerializedSize(data.bitmask_type(), current_alignment);
-            break;
-        default:
-            current_alignment += MinimalExtendedType::getCdrSerializedSize(data.extended_type(), current_alignment);
-            break;
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void MinimalTypeObject::serialize(
-        eprosima::fastcdr::Cdr& cdr) const
+        eprosima::fastcdr::Cdr& scdr) const
 {
-    cdr << m__d;
-
-    switch (m__d)
-    {
-        case TK_ALIAS:
-            cdr << m_alias_type;
-            break;
-        case TK_ANNOTATION:
-            cdr << m_annotation_type;
-            break;
-        case TK_STRUCTURE:
-            cdr << m_struct_type;
-            break;
-        case TK_UNION:
-            cdr << m_union_type;
-            break;
-        case TK_BITSET:
-            cdr << m_bitset_type;
-            break;
-        case TK_SEQUENCE:
-            cdr << m_sequence_type;
-            break;
-        case TK_ARRAY:
-            cdr << m_array_type;
-            break;
-        case TK_MAP:
-            cdr << m_map_type;
-            break;
-        case TK_ENUM:
-            cdr << m_enumerated_type;
-            break;
-        case TK_BITMASK:
-            cdr << m_bitmask_type;
-            break;
-        default:
-            cdr << m_extended_type;
-            break;
-    }
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void MinimalTypeObject::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
+        eprosima::fastcdr::Cdr& dcdr)
 {
-    cdr >> m__d;
-
-    switch (m__d)
-    {
-        case TK_ALIAS:
-            cdr >> m_alias_type;
-            break;
-        case TK_ANNOTATION:
-            cdr >> m_annotation_type;
-            break;
-        case TK_STRUCTURE:
-            cdr >> m_struct_type;
-            break;
-        case TK_UNION:
-            cdr >> m_union_type;
-            break;
-        case TK_BITSET:
-            cdr >> m_bitset_type;
-            break;
-        case TK_SEQUENCE:
-            cdr >> m_sequence_type;
-            break;
-        case TK_ARRAY:
-            cdr >> m_array_type;
-            break;
-        case TK_MAP:
-            cdr >> m_map_type;
-            break;
-        case TK_ENUM:
-            cdr >> m_enumerated_type;
-            break;
-        case TK_BITMASK:
-            cdr >> m_bitmask_type;
-            break;
-        default:
-            cdr >> m_extended_type;
-            break;
-    }
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalTypeObject::operator ==(
@@ -9148,25 +8378,25 @@ bool MinimalTypeObject::operator ==(
     {
         switch (m__d)
         {
-            case TK_ALIAS:
+            case eprosima::fastrtps::types::TK_ALIAS:
                 return m_alias_type == other.m_alias_type;
-            case TK_ANNOTATION:
+            case eprosima::fastrtps::types::TK_ANNOTATION:
                 return m_annotation_type == other.m_annotation_type;
-            case TK_STRUCTURE:
+            case eprosima::fastrtps::types::TK_STRUCTURE:
                 return m_struct_type == other.m_struct_type;
-            case TK_UNION:
+            case eprosima::fastrtps::types::TK_UNION:
                 return m_union_type == other.m_union_type;
-            case TK_BITSET:
+            case eprosima::fastrtps::types::TK_BITSET:
                 return m_bitset_type == other.m_bitset_type;
-            case TK_SEQUENCE:
+            case eprosima::fastrtps::types::TK_SEQUENCE:
                 return m_sequence_type == other.m_sequence_type;
-            case TK_ARRAY:
+            case eprosima::fastrtps::types::TK_ARRAY:
                 return m_array_type == other.m_array_type;
-            case TK_MAP:
+            case eprosima::fastrtps::types::TK_MAP:
                 return m_map_type == other.m_map_type;
-            case TK_ENUM:
+            case eprosima::fastrtps::types::TK_ENUM:
                 return m_enumerated_type == other.m_enumerated_type;
-            case TK_BITMASK:
+            case eprosima::fastrtps::types::TK_BITMASK:
                 return m_bitmask_type == other.m_bitmask_type;
             default:
                 return m_extended_type == other.m_extended_type;
@@ -9211,25 +8441,25 @@ bool MinimalTypeObject::consistent(
 
     switch (m__d)
     {
-        //case TK_ALIAS:
+        //case eprosima::fastrtps::types::TK_ALIAS:
         //    return m_alias_type.consistent(x.m_alias_type, consistency);
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             return m_annotation_type.consistent(x.m_annotation_type, consistency);
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             return m_struct_type.consistent(x.m_struct_type, consistency);
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             return m_union_type.consistent(x.m_union_type, consistency);
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             return m_bitset_type.consistent(x.m_bitset_type, consistency);
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             return m_sequence_type.consistent(x.m_sequence_type, consistency);
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             return m_array_type.consistent(x.m_array_type, consistency);
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             return m_map_type.consistent(x.m_map_type, consistency);
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             return m_enumerated_type.consistent(x.m_enumerated_type, consistency);
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             return m_bitmask_type.consistent(x.m_bitmask_type, consistency);
         default:
             return m_extended_type.consistent(x.m_extended_type, consistency);
@@ -9253,10 +8483,10 @@ TypeObject::TypeObject(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             m_complete = x.m_complete;
             break;
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             m_minimal = x.m_minimal;
             break;
         default:
@@ -9271,10 +8501,10 @@ TypeObject::TypeObject(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             m_complete = std::move(x.m_complete);
             break;
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             m_minimal = std::move(x.m_minimal);
             break;
         default:
@@ -9289,10 +8519,10 @@ TypeObject& TypeObject::operator =(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             m_complete = x.m_complete;
             break;
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             m_minimal = x.m_minimal;
             break;
         default:
@@ -9309,10 +8539,10 @@ TypeObject& TypeObject::operator =(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             m_complete = std::move(x.m_complete);
             break;
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             m_minimal = std::move(x.m_minimal);
             break;
         default:
@@ -9330,20 +8560,20 @@ void TypeObject::_d(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             switch (__d)
             {
-                case EK_COMPLETE:
+                case eprosima::fastrtps::types::EK_COMPLETE:
                     b = true;
                     break;
                 default:
                     break;
             }
             break;
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             switch (__d)
             {
-                case EK_MINIMAL:
+                case eprosima::fastrtps::types::EK_MINIMAL:
                     b = true;
                     break;
                 default:
@@ -9390,7 +8620,7 @@ const CompleteTypeObject& TypeObject::complete() const
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             b = true;
             break;
         default:
@@ -9411,7 +8641,7 @@ CompleteTypeObject& TypeObject::complete()
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             b = true;
             break;
         default:
@@ -9451,9 +8681,9 @@ bool TypeObject::consistent(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             return m_complete.consistent(x.m_complete, consistency);
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             return m_minimal.consistent(x.m_minimal, consistency);
         default:
             return false;
@@ -9476,7 +8706,7 @@ const MinimalTypeObject& TypeObject::minimal() const
 
     switch (m__d)
     {
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             b = true;
             break;
         default:
@@ -9497,7 +8727,7 @@ MinimalTypeObject& TypeObject::minimal()
 
     switch (m__d)
     {
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             b = true;
             break;
         default:
@@ -9512,64 +8742,25 @@ MinimalTypeObject& TypeObject::minimal()
     return m_minimal;
 }
 
-// TODO(Ricardo) Review
 size_t TypeObject::getCdrSerializedSize(
         const TypeObject& data,
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    switch (data.m__d)
-    {
-        case EK_COMPLETE:
-            current_alignment += CompleteTypeObject::getCdrSerializedSize(data.complete(), current_alignment);
-            break;
-        case EK_MINIMAL:
-            current_alignment += MinimalTypeObject::getCdrSerializedSize(data.minimal(), current_alignment);
-            break;
-        default:
-            break;
-    }
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void TypeObject::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m__d;
-
-    switch (m__d)
-    {
-        case EK_COMPLETE:
-            scdr << m_complete;
-            break;
-        case EK_MINIMAL:
-            scdr << m_minimal;
-            break;
-        default:
-            break;
-    }
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void TypeObject::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m__d;
-
-    switch (m__d)
-    {
-        case EK_COMPLETE:
-            dcdr >> m_complete;
-            break;
-        case EK_MINIMAL:
-            dcdr >> m_minimal;
-            break;
-        default:
-            break;
-    }
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool TypeObject::operator ==(
@@ -9579,9 +8770,9 @@ bool TypeObject::operator ==(
     {
         switch (m__d)
         {
-            case EK_COMPLETE:
+            case eprosima::fastrtps::types::EK_COMPLETE:
                 return m_complete == other.m_complete;
-            case EK_MINIMAL:
+            case eprosima::fastrtps::types::EK_MINIMAL:
                 return m_minimal == other.m_minimal;
             default:
                 break;
@@ -9635,25 +8826,20 @@ size_t TypeInformation::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifierWithDependencies::getCdrSerializedSize(data.minimal(), current_alignment);
-    current_alignment += TypeIdentifierWithDependencies::getCdrSerializedSize(data.complete(), current_alignment);
-
-    return current_alignment - initial_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
 void TypeInformation::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_minimal;
-    scdr << m_complete;
+    eprosima::fastcdr::serialize(scdr, *this);
 }
 
 void TypeInformation::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_minimal;
-    dcdr >> m_complete;
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 OctetSeq& operator ++(

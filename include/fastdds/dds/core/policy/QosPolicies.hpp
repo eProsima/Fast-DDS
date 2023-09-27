@@ -2066,7 +2066,7 @@ public:
 };
 
 /**
- * Enum DataRepresentationId, different kinds of topic data representation
+ * Enum @ref DataRepresentationId, different kinds of topic data representation
  */
 typedef enum DataRepresentationId : int16_t
 {
@@ -2074,6 +2074,9 @@ typedef enum DataRepresentationId : int16_t
     XML_DATA_REPRESENTATION = 1,    //!< XML Data Representation (Unsupported)
     XCDR2_DATA_REPRESENTATION = 2    //!< Extended CDR Encoding version 2
 } DataRepresentationId_t;
+
+//! Default @ref DataRepresentationId used in Fast DDS.
+constexpr DataRepresentationId_t DEFAULT_DATA_REPRESENTATION {DataRepresentationId_t::XCDR_DATA_REPRESENTATION};
 
 /**
  * With multiple standard data Representations available, and vendor-specific extensions possible, DataWriters and
@@ -2089,7 +2092,7 @@ class DataRepresentationQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
-    //!List of DataRepresentationId. <br> By default, empty list.
+    //!List of @ref DataRepresentationId. <br> By default, empty list.
     std::vector<DataRepresentationId_t> m_value;
 
     /**

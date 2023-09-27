@@ -56,7 +56,9 @@ target_include_directories(ReaderProxyTests PRIVATE
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
     )
 target_link_libraries(ReaderProxyTests
-    GTest::gmock foonathan_memory
+    fastcdr
+    foonathan_memory
+    GTest::gmock
     ${CMAKE_DL_LIBS}
     ${THIRDPARTY_BOOST_LINK_LIBS})
 add_gtest(ReaderProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
