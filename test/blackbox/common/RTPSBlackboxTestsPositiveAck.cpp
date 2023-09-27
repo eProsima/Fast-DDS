@@ -1,4 +1,4 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ using namespace eprosima::fastrtps::rtps;
 TEST(RTPSAck, EnableUpdatabilityOfPositiveAcksPeriodRTPSLayer)
 {
     // This test checks that only the positive ACKs
-    // period is updatable on run time on the RTPS Layer.
+    // period is updatable at runtime on the RTPS Layer.
 
     RTPSAsSocketReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -96,6 +96,6 @@ TEST(RTPSAck, EnableUpdatabilityOfPositiveAcksPeriodRTPSLayer)
 
     writer.updateAttributes(w_att);
 
-    // Check that positive_acks feature is not changed on run time
+    // Check that positive_acks feature is not changed at runtime
     EXPECT_TRUE(writer.get_disable_positive_acks());
 }

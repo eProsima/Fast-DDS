@@ -1623,7 +1623,10 @@ void StatefulWriter::updateAttributes(
         const WriterAttributes& att)
 {
     this->updateTimes(att.times);
-    this->updatePositiveAcks(att);
+    if (this->get_disable_positive_acks())
+    {
+        this->updatePositiveAcks(att);
+    }
 }
 
 void StatefulWriter::updatePositiveAcks(
@@ -1632,6 +1635,7 @@ void StatefulWriter::updatePositiveAcks(
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (keep_duration_us_.count() != (att.keep_duration.to_ns() * 1e-3))
     {
+        // Implicit conversion to microseconds
         keep_duration_us_ = std::chrono::nanoseconds {att.keep_duration.to_ns()};
     }
     // Restart ack timer with new duration
@@ -2074,6 +2078,7 @@ bool StatefulWriter::ack_timer_expired()
 
         CacheChange_t* change;
 
+        // Skip removed changes until reaching the last change
         do
         {
             last_sequence_number_++;
