@@ -23,10 +23,9 @@ on:
   push:
     branches:
       - 'master'
+      - '2.11.x'
       - '2.10.x'
-      - '2.9.x'
       - '2.6.x'
-      - '2.1.x'
     paths-ignore:
       - '**.md'
       - '**.txt'
