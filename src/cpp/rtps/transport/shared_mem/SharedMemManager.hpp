@@ -19,10 +19,13 @@
 #include <list>
 #include <unordered_map>
 
-#include <rtps/transport/shared_mem/SharedMemGlobal.hpp>
+#include <foonathan/memory/container.hpp>
+#include <foonathan/memory/memory_pool.hpp>
 
-#include <utils/shared_memory/RobustSharedLock.hpp>
-#include <utils/shared_memory/SharedMemWatchdog.hpp>
+#include "rtps/transport/shared_mem/SharedMemGlobal.hpp"
+#include "utils/collections/node_size_helpers.hpp"
+#include "utils/shared_memory/RobustSharedLock.hpp"
+#include "utils/shared_memory/SharedMemWatchdog.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -366,7 +369,12 @@ public:
                 uint32_t payload_size,
                 uint32_t max_allocations,
                 const std::string& domain_name)
-            : segment_id_()
+            : buffer_node_list_allocator_(
+                buffer_node_list_helper::node_size,
+                buffer_node_list_helper::min_pool_size<pool_allocator_t>(max_allocations))
+            , free_buffers_(buffer_node_list_allocator_)
+            , allocated_buffers_(buffer_node_list_allocator_)
+            , segment_id_()
             , overflows_count_(0)
         {
             generate_segment_id_and_name(domain_name);
@@ -468,7 +476,6 @@ public:
                     throw std::runtime_error("alloc_buffer: out of memory");
                 }
 
-                // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
                 allocated_buffers_.push_back(buffer_node);
             }
             catch (const std::exception&)
@@ -502,9 +509,15 @@ public:
 
         std::unique_ptr<RobustExclusiveLock> segment_name_lock_;
 
-        // TODO(Adolfo) : Dynamic allocations. Use foonathan to convert it to static allocation
-        std::list<BufferNode*> free_buffers_;
-        std::list<BufferNode*> allocated_buffers_;
+        using buffer_node_list_helper =
+                utilities::collections::list_size_helper<BufferNode*>;
+
+        using pool_allocator_t =
+                foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+        pool_allocator_t buffer_node_list_allocator_;
+
+        foonathan::memory::list<BufferNode*, pool_allocator_t> free_buffers_;
+        foonathan::memory::list<BufferNode*, pool_allocator_t> allocated_buffers_;
 
         std::mutex alloc_mutex_;
         std::shared_ptr<SharedMemSegment> segment_;

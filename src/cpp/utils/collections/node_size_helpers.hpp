@@ -43,6 +43,7 @@ namespace detail {
 namespace fm = foonathan::memory;
 
 // Include implementations for node size helpers
+#include "impl/node-sizes/list_node_size_impl.hpp"
 #include "impl/node-sizes/map_node_size_impl.hpp"
 #include "impl/node-sizes/set_node_size_impl.hpp"
 #include "impl/node-sizes/unordered_map_node_size_impl.hpp"
@@ -108,6 +109,10 @@ private:
 
 } // namespace detail
 
+template<typename T>
+struct list_size_helper : public detail::pool_size_helper<detail::list_node_size<T>::value>
+{
+};
 
 template<typename K, typename V>
 struct map_size_helper : public detail::pool_size_helper<detail::map_node_size<K, V>::value>
