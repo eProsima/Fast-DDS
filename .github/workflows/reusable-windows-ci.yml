@@ -369,12 +369,20 @@ jobs:
           if ("${{ inputs.label }}".Contains("nightly"))
           {
               $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_${{ inputs.fastdds_branch }}.repos"
+              if (!(Test-Path -Path $depends_repos_path))
+              {
+                $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_master.repos"
+              }
               $meta_path = ".\src\fastrtps\.github\workflows\config\nightly.meta"
           }
           # Either PR or manual
           else
           {
               $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_${{ inputs.fastdds_branch }}.repos"
+              if (!(Test-Path -Path $depends_repos_path))
+              {
+                $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_master.repos"
+              }
               $meta_path = ".\src\fastrtps\.github\workflows\config\default_ci.meta"
           }
           Write-Output "Selected repos files: $depends_repos_path"
