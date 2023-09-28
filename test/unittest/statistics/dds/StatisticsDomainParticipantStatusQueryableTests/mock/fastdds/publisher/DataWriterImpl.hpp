@@ -331,7 +331,13 @@ public:
 
     const Publisher* get_publisher() const
     {
-        return nullptr;
+        return pub_;
+    }
+
+    void set_publisher(
+            Publisher* pub)
+    {
+        pub_ = pub;
     }
 
     ReturnCode_t assert_liveliness()
@@ -426,6 +432,7 @@ public:
     //! Pointer to the associated Data Writer.
     fastrtps::rtps::RTPSWriter* writer_ = nullptr;
     Topic* topic_ = nullptr;
+    Publisher* pub_ = nullptr;
     fastrtps::rtps::GUID_t guid_;
     DataWriterQos qos_;
 

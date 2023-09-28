@@ -564,6 +564,13 @@ public:
     {
         //! reset received function
         take_ = read_ = false;
+
+        if (nullptr != sample_validator_)
+        {
+            std::unique_lock<std::mutex> lock(validator_mtx_);
+            delete sample_validator_;
+            sample_validator_ = nullptr;
+        }
     }
 
     GUID_t get_participant_guid()
@@ -650,12 +657,20 @@ protected:
             ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
             last_seq[seq_info] = info.sample_identity.sequence_number();
 
-            validator_selector(statistics_part_, sample_validator_,
-                    data.status_kind(), info, data, total_msgs_, current_processed_count_, cv_);
+            {
+                std::unique_lock<std::mutex> guard(validator_mtx_);
+                if (nullptr != sample_validator_)
+                {
+                    validator_selector(statistics_part_, sample_validator_,
+                            data.status_kind(), info, data, total_msgs_, current_processed_count_, cv_);
+                }
+            }
         }
     }
 
     SampleValidator* sample_validator_;
+
+    std::mutex validator_mtx_;
 
     statistics::dds::DomainParticipant* statistics_part_;
 };

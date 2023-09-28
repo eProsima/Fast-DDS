@@ -116,6 +116,24 @@ public:
         return retcode;
     }
 
+    ReturnCode_t delete_datawriters()
+    {
+        std::unique_lock<std::mutex> lock(mtx_writers_);
+
+        for (auto& dwt : writers_)
+        {
+            for (auto& dw : dwt.second)
+            {
+                delete (dw->user_datawriter_);
+                delete (dw);
+            }
+        }
+
+        writers_.clear();
+
+        return ReturnCode_t::RETCODE_OK;
+    }
+
 private:
 
     std::shared_ptr<IListener> statistics_listener_;

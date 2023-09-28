@@ -491,7 +491,7 @@ void StatelessReader::change_read_by_user(
 #ifdef FASTDDS_STATISTICS
 
 bool StatelessReader::get_connections(
-        fastdds::statistics::rtps::ConnectionList& connection_list)
+        eprosima::fastdds::statistics::rtps::ConnectionList& connection_list)
 {
     connection_list.reserve(matched_writers_.size());
 

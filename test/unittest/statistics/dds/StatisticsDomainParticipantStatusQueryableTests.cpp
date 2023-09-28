@@ -173,6 +173,7 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_in
 
     //! Create DataWriters
     EXPECT_CALL(*publisher, create_datawriter_mock()).WillRepeatedly(testing::Return(false));
+    EXPECT_CALL(*statistics_participant_impl_test, delete_topic_mock()).WillRepeatedly(testing::Return(false));
     auto dw1 = publisher->create_datawriter(topic, fastdds::dds::DATAWRITER_QOS_DEFAULT);
     auto dw2 = publisher->create_datawriter(topic, fastdds::dds::DATAWRITER_QOS_DEFAULT);
 
@@ -195,7 +196,13 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_in
     ASSERT_EQ(1u, incomp_qos_status_dw_1->policies[fastdds::dds::RELIABILITY_QOS_POLICY_ID].count);
     ASSERT_EQ(1u, incomp_qos_status_dw_2->policies[fastdds::dds::RELIABILITY_QOS_POLICY_ID].count);
 
-    delete publisher;
+    statistics_pub_impl->delete_datawriters();
+    topic->get_impl()->dereference();
+    topic->get_impl()->dereference();
+    statistics_participant->delete_topic(topic);
+    statistics_participant->delete_publisher(publisher);
+    statistics_participant->delete_contained_entities();
+
     delete incomp_qos_status_dw_1;
     delete incomp_qos_status_dw_2;
 
@@ -229,6 +236,7 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_li
 
     //! Create DataWriters
     EXPECT_CALL(*publisher, create_datawriter_mock()).WillRepeatedly(testing::Return(false));
+    EXPECT_CALL(*statistics_participant_impl_test, delete_topic_mock()).WillRepeatedly(testing::Return(false));
     auto dw1 = publisher->create_datawriter(topic, fastdds::dds::DATAWRITER_QOS_DEFAULT);
     auto dw2 = publisher->create_datawriter(topic, fastdds::dds::DATAWRITER_QOS_DEFAULT);
 
@@ -249,7 +257,13 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_li
     ASSERT_EQ(1, static_cast<fastdds::dds::LivelinessLostStatus*>(liv_lost_status_dw_1)->total_count);
     ASSERT_EQ(1, static_cast<fastdds::dds::LivelinessLostStatus*>(liv_lost_status_dw_2)->total_count);
 
-    delete publisher;
+    statistics_pub_impl->delete_datawriters();
+    topic->get_impl()->dereference();
+    topic->get_impl()->dereference();
+    statistics_participant->delete_topic(topic);
+    statistics_participant->delete_publisher(publisher);
+    statistics_participant->delete_contained_entities();
+
     delete liv_lost_status_dw_1;
     delete liv_lost_status_dw_2;
 
@@ -283,6 +297,7 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_de
 
     //! Create DataWriters
     EXPECT_CALL(*publisher, create_datawriter_mock()).WillRepeatedly(testing::Return(false));
+    EXPECT_CALL(*statistics_participant_impl_test, delete_topic_mock()).WillRepeatedly(testing::Return(false));
     auto dw1 = publisher->create_datawriter(topic, fastdds::dds::DATAWRITER_QOS_DEFAULT);
     auto dw2 = publisher->create_datawriter(topic, fastdds::dds::DATAWRITER_QOS_DEFAULT);
 
@@ -303,7 +318,13 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_de
     ASSERT_EQ(1u, static_cast<fastdds::dds::DeadlineMissedStatus*>(deadline_missed_status_dw_1)->total_count);
     ASSERT_EQ(1u, static_cast<fastdds::dds::DeadlineMissedStatus*>(deadline_missed_status_dw_2)->total_count);
 
-    delete publisher;
+    statistics_pub_impl->delete_datawriters();
+    topic->get_impl()->dereference();
+    topic->get_impl()->dereference();
+    statistics_participant->delete_topic(topic);
+    statistics_participant->delete_publisher(publisher);
+    statistics_participant->delete_contained_entities();
+
     delete deadline_missed_status_dw_1;
     delete deadline_missed_status_dw_2;
 
