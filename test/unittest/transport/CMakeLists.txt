@@ -16,6 +16,7 @@ if(WIN32)
     add_definitions(
         -D_WIN32_WINNT=0x0601
         -D_CRT_SECURE_NO_WARNINGS
+        -DNOMINMAX
         )
 endif()
 
@@ -406,7 +407,15 @@ if(IS_THIRDPARTY_BOOST_OK)
         ${THIRDPARTY_BOOST_INCLUDE_DIR}
         $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
         )
+<<<<<<< HEAD
     target_link_libraries(SharedMemTests GTest::gtest ${MOCKS}
+=======
+    target_link_libraries(SharedMemTests
+        foonathan_memory
+        fastcdr
+        GTest::gtest
+        ${MOCKS}
+>>>>>>> df180560d (Use foonathan memory manager for reducing allocations in SharedMemManager.hpp (#3833))
         $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         ${THIRDPARTY_BOOST_LINK_LIBS}
         eProsima_atomic
