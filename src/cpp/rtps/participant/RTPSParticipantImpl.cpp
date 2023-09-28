@@ -2791,7 +2791,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
-    CDRMessage_t serialized_msg;
+    CDRMessage_t serialized_msg{0};
     serialized_msg.wraps = true;
 
     serialized_msg.buffer = msg.value().entity_proxy().data();
@@ -2812,7 +2812,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
-    CDRMessage_t serialized_msg;
+    CDRMessage_t serialized_msg{0};
     serialized_msg.wraps = true;
 
     serialized_msg.buffer = msg.value().entity_proxy().data();
@@ -2832,7 +2832,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
-    CDRMessage_t serialized_msg;
+    CDRMessage_t serialized_msg{0};
     serialized_msg.wraps = true;
 
     serialized_msg.buffer = msg.value().entity_proxy().data();
