@@ -1144,14 +1144,18 @@ ReturnCode_t DataWriterImpl::set_qos(
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
     set_qos(qos_, qos_to_set, enabled);
-    if (enabled && qos_.reliability().kind == eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    if (enabled)
     {
-        // Update times and positive_acks attributes on RTPS Layer
-        WriterAttributes w_att;
-        w_att.times = qos_.reliable_writer_qos().times;
-        w_att.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks.enabled;
-        w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
-        writer_->updateAttributes(w_att);
+        if (qos_.reliability().kind == eprosima::fastrtps::RELIABLE_RELIABILITY_QOS &&
+                qos_.reliable_writer_qos() == qos_to_set.reliable_writer_qos())
+        {
+            // Update times and positive_acks attributes on RTPS Layer
+            WriterAttributes w_att;
+            w_att.times = qos_.reliable_writer_qos().times;
+            w_att.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks.enabled;
+            w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
+            writer_->updateAttributes(w_att);
+        }
     }
 
     if (enabled)
