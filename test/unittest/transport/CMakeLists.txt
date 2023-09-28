@@ -16,6 +16,7 @@ if(WIN32)
     add_definitions(
         -D_WIN32_WINNT=0x0601
         -D_CRT_SECURE_NO_WARNINGS
+        -DNOMINMAX
         )
 endif()
 
@@ -422,6 +423,7 @@ if(IS_THIRDPARTY_BOOST_OK)
         $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
         )
     target_link_libraries(SharedMemTests
+        foonathan_memory
         fastcdr
         GTest::gtest
         ${MOCKS}
