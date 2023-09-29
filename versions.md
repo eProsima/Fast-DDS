@@ -1,6 +1,9 @@
 Forthcoming
 -----------
 
+Version 2.12.0
+--------------
+
 * Added participant property to configure SHM transport metatraffic behavior.
   No metatraffic over SHM transport by default.
 * Exposed custom payload pool on DDS endpoints declaration
