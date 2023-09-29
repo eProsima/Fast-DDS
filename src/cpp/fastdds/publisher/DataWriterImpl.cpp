@@ -1143,7 +1143,9 @@ ReturnCode_t DataWriterImpl::set_qos(
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
+
     set_qos(qos_, qos_to_set, enabled);
+
     if (enabled)
     {
         if (qos_.reliability().kind == eprosima::fastrtps::RELIABLE_RELIABILITY_QOS &&
@@ -1156,10 +1158,7 @@ ReturnCode_t DataWriterImpl::set_qos(
             w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
             writer_->updateAttributes(w_att);
         }
-    }
 
-    if (enabled)
-    {
         //Notify the participant that a Writer has changed its QOS
         fastrtps::TopicAttributes topic_att = get_topic_attributes(qos_, *topic_, type_);
         WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
