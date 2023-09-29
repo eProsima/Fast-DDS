@@ -18,11 +18,13 @@
 
 #include <cstdlib>
 #include <memory>
-#include <fastrtps/fastrtps_dll.h>
+
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
+#include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/qos/ReaderQos.h>
 #include <fastrtps/qos/WriterQos.h>
 
@@ -141,6 +143,13 @@ public:
         return true;
     }
 
+    MOCK_CONST_METHOD0(enable_monitor_service, bool());
+    MOCK_CONST_METHOD0(disable_monitor_service, bool());
+
+    MOCK_METHOD0(is_monitor_service_created, bool());
+    MOCK_METHOD1(create_monitor_service, fastdds::statistics::rtps::IStatusObserver* (
+                fastdds::statistics::rtps::IStatusQueryable&));
+
 #endif // FASTDDS_STATISTICS
 
 
@@ -159,9 +168,6 @@ public:
     }
 
     MOCK_CONST_METHOD0(getParticipantNames, std::vector<std::string>());
-
-    MOCK_CONST_METHOD0(enable_monitor_service, bool());
-    MOCK_CONST_METHOD0(disable_monitor_service, bool());
 
     MOCK_METHOD2(newRemoteWriterDiscovered, bool(
                 const GUID_t& pguid,

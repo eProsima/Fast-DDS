@@ -55,6 +55,11 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/RTPSDomainImpl.hpp>
 
+#ifdef FASTDDS_STATISTICS
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
+#include <statistics/types/monitorservice_types.h>
+#endif //FASTDDS_STATISTICS
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace std::chrono;
@@ -1258,6 +1263,11 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
             listener->on_offered_incompatible_qos(data_writer_->user_datawriter_, callback_status);
         }
     }
+
+#ifdef FASTDDS_STATISTICS
+    notify_status_observer(statistics::INCOMPATIBLE_QOS);
+#endif //FASTDDS_STATISTICS
+
     data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
@@ -1292,6 +1302,11 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
             listener->on_liveliness_lost(data_writer_->user_datawriter_, callback_status);
         }
     }
+
+#ifdef FASTDDS_STATISTICS
+    notify_status_observer(statistics::LIVELINESS_LOST);
+#endif //FASTDDS_STATISTICS
+
     data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
@@ -1318,6 +1333,23 @@ void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
         }
     }
 }
+
+#ifdef FASTDDS_STATISTICS
+void DataWriterImpl::InnerDataWriterListener::notify_status_observer(
+        const uint32_t& status_id)
+{
+    DomainParticipantImpl* pp_impl = data_writer_->publisher_->get_participant_impl();
+    auto statistics_pp_impl = static_cast<eprosima::fastdds::statistics::dds::DomainParticipantImpl*>(pp_impl);
+    if (nullptr != statistics_pp_impl->get_status_observer())
+    {
+        if (!statistics_pp_impl->get_status_observer()->on_local_entity_status_change(data_writer_->guid(), status_id))
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not set entity status");
+        }
+    }
+}
+
+#endif //FASTDDS_STATISTICS
 
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
         const Duration_t& max_wait)
@@ -1442,6 +1474,11 @@ bool DataWriterImpl::deadline_missed()
         listener->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
         deadline_missed_status_.total_count_change = 0;
     }
+
+#ifdef FASTDDS_STATISTICS
+    writer_listener_.notify_status_observer(statistics::DEADLINE_MISSED);
+#endif //FASTDDS_STATISTICS
+
     user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 
     if (!history_.set_next_deadline(

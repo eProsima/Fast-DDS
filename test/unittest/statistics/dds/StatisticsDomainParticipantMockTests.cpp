@@ -17,7 +17,6 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
@@ -30,67 +29,6 @@
 #include "../../logging/mock/MockConsumer.h"
 
 using eprosima::fastrtps::types::ReturnCode_t;
-
-constexpr const char* TEST_TOPIC = "test_topic";
-
-class TopicDataTypeMock : public eprosima::fastdds::dds::TopicDataType
-{
-public:
-
-    TopicDataTypeMock()
-        : TopicDataType()
-    {
-        m_typeSize = 4u;
-        setName("footype");
-    }
-
-    bool serialize(
-            void* /*data*/,
-            eprosima::fastrtps::rtps::SerializedPayload_t* /*payload*/) override
-    {
-        return true;
-    }
-
-    bool deserialize(
-            eprosima::fastrtps::rtps::SerializedPayload_t* /*payload*/,
-            void* /*data*/) override
-    {
-        return true;
-    }
-
-    std::function<uint32_t()> getSerializedSizeProvider(
-            void* /*data*/) override
-    {
-        return []()->uint32_t
-               {
-                   return 0;
-               };
-    }
-
-    void* createData() override
-    {
-        return nullptr;
-    }
-
-    void deleteData(
-            void* /*data*/) override
-    {
-    }
-
-    bool getKey(
-            void* /*data*/,
-            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
-            bool /*force_md5*/) override
-    {
-        return true;
-    }
-
-    void clearName()
-    {
-        setName("");
-    }
-
-};
 
 namespace eprosima {
 namespace fastdds {
@@ -123,48 +61,6 @@ public:
     PublisherImpl* get_builtin_publisher_impl() const
     {
         return builtin_publisher_impl_;
-    }
-
-    bool incompatible_qos_status(
-            fastrtps::rtps::GUID_t guid,
-            fastdds::dds::IncompatibleQosStatus status)
-    {
-        return get_incompatible_qos_status(guid, status);
-    }
-
-    bool inconsistent_topic_status(
-            fastrtps::rtps::GUID_t guid,
-            fastdds::dds::InconsistentTopicStatus status)
-    {
-        return get_inconsistent_topic_status(guid, status);
-    }
-
-    bool liveliness_lost_status(
-            fastrtps::rtps::GUID_t guid,
-            fastdds::dds::LivelinessLostStatus status)
-    {
-        return get_liveliness_lost_status(guid, status);
-    }
-
-    bool liveliness_changed_status(
-            fastrtps::rtps::GUID_t guid,
-            fastdds::dds::LivelinessChangedStatus status)
-    {
-        return get_liveliness_changed_status(guid, status);
-    }
-
-    bool deadline_missed_status(
-            fastrtps::rtps::GUID_t guid,
-            fastdds::dds::DeadlineMissedStatus status)
-    {
-        return get_deadline_missed_status(guid, status);
-    }
-
-    bool sample_lost_status(
-            fastrtps::rtps::GUID_t guid,
-            fastdds::dds::SampleLostStatus status)
-    {
-        return get_sample_lost_status(guid, status);
     }
 
 };
@@ -345,152 +241,6 @@ TEST_F(StatisticsDomainParticipantMockTests, DisableStatisticsDataWriterFailureD
 
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
                     delete_participant(statistics_participant), ReturnCode_t::RETCODE_OK);
-#endif // FASTDDS_STATISTICS
-}
-
-TEST_F(StatisticsDomainParticipantMockTests, istatus_queryable_get_incompatible_qos)
-{
-#ifdef FASTDDS_STATISTICS
-    // Create DomainParticipant
-    eprosima::fastdds::dds::DomainParticipant* participant =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    DomainParticipant* statistics_participant = DomainParticipant::narrow(participant);
-    ASSERT_NE(statistics_participant, nullptr);
-
-    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
-    ASSERT_NE(nullptr, participant_test);
-    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
-        participant_test->get_impl());
-
-    ASSERT_NE(nullptr, statistics_participant_impl_test);
-
-    fastdds::dds::TypeSupport type(new TopicDataTypeMock());
-    type.register_type(statistics_participant);
-
-    auto publisher = participant_test->create_publisher(fastdds::dds::PUBLISHER_QOS_DEFAULT);
-    auto topic = participant_test->create_topic(TEST_TOPIC, "footype", fastdds::dds::TOPIC_QOS_DEFAULT);
-
-    //! Create DataWriters
-    EXPECT_CALL(*publisher, create_datawriter_mock()).WillRepeatedly(testing::Return(false));
-    auto dw1 = publisher->create_datawriter(topic, fastdds::dds::DATAWRITER_QOS_DEFAULT);
-    auto dw2 = publisher->create_datawriter(topic, fastdds::dds::DATAWRITER_QOS_DEFAULT);
-
-    //! Insert some QoS incompatibilities
-    auto pub_impl = publisher->get_impl();
-    auto statistics_pub_impl = static_cast<fastdds::statistics::dds::PublisherImpl*>(pub_impl);
-
-    statistics_pub_impl->insert_policy_violation(dw1->guid(), fastdds::dds::RELIABILITY_QOS_POLICY_ID);
-    statistics_pub_impl->insert_policy_violation(dw2->guid(), fastdds::dds::RELIABILITY_QOS_POLICY_ID);
-
-    fastdds::dds::IncompatibleQosStatus incomp_qos_status_dw_1, incomp_qos_status_dw_2;
-    ASSERT_TRUE(statistics_participant_impl_test->incompatible_qos_status(dw1->guid(), incomp_qos_status_dw_1));
-    ASSERT_TRUE(statistics_participant_impl_test->incompatible_qos_status(dw2->guid(), incomp_qos_status_dw_2));
-
-    //! Expect incompatibilities
-    ASSERT_EQ(1u, incomp_qos_status_dw_1.total_count);
-    ASSERT_EQ(1u, incomp_qos_status_dw_2.total_count);
-    ASSERT_EQ(1u, incomp_qos_status_dw_1.policies[fastdds::dds::RELIABILITY_QOS_POLICY_ID].count);
-    ASSERT_EQ(1u, incomp_qos_status_dw_2.policies[fastdds::dds::RELIABILITY_QOS_POLICY_ID].count);
-
-#endif // FASTDDS_STATISTICS
-}
-
-TEST_F(StatisticsDomainParticipantMockTests, istatus_queryable_get_liveliness_lost_status)
-{
-#ifdef FASTDDS_STATISTICS
-    // Create DomainParticipant
-    eprosima::fastdds::dds::DomainParticipant* participant =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    DomainParticipant* statistics_participant = DomainParticipant::narrow(participant);
-    ASSERT_NE(statistics_participant, nullptr);
-
-    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
-    ASSERT_NE(nullptr, participant_test);
-    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
-        participant_test->get_impl());
-
-    ASSERT_NE(nullptr, statistics_participant_impl_test);
-
-    fastdds::dds::TypeSupport type(new TopicDataTypeMock());
-    type.register_type(statistics_participant);
-
-    auto publisher = participant_test->create_publisher(fastdds::dds::PUBLISHER_QOS_DEFAULT);
-    auto topic = participant_test->create_topic(TEST_TOPIC, "footype", fastdds::dds::TOPIC_QOS_DEFAULT);
-
-    //! Create DataWriters
-    EXPECT_CALL(*publisher, create_datawriter_mock()).WillRepeatedly(testing::Return(false));
-    auto dw1 = publisher->create_datawriter(topic, fastdds::dds::DATAWRITER_QOS_DEFAULT);
-    auto dw2 = publisher->create_datawriter(topic, fastdds::dds::DATAWRITER_QOS_DEFAULT);
-
-    //! Insert some QoS incompatibilities
-    auto pub_impl = publisher->get_impl();
-    auto statistics_pub_impl = static_cast<fastdds::statistics::dds::PublisherImpl*>(pub_impl);
-
-    statistics_pub_impl->insert_policy_violation(dw1->guid(), fastdds::dds::LIVELINESS_QOS_POLICY_ID);
-    statistics_pub_impl->insert_policy_violation(dw2->guid(), fastdds::dds::LIVELINESS_QOS_POLICY_ID);
-
-    fastdds::dds::LivelinessLostStatus liv_lost_status_dw_1, liv_lost_status_dw_2;
-    ASSERT_TRUE(statistics_participant_impl_test->liveliness_lost_status(dw1->guid(), liv_lost_status_dw_1));
-    ASSERT_TRUE(statistics_participant_impl_test->liveliness_lost_status(dw2->guid(), liv_lost_status_dw_2));
-
-    //! Expect incompatibilities
-    ASSERT_EQ(1, liv_lost_status_dw_1.total_count);
-    ASSERT_EQ(1, liv_lost_status_dw_2.total_count);
-
-#endif // FASTDDS_STATISTICS
-}
-
-TEST_F(StatisticsDomainParticipantMockTests, istatus_queryable_get_deadline_missed_status)
-{
-#ifdef FASTDDS_STATISTICS
-    // Create DomainParticipant
-    eprosima::fastdds::dds::DomainParticipant* participant =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    DomainParticipant* statistics_participant = DomainParticipant::narrow(participant);
-    ASSERT_NE(statistics_participant, nullptr);
-
-    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
-    ASSERT_NE(nullptr, participant_test);
-    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
-        participant_test->get_impl());
-
-    ASSERT_NE(nullptr, statistics_participant_impl_test);
-
-    fastdds::dds::TypeSupport type(new TopicDataTypeMock());
-    type.register_type(statistics_participant);
-
-    auto publisher = participant_test->create_publisher(fastdds::dds::PUBLISHER_QOS_DEFAULT);
-    auto topic = participant_test->create_topic(TEST_TOPIC, "footype", fastdds::dds::TOPIC_QOS_DEFAULT);
-
-    //! Create DataWriters
-    EXPECT_CALL(*publisher, create_datawriter_mock()).WillRepeatedly(testing::Return(false));
-    auto dw1 = publisher->create_datawriter(topic, fastdds::dds::DATAWRITER_QOS_DEFAULT);
-    auto dw2 = publisher->create_datawriter(topic, fastdds::dds::DATAWRITER_QOS_DEFAULT);
-
-    //! Insert some QoS incompatibilities
-    auto pub_impl = publisher->get_impl();
-    auto statistics_pub_impl = static_cast<fastdds::statistics::dds::PublisherImpl*>(pub_impl);
-
-    statistics_pub_impl->insert_policy_violation(dw1->guid(), fastdds::dds::DEADLINE_QOS_POLICY_ID);
-    statistics_pub_impl->insert_policy_violation(dw2->guid(), fastdds::dds::DEADLINE_QOS_POLICY_ID);
-
-    fastdds::dds::DeadlineMissedStatus deadline_missed_status_dw_1, deadline_missed_status_dw_2;
-    ASSERT_TRUE(statistics_participant_impl_test->deadline_missed_status(dw1->guid(), deadline_missed_status_dw_1));
-    ASSERT_TRUE(statistics_participant_impl_test->deadline_missed_status(dw2->guid(), deadline_missed_status_dw_2));
-
-    //! Expect incompatibilities
-    ASSERT_EQ(1u, deadline_missed_status_dw_1.total_count);
-    ASSERT_EQ(1u, deadline_missed_status_dw_2.total_count);
-
 #endif // FASTDDS_STATISTICS
 }
 

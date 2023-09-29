@@ -67,6 +67,10 @@ namespace rtps {
 #define ENTITYID_DS_SERVER_VIRTUAL_WRITER 0x00030073
 #define ENTITYID_DS_SERVER_VIRTUAL_READER 0x00030074
 
+#ifdef FASTDDS_STATISTICS
+#define ENTITYID_MONITOR_SERVICE_WRITER 0x004000D2
+#endif // ifdef FASTDDS_STATISTICS
+
 //!@brief Structure EntityId_t, entity id part of GUID_t.
 //!@ingroup COMMON_MODULE
 struct RTPS_DllAPI EntityId_t
@@ -372,6 +376,10 @@ const EntityId_t c_EntityId_spdp_reliable_participant_secure_writer =
 
 const EntityId_t ds_server_virtual_writer = ENTITYID_DS_SERVER_VIRTUAL_WRITER;
 const EntityId_t ds_server_virtual_reader = ENTITYID_DS_SERVER_VIRTUAL_READER;
+
+#ifdef FASTDDS_STATISTICS
+const EntityId_t monitor_service_status_writer = ENTITYID_MONITOR_SERVICE_WRITER;
+#endif // if FASTDDS_STATISTICS
 
 } // namespace rtps
 } // namespace fastrtps

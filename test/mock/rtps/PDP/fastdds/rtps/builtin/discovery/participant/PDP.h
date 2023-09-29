@@ -27,6 +27,10 @@
 
 #include <gmock/gmock.h>
 
+#ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyObserver.hpp>
+#endif // ifdef FASTDDS_STATISTICS
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -51,6 +55,10 @@ public:
     MOCK_METHOD0(createPDPEndpoints, bool());
 
     MOCK_METHOD0(getEDP, EDP*());
+
+#ifdef FASTDDS_STATISTICS
+    MOCK_METHOD0(get_proxy_observer, const fastdds::statistics::rtps::IProxyObserver*());
+#endif // FASTDDS_STATISTICS
 
     MOCK_METHOD1(assignRemoteEndpoints, void(
             ParticipantProxyData* pdata));

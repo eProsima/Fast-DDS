@@ -7,7 +7,7 @@
                     <properties>
                         <property>
                             <name>fastdds.enable_monitor_service</name>
-                            <value></value>
+                            <value>true</value>
                         </property>
                     </properties>
                 </propertiesPolicy>

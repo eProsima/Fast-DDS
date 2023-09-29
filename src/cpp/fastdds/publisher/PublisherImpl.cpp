@@ -40,6 +40,10 @@
 
 #include <functional>
 
+#ifdef FASTDDS_STATISTICS
+#include <statistics/types/monitorservice_types.h>
+#endif //FASTDDS_STATISTICS
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -643,6 +647,69 @@ PublisherListener* PublisherImpl::get_listener_for(
     }
     return participant_->get_listener_for(status);
 }
+
+#ifdef FASTDDS_STATISTICS
+bool PublisherImpl::get_monitoring_status(
+        const uint32_t& status_id,
+        statistics::rtps::DDSEntityStatus*& status,
+        const fastrtps::rtps::GUID_t& entity_guid)
+{
+    bool ret = false;
+    std::vector<DataWriter*> writers;
+    if (get_datawriters(writers))
+    {
+        for (auto& writer : writers)
+        {
+            if (writer->guid() == entity_guid)
+            {
+                switch (status_id)
+                {
+                    case statistics::INCOMPATIBLE_QOS:
+                    {
+                        writer->get_offered_incompatible_qos_status(*static_cast<OfferedIncompatibleQosStatus*>(status));
+                        ret = true;
+                        break;
+                    }
+                    //! TODO
+                    /*case statistics::INCONSISTENT_TOPIC:
+                       {
+                        writer->get_inconsistent_topic_status();
+                        ret = true;
+                        break;
+                       }*/
+                    case statistics::LIVELINESS_LOST:
+                    {
+                        writer->get_liveliness_lost_status(*static_cast<LivelinessLostStatus*>(status));
+                        ret = true;
+                        break;
+                    }
+                    case statistics::DEADLINE_MISSED:
+                    {
+                        writer->get_offered_deadline_missed_status(*static_cast<DeadlineMissedStatus*>(status));
+                        ret = true;
+                        break;
+                    }
+                    default:
+                    {
+                        EPROSIMA_LOG_ERROR(PUBLISHER, "Queried status not available for this entity " << status_id);
+                        break;
+                    }
+                }
+
+                break;
+            }
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Could not retrieve datawriters");
+    }
+
+
+    return ret;
+}
+
+#endif //FASTDDS_STATISTICS
 
 } // dds
 } // fastdds

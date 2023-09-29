@@ -19,6 +19,7 @@
 #include "PubSubWriter.hpp"
 
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
+#include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -125,7 +126,15 @@ public:
 
     }
 
-    ~MonitorServiceParticipant() = default;
+    ~MonitorServiceParticipant()
+    {
+        auto dpf = DomainParticipantFactory::get_instance();
+        if (nullptr != statistics_part_)
+        {
+            statistics_part_->delete_contained_entities();
+            dpf->delete_participant(statistics_part_);
+        }
+    }
 
     void setup(
             const DomainParticipantQos& qos)
@@ -269,6 +278,16 @@ public:
         return false;
     }
 
+    bool delete_reader()
+    {
+        if (!readers_.empty())
+        {
+            return (ReturnCode_t::RETCODE_OK == subscriber_->delete_datareader(readers_.back()));
+        }
+
+        return false;
+    }
+
     void send(
             std::list<HelloWorld>& msgs,
             uint32_t milliseconds = 0)
@@ -314,6 +333,7 @@ public:
         ASSERT_EQ(ReturnCode_t::RETCODE_OK, statistics_part_->delete_contained_entities());
         ASSERT_EQ(ReturnCode_t::RETCODE_OK,
                 DomainParticipantFactory::get_instance()->delete_participant(statistics_part_));
+        statistics_part_ = nullptr;
     }
 
 protected:
@@ -492,7 +512,19 @@ protected:
 
 struct SampleValidator
 {
-    //! Avoid decalaring it as virtual
+    SampleValidator()
+    {
+        validation_mask.set();
+    }
+
+    SampleValidator(
+            std::bitset<statistics::STATUSES_SIZE>& val_mask)
+        : validation_mask(val_mask)
+    {
+
+    }
+
+    //! Avoid declaring it as virtual
     //! in order to correctly apply static_cast
     void validate(
             SampleInfo&,
@@ -504,6 +536,8 @@ struct SampleValidator
     {
     }
 
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+
 };
 
 class MonitorServiceConsumer : protected PubSubReader<MonitorServiceType>
@@ -512,14 +546,36 @@ class MonitorServiceConsumer : protected PubSubReader<MonitorServiceType>
 public:
 
     MonitorServiceConsumer()
-        : PubSubReader<MonitorServiceType>("fastdds_monitor_service_status", true, true)
+        : PubSubReader<MonitorServiceType>(statistics::MONITOR_SERVICE_TOPIC, true, true)
         , sample_validator_( new SampleValidator())
+    {
+
+    }
+
+    MonitorServiceConsumer(
+            std::bitset<statistics::STATUSES_SIZE>& val_mask)
+        : PubSubReader<MonitorServiceType>(statistics::MONITOR_SERVICE_TOPIC, true, true)
+        , sample_validator_( new SampleValidator(val_mask))
     {
 
     }
 
     virtual ~MonitorServiceConsumer()
     {
+        //! reset received function
+        take_ = read_ = false;
+
+        if (nullptr != sample_validator_)
+        {
+            std::unique_lock<std::mutex> lock(validator_mtx_);
+            delete sample_validator_;
+            sample_validator_ = nullptr;
+        }
+    }
+
+    GUID_t get_participant_guid()
+    {
+        return statistics_part_->guid();
     }
 
     void init_monitor_service_reader()
@@ -527,7 +583,28 @@ public:
         reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
         durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
         history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
+        resource_limits_max_samples(4000);
+        resource_limits_max_samples_per_instance(100);
+        resource_limits_max_instances(30);
+        init();
+
+        statistics_part_ = statistics::dds::DomainParticipant::narrow(get_participant());
+    }
+
+    void init_monitor_service_reader(
+            const uint32_t& domain_id)
+    {
+        reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+        durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
+        history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
         history_depth(1);
+
+        participant_ = DomainParticipantFactory::get_instance()->create_participant(
+            domain_id,
+            participant_qos_,
+            &participant_listener_,
+            eprosima::fastdds::dds::StatusMask::none());
+
         init();
 
         statistics_part_ = statistics::dds::DomainParticipant::narrow(get_participant());
@@ -550,6 +627,11 @@ public:
     void stop()
     {
         destroy();
+    }
+
+    unsigned int get_participants_matched()
+    {
+        return participant_matched_;
     }
 
 protected:
@@ -575,12 +657,20 @@ protected:
             ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
             last_seq[seq_info] = info.sample_identity.sequence_number();
 
-            validator_selector(statistics_part_, sample_validator_,
-                    data.status_kind(), info, data, total_msgs_, current_processed_count_, cv_);
+            {
+                std::unique_lock<std::mutex> guard(validator_mtx_);
+                if (nullptr != sample_validator_)
+                {
+                    validator_selector(statistics_part_, sample_validator_,
+                            data.status_kind(), info, data, total_msgs_, current_processed_count_, cv_);
+                }
+            }
         }
     }
 
     SampleValidator* sample_validator_;
+
+    std::mutex validator_mtx_;
 
     statistics::dds::DomainParticipant* statistics_part_;
 };
@@ -595,7 +685,8 @@ struct ProxySampleValidator : public SampleValidator
             std::condition_variable& cv,
             statistics::dds::DomainParticipant* participant = nullptr)
     {
-        if (info.valid_data
+        if (validation_mask[statistics::PROXY]
+                && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
             auto it = std::find_if(total_msgs.begin(), total_msgs.end(),
@@ -605,29 +696,58 @@ struct ProxySampleValidator : public SampleValidator
                                 data.local_entity() == elem.local_entity();
                             });
 
+            if (it == total_msgs.end())
+            {
+                std::cout << "Unexpected proxy " << statistics::to_fastdds_type(data.local_entity()) <<
+                    data.status_kind() << std::endl;
+            }
+
             ASSERT_NE(it, total_msgs.end());
 
             GUID_t guid = statistics::to_fastdds_type(data.local_entity());
 
-            std::cout << "Received Proxy on local_entity "
-                      << statistics::to_fastdds_type(data.local_entity()) << std::endl;
-
             bool valid_entity = true;
 
-            if (guid.entityId == c_EntityId_RTPSParticipant)
+            if (!data.value().entity_proxy().empty())
             {
-                RTPSParticipantAllocationAttributes att;
-                ParticipantProxyData pdata(att);
+                std::cout << "Received Proxy on local_entity "
+                          << statistics::to_fastdds_type(data.local_entity()) << std::endl;
 
-                ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata, data), ReturnCode_t::RETCODE_OK);
+                if (guid.entityId == c_EntityId_RTPSParticipant)
+                {
+                    RTPSParticipantAllocationAttributes att;
+                    ParticipantProxyData pdata(att);
 
-                auto part_names = participant->get_participant_names();
-                auto it = std::find(part_names.begin(), part_names.end(), pdata.m_participantName.to_string());
-                ASSERT_TRUE(it != part_names.end());
+                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata, data), ReturnCode_t::RETCODE_OK);
+
+                    auto part_names = participant->get_participant_names();
+                    auto it_names =
+                            std::find(part_names.begin(), part_names.end(), pdata.m_participantName.to_string());
+                    ASSERT_TRUE(it_names != part_names.end());
+                }
+                else if (guid.entityId.is_reader())
+                {
+                    ReaderProxyData rdata(4, 4);
+
+                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(rdata, data), ReturnCode_t::RETCODE_OK);
+
+                }
+                else if (guid.entityId.is_writer())
+                {
+                    WriterProxyData wdata(4, 4);
+
+                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(wdata, data), ReturnCode_t::RETCODE_OK);
+                }
+                else
+                {
+                    valid_entity = false;
+                    EPROSIMA_LOG_ERROR(BBTestsMonitorService, "Invalid entity guid " << guid);
+                }
             }
             else
             {
-                valid_entity = false;
+                std::cout << "Received Entity disposal of entity "
+                          << statistics::to_fastdds_type(data.local_entity()) << std::endl;
             }
 
             if (valid_entity)
@@ -636,6 +756,24 @@ struct ProxySampleValidator : public SampleValidator
                 ++processed_count;
                 cv.notify_one();
             }
+        }
+        else if (validation_mask[statistics::PROXY])
+        {
+            auto it = std::find_if(total_msgs.begin(), total_msgs.end(),
+                            [&](const MonitorServiceType::type& elem)
+                            {
+                                return (data.status_kind() == elem.status_kind()) &&
+                                data.local_entity() == elem.local_entity();
+                            });
+
+            std::cout << "Received unregistration of instance "
+                      << info.instance_handle << std::endl;
+
+            ASSERT_NE(it, total_msgs.end());
+
+            total_msgs.erase(it);
+            ++processed_count;
+            cv.notify_one();
         }
     }
 
@@ -650,7 +788,8 @@ struct ConnectionListSampleValidator : public SampleValidator
             std::atomic<size_t>& processed_count,
             std::condition_variable& cv)
     {
-        if (info.valid_data
+        if (validation_mask[statistics::CONNECTION_LIST]
+                && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
             std::cout << "Received ConnectionList on local_entity "
@@ -659,44 +798,47 @@ struct ConnectionListSampleValidator : public SampleValidator
             for (auto& connection : data.value().connection_list())
             {
                 std::cout << "Received Connection: \n\tMode: " << connection.mode() <<
-                    "\n\t Guid " << statistics::to_fastdds_type(connection.guid()) << "\n\t"
+                    "\n\tGuid " << statistics::to_fastdds_type(connection.guid()) << "\n\t"
                           << "Announced Locators: ";
-                for (auto& locator : connection.announced_locators())
+                for (auto& locator : connection.used_locators())
                 {
                     std::cout << "\n\t " << statistics::to_fastdds_type(locator) << std::endl;
                 }
-                std::cout << std::endl;
             }
 
+            std::cout << std::endl;
+
             auto it = std::find_if(total_msgs.begin(), total_msgs.end(),
-                            [&](const MonitorServiceType::type& elem)
+                            [&](const MonitorServiceType::type& total_msgs_elem)
                             {
-                                if ((data.status_kind() == elem.status_kind()) &&
-                                (data.local_entity() == elem.local_entity()))
+                                if ((data.status_kind() == total_msgs_elem.status_kind()) &&
+                                (data.local_entity() == total_msgs_elem.local_entity()))
                                 {
                                     //! Check for connections
                                     bool expected_locators_found = true;
-                                    for (auto& incoming_connection : data.value().connection_list())
+                                    for (auto& data_connection : data.value().connection_list())
                                     {
                                         //! Find the first Connection that matches with the incoming, with same
-                                        //  mode and same locators
-                                        auto conn_it = std::find_if(elem.value().connection_list().begin(),
-                                        elem.value().connection_list().end(),
-                                        [&](const statistics::Connection&  connection)
+                                        //! mode and same locators
+                                        auto conn_it = std::find_if(total_msgs_elem.value().connection_list().begin(),
+                                        total_msgs_elem.value().connection_list().end(),
+                                        [&](const statistics::Connection&  total_msgs_elem_connection)
                                         {
-                                            if (connection.mode() == incoming_connection.mode())
+                                            if (total_msgs_elem_connection.mode() == data_connection.mode()
+                                            && total_msgs_elem_connection.guid() == data_connection.guid())
                                             {
                                                 //! check locators
                                                 bool same_locators = true;
-                                                for (size_t i = 0; i < connection.announced_locators().size(); i++)
+                                                for (size_t i = 0;
+                                                i < total_msgs_elem_connection.announced_locators().size(); i++)
                                                 {
                                                     bool locator_found = false;
                                                     for (size_t j = 0;
-                                                    j < incoming_connection.announced_locators().size(); j++)
+                                                    j < data_connection.announced_locators().size(); j++)
                                                     {
                                                         //! provided comparison operator
-                                                        if (connection.announced_locators()[i] ==
-                                                        incoming_connection.announced_locators()[j])
+                                                        if (total_msgs_elem_connection.announced_locators()[i] ==
+                                                        data_connection.announced_locators()[j])
                                                         {
                                                             locator_found = true;
                                                         }
@@ -704,6 +846,12 @@ struct ConnectionListSampleValidator : public SampleValidator
 
                                                     if (!locator_found)
                                                     {
+                                                        EPROSIMA_LOG_ERROR(BBTestsMonitorService,
+                                                        "Locator not found in sample msg "
+                                                            << statistics::to_fastdds_type(total_msgs_elem_connection.
+                                                                announced_locators()[i]) <<
+                                                            " for local entity " <<
+                                                            statistics::to_fastdds_type(total_msgs_elem.local_entity()));
                                                         same_locators = false;
                                                         break;
                                                     }
@@ -718,7 +866,7 @@ struct ConnectionListSampleValidator : public SampleValidator
                                         });
 
                                         //! Check return connection is the last (valid connection NOT found)
-                                        if (conn_it == elem.value().connection_list().end())
+                                        if (conn_it == total_msgs_elem.value().connection_list().end())
                                         {
                                             expected_locators_found = false;
                                             break;
@@ -754,7 +902,8 @@ struct IncompatibleQoSSampleValidator : public SampleValidator
             std::atomic<size_t>& processed_count,
             std::condition_variable& cv)
     {
-        if (info.valid_data
+        if (validation_mask[statistics::INCOMPATIBLE_QOS]
+                && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
             auto it = std::find_if(total_msgs.begin(), total_msgs.end(),
@@ -790,7 +939,8 @@ struct LivelinessLostSampleValidator : public SampleValidator
             std::atomic<size_t>& processed_count,
             std::condition_variable& cv)
     {
-        if (info.valid_data
+        if (validation_mask[statistics::LIVELINESS_LOST]
+                && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
             auto it = std::find_if(total_msgs.begin(), total_msgs.end(),
@@ -826,7 +976,8 @@ struct LivelinessChangedSampleValidator : public SampleValidator
             std::atomic<size_t>& processed_count,
             std::condition_variable& cv)
     {
-        if (info.valid_data
+        if (validation_mask[statistics::LIVELINESS_CHANGED]
+                && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
             auto it = std::find_if(total_msgs.begin(), total_msgs.end(),
@@ -835,15 +986,15 @@ struct LivelinessChangedSampleValidator : public SampleValidator
                                 return (data.status_kind() == elem.status_kind()) &&
                                 (data.local_entity() == elem.local_entity()) &&
                                 (data.value().liveliness_changed_status().not_alive_count()
-                                == elem.value().liveliness_changed_status().not_alive_count());
+                                >= elem.value().liveliness_changed_status().not_alive_count());
                             });
 
-            ASSERT_NE(it, total_msgs.end());
-
-            std::cout << "Received QoS Incompatibility on local_entity "
+            std::cout << "Received Liveliness Changed on local_entity "
                       << statistics::to_fastdds_type(data.local_entity())
                       << "\n\tNot Alive Count: " << data.value().liveliness_changed_status().not_alive_count()
                       << std::endl;
+
+            ASSERT_NE(it, total_msgs.end());
 
             total_msgs.erase(it);
             ++processed_count;
@@ -862,7 +1013,8 @@ struct DeadlineMissedSampleValidator : public SampleValidator
             std::atomic<size_t>& processed_count,
             std::condition_variable& cv)
     {
-        if (info.valid_data
+        if (validation_mask[statistics::DEADLINE_MISSED]
+                && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
             auto it = std::find_if(total_msgs.begin(), total_msgs.end(),
@@ -871,15 +1023,15 @@ struct DeadlineMissedSampleValidator : public SampleValidator
                                 return (data.status_kind() == elem.status_kind()) &&
                                 (data.local_entity() == elem.local_entity()) &&
                                 (data.value().deadline_missed_status().total_count()
-                                == elem.value().deadline_missed_status().total_count());
+                                >= elem.value().deadline_missed_status().total_count());
                             });
-
-            ASSERT_NE(it, total_msgs.end());
 
             std::cout << "Received Deadline Missed on local_entity "
                       << statistics::to_fastdds_type(data.local_entity())
                       << "\n\tTotal Count: " << data.value().deadline_missed_status().total_count()
                       << std::endl;
+
+            ASSERT_NE(it, total_msgs.end());
 
             total_msgs.erase(it);
             ++processed_count;
@@ -898,7 +1050,8 @@ struct SampleLostSampleValidator : public SampleValidator
             std::atomic<size_t>& processed_count,
             std::condition_variable& cv)
     {
-        if (info.valid_data
+        if (validation_mask[statistics::SAMPLE_LOST]
+                && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
             auto it = std::find_if(total_msgs.begin(), total_msgs.end(),
@@ -909,12 +1062,13 @@ struct SampleLostSampleValidator : public SampleValidator
                                 (data.value().sample_lost_status().total_count() >= 1);
                             });
 
-            ASSERT_NE(it, total_msgs.end());
-
-            std::cout << "Received QoS Incompatibility on local_entity "
+            std::cout << "Received Sample Lost on local_entity "
                       << statistics::to_fastdds_type(data.local_entity())
                       << "\n\tLast policy id: " << data.value().sample_lost_status().total_count()
                       << std::endl;
+
+
+            ASSERT_NE(it, total_msgs.end());
 
             total_msgs.erase(it);
             ++processed_count;
@@ -1097,7 +1251,7 @@ TEST(DDSMonitorServiceTest, monitor_service_properties_cpp_api)
 
     //! Procedure
     DomainParticipantQos pqos;
-    pqos.properties().properties().push_back({"fastdds.enable_monitor_service", ""});
+    pqos.properties().properties().push_back({"fastdds.enable_monitor_service", "true"});
     MSP.setup(pqos);
 
     //! Assertions
@@ -1115,9 +1269,13 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_proxy)
 {
 #ifdef FASTDDS_STATISTICS
 
+    //! Validate PROXY samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::PROXY] = true;
+
     //! Setup
     MonitorServiceParticipant MSP;
-    MonitorServiceConsumer MSC;
+    MonitorServiceConsumer MSC(validation_mask);
 
     MSP.setup();
 
@@ -1158,19 +1316,26 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_proxy)
  * A MSC correctly shall receive the corresponding connection list update in the MST
  * after creating two MSP with a pair of matched endpoints.
  *
- * TODO: Extend the connection list test cases that checks for intraprocess and datasharing
+ * TODO: Extend the connection list test cases (or make it TEST_P)
+ * in order to check for intraprocess and datasharing
  * connection modes
  *
  */
-TEST_P(DDSMonitorServiceTest, monitor_service_simple_connection_list)
+TEST(DDSMonitorServiceTest, monitor_service_simple_connection_list)
 {
 #ifdef FASTDDS_STATISTICS
+    //! Validate CONNECTION_LIST samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::CONNECTION_LIST] = true;
+
     //! Setup
     MonitorServiceParticipant MSP1, MSP2;
-    MonitorServiceConsumer MSC;
+    MonitorServiceConsumer MSC(validation_mask);
 
     //! Procedure
-    MSC.init_monitor_service_reader();
+    //force domain id 0 to share at least the multicast port set in the
+    //xml config port mapping
+    MSC.init_monitor_service_reader(0);
 
     std::string xml_profile = "MonitorServiceConnectionList_profile.xml";
     std::pair<std::string, std::string> participant_profiles =
@@ -1202,14 +1367,27 @@ TEST_P(DDSMonitorServiceTest, monitor_service_simple_connection_list)
     Locator_t metatraffic_multicast_addr_locator(LOCATOR_KIND_UDPv4, 7400);
     IPLocator::setIPv4(metatraffic_multicast_addr_locator, MULTICAST_ADDRESS);
 
-    locators.push_back(statistics::to_statistics_type(metatraffic_unicast_local_addr_locator));
-    locators.push_back(statistics::to_statistics_type(default_unicast_local_addr_locator));
-    locators.push_back(statistics::to_statistics_type(metatraffic_multicast_addr_locator));
-
     std::vector<statistics::Connection> connection_list;
     statistics::Connection conn;
+
+    conn.guid() = statistics::to_statistics_type(MSC.get_participant_guid());
+    conn.mode() = statistics::ConnectionMode::TRANSPORT;
+    Locator_t msc_locator_unicast(LOCATOR_KIND_UDPv4, 7410);
+    IPLocator::setIPv4(msc_locator_unicast, LOCAL_ADDRESS);
+    locators.push_back(statistics::to_statistics_type(msc_locator_unicast));
+    msc_locator_unicast.port = 7411;
+    locators.push_back(statistics::to_statistics_type(msc_locator_unicast));
+    conn.announced_locators(locators);
+    connection_list.push_back(conn);
+
     conn.guid() = MSP2.get_participant_guid();
     conn.mode() = statistics::ConnectionMode::TRANSPORT;
+    locators.clear();
+    locators.push_back(statistics::to_statistics_type(metatraffic_unicast_local_addr_locator));
+    locators.push_back(statistics::to_statistics_type(default_unicast_local_addr_locator));
+    // The avoid_builtin_multicast prevents the multicast locator list to be filled
+    // in the participant proxy, avoid expecting it
+    //locators.push_back(statistics::to_statistics_type(metatraffic_multicast_addr_locator));
     conn.announced_locators(locators);
     connection_list.push_back(conn);
 
@@ -1221,7 +1399,7 @@ TEST_P(DDSMonitorServiceTest, monitor_service_simple_connection_list)
     participant_connection_msg.local_entity(MSP2.get_participant_guid());
 
     ASSERT_FALSE(participant_connection_msg.value().connection_list().empty());
-    ASSERT_EQ(participant_connection_msg.value().connection_list().back().announced_locators().size(), 3u);
+    ASSERT_EQ(participant_connection_msg.value().connection_list().back().announced_locators().size(), 2u);
 
     participant_connection_msg.value().connection_list().back().guid() = MSP1.get_participant_guid();
     participant_connection_msg.value().connection_list().back().mode() = statistics::ConnectionMode::TRANSPORT;
@@ -1230,8 +1408,10 @@ TEST_P(DDSMonitorServiceTest, monitor_service_simple_connection_list)
 
     expected_msgs.push_back(participant_connection_msg);
 
+    DataReaderQos dr_qos;
+    dr_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     MSP1.create_and_add_writer();
-    MSP2.create_and_add_reader();
+    MSP2.create_and_add_reader(dr_qos);
 
     StatisticsGUIDList w_guids, r_guids;
     endpoint_connections_msg.status_kind(eprosima::fastdds::statistics::CONNECTION_LIST);
@@ -1240,20 +1420,26 @@ TEST_P(DDSMonitorServiceTest, monitor_service_simple_connection_list)
     r_guids = MSP2.get_reader_guids();
     ASSERT_EQ(r_guids.size(), 1);
 
+    //! dw and dr have one connection only (with each other)
     endpoint_connections_msg.local_entity(w_guids.back());
     endpoint_connections_msg.value().connection_list(connection_list);
+    endpoint_connections_msg.value().connection_list().pop_back();
     endpoint_connections_msg.value().connection_list().back().guid() = r_guids.back();
     endpoint_connections_msg.value().connection_list().back().mode() = statistics::ConnectionMode::TRANSPORT;
     endpoint_connections_msg.value().connection_list().back().announced_locators()[0].port() = 2020;//unicast
-    endpoint_connections_msg.value().connection_list().back().announced_locators()[1].port() = 2022;//multicast
+    metatraffic_multicast_addr_locator.port = 2022;
+    endpoint_connections_msg.value().connection_list().back().announced_locators()[1] =
+            statistics::to_statistics_type(metatraffic_multicast_addr_locator); //multicast
 
     expected_msgs.push_back(endpoint_connections_msg);
 
+    //! An stateful reader only announces its unicast locator
+    //! An stateless reader, nothing, as the writer does not need to communicate with it
     endpoint_connections_msg.local_entity(r_guids.back());
+    endpoint_connections_msg.value().connection_list().back().announced_locators().pop_back();
     endpoint_connections_msg.value().connection_list().back().guid() = w_guids.back();
     endpoint_connections_msg.value().connection_list().back().mode() = statistics::ConnectionMode::TRANSPORT;
     endpoint_connections_msg.value().connection_list().back().announced_locators()[0].port() = 2019;//unicast
-    endpoint_connections_msg.value().connection_list().back().announced_locators()[1].port() = 2021;//multicast
 
     expected_msgs.push_back(endpoint_connections_msg);
 
@@ -1273,9 +1459,13 @@ TEST_P(DDSMonitorServiceTest, monitor_service_simple_connection_list)
 TEST(DDSMonitorServiceTest, monitor_service_simple_qos_incompatibility_status)
 {
 #ifdef FASTDDS_STATISTICS
+    //! Validate INCOMPATIBLE_QOS samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::INCOMPATIBLE_QOS] = true;
+
     //! Setup
     MonitorServiceParticipant MSP;
-    MonitorServiceConsumer MSC;
+    MonitorServiceConsumer MSC(validation_mask);
 
     //! Procedure
     MSC.init_monitor_service_reader();
@@ -1307,7 +1497,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_qos_incompatibility_status)
     policy.policy_id(RELIABILITY_QOS_POLICY_ID);
     incompatible_qos.policies().push_back(policy);
     endpoint_qos_msg.value().incompatible_qos_status(incompatible_qos);
-
+    endpoint_qos_msg.value().incompatible_qos_status().last_policy_id() = RELIABILITY_QOS_POLICY_ID;
     expected_msgs.push_back(endpoint_qos_msg);
 
     endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::INCOMPATIBLE_QOS);
@@ -1343,9 +1533,13 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_qos_incompatibility_status)
 TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_lost_status)
 {
 #ifdef FASTDDS_STATISTICS
+    //! Validate LIVELINESS_LOST samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::LIVELINESS_LOST] = true;
+
     //! Setup
     MonitorServiceParticipant MSP;
-    MonitorServiceConsumer MSC;
+    MonitorServiceConsumer MSC(validation_mask);
 
     //! Procedure
     MSC.init_monitor_service_reader();
@@ -1395,9 +1589,13 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_lost_status)
 TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_changed_status)
 {
 #ifdef FASTDDS_STATISTICS
+    //! Validate LIVELINESS_CHANGED samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::LIVELINESS_CHANGED] = true;
+
     //! Setup
     MonitorServiceParticipant MSP;
-    MonitorServiceConsumer MSC;
+    MonitorServiceConsumer MSC(validation_mask);
 
     //! Procedure
     MSC.init_monitor_service_reader();
@@ -1432,7 +1630,6 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_changed_status)
     endpoint_liveliness_msg.local_entity(r_guids.back());
 
     statistics::LivelinessChangedStatus_s liv_changed_status;
-    liv_changed_status.not_alive_count() = 1;
     endpoint_liveliness_msg.value().liveliness_changed_status(liv_changed_status);
 
     expected_msgs.push_back(endpoint_liveliness_msg);
@@ -1455,9 +1652,14 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_changed_status)
 TEST(DDSMonitorServiceTest, monitor_service_simple_deadline_missed_status)
 {
 #ifdef FASTDDS_STATISTICS
+
+    //! Validate DEADLINE_MISSED samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::DEADLINE_MISSED] = true;
+
     //! Setup
     MonitorServiceParticipant MSP;
-    MonitorServiceConsumer MSC;
+    MonitorServiceConsumer MSC(validation_mask);
 
     //! Procedure
     MSC.init_monitor_service_reader();
@@ -1518,9 +1720,14 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_deadline_missed_status)
 TEST(DDSMonitorServiceTest, monitor_service_simple_sample_lost_status)
 {
 #ifdef FASTDDS_STATISTICS
+
+    //! Validate SAMPLE_LOST samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::SAMPLE_LOST] = true;
+
     //! Setup
     MonitorServiceParticipant MSP1, MSP2;
-    MonitorServiceConsumer MSC;
+    MonitorServiceConsumer MSC(validation_mask);
 
     //! Procedure
     DomainParticipantQos dqos;
@@ -1609,9 +1816,14 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_sample_lost_status)
 TEST(DDSMonitorServiceTest, monitor_service_simple_instance_disposals)
 {
 #ifdef FASTDDS_STATISTICS
+
+    //! Validate PROXY samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::PROXY] = true;
+
     //! Setup
     MonitorServiceParticipant MSP;
-    MonitorServiceConsumer MSC;
+    MonitorServiceConsumer MSC(validation_mask);
 
     MSP.setup();
 
@@ -1623,16 +1835,37 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_instance_disposals)
 
     std::list<MonitorServiceType::type> expected_msgs;
 
-    MonitorServiceType::type writer_proxy_msg;
-    expected_msgs.push_back(writer_proxy_msg);
+    MonitorServiceType::type proxy_msg;
+    auto writers = MSP.get_writer_guids();
+    ASSERT_TRUE(writers.size());
+
+    //! expect 2 proxies, one empty proxy (disposal)
+    //! and 8 statuses kind unregistered
+    proxy_msg.local_entity() = writers.back();
+    expected_msgs.push_back(proxy_msg);
+
+    proxy_msg.local_entity() = MSP.get_participant_guid();
+    expected_msgs.push_back(proxy_msg);
+
+    //! Expect one unregister for each of the statuses
+    for (uint32_t i = 0; i < statistics::STATUSES_SIZE; i++)
+    {
+        proxy_msg.local_entity() = statistics::to_statistics_type(c_Guid_Unknown);
+        expected_msgs.push_back(proxy_msg);
+    }
 
     MSC.start_reception(expected_msgs);
-
     MSP.delete_writer();
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    //! For the moment, until fake instances feature is available
+    //! expect a discovery callback for the matching status to deduce
+    //! the dispose of the participant
+    MSP.reset();
 
     //! Assertions
     //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
+    ASSERT_FALSE(MSC.get_participants_matched());
 
 #endif //FASTDDS_STATISTICS
 }
@@ -1645,9 +1878,14 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_instance_disposals)
 TEST(DDSMonitorServiceTest, monitor_service_simple_late_joiner)
 {
 #ifdef FASTDDS_STATISTICS
+
+    //! Validate PROXY samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::PROXY] = true;
+
     //! Setup
     MonitorServiceParticipant MSP;
-    MonitorServiceConsumer MSC;
+    MonitorServiceConsumer MSC(validation_mask);
 
     MSP.setup();
 
@@ -1703,9 +1941,14 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_late_joiner)
 TEST(DDSMonitorServiceTest, monitor_service_simple_enable_disable_enable)
 {
 #ifdef FASTDDS_STATISTICS
+
+    //! Validate PROXY samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::PROXY] = true;
+
     //! Setup
     MonitorServiceParticipant MSP;
-    MonitorServiceConsumer MSC;
+    MonitorServiceConsumer MSC(validation_mask);
 
     //! Procedure
     MSP.setup();
@@ -1763,29 +2006,30 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_enable_disable_enable)
 TEST(DDSMonitorServiceTest, monitor_service_advanced_proxy)
 {
 #ifdef FASTDDS_STATISTICS
+    //! Validate PROXY samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::PROXY] = true;
+
     //! Setup
     size_t n_participants = 3;
     std::vector<MonitorServiceParticipant> MSPs;
-    MSPs.reserve(n_participants);
+    MSPs.resize(n_participants);
 
-    MonitorServiceConsumer MSC;
+    MonitorServiceConsumer MSC(validation_mask);
 
     //! Procedure
     MSC.init_monitor_service_reader();
 
     std::list<MonitorServiceType::type> expected_msgs;
 
-    for (size_t i = 0; i < n_participants; i++)
+    int topic_idx = 1;
+    for (auto& MSP : MSPs)
     {
-        MonitorServiceParticipant MSP;
-
         MSP.setup();
         MSP.enable_monitor_service();
 
-        if (i != 0)
-        {
-            MSP.create_topic((int)i);
-        }
+        MSP.create_topic(topic_idx);
+        topic_idx++;
 
         MSP.create_and_add_writer();
         MSP.create_and_add_reader();
@@ -1809,7 +2053,6 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_proxy)
         entity_proxy_msg.local_entity(r_guids.back());
 
         expected_msgs.push_back(entity_proxy_msg);
-        MSPs.emplace_back(std::move(MSP));
     }
 
     MSC.start_reception(expected_msgs);
@@ -1832,46 +2075,77 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_instance_disposals)
     //! Setup
     size_t n_participants = 3;
     std::vector<MonitorServiceParticipant> MSPs;
-    MSPs.reserve(n_participants);
+    MSPs.resize(n_participants);
 
-    MonitorServiceConsumer MSC;
+    //! Validate PROXY samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::PROXY] = true;
+
+    MonitorServiceConsumer MSC (validation_mask);
 
     //! Procedure
     MSC.init_monitor_service_reader();
 
-    for (size_t i = 0; i < n_participants; i++)
+    std::list<MonitorServiceType::type> expected_msgs;
+
+    int topic_idx = 1;
+    for (auto& MSP : MSPs)
     {
-        MonitorServiceParticipant MSP;
+        MonitorServiceType::type msg;
 
         MSP.setup();
         MSP.enable_monitor_service();
 
-        if (i != 0)
-        {
-            MSP.create_topic((int)i);
-        }
+        MSP.create_topic(topic_idx);
+        topic_idx++;
 
         MSP.create_and_add_writer();
         MSP.create_and_add_reader();
 
-        MSPs.emplace_back(std::move(MSP));
+        //! Participant entity + writer + reader proxies
+        msg.local_entity() = MSP.get_participant_guid();
+        expected_msgs.push_back(msg);
+        msg.local_entity() = MSP.get_reader_guids().back();
+        expected_msgs.push_back(msg);
+        msg.local_entity() = MSP.get_writer_guids().back();
+        expected_msgs.push_back(msg);
     }
 
-    MSPs.back().reset();
-    MSPs.back().reset();
+    ASSERT_EQ(3, MSPs.size());
 
-    //! Expect instance disposals from proxy and connection list of
-    //! 4 instances = 2 participants proxies + 2 participant connection lists
-    //! 4 instances = 2 readers proxies + 2 reader connection lists
-    //! 4 instances = 2 writer proxies + 2 writer connection lists
-    //! 12 = 2 statuses * 3 entities * 3 participants removed
-    std::list<MonitorServiceType::type> expected_msgs{2 * 3 * 3, MonitorServiceType::type()};
+    //! Expect 6 empty proxies (disposals) (3 entities per each)
+    for (auto& MSP : MSPs)
+    {
+        MonitorServiceType::type msg;
+        msg.local_entity(MSP.get_reader_guids().back());
+        expected_msgs.push_back(msg);
+        msg.local_entity(MSP.get_writer_guids().back());
+        expected_msgs.push_back(msg);
+    }
+
+    //! Plus 48 instance disposals (8 per instance)
+    for (uint32_t i = 0; i < 6 * statistics::STATUSES_SIZE; i++)
+    {
+        expected_msgs.push_back(MonitorServiceType::type());
+    }
+
     MSC.start_reception(expected_msgs);
 
+    //! Give some time to receive the proxies
+    //! Otherwise, if we suddendy delete the entities, the monitor
+    //! service will not say nothing about that entity and the
+    //! expected_msgs list will not be correct
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+
+    for (auto& MSP : MSPs)
+    {
+        MSP.delete_reader();
+        MSP.delete_writer();
+    }
 
     //! Assertions
     //! The assertion checking whether the on_data_availble() was called is assumed in the following one
-    ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
+    ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(5)), expected_msgs.size());
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1883,19 +2157,23 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_instance_disposals)
 TEST(DDSMonitorServiceTest, monitor_service_advanced_single_late_joiner)
 {
 #ifdef FASTDDS_STATISTICS
+
+    //! Validate INCOMPATIBLE_QOS samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::INCOMPATIBLE_QOS] = true;
+
     //! Setup
     size_t n_participants = 3;
     std::vector<MonitorServiceParticipant> MSPs;
-    MSPs.reserve(n_participants);
-    MonitorServiceConsumer MSC;
+    MSPs.resize(n_participants);
+    MonitorServiceConsumer MSC(validation_mask);
 
     //! Procedure
     std::list<MonitorServiceType::type> expected_msgs;
 
-    for (size_t i = 0; i < n_participants; i++)
+    int topic_idx = 1;
+    for (auto& MSP : MSPs)
     {
-        MonitorServiceParticipant MSP;
-
         MSP.setup();
         MSP.enable_monitor_service();
 
@@ -1905,14 +2183,11 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_single_late_joiner)
         dr_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
         dw_qos.reliability().kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
 
-        if (i != 0)
-        {
-            MSP.create_topic((int)i);
-        }
+        MSP.create_topic(topic_idx);
+        topic_idx++;
 
         MSP.create_and_add_writer(dw_qos);
         MSP.create_and_add_reader(dr_qos);
-
 
         MonitorServiceType::type endpoint_qos_msg;
         StatisticsGUIDList w_guids, r_guids;
@@ -1923,9 +2198,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_single_late_joiner)
         endpoint_qos_msg.local_entity(w_guids.back());
 
         statistics::IncompatibleQoSStatus_s incompatible_qos;
-        statistics::QosPolicyCount_s policy;
-        policy.policy_id(RELIABILITY_QOS_POLICY_ID);
-        incompatible_qos.policies().push_back(policy);
+        incompatible_qos.last_policy_id(RELIABILITY_QOS_POLICY_ID);
         endpoint_qos_msg.value().incompatible_qos_status(incompatible_qos);
 
         expected_msgs.push_back(endpoint_qos_msg);
@@ -1936,17 +2209,15 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_single_late_joiner)
         endpoint_qos_msg.local_entity(r_guids.back());
 
         expected_msgs.push_back(endpoint_qos_msg);
-
-        MSPs.emplace_back(std::move(MSP));
     }
 
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::this_thread::sleep_for(std::chrono::seconds(5));
     MSC.init_monitor_service_reader();
     MSC.start_reception(expected_msgs);
 
     //! Assertions
     //! The assertion checking whether the on_data_availble() was called is assumed in the following one
-    ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(10)), expected_msgs.size());
+    ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(5)), expected_msgs.size());
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1974,8 +2245,6 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
     dr_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     dw_qos.reliability().kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
 
-    MSP.create_topic(0);
-
     MSP.create_and_add_writer(dw_qos);
     MSP.create_and_add_reader(dr_qos);
 
@@ -1988,9 +2257,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
     endpoint_qos_msg.local_entity(w_guids.back());
 
     statistics::IncompatibleQoSStatus_s incompatible_qos;
-    statistics::QosPolicyCount_s policy;
-    policy.policy_id(RELIABILITY_QOS_POLICY_ID);
-    incompatible_qos.policies().push_back(policy);
+    incompatible_qos.last_policy_id(RELIABILITY_QOS_POLICY_ID);
     endpoint_qos_msg.value().incompatible_qos_status(incompatible_qos);
 
     expected_msgs.push_back(endpoint_qos_msg);
@@ -2002,18 +2269,22 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
 
     expected_msgs.push_back(endpoint_qos_msg);
 
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::this_thread::sleep_for(std::chrono::seconds(3));
 
     for (size_t i = 0; i < n_participants; i++)
     {
-        MonitorServiceConsumer MSC;
+        //! Validate INCOMPATIBLE_QOS samples only
+        std::bitset<statistics::STATUSES_SIZE> validation_mask;
+        validation_mask[statistics::INCOMPATIBLE_QOS] = true;
+
+        MonitorServiceConsumer MSC(validation_mask);
 
         MSC.init_monitor_service_reader();
         MSC.start_reception(expected_msgs);
 
         //! Assertions
         //! The assertion checking whether the on_data_availble() was called is assumed in the following one
-        ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(10)), expected_msgs.size());
+        ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
     }
 #endif //FASTDDS_STATISTICS
 }

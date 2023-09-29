@@ -363,6 +363,15 @@ public:
     }
 
     /**
+     * Get the number of participant proxies.
+     * @return size_t.
+     */
+    size_t participant_proxies_number()
+    {
+        return participant_proxies_number_;
+    }
+
+    /**
      * Assert the liveliness of a Remote Participant.
      * @param remote_guid GuidPrefix_t of the participant whose liveliness is being asserted.
      */
@@ -442,6 +451,12 @@ public:
 
     void set_proxy_observer(
             const fastdds::statistics::rtps::IProxyObserver* proxy_observer);
+
+    const fastdds::statistics::rtps::IProxyObserver* get_proxy_observer()
+    {
+        return proxy_observer_;
+    }
+
 #else
     bool get_all_local_proxies(
             std::vector<GUID_t>&) override

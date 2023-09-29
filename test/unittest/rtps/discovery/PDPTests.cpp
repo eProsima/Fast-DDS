@@ -110,14 +110,18 @@ public:
             BuiltinProtocols* bp,
             const RTPSParticipantAllocationAttributes& allocs)
         : PDP(bp, allocs)
+        , endpoints_(nullptr)
     {
-        auto endpoints = new TesterPDPEndpoints();
-        builtin_endpoints_.reset(endpoints);
+        endpoints_ = new TesterPDPEndpoints();
+        builtin_endpoints_.reset(endpoints_);
     }
 
     virtual ~PDPTester()
     {
-
+        for (size_t i = 0; i < pdatas_.size(); i++)
+        {
+            delete pdatas_[i];
+        }
     }
 
     bool init(
@@ -142,6 +146,7 @@ public:
         pdata->m_guid = part_guid;
 
         add_participant_proxy_data(part_guid, false, pdata);
+        pdatas_.push_back(pdata);
     }
 
     void announceParticipantState(
@@ -227,6 +232,9 @@ protected:
     void update_builtin_locators() override
     {
     }
+
+    TesterPDPEndpoints* endpoints_;
+    std::vector<ParticipantProxyData*> pdatas_;
 
 };
 
