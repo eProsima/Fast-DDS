@@ -2295,7 +2295,7 @@ TEST_F(DynamicComplexTypesTests, TypeInformation)
     ASSERT_FALSE(info->minimal().typeid_with_size().type_id() == info->complete().typeid_with_size().type_id());
     ASSERT_TRUE(info->complete().typeid_with_size().type_id()._d() == EK_COMPLETE);
     ASSERT_TRUE(info->complete().dependent_typeid_count() == 2);
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     size_t current_alignment {0};
     ASSERT_TRUE(info->complete().typeid_with_size().typeobject_serialized_size()
             == calculator.calculate_serialized_size(*compl_obj, current_alignment));
