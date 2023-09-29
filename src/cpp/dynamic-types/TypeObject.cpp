@@ -81,7 +81,7 @@ size_t CommonStructMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -162,7 +162,7 @@ size_t CompleteMemberDetail::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -239,7 +239,7 @@ size_t MinimalMemberDetail::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -315,7 +315,7 @@ size_t CompleteStructMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -392,7 +392,7 @@ size_t MinimalStructMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -465,7 +465,7 @@ size_t AppliedBuiltinTypeAnnotations::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -531,7 +531,7 @@ size_t MinimalTypeDetail::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -603,7 +603,7 @@ size_t CompleteTypeDetail::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -687,7 +687,7 @@ size_t CompleteStructHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -764,7 +764,7 @@ size_t MinimalStructHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -845,7 +845,7 @@ size_t CompleteStructType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -989,7 +989,7 @@ size_t MinimalStructType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -1137,7 +1137,7 @@ size_t CommonUnionMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -1240,7 +1240,7 @@ size_t CompleteUnionMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -1317,7 +1317,7 @@ size_t MinimalUnionMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -1394,7 +1394,7 @@ size_t CommonDiscriminatorMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -1474,7 +1474,7 @@ size_t CompleteDiscriminatorMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -1551,7 +1551,7 @@ size_t MinimalDiscriminatorMember::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -1622,7 +1622,7 @@ size_t CompleteUnionHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -1693,7 +1693,7 @@ size_t MinimalUnionHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -1776,7 +1776,7 @@ size_t CompleteUnionType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -1926,7 +1926,7 @@ size_t MinimalUnionType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2068,7 +2068,7 @@ size_t CommonAnnotationParameter::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2149,7 +2149,7 @@ size_t CompleteAnnotationParameter::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2231,7 +2231,7 @@ size_t MinimalAnnotationParameter::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2305,7 +2305,7 @@ size_t CompleteAnnotationHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2371,7 +2371,7 @@ size_t MinimalAnnotationHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2444,7 +2444,7 @@ size_t CompleteAnnotationType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2529,7 +2529,7 @@ size_t MinimalAnnotationType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2610,7 +2610,7 @@ size_t CommonAliasBody::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2688,7 +2688,7 @@ size_t CompleteAliasBody::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2763,7 +2763,7 @@ size_t MinimalAliasBody::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2832,7 +2832,7 @@ size_t CompleteAliasHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2895,7 +2895,7 @@ size_t MinimalAliasHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -2960,7 +2960,7 @@ size_t CompleteAliasType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3040,7 +3040,7 @@ size_t MinimalAliasType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3116,7 +3116,7 @@ size_t CompleteElementDetail::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3196,7 +3196,7 @@ size_t CommonCollectionElement::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3272,7 +3272,7 @@ size_t CompleteCollectionElement::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3345,7 +3345,7 @@ size_t MinimalCollectionElement::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3416,7 +3416,7 @@ size_t CommonCollectionHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3492,7 +3492,7 @@ size_t CompleteCollectionHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3565,7 +3565,7 @@ size_t MinimalCollectionHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3644,7 +3644,7 @@ size_t CompleteSequenceType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3726,7 +3726,7 @@ size_t MinimalSequenceType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3800,7 +3800,7 @@ size_t CommonArrayHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3892,7 +3892,7 @@ size_t CompleteArrayHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -3965,7 +3965,7 @@ size_t MinimalArrayHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -4044,7 +4044,7 @@ size_t CompleteArrayType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -4126,7 +4126,7 @@ size_t MinimalArrayType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -4212,7 +4212,7 @@ size_t CompleteMapType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -4300,7 +4300,7 @@ size_t MinimalMapType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -4380,7 +4380,7 @@ size_t CommonEnumeratedLiteral::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -4456,7 +4456,7 @@ size_t CompleteEnumeratedLiteral::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -4533,7 +4533,7 @@ size_t MinimalEnumeratedLiteral::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -4606,7 +4606,7 @@ size_t CommonEnumeratedHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -4683,7 +4683,7 @@ size_t CompleteEnumeratedHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -4756,7 +4756,7 @@ size_t MinimalEnumeratedHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -4835,7 +4835,7 @@ size_t CompleteEnumeratedType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -4979,7 +4979,7 @@ size_t MinimalEnumeratedType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -5119,7 +5119,7 @@ size_t CommonBitflag::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -5195,7 +5195,7 @@ size_t CompleteBitflag::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -5272,7 +5272,7 @@ size_t MinimalBitflag::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -5345,7 +5345,7 @@ size_t CommonBitmaskHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -5426,7 +5426,7 @@ size_t CompleteBitmaskType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -5570,7 +5570,7 @@ size_t MinimalBitmaskType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -5718,7 +5718,7 @@ size_t CommonBitfield::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -5799,7 +5799,7 @@ size_t CompleteBitfield::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -5876,7 +5876,7 @@ size_t MinimalBitfield::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -5957,7 +5957,7 @@ size_t CompleteBitsetHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -6027,7 +6027,7 @@ size_t MinimalBitsetHeader::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -6105,7 +6105,7 @@ size_t CompleteBitsetType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -6249,7 +6249,7 @@ size_t MinimalBitsetType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -6379,7 +6379,7 @@ size_t CompleteExtendedType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -6437,7 +6437,7 @@ size_t MinimalExtendedType::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -6505,7 +6505,7 @@ size_t TypeIdentifierTypeObjectPair::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -6566,7 +6566,7 @@ size_t TypeIdentifierPair::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -6628,7 +6628,7 @@ size_t TypeIdentifierWithSize::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -6694,7 +6694,7 @@ size_t TypeIdentifierWithDependencies::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -7476,7 +7476,7 @@ size_t CompleteTypeObject::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -8355,7 +8355,7 @@ size_t MinimalTypeObject::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -8747,7 +8747,7 @@ size_t TypeObject::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -8826,7 +8826,7 @@ size_t TypeInformation::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 

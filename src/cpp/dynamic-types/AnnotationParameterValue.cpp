@@ -78,7 +78,7 @@ size_t ExtendedAnnotationParameterValue::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 
@@ -1256,7 +1256,7 @@ size_t AnnotationParameterValue::getCdrSerializedSize(
         size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
 }
 

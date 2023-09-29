@@ -1479,15 +1479,15 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.complete().alias_type(), current_alignment) + 4));
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
         eprosima::fastcdr::Cdr ser(
-            fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+            fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+            eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         ser << object;
@@ -1535,15 +1535,15 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_MINIMAL);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.minimal().alias_type(), current_alignment) + 4));
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
         eprosima::fastcdr::Cdr ser(
-            fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+            fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+            eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         ser << object;
@@ -1597,7 +1597,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.complete().enumerated_type(),
@@ -1605,8 +1605,8 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
         eprosima::fastcdr::Cdr ser(
-            fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+            fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+            eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         ser << object;
@@ -1643,7 +1643,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_MINIMAL);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.minimal().enumerated_type(),
@@ -1651,8 +1651,8 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
         eprosima::fastcdr::Cdr ser(
-            fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+            fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+            eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         ser << object;
@@ -1748,15 +1748,15 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.complete().struct_type(), current_alignment) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Serialize encapsulation
 
@@ -1841,15 +1841,15 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_MINIMAL);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.minimal().struct_type(), current_alignment) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Serialize encapsulation
 
@@ -1958,14 +1958,14 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_MINIMAL);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.complete().union_type(), current_alignment) + 4));
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         ser << object;
@@ -2060,14 +2060,14 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_MINIMAL);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.minimal().union_type(), current_alignment) + 4));
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         ser << object;
@@ -2136,15 +2136,15 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.complete().bitset_type(), current_alignment) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Serialize encapsulation
 
@@ -2203,15 +2203,15 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.minimal().bitset_type(), current_alignment) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Serialize encapsulation
 
@@ -2271,15 +2271,15 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.complete().bitmask_type(), current_alignment) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Serialize encapsulation
 
@@ -2324,15 +2324,15 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.minimal().bitmask_type(), current_alignment) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Serialize encapsulation
 
@@ -2399,7 +2399,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.complete().annotation_type(),
@@ -2407,8 +2407,8 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Serialize encapsulation
 
@@ -2465,7 +2465,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
         size_t current_alignment {0};
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     calculator.calculate_serialized_size(object.minimal().annotation_type(),
@@ -2473,8 +2473,8 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Serialize encapsulation
 
