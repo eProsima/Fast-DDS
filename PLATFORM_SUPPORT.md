@@ -46,7 +46,7 @@ Community members may provide assistance with these platforms.
 Tier 1 compilers and minimum supported versions:
 
 * GCC 11.4 [^d]
-* Clang 12
+* Clang 15
 * MSVC v142 (Visual Studio 2019)
 
 Tier 2 compilers:
