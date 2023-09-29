@@ -76,6 +76,7 @@ struct IStatusQueryable;
 struct IStatusObserver;
 struct IConnectionsObserver;
 class SimpleQueryable;
+class MonitorService;
 
 } // namespace rtps
 } // namespace statistics
@@ -683,6 +684,12 @@ private:
     //!Will this participant use intraprocess only?
     bool is_intraprocess_only_;
 
+#ifdef FASTDDS_STATISTICS
+    std::unique_ptr<fastdds::statistics::rtps::MonitorService> monitor_server_;
+    std::unique_ptr<fastdds::statistics::rtps::SimpleQueryable> simple_queryable_;
+    const fastdds::statistics::rtps::IConnectionsObserver* conns_observer_;
+#endif // ifdef FASTDDS_STATISTICS
+
     /*
      * Flow controller factory.
      */
@@ -1144,7 +1151,6 @@ public:
      *
      * @return A const pointer to the listener (implemented within the RTPSParticipant)
      *
-     * @note Not supported yet. Currently always returns nullptr
      */
     const fastdds::statistics::rtps::IStatusObserver* create_monitor_service(
             fastdds::statistics::rtps::IStatusQueryable& status_queryable);
@@ -1155,7 +1161,6 @@ public:
      *
      * @return true if the monitor service could be correctly created.
      *
-     * @note Not supported yet. Currently always returns false
      */
     bool create_monitor_service();
 
@@ -1165,7 +1170,6 @@ public:
      * @return true if the monitor service is created.
      * @return false otherwise.
      *
-     * @note Not supported yet. Currently always returns false
      */
     bool is_monitor_service_created() const;
 
@@ -1174,7 +1178,6 @@ public:
      *
      * @return true if the monitor service could be correctly enabled.
      *
-     * @note Not supported yet. Currently always returns false
      */
     bool enable_monitor_service() const;
 
@@ -1184,7 +1187,6 @@ public:
      * @return true if the monitor service could be correctly disabled.
      * @return false if the service could not be properly disabled or if the monitor service was not previously enabled.
      *
-     * @note Not supported yet. Currently always returns false
      */
     bool disable_monitor_service() const;
 
@@ -1224,10 +1226,14 @@ public:
             fastrtps::rtps::ReaderProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
-    std::vector<fastdds::statistics::Connection> get_entity_connections(
-            const GUID_t&) override;
-    std::unique_ptr<fastdds::statistics::rtps::SimpleQueryable> simple_queryable_;
-    const fastdds::statistics::rtps::IConnectionsObserver* conns_observer_;
+    bool get_entity_connections(
+            const GUID_t&,
+            fastdds::statistics::rtps::ConnectionList& conn_list) override;
+
+    const fastdds::statistics::rtps::IConnectionsObserver* get_connections_observer()
+    {
+        return conns_observer_;
+    }
 
 #else
     std::vector<fastdds::statistics::Connection> get_entity_connections(

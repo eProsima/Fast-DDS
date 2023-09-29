@@ -61,6 +61,11 @@
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
+#ifdef FASTDDS_STATISTICS
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
+#include <statistics/types/monitorservice_types.h>
+#endif //FASTDDS_STATISTICS
+
 using eprosima::fastrtps::RecursiveTimedMutex;
 using eprosima::fastrtps::c_TimeInfinite;
 
@@ -949,6 +954,11 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
             listener->on_liveliness_changed(data_reader_->user_datareader_, callback_status);
         }
     }
+
+#ifdef FASTDDS_STATISTICS
+    notify_status_observer(statistics::LIVELINESS_CHANGED);
+#endif //FASTDDS_STATISTICS
+
     data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
@@ -967,6 +977,11 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
             listener->on_requested_incompatible_qos(data_reader_->user_datareader_, callback_status);
         }
     }
+
+#ifdef FASTDDS_STATISTICS
+    notify_status_observer(statistics::INCOMPATIBLE_QOS);
+#endif //FASTDDS_STATISTICS
+
     data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
@@ -985,6 +1000,11 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_lost(
             listener->on_sample_lost(data_reader_->user_datareader_, callback_status);
         }
     }
+
+#ifdef FASTDDS_STATISTICS
+    notify_status_observer(statistics::SAMPLE_LOST);
+#endif //FASTDDS_STATISTICS
+
     data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
@@ -1006,6 +1026,23 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
     }
     data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
+
+#ifdef FASTDDS_STATISTICS
+void DataReaderImpl::InnerDataReaderListener::notify_status_observer(
+        const uint32_t& status_id)
+{
+    DomainParticipantImpl* pp_impl = data_reader_->subscriber_->get_participant_impl();
+    auto statistics_pp_impl = static_cast<eprosima::fastdds::statistics::dds::DomainParticipantImpl*>(pp_impl);
+    if (nullptr != statistics_pp_impl->get_status_observer())
+    {
+        if (!statistics_pp_impl->get_status_observer()->on_local_entity_status_change(data_reader_->guid(), status_id))
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not set entity status");
+        }
+    }
+}
+
+#endif //FASTDDS_STATISTICS
 
 bool DataReaderImpl::on_data_available(
         const GUID_t& writer_guid,
@@ -1175,6 +1212,11 @@ bool DataReaderImpl::deadline_missed()
         listener->on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
         deadline_missed_status_.total_count_change = 0;
     }
+
+#ifdef FASTDDS_STATISTICS
+    reader_listener_.notify_status_observer(statistics::DEADLINE_MISSED);
+#endif //FASTDDS_STATISTICS
+
     user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 
     if (!history_.set_next_deadline(

@@ -1123,6 +1123,13 @@ const char* const parameter_policy_physical_data_user = "fastdds.physical_data.u
 const char* const parameter_policy_physical_data_process = "fastdds.physical_data.process";
 
 /**
+ * Parameter property value for enabling the monitor service
+ *
+ * @ingroup PARAMETER_MODULE
+ */
+const char* const parameter_enable_monitor_service = "fastdds.enable_monitor_service";
+
+/**
  * @ingroup PARAMETER_MODULE
  */
 class ParameterPropertyList_t : public Parameter_t

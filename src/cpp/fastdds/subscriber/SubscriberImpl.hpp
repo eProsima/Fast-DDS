@@ -29,6 +29,8 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusQueryable.hpp>
+
 #include <mutex>
 #include <map>
 
@@ -226,6 +228,13 @@ public:
     ReturnCode_t delete_contained_entities();
 
     bool can_be_deleted() const;
+
+#ifdef FASTDDS_STATISTICS
+    bool get_monitoring_status(
+            const uint32_t& status_id,
+            statistics::rtps::DDSEntityStatus*& status,
+            const fastrtps::rtps::GUID_t& entity_guid);
+#endif //FASTDDS_STATISTICS
 
 protected:
 

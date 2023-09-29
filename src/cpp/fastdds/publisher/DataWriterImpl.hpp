@@ -450,6 +450,11 @@ protected:
                 const fastrtps::rtps::GUID_t& reader_guid,
                 const fastrtps::rtps::ReaderProxyData* reader_info) override;
 
+#ifdef FASTDDS_STATISTICS
+        void notify_status_observer(
+                const uint32_t& status_id);
+#endif //FASTDDS_STATISTICS
+
         DataWriterImpl* data_writer_;
     }
     writer_listener_;

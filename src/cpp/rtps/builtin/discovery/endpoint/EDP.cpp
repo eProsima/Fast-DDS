@@ -232,6 +232,14 @@ bool EDP::newLocalReaderProxyData(
         return false;
     }
 
+#ifdef FASTDDS_STATISTICS
+    // notify monitor service about the new local entity proxy
+    if (nullptr != this->mp_PDP->get_proxy_observer())
+    {
+        this->mp_PDP->get_proxy_observer()->on_local_entity_change(reader_data->guid(), true);
+    }
+#endif //FASTDDS_STATISTICS
+
     //PAIRING
     if (this->mp_PDP->getRTPSParticipant()->should_match_local_endpoints())
     {
@@ -367,6 +375,14 @@ bool EDP::newLocalWriterProxyData(
         return false;
     }
 
+#ifdef FASTDDS_STATISTICS
+    // notify monitor service about the new local entity proxy
+    if (nullptr != this->mp_PDP->get_proxy_observer())
+    {
+        this->mp_PDP->get_proxy_observer()->on_local_entity_change(writer_data->guid(), true);
+    }
+#endif //FASTDDS_STATISTICS
+
     //PAIRING
     if (this->mp_PDP->getRTPSParticipant()->should_match_local_endpoints())
     {
@@ -475,6 +491,13 @@ bool EDP::updatedLocalReader(
     if (reader_data != nullptr)
     {
         processLocalReaderProxyData(reader, reader_data);
+#ifdef FASTDDS_STATISTICS
+        // notify monitor service about the new local entity proxy update
+        if (nullptr != this->mp_PDP->get_proxy_observer())
+        {
+            this->mp_PDP->get_proxy_observer()->on_local_entity_change(reader_data->guid(), true);
+        }
+#endif //FASTDDS_STATISTICS
         if (this->mp_PDP->getRTPSParticipant()->should_match_local_endpoints())
         {
             pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
@@ -560,6 +583,15 @@ bool EDP::updatedLocalWriter(
     if (writer_data != nullptr)
     {
         processLocalWriterProxyData(writer, writer_data);
+
+#ifdef FASTDDS_STATISTICS
+        // notify monitor service about the new local entity proxy update
+        if (nullptr != this->mp_PDP->get_proxy_observer())
+        {
+            this->mp_PDP->get_proxy_observer()->on_local_entity_change(writer_data->guid(), true);
+        }
+#endif //FASTDDS_STATISTICS
+
         if (this->mp_PDP->getRTPSParticipant()->should_match_local_endpoints())
         {
             pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);

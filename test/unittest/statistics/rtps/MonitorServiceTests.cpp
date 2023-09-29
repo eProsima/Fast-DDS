@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 
 #include <statistics/rtps/monitor-service/MonitorService.hpp>
@@ -28,36 +29,17 @@ namespace rtps {
 
 struct MockStatusQueryable : public IStatusQueryable
 {
-    MOCK_METHOD2(get_incompatible_qos_status, bool (
+    MOCK_METHOD3(get_monitoring_status, bool (
                 const fastrtps::rtps::GUID_t& guid,
-                dds::IncompatibleQosStatus& status));
-
-    MOCK_METHOD2(get_inconsistent_topic_status, bool(
-                const fastrtps::rtps::GUID_t& guid,
-                dds::InconsistentTopicStatus& status));
-
-    MOCK_METHOD2(get_liveliness_lost_status, bool(
-                const fastrtps::rtps::GUID_t& guid,
-                dds::LivelinessLostStatus& status));
-
-    MOCK_METHOD2(get_liveliness_changed_status, bool(
-                const fastrtps::rtps::GUID_t& guid,
-                dds::LivelinessChangedStatus& status));
-
-    MOCK_METHOD2(get_deadline_missed_status, bool(
-                const fastrtps::rtps::GUID_t& guid,
-                dds::DeadlineMissedStatus& status));
-
-    MOCK_METHOD2(get_sample_lost_status, bool(
-                const fastrtps::rtps::GUID_t& guid,
-                dds::SampleLostStatus& status));
-
+                const uint32_t& id,
+                DDSEntityStatus * &status));
 };
 
 struct MockConnectionsQueryable : public IConnectionsQueryable
 {
-    MOCK_METHOD1(get_entity_connections, ConnectionList(
-                const fastrtps::rtps::GUID_t& guid));
+    MOCK_METHOD2(get_entity_connections, bool(
+                const fastrtps::rtps::GUID_t& guid,
+                ConnectionList & conns_list));
 };
 
 struct MockProxyQueryable : public IProxyQueryable
@@ -78,15 +60,34 @@ class MonitorServiceTests : public ::testing::Test
 public:
 
     MonitorServiceTests()
-        : monitor_srv_(
+        : listener_(&monitor_srv_)
+        , n_local_entities(5)
+        , monitor_srv_(
             fastrtps::rtps::GUID_t(),
             &mock_proxy_q_,
             &mock_conns_q_,
-            mock_status_q_)
-        , listener_(&monitor_srv_)
-        , n_local_entities(5)
+            mock_status_q_,
+            [&](fastrtps::rtps::RTPSWriter**,
+            fastrtps::rtps::WriterAttributes&,
+            const std::shared_ptr<fastrtps::rtps::IPayloadPool>&,
+            fastrtps::rtps::WriterHistory*,
+            fastrtps::rtps::WriterListener*,
+            const fastrtps::rtps::EntityId_t&,
+            bool)->bool
+            {
+                return true;
+            },
+            [&](
+                fastrtps::rtps::RTPSWriter*,
+                const fastrtps::TopicAttributes&,
+                const fastrtps::WriterQos&)->bool
+            {
+                return true;
+            },
+            mock_event_resource_)
     {
-
+        monitor_srv_.set_writer(&writer);
+        mock_event_resource_.init_thread();
     }
 
     void SetUp() override
@@ -108,6 +109,20 @@ public:
                         }
                         return true;
                     }));
+
+        ON_CALL(mock_proxy_q_, get_serialized_proxy(::testing::_, ::testing::_)).WillByDefault(testing::Invoke(
+                    [](const fastrtps::rtps::GUID_t&,
+                    fastrtps::rtps::CDRMessage_t*)
+                    {
+                        return true;
+                    }));
+
+        ON_CALL(mock_conns_q_, get_entity_connections(::testing::_, ::testing::_)).WillByDefault(testing::Invoke(
+                    [](const fastrtps::rtps::GUID_t&,
+                    ConnectionList&)
+                    {
+                        return true;
+                    }));
     }
 
     void TearDown() override
@@ -117,14 +132,15 @@ public:
 
 protected:
 
-    MockConnectionsQueryable mock_conns_q_;
-    MockStatusQueryable mock_status_q_;
-    MockProxyQueryable mock_proxy_q_;
-
-    MonitorService monitor_srv_;
+    testing::NiceMock<MockConnectionsQueryable> mock_conns_q_;
+    testing::NiceMock<MockStatusQueryable> mock_status_q_;
+    testing::NiceMock<MockProxyQueryable> mock_proxy_q_;
     MonitorServiceListener listener_;
     int n_local_entities;
     std::vector<fastrtps::rtps::GUID_t> mock_guids;
+    fastrtps::rtps::ResourceEvent mock_event_resource_;
+    MonitorService monitor_srv_;
+    testing::NiceMock<fastrtps::rtps::RTPSWriter> writer;
 };
 
 TEST_F(MonitorServiceTests, enabling_monitor_service_routine)
@@ -133,7 +149,7 @@ TEST_F(MonitorServiceTests, enabling_monitor_service_routine)
     //! local entities
     EXPECT_CALL(mock_proxy_q_, get_all_local_proxies(::testing::_)).Times(1);
     EXPECT_CALL(mock_proxy_q_, get_serialized_proxy(::testing::_, ::testing::_)).Times(n_local_entities);
-    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_)).Times(n_local_entities);
+    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_, ::testing::_)).Times(n_local_entities);
 
     //! Enable the service
     ASSERT_FALSE(monitor_srv_.disable_monitor_service());
@@ -160,7 +176,7 @@ TEST_F(MonitorServiceTests, multiple_proxy_and_connection_updates)
     //! Expect the getters for each status that is going to be updated
     EXPECT_CALL(mock_proxy_q_, get_serialized_proxy(::testing::_, ::testing::_)).
             Times(n_local_entities);
-    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_)).
+    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_, ::testing::_)).
             Times(n_local_entities);
 
     //! Trigger statuses updates for each entity
@@ -183,17 +199,12 @@ TEST_F(MonitorServiceTests, multiple_dds_status_updates)
     ASSERT_TRUE(monitor_srv_.enable_monitor_service());
     ASSERT_TRUE(monitor_srv_.is_enabled());
 
+    ON_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_, ::testing::_)).
+            WillByDefault(testing::Return(true));
+
     //! Expect the getters for each status that is going to be updated
-    EXPECT_CALL(mock_status_q_, get_incompatible_qos_status(::testing::_, ::testing::_)).
-            Times(n_local_entities);
-    EXPECT_CALL(mock_status_q_, get_liveliness_lost_status(::testing::_, ::testing::_)).
-            Times(n_local_entities);
-    EXPECT_CALL(mock_status_q_, get_liveliness_changed_status(::testing::_, ::testing::_)).
-            Times(n_local_entities);
-    EXPECT_CALL(mock_status_q_, get_deadline_missed_status(::testing::_, ::testing::_)).
-            Times(n_local_entities);
-    EXPECT_CALL(mock_status_q_, get_sample_lost_status(::testing::_, ::testing::_)).
-            Times(n_local_entities);
+    EXPECT_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_, ::testing::_)).
+            Times(n_local_entities * 5);//statuses * n_local_entities
 
     //! Trigger statuses updates for each entity
     for (auto& entity : mock_guids)
@@ -223,22 +234,22 @@ TEST_F(MonitorServiceTests, entity_removal_correctly_performs)
         listener_.on_local_entity_change(entity, false);
     }
 
+    ON_CALL(mock_proxy_q_, get_serialized_proxy(::testing::_, ::testing::_)).
+            WillByDefault(testing::Return(true));
+    ON_CALL(mock_conns_q_, get_entity_connections(::testing::_, ::testing::_)).
+            WillByDefault(testing::Return(true));
+    ON_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_, ::testing::_)).
+            WillByDefault(testing::Return(true));
+
+    //! Expect the creation 5 ones
     EXPECT_CALL(mock_proxy_q_, get_serialized_proxy(::testing::_, ::testing::_)).
-            Times(0);
-    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_)).
-            Times(0);
+            Times(5);
+    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_, ::testing::_)).
+            Times(5);
 
     //! Expect the getters for each status that is going to be updated
-    EXPECT_CALL(mock_status_q_, get_incompatible_qos_status(::testing::_, ::testing::_)).
-            Times(0);
-    EXPECT_CALL(mock_status_q_, get_liveliness_lost_status(::testing::_, ::testing::_)).
-            Times(0);
-    EXPECT_CALL(mock_status_q_, get_liveliness_changed_status(::testing::_, ::testing::_)).
-            Times(0);
-    EXPECT_CALL(mock_status_q_, get_deadline_missed_status(::testing::_, ::testing::_)).
-            Times(0);
-    EXPECT_CALL(mock_status_q_, get_sample_lost_status(::testing::_, ::testing::_)).
-            Times(0);
+    EXPECT_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_, ::testing::_)).
+            Times(5 * 5);
 
     //! Trigger statuses updates for each of the non-existent entity
     for (auto& entity : mock_guids)

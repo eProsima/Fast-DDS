@@ -21,6 +21,7 @@
 
 
 #include <bitset>
+#include <functional>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -31,9 +32,12 @@
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
+#include <fastrtps/qos/WriterQos.h>
 
+#include <rtps/history/ITopicPayloadPool.h>
 #include <statistics/rtps/monitor-service/MonitorServiceListener.hpp>
 #include <statistics/types/monitorservice_types.h>
+#include <statistics/types/monitorservice_typesPubSubTypes.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -42,65 +46,54 @@ namespace rtps {
 
 #ifdef FASTDDS_STATISTICS
 
-class MonitorService
+//! Dummy implementation
+class SimpleQueryable : public IStatusQueryable
 {
-    //! Dummy implementation
-    class SimpleQueryable : public IStatusQueryable
-    {
-
-    public:
-
-        inline bool get_incompatible_qos_status(
-                const fastrtps::rtps::GUID_t&,
-                dds::IncompatibleQosStatus&) override
-        {
-            return true;
-        }
-
-        inline bool get_inconsistent_topic_status(
-                const fastrtps::rtps::GUID_t&,
-                dds::InconsistentTopicStatus&) override
-        {
-            return true;
-        }
-
-        inline bool get_liveliness_lost_status(
-                const fastrtps::rtps::GUID_t&,
-                dds::LivelinessLostStatus&) override
-        {
-            return true;
-        }
-
-        inline bool get_liveliness_changed_status(
-                const fastrtps::rtps::GUID_t&,
-                dds::LivelinessChangedStatus&) override
-        {
-            return true;
-        }
-
-        inline bool get_deadline_missed_status(
-                const fastrtps::rtps::GUID_t&,
-                dds::DeadlineMissedStatus&) override
-        {
-            return true;
-        }
-
-        inline bool get_sample_lost_status(
-                const fastrtps::rtps::GUID_t&,
-                dds::SampleLostStatus&) override
-        {
-            return true;
-        }
-
-    };
 
 public:
+
+    virtual ~SimpleQueryable()
+    {
+
+    }
+
+    inline bool get_monitoring_status(
+            const fastrtps::rtps::GUID_t&,
+            const uint32_t&,
+            rtps::DDSEntityStatus*&) override
+    {
+        return true;
+    }
+
+};
+
+class MonitorService
+{
+    static constexpr int MIN_TIME_BETWEEN_PUBS_MS = 500;
+
+public:
+
+    using endpoint_creator_t = std::function<bool (fastrtps::rtps::RTPSWriter**,
+                    fastrtps::rtps::WriterAttributes&,
+                    const std::shared_ptr<fastrtps::rtps::IPayloadPool>&,
+                    fastrtps::rtps::WriterHistory*,
+                    fastrtps::rtps::WriterListener*,
+                    const fastrtps::rtps::EntityId_t&,
+                    bool)>;
+
+    using endpoint_registrator_t = std::function<bool (
+                        fastrtps::rtps::RTPSWriter*,
+                        const fastrtps::TopicAttributes&,
+                        const fastrtps::WriterQos&)>;
 
     MonitorService(
             const fastrtps::rtps::GUID_t& guid,
             IProxyQueryable* proxy_q,
             IConnectionsQueryable* conns_q,
-            IStatusQueryable& status_q);
+            IStatusQueryable& status_q,
+            endpoint_creator_t endpoint_creator,
+            endpoint_registrator_t endpoint_registrator,
+            fastrtps::rtps::ResourceEvent& event_service);
 
     ~MonitorService();
 
@@ -128,7 +121,7 @@ public:
      */
     inline bool is_enabled()
     {
-        return enabled_;
+        return enabled_.load();
     }
 
     /**
@@ -177,7 +170,18 @@ private:
      * @return True if the operation succeeds.
      */
     bool write_status(
-            const fastrtps::rtps::EntityId_t& entity_id);
+            const fastrtps::rtps::EntityId_t& entity_id,
+            const std::bitset<STATUSES_SIZE>& changed_statuses,
+            const bool& entity_disposed);
+
+    /**
+     * @brief Adds a new change to writer history
+     *
+     * @return True if the operation succeeds.
+     */
+    bool add_change(
+            MonitorServiceStatusData& status_data,
+            const bool& disposed);
 
     /**
      * @brief Creates and initializes the Monitor Service
@@ -195,11 +199,28 @@ private:
      */
     bool spin_queue();
 
-    bool enabled_;
+    /**
+     * @brief Initialized a new local entity
+     * and requests the proxy and connection_list update
+     *
+     * @param entity_id Identifier of the entity.
+     *
+     * @return true if the entity was correctly initialized
+     */
+    bool initialize_entity(
+            const fastrtps::rtps::EntityId_t& entity_id);
 
-    bool initialized_;
+    /**
+     * @brief Frees the Payload Pool
+     *
+     */
+    void release_payload_pool();
 
-    std::atomic_bool timer_active_;
+    std::atomic<bool> enabled_;
+
+    std::atomic<bool> initialized_;
+
+    std::atomic<bool> timer_active_;
 
     const fastrtps::rtps::GUID_t local_participant_guid_;
 
@@ -216,11 +237,11 @@ private:
     //! inserted twice.
     std::map<fastrtps::rtps::EntityId_t,
             std::pair<
-                std::bitset<statistics::STATUSES_SIZE>, bool>> local_entities;
+                std::bitset<statistics::STATUSES_SIZE>, bool>> local_entities_;
 
     std::unique_ptr<fastrtps::rtps::TimedEvent> event_;
 
-    std::vector<fastrtps::rtps::EntityId_t*> changed_entities_;
+    std::vector<fastrtps::rtps::EntityId_t> changed_entities_;
 
     std::mutex mtx_;
 
@@ -228,7 +249,15 @@ private:
 
     fastrtps::rtps::StatefulWriter* status_writer_;
 
-    fastrtps::rtps::WriterHistory* status_writer_history_;
+    std::unique_ptr<fastrtps::rtps::WriterHistory> status_writer_history_;
+
+    std::shared_ptr<fastrtps::rtps::ITopicPayloadPool> status_writer_payload_pool_;
+
+    endpoint_creator_t endpoint_creator_;
+
+    endpoint_registrator_t endpoint_registrator_;
+
+    MonitorServiceStatusDataPubSubType type_;
 };
 
 #endif // FASTDDS_STATISTICS
