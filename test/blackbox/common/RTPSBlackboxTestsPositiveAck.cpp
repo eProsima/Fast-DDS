@@ -61,7 +61,7 @@ TEST(RTPSAck, EnableUpdatabilityOfPositiveAcksPeriodRTPSLayer)
     // Check history is not empty
     EXPECT_FALSE(writer.is_history_empty());
     // Check history after keep_duration period
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1200));
     EXPECT_TRUE(writer.is_history_empty());
 
     // Update attributes at RTPS layer
@@ -85,10 +85,10 @@ TEST(RTPSAck, EnableUpdatabilityOfPositiveAcksPeriodRTPSLayer)
     // Check history is not empty
     EXPECT_FALSE(writer.is_history_empty());
     // Check history before keep_duration period
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1200));
     EXPECT_FALSE(writer.is_history_empty());
     // Check history after keep_duration period
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1200));
     EXPECT_TRUE(writer.is_history_empty());
 
     // Update attributes at RTPS layer
