@@ -790,7 +790,7 @@ const TypeObject* GetMinimalMyEnumStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -862,7 +862,7 @@ const TypeObject* GetCompleteMyEnumStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -957,7 +957,7 @@ const TypeObject* GetMinimalMyBadEnumStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -1029,7 +1029,7 @@ const TypeObject* GetCompleteMyBadEnumStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -1314,7 +1314,7 @@ const TypeObject* GetMinimalMyAliasEnumStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -1386,7 +1386,7 @@ const TypeObject* GetCompleteMyAliasEnumStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -1481,7 +1481,7 @@ const TypeObject* GetMinimalBasicStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -1591,7 +1591,7 @@ const TypeObject* GetCompleteBasicStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -1718,7 +1718,7 @@ const TypeObject* GetMinimalBasicNamesStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -1828,7 +1828,7 @@ const TypeObject* GetCompleteBasicNamesStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -1955,7 +1955,7 @@ const TypeObject* GetMinimalBasicBadStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -2065,7 +2065,7 @@ const TypeObject* GetCompleteBasicBadStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -2192,7 +2192,7 @@ const TypeObject* GetMinimalBasicWideStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -2339,7 +2339,7 @@ const TypeObject* GetCompleteBasicWideStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -2497,7 +2497,7 @@ const TypeObject* GetMinimalBadBasicWideStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -2644,7 +2644,7 @@ const TypeObject* GetCompleteBadBasicWideStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -2802,7 +2802,7 @@ const TypeObject* GetMinimalStringStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -2874,7 +2874,7 @@ const TypeObject* GetCompleteStringStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -2969,7 +2969,7 @@ const TypeObject* GetMinimalLargeStringStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3041,7 +3041,7 @@ const TypeObject* GetCompleteLargeStringStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3136,7 +3136,7 @@ const TypeObject* GetMinimalWStringStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3208,7 +3208,7 @@ const TypeObject* GetCompleteWStringStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3303,7 +3303,7 @@ const TypeObject* GetMinimalLargeWStringStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3375,7 +3375,7 @@ const TypeObject* GetCompleteLargeWStringStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3470,7 +3470,7 @@ const TypeObject* GetMinimalArrayStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3542,7 +3542,7 @@ const TypeObject* GetCompleteArrayStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3637,7 +3637,7 @@ const TypeObject* GetMinimalArrayStructEqualObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3709,7 +3709,7 @@ const TypeObject* GetCompleteArrayStructEqualObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3804,7 +3804,7 @@ const TypeObject* GetMinimalArrayBadStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3876,7 +3876,7 @@ const TypeObject* GetCompleteArrayBadStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3971,7 +3971,7 @@ const TypeObject* GetMinimalArrayDimensionsStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4043,7 +4043,7 @@ const TypeObject* GetCompleteArrayDimensionsStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4138,7 +4138,7 @@ const TypeObject* GetMinimalArraySizeStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4210,7 +4210,7 @@ const TypeObject* GetCompleteArraySizeStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4305,7 +4305,7 @@ const TypeObject* GetMinimalSequenceStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4377,7 +4377,7 @@ const TypeObject* GetCompleteSequenceStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4472,7 +4472,7 @@ const TypeObject* GetMinimalSequenceStructEqualObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4544,7 +4544,7 @@ const TypeObject* GetCompleteSequenceStructEqualObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4639,7 +4639,7 @@ const TypeObject* GetMinimalSequenceBadStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4711,7 +4711,7 @@ const TypeObject* GetCompleteSequenceBadStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4806,7 +4806,7 @@ const TypeObject* GetMinimalSequenceBoundsStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4878,7 +4878,7 @@ const TypeObject* GetCompleteSequenceBoundsStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4973,7 +4973,7 @@ const TypeObject* GetMinimalSequenceSequenceStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -5045,7 +5045,7 @@ const TypeObject* GetCompleteSequenceSequenceStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -5140,7 +5140,7 @@ const TypeObject* GetMinimalSequenceSequenceBoundsStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -5212,7 +5212,7 @@ const TypeObject* GetCompleteSequenceSequenceBoundsStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -5307,7 +5307,7 @@ const TypeObject* GetMinimalMapStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -5379,7 +5379,7 @@ const TypeObject* GetCompleteMapStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -5474,7 +5474,7 @@ const TypeObject* GetMinimalMapStructEqualObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -5546,7 +5546,7 @@ const TypeObject* GetCompleteMapStructEqualObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -5641,7 +5641,7 @@ const TypeObject* GetMinimalMapBadKeyStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -5713,7 +5713,7 @@ const TypeObject* GetCompleteMapBadKeyStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -5808,7 +5808,7 @@ const TypeObject* GetMinimalMapBadElemStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -5880,7 +5880,7 @@ const TypeObject* GetCompleteMapBadElemStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -5975,7 +5975,7 @@ const TypeObject* GetMinimalMapBoundsStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -6047,7 +6047,7 @@ const TypeObject* GetCompleteMapBoundsStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -6142,7 +6142,7 @@ const TypeObject* GetMinimalMapMapStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -6214,7 +6214,7 @@ const TypeObject* GetCompleteMapMapStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -6309,7 +6309,7 @@ const TypeObject* GetMinimalMapMapBoundsStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -6381,7 +6381,7 @@ const TypeObject* GetCompleteMapMapBoundsStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -6476,7 +6476,7 @@ const TypeObject* GetMinimalSimpleUnionObject()
     type_object->minimal()._d(TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
-    type_object->minimal().union_type().union_flags().IS_APPENDABLE(true);
+    type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
     type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -6581,7 +6581,7 @@ const TypeObject* GetCompleteSimpleUnionObject()
     type_object->complete()._d(TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
-    type_object->complete().union_type().union_flags().IS_APPENDABLE(true);
+    type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
     type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -6707,7 +6707,7 @@ const TypeObject* GetMinimalSimpleUnionNamesObject()
     type_object->minimal()._d(TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
-    type_object->minimal().union_type().union_flags().IS_APPENDABLE(true);
+    type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
     type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -6812,7 +6812,7 @@ const TypeObject* GetCompleteSimpleUnionNamesObject()
     type_object->complete()._d(TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
-    type_object->complete().union_type().union_flags().IS_APPENDABLE(true);
+    type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
     type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -6938,7 +6938,7 @@ const TypeObject* GetMinimalSimpleTypeUnionObject()
     type_object->minimal()._d(TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
-    type_object->minimal().union_type().union_flags().IS_APPENDABLE(true);
+    type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
     type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -7043,7 +7043,7 @@ const TypeObject* GetCompleteSimpleTypeUnionObject()
     type_object->complete()._d(TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
-    type_object->complete().union_type().union_flags().IS_APPENDABLE(true);
+    type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
     type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -7169,7 +7169,7 @@ const TypeObject* GetMinimalSimpleBadUnionObject()
     type_object->minimal()._d(TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
-    type_object->minimal().union_type().union_flags().IS_APPENDABLE(true);
+    type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
     type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -7274,7 +7274,7 @@ const TypeObject* GetCompleteSimpleBadUnionObject()
     type_object->complete()._d(TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
-    type_object->complete().union_type().union_flags().IS_APPENDABLE(true);
+    type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
     type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -7400,7 +7400,7 @@ const TypeObject* GetMinimalSimpleBadDiscUnionObject()
     type_object->minimal()._d(TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
-    type_object->minimal().union_type().union_flags().IS_APPENDABLE(true);
+    type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
     type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -7505,7 +7505,7 @@ const TypeObject* GetCompleteSimpleBadDiscUnionObject()
     type_object->complete()._d(TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
-    type_object->complete().union_type().union_flags().IS_APPENDABLE(true);
+    type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
     type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -7631,7 +7631,7 @@ const TypeObject* GetMinimalSimpleUnionStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -7703,7 +7703,7 @@ const TypeObject* GetCompleteSimpleUnionStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -7798,7 +7798,7 @@ const TypeObject* GetMinimalSimpleUnionStructEqualObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -7870,7 +7870,7 @@ const TypeObject* GetCompleteSimpleUnionStructEqualObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -7965,7 +7965,7 @@ const TypeObject* GetMinimalSimpleUnionNamesStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -8037,7 +8037,7 @@ const TypeObject* GetCompleteSimpleUnionNamesStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -8132,7 +8132,7 @@ const TypeObject* GetMinimalSimpleTypeUnionStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -8204,7 +8204,7 @@ const TypeObject* GetCompleteSimpleTypeUnionStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -8299,7 +8299,7 @@ const TypeObject* GetMinimalSimpleBadUnionStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -8371,7 +8371,7 @@ const TypeObject* GetCompleteSimpleBadUnionStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -8466,7 +8466,7 @@ const TypeObject* GetMinimalSimplBadDiscUnionStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -8538,7 +8538,7 @@ const TypeObject* GetCompleteSimplBadDiscUnionStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported

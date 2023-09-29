@@ -668,9 +668,9 @@ const TypeObject* GetMinimalStructTypeObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
-    type_object->minimal().struct_type().struct_flags().IS_NESTED(true);
+    type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
@@ -1004,9 +1004,9 @@ const TypeObject* GetCompleteStructTypeObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
-    type_object->complete().struct_type().struct_flags().IS_NESTED(true);
+    type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
@@ -1345,7 +1345,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -2563,7 +2563,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
