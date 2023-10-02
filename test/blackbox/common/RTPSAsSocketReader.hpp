@@ -324,6 +324,13 @@ public:
         }
     }
 
+    RTPSAsSocketReader& disable_positive_acks(
+            bool disable)
+    {
+        reader_attr_.disable_positive_acks = disable;
+        return *this;
+    }
+
 private:
 
     void receive_one(

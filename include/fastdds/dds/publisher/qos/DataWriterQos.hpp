@@ -54,7 +54,8 @@ public:
             const RTPSReliableWriterQos& b) const
     {
         return (this->times == b.times) &&
-               (this->disable_positive_acks == b.disable_positive_acks);
+               (this->disable_positive_acks == b.disable_positive_acks) &&
+               (this->disable_heartbeat_piggyback == b.disable_heartbeat_piggyback);
     }
 
     //!Writer Timing Attributes

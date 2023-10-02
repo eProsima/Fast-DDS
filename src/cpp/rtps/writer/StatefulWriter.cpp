@@ -65,7 +65,7 @@ namespace rtps {
 /**
  * Loops over all the readers in the vector, applying the given routine.
  * The loop continues until the result of the routine is true for any reader
- * or all readers have been processes.
+ * or all readers have been processed.
  * The returned value is true if the routine returned true at any point,
  * or false otherwise.
  */
@@ -944,6 +944,17 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         if (disable_positive_acks_ && last_sequence_number_ == SequenceNumber_t())
         {
             last_sequence_number_ = change->sequenceNumber;
+            if ( !(ack_event_->getRemainingTimeMilliSec() > 0))
+            {
+                // Restart ack_timer
+                auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
+                auto now = system_clock::now();
+                auto interval = source_timestamp - now + keep_duration_us_;
+                assert(interval.count() >= 0);
+
+                ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+                ack_event_->restart_timer(max_blocking_time);
+            }
         }
 
         // Restore in case a exception was launched by RTPSMessageGroup.
@@ -1571,6 +1582,24 @@ void StatefulWriter::updateAttributes(
         const WriterAttributes& att)
 {
     this->updateTimes(att.times);
+    if (this->get_disable_positive_acks())
+    {
+        this->updatePositiveAcks(att);
+    }
+}
+
+void StatefulWriter::updatePositiveAcks(
+        const WriterAttributes& att)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    if (keep_duration_us_.count() != (att.keep_duration.to_ns() * 1e-3))
+    {
+        // Implicit conversion to microseconds
+        keep_duration_us_ = std::chrono::nanoseconds {att.keep_duration.to_ns()};
+    }
+    // Restart ack timer with new duration
+    ack_event_->update_interval_millisec(keep_duration_us_.count() * 1e-3);
+    ack_event_->restart_timer();
 }
 
 void StatefulWriter::updateTimes(
@@ -1988,26 +2017,40 @@ bool StatefulWriter::ack_timer_expired()
 
     while (interval.count() < 0)
     {
+        bool acks_flag = false;
         for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-                [this](ReaderProxy* reader)
+                [this, &acks_flag](ReaderProxy* reader)
                 {
                     if (reader->disable_positive_acks())
                     {
                         reader->acked_changes_set(last_sequence_number_ + 1);
+                        acks_flag = true;
                     }
                     return false;
                 }
                 );
-        last_sequence_number_++;
+        if (acks_flag)
+        {
+            check_acked_status();
+        }
 
-        // Get the next cache change from the history
         CacheChange_t* change;
+
+        // Skip removed changes until reaching the last change
+        do
+        {
+            last_sequence_number_++;
+        } while (!mp_history->get_change(
+            last_sequence_number_,
+            getGuid(),
+            &change) && last_sequence_number_ < next_sequence_number());
 
         if (!mp_history->get_change(
                     last_sequence_number_,
                     getGuid(),
                     &change))
         {
+            // Stop ack_timer
             return false;
         }
 
