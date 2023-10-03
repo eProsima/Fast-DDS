@@ -1395,8 +1395,6 @@ public:
         return (ReturnCode_t::RETCODE_OK == publisher_->set_qos(publisher_qos_));
     }
 
-<<<<<<< HEAD
-=======
     bool set_qos()
     {
         return (ReturnCode_t::RETCODE_OK == datawriter_->set_qos(datawriter_qos_));
@@ -1413,7 +1411,6 @@ public:
         return (datawriter_->get_qos());
     }
 
->>>>>>> b84825a5b (Updatable disable_positive_acks period (#3879))
     bool remove_all_changes(
             size_t* number_of_changes_removed)
     {
