@@ -1109,7 +1109,6 @@
             <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="durability" type="durabilityQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="durabilityService" type="durabilityServiceQosPolicyType" minOccurs="0" maxOccurs="1"/>
-            <!-- <xs:element name="entity_factory" type="entityFactoryQoSPolicyType" minOccurs="0" maxOccurs="1"/> -->
             <xs:element name="groupData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="latencyBudget" type="latencyBudgetQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="lifespan" type="lifespanQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -1153,7 +1152,6 @@
             <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="durability" type="durabilityQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="durabilityService" type="durabilityServiceQosPolicyType" minOccurs="0" maxOccurs="1"/>
-            <!-- <xs:element name="entity_factory" type="entityFactoryQoSPolicyType" minOccurs="0" maxOccurs="1"/> -->
             <xs:element name="groupData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="latencyBudget" type="latencyBudgetQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="lifespan" type="lifespanQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -1692,6 +1690,19 @@
         </xs:all>
     </xs:complexType>
 
+    <!--Thread Settings Type:
+        ├ scheduling_policy  [int32],
+        ├ priority           [int32],
+        ├ affinity           [uint64],
+        └ stack_size         [int32]-->
+    <xs:complexType name="threadSettingsType">
+        <xs:all>
+            <xs:element name="scheduling_policy" type="int32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="priority" type="int32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="affinity" type="uint64" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="stack_size" type="int32" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
 
 
 
@@ -1816,6 +1827,10 @@
 
     <xs:simpleType name="uint32">
         <xs:restriction base="xs:unsignedInt"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="uint64">
+        <xs:restriction base="xs:unsignedLong"/>
     </xs:simpleType>
 
     <!--Octect vector-->
