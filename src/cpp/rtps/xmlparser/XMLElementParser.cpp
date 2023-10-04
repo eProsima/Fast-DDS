@@ -18,6 +18,7 @@
 #include <cstdio>
 #include <cstring>
 #include <regex>
+#include <set>
 #include <string>
 #include <unordered_map>
 
@@ -4409,8 +4410,75 @@ XMLP_ret XMLParser::getXMLThreadSettings(
         tinyxml2::XMLElement& elem,
         fastdds::rtps::ThreadSettings& thread_setting)
 {
-    static_cast<void>(elem);
-    static_cast<void>(thread_setting);
+    /*
+        <xs:complexType name="threadSettingsType">
+            <xs:all>
+                <xs:element name="scheduling_policy" type="int32" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="priority" type="int32" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="affinity" type="uint32" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="stack_size" type="int32" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+     */
+
+    /*
+     * The are 4 allowed elements, all their min occurrences are 0, and their max are 1.
+     */
+    const uint8_t ident = 1;
+    std::set<std::string> tags_present;
+
+    for (tinyxml2::XMLElement* current_elem = elem.FirstChildElement(); current_elem != nullptr;
+            current_elem = current_elem->NextSiblingElement())
+    {
+        const char* name = current_elem->Name();
+        if (tags_present.count(name) != 0)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'thread_settings'. Tag: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present.emplace(name);
+
+        if (strcmp(current_elem->Name(), SCHEDULING_POLICY) == 0)
+        {
+            // scheduling_policy - int32Type
+            if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.scheduling_policy, ident) ||
+                    thread_setting.scheduling_policy < -1)
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(current_elem->Name(), PRIORITY) == 0)
+        {
+            // priority - int32Type
+            if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.priority, ident) ||
+                    thread_setting.priority < -1)
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(current_elem->Name(), AFFINITY) == 0)
+        {
+            // affinity - uint64Type
+            if (XMLP_ret::XML_OK != getXMLUint(current_elem, &thread_setting.affinity, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(current_elem->Name(), STACK_SIZE) == 0)
+        {
+            // stack_size - int32Type
+            if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.stack_size, ident) ||
+                    thread_setting.stack_size < -1)
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Found incorrect tag '" << current_elem->Name() << "'");
+            return XMLP_ret::XML_ERROR;
+        }
+    }
     return XMLP_ret::XML_OK;
 }
 
