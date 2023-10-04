@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastrtps/xmlparser/XMLParser.h>
 
 using namespace eprosima::fastrtps;
@@ -212,6 +213,14 @@ public:
             uint8_t ident)
     {
         return getXMLUint(elem, ui16, ident);
+    }
+
+    static XMLP_ret getXMLUint_wrapper(
+            tinyxml2::XMLElement* elem,
+            uint64_t* ui64,
+            uint8_t ident)
+    {
+        return getXMLUint(elem, ui64, ident);
     }
 
     static XMLP_ret getXMLBuiltinAttributes_wrapper(
@@ -575,6 +584,13 @@ public:
             BaseNode& rootNode)
     {
         return parseXMLTopicData(p_root, rootNode);
+    }
+
+    static XMLP_ret getXMLThreadSettings_wrapper(
+            tinyxml2::XMLElement* p_root,
+            eprosima::fastdds::rtps::ThreadSettings& thread_settings)
+    {
+        return getXMLThreadSettings(*p_root, thread_settings);
     }
 
 };

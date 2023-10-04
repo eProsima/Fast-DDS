@@ -14,6 +14,8 @@
 //
 
 #include <cassert>
+#include <cstdint>
+#include <cstdio>
 #include <cstring>
 #include <regex>
 #include <string>
@@ -3718,6 +3720,37 @@ XMLP_ret XMLParser::getXMLUint(
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLParser::getXMLUint(
+        tinyxml2::XMLElement* elem,
+        uint64_t* ui64,
+        uint8_t /*ident*/)
+{
+    unsigned long int ui = 0u;
+    if (nullptr == elem || nullptr == ui64)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    auto to_uint64 = [](const char* str, unsigned long int* value) -> bool
+    {
+        if (sscanf( str, "%lu", value) == 1)
+        {
+            return true;
+        }
+        return false;
+    };
+
+    std::string text = get_element_text(elem);
+    if (text.empty() || !to_uint64(text.c_str(), &ui))
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    *ui64 = static_cast<uint64_t>(ui);
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::getXMLBool(
         tinyxml2::XMLElement* elem,
         bool* b,
@@ -4369,6 +4402,15 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
         }
     }
 
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLThreadSettings(
+        tinyxml2::XMLElement& elem,
+        fastdds::rtps::ThreadSettings& thread_setting)
+{
+    static_cast<void>(elem);
+    static_cast<void>(thread_setting);
     return XMLP_ret::XML_OK;
 }
 

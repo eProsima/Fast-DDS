@@ -69,6 +69,11 @@ const char* FAIL = "FAIL";
 const char* RTPS_DUMP_FILE = "rtps_dump_file";
 const char* ON = "ON";
 const char* AUTO = "AUTO";
+const char* THREAD_SETTINGS = "thread_settings";
+const char* SCHEDULING_POLICY = "scheduling_policy";
+const char* PRIORITY = "priority";
+const char* AFFINITY = "affinity";
+const char* STACK_SIZE = "stack_size";
 
 const char* OFF = "OFF";
 const char* USER_DATA_ONLY = "USER_DATA_ONLY";

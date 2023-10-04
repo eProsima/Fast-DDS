@@ -15,19 +15,20 @@
 #ifndef XML_PARSER_H_
 #define XML_PARSER_H_
 
-#include <stdio.h>
-#include <fastrtps/transport/TransportDescriptorInterface.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/attributes/RequesterAttributes.hpp>
-#include <fastrtps/attributes/ReplierAttributes.hpp>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
-
+#include <cstdio>
 #include <map>
 #include <string>
+
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastrtps/attributes/LibrarySettingsAttributes.h>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/ReplierAttributes.hpp>
+#include <fastrtps/attributes/RequesterAttributes.hpp>
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 
 namespace tinyxml2 {
 class XMLElement;
@@ -549,6 +550,11 @@ protected:
             uint16_t* ui16,
             uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLUint(
+            tinyxml2::XMLElement* elem,
+            uint64_t* ui64,
+            uint8_t ident);
+
     RTPS_DllAPI static XMLP_ret getXMLBool(
             tinyxml2::XMLElement* elem,
             bool* b,
@@ -608,6 +614,10 @@ protected:
             tinyxml2::XMLElement* elem,
             SubscriberAttributes& subscriber,
             uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLThreadSettings(
+            tinyxml2::XMLElement& elem,
+            fastdds::rtps::ThreadSettings& thread_setting);
 };
 
 } // namespace xmlparser

@@ -82,6 +82,11 @@ extern const char* FAIL;
 extern const char* RTPS_DUMP_FILE;
 extern const char* ON;
 extern const char* AUTO;
+extern const char* THREAD_SETTINGS;
+extern const char* SCHEDULING_POLICY;
+extern const char* PRIORITY;
+extern const char* AFFINITY;
+extern const char* STACK_SIZE;
 
 // IntraprocessDeliveryType
 extern const char* OFF;
