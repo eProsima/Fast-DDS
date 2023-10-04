@@ -25,6 +25,7 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/log/Log.h>
 
+#include "arg_configuration.h"
 #include "LargeDataPublisher.h"
 #include "LargeDataSubscriber.h"
 
@@ -32,76 +33,169 @@ using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
 
+enum EntityType
+{
+    PUBLISHER,
+    SUBSCRIBER
+};
+
 int main(
         int argc,
         char** argv)
 {
     std::cout << "Starting " << std::endl;
-    int type = 1;
-    std::string tcp_type = "client";
-    uint16_t pub_frequency = 10;
-    uint32_t data_size = 200000;
-    if (argc > 1)
+
+    int columns;
+
+#if defined(_WIN32)
+    char* buf = nullptr;
+    size_t sz = 0;
+    if (_dupenv_s(&buf, &sz, "COLUMNS") == 0 && buf != nullptr)
     {
-        uint8_t argc_idx = 1;
-        if (strcmp(argv[argc_idx], "publisher") == 0)
-        {
-            type = 1;
-        }
-        else if (strcmp(argv[argc_idx], "subscriber") == 0)
-        {
-            type = 2;
-        }
-
-        argc_idx++;
-        if (strcmp(argv[argc_idx], "server") == 0)
-        {
-            tcp_type = "server";
-        }
-        else if (strcmp(argv[argc_idx], "client") == 0)
-        {
-            tcp_type = "client";
-        }
-
-        // Sending frequency
-        if (type == 1)
-        {
-            argc_idx++;
-            if (argc > 2)
-            {
-                pub_frequency = static_cast<uint16_t>(atoi(argv[argc_idx]));
-            }
-
-            // Size of the data to get sent
-            argc_idx++;
-            if (argc > 3)
-            {
-                data_size = static_cast<uint32_t>(atoi(argv[argc_idx]));
-            }
-        }
+        columns = strtol(buf, nullptr, 10);
+        free(buf);
     }
     else
     {
-        std::cout << "[publisher|subscriber] [client|server] arguments needed" << std::endl;
-        Log::Reset();
+        columns = 80;
+    }
+#else
+    columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
+#endif // if defined(_WIN32)
+
+    EntityType type = PUBLISHER;
+    ReliabilityQosPolicyKind rel_kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
+    DurabilityQosPolicyKind dur_kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
+    int domain = 0;
+    uint16_t pub_rate = 50;
+    uint32_t data_size = 100;
+    TCPMode tcp_mode = TCPMode::NONE;
+    std::string wan_ip = "127.0.0.1";
+    int wan_port = 20000;
+
+    argc -= (argc > 0);
+    argv += (argc > 0); // skip program name argv[0] if present
+    option::Stats stats(true, usage, argc, argv);
+    std::vector<option::Option> options(stats.options_max);
+    std::vector<option::Option> buffer(stats.buffer_max);
+    option::Parser parse(true, usage, argc, argv, &options[0], &buffer[0]);
+
+    if (parse.error())
+    {
+        option::printUsage(fwrite, stdout, usage, columns);
+        return 1;
+    }
+
+    if (options[optionIndex::HELP])
+    {
+        option::printUsage(fwrite, stdout, usage, columns);
         return 0;
+    }
+
+    // Decide between publisher or subscriber
+    try
+    {
+        if (parse.nonOptionsCount() != 1)
+        {
+            throw 1;
+        }
+
+        const char* type_name = parse.nonOption(0);
+
+        // make sure is the first option.
+        // type_name and buffer[0].name reference the original command line char array
+        // type_name must precede any other arguments in the array.
+        // Note buffer[0].arg may be null for non-valued options and is not reliable for
+        // testing purposes.
+        if (parse.optionsCount() && type_name >= buffer[0].name)
+        {
+            throw 1;
+        }
+
+        if (strcmp(type_name, "publisher") == 0)
+        {
+            type = PUBLISHER;
+        }
+        else if (strcmp(type_name, "subscriber") == 0)
+        {
+            type = SUBSCRIBER;
+        }
+        else
+        {
+            throw 1;
+        }
+    }
+    catch (int error)
+    {
+        std::cerr << "ERROR: first argument must be <publisher|subscriber> followed by - or -- options" << std::endl;
+        option::printUsage(fwrite, stdout, usage, columns);
+        return error;
+    }
+
+    for (int i = 0; i < parse.optionsCount(); ++i)
+    {
+        option::Option& opt = buffer[i];
+        switch (opt.index())
+        {
+            case optionIndex::HELP:
+                // not possible, because handled further above and exits the program
+                break;
+
+            case optionIndex::DOMAIN_ID:
+                domain = strtol(opt.arg, nullptr, 10);
+                break;
+
+            case optionIndex::RELIABLE:
+                rel_kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+                break;
+
+            case optionIndex::TRANSIENT_LOCAL:
+                dur_kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+                break;
+
+            case optionIndex::PUB_RATE:
+                pub_rate = strtol(opt.arg, nullptr, 10);
+                break;
+
+            case optionIndex::DATA_SIZE:
+                data_size = strtol(opt.arg, nullptr, 10);
+                break;
+
+            case optionIndex::TCP_MODE:
+                tcp_mode = static_cast<TCPMode>(strtol(opt.arg, nullptr, 10));
+                break;
+
+            case optionIndex::WAN_ADDRESS:
+                wan_ip = std::string(opt.arg);
+                break;
+
+            case optionIndex::WAN_PORT:
+                wan_port = (uint64_t)strtol(opt.arg, nullptr, 10);
+                break;
+
+            case optionIndex::UNKNOWN_OPT:
+                std::cerr << "ERROR: " << opt.name << " is not a valid argument." << std::endl;
+                option::printUsage(fwrite, stdout, usage, columns);
+                return 1;
+                break;
+        }
     }
 
     switch (type)
     {
-        case 1:
+        case EntityType::PUBLISHER:
         {
             LargeDataPublisher mypub(data_size);
-            if (mypub.init(tcp_type))
+            if (mypub.init(domain, rel_kind, dur_kind, pub_rate, tcp_mode, wan_ip, wan_port))
             {
-                mypub.run(pub_frequency);
+                mypub.run();
             }
             break;
         }
-        case 2:
+        case EntityType::SUBSCRIBER:
         {
             LargeDataSubscriber mysub;
-            if (mysub.init(tcp_type))
+            if (mysub.init(domain, rel_kind, dur_kind, tcp_mode, wan_ip, wan_port))
             {
                 mysub.run();
             }

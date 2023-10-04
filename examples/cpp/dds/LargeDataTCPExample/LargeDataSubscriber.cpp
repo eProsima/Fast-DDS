@@ -68,15 +68,18 @@ LargeDataSubscriber::LargeDataSubscriber()
 {
 }
 
-bool LargeDataSubscriber::init(const std::string &tcp_type)
+bool LargeDataSubscriber::init(
+    const int& domain,
+    const ReliabilityQosPolicyKind& rel,
+    const DurabilityQosPolicyKind& dur,
+    const uint32_t& tcp_mode,
+    const std::string& wan_addr,
+    const int& wan_port)
 {
     // CREATE THE PARTICIPANT
     DomainParticipantQos pqos;
 
-    const std::string WAN_IP = "127.0.0.1";
-    const int PORT = 20000;
-
-    if (tcp_type == "server")
+    if (tcp_mode == TCPMode::SERVER)
     {
         // SERVER
         pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
@@ -89,13 +92,13 @@ bool LargeDataSubscriber::init(const std::string &tcp_type)
         descriptor->sendBufferSize = 0;
         descriptor->receiveBufferSize = 0;
 
-        descriptor->set_WAN_address(WAN_IP);
-        descriptor->add_listener_port(PORT);
+        descriptor->set_WAN_address(wan_addr);
+        descriptor->add_listener_port(wan_port);
 
         pqos.transport().user_transports.push_back(descriptor);
     }
 
-    else if (tcp_type == "client")
+    else if (tcp_mode == TCPMode::CLIENT)
     {
         // CLIENT
         int32_t kind = LOCATOR_KIND_TCPv4;
@@ -105,8 +108,8 @@ bool LargeDataSubscriber::init(const std::string &tcp_type)
 
         std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
 
-        IPLocator::setIPv4(initial_peer_locator, WAN_IP);
-        initial_peer_locator.port = PORT;
+        IPLocator::setIPv4(initial_peer_locator, wan_addr);
+        initial_peer_locator.port = wan_port;
 
         pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
@@ -117,7 +120,7 @@ bool LargeDataSubscriber::init(const std::string &tcp_type)
         pqos.transport().user_transports.push_back(descriptor);
     }
 
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(domain, pqos);
 
     if (participant_ == nullptr)
     {
@@ -139,8 +142,8 @@ bool LargeDataSubscriber::init(const std::string &tcp_type)
     topic_ = participant_->create_topic("LargeDataTCPTopic", type_.get_type_name(), TOPIC_QOS_DEFAULT);
     //CREATE THE DATAREADER
     DataReaderQos rqos;
-    rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    rqos.durability().kind = VOLATILE_DURABILITY_QOS;
+    rqos.reliability().kind = rel;
+    rqos.durability().kind = dur;
     rqos.history().kind = KEEP_LAST_HISTORY_QOS;
     rqos.history().depth = 10;
 

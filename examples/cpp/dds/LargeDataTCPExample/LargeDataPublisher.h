@@ -36,6 +36,13 @@
 
 #include "LargeData.h"
 
+enum TCPMode
+{
+    NONE,
+    CLIENT,
+    SERVER
+};
+
 class LargeDataPublisher : public eprosima::fastdds::dds::DataWriterListener
 {
 public:
@@ -45,11 +52,17 @@ public:
     virtual ~LargeDataPublisher();
 
     //!Initialize
-    bool init(const std::string &tcp_type);
+    bool init(
+        const int& domain,
+        const eprosima::fastrtps::ReliabilityQosPolicyKind& rel,
+        const eprosima::fastrtps::DurabilityQosPolicyKind& dur,
+        const uint16_t& pub_rate,
+        const uint32_t& tcp_mode,
+        const std::string& wan_addr,
+        const int& wan_port);
 
     //!Run publisher
-    void run(
-            uint16_t frequency);
+    void run();
 
 private:
 

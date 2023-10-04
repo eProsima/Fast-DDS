@@ -43,12 +43,25 @@ class LargeDataSubscriber : public eprosima::fastdds::dds::DataReaderListener
 {
 public:
 
+    enum TCPMode
+    {
+        NONE,
+        CLIENT,
+        SERVER
+    };
+
     LargeDataSubscriber();
 
     virtual ~LargeDataSubscriber();
 
     //!Initialize the subscriber
-    bool init(const std::string &tcp_type);
+    bool init(
+        const int& domain,
+        const eprosima::fastrtps::ReliabilityQosPolicyKind& rel,
+        const eprosima::fastrtps::DurabilityQosPolicyKind& dur,
+        const uint32_t& tcp_mode,
+        const std::string& wan_addr,
+        const int& wan_port);
 
     //!RUN the subscriber
     void run();

@@ -48,7 +48,7 @@ target_compile_definitions(LargeDataTCPExample PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LargeDataTCPExample PRIVATE)
-target_link_libraries(LargeDataTCPExample fastrtps fastcdr foonathan_memory)
+target_link_libraries(LargeDataTCPExample fastrtps fastcdr foonathan_memory fastdds::optionparser)
 install(TARGETS LargeDataTCPExample
     RUNTIME DESTINATION examples/cpp/dds/LargeDataTCPExample/${BIN_INSTALL_DIR})
 
