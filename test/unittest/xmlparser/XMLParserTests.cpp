@@ -1556,7 +1556,7 @@ TEST_F(XMLParserTests, parseXMLConsumerNegativeClauses)
 
 /*
  * This test checks the return of the parseLogConfig method.
- * 1. Check a consummer with a wrong class
+ * 1. Check a consumer with a wrong class
  * 2. Check the use_default tag without TRUE and TRUE
  * 3. Check a wrong tag
  */

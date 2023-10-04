@@ -57,8 +57,14 @@ void TestClearConsumersFunc()
     log_mock->ClearConsumers();
 }
 
+void TestSetThreadConfigFunc()
+{
+    log_mock->SetThreadConfig();
+}
+
 std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc = TestRegisterConsumerFunc;
 std::function<void()> Log::ClearConsumersFunc = TestClearConsumersFunc;
+std::function<void()> Log::SetThreadConfigFunc = TestSetThreadConfigFunc;
 
 class XMLProfileParserBasicTests : public ::testing::Test
 {
@@ -3179,6 +3185,88 @@ TEST_F(XMLProfileParserBasicTests, external_locators_feature)
             xmlparser::XMLP_ret::XML_ERROR
         },
     };
+
+    for (const TestCase& test : test_cases)
+    {
+        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length())) <<
+            " test_case = [" << test.title << "]";
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+}
+
+/**
+ * This test checks positive and negative cases for parsing of ThreadSettings in Log
+ */
+TEST_F(XMLProfileParserBasicTests, log_thread_settings_qos)
+{
+    struct TestCase
+    {
+        std::string title;
+        std::string xml;
+        xmlparser::XMLP_ret result;
+    };
+
+    std::vector<TestCase> test_cases =
+    {
+        /* Log test cases */
+        {
+            "log_thread_settings_ok",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <log>
+                        <thread_settings>
+                            <scheduling_policy>-1</scheduling_policy>
+                            <priority>0</priority>
+                            <affinity>0</affinity>
+                            <stack_size>-1</stack_size>
+                        </thread_settings>
+                    </log>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_OK
+        },
+        {
+            "log_thread_settings_duplicate",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <log>
+                        <thread_settings>
+                            <scheduling_policy>-1</scheduling_policy>
+                            <priority>0</priority>
+                            <affinity>0</affinity>
+                            <stack_size>-1</stack_size>
+                        </thread_settings>
+                        <thread_settings>
+                            <scheduling_policy>-1</scheduling_policy>
+                            <priority>0</priority>
+                            <affinity>0</affinity>
+                            <stack_size>-1</stack_size>
+                        </thread_settings>
+                    </log>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_ERROR
+        },
+        {
+            "log_thread_settings_wrong",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <log>
+                        <thread_settings>
+                            <scheduling_policy>-1</scheduling_policy>
+                            <priority>0</priority>
+                            <affinity>0</affinity>
+                            <stack_size>-1</stack_size>
+                            <wrong_tag>0</wrong_tag>
+                        </thread_settings>
+                    </log>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_ERROR
+        },
+    };
+
+    EXPECT_CALL(*log_mock, SetThreadConfig()).Times(2);
 
     for (const TestCase& test : test_cases)
     {

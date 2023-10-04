@@ -61,13 +61,15 @@
     </xs:complexType>
 
     <!--LOG:
-        ├ use_default [bool],
-        └ consumer    [1~*],-->
+        ├ use_default      [bool],
+        ├ consumer         [1~*],
+        └ thread_settings  [threadSettingsType],-->
     <xs:complexType name="logType">
         <xs:sequence minOccurs="1" maxOccurs="unbounded">
             <xs:choice minOccurs="1">
                 <xs:element name="use_default" type="booleanCaps" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="consumer" type="logConsumerType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="thread_settings" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
