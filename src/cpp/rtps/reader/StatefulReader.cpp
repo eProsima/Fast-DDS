@@ -311,7 +311,7 @@ bool StatefulReader::matched_writer_add(
                     wp->lost_changes_update(last_seq + 1);
                 }
             }
-            else if (!is_same_process)
+            else
             {
                 // simulate a notification to force reading of transient changes
                 datasharing_listener_->notify(false);
