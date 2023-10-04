@@ -24,6 +24,7 @@
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
@@ -1384,6 +1385,7 @@ XMLP_ret XMLParser::parseLogConfig(
                 <xs:choice minOccurs="1">
                     <xs:element name="use_default" type="booleanCaps" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="consumer" type="logConsumerType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="thread_settings" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
                 </xs:choice>
             </xs:sequence>
         </xs:complexType>
@@ -1406,11 +1408,22 @@ XMLP_ret XMLParser::parseLogConfig(
         p_aux0 = p_root;
     }
 
+    std::set<std::string> tags_present;
     tinyxml2::XMLElement* p_element = p_aux0->FirstChildElement();
 
     while (ret == XMLP_ret::XML_OK && nullptr != p_element)
     {
+        const char* name = p_element->Name();
         const char* tag = p_element->Value();
+
+        // Fail on duplicated not allowed elements
+        if (strcmp(tag, CONSUMER) != 0 && tags_present.count(name) != 0)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'log'. Tag: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present.emplace(name);
+
         if (nullptr != tag)
         {
             if (strcmp(tag, USE_DEFAULT) == 0)
@@ -1439,6 +1452,19 @@ XMLP_ret XMLParser::parseLogConfig(
             {
                 ret = parseXMLConsumer(*p_element);
             }
+            else if (strcmp(tag, THREAD_SETTINGS) == 0)
+            {
+                fastdds::rtps::ThreadSettings thread_settings;
+                ret = getXMLThreadSettings(*p_element, thread_settings);
+                if (ret == XMLP_ret::XML_OK)
+                {
+                    fastdds::dds::Log::SetThreadConfig(thread_settings);
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Incorrect thread settings");
+                }
+            }
             else
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Not expected tag: '" << tag << "'");
@@ -1448,7 +1474,7 @@ XMLP_ret XMLParser::parseLogConfig(
 
         if (ret == XMLP_ret::XML_OK)
         {
-            p_element = p_element->NextSiblingElement(CONSUMER);
+            p_element = p_element->NextSiblingElement();
         }
     }
 

@@ -1644,6 +1644,7 @@ TEST_F(XMLProfileParserBasicTests, file_and_default)
     using namespace eprosima::fastdds::dds;
 
     EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
+    EXPECT_CALL(*log_mock, SetThreadConfig()).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_def_file_profile.xml");
 }
 
