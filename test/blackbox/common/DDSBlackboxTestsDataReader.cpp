@@ -273,7 +273,7 @@ TEST(DDSDataReader, ConsistentReliabilityWhenIntraprocess)
 
     eprosima::fastdds::dds::SubscriptionMatchedStatus status;
     reader->get_subscription_matched_status(status);
-    ASSERT_TRUE(status.total_count);
+    ASSERT_GT(status.total_count, 0);
 
     // wait for message
     uint64_t unread_count = 0;
@@ -289,6 +289,10 @@ TEST(DDSDataReader, ConsistentReliabilityWhenIntraprocess)
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 
     ASSERT_TRUE(unread_count > 0);
+
+    //! Reset back to INTRAPROCESS_OFF
+    library_settings.intraprocess_delivery = eprosima::fastrtps::INTRAPROCESS_OFF;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
