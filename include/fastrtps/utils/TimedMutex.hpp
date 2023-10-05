@@ -31,7 +31,7 @@
 extern int clock_gettime(
         int,
         struct timespec* tv);
-#endif
+#endif // if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
 
 #elif _GTHREAD_USE_MUTEX_TIMEDLOCK
 #include <mutex>
@@ -194,7 +194,7 @@ private:
 
     _Mtx_t mutex_;
 };
-#endif
+#endif // if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
 
 #elif _GTHREAD_USE_MUTEX_TIMEDLOCK || !defined(__unix__)
 using TimedMutex = std::timed_mutex;
