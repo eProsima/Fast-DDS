@@ -55,6 +55,18 @@ void set_name_to_current_thread(
     set_name_to_current_thread_impl(fmt, arg1, arg2);
 }
 
+static void configure_current_thread_priority(
+        int32_t priority)
+{
+    if (priority != 0)
+    {
+        if (0 == SetThreadPriority(GetCurrentThread(), priority))
+        {
+            EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << GetLastError() << "' configuring priority for thread " << GetCurrentThread());
+        }
+    }
+}
+
 static void configure_current_thread_affinity(
         uint64_t affinity_mask)
 {
@@ -70,6 +82,7 @@ static void configure_current_thread_affinity(
 void apply_thread_settings_to_current_thread(
         const fastdds::rtps::ThreadSettings& settings)
 {
+    configure_current_thread_priority(settings.priority);
     configure_current_thread_affinity(settings.affinity);
 }
 
