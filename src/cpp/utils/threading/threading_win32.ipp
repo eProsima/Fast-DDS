@@ -55,9 +55,22 @@ void set_name_to_current_thread(
     set_name_to_current_thread_impl(fmt, arg1, arg2);
 }
 
-void apply_thread_settings_to_current_thread(
-        const fastdds::rtps::ThreadSettings& /*settings*/)
+static void configure_current_thread_affinity(
+        uint64_t affinity_mask)
 {
+    if (affinity_mask != 0)
+    {
+        if (0 == SetThreadAffinityMask(GetCurrentThread(), affinity_mask))
+        {
+            EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << GetLastError() << "' configuring affinity for thread " << GetCurrentThread());
+        }
+    }
+}
+
+void apply_thread_settings_to_current_thread(
+        const fastdds::rtps::ThreadSettings& settings)
+{
+    configure_current_thread_affinity(settings.affinity);
 }
 
 }  // namespace eprosima
