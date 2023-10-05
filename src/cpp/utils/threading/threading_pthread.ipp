@@ -108,12 +108,12 @@ static void configure_current_thread_scheduler(
 }
 
 static void configure_current_thread_affinity(
-        uint32_t affinity_mask)
-{    
+        uint64_t affinity_mask)
+{
     int a;
     int result;
     int cpu_count;
-    cpu_set_t  cpu_set;
+    cpu_set_t cpu_set;
     pthread_t self_tid = pthread_self();
 
     result = 0;
@@ -129,16 +129,21 @@ static void configure_current_thread_affinity(
     // We only consider up to the total number of CPU's the
     // system has.
     //
-
     cpu_count = get_nprocs_conf();
-    
+
     for(a = 0; a < cpu_count; a++)
     {
-        if(affinity_mask & (1 << a))
-        {            
+        if(0 != (affinity_mask & 1))
+        {
             CPU_SET(a, &cpu_set);
             result++;
         }
+        affinity_mask >>= 1;
+    }
+
+    if (affinity_mask > 0)
+    {
+        EPROSIMA_LOG_ERROR(SYSTEM, "Affinity mask has more processors than the ones present in the system");
     }
 
     if(result > 0)
@@ -156,7 +161,7 @@ void apply_thread_settings_to_current_thread(
         const fastdds::rtps::ThreadSettings& settings)
 {
     configure_current_thread_scheduler(settings.scheduling_policy, settings.priority);
-    configure_current_thread_affinity(settings.cpu_mask);
+    configure_current_thread_affinity(settings.affinity);
 }
 
 }  // namespace eprosima

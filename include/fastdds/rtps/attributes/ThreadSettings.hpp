@@ -59,16 +59,16 @@ struct RTPS_DllAPI ThreadSettings
     int32_t priority = 0;
 
     /**
-     * @brief The thread's core affinity.
+     * @brief The thread's affinity.
      *
-     * cpu_mask is a bit mask for setting the threads affinity to each core individually.
+     * On some systems, this is a bit mask for setting the threads affinity to each core individually.
      * A value of 0 indicates no particular affinity.
      *
      * This value is platform specific and it is used as-is to configure the specific platform thread.
      * Setting this value to something other than the default one may require different privileges
      * on different platforms.
      */
-    uint32_t cpu_mask = 0;
+    uint64_t affinity = 0;
 
     /**
      * @brief The thread's stack size in bytes.

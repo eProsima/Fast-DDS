@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <limits>
+
 #include <pthread.h>
 #include <string.h>
 #include <stdio.h>
@@ -103,18 +105,21 @@ static void configure_current_thread_scheduler(
 }
 
 static void configure_current_thread_affinity(
-        uint32_t affinity_mask)
+        uint64_t affinity)
 {
-    thread_affinity_policy_data_t policy = { m_affinityMask };
-    pthread_t self_tid = pthread_self();
-    thread_policy_set(pthread_mach_thread_np(self_tid), THREAD_AFFINITY_POLICY, (thread_policy_t)&policy, 1);
+    if (affinity <= static_cast<uint64_t>(std::numeric_limits<integer_t>::max()))
+    {
+        thread_affinity_policy_data_t policy = { static_cast<integer_t>(affinity) };
+        pthread_t self_tid = pthread_self();
+        thread_policy_set(pthread_mach_thread_np(self_tid), THREAD_AFFINITY_POLICY, (thread_policy_t)&policy, 1);
+    }
 }
 
 void apply_thread_settings_to_current_thread(
         const fastdds::rtps::ThreadSettings& settings)
 {
     configure_current_thread_scheduler(settings.scheduling_policy, settings.priority);
-    configure_current_thread_affinity(settings.cpu_mask);
+    configure_current_thread_affinity(settings.affinity);
 }
 
 }  // namespace eprosima
