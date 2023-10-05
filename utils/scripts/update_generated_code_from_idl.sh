@@ -93,4 +93,16 @@ for idl_file in "${idl_files[@]}"; do
     cd -
 done
 
+# Move source files to src/cpp
+echo "*************************************************************"
+echo "Moving files to src/cpp. Please remember to update the include header path"
+mv ./include/fastdds/dds/xtypes/type_representation/TypeObject.cxx ./src/cpp/fastdds/xtypes/type_representation/TypeObject.cxx
+mv ./include/fastdds/dds/xtypes/type_representation/TypeObjectCdrAux.ipp ./src/cpp/fastdds/xtypes/type_representation/TypeObjectCdrAux.ipp
+
+# Remove unused files
+rm ./include/fastdds/dds/xtypes/type_representation/TypeObjectPubSubTypes.cxx
+rm ./include/fastdds/dds/xtypes/type_representation/TypeObjectPubSubTypes.h
+
+cd utils/scripts
+
 exit $ret_value
