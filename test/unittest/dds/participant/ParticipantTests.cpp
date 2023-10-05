@@ -3148,16 +3148,6 @@ void register_dynamic_data_string(
         DomainParticipant* participant,
         fastrtps::types::TypeIdentifierSeq& types)
 {
-<<<<<<< HEAD
-    // Create the participant
-    DomainParticipantQos pqos;
-    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, pqos);
-
-=======
->>>>>>> 396a01027 (Refs #18721: improve and extend ParticipantTests related to TypeLookupService)
     // Create the dynamic type builder
     DynamicTypeBuilder_ptr builder_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder(100);
     // Create the dynamic type
@@ -3196,25 +3186,6 @@ TEST(ParticipantTests, GetTypes_typelookup_config_client)
         (uint32_t)GET_PID() % 230, pqos);
     ASSERT_NE(nullptr, participant);
 
-    // Create the dynamic type builder
-    DynamicTypeBuilder_ptr builder_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder(100);
-    // Create the dynamic type
-    DynamicType_ptr dyn_type_string = builder_string->build();
-    TypeSupport type_string(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type_string));
-    // Create the data instance
-    DynamicData_ptr data_string(DynamicDataFactory::get_instance()->create_data(dyn_type_string));
-    data_string->set_string_value("Dynamic String");
-
-    // Register the type
-    type_string->auto_fill_type_information(true);
-    type_string->auto_fill_type_object(true);
-    type_string.register_type(participant);
-
-    // Create the sequence of TypeIdentifiers
-    const fastrtps::types::TypeIdentifier* indentifier_string =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-        type_string.get_type_name());
-
     fastrtps::types::TypeIdentifierSeq types;
     register_dynamic_data_string(participant, types);
 
@@ -3237,7 +3208,7 @@ TEST(ParticipantTests, GetTypes_typelookup_config_server)
     DomainParticipantQos pqos;
     pqos.wire_protocol().builtin.typelookup_config.use_server = true;
     DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+            DomainParticipantFactory::get_instance()->create_participant((uint32_t)GET_PID() % 230, pqos);
     ASSERT_NE(nullptr, participant);
 
     fastrtps::types::TypeIdentifierSeq types;
@@ -3262,7 +3233,7 @@ TEST(ParticipantTests, GetTypeDependencies_typelookup_config_client)
     DomainParticipantQos pqos;
     pqos.wire_protocol().builtin.typelookup_config.use_client = true;
     DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+            DomainParticipantFactory::get_instance()->create_participant((uint32_t)GET_PID() % 230, pqos);
     ASSERT_NE(nullptr, participant);
 
     fastrtps::types::TypeIdentifierSeq types;
@@ -3287,7 +3258,7 @@ TEST(ParticipantTests, GetTypeDependencies_typelookup_config_server)
     DomainParticipantQos pqos;
     pqos.wire_protocol().builtin.typelookup_config.use_server = true;
     DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+            DomainParticipantFactory::get_instance()->create_participant((uint32_t)GET_PID() % 230, pqos);
     ASSERT_NE(nullptr, participant);
 
     fastrtps::types::TypeIdentifierSeq types;
