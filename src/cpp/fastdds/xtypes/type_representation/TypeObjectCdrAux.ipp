@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_DDS_XTYPES_TYPEOBJECTCDRAUX_IPP_
 #define _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_DDS_XTYPES_TYPEOBJECTCDRAUX_IPP_
 
-#include "TypeObjectCdrAux.hpp"
+#include <fastdds/dds/xtypes/type_representation/TypeObjectCdrAux.hpp>
 
 #include <fastcdr/Cdr.h>
 #include <fastcdr/CdrSizeCalculator.hpp>

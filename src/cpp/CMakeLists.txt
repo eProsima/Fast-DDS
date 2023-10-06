@@ -165,6 +165,8 @@ set(${PROJECT_NAME}_source_files
     dynamic-types/BuiltinAnnotationsTypeObject.cpp
     dynamic-types/DynamicDataHelper.cpp
 
+    fastdds/xtypes/type_representation/TypeObject.cxx
+
     fastrtps_deprecated/attributes/TopicAttributes.cpp
     fastdds/core/Entity.cpp
     fastdds/core/condition/Condition.cpp

@@ -26,7 +26,7 @@ char dummy;
 }  // namespace
 #endif  // _WIN32
 
-#include "TypeObject.h"
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastcdr/Cdr.h>
 
 
