@@ -34,6 +34,8 @@ using namespace eprosima::fastcdr::exception;
 namespace eprosima {
 namespace fastcdr {
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -60,6 +62,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                                 data.hash(), current_alignment);
                     break;
 
+        default:
+            break;
     }
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
@@ -88,6 +92,8 @@ eProsima_user_DllExport void serialize(
                     scdr << eprosima::fastcdr::MemberId(0) << data.hash();
                     break;
 
+        default:
+            break;
     }
 
     scdr.end_serialize_type(current_state);
@@ -117,6 +123,8 @@ eProsima_user_DllExport void deserialize(
                                                             dcdr >> data.hash();
                                                             break;
 
+                            default:
+                                break;
                         }
                         ret_value = false;
                         break;
@@ -146,6 +154,8 @@ eProsima_user_DllExport void deserialize(
 
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -186,7 +196,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.bound()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -223,6 +232,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -263,7 +274,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.bound()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -300,6 +310,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -344,7 +356,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.equiv_kind()
         << eprosima::fastcdr::MemberId(1) << data.element_flags()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -385,6 +396,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -433,7 +446,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.bound()
         << eprosima::fastcdr::MemberId(2) << data.element_identifier()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -478,6 +490,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -526,7 +540,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.bound()
         << eprosima::fastcdr::MemberId(2) << data.element_identifier()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -571,6 +584,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -619,7 +634,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.array_bound_seq()
         << eprosima::fastcdr::MemberId(2) << data.element_identifier()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -664,6 +678,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -712,7 +728,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.array_bound_seq()
         << eprosima::fastcdr::MemberId(2) << data.element_identifier()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -757,6 +772,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -813,7 +830,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(3) << data.key_flags()
         << eprosima::fastcdr::MemberId(4) << data.key_identifier()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -866,6 +882,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -922,7 +940,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(3) << data.key_flags()
         << eprosima::fastcdr::MemberId(4) << data.key_identifier()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -976,6 +993,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -1023,7 +1042,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.scc_length()
         << eprosima::fastcdr::MemberId(2) << data.scc_index()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -1069,6 +1087,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -1102,7 +1122,7 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
-    scdr;
+    static_cast<void>(data);
 
     scdr.end_serialize_type(current_state);
 }
@@ -1120,6 +1140,7 @@ eProsima_user_DllExport void deserialize(
                 bool ret_value = true;
                 switch (mid.id)
                 {
+                    static_cast<void>(dcdr);
                     default:
                         ret_value = false;
                         break;
@@ -1136,6 +1157,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -1368,6 +1391,8 @@ eProsima_user_DllExport void deserialize(
 
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -1401,7 +1426,7 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
-    scdr;
+    static_cast<void>(data);
 
     scdr.end_serialize_type(current_state);
 }
@@ -1419,6 +1444,7 @@ eProsima_user_DllExport void deserialize(
                 bool ret_value = true;
                 switch (mid.id)
                 {
+                    static_cast<void>(dcdr);
                     default:
                         ret_value = false;
                         break;
@@ -1435,6 +1461,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -1758,6 +1786,8 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -1801,7 +1831,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.paramname_hash()
         << eprosima::fastcdr::MemberId(1) << data.value()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -1843,6 +1872,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -1887,7 +1918,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.annotation_typeid()
         << eprosima::fastcdr::MemberId(1) << data.param_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -1929,6 +1959,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -1977,7 +2009,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.language()
         << eprosima::fastcdr::MemberId(2) << data.text()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -2022,6 +2053,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -2074,7 +2107,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(2) << data.max()
         << eprosima::fastcdr::MemberId(3) << data.hash_id()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -2124,6 +2156,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -2171,7 +2205,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.member_flags()
         << eprosima::fastcdr::MemberId(2) << data.member_type_id()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -2216,6 +2249,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -2264,7 +2299,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.ann_builtin()
         << eprosima::fastcdr::MemberId(2) << data.ann_custom()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -2310,6 +2344,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -2349,7 +2385,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.name_hash()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -2386,6 +2421,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -2430,7 +2467,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -2472,6 +2508,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -2516,7 +2554,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -2559,6 +2596,8 @@ void serialize_key(
 
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -2598,7 +2637,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.verbatim()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -2636,6 +2674,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -2669,7 +2709,7 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
-    scdr;
+    static_cast<void>(data);
 
     scdr.end_serialize_type(current_state);
 }
@@ -2687,6 +2727,7 @@ eProsima_user_DllExport void deserialize(
                 bool ret_value = true;
                 switch (mid.id)
                 {
+                    static_cast<void>(dcdr);
                     default:
                         ret_value = false;
                         break;
@@ -2703,6 +2744,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -2751,7 +2794,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.ann_custom()
         << eprosima::fastcdr::MemberId(2) << data.type_name()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -2797,6 +2839,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -2840,7 +2884,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.base_type()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -2881,6 +2924,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -2925,7 +2970,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.base_type()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -2966,6 +3010,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -3014,7 +3060,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.member_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -3059,6 +3104,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -3107,7 +3154,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.member_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -3153,6 +3199,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -3205,7 +3253,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(2) << data.type_id()
         << eprosima::fastcdr::MemberId(3) << data.label_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -3255,6 +3302,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -3298,7 +3347,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -3340,6 +3388,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -3384,7 +3434,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -3426,6 +3475,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -3470,7 +3521,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.member_flags()
         << eprosima::fastcdr::MemberId(1) << data.type_id()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -3511,6 +3561,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -3559,7 +3611,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.ann_builtin()
         << eprosima::fastcdr::MemberId(2) << data.ann_custom()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -3605,6 +3656,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -3644,7 +3697,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.common()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -3681,6 +3733,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -3721,7 +3775,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -3758,6 +3811,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -3798,7 +3853,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -3835,6 +3889,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -3887,7 +3943,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(2) << data.discriminator()
         << eprosima::fastcdr::MemberId(3) << data.member_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -3936,6 +3991,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -3988,7 +4045,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(2) << data.discriminator()
         << eprosima::fastcdr::MemberId(3) << data.member_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -4038,6 +4094,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -4081,7 +4139,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.member_flags()
         << eprosima::fastcdr::MemberId(1) << data.member_type_id()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -4122,6 +4179,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -4170,7 +4229,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.name()
         << eprosima::fastcdr::MemberId(2) << data.default_value()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -4216,6 +4274,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -4264,7 +4324,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.name_hash()
         << eprosima::fastcdr::MemberId(2) << data.default_value()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -4311,6 +4370,8 @@ void serialize_key(
 
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -4350,7 +4411,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.annotation_name()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -4388,6 +4448,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -4421,7 +4483,7 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
-    scdr;
+    static_cast<void>(data);
 
     scdr.end_serialize_type(current_state);
 }
@@ -4439,6 +4501,7 @@ eProsima_user_DllExport void deserialize(
                 bool ret_value = true;
                 switch (mid.id)
                 {
+                    static_cast<void>(dcdr);
                     default:
                         ret_value = false;
                         break;
@@ -4455,6 +4518,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -4503,7 +4568,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.member_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -4548,6 +4612,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -4596,7 +4662,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.member_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -4642,6 +4707,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -4685,7 +4752,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.related_flags()
         << eprosima::fastcdr::MemberId(1) << data.related_type()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -4726,6 +4792,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -4774,7 +4842,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.ann_builtin()
         << eprosima::fastcdr::MemberId(2) << data.ann_custom()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -4820,6 +4887,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -4859,7 +4928,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.common()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -4896,6 +4964,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -4936,7 +5006,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -4974,6 +5043,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -5007,7 +5078,7 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
-    scdr;
+    static_cast<void>(data);
 
     scdr.end_serialize_type(current_state);
 }
@@ -5025,6 +5096,7 @@ eProsima_user_DllExport void deserialize(
                 bool ret_value = true;
                 switch (mid.id)
                 {
+                    static_cast<void>(dcdr);
                     default:
                         ret_value = false;
                         break;
@@ -5041,6 +5113,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -5089,7 +5163,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.body()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -5134,6 +5207,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -5182,7 +5257,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.body()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -5228,6 +5302,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -5271,7 +5347,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.ann_builtin()
         << eprosima::fastcdr::MemberId(1) << data.ann_custom()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -5312,6 +5387,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -5356,7 +5433,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.element_flags()
         << eprosima::fastcdr::MemberId(1) << data.type()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -5397,6 +5473,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -5441,7 +5519,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -5483,6 +5560,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -5522,7 +5601,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.common()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -5559,6 +5637,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -5599,7 +5679,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.bound()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -5636,6 +5715,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -5680,7 +5761,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -5722,6 +5802,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -5761,7 +5843,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.common()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -5798,6 +5879,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -5846,7 +5929,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.element()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -5891,6 +5973,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -5939,7 +6023,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.element()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -5985,6 +6068,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -6024,7 +6109,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.bound_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -6061,6 +6145,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -6105,7 +6191,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -6147,6 +6232,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -6186,7 +6273,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.common()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -6223,6 +6309,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -6271,7 +6359,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.element()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -6316,6 +6403,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -6364,7 +6453,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.element()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -6409,6 +6497,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -6461,7 +6551,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(2) << data.key()
         << eprosima::fastcdr::MemberId(3) << data.element()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -6510,6 +6599,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -6562,7 +6653,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(2) << data.key()
         << eprosima::fastcdr::MemberId(3) << data.element()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -6613,6 +6703,8 @@ void serialize_key(
 
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -6656,7 +6748,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.value()
         << eprosima::fastcdr::MemberId(1) << data.flags()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -6697,6 +6788,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -6741,7 +6834,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -6783,6 +6875,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -6827,7 +6921,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -6870,6 +6963,8 @@ void serialize_key(
 
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -6909,7 +7004,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.bit_bound()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -6946,6 +7040,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -6990,7 +7086,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -7032,6 +7127,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -7071,7 +7168,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.common()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -7108,6 +7204,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -7156,7 +7254,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.literal_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -7201,6 +7298,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -7249,7 +7348,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.literal_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -7295,6 +7393,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -7338,7 +7438,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.position()
         << eprosima::fastcdr::MemberId(1) << data.flags()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -7379,6 +7478,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -7423,7 +7524,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -7465,6 +7565,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -7509,7 +7611,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -7552,6 +7653,8 @@ void serialize_key(
 
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -7591,7 +7694,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.bit_bound()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -7630,6 +7732,8 @@ void serialize_key(
 
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -7678,7 +7782,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.flag_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -7723,6 +7826,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -7771,7 +7876,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.flag_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -7816,6 +7920,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -7868,7 +7974,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(2) << data.bitcount()
         << eprosima::fastcdr::MemberId(3) << data.holder_type()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -7918,6 +8023,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -7961,7 +8068,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -8003,6 +8109,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -8047,7 +8155,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.common()
         << eprosima::fastcdr::MemberId(1) << data.name_hash()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -8090,6 +8197,8 @@ void serialize_key(
 
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -8129,7 +8238,6 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.detail()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -8167,6 +8275,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -8200,7 +8310,7 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
-    scdr;
+    static_cast<void>(data);
 
     scdr.end_serialize_type(current_state);
 }
@@ -8218,6 +8328,7 @@ eProsima_user_DllExport void deserialize(
                 bool ret_value = true;
                 switch (mid.id)
                 {
+                    static_cast<void>(dcdr);
                     default:
                         ret_value = false;
                         break;
@@ -8234,6 +8345,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -8282,7 +8395,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.field_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -8327,6 +8439,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -8375,7 +8489,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.header()
         << eprosima::fastcdr::MemberId(2) << data.field_seq()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -8421,6 +8534,8 @@ void serialize_key(
 }
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -8454,7 +8569,7 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
-    scdr;
+    static_cast<void>(data);
 
     scdr.end_serialize_type(current_state);
 }
@@ -8472,6 +8587,7 @@ eProsima_user_DllExport void deserialize(
                 bool ret_value = true;
                 switch (mid.id)
                 {
+                    static_cast<void>(dcdr);
                     default:
                         ret_value = false;
                         break;
@@ -8488,6 +8604,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -8707,6 +8825,8 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -8740,7 +8860,7 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
-    scdr;
+    static_cast<void>(data);
 
     scdr.end_serialize_type(current_state);
 }
@@ -8758,6 +8878,7 @@ eProsima_user_DllExport void deserialize(
                 bool ret_value = true;
                 switch (mid.id)
                 {
+                    static_cast<void>(dcdr);
                     default:
                         ret_value = false;
                         break;
@@ -8774,6 +8895,8 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -8993,6 +9116,8 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -9023,6 +9148,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                                 data.minimal(), current_alignment);
                     break;
 
+        default:
+            break;
     }
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
@@ -9054,6 +9181,8 @@ eProsima_user_DllExport void serialize(
                     scdr << eprosima::fastcdr::MemberId(1) << data.minimal();
                     break;
 
+        default:
+            break;
     }
 
     scdr.end_serialize_type(current_state);
@@ -9086,6 +9215,8 @@ eProsima_user_DllExport void deserialize(
                                                             dcdr >> data.minimal();
                                                             break;
 
+                            default:
+                                break;
                         }
                         ret_value = false;
                         break;
@@ -9095,6 +9226,8 @@ eProsima_user_DllExport void deserialize(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -9139,7 +9272,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.type_identifier()
         << eprosima::fastcdr::MemberId(1) << data.type_object()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -9181,6 +9313,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -9225,7 +9359,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.type_identifier1()
         << eprosima::fastcdr::MemberId(1) << data.type_identifier2()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -9267,6 +9400,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -9311,7 +9446,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.type_id()
         << eprosima::fastcdr::MemberId(1) << data.typeobject_serialized_size()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -9353,6 +9487,8 @@ void serialize_key(
 }
 
 
+
+using namespace eprosima::fastdds::dds::xtypes;
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -9401,7 +9537,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.dependent_typeid_count()
         << eprosima::fastcdr::MemberId(2) << data.dependent_typeids()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -9448,6 +9583,8 @@ void serialize_key(
 
 
 
+using namespace eprosima::fastdds::dds::xtypes;
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -9491,7 +9628,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.minimal()
         << eprosima::fastcdr::MemberId(1) << data.complete()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
