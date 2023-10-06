@@ -120,8 +120,13 @@ void TestWriterRegistered::run(
                 sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %d", i) + 1;
 #else
         ch->serializedPayload.length =
+<<<<<<< HEAD:examples/C++/RTPSTest_registered/TestWriterRegistered.cpp
                 sprintf((char*)ch->serializedPayload.data, "My example string %d", i) + 1;
 #endif
+=======
+                snprintf((char*)ch->serializedPayload.data, 255, "My example string %d", i) + 1;
+#endif // if defined(_WIN32)
+>>>>>>> 462f5d741 (Fix clang warnings (#3901)):examples/cpp/rtps/Registered/TestWriterRegistered.cpp
         printf("Sending: %s\n", (char*)ch->serializedPayload.data);
         mp_history->add_change(ch);
     }

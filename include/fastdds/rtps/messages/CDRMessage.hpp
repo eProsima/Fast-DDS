@@ -253,7 +253,7 @@ inline bool CDRMessage::readSequenceNumber(
     }
     bool valid = readInt32(msg, &sn->high);
     valid &= readUInt32(msg, &sn->low);
-    return true;
+    return valid;
 }
 
 inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
