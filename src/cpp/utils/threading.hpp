@@ -87,12 +87,12 @@ void apply_thread_settings_to_current_thread(
  */
 template<typename Functor, typename ... Args>
 std::thread create_thread(
-        const Functor& func,
+        Functor func,
         const fastdds::rtps::ThreadSettings& settings,
         const char* name,
         Args... args)
 {
-    return std::thread([&]()
+    return std::thread([=]()
                    {
                        apply_thread_settings_to_current_thread(settings);
                        set_name_to_current_thread(name, args ...);
