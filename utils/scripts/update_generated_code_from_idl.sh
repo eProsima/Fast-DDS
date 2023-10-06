@@ -6,6 +6,7 @@ files_to_exclude=(
 
 files_needing_typeobject=(
     './examples/cpp/dds/ContentFilteredTopicExample/HelloWorld.idl'
+    './src/cpp/fastdds/xtypes/type_representation/BuiltinAnnotations.idl'
     './test/blackbox/types/HelloWorld.idl'
     './test/blackbox/types/TestIncludeRegression3361.idl'
     './test/blackbox/types/TestRegression3361.idl'
