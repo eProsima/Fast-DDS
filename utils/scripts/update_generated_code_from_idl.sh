@@ -6,6 +6,7 @@ files_to_exclude=(
 
 files_needing_typeobject=(
     './examples/cpp/dds/ContentFilteredTopicExample/HelloWorld.idl'
+    './src/cpp/fastdds/xtypes/type_representation/BuiltinAnnotations.idl'
     './test/blackbox/types/HelloWorld.idl'
     './test/blackbox/types/TestIncludeRegression3361.idl'
     './test/blackbox/types/TestRegression3361.idl'
@@ -102,6 +103,9 @@ mv ./include/fastdds/dds/xtypes/type_representation/TypeObjectCdrAux.ipp ./src/c
 # Remove unused files
 rm ./include/fastdds/dds/xtypes/type_representation/TypeObjectPubSubTypes.cxx
 rm ./include/fastdds/dds/xtypes/type_representation/TypeObjectPubSubTypes.h
+rm ./src/cpp/fastdds/xtypes/type_representation/BuiltinAnnotations.cxx
+rm ./src/cpp/fastdds/xtypes/type_representation/BuiltinAnnotations.h
+rm ./src/cpp/fastdds/xtypes/type_representation/BuiltinAnnotationsPubSubTypes.h
 
 cd utils/scripts
 
