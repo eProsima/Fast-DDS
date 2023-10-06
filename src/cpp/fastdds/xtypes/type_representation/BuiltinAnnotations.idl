@@ -204,7 +204,7 @@ bitmask DataRepresentationMask {
     @position(0) XCDR1,
     @position(1) XML,
     @position(2) XCDR2
-}
+};
 
 @annotation _data_representation {
     DataRepresentationMask allowed_kinds;
