@@ -35,14 +35,16 @@
 
 
     <!--PROFILES:
-        ├ participant           [0~*],
-        ├ data_writer           [0~*],
-        ├ data_reader           [0~*],
-        ├ transport_descriptors [0~1],
-        └ topic                 [0~*] -->
+        ├ domainparticipant_factory [0~*],
+        ├ participant               [0~*],
+        ├ data_writer               [0~*],
+        ├ data_reader               [0~*],
+        ├ transport_descriptors     [0~1],
+        └ topic                     [0~*] -->
     <xs:complexType name="profilesType">
         <xs:sequence minOccurs="1" maxOccurs="unbounded">   <!-- multiple instances of the elements -->
             <xs:choice minOccurs="1"> <!-- each instance can be one of the elements below -->
+                <xs:element name="domainparticipant_factory" type="domainParticipantFactoryProfileType" maxOccurs="unbounded"/>
                 <xs:element name="participant" type="participantProfileType" maxOccurs="unbounded"/>
                 <xs:element name="data_writer" type="publisherProfileType" maxOccurs="unbounded"/>
                 <xs:element name="data_reader" type="subscriberProfileType" maxOccurs="unbounded"/>
@@ -95,6 +97,19 @@
 
 
     <!--| PROFILES ELEMENTS |-->
+    <!--DomainParticipantFactory:
+        | ╠ att. profile_name       [string] REQ,
+        | ╚ att. is_default_profile [bool],
+        |
+        └ qos                       [0~1]-->
+    <xs:complexType name="domainParticipantFactoryProfileType">
+        <xs:all>
+            <xs:element name="qos" type="domainParticipantFactoryQosPoliciesType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+        <xs:attribute name="profile_name" type="string" use="required"/>
+        <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+    </xs:complexType>
+
     <!--Participant:
         | ╠ att. profile_name       [string] REQ,
         | ╚ att. is_default_profile [bool],
@@ -1080,6 +1095,18 @@
         </xs:sequence>
     </xs:complexType>
 
+    <!--DomainParticipantFactory QoS Policies:
+        ├ entity_factory      [0~1],
+        ├ shm_watchdog_thread [0~1],
+        └ file_watch_threads  [0~1] -->
+    <xs:complexType name="domainParticipantFactoryQosPoliciesType">
+        <xs:all>
+            <xs:element name="entity_factory" type="entityFactoryQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="shm_watchdog_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="file_watch_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
     <!--Data writer QoS Policies:
         ├ data_sharing                [0~1],
         ├ deadline                    [0~1],
@@ -1429,13 +1456,11 @@
 
     <!--QoS Entity Factory:
         └ autoenable_created_entities [bool] -->
-    <!-- NOT IN USE YET, COMMENTED
-    <xs:complexType name="entityFactoryQoSPolicyType">
+    <xs:complexType name="entityFactoryQosPolicyType">
         <xs:all>
-            <xs:element name="autoenable_created_entities" type="bool" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="autoenable_created_entities" type="boolean" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
-    -->
 
     <!--QoS History:
         ├ kind  [0~1],
