@@ -15,18 +15,19 @@
 #ifndef XML_PROFILE_MANAGER_H_
 #define XML_PROFILE_MANAGER_H_
 
+#include <cstdio>
+#include <map>
+#include <string>
+
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicPubSubType.h>
-
-#include <stdio.h>
-#include <string>
-#include <map>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -134,6 +135,22 @@ public:
     //!Fills participant_attributes with the default values.
     RTPS_DllAPI static void getDefaultParticipantAttributes(
             ParticipantAttributes& participant_attributes);
+
+    /**
+     * Search for the profile specified and fill the structure.
+     * @param profile_name Name for the profile to be used to fill the structure.
+     * @param qos Structure to be filled.
+     * @param log_error Flag to log an error if the profile_name is not found.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
+     */
+    RTPS_DllAPI static XMLP_ret fillDomainParticipantFactoryQos(
+            const std::string& profile_name,
+            fastdds::dds::DomainParticipantFactoryQos& qos,
+            bool log_error = true);
+
+    //!Fills qos with the default values.
+    RTPS_DllAPI static void getDefaultDomainParticipantFactoryQos(
+            fastdds::dds::DomainParticipantFactoryQos& qos);
 
     /**
      * Search for the profile specified and fill the structure.

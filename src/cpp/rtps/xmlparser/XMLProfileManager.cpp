@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/xmlparser/XMLTree.h>
-#include <fastdds/dds/log/Log.hpp>
 
 #include <cstdlib>
 #ifdef _WIN32
 #include <windows.h>
 #endif // ifdef _WIN32
+
+#include <tinyxml2.h>
+
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/xmlparser/XMLTree.h>
 
 using namespace eprosima::fastrtps;
 using namespace ::xmlparser;
@@ -147,6 +150,23 @@ void XMLProfileManager::getDefaultPublisherAttributes(
         PublisherAttributes& publisher_attributes)
 {
     publisher_attributes = default_publisher_attributes;
+}
+
+XMLP_ret XMLProfileManager::fillDomainParticipantFactoryQos(
+        const std::string& profile_name,
+        fastdds::dds::DomainParticipantFactoryQos& qos,
+        bool log_error)
+{
+    static_cast<void>(profile_name);
+    static_cast<void>(qos);
+    static_cast<void>(log_error);
+    return XMLP_ret::XML_OK;
+}
+
+void XMLProfileManager::getDefaultDomainParticipantFactoryQos(
+        fastdds::dds::DomainParticipantFactoryQos& qos)
+{
+    static_cast<void>(qos);
 }
 
 void XMLProfileManager::getDefaultSubscriberAttributes(

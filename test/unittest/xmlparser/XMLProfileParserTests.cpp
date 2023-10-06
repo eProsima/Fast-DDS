@@ -22,6 +22,8 @@
 #include <gtest/gtest.h>
 #include <tinyxml2.h>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
@@ -128,7 +130,7 @@ protected:
 
     std::string xml_filename_ = "test_xml_profile.xml";
 
-    const std::pair<std::string, std::string> c_environment_values_[156]
+    const std::pair<std::string, std::string> c_environment_values_[161]
     {
         {"XML_PROFILES_ENV_VAR_1",   "123"},
         {"XML_PROFILES_ENV_VAR_2",   "4"},
@@ -285,7 +287,12 @@ protected:
         {"XML_PROFILES_ENV_VAR_153", "0"},
         {"XML_PROFILES_ENV_VAR_154", "KEEP_ALL"},
         {"XML_PROFILES_ENV_VAR_155", "1001"},
-        {"XML_PROFILES_ENV_VAR_156", "FULL"}
+        {"XML_PROFILES_ENV_VAR_156", "FULL"},
+        {"XML_PROFILES_ENV_VAR_157", "true"},
+        {"XML_PROFILES_ENV_VAR_158", "-1"},
+        {"XML_PROFILES_ENV_VAR_159", "0"},
+        {"XML_PROFILES_ENV_VAR_160", "0"},
+        {"XML_PROFILES_ENV_VAR_161", "-1"}
     };
 
 };
@@ -3268,11 +3275,358 @@ TEST_F(XMLProfileParserBasicTests, log_thread_settings_qos)
     };
 
     EXPECT_CALL(*log_mock, SetThreadConfig()).Times(2);
+    for (const TestCase& test : test_cases)
+    {
+        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length())) <<
+            " test_case = [" << test.title << "]";
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+}
+
+/**
+ * This test checks positive and negative cases for parsing of DomainParticipantFactory Qos
+ */
+TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+    struct TestCase
+    {
+        std::string title;
+        std::string xml;
+        xmlparser::XMLP_ret result;
+        EntityFactoryQosPolicy entity_factory;
+        ThreadSettings shm_watchdog_thread;
+        ThreadSettings file_watch_threads;
+    };
+
+    ThreadSettings default_thread_settings;
+    ThreadSettings modified_thread_settings;
+    modified_thread_settings.scheduling_policy = 12;
+    modified_thread_settings.priority = 12;
+    modified_thread_settings.affinity = 12;
+    modified_thread_settings.stack_size = 12;
+
+    std::vector<TestCase> test_cases =
+    {
+        /* DomainParticipantFactory cases */
+        {
+            "entity_factory_ok",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <domainparticipant_factory profile_name="factory" is_default_profile="true">
+                        <qos>
+                            <entity_factory>
+                                <autoenable_created_entities>false</autoenable_created_entities>
+                            </entity_factory>
+                        </qos>
+                        </domainparticipant_factory>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_OK,
+            EntityFactoryQosPolicy(false),
+            default_thread_settings,
+            default_thread_settings
+        },
+        {
+            "shm_watchdog_thread_ok",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <domainparticipant_factory profile_name="factory" is_default_profile="true">
+                        <qos>
+                            <shm_watchdog_thread>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </shm_watchdog_thread>
+                        </qos>
+                        </domainparticipant_factory>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_OK,
+            EntityFactoryQosPolicy(true),
+            modified_thread_settings,
+            default_thread_settings
+        },
+        {
+            "file_watch_threads_ok",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <domainparticipant_factory profile_name="factory" is_default_profile="true">
+                        <qos>
+                            <file_watch_threads>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </file_watch_threads>
+                        </qos>
+                        </domainparticipant_factory>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_OK,
+            EntityFactoryQosPolicy(true),
+            default_thread_settings,
+            modified_thread_settings
+        },
+        {
+            "all_present_ok",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <domainparticipant_factory profile_name="factory" is_default_profile="true">
+                        <qos>
+                            <entity_factory>
+                                <autoenable_created_entities>false</autoenable_created_entities>
+                            </entity_factory>
+                            <shm_watchdog_thread>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </shm_watchdog_thread>
+                            <file_watch_threads>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </file_watch_threads>
+                        </qos>
+                        </domainparticipant_factory>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_OK,
+            EntityFactoryQosPolicy(false),
+            modified_thread_settings,
+            modified_thread_settings
+        },
+        {
+            "qos_duplicated",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <domainparticipant_factory profile_name="factory" is_default_profile="true">
+                        <qos>
+                            <entity_factory>
+                                <autoenable_created_entities>false</autoenable_created_entities>
+                            </entity_factory>
+                        </qos>
+                        <qos>
+                            <entity_factory>
+                                <autoenable_created_entities>false</autoenable_created_entities>
+                            </entity_factory>
+                        </qos>
+                        </domainparticipant_factory>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            EntityFactoryQosPolicy(true),
+            default_thread_settings,
+            default_thread_settings
+        },
+        {
+            "entity_factory_wrong_tag",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <domainparticipant_factory profile_name="factory" is_default_profile="true">
+                        <qos>
+                            <entity_factory>
+                                <wrong_tag>false</wrong_tag>
+                            </entity_factory>
+                        </qos>
+                        </domainparticipant_factory>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            EntityFactoryQosPolicy(true),
+            default_thread_settings,
+            default_thread_settings
+        },
+        {
+            "entity_factory_duplicated_autoenable_created_entities_tag",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <domainparticipant_factory profile_name="factory" is_default_profile="true">
+                        <qos>
+                            <entity_factory>
+                                <autoenable_created_entities>false</autoenable_created_entities>
+                                <autoenable_created_entities>false</autoenable_created_entities>
+                            </entity_factory>
+                        </qos>
+                        </domainparticipant_factory>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            EntityFactoryQosPolicy(true),
+            default_thread_settings,
+            default_thread_settings
+        },
+        {
+            "entity_factory_duplicated_autoenable_created_entities_and_wrong_tag",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <domainparticipant_factory profile_name="factory" is_default_profile="true">
+                        <qos>
+                            <entity_factory>
+                                <autoenable_created_entities>false</autoenable_created_entities>
+                                <wrong_tag>false</wrong_tag>
+                            </entity_factory>
+                        </qos>
+                        </domainparticipant_factory>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            EntityFactoryQosPolicy(true),
+            default_thread_settings,
+            default_thread_settings
+        },
+        {
+            "entity_factory_duplicated",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <domainparticipant_factory profile_name="factory" is_default_profile="true">
+                        <qos>
+                            <entity_factory>
+                                <autoenable_created_entities>false</autoenable_created_entities>
+                            </entity_factory>
+                            <entity_factory>
+                                <autoenable_created_entities>false</autoenable_created_entities>
+                            </entity_factory>
+                            <shm_watchdog_thread>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </shm_watchdog_thread>
+                            <file_watch_threads>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </file_watch_threads>
+                        </qos>
+                        </domainparticipant_factory>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            EntityFactoryQosPolicy(true),
+            modified_thread_settings,
+            modified_thread_settings
+        },
+        {
+            "shm_watchdog_thread_duplicated",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <domainparticipant_factory profile_name="factory" is_default_profile="true">
+                        <qos>
+                            <entity_factory>
+                                <autoenable_created_entities>false</autoenable_created_entities>
+                            </entity_factory>
+                            <shm_watchdog_thread>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </shm_watchdog_thread>
+                            <shm_watchdog_thread>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </shm_watchdog_thread>
+                            <file_watch_threads>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </file_watch_threads>
+                        </qos>
+                        </domainparticipant_factory>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            EntityFactoryQosPolicy(true),
+            modified_thread_settings,
+            modified_thread_settings
+        },
+        {
+            "file_watch_threads_duplicated",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <domainparticipant_factory profile_name="factory" is_default_profile="true">
+                        <qos>
+                            <entity_factory>
+                                <autoenable_created_entities>false</autoenable_created_entities>
+                            </entity_factory>
+                            <shm_watchdog_thread>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </shm_watchdog_thread>
+                            <file_watch_threads>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </file_watch_threads>
+                            <file_watch_threads>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </file_watch_threads>
+                        </qos>
+                        </domainparticipant_factory>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            EntityFactoryQosPolicy(true),
+            modified_thread_settings,
+            modified_thread_settings
+        }
+    };
 
     for (const TestCase& test : test_cases)
     {
         EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length())) <<
             " test_case = [" << test.title << "]";
+        if (test.result == xmlparser::XMLP_ret::XML_OK)
+        {
+            using namespace eprosima::fastdds::dds;
+
+            DomainParticipantFactoryQos profile_qos;
+            ASSERT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::fillDomainParticipantFactoryQos("factory", profile_qos));
+
+            DomainParticipantFactoryQos default_qos;
+            xmlparser::XMLProfileManager::getDefaultDomainParticipantFactoryQos(default_qos);
+
+            ASSERT_EQ(profile_qos, default_qos);
+            ASSERT_EQ(profile_qos.entity_factory(), test.entity_factory);
+            ASSERT_EQ(profile_qos.shm_watchdog_thread(), test.shm_watchdog_thread);
+            ASSERT_EQ(profile_qos.file_watch_threads(), test.file_watch_threads);
+        }
         xmlparser::XMLProfileManager::DeleteInstance();
     }
 }
