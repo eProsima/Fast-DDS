@@ -4067,6 +4067,62 @@ XMLP_ret XMLParser::getXMLguidPrefix(
 
 }
 
+XMLP_ret XMLParser::getXMLDomainParticipantFactoryQos(
+        tinyxml2::XMLElement& elem,
+        fastdds::dds::DomainParticipantFactoryQos& qos)
+{
+    /*
+        <xs:complexType name="domainParticipantFactoryQosPoliciesType">
+            <xs:all>
+                <xs:element name="entity_factory" type="entityFactoryQosPolicyType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="shm_watchdog_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="file_watch_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+     */
+
+    std::set<std::string> tags_present;
+
+    for (tinyxml2::XMLElement* element = elem.FirstChildElement(); element != nullptr; element = element->NextSiblingElement())
+    {
+        const char* name = element->Name();
+        if (tags_present.count(name) != 0)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'domainParticipantFactoryQosPoliciesType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present.emplace(name);
+
+        if (strcmp(name, ENTITY_FACTORY) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLEntityFactoryQos(*element, qos.entity_factory()))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, SHM_WATCHDOG_THREAD) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*element, qos.shm_watchdog_thread()))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, FILE_WATCH_THREADS) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*element, qos.file_watch_threads()))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'domainParticipantFactoryQosPoliciesType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::getXMLPublisherAttributes(
         tinyxml2::XMLElement* elem,
         PublisherAttributes& publisher,
@@ -4469,6 +4525,52 @@ XMLP_ret XMLParser::getXMLThreadSettings(
             // stack_size - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.stack_size, ident) ||
                     thread_setting.stack_size < -1)
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Found incorrect tag '" << current_elem->Name() << "'");
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLEntityFactoryQos(
+            tinyxml2::XMLElement& elem,
+            fastdds::dds::EntityFactoryQosPolicy& entity_factory)
+{
+    /*
+        <xs:complexType name="entityFactoryQosPolicyType">
+            <xs:all>
+                <xs:element name="autoenable_created_entities" type="boolean" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+     */
+
+    /*
+     * The only allowed element is autoenable_created_entities, its min occurrences is 0, and its max is 1.
+     */
+    const uint8_t ident = 1;
+    std::set<std::string> tags_present;
+
+    for (tinyxml2::XMLElement* current_elem = elem.FirstChildElement(); current_elem != nullptr;
+            current_elem = current_elem->NextSiblingElement())
+    {
+        const char* name = current_elem->Name();
+        if (tags_present.count(name) != 0)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'entityFactoryQosPolicyType'. Tag: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present.emplace(name);
+
+        if (strcmp(current_elem->Name(), AUTOENABLE_CREATED_ENTITIES) == 0)
+        {
+            // autoenable_created_entities - boolean
+            if (XMLP_ret::XML_OK != getXMLBool(current_elem, &entity_factory.autoenable_created_entities, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

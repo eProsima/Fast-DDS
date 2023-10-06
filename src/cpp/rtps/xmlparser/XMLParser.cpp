@@ -123,6 +123,10 @@ XMLP_ret XMLParser::parseXML(
                         root->addChild(std::move(library_node));
                     }
                 }
+                else if (strcmp(tag, DOMAINPARTICIPANT_FACTORY) == 0)
+                {
+                    ret = parseXMLDomainParticipantFactoryProf(node, *root);
+                }
                 else if (strcmp(tag, PARTICIPANT) == 0)
                 {
                     ret = parseXMLParticipantProf(node, *root);
@@ -1167,6 +1171,26 @@ XMLP_ret XMLParser::parseXMLLibrarySettings(
     return ret;
 }
 
+XMLP_ret XMLParser::parseXMLDomainParticipantFactoryProf(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    up_participantfactory_t factory_qos{new fastdds::dds::DomainParticipantFactoryQos};
+    up_node_participantfactory_t factory_node{new node_participantfactory_t{NodeType::DOMAINPARTICIPANT_FACTORY, std::move(factory_qos)}};
+    if (XMLP_ret::XML_OK == fillDataNode(p_root, *factory_node))
+    {
+        rootNode.addChild(std::move(factory_node));
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing participant profile");
+        ret = XMLP_ret::XML_ERROR;
+    }
+
+    return ret;
+}
+
 XMLP_ret XMLParser::parseXMLParticipantProf(
         tinyxml2::XMLElement* p_root,
         BaseNode& rootNode)
@@ -1317,6 +1341,10 @@ XMLP_ret XMLParser::parseProfiles(
             else if (strcmp(tag, LIBRARY_SETTINGS) == 0)
             {
                 parseOk &= parseXMLLibrarySettings(p_profile) == XMLP_ret::XML_OK;
+            }
+            else if (strcmp(tag, DOMAINPARTICIPANT_FACTORY) == 0)
+            {
+                parseOk &= parseXMLDomainParticipantFactoryProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, PARTICIPANT) == 0)
             {
@@ -1740,6 +1768,53 @@ XMLP_ret XMLParser::fillDataNode(
         return XMLP_ret::XML_ERROR;
     }
 
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::fillDataNode(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<fastdds::dds::DomainParticipantFactoryQos>& factory_node)
+{
+    /*
+    <xs:complexType name="domainParticipantFactoryProfileType">
+        <xs:all>
+            <xs:element name="qos" type="domainParticipantFactoryQosPoliciesType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+        <xs:attribute name="profile_name" type="string" use="required"/>
+        <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+    </xs:complexType>
+     */
+
+    if (nullptr == p_profile)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Bad parameters!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    addAllAttributes(p_profile, factory_node);
+
+    /*
+     * The only allowed element <qos>, and its max is 1; look for it.
+     */
+    std::set<std::string> tags_present;
+    for (tinyxml2::XMLElement* p_element = p_profile->FirstChildElement(); p_element != nullptr; p_element = p_element->NextSiblingElement())
+    {
+        const char* name = p_element->Name();
+        if (tags_present.count(name) != 0)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'participant'. Tag: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present.emplace(name);
+
+        if (strcmp(p_element->Name(), QOS) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLDomainParticipantFactoryQos(*p_element, *factory_node.get()))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+    }
     return XMLP_ret::XML_OK;
 }
 

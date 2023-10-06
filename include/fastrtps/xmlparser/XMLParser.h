@@ -17,8 +17,11 @@
 
 #include <cstdio>
 #include <map>
+#include <memory>
 #include <string>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
@@ -52,6 +55,11 @@ typedef std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> sp_transpor
 typedef std::map<std::string, sp_transport_t>  sp_transport_map_t;
 typedef types::DynamicTypeBuilder*             p_dynamictypebuilder_t;
 typedef std::map<std::string, p_dynamictypebuilder_t> p_dynamictype_map_t;
+
+typedef std::unique_ptr<fastdds::dds::DomainParticipantFactoryQos> up_participantfactory_t;
+typedef DataNode<fastdds::dds::DomainParticipantFactoryQos>        node_participantfactory_t;
+typedef node_participantfactory_t*                                 p_node_participantfactory_t;
+typedef std::unique_ptr<node_participantfactory_t>                 up_node_participantfactory_t;
 
 typedef std::unique_ptr<ParticipantAttributes> up_participant_t;
 typedef DataNode<ParticipantAttributes>        node_participant_t;
@@ -178,6 +186,10 @@ protected:
     RTPS_DllAPI static XMLP_ret parseXMLTransportsProf(
             tinyxml2::XMLElement* p_root);
 
+    RTPS_DllAPI static XMLP_ret parseXMLDomainParticipantFactoryProf(
+            tinyxml2::XMLElement* p_root,
+            BaseNode& rootNode);
+
     RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(
             tinyxml2::XMLElement* p_root,
             BaseNode& rootNode);
@@ -280,6 +292,10 @@ protected:
             p_dynamictypebuilder_t p_dynamictype,
             types::MemberId mId,
             const std::string& values);
+
+    RTPS_DllAPI static XMLP_ret fillDataNode(
+            tinyxml2::XMLElement* p_profile,
+            DataNode<fastdds::dds::DomainParticipantFactoryQos>& factory_node);
 
     RTPS_DllAPI static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* p_profile,
@@ -605,6 +621,10 @@ protected:
             rtps::GuidPrefix_t& prefix,
             uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLDomainParticipantFactoryQos(
+            tinyxml2::XMLElement& elem,
+            fastdds::dds::DomainParticipantFactoryQos& qos);
+
     RTPS_DllAPI static XMLP_ret getXMLPublisherAttributes(
             tinyxml2::XMLElement* elem,
             PublisherAttributes& publisher,
@@ -618,6 +638,10 @@ protected:
     RTPS_DllAPI static XMLP_ret getXMLThreadSettings(
             tinyxml2::XMLElement& elem,
             fastdds::rtps::ThreadSettings& thread_setting);
+
+    RTPS_DllAPI static XMLP_ret getXMLEntityFactoryQos(
+            tinyxml2::XMLElement& elem,
+            fastdds::dds::EntityFactoryQosPolicy& entity_factory);
 };
 
 } // namespace xmlparser

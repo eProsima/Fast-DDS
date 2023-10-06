@@ -33,6 +33,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
+using participant_factory_map_t = std::map<std::string, up_participantfactory_t>;
+using part_factory_map_iterator_t = participant_factory_map_t::iterator;
 using participant_map_t = std::map<std::string, up_participant_t>;
 using part_map_iterator_t = participant_map_t::iterator;
 using publisher_map_t = std::map<std::string, up_publisher_t>;
@@ -244,6 +246,7 @@ public:
      */
     RTPS_DllAPI static void DeleteInstance()
     {
+        participant_factory_profiles_.clear();
         participant_profiles_.clear();
         publisher_profiles_.clear();
         subscriber_profiles_.clear();
@@ -285,6 +288,10 @@ private:
             up_base_node_t properties,
             const std::string& filename);
 
+    RTPS_DllAPI static XMLP_ret extractDomainParticipantFactoryProfile(
+            up_base_node_t& profile,
+            const std::string& filename);
+
     RTPS_DllAPI static XMLP_ret extractParticipantProfile(
             up_base_node_t& profile,
             const std::string& filename);
@@ -312,6 +319,8 @@ private:
     static BaseNode* root;
 
     static LibrarySettingsAttributes library_settings_;
+
+    static participant_factory_map_t participant_factory_profiles_;
 
     static participant_map_t participant_profiles_;
 

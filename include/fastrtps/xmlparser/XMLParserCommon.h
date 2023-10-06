@@ -42,6 +42,7 @@ extern const char* LIBRARY_SETTINGS;
 extern const char* TRANSPORT_DESCRIPTORS;
 extern const char* PROFILE_NAME;
 extern const char* DEFAULT_PROF;
+extern const char* DOMAINPARTICIPANT_FACTORY;
 extern const char* PARTICIPANT;
 extern const char* PUBLISHER;
 extern const char* SUBSCRIBER;
@@ -102,6 +103,12 @@ extern const char* DATA_READER;
 
 /// LibrarySettings attributes
 extern const char* INTRAPROCESS_DELIVERY;
+
+/// DomainParticipantFactory Qos
+extern const char* ENTITY_FACTORY;
+extern const char* AUTOENABLE_CREATED_ENTITIES;
+extern const char* SHM_WATCHDOG_THREAD;
+extern const char* FILE_WATCH_THREADS;
 
 /// RTPS Participant attributes
 extern const char* ALLOCATION;

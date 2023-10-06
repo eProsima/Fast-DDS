@@ -29,6 +29,7 @@ const char* LIBRARY_SETTINGS = "library_settings";
 const char* TRANSPORT_DESCRIPTORS = "transport_descriptors";
 const char* PROFILE_NAME = "profile_name";
 const char* DEFAULT_PROF = "is_default_profile";
+const char* DOMAINPARTICIPANT_FACTORY = "domainparticipant_factory";
 const char* PARTICIPANT = "participant";
 const char* PUBLISHER = "publisher";
 const char* SUBSCRIBER = "subscriber";
@@ -85,6 +86,12 @@ const char* TYPE = "type";
 // const char* TOPIC = "topic";
 const char* DATA_WRITER = "data_writer";
 const char* DATA_READER = "data_reader";
+
+/// DomainParticipantFactory Qos
+const char* ENTITY_FACTORY = "entity_factory";
+const char* AUTOENABLE_CREATED_ENTITIES = "autoenable_created_entities";
+const char* SHM_WATCHDOG_THREAD = "shm_watchdog_thread";
+const char* FILE_WATCH_THREADS = "file_watch_threads";
 
 /// RTPS Domain attributes
 const char* INTRAPROCESS_DELIVERY = "intraprocess_delivery";
