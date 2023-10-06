@@ -24,6 +24,7 @@
 
 #include "TypeObject.h"
 
+/*
 constexpr uint32_t eprosima_fastdds_dds_xtypes_CompleteStructMember_max_cdr_typesize {UL};
 constexpr uint32_t eprosima_fastdds_dds_xtypes_CompleteStructMember_max_key_cdr_typesize {0UL};
 
@@ -373,7 +374,7 @@ constexpr uint32_t eprosima_fastdds_dds_xtypes_CompleteUnionMember_max_key_cdr_t
 
 constexpr uint32_t eprosima_fastdds_dds_xtypes_CompleteUnionType_max_cdr_typesize {UL};
 constexpr uint32_t eprosima_fastdds_dds_xtypes_CompleteUnionType_max_key_cdr_typesize {0UL};
-
+*/
 
 
 namespace eprosima {
