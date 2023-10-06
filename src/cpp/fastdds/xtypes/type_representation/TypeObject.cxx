@@ -166,6 +166,8 @@ void eprosima::fastdds::dds::xtypes::TypeObjectHashId::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -295,7 +297,6 @@ eprosima::fastdds::dds::xtypes::StringSTypeDefn& eprosima::fastdds::dds::xtypes:
 {
 
     m_bound = x.m_bound;
-
     return *this;
 }
 
@@ -304,7 +305,6 @@ eprosima::fastdds::dds::xtypes::StringSTypeDefn& eprosima::fastdds::dds::xtypes:
 {
 
     m_bound = x.m_bound;
-
     return *this;
 }
 
@@ -375,7 +375,6 @@ eprosima::fastdds::dds::xtypes::StringLTypeDefn& eprosima::fastdds::dds::xtypes:
 {
 
     m_bound = x.m_bound;
-
     return *this;
 }
 
@@ -384,7 +383,6 @@ eprosima::fastdds::dds::xtypes::StringLTypeDefn& eprosima::fastdds::dds::xtypes:
 {
 
     m_bound = x.m_bound;
-
     return *this;
 }
 
@@ -458,7 +456,6 @@ eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::x
 
     m_equiv_kind = x.m_equiv_kind;
     m_element_flags = x.m_element_flags;
-
     return *this;
 }
 
@@ -468,7 +465,6 @@ eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::x
 
     m_equiv_kind = x.m_equiv_kind;
     m_element_flags = std::move(x.m_element_flags);
-
     return *this;
 }
 
@@ -588,7 +584,6 @@ eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn& eprosima::fastdds::dds::
     m_header = x.m_header;
     m_bound = x.m_bound;
     m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
-
     return *this;
 }
 
@@ -599,7 +594,6 @@ eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn& eprosima::fastdds::dds::
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
     m_element_identifier = x.m_element_identifier;x.m_element_identifier = nullptr;
-
     return *this;
 }
 
@@ -759,7 +753,6 @@ eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn& eprosima::fastdds::dds::
     m_header = x.m_header;
     m_bound = x.m_bound;
     m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
-
     return *this;
 }
 
@@ -770,7 +763,6 @@ eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn& eprosima::fastdds::dds::
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
     m_element_identifier = x.m_element_identifier;x.m_element_identifier = nullptr;
-
     return *this;
 }
 
@@ -930,7 +922,6 @@ eprosima::fastdds::dds::xtypes::PlainArraySElemDefn& eprosima::fastdds::dds::xty
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
     m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
-
     return *this;
 }
 
@@ -941,7 +932,6 @@ eprosima::fastdds::dds::xtypes::PlainArraySElemDefn& eprosima::fastdds::dds::xty
     m_header = std::move(x.m_header);
     m_array_bound_seq = std::move(x.m_array_bound_seq);
     m_element_identifier = x.m_element_identifier;x.m_element_identifier = nullptr;
-
     return *this;
 }
 
@@ -1111,7 +1101,6 @@ eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn& eprosima::fastdds::dds::xty
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
     m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
-
     return *this;
 }
 
@@ -1122,7 +1111,6 @@ eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn& eprosima::fastdds::dds::xty
     m_header = std::move(x.m_header);
     m_array_bound_seq = std::move(x.m_array_bound_seq);
     m_element_identifier = x.m_element_identifier;x.m_element_identifier = nullptr;
-
     return *this;
 }
 
@@ -1304,7 +1292,6 @@ eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn& eprosima::fastdds::dds::xtype
     m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
     m_key_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_key_identifier = *x.m_key_identifier;
-
     return *this;
 }
 
@@ -1317,7 +1304,6 @@ eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn& eprosima::fastdds::dds::xtype
     m_element_identifier = x.m_element_identifier;x.m_element_identifier = nullptr;
     m_key_flags = std::move(x.m_key_flags);
     m_key_identifier = x.m_key_identifier;x.m_key_identifier = nullptr;
-
     return *this;
 }
 
@@ -1569,7 +1555,6 @@ eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn& eprosima::fastdds::dds::xtype
     m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
     m_key_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_key_identifier = *x.m_key_identifier;
-
     return *this;
 }
 
@@ -1582,7 +1567,6 @@ eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn& eprosima::fastdds::dds::xtype
     m_element_identifier = x.m_element_identifier;x.m_element_identifier = nullptr;
     m_key_flags = std::move(x.m_key_flags);
     m_key_identifier = x.m_key_identifier;x.m_key_identifier = nullptr;
-
     return *this;
 }
 
@@ -1819,7 +1803,6 @@ eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId& eprosima::fastdds:
     m_sc_component_id = x.m_sc_component_id;
     m_scc_length = x.m_scc_length;
     m_scc_index = x.m_scc_index;
-
     return *this;
 }
 
@@ -1830,7 +1813,6 @@ eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId& eprosima::fastdds:
     m_sc_component_id = std::move(x.m_sc_component_id);
     m_scc_length = x.m_scc_length;
     m_scc_index = x.m_scc_index;
-
     return *this;
 }
 
@@ -1957,17 +1939,20 @@ eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::~ExtendedTypeDefn()
 eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::ExtendedTypeDefn(
         const ExtendedTypeDefn& x)
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::ExtendedTypeDefn(
         ExtendedTypeDefn&& x) noexcept
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::operator =(
         const ExtendedTypeDefn& x)
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -1976,6 +1961,7 @@ eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes
         ExtendedTypeDefn&& x) noexcept
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -1983,6 +1969,7 @@ eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes
 bool eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::operator ==(
         const ExtendedTypeDefn& x) const
 {
+    static_cast<void>(x);
     return true;
 }
 
@@ -3241,17 +3228,20 @@ eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::~ExtendedAnnot
 eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(
         const ExtendedAnnotationParameterValue& x)
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(
         ExtendedAnnotationParameterValue&& x) noexcept
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::operator =(
         const ExtendedAnnotationParameterValue& x)
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -3260,6 +3250,7 @@ eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& eprosima::fast
         ExtendedAnnotationParameterValue&& x) noexcept
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -3267,6 +3258,7 @@ eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& eprosima::fast
 bool eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::operator ==(
         const ExtendedAnnotationParameterValue& x) const
 {
+    static_cast<void>(x);
     return true;
 }
 
@@ -5150,7 +5142,6 @@ eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter& eprosima::fastdds::d
 
     m_paramname_hash = x.m_paramname_hash;
     m_value = x.m_value;
-
     return *this;
 }
 
@@ -5160,7 +5151,6 @@ eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter& eprosima::fastdds::d
 
     m_paramname_hash = std::move(x.m_paramname_hash);
     m_value = std::move(x.m_value);
-
     return *this;
 }
 
@@ -5290,7 +5280,6 @@ eprosima::fastdds::dds::xtypes::AppliedAnnotation& eprosima::fastdds::dds::xtype
 
     m_annotation_typeid = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_annotation_typeid = *x.m_annotation_typeid;
     m_param_seq = x.m_param_seq;
-
     return *this;
 }
 
@@ -5300,7 +5289,6 @@ eprosima::fastdds::dds::xtypes::AppliedAnnotation& eprosima::fastdds::dds::xtype
 
     m_annotation_typeid = x.m_annotation_typeid;x.m_annotation_typeid = nullptr;
     m_param_seq = std::move(x.m_param_seq);
-
     return *this;
 }
 
@@ -5428,7 +5416,6 @@ eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation& eprosima::fastdds::dd
     m_placement = x.m_placement;
     m_language = x.m_language;
     m_text = x.m_text;
-
     return *this;
 }
 
@@ -5439,7 +5426,6 @@ eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation& eprosima::fastdds::dd
     m_placement = std::move(x.m_placement);
     m_language = std::move(x.m_language);
     m_text = std::move(x.m_text);
-
     return *this;
 }
 
@@ -5609,7 +5595,6 @@ eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations& eprosima::fastd
     m_min = x.m_min;
     m_max = x.m_max;
     m_hash_id = x.m_hash_id;
-
     return *this;
 }
 
@@ -5621,7 +5606,6 @@ eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations& eprosima::fastd
     m_min = std::move(x.m_min);
     m_max = std::move(x.m_max);
     m_hash_id = std::move(x.m_hash_id);
-
     return *this;
 }
 
@@ -5831,7 +5815,6 @@ eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds::xtyp
     m_member_id = x.m_member_id;
     m_member_flags = x.m_member_flags;
     m_member_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_member_type_id = *x.m_member_type_id;
-
     return *this;
 }
 
@@ -5842,7 +5825,6 @@ eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds::xtyp
     m_member_id = x.m_member_id;
     m_member_flags = std::move(x.m_member_flags);
     m_member_type_id = x.m_member_type_id;x.m_member_type_id = nullptr;
-
     return *this;
 }
 
@@ -5999,7 +5981,6 @@ eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xt
     m_name = x.m_name;
     m_ann_builtin = x.m_ann_builtin;
     m_ann_custom = x.m_ann_custom;
-
     return *this;
 }
 
@@ -6010,7 +5991,6 @@ eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xt
     m_name = std::move(x.m_name);
     m_ann_builtin = std::move(x.m_ann_builtin);
     m_ann_custom = std::move(x.m_ann_custom);
-
     return *this;
 }
 
@@ -6171,7 +6151,6 @@ eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xty
 {
 
     m_name_hash = x.m_name_hash;
-
     return *this;
 }
 
@@ -6180,7 +6159,6 @@ eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xty
 {
 
     m_name_hash = std::move(x.m_name_hash);
-
     return *this;
 }
 
@@ -6264,7 +6242,6 @@ eprosima::fastdds::dds::xtypes::CompleteStructMember& eprosima::fastdds::dds::xt
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -6274,7 +6251,6 @@ eprosima::fastdds::dds::xtypes::CompleteStructMember& eprosima::fastdds::dds::xt
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -6399,7 +6375,6 @@ eprosima::fastdds::dds::xtypes::MinimalStructMember& eprosima::fastdds::dds::xty
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -6409,7 +6384,6 @@ eprosima::fastdds::dds::xtypes::MinimalStructMember& eprosima::fastdds::dds::xty
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -6531,7 +6505,6 @@ eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations& eprosima::fastdds
 {
 
     m_verbatim = x.m_verbatim;
-
     return *this;
 }
 
@@ -6540,7 +6513,6 @@ eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations& eprosima::fastdds
 {
 
     m_verbatim = std::move(x.m_verbatim);
-
     return *this;
 }
 
@@ -6607,17 +6579,20 @@ eprosima::fastdds::dds::xtypes::MinimalTypeDetail::~MinimalTypeDetail()
 eprosima::fastdds::dds::xtypes::MinimalTypeDetail::MinimalTypeDetail(
         const MinimalTypeDetail& x)
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::MinimalTypeDetail::MinimalTypeDetail(
         MinimalTypeDetail&& x) noexcept
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds::xtypes::MinimalTypeDetail::operator =(
         const MinimalTypeDetail& x)
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -6626,6 +6601,7 @@ eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds::xtype
         MinimalTypeDetail&& x) noexcept
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -6633,6 +6609,7 @@ eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds::xtype
 bool eprosima::fastdds::dds::xtypes::MinimalTypeDetail::operator ==(
         const MinimalTypeDetail& x) const
 {
+    static_cast<void>(x);
     return true;
 }
 
@@ -6675,7 +6652,6 @@ eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtyp
     m_ann_builtin = x.m_ann_builtin;
     m_ann_custom = x.m_ann_custom;
     m_type_name = x.m_type_name;
-
     return *this;
 }
 
@@ -6686,7 +6662,6 @@ eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtyp
     m_ann_builtin = std::move(x.m_ann_builtin);
     m_ann_custom = std::move(x.m_ann_custom);
     m_type_name = std::move(x.m_type_name);
-
     return *this;
 }
 
@@ -6855,7 +6830,6 @@ eprosima::fastdds::dds::xtypes::CompleteStructHeader& eprosima::fastdds::dds::xt
 
     m_base_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_base_type = *x.m_base_type;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -6865,7 +6839,6 @@ eprosima::fastdds::dds::xtypes::CompleteStructHeader& eprosima::fastdds::dds::xt
 
     m_base_type = x.m_base_type;x.m_base_type = nullptr;
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -6994,7 +6967,6 @@ eprosima::fastdds::dds::xtypes::MinimalStructHeader& eprosima::fastdds::dds::xty
 
     m_base_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_base_type = *x.m_base_type;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -7004,7 +6976,6 @@ eprosima::fastdds::dds::xtypes::MinimalStructHeader& eprosima::fastdds::dds::xty
 
     m_base_type = x.m_base_type;x.m_base_type = nullptr;
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -7131,7 +7102,6 @@ eprosima::fastdds::dds::xtypes::CompleteStructType& eprosima::fastdds::dds::xtyp
     m_struct_flags = x.m_struct_flags;
     m_header = x.m_header;
     m_member_seq = x.m_member_seq;
-
     return *this;
 }
 
@@ -7142,7 +7112,6 @@ eprosima::fastdds::dds::xtypes::CompleteStructType& eprosima::fastdds::dds::xtyp
     m_struct_flags = std::move(x.m_struct_flags);
     m_header = std::move(x.m_header);
     m_member_seq = std::move(x.m_member_seq);
-
     return *this;
 }
 
@@ -7309,7 +7278,6 @@ eprosima::fastdds::dds::xtypes::MinimalStructType& eprosima::fastdds::dds::xtype
     m_struct_flags = x.m_struct_flags;
     m_header = x.m_header;
     m_member_seq = x.m_member_seq;
-
     return *this;
 }
 
@@ -7320,7 +7288,6 @@ eprosima::fastdds::dds::xtypes::MinimalStructType& eprosima::fastdds::dds::xtype
     m_struct_flags = std::move(x.m_struct_flags);
     m_header = std::move(x.m_header);
     m_member_seq = std::move(x.m_member_seq);
-
     return *this;
 }
 
@@ -7496,7 +7463,6 @@ eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds::xtype
     m_member_flags = x.m_member_flags;
     m_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_id = *x.m_type_id;
     m_label_seq = x.m_label_seq;
-
     return *this;
 }
 
@@ -7508,7 +7474,6 @@ eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds::xtype
     m_member_flags = std::move(x.m_member_flags);
     m_type_id = x.m_type_id;x.m_type_id = nullptr;
     m_label_seq = std::move(x.m_label_seq);
-
     return *this;
 }
 
@@ -7702,7 +7667,6 @@ eprosima::fastdds::dds::xtypes::CompleteUnionMember& eprosima::fastdds::dds::xty
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -7712,7 +7676,6 @@ eprosima::fastdds::dds::xtypes::CompleteUnionMember& eprosima::fastdds::dds::xty
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -7837,7 +7800,6 @@ eprosima::fastdds::dds::xtypes::MinimalUnionMember& eprosima::fastdds::dds::xtyp
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -7847,7 +7809,6 @@ eprosima::fastdds::dds::xtypes::MinimalUnionMember& eprosima::fastdds::dds::xtyp
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -7975,7 +7936,6 @@ eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& eprosima::fastdds::dd
 
     m_member_flags = x.m_member_flags;
     m_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_id = *x.m_type_id;
-
     return *this;
 }
 
@@ -7985,7 +7945,6 @@ eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& eprosima::fastdds::dd
 
     m_member_flags = std::move(x.m_member_flags);
     m_type_id = x.m_type_id;x.m_type_id = nullptr;
-
     return *this;
 }
 
@@ -8112,7 +8071,6 @@ eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& eprosima::fastdds::
     m_common = x.m_common;
     m_ann_builtin = x.m_ann_builtin;
     m_ann_custom = x.m_ann_custom;
-
     return *this;
 }
 
@@ -8123,7 +8081,6 @@ eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& eprosima::fastdds::
     m_common = std::move(x.m_common);
     m_ann_builtin = std::move(x.m_ann_builtin);
     m_ann_custom = std::move(x.m_ann_custom);
-
     return *this;
 }
 
@@ -8284,7 +8241,6 @@ eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& eprosima::fastdds::d
 {
 
     m_common = x.m_common;
-
     return *this;
 }
 
@@ -8293,7 +8249,6 @@ eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& eprosima::fastdds::d
 {
 
     m_common = std::move(x.m_common);
-
     return *this;
 }
 
@@ -8374,7 +8329,6 @@ eprosima::fastdds::dds::xtypes::CompleteUnionHeader& eprosima::fastdds::dds::xty
 {
 
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -8383,7 +8337,6 @@ eprosima::fastdds::dds::xtypes::CompleteUnionHeader& eprosima::fastdds::dds::xty
 {
 
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -8464,7 +8417,6 @@ eprosima::fastdds::dds::xtypes::MinimalUnionHeader& eprosima::fastdds::dds::xtyp
 {
 
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -8473,7 +8425,6 @@ eprosima::fastdds::dds::xtypes::MinimalUnionHeader& eprosima::fastdds::dds::xtyp
 {
 
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -8563,7 +8514,6 @@ eprosima::fastdds::dds::xtypes::CompleteUnionType& eprosima::fastdds::dds::xtype
     m_header = x.m_header;
     m_discriminator = x.m_discriminator;
     m_member_seq = x.m_member_seq;
-
     return *this;
 }
 
@@ -8575,7 +8525,6 @@ eprosima::fastdds::dds::xtypes::CompleteUnionType& eprosima::fastdds::dds::xtype
     m_header = std::move(x.m_header);
     m_discriminator = std::move(x.m_discriminator);
     m_member_seq = std::move(x.m_member_seq);
-
     return *this;
 }
 
@@ -8785,7 +8734,6 @@ eprosima::fastdds::dds::xtypes::MinimalUnionType& eprosima::fastdds::dds::xtypes
     m_header = x.m_header;
     m_discriminator = x.m_discriminator;
     m_member_seq = x.m_member_seq;
-
     return *this;
 }
 
@@ -8797,7 +8745,6 @@ eprosima::fastdds::dds::xtypes::MinimalUnionType& eprosima::fastdds::dds::xtypes
     m_header = std::move(x.m_header);
     m_discriminator = std::move(x.m_discriminator);
     m_member_seq = std::move(x.m_member_seq);
-
     return *this;
 }
 
@@ -9004,7 +8951,6 @@ eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastdds::dd
 
     m_member_flags = x.m_member_flags;
     m_member_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_member_type_id = *x.m_member_type_id;
-
     return *this;
 }
 
@@ -9014,7 +8960,6 @@ eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastdds::dd
 
     m_member_flags = std::move(x.m_member_flags);
     m_member_type_id = x.m_member_type_id;x.m_member_type_id = nullptr;
-
     return *this;
 }
 
@@ -9141,7 +9086,6 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter& eprosima::fastdds::
     m_common = x.m_common;
     m_name = x.m_name;
     m_default_value = x.m_default_value;
-
     return *this;
 }
 
@@ -9152,7 +9096,6 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter& eprosima::fastdds::
     m_common = std::move(x.m_common);
     m_name = std::move(x.m_name);
     m_default_value = std::move(x.m_default_value);
-
     return *this;
 }
 
@@ -9320,7 +9263,6 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter& eprosima::fastdds::d
     m_common = x.m_common;
     m_name_hash = x.m_name_hash;
     m_default_value = x.m_default_value;
-
     return *this;
 }
 
@@ -9331,7 +9273,6 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter& eprosima::fastdds::d
     m_common = std::move(x.m_common);
     m_name_hash = std::move(x.m_name_hash);
     m_default_value = std::move(x.m_default_value);
-
     return *this;
 }
 
@@ -9493,7 +9434,6 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader& eprosima::fastdds::dds
 {
 
     m_annotation_name = x.m_annotation_name;
-
     return *this;
 }
 
@@ -9502,7 +9442,6 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader& eprosima::fastdds::dds
 {
 
     m_annotation_name = std::move(x.m_annotation_name);
-
     return *this;
 }
 
@@ -9569,17 +9508,20 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::~MinimalAnnotationHeade
 eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::MinimalAnnotationHeader(
         const MinimalAnnotationHeader& x)
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::MinimalAnnotationHeader(
         MinimalAnnotationHeader&& x) noexcept
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::operator =(
         const MinimalAnnotationHeader& x)
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -9588,6 +9530,7 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& eprosima::fastdds::dds:
         MinimalAnnotationHeader&& x) noexcept
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -9595,6 +9538,7 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& eprosima::fastdds::dds:
 bool eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::operator ==(
         const MinimalAnnotationHeader& x) const
 {
+    static_cast<void>(x);
     return true;
 }
 
@@ -9637,7 +9581,6 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationType& eprosima::fastdds::dds::
     m_annotation_flag = x.m_annotation_flag;
     m_header = x.m_header;
     m_member_seq = x.m_member_seq;
-
     return *this;
 }
 
@@ -9648,7 +9591,6 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationType& eprosima::fastdds::dds::
     m_annotation_flag = std::move(x.m_annotation_flag);
     m_header = std::move(x.m_header);
     m_member_seq = std::move(x.m_member_seq);
-
     return *this;
 }
 
@@ -9815,7 +9757,6 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationType& eprosima::fastdds::dds::x
     m_annotation_flag = x.m_annotation_flag;
     m_header = x.m_header;
     m_member_seq = x.m_member_seq;
-
     return *this;
 }
 
@@ -9826,7 +9767,6 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationType& eprosima::fastdds::dds::x
     m_annotation_flag = std::move(x.m_annotation_flag);
     m_header = std::move(x.m_header);
     m_member_seq = std::move(x.m_member_seq);
-
     return *this;
 }
 
@@ -9993,7 +9933,6 @@ eprosima::fastdds::dds::xtypes::CommonAliasBody& eprosima::fastdds::dds::xtypes:
 
     m_related_flags = x.m_related_flags;
     m_related_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_related_type = *x.m_related_type;
-
     return *this;
 }
 
@@ -10003,7 +9942,6 @@ eprosima::fastdds::dds::xtypes::CommonAliasBody& eprosima::fastdds::dds::xtypes:
 
     m_related_flags = std::move(x.m_related_flags);
     m_related_type = x.m_related_type;x.m_related_type = nullptr;
-
     return *this;
 }
 
@@ -10130,7 +10068,6 @@ eprosima::fastdds::dds::xtypes::CompleteAliasBody& eprosima::fastdds::dds::xtype
     m_common = x.m_common;
     m_ann_builtin = x.m_ann_builtin;
     m_ann_custom = x.m_ann_custom;
-
     return *this;
 }
 
@@ -10141,7 +10078,6 @@ eprosima::fastdds::dds::xtypes::CompleteAliasBody& eprosima::fastdds::dds::xtype
     m_common = std::move(x.m_common);
     m_ann_builtin = std::move(x.m_ann_builtin);
     m_ann_custom = std::move(x.m_ann_custom);
-
     return *this;
 }
 
@@ -10302,7 +10238,6 @@ eprosima::fastdds::dds::xtypes::MinimalAliasBody& eprosima::fastdds::dds::xtypes
 {
 
     m_common = x.m_common;
-
     return *this;
 }
 
@@ -10311,7 +10246,6 @@ eprosima::fastdds::dds::xtypes::MinimalAliasBody& eprosima::fastdds::dds::xtypes
 {
 
     m_common = std::move(x.m_common);
-
     return *this;
 }
 
@@ -10392,7 +10326,6 @@ eprosima::fastdds::dds::xtypes::CompleteAliasHeader& eprosima::fastdds::dds::xty
 {
 
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -10401,7 +10334,6 @@ eprosima::fastdds::dds::xtypes::CompleteAliasHeader& eprosima::fastdds::dds::xty
 {
 
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -10468,17 +10400,20 @@ eprosima::fastdds::dds::xtypes::MinimalAliasHeader::~MinimalAliasHeader()
 eprosima::fastdds::dds::xtypes::MinimalAliasHeader::MinimalAliasHeader(
         const MinimalAliasHeader& x)
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::MinimalAliasHeader::MinimalAliasHeader(
         MinimalAliasHeader&& x) noexcept
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::MinimalAliasHeader& eprosima::fastdds::dds::xtypes::MinimalAliasHeader::operator =(
         const MinimalAliasHeader& x)
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -10487,6 +10422,7 @@ eprosima::fastdds::dds::xtypes::MinimalAliasHeader& eprosima::fastdds::dds::xtyp
         MinimalAliasHeader&& x) noexcept
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -10494,6 +10430,7 @@ eprosima::fastdds::dds::xtypes::MinimalAliasHeader& eprosima::fastdds::dds::xtyp
 bool eprosima::fastdds::dds::xtypes::MinimalAliasHeader::operator ==(
         const MinimalAliasHeader& x) const
 {
+    static_cast<void>(x);
     return true;
 }
 
@@ -10536,7 +10473,6 @@ eprosima::fastdds::dds::xtypes::CompleteAliasType& eprosima::fastdds::dds::xtype
     m_alias_flags = x.m_alias_flags;
     m_header = x.m_header;
     m_body = x.m_body;
-
     return *this;
 }
 
@@ -10547,7 +10483,6 @@ eprosima::fastdds::dds::xtypes::CompleteAliasType& eprosima::fastdds::dds::xtype
     m_alias_flags = std::move(x.m_alias_flags);
     m_header = std::move(x.m_header);
     m_body = std::move(x.m_body);
-
     return *this;
 }
 
@@ -10714,7 +10649,6 @@ eprosima::fastdds::dds::xtypes::MinimalAliasType& eprosima::fastdds::dds::xtypes
     m_alias_flags = x.m_alias_flags;
     m_header = x.m_header;
     m_body = x.m_body;
-
     return *this;
 }
 
@@ -10725,7 +10659,6 @@ eprosima::fastdds::dds::xtypes::MinimalAliasType& eprosima::fastdds::dds::xtypes
     m_alias_flags = std::move(x.m_alias_flags);
     m_header = std::move(x.m_header);
     m_body = std::move(x.m_body);
-
     return *this;
 }
 
@@ -10889,7 +10822,6 @@ eprosima::fastdds::dds::xtypes::CompleteElementDetail& eprosima::fastdds::dds::x
 
     m_ann_builtin = x.m_ann_builtin;
     m_ann_custom = x.m_ann_custom;
-
     return *this;
 }
 
@@ -10899,7 +10831,6 @@ eprosima::fastdds::dds::xtypes::CompleteElementDetail& eprosima::fastdds::dds::x
 
     m_ann_builtin = std::move(x.m_ann_builtin);
     m_ann_custom = std::move(x.m_ann_custom);
-
     return *this;
 }
 
@@ -11026,7 +10957,6 @@ eprosima::fastdds::dds::xtypes::CommonCollectionElement& eprosima::fastdds::dds:
 
     m_element_flags = x.m_element_flags;
     m_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type = *x.m_type;
-
     return *this;
 }
 
@@ -11036,7 +10966,6 @@ eprosima::fastdds::dds::xtypes::CommonCollectionElement& eprosima::fastdds::dds:
 
     m_element_flags = std::move(x.m_element_flags);
     m_type = x.m_type;x.m_type = nullptr;
-
     return *this;
 }
 
@@ -11160,7 +11089,6 @@ eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dd
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -11170,7 +11098,6 @@ eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dd
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -11291,7 +11218,6 @@ eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds
 {
 
     m_common = x.m_common;
-
     return *this;
 }
 
@@ -11300,7 +11226,6 @@ eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds
 {
 
     m_common = std::move(x.m_common);
-
     return *this;
 }
 
@@ -11381,7 +11306,6 @@ eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds::dds::
 {
 
     m_bound = x.m_bound;
-
     return *this;
 }
 
@@ -11390,7 +11314,6 @@ eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds::dds::
 {
 
     m_bound = x.m_bound;
-
     return *this;
 }
 
@@ -11464,7 +11387,6 @@ eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdds::dds
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -11474,7 +11396,6 @@ eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdds::dds
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -11595,7 +11516,6 @@ eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds::dds:
 {
 
     m_common = x.m_common;
-
     return *this;
 }
 
@@ -11604,7 +11524,6 @@ eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds::dds:
 {
 
     m_common = std::move(x.m_common);
-
     return *this;
 }
 
@@ -11691,7 +11610,6 @@ eprosima::fastdds::dds::xtypes::CompleteSequenceType& eprosima::fastdds::dds::xt
     m_collection_flag = x.m_collection_flag;
     m_header = x.m_header;
     m_element = x.m_element;
-
     return *this;
 }
 
@@ -11702,7 +11620,6 @@ eprosima::fastdds::dds::xtypes::CompleteSequenceType& eprosima::fastdds::dds::xt
     m_collection_flag = std::move(x.m_collection_flag);
     m_header = std::move(x.m_header);
     m_element = std::move(x.m_element);
-
     return *this;
 }
 
@@ -11869,7 +11786,6 @@ eprosima::fastdds::dds::xtypes::MinimalSequenceType& eprosima::fastdds::dds::xty
     m_collection_flag = x.m_collection_flag;
     m_header = x.m_header;
     m_element = x.m_element;
-
     return *this;
 }
 
@@ -11880,7 +11796,6 @@ eprosima::fastdds::dds::xtypes::MinimalSequenceType& eprosima::fastdds::dds::xty
     m_collection_flag = std::move(x.m_collection_flag);
     m_header = std::move(x.m_header);
     m_element = std::move(x.m_element);
-
     return *this;
 }
 
@@ -12041,7 +11956,6 @@ eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds::xtype
 {
 
     m_bound_seq = x.m_bound_seq;
-
     return *this;
 }
 
@@ -12050,7 +11964,6 @@ eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds::xtype
 {
 
     m_bound_seq = std::move(x.m_bound_seq);
-
     return *this;
 }
 
@@ -12134,7 +12047,6 @@ eprosima::fastdds::dds::xtypes::CompleteArrayHeader& eprosima::fastdds::dds::xty
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -12144,7 +12056,6 @@ eprosima::fastdds::dds::xtypes::CompleteArrayHeader& eprosima::fastdds::dds::xty
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -12265,7 +12176,6 @@ eprosima::fastdds::dds::xtypes::MinimalArrayHeader& eprosima::fastdds::dds::xtyp
 {
 
     m_common = x.m_common;
-
     return *this;
 }
 
@@ -12274,7 +12184,6 @@ eprosima::fastdds::dds::xtypes::MinimalArrayHeader& eprosima::fastdds::dds::xtyp
 {
 
     m_common = std::move(x.m_common);
-
     return *this;
 }
 
@@ -12361,7 +12270,6 @@ eprosima::fastdds::dds::xtypes::CompleteArrayType& eprosima::fastdds::dds::xtype
     m_collection_flag = x.m_collection_flag;
     m_header = x.m_header;
     m_element = x.m_element;
-
     return *this;
 }
 
@@ -12372,7 +12280,6 @@ eprosima::fastdds::dds::xtypes::CompleteArrayType& eprosima::fastdds::dds::xtype
     m_collection_flag = std::move(x.m_collection_flag);
     m_header = std::move(x.m_header);
     m_element = std::move(x.m_element);
-
     return *this;
 }
 
@@ -12539,7 +12446,6 @@ eprosima::fastdds::dds::xtypes::MinimalArrayType& eprosima::fastdds::dds::xtypes
     m_collection_flag = x.m_collection_flag;
     m_header = x.m_header;
     m_element = x.m_element;
-
     return *this;
 }
 
@@ -12550,7 +12456,6 @@ eprosima::fastdds::dds::xtypes::MinimalArrayType& eprosima::fastdds::dds::xtypes
     m_collection_flag = std::move(x.m_collection_flag);
     m_header = std::move(x.m_header);
     m_element = std::move(x.m_element);
-
     return *this;
 }
 
@@ -12720,7 +12625,6 @@ eprosima::fastdds::dds::xtypes::CompleteMapType& eprosima::fastdds::dds::xtypes:
     m_header = x.m_header;
     m_key = x.m_key;
     m_element = x.m_element;
-
     return *this;
 }
 
@@ -12732,7 +12636,6 @@ eprosima::fastdds::dds::xtypes::CompleteMapType& eprosima::fastdds::dds::xtypes:
     m_header = std::move(x.m_header);
     m_key = std::move(x.m_key);
     m_element = std::move(x.m_element);
-
     return *this;
 }
 
@@ -12942,7 +12845,6 @@ eprosima::fastdds::dds::xtypes::MinimalMapType& eprosima::fastdds::dds::xtypes::
     m_header = x.m_header;
     m_key = x.m_key;
     m_element = x.m_element;
-
     return *this;
 }
 
@@ -12954,7 +12856,6 @@ eprosima::fastdds::dds::xtypes::MinimalMapType& eprosima::fastdds::dds::xtypes::
     m_header = std::move(x.m_header);
     m_key = std::move(x.m_key);
     m_element = std::move(x.m_element);
-
     return *this;
 }
 
@@ -13159,7 +13060,6 @@ eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds::dds:
 
     m_value = x.m_value;
     m_flags = x.m_flags;
-
     return *this;
 }
 
@@ -13169,7 +13069,6 @@ eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds::dds:
 
     m_value = x.m_value;
     m_flags = std::move(x.m_flags);
-
     return *this;
 }
 
@@ -13283,7 +13182,6 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral& eprosima::fastdds::dd
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -13293,7 +13191,6 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral& eprosima::fastdds::dd
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -13418,7 +13315,6 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral& eprosima::fastdds::dds
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -13428,7 +13324,6 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral& eprosima::fastdds::dds
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -13550,7 +13445,6 @@ eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds::dds::
 {
 
     m_bit_bound = x.m_bit_bound;
-
     return *this;
 }
 
@@ -13559,7 +13453,6 @@ eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds::dds::
 {
 
     m_bit_bound = x.m_bit_bound;
-
     return *this;
 }
 
@@ -13633,7 +13526,6 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& eprosima::fastdds::dds
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -13643,7 +13535,6 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& eprosima::fastdds::dds
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -13764,7 +13655,6 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& eprosima::fastdds::dds:
 {
 
     m_common = x.m_common;
-
     return *this;
 }
 
@@ -13773,7 +13663,6 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& eprosima::fastdds::dds:
 {
 
     m_common = std::move(x.m_common);
-
     return *this;
 }
 
@@ -13860,7 +13749,6 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& eprosima::fastdds::dds::
     m_enum_flags = x.m_enum_flags;
     m_header = x.m_header;
     m_literal_seq = x.m_literal_seq;
-
     return *this;
 }
 
@@ -13871,7 +13759,6 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& eprosima::fastdds::dds::
     m_enum_flags = std::move(x.m_enum_flags);
     m_header = std::move(x.m_header);
     m_literal_seq = std::move(x.m_literal_seq);
-
     return *this;
 }
 
@@ -14038,7 +13925,6 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& eprosima::fastdds::dds::x
     m_enum_flags = x.m_enum_flags;
     m_header = x.m_header;
     m_literal_seq = x.m_literal_seq;
-
     return *this;
 }
 
@@ -14049,7 +13935,6 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& eprosima::fastdds::dds::x
     m_enum_flags = std::move(x.m_enum_flags);
     m_header = std::move(x.m_header);
     m_literal_seq = std::move(x.m_literal_seq);
-
     return *this;
 }
 
@@ -14213,7 +14098,6 @@ eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xtypes::C
 
     m_position = x.m_position;
     m_flags = x.m_flags;
-
     return *this;
 }
 
@@ -14223,7 +14107,6 @@ eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xtypes::C
 
     m_position = x.m_position;
     m_flags = std::move(x.m_flags);
-
     return *this;
 }
 
@@ -14337,7 +14220,6 @@ eprosima::fastdds::dds::xtypes::CompleteBitflag& eprosima::fastdds::dds::xtypes:
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -14347,7 +14229,6 @@ eprosima::fastdds::dds::xtypes::CompleteBitflag& eprosima::fastdds::dds::xtypes:
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -14472,7 +14353,6 @@ eprosima::fastdds::dds::xtypes::MinimalBitflag& eprosima::fastdds::dds::xtypes::
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -14482,7 +14362,6 @@ eprosima::fastdds::dds::xtypes::MinimalBitflag& eprosima::fastdds::dds::xtypes::
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -14604,7 +14483,6 @@ eprosima::fastdds::dds::xtypes::CommonBitmaskHeader& eprosima::fastdds::dds::xty
 {
 
     m_bit_bound = x.m_bit_bound;
-
     return *this;
 }
 
@@ -14613,7 +14491,6 @@ eprosima::fastdds::dds::xtypes::CommonBitmaskHeader& eprosima::fastdds::dds::xty
 {
 
     m_bit_bound = x.m_bit_bound;
-
     return *this;
 }
 
@@ -14692,7 +14569,6 @@ eprosima::fastdds::dds::xtypes::CompleteBitmaskType& eprosima::fastdds::dds::xty
     m_bitmask_flags = x.m_bitmask_flags;
     m_header = x.m_header;
     m_flag_seq = x.m_flag_seq;
-
     return *this;
 }
 
@@ -14703,7 +14579,6 @@ eprosima::fastdds::dds::xtypes::CompleteBitmaskType& eprosima::fastdds::dds::xty
     m_bitmask_flags = std::move(x.m_bitmask_flags);
     m_header = std::move(x.m_header);
     m_flag_seq = std::move(x.m_flag_seq);
-
     return *this;
 }
 
@@ -14870,7 +14745,6 @@ eprosima::fastdds::dds::xtypes::MinimalBitmaskType& eprosima::fastdds::dds::xtyp
     m_bitmask_flags = x.m_bitmask_flags;
     m_header = x.m_header;
     m_flag_seq = x.m_flag_seq;
-
     return *this;
 }
 
@@ -14881,7 +14755,6 @@ eprosima::fastdds::dds::xtypes::MinimalBitmaskType& eprosima::fastdds::dds::xtyp
     m_bitmask_flags = std::move(x.m_bitmask_flags);
     m_header = std::move(x.m_header);
     m_flag_seq = std::move(x.m_flag_seq);
-
     return *this;
 }
 
@@ -15051,7 +14924,6 @@ eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xtypes::
     m_flags = x.m_flags;
     m_bitcount = x.m_bitcount;
     m_holder_type = x.m_holder_type;
-
     return *this;
 }
 
@@ -15063,7 +14935,6 @@ eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xtypes::
     m_flags = std::move(x.m_flags);
     m_bitcount = x.m_bitcount;
     m_holder_type = x.m_holder_type;
-
     return *this;
 }
 
@@ -15237,7 +15108,6 @@ eprosima::fastdds::dds::xtypes::CompleteBitfield& eprosima::fastdds::dds::xtypes
 
     m_common = x.m_common;
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -15247,7 +15117,6 @@ eprosima::fastdds::dds::xtypes::CompleteBitfield& eprosima::fastdds::dds::xtypes
 
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -15372,7 +15241,6 @@ eprosima::fastdds::dds::xtypes::MinimalBitfield& eprosima::fastdds::dds::xtypes:
 
     m_common = x.m_common;
     m_name_hash = x.m_name_hash;
-
     return *this;
 }
 
@@ -15382,7 +15250,6 @@ eprosima::fastdds::dds::xtypes::MinimalBitfield& eprosima::fastdds::dds::xtypes:
 
     m_common = std::move(x.m_common);
     m_name_hash = std::move(x.m_name_hash);
-
     return *this;
 }
 
@@ -15504,7 +15371,6 @@ eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& eprosima::fastdds::dds::xt
 {
 
     m_detail = x.m_detail;
-
     return *this;
 }
 
@@ -15513,7 +15379,6 @@ eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& eprosima::fastdds::dds::xt
 {
 
     m_detail = std::move(x.m_detail);
-
     return *this;
 }
 
@@ -15580,17 +15445,20 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::~MinimalBitsetHeader()
 eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::MinimalBitsetHeader(
         const MinimalBitsetHeader& x)
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::MinimalBitsetHeader(
         MinimalBitsetHeader&& x) noexcept
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::operator =(
         const MinimalBitsetHeader& x)
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -15599,6 +15467,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& eprosima::fastdds::dds::xty
         MinimalBitsetHeader&& x) noexcept
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -15606,6 +15475,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& eprosima::fastdds::dds::xty
 bool eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::operator ==(
         const MinimalBitsetHeader& x) const
 {
+    static_cast<void>(x);
     return true;
 }
 
@@ -15648,7 +15518,6 @@ eprosima::fastdds::dds::xtypes::CompleteBitsetType& eprosima::fastdds::dds::xtyp
     m_bitset_flags = x.m_bitset_flags;
     m_header = x.m_header;
     m_field_seq = x.m_field_seq;
-
     return *this;
 }
 
@@ -15659,7 +15528,6 @@ eprosima::fastdds::dds::xtypes::CompleteBitsetType& eprosima::fastdds::dds::xtyp
     m_bitset_flags = std::move(x.m_bitset_flags);
     m_header = std::move(x.m_header);
     m_field_seq = std::move(x.m_field_seq);
-
     return *this;
 }
 
@@ -15826,7 +15694,6 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetType& eprosima::fastdds::dds::xtype
     m_bitset_flags = x.m_bitset_flags;
     m_header = x.m_header;
     m_field_seq = x.m_field_seq;
-
     return *this;
 }
 
@@ -15837,7 +15704,6 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetType& eprosima::fastdds::dds::xtype
     m_bitset_flags = std::move(x.m_bitset_flags);
     m_header = std::move(x.m_header);
     m_field_seq = std::move(x.m_field_seq);
-
     return *this;
 }
 
@@ -15984,17 +15850,20 @@ eprosima::fastdds::dds::xtypes::CompleteExtendedType::~CompleteExtendedType()
 eprosima::fastdds::dds::xtypes::CompleteExtendedType::CompleteExtendedType(
         const CompleteExtendedType& x)
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::CompleteExtendedType::CompleteExtendedType(
         CompleteExtendedType&& x) noexcept
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::CompleteExtendedType& eprosima::fastdds::dds::xtypes::CompleteExtendedType::operator =(
         const CompleteExtendedType& x)
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -16003,6 +15872,7 @@ eprosima::fastdds::dds::xtypes::CompleteExtendedType& eprosima::fastdds::dds::xt
         CompleteExtendedType&& x) noexcept
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -16010,6 +15880,7 @@ eprosima::fastdds::dds::xtypes::CompleteExtendedType& eprosima::fastdds::dds::xt
 bool eprosima::fastdds::dds::xtypes::CompleteExtendedType::operator ==(
         const CompleteExtendedType& x) const
 {
+    static_cast<void>(x);
     return true;
 }
 
@@ -17228,17 +17099,20 @@ eprosima::fastdds::dds::xtypes::MinimalExtendedType::~MinimalExtendedType()
 eprosima::fastdds::dds::xtypes::MinimalExtendedType::MinimalExtendedType(
         const MinimalExtendedType& x)
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::MinimalExtendedType::MinimalExtendedType(
         MinimalExtendedType&& x) noexcept
 {
+    static_cast<void>(x);
 }
 
 eprosima::fastdds::dds::xtypes::MinimalExtendedType& eprosima::fastdds::dds::xtypes::MinimalExtendedType::operator =(
         const MinimalExtendedType& x)
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -17247,6 +17121,7 @@ eprosima::fastdds::dds::xtypes::MinimalExtendedType& eprosima::fastdds::dds::xty
         MinimalExtendedType&& x) noexcept
 {
 
+    static_cast<void>(x);
 
     return *this;
 }
@@ -17254,6 +17129,7 @@ eprosima::fastdds::dds::xtypes::MinimalExtendedType& eprosima::fastdds::dds::xty
 bool eprosima::fastdds::dds::xtypes::MinimalExtendedType::operator ==(
         const MinimalExtendedType& x) const
 {
+    static_cast<void>(x);
     return true;
 }
 
@@ -18622,6 +18498,8 @@ void eprosima::fastdds::dds::xtypes::TypeObject::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -18796,7 +18674,6 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair& eprosima::fastdds:
 
     m_type_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_identifier = *x.m_type_identifier;
     m_type_object = x.m_type_object;
-
     return *this;
 }
 
@@ -18806,7 +18683,6 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair& eprosima::fastdds:
 
     m_type_identifier = x.m_type_identifier;x.m_type_identifier = nullptr;
     m_type_object = std::move(x.m_type_object);
-
     return *this;
 }
 
@@ -18938,7 +18814,6 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierPair& eprosima::fastdds::dds::xtyp
 
     m_type_identifier1 = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_identifier1 = *x.m_type_identifier1;
     m_type_identifier2 = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_identifier2 = *x.m_type_identifier2;
-
     return *this;
 }
 
@@ -18948,7 +18823,6 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierPair& eprosima::fastdds::dds::xtyp
 
     m_type_identifier1 = x.m_type_identifier1;x.m_type_identifier1 = nullptr;
     m_type_identifier2 = x.m_type_identifier2;x.m_type_identifier2 = nullptr;
-
     return *this;
 }
 
@@ -19078,7 +18952,6 @@ eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& eprosima::fastdds::dds::x
 
     m_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_id = *x.m_type_id;
     m_typeobject_serialized_size = x.m_typeobject_serialized_size;
-
     return *this;
 }
 
@@ -19088,7 +18961,6 @@ eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& eprosima::fastdds::dds::x
 
     m_type_id = x.m_type_id;x.m_type_id = nullptr;
     m_typeobject_serialized_size = x.m_typeobject_serialized_size;
-
     return *this;
 }
 
@@ -19206,7 +19078,6 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::fastdd
     m_typeid_with_size = x.m_typeid_with_size;
     m_dependent_typeid_count = x.m_dependent_typeid_count;
     m_dependent_typeids = x.m_dependent_typeids;
-
     return *this;
 }
 
@@ -19217,7 +19088,6 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::fastdd
     m_typeid_with_size = std::move(x.m_typeid_with_size);
     m_dependent_typeid_count = x.m_dependent_typeid_count;
     m_dependent_typeids = std::move(x.m_dependent_typeids);
-
     return *this;
 }
 
@@ -19372,7 +19242,6 @@ eprosima::fastdds::dds::xtypes::TypeInformation& eprosima::fastdds::dds::xtypes:
 
     m_minimal = x.m_minimal;
     m_complete = x.m_complete;
-
     return *this;
 }
 
@@ -19382,7 +19251,6 @@ eprosima::fastdds::dds::xtypes::TypeInformation& eprosima::fastdds::dds::xtypes:
 
     m_minimal = std::move(x.m_minimal);
     m_complete = std::move(x.m_complete);
-
     return *this;
 }
 
