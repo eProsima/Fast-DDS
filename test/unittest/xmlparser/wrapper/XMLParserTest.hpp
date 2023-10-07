@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastrtps/xmlparser/XMLParser.h>
 
@@ -593,4 +594,10 @@ public:
         return getXMLThreadSettings(*p_root, thread_settings);
     }
 
+    static XMLP_ret getXMLEntityFactoryQos_wrapper(
+            tinyxml2::XMLElement* p_root,
+            eprosima::fastdds::dds::EntityFactoryQosPolicy& entity_factory)
+    {
+        return getXMLEntityFactoryQos(*p_root, entity_factory);
+    }
 };
