@@ -147,6 +147,30 @@
                 <userData>
                     <value>${XML_PROFILES_ENV_VAR_66}</value>
                 </userData>
+                <builtin_controllers_sender_thread>
+                    <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                    <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                    <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                    <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+                </builtin_controllers_sender_thread>
+                <timed_events_thread>
+                    <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                    <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                    <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                    <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+                </timed_events_thread>
+                <discovery_server_thread>
+                    <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                    <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                    <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                    <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+                </discovery_server_thread>
+                <security_log_thread>
+                    <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                    <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                    <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                    <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+                </security_log_thread>
             </rtps>
         </participant>
 
