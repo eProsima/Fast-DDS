@@ -487,7 +487,13 @@ public:
                (this->properties == b.properties) &&
                (this->prefix == b.prefix) &&
                (this->flow_controllers == b.flow_controllers) &&
-               (this->builtin_controllers_sender_thread == b.builtin_controllers_sender_thread);
+               (this->builtin_controllers_sender_thread == b.builtin_controllers_sender_thread) &&
+               (this->timed_events_thread == b.timed_events_thread) &&
+#if HAVE_SECURITY
+               (this->security_log_thread == b.security_log_thread) &&
+#endif // if HAVE_SECURITY
+               (this->discovery_server_thread == b.discovery_server_thread);
+
     }
 
     /**

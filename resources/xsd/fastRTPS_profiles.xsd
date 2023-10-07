@@ -132,7 +132,11 @@
             ├ propertiesPolicy                  [0~1],
             ├ allocation                        [0~1],
             ├ userData                          [0~1],
-            └ prefix                            [0~1]-->
+            ├ prefix                            [0~1],
+            ├ builtin_controllers_sender_thread [threadSettingsType],
+            ├ timed_events_thread               [threadSettingsType],
+            ├ discovery_server_thread           [threadSettingsType],
+            └ security_log_thread               [threadSettingsType]-->
     <!-- TODO:  How to ensure that the userTransports identifiers exist in transport descriptors in the XML file? -->
     <xs:complexType name="participantProfileType">
         <xs:all>
@@ -162,6 +166,10 @@
                         <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType"  minOccurs="0" maxOccurs="1"/>
                         <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="prefix" type="prefixType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtin_controllers_sender_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="timed_events_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="discovery_server_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="security_log_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
                     </xs:all>
                 </xs:complexType>
             </xs:element>

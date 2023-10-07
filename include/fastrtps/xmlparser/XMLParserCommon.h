@@ -144,6 +144,11 @@ extern const char* DYNAMIC_LC;
 extern const char* MAX_PROPERTIES;
 extern const char* MAX_USER_DATA;
 extern const char* MAX_PARTITIONS;
+extern const char* TIMED_EVENTS_THREAD;
+extern const char* DISCOVERY_SERVER_THREAD;
+extern const char* SECURITY_LOG_THREAD;
+extern const char* BUILTIN_TRANSPORTS_RECEPTION_THREADS;
+extern const char* BUILTIN_CONTROLLERS_SENDER_THREAD;
 
 /// Publisher-subscriber attributes
 extern const char* TOPIC;

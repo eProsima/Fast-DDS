@@ -128,6 +128,11 @@ const char* DYNAMIC_LC = "dynamic";
 const char* MAX_PROPERTIES = "max_properties";
 const char* MAX_USER_DATA = "max_user_data";
 const char* MAX_PARTITIONS = "max_partitions";
+const char* TIMED_EVENTS_THREAD = "timed_events_thread";
+const char* DISCOVERY_SERVER_THREAD = "discovery_server_thread";
+const char* SECURITY_LOG_THREAD = "security_log_thread";
+const char* BUILTIN_TRANSPORTS_RECEPTION_THREADS = "builtin_transports_reception_threads";
+const char* BUILTIN_CONTROLLERS_SENDER_THREAD = "builtin_controllers_sender_thread";
 
 /// Publisher-subscriber attributes
 const char* TOPIC = "topic";

@@ -2062,6 +2062,36 @@ XMLP_ret XMLParser::fillDataNode(
             }
             participant_node.get()->rtps.setName(s.c_str());
         }
+        else if (strcmp(name, BUILTIN_CONTROLLERS_SENDER_THREAD) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*p_aux0, participant_node.get()->rtps.builtin_controllers_sender_thread))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, TIMED_EVENTS_THREAD) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*p_aux0, participant_node.get()->rtps.timed_events_thread))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, DISCOVERY_SERVER_THREAD) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*p_aux0, participant_node.get()->rtps.discovery_server_thread))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+#if HAVE_SECURITY
+        else if (strcmp(name, SECURITY_LOG_THREAD) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*p_aux0, participant_node.get()->rtps.security_log_thread))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+#endif // if HAVE_SECURITY
         else
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'rtpsParticipantAttributesType'. Name: " << name);
