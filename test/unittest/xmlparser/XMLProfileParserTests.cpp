@@ -3617,7 +3617,8 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
             using namespace eprosima::fastdds::dds;
 
             DomainParticipantFactoryQos profile_qos;
-            ASSERT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::fillDomainParticipantFactoryQos("factory", profile_qos));
+            ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+                    xmlparser::XMLProfileManager::fillDomainParticipantFactoryQos("factory", profile_qos));
 
             DomainParticipantFactoryQos default_qos;
             xmlparser::XMLProfileManager::getDefaultDomainParticipantFactoryQos(default_qos);
@@ -3865,7 +3866,8 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             using namespace eprosima::fastdds::dds;
 
             ParticipantAttributes profile_attr;
-            ASSERT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::fillParticipantAttributes("participant", profile_attr));
+            ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+                    xmlparser::XMLProfileManager::fillParticipantAttributes("participant", profile_attr));
 
             ParticipantAttributes default_attr;
             xmlparser::XMLProfileManager::getDefaultParticipantAttributes(default_attr);

@@ -1177,7 +1177,8 @@ XMLP_ret XMLParser::parseXMLDomainParticipantFactoryProf(
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
     up_participantfactory_t factory_qos{new fastdds::dds::DomainParticipantFactoryQos};
-    up_node_participantfactory_t factory_node{new node_participantfactory_t{NodeType::DOMAINPARTICIPANT_FACTORY, std::move(factory_qos)}};
+    up_node_participantfactory_t factory_node{new node_participantfactory_t{NodeType::DOMAINPARTICIPANT_FACTORY,
+                                                                            std::move(factory_qos)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *factory_node))
     {
         rootNode.addChild(std::move(factory_node));
@@ -1776,13 +1777,13 @@ XMLP_ret XMLParser::fillDataNode(
         DataNode<fastdds::dds::DomainParticipantFactoryQos>& factory_node)
 {
     /*
-    <xs:complexType name="domainParticipantFactoryProfileType">
+       <xs:complexType name="domainParticipantFactoryProfileType">
         <xs:all>
             <xs:element name="qos" type="domainParticipantFactoryQosPoliciesType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
         <xs:attribute name="profile_name" type="string" use="required"/>
         <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
-    </xs:complexType>
+       </xs:complexType>
      */
 
     if (nullptr == p_profile)
@@ -1797,7 +1798,8 @@ XMLP_ret XMLParser::fillDataNode(
      * The only allowed element <qos>, and its max is 1; look for it.
      */
     std::set<std::string> tags_present;
-    for (tinyxml2::XMLElement* p_element = p_profile->FirstChildElement(); p_element != nullptr; p_element = p_element->NextSiblingElement())
+    for (tinyxml2::XMLElement* p_element = p_profile->FirstChildElement(); p_element != nullptr;
+            p_element = p_element->NextSiblingElement())
     {
         const char* name = p_element->Name();
         if (tags_present.count(name) != 0)
@@ -2064,7 +2066,9 @@ XMLP_ret XMLParser::fillDataNode(
         }
         else if (strcmp(name, BUILTIN_CONTROLLERS_SENDER_THREAD) == 0)
         {
-            if (XMLP_ret::XML_OK != getXMLThreadSettings(*p_aux0, participant_node.get()->rtps.builtin_controllers_sender_thread))
+            if (XMLP_ret::XML_OK !=
+                    getXMLThreadSettings(*p_aux0,
+                    participant_node.get()->rtps.builtin_controllers_sender_thread))
             {
                 return XMLP_ret::XML_ERROR;
             }

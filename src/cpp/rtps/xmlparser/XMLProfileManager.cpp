@@ -507,7 +507,8 @@ XMLP_ret XMLProfileManager::extractDomainParticipantFactoryProfile(
 
     profile_name = it->second;
 
-    std::pair<part_factory_map_iterator_t, bool> emplace = participant_factory_profiles_.emplace(profile_name, node_factory->getData());
+    std::pair<part_factory_map_iterator_t, bool> emplace = participant_factory_profiles_.emplace(profile_name,
+                    node_factory->getData());
     if (false == emplace.second)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding profile '" << profile_name << "' from file '" << filename << "'");

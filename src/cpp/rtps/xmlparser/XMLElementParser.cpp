@@ -3734,13 +3734,13 @@ XMLP_ret XMLParser::getXMLUint(
     }
 
     auto to_uint64 = [](const char* str, unsigned long int* value) -> bool
-    {
-        if (sscanf( str, "%lu", value) == 1)
-        {
-            return true;
-        }
-        return false;
-    };
+            {
+                if (sscanf( str, "%lu", value) == 1)
+                {
+                    return true;
+                }
+                return false;
+            };
 
     std::string text = get_element_text(elem);
     if (text.empty() || !to_uint64(text.c_str(), &ui))
@@ -4083,12 +4083,14 @@ XMLP_ret XMLParser::getXMLDomainParticipantFactoryQos(
 
     std::set<std::string> tags_present;
 
-    for (tinyxml2::XMLElement* element = elem.FirstChildElement(); element != nullptr; element = element->NextSiblingElement())
+    for (tinyxml2::XMLElement* element = elem.FirstChildElement(); element != nullptr;
+            element = element->NextSiblingElement())
     {
         const char* name = element->Name();
         if (tags_present.count(name) != 0)
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'domainParticipantFactoryQosPoliciesType'. Name: " << name);
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Duplicated element found in 'domainParticipantFactoryQosPoliciesType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
         }
         tags_present.emplace(name);
@@ -4116,7 +4118,8 @@ XMLP_ret XMLParser::getXMLDomainParticipantFactoryQos(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'domainParticipantFactoryQosPoliciesType'. Name: " << name);
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Invalid element found into 'domainParticipantFactoryQosPoliciesType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -4539,8 +4542,8 @@ XMLP_ret XMLParser::getXMLThreadSettings(
 }
 
 XMLP_ret XMLParser::getXMLEntityFactoryQos(
-            tinyxml2::XMLElement& elem,
-            fastdds::dds::EntityFactoryQosPolicy& entity_factory)
+        tinyxml2::XMLElement& elem,
+        fastdds::dds::EntityFactoryQosPolicy& entity_factory)
 {
     /*
         <xs:complexType name="entityFactoryQosPolicyType">

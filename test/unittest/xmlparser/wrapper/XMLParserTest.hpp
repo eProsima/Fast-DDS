@@ -600,4 +600,5 @@ public:
     {
         return getXMLEntityFactoryQos(*p_root, entity_factory);
     }
+
 };
