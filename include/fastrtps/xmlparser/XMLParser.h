@@ -23,6 +23,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
@@ -232,6 +233,10 @@ protected:
     RTPS_DllAPI static XMLP_ret parse_tls_config(
             tinyxml2::XMLElement* p_root,
             sp_transport_t tcp_transport);
+
+    RTPS_DllAPI static XMLP_ret parseXMLReceptionThreads(
+            tinyxml2::XMLElement& p_root,
+            fastdds::rtps::PortBasedTransportDescriptor::ReceptionThreadsConfigMap& reception_threads);
 
     /**
      * Load a XML consumer node and parses it. Adds the parsed consumer to Log directly.

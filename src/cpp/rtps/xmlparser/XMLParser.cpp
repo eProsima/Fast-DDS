@@ -1135,6 +1135,15 @@ XMLP_ret XMLParser::parse_tls_config(
     return ret;
 }
 
+XMLP_ret XMLParser::parseXMLReceptionThreads(
+        tinyxml2::XMLElement& p_root,
+        fastdds::rtps::PortBasedTransportDescriptor::ReceptionThreadsConfigMap& reception_threads)
+{
+    static_cast<void>(p_root);
+    static_cast<void>(reception_threads);
+    return XMLP_ret::XML_NOK;
+}
+
 XMLP_ret XMLParser::parseXMLLibrarySettings(
         tinyxml2::XMLElement* p_root)
 {

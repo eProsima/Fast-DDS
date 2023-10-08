@@ -12,30 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/xmlparser/XMLTree.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/transport/UDPv6TransportDescriptor.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/log/OStreamConsumer.hpp>
-#include <fastdds/dds/log/FileConsumer.hpp>
-#include <fastdds/dds/log/StdoutConsumer.hpp>
-#include <fastdds/dds/log/StdoutErrConsumer.hpp>
-#include "../logging/mock/MockConsumer.h"
 #include "XMLParserTests.hpp"
-#include "wrapper/XMLParserTest.hpp"
-
-#include <tinyxml2.h>
-#include <gtest/gtest.h>
 
 #include <fstream>
 #include <sstream>
+
+#include <fastdds/dds/log/FileConsumer.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/OStreamConsumer.hpp>
+#include <fastdds/dds/log/StdoutConsumer.hpp>
+#include <fastdds/dds/log/StdoutErrConsumer.hpp>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/xmlparser/XMLTree.h>
+
+#include <tinyxml2.h>
+
+#include <gtest/gtest.h>
+
+#include "../logging/mock/MockConsumer.h"
+#include "wrapper/XMLParserTest.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -2874,6 +2878,133 @@ TEST_F(XMLParserTests, parseXMLTopicDataNegativeClauses)
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTopicData_wrapper(nullptr, *topic_node));
+}
+
+/*
+ * This test checks the behaviour of the parseXMLReceptionThreads function.
+ */
+TEST_F(XMLParserTests, parseXMLReceptionThreads)
+{
+    using namespace eprosima::fastdds::rtps;
+
+    struct TestCase
+    {
+        std::string title;
+        std::string xml;
+        xmlparser::XMLP_ret result;
+        PortBasedTransportDescriptor::ReceptionThreadsConfigMap threads_config;
+    };
+
+    ThreadSettings default_thread_settings;
+    ThreadSettings modified_thread_settings;
+    modified_thread_settings.scheduling_policy = 12;
+    modified_thread_settings.priority = 12;
+    modified_thread_settings.affinity = 12;
+    modified_thread_settings.stack_size = 12;
+
+
+    std::vector<TestCase> test_cases =
+    {
+        {
+            "reception_threads_empty",
+            "<reception_threads></reception_threads>",
+            xmlparser::XMLP_ret::XML_OK,
+            {}
+        },
+        {
+            "reception_threads_ok",
+            R"(
+                <reception_threads>
+                    <reception_thread port="12345">
+                        <scheduling_policy>12</scheduling_policy>
+                        <priority>12</priority>
+                        <affinity>12</affinity>
+                        <stack_size>12</stack_size>
+                    </reception_thread>
+                    <reception_thread port="12346">
+                        <scheduling_policy>12</scheduling_policy>
+                        <priority>12</priority>
+                        <affinity>12</affinity>
+                        <stack_size>12</stack_size>
+                    </reception_thread>
+                </reception_threads>)",
+            xmlparser::XMLP_ret::XML_OK,
+            {
+                {12345, {modified_thread_settings}},
+                {12346, {modified_thread_settings}}
+            }
+        },
+        {
+            "reception_threads_duplicated",
+            R"(
+                <reception_threads>
+                    <reception_thread port="12345">
+                        <scheduling_policy>12</scheduling_policy>
+                        <priority>12</priority>
+                        <affinity>12</affinity>
+                        <stack_size>12</stack_size>
+                    </reception_thread>
+                    <reception_thread port="12345">
+                        <scheduling_policy>12</scheduling_policy>
+                        <priority>12</priority>
+                        <affinity>12</affinity>
+                        <stack_size>12</stack_size>
+                    </reception_thread>
+                </reception_threads>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            {}
+        },
+        {
+            "reception_threads_wrong_tags",
+            R"(
+                <reception_threads>
+                    <wrong_tag port="12345">
+                        <scheduling_policy>12</scheduling_policy>
+                        <priority>12</priority>
+                        <affinity>12</affinity>
+                        <stack_size>12</stack_size>
+                    </wrong_tag>
+                </reception_threads>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            {}
+        },
+        {
+            "reception_threads_wrong_attribute",
+            R"(
+                <reception_threads>
+                    <reception_thread wrong_attribute="12345">
+                        <scheduling_policy>12</scheduling_policy>
+                        <priority>12</priority>
+                        <affinity>12</affinity>
+                        <stack_size>12</stack_size>
+                    </reception_thread>
+                </reception_threads>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            {}
+        },
+    };
+
+    for (auto test_case : test_cases)
+    {
+        tinyxml2::XMLDocument xml_doc;
+        std::unique_ptr<BaseNode> root;
+        tinyxml2::XMLElement* titleElement;
+        PortBasedTransportDescriptor::ReceptionThreadsConfigMap reception_threads;
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS,
+                xml_doc.Parse(test_case.xml.c_str())) << "test_case = [" << test_case.title << "]";
+
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(test_case.result, XMLParserTest::parseXMLReceptionThreads_wrapper(*titleElement, reception_threads));
+
+        if (test_case.result == xmlparser::XMLP_ret::XML_OK)
+        {
+            for (auto entry : test_case.threads_config)
+            {
+                EXPECT_EQ(entry.second, reception_threads[entry.first]);
+            }
+        }
+    }
 }
 
 int main(

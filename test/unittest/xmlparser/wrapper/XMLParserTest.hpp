@@ -14,6 +14,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastrtps/xmlparser/XMLParser.h>
 
 using namespace eprosima::fastrtps;
@@ -502,6 +503,13 @@ public:
             eprosima::fastrtps::xmlparser::sp_transport_t tcp_transport)
     {
         return parse_tls_config(p_root, tcp_transport);
+    }
+
+    static XMLP_ret parseXMLReceptionThreads_wrapper(
+            tinyxml2::XMLElement& p_root,
+            eprosima::fastdds::rtps::PortBasedTransportDescriptor::ReceptionThreadsConfigMap& reception_threads)
+    {
+        return parseXMLReceptionThreads(p_root, reception_threads);
     }
 
     static XMLP_ret parseXMLLibrarySettings_wrapper(
