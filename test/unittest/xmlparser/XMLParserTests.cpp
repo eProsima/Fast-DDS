@@ -862,6 +862,12 @@ TEST_F(XMLParserTests, loadXMLProfiles)
  */
 TEST_F(XMLParserTests, parseXMLTransportData)
 {
+    eprosima::fastdds::rtps::ThreadSettings modified_thread_settings;
+    modified_thread_settings.scheduling_policy = 12;
+    modified_thread_settings.priority = 12;
+    modified_thread_settings.affinity = 12;
+    modified_thread_settings.stack_size = 12;
+
     // Test UDPv4 and UDPv6
     {
         tinyxml2::XMLDocument xml_doc;
@@ -901,9 +907,29 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <port_queue_capacity>512</port_queue_capacity>\
                     <healthy_check_timeout_ms>1000</healthy_check_timeout_ms>\
                     <rtps_dump_file>rtsp_messages.log</rtps_dump_file>\
+                    <default_reception_threads>\
+                        <scheduling_policy>12</scheduling_policy>\
+                        <priority>12</priority>\
+                        <affinity>12</affinity>\
+                        <stack_size>12</stack_size>\
+                    </default_reception_threads>\
+                    <reception_threads>\
+                        <reception_thread port=\"12345\">\
+                            <scheduling_policy>12</scheduling_policy>\
+                            <priority>12</priority>\
+                            <affinity>12</affinity>\
+                            <stack_size>12</stack_size>\
+                        </reception_thread>\
+                        <reception_thread port=\"12346\">\
+                            <scheduling_policy>12</scheduling_policy>\
+                            <priority>12</priority>\
+                            <affinity>12</affinity>\
+                            <stack_size>12</stack_size>\
+                        </reception_thread>\
+                    </reception_threads>\
                 </transport_descriptor>\
                 ";
-        constexpr size_t xml_len {2000};
+        constexpr size_t xml_len {3000};
         char xml[xml_len];
 
         // UDPv4
@@ -923,6 +949,9 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[0], "192.168.1.41");
         EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[1], "127.0.0.1");
         EXPECT_EQ(pUDPv4Desc->m_output_udp_socket, 5101u);
+        EXPECT_EQ(pUDPv4Desc->default_reception_threads(), modified_thread_settings);
+        EXPECT_EQ(pUDPv4Desc->get_thread_config_for_port(12345), modified_thread_settings);
+        EXPECT_EQ(pUDPv4Desc->get_thread_config_for_port(12346), modified_thread_settings);
 
         xmlparser::XMLProfileManager::DeleteInstance();
 
@@ -943,6 +972,9 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[0], "192.168.1.41");
         EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[1], "127.0.0.1");
         EXPECT_EQ(pUDPv6Desc->m_output_udp_socket, 5101u);
+        EXPECT_EQ(pUDPv6Desc->default_reception_threads(), modified_thread_settings);
+        EXPECT_EQ(pUDPv6Desc->get_thread_config_for_port(12345), modified_thread_settings);
+        EXPECT_EQ(pUDPv6Desc->get_thread_config_for_port(12346), modified_thread_settings);
         xmlparser::XMLProfileManager::DeleteInstance();
     }
 
@@ -979,9 +1011,29 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <check_crc>false</check_crc>\
                     <enable_tcp_nodelay>false</enable_tcp_nodelay>\
                     <tls><!-- TLS Section --></tls>\
+                    <default_reception_threads>\
+                        <scheduling_policy>12</scheduling_policy>\
+                        <priority>12</priority>\
+                        <affinity>12</affinity>\
+                        <stack_size>12</stack_size>\
+                    </default_reception_threads>\
+                    <reception_threads>\
+                        <reception_thread port=\"12345\">\
+                            <scheduling_policy>12</scheduling_policy>\
+                            <priority>12</priority>\
+                            <affinity>12</affinity>\
+                            <stack_size>12</stack_size>\
+                        </reception_thread>\
+                        <reception_thread port=\"12346\">\
+                            <scheduling_policy>12</scheduling_policy>\
+                            <priority>12</priority>\
+                            <affinity>12</affinity>\
+                            <stack_size>12</stack_size>\
+                        </reception_thread>\
+                    </reception_threads>\
                 </transport_descriptor>\
                 ";
-        constexpr size_t xml_len {2000};
+        constexpr size_t xml_len {3000};
         char xml[xml_len];
 
         // TCPv4
@@ -1011,6 +1063,9 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pTCPv4Desc->logical_port_increment, 2u);
         EXPECT_EQ(pTCPv4Desc->listening_ports[0], 5100u);
         EXPECT_EQ(pTCPv4Desc->listening_ports[1], 5200u);
+        EXPECT_EQ(pTCPv4Desc->default_reception_threads(), modified_thread_settings);
+        EXPECT_EQ(pTCPv4Desc->get_thread_config_for_port(12345), modified_thread_settings);
+        EXPECT_EQ(pTCPv4Desc->get_thread_config_for_port(12346), modified_thread_settings);
         xmlparser::XMLProfileManager::DeleteInstance();
 
         // TCPv6
@@ -1036,6 +1091,9 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pTCPv6Desc->logical_port_increment, 2u);
         EXPECT_EQ(pTCPv6Desc->listening_ports[0], 5100u);
         EXPECT_EQ(pTCPv6Desc->listening_ports[1], 5200u);
+        EXPECT_EQ(pTCPv6Desc->default_reception_threads(), modified_thread_settings);
+        EXPECT_EQ(pTCPv6Desc->get_thread_config_for_port(12345), modified_thread_settings);
+        EXPECT_EQ(pTCPv6Desc->get_thread_config_for_port(12346), modified_thread_settings);
         xmlparser::XMLProfileManager::DeleteInstance();
     }
 
@@ -1055,6 +1113,32 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <rtps_dump_file>rtsp_messages.log</rtps_dump_file>\
                     <maxMessageSize>16384</maxMessageSize>\
                     <maxInitialPeersRange>100</maxInitialPeersRange>\
+                    <default_reception_threads>\
+                        <scheduling_policy>12</scheduling_policy>\
+                        <priority>12</priority>\
+                        <affinity>12</affinity>\
+                        <stack_size>12</stack_size>\
+                    </default_reception_threads>\
+                    <reception_threads>\
+                        <reception_thread port=\"12345\">\
+                            <scheduling_policy>12</scheduling_policy>\
+                            <priority>12</priority>\
+                            <affinity>12</affinity>\
+                            <stack_size>12</stack_size>\
+                        </reception_thread>\
+                        <reception_thread port=\"12346\">\
+                            <scheduling_policy>12</scheduling_policy>\
+                            <priority>12</priority>\
+                            <affinity>12</affinity>\
+                            <stack_size>12</stack_size>\
+                        </reception_thread>\
+                    </reception_threads>\
+                    <dump_thread>\
+                        <scheduling_policy>12</scheduling_policy>\
+                        <priority>12</priority>\
+                        <affinity>12</affinity>\
+                        <stack_size>12</stack_size>\
+                    </dump_thread>\
                 </transport_descriptor>\
                 ";
 
@@ -1070,6 +1154,10 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pSHMDesc->rtps_dump_file(), "rtsp_messages.log");
         EXPECT_EQ(pSHMDesc->max_message_size(), 16384u);
         EXPECT_EQ(pSHMDesc->max_initial_peers_range(), 100u);
+        EXPECT_EQ(pSHMDesc->default_reception_threads(), modified_thread_settings);
+        EXPECT_EQ(pSHMDesc->get_thread_config_for_port(12345), modified_thread_settings);
+        EXPECT_EQ(pSHMDesc->get_thread_config_for_port(12346), modified_thread_settings);
+        EXPECT_EQ(pSHMDesc->dump_thread(), modified_thread_settings);
 
         xmlparser::XMLProfileManager::DeleteInstance();
     }
@@ -1100,6 +1188,8 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
         "non_blocking_send",
         "interfaceWhiteList",
         "output_port",
+        "default_reception_threads",
+        "reception_threads",
         "bad_element"
     };
 
@@ -1110,9 +1200,7 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
         "sendBufferSize",
         "receiveBufferSize",
         "TTL",
-        "non_blocking_send",
         "interfaceWhiteList",
-        "output_port",
         "keep_alive_frequency_ms",
         "keep_alive_timeout_ms",
         "max_logical_port",
@@ -1122,6 +1210,8 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
         "check_crc",
         "enable_tcp_nodelay",
         "tls",
+        "default_reception_threads",
+        "reception_threads",
         "bad_element"
     };
 
@@ -1133,6 +1223,9 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
         "port_queue_capacity",
         "healthy_check_timeout_ms",
         "rtps_dump_file",
+        "default_reception_threads",
+        "reception_threads",
+        "dump_thread",
         "bad_element"
     };
 
