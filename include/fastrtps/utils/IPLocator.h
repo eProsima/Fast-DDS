@@ -200,6 +200,12 @@ public:
     //! Retrieves a string representation of the locator's WAN address (as in RTCP protocol)
     RTPS_DllAPI static std::string toWanstring(
             const Locator_t& locator);
+    
+    //! This method is useful in the case of having an client initial peer 
+    //! pointing to a WAN locator, and receiving a locator with LAN and WAN
+    //! addresses (TCP Client from TCP Server)
+    RTPS_DllAPI static Locator_t WanToLanLocator(
+            const Locator_t& locator);
 
     //! Sets locator's LAN ID (as in RTCP protocol)
     RTPS_DllAPI static bool setLanID(

@@ -713,6 +713,20 @@ std::string IPLocator::toWanstring(
     return ss.str();
 }
 
+Locator_t IPLocator::WanToLanLocator(
+        const Locator_t& locator)
+{
+    Locator_t out(locator);
+
+    for (size_t i = 8; i < 12; i++)
+    {
+        out.address[i+4] = out.address[i];
+        out.address[i] = 0;
+    }
+
+    return out;
+}
+
 bool IPLocator::setLanID(
         Locator_t& locator,
         const std::string& lanId)
