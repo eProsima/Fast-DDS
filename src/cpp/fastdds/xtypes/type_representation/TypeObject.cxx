@@ -36,16 +36,27 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
-eprosima::fastdds::dds::xtypes::TypeObjectHashId::TypeObjectHashId()
+
+
+
+
+
+
+
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::TypeObjectHashId()
 {
     m__d = EK_COMPLETE;
 }
 
-eprosima::fastdds::dds::xtypes::TypeObjectHashId::~TypeObjectHashId()
+eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::~TypeObjectHashId()
 {
 }
 
-eprosima::fastdds::dds::xtypes::TypeObjectHashId::TypeObjectHashId(
+eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::TypeObjectHashId(
         const TypeObjectHashId& x)
 {
     m__d = x.m__d;
@@ -62,7 +73,7 @@ eprosima::fastdds::dds::xtypes::TypeObjectHashId::TypeObjectHashId(
     }
 }
 
-eprosima::fastdds::dds::xtypes::TypeObjectHashId::TypeObjectHashId(
+eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::TypeObjectHashId(
         TypeObjectHashId&& x) noexcept
 {
     m__d = x.m__d;
@@ -80,7 +91,7 @@ eprosima::fastdds::dds::xtypes::TypeObjectHashId::TypeObjectHashId(
     }
 }
 
-eprosima::fastdds::dds::xtypes::TypeObjectHashId& eprosima::fastdds::dds::xtypes::TypeObjectHashId::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId& eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::operator =(
         const TypeObjectHashId& x)
 {
     m__d = x.m__d;
@@ -99,7 +110,7 @@ eprosima::fastdds::dds::xtypes::TypeObjectHashId& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::TypeObjectHashId& eprosima::fastdds::dds::xtypes::TypeObjectHashId::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId& eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::operator =(
         TypeObjectHashId&& x) noexcept
 {
     m__d = x.m__d;
@@ -119,7 +130,7 @@ eprosima::fastdds::dds::xtypes::TypeObjectHashId& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeObjectHashId::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::operator ==(
         const TypeObjectHashId& x) const
 {
     if (m__d != x.m__d)
@@ -140,13 +151,13 @@ bool eprosima::fastdds::dds::xtypes::TypeObjectHashId::operator ==(
     return false;
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeObjectHashId::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::operator !=(
         const TypeObjectHashId& x) const
 {
     return !(*this == x);
 }
 
-void eprosima::fastdds::dds::xtypes::TypeObjectHashId::_d(
+void eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::_d(
         uint8_t __d)
 {
     bool b = false;
@@ -178,33 +189,33 @@ void eprosima::fastdds::dds::xtypes::TypeObjectHashId::_d(
     m__d = __d;
 }
 
-uint8_t eprosima::fastdds::dds::xtypes::TypeObjectHashId::_d() const
+uint8_t eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::_d() const
 {
     return m__d;
 }
 
-uint8_t& eprosima::fastdds::dds::xtypes::TypeObjectHashId::_d()
+uint8_t& eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::_d()
 {
     return m__d;
 }
 
-void eprosima::fastdds::dds::xtypes::TypeObjectHashId::hash(
-        const eprosima::fastdds::dds::xtypes::EquivalenceHash& _hash)
+void eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::hash(
+        const eprosima::fastdds::dds::xtypes1_3::EquivalenceHash& _hash)
 {
     m_hash = _hash;
     m__d = EK_COMPLETE;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeObjectHashId::hash(
-        eprosima::fastdds::dds::xtypes::EquivalenceHash&& _hash)
+void eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::hash(
+        eprosima::fastdds::dds::xtypes1_3::EquivalenceHash&& _hash)
 {
     m_hash = std::move(_hash);
     m__d = EK_COMPLETE;
 
 }
 
-const eprosima::fastdds::dds::xtypes::EquivalenceHash& eprosima::fastdds::dds::xtypes::TypeObjectHashId::hash() const
+const eprosima::fastdds::dds::xtypes1_3::EquivalenceHash& eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::hash() const
 {
     bool b = false;
 
@@ -226,7 +237,7 @@ const eprosima::fastdds::dds::xtypes::EquivalenceHash& eprosima::fastdds::dds::x
     return m_hash;
 }
 
-eprosima::fastdds::dds::xtypes::EquivalenceHash& eprosima::fastdds::dds::xtypes::TypeObjectHashId::hash()
+eprosima::fastdds::dds::xtypes1_3::EquivalenceHash& eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::hash()
 {
     bool b = false;
 
@@ -271,28 +282,30 @@ eprosima::fastdds::dds::xtypes::EquivalenceHash& eprosima::fastdds::dds::xtypes:
 
 
 
-eprosima::fastdds::dds::xtypes::StringSTypeDefn::StringSTypeDefn()
+
+
+eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn::StringSTypeDefn()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::StringSTypeDefn::~StringSTypeDefn()
+eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn::~StringSTypeDefn()
 {
 }
 
-eprosima::fastdds::dds::xtypes::StringSTypeDefn::StringSTypeDefn(
+eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn::StringSTypeDefn(
         const StringSTypeDefn& x)
 {
     m_bound = x.m_bound;
 }
 
-eprosima::fastdds::dds::xtypes::StringSTypeDefn::StringSTypeDefn(
+eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn::StringSTypeDefn(
         StringSTypeDefn&& x) noexcept
 {
     m_bound = x.m_bound;
 }
 
-eprosima::fastdds::dds::xtypes::StringSTypeDefn& eprosima::fastdds::dds::xtypes::StringSTypeDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn& eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn::operator =(
         const StringSTypeDefn& x)
 {
 
@@ -300,7 +313,7 @@ eprosima::fastdds::dds::xtypes::StringSTypeDefn& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::StringSTypeDefn& eprosima::fastdds::dds::xtypes::StringSTypeDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn& eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn::operator =(
         StringSTypeDefn&& x) noexcept
 {
 
@@ -308,13 +321,13 @@ eprosima::fastdds::dds::xtypes::StringSTypeDefn& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::StringSTypeDefn::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn::operator ==(
         const StringSTypeDefn& x) const
 {
     return (m_bound == x.m_bound);
 }
 
-bool eprosima::fastdds::dds::xtypes::StringSTypeDefn::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn::operator !=(
         const StringSTypeDefn& x) const
 {
     return !(*this == x);
@@ -324,8 +337,8 @@ bool eprosima::fastdds::dds::xtypes::StringSTypeDefn::operator !=(
  * @brief This function sets a value in member bound
  * @param _bound New value for member bound
  */
-void eprosima::fastdds::dds::xtypes::StringSTypeDefn::bound(
-        eprosima::fastdds::dds::xtypes::SBound _bound)
+void eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn::bound(
+        eprosima::fastdds::dds::xtypes1_3::SBound _bound)
 {
     m_bound = _bound;
 }
@@ -334,7 +347,7 @@ void eprosima::fastdds::dds::xtypes::StringSTypeDefn::bound(
  * @brief This function returns the value of member bound
  * @return Value of member bound
  */
-eprosima::fastdds::dds::xtypes::SBound eprosima::fastdds::dds::xtypes::StringSTypeDefn::bound() const
+eprosima::fastdds::dds::xtypes1_3::SBound eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn::bound() const
 {
     return m_bound;
 }
@@ -343,34 +356,36 @@ eprosima::fastdds::dds::xtypes::SBound eprosima::fastdds::dds::xtypes::StringSTy
  * @brief This function returns a reference to member bound
  * @return Reference to member bound
  */
-eprosima::fastdds::dds::xtypes::SBound& eprosima::fastdds::dds::xtypes::StringSTypeDefn::bound()
+eprosima::fastdds::dds::xtypes1_3::SBound& eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn::bound()
 {
     return m_bound;
 }
 
 
-eprosima::fastdds::dds::xtypes::StringLTypeDefn::StringLTypeDefn()
+
+
+eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn::StringLTypeDefn()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::StringLTypeDefn::~StringLTypeDefn()
+eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn::~StringLTypeDefn()
 {
 }
 
-eprosima::fastdds::dds::xtypes::StringLTypeDefn::StringLTypeDefn(
+eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn::StringLTypeDefn(
         const StringLTypeDefn& x)
 {
     m_bound = x.m_bound;
 }
 
-eprosima::fastdds::dds::xtypes::StringLTypeDefn::StringLTypeDefn(
+eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn::StringLTypeDefn(
         StringLTypeDefn&& x) noexcept
 {
     m_bound = x.m_bound;
 }
 
-eprosima::fastdds::dds::xtypes::StringLTypeDefn& eprosima::fastdds::dds::xtypes::StringLTypeDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn& eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn::operator =(
         const StringLTypeDefn& x)
 {
 
@@ -378,7 +393,7 @@ eprosima::fastdds::dds::xtypes::StringLTypeDefn& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::StringLTypeDefn& eprosima::fastdds::dds::xtypes::StringLTypeDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn& eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn::operator =(
         StringLTypeDefn&& x) noexcept
 {
 
@@ -386,13 +401,13 @@ eprosima::fastdds::dds::xtypes::StringLTypeDefn& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::StringLTypeDefn::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn::operator ==(
         const StringLTypeDefn& x) const
 {
     return (m_bound == x.m_bound);
 }
 
-bool eprosima::fastdds::dds::xtypes::StringLTypeDefn::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn::operator !=(
         const StringLTypeDefn& x) const
 {
     return !(*this == x);
@@ -402,8 +417,8 @@ bool eprosima::fastdds::dds::xtypes::StringLTypeDefn::operator !=(
  * @brief This function sets a value in member bound
  * @param _bound New value for member bound
  */
-void eprosima::fastdds::dds::xtypes::StringLTypeDefn::bound(
-        eprosima::fastdds::dds::xtypes::LBound _bound)
+void eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn::bound(
+        eprosima::fastdds::dds::xtypes1_3::LBound _bound)
 {
     m_bound = _bound;
 }
@@ -412,7 +427,7 @@ void eprosima::fastdds::dds::xtypes::StringLTypeDefn::bound(
  * @brief This function returns the value of member bound
  * @return Value of member bound
  */
-eprosima::fastdds::dds::xtypes::LBound eprosima::fastdds::dds::xtypes::StringLTypeDefn::bound() const
+eprosima::fastdds::dds::xtypes1_3::LBound eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn::bound() const
 {
     return m_bound;
 }
@@ -421,36 +436,38 @@ eprosima::fastdds::dds::xtypes::LBound eprosima::fastdds::dds::xtypes::StringLTy
  * @brief This function returns a reference to member bound
  * @return Reference to member bound
  */
-eprosima::fastdds::dds::xtypes::LBound& eprosima::fastdds::dds::xtypes::StringLTypeDefn::bound()
+eprosima::fastdds::dds::xtypes1_3::LBound& eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn::bound()
 {
     return m_bound;
 }
 
 
-eprosima::fastdds::dds::xtypes::PlainCollectionHeader::PlainCollectionHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::PlainCollectionHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::PlainCollectionHeader::~PlainCollectionHeader()
+eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::~PlainCollectionHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::PlainCollectionHeader::PlainCollectionHeader(
+eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::PlainCollectionHeader(
         const PlainCollectionHeader& x)
 {
     m_equiv_kind = x.m_equiv_kind;
     m_element_flags = x.m_element_flags;
 }
 
-eprosima::fastdds::dds::xtypes::PlainCollectionHeader::PlainCollectionHeader(
+eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::PlainCollectionHeader(
         PlainCollectionHeader&& x) noexcept
 {
     m_equiv_kind = x.m_equiv_kind;
     m_element_flags = std::move(x.m_element_flags);
 }
 
-eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainCollectionHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::operator =(
         const PlainCollectionHeader& x)
 {
 
@@ -459,7 +476,7 @@ eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::x
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainCollectionHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::operator =(
         PlainCollectionHeader&& x) noexcept
 {
 
@@ -468,14 +485,14 @@ eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::x
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainCollectionHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::operator ==(
         const PlainCollectionHeader& x) const
 {
     return (m_equiv_kind == x.m_equiv_kind &&
            m_element_flags == x.m_element_flags);
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainCollectionHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::operator !=(
         const PlainCollectionHeader& x) const
 {
     return !(*this == x);
@@ -485,8 +502,8 @@ bool eprosima::fastdds::dds::xtypes::PlainCollectionHeader::operator !=(
  * @brief This function sets a value in member equiv_kind
  * @param _equiv_kind New value for member equiv_kind
  */
-void eprosima::fastdds::dds::xtypes::PlainCollectionHeader::equiv_kind(
-        eprosima::fastdds::dds::xtypes::EquivalenceKind _equiv_kind)
+void eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::equiv_kind(
+        eprosima::fastdds::dds::xtypes1_3::EquivalenceKind _equiv_kind)
 {
     m_equiv_kind = _equiv_kind;
 }
@@ -495,7 +512,7 @@ void eprosima::fastdds::dds::xtypes::PlainCollectionHeader::equiv_kind(
  * @brief This function returns the value of member equiv_kind
  * @return Value of member equiv_kind
  */
-eprosima::fastdds::dds::xtypes::EquivalenceKind eprosima::fastdds::dds::xtypes::PlainCollectionHeader::equiv_kind() const
+eprosima::fastdds::dds::xtypes1_3::EquivalenceKind eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::equiv_kind() const
 {
     return m_equiv_kind;
 }
@@ -504,7 +521,7 @@ eprosima::fastdds::dds::xtypes::EquivalenceKind eprosima::fastdds::dds::xtypes::
  * @brief This function returns a reference to member equiv_kind
  * @return Reference to member equiv_kind
  */
-eprosima::fastdds::dds::xtypes::EquivalenceKind& eprosima::fastdds::dds::xtypes::PlainCollectionHeader::equiv_kind()
+eprosima::fastdds::dds::xtypes1_3::EquivalenceKind& eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::equiv_kind()
 {
     return m_equiv_kind;
 }
@@ -514,8 +531,8 @@ eprosima::fastdds::dds::xtypes::EquivalenceKind& eprosima::fastdds::dds::xtypes:
  * @brief This function copies the value in member element_flags
  * @param _element_flags New value to be copied in member element_flags
  */
-void eprosima::fastdds::dds::xtypes::PlainCollectionHeader::element_flags(
-        const eprosima::fastdds::dds::xtypes::CollectionElementFlag& _element_flags)
+void eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::element_flags(
+        const eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& _element_flags)
 {
     m_element_flags = _element_flags;
 }
@@ -524,8 +541,8 @@ void eprosima::fastdds::dds::xtypes::PlainCollectionHeader::element_flags(
  * @brief This function moves the value in member element_flags
  * @param _element_flags New value to be moved in member element_flags
  */
-void eprosima::fastdds::dds::xtypes::PlainCollectionHeader::element_flags(
-        eprosima::fastdds::dds::xtypes::CollectionElementFlag&& _element_flags)
+void eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::element_flags(
+        eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag&& _element_flags)
 {
     m_element_flags = std::move(_element_flags);
 }
@@ -534,7 +551,7 @@ void eprosima::fastdds::dds::xtypes::PlainCollectionHeader::element_flags(
  * @brief This function returns a constant reference to member element_flags
  * @return Constant reference to member element_flags
  */
-const eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::dds::xtypes::PlainCollectionHeader::element_flags() const
+const eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::element_flags() const
 {
     return m_element_flags;
 }
@@ -543,33 +560,35 @@ const eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::
  * @brief This function returns a reference to member element_flags
  * @return Reference to member element_flags
  */
-eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::dds::xtypes::PlainCollectionHeader::element_flags()
+eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::element_flags()
 {
     return m_element_flags;
 }
 
 
-eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::PlainSequenceSElemDefn()
+
+
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::PlainSequenceSElemDefn()
 {
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 }
 
-eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::~PlainSequenceSElemDefn()
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::~PlainSequenceSElemDefn()
 {
     delete m_element_identifier;
 }
 
-eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::PlainSequenceSElemDefn(
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::PlainSequenceSElemDefn(
         const PlainSequenceSElemDefn& x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
 }
 
-eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::PlainSequenceSElemDefn(
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::PlainSequenceSElemDefn(
         PlainSequenceSElemDefn&& x) noexcept
 {
     m_header = std::move(x.m_header);
@@ -577,17 +596,17 @@ eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::PlainSequenceSElemDefn(
     m_element_identifier = x.m_element_identifier;x.m_element_identifier = nullptr;
 }
 
-eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn& eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn& eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::operator =(
         const PlainSequenceSElemDefn& x)
 {
 
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn& eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn& eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::operator =(
         PlainSequenceSElemDefn&& x) noexcept
 {
 
@@ -597,7 +616,7 @@ eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn& eprosima::fastdds::dds::
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::operator ==(
         const PlainSequenceSElemDefn& x) const
 {
     return (m_header == x.m_header &&
@@ -605,7 +624,7 @@ bool eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::operator ==(
            m_element_identifier == x.m_element_identifier);
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::operator !=(
         const PlainSequenceSElemDefn& x) const
 {
     return !(*this == x);
@@ -615,8 +634,8 @@ bool eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::operator !=(
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::header(
-        const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::header(
+        const eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& _header)
 {
     m_header = _header;
 }
@@ -625,8 +644,8 @@ void eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::header(
-        eprosima::fastdds::dds::xtypes::PlainCollectionHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::header(
+        eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -635,7 +654,7 @@ void eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::header() const
+const eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::header() const
 {
     return m_header;
 }
@@ -644,7 +663,7 @@ const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::header()
+eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::header()
 {
     return m_header;
 }
@@ -654,8 +673,8 @@ eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::x
  * @brief This function sets a value in member bound
  * @param _bound New value for member bound
  */
-void eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::bound(
-        eprosima::fastdds::dds::xtypes::SBound _bound)
+void eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::bound(
+        eprosima::fastdds::dds::xtypes1_3::SBound _bound)
 {
     m_bound = _bound;
 }
@@ -664,7 +683,7 @@ void eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::bound(
  * @brief This function returns the value of member bound
  * @return Value of member bound
  */
-eprosima::fastdds::dds::xtypes::SBound eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::bound() const
+eprosima::fastdds::dds::xtypes1_3::SBound eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::bound() const
 {
     return m_bound;
 }
@@ -673,7 +692,7 @@ eprosima::fastdds::dds::xtypes::SBound eprosima::fastdds::dds::xtypes::PlainSequ
  * @brief This function returns a reference to member bound
  * @return Reference to member bound
  */
-eprosima::fastdds::dds::xtypes::SBound& eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::bound()
+eprosima::fastdds::dds::xtypes1_3::SBound& eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::bound()
 {
     return m_bound;
 }
@@ -683,8 +702,8 @@ eprosima::fastdds::dds::xtypes::SBound& eprosima::fastdds::dds::xtypes::PlainSeq
  * @brief This function copies the value in member element_identifier
  * @param _element_identifier New value to be copied in member element_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::element_identifier(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _element_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::element_identifier(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _element_identifier)
 {
     *m_element_identifier = _element_identifier;
 }
@@ -693,8 +712,8 @@ void eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::element_identifier(
  * @brief This function moves the value in member element_identifier
  * @param _element_identifier New value to be moved in member element_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::element_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _element_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::element_identifier(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _element_identifier)
 {
     *m_element_identifier = std::move(_element_identifier);
 }
@@ -703,7 +722,7 @@ void eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::element_identifier(
  * @brief This function returns a constant reference to member element_identifier
  * @return Constant reference to member element_identifier
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::element_identifier() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::element_identifier() const
 {
     return *m_element_identifier;
 }
@@ -712,33 +731,35 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member element_identifier
  * @return Reference to member element_identifier
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn::element_identifier()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::element_identifier()
 {
     return *m_element_identifier;
 }
 
 
-eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::PlainSequenceLElemDefn()
+
+
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::PlainSequenceLElemDefn()
 {
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 }
 
-eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::~PlainSequenceLElemDefn()
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::~PlainSequenceLElemDefn()
 {
     delete m_element_identifier;
 }
 
-eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::PlainSequenceLElemDefn(
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::PlainSequenceLElemDefn(
         const PlainSequenceLElemDefn& x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
 }
 
-eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::PlainSequenceLElemDefn(
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::PlainSequenceLElemDefn(
         PlainSequenceLElemDefn&& x) noexcept
 {
     m_header = std::move(x.m_header);
@@ -746,17 +767,17 @@ eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::PlainSequenceLElemDefn(
     m_element_identifier = x.m_element_identifier;x.m_element_identifier = nullptr;
 }
 
-eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn& eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn& eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::operator =(
         const PlainSequenceLElemDefn& x)
 {
 
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn& eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn& eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::operator =(
         PlainSequenceLElemDefn&& x) noexcept
 {
 
@@ -766,7 +787,7 @@ eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn& eprosima::fastdds::dds::
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::operator ==(
         const PlainSequenceLElemDefn& x) const
 {
     return (m_header == x.m_header &&
@@ -774,7 +795,7 @@ bool eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::operator ==(
            m_element_identifier == x.m_element_identifier);
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::operator !=(
         const PlainSequenceLElemDefn& x) const
 {
     return !(*this == x);
@@ -784,8 +805,8 @@ bool eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::operator !=(
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::header(
-        const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::header(
+        const eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& _header)
 {
     m_header = _header;
 }
@@ -794,8 +815,8 @@ void eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::header(
-        eprosima::fastdds::dds::xtypes::PlainCollectionHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::header(
+        eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -804,7 +825,7 @@ void eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::header() const
+const eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::header() const
 {
     return m_header;
 }
@@ -813,7 +834,7 @@ const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::header()
+eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::header()
 {
     return m_header;
 }
@@ -823,8 +844,8 @@ eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::x
  * @brief This function sets a value in member bound
  * @param _bound New value for member bound
  */
-void eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::bound(
-        eprosima::fastdds::dds::xtypes::LBound _bound)
+void eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::bound(
+        eprosima::fastdds::dds::xtypes1_3::LBound _bound)
 {
     m_bound = _bound;
 }
@@ -833,7 +854,7 @@ void eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::bound(
  * @brief This function returns the value of member bound
  * @return Value of member bound
  */
-eprosima::fastdds::dds::xtypes::LBound eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::bound() const
+eprosima::fastdds::dds::xtypes1_3::LBound eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::bound() const
 {
     return m_bound;
 }
@@ -842,7 +863,7 @@ eprosima::fastdds::dds::xtypes::LBound eprosima::fastdds::dds::xtypes::PlainSequ
  * @brief This function returns a reference to member bound
  * @return Reference to member bound
  */
-eprosima::fastdds::dds::xtypes::LBound& eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::bound()
+eprosima::fastdds::dds::xtypes1_3::LBound& eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::bound()
 {
     return m_bound;
 }
@@ -852,8 +873,8 @@ eprosima::fastdds::dds::xtypes::LBound& eprosima::fastdds::dds::xtypes::PlainSeq
  * @brief This function copies the value in member element_identifier
  * @param _element_identifier New value to be copied in member element_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::element_identifier(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _element_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::element_identifier(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _element_identifier)
 {
     *m_element_identifier = _element_identifier;
 }
@@ -862,8 +883,8 @@ void eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::element_identifier(
  * @brief This function moves the value in member element_identifier
  * @param _element_identifier New value to be moved in member element_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::element_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _element_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::element_identifier(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _element_identifier)
 {
     *m_element_identifier = std::move(_element_identifier);
 }
@@ -872,7 +893,7 @@ void eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::element_identifier(
  * @brief This function returns a constant reference to member element_identifier
  * @return Constant reference to member element_identifier
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::element_identifier() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::element_identifier() const
 {
     return *m_element_identifier;
 }
@@ -881,33 +902,35 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member element_identifier
  * @return Reference to member element_identifier
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn::element_identifier()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::element_identifier()
 {
     return *m_element_identifier;
 }
 
 
-eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::PlainArraySElemDefn()
+
+
+eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::PlainArraySElemDefn()
 {
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 }
 
-eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::~PlainArraySElemDefn()
+eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::~PlainArraySElemDefn()
 {
     delete m_element_identifier;
 }
 
-eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::PlainArraySElemDefn(
+eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::PlainArraySElemDefn(
         const PlainArraySElemDefn& x)
 {
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
 }
 
-eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::PlainArraySElemDefn(
+eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::PlainArraySElemDefn(
         PlainArraySElemDefn&& x) noexcept
 {
     m_header = std::move(x.m_header);
@@ -915,17 +938,17 @@ eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::PlainArraySElemDefn(
     m_element_identifier = x.m_element_identifier;x.m_element_identifier = nullptr;
 }
 
-eprosima::fastdds::dds::xtypes::PlainArraySElemDefn& eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn& eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::operator =(
         const PlainArraySElemDefn& x)
 {
 
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::PlainArraySElemDefn& eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn& eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::operator =(
         PlainArraySElemDefn&& x) noexcept
 {
 
@@ -935,7 +958,7 @@ eprosima::fastdds::dds::xtypes::PlainArraySElemDefn& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::operator ==(
         const PlainArraySElemDefn& x) const
 {
     return (m_header == x.m_header &&
@@ -943,7 +966,7 @@ bool eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::operator ==(
            m_element_identifier == x.m_element_identifier);
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::operator !=(
         const PlainArraySElemDefn& x) const
 {
     return !(*this == x);
@@ -953,8 +976,8 @@ bool eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::operator !=(
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::header(
-        const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::header(
+        const eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& _header)
 {
     m_header = _header;
 }
@@ -963,8 +986,8 @@ void eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::header(
-        eprosima::fastdds::dds::xtypes::PlainCollectionHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::header(
+        eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -973,7 +996,7 @@ void eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::header() const
+const eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::header() const
 {
     return m_header;
 }
@@ -982,7 +1005,7 @@ const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::header()
+eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::header()
 {
     return m_header;
 }
@@ -992,8 +1015,8 @@ eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::x
  * @brief This function copies the value in member array_bound_seq
  * @param _array_bound_seq New value to be copied in member array_bound_seq
  */
-void eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::array_bound_seq(
-        const eprosima::fastdds::dds::xtypes::SBoundSeq& _array_bound_seq)
+void eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::array_bound_seq(
+        const eprosima::fastdds::dds::xtypes1_3::SBoundSeq& _array_bound_seq)
 {
     m_array_bound_seq = _array_bound_seq;
 }
@@ -1002,8 +1025,8 @@ void eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::array_bound_seq(
  * @brief This function moves the value in member array_bound_seq
  * @param _array_bound_seq New value to be moved in member array_bound_seq
  */
-void eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::array_bound_seq(
-        eprosima::fastdds::dds::xtypes::SBoundSeq&& _array_bound_seq)
+void eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::array_bound_seq(
+        eprosima::fastdds::dds::xtypes1_3::SBoundSeq&& _array_bound_seq)
 {
     m_array_bound_seq = std::move(_array_bound_seq);
 }
@@ -1012,7 +1035,7 @@ void eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::array_bound_seq(
  * @brief This function returns a constant reference to member array_bound_seq
  * @return Constant reference to member array_bound_seq
  */
-const eprosima::fastdds::dds::xtypes::SBoundSeq& eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::array_bound_seq() const
+const eprosima::fastdds::dds::xtypes1_3::SBoundSeq& eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::array_bound_seq() const
 {
     return m_array_bound_seq;
 }
@@ -1021,7 +1044,7 @@ const eprosima::fastdds::dds::xtypes::SBoundSeq& eprosima::fastdds::dds::xtypes:
  * @brief This function returns a reference to member array_bound_seq
  * @return Reference to member array_bound_seq
  */
-eprosima::fastdds::dds::xtypes::SBoundSeq& eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::array_bound_seq()
+eprosima::fastdds::dds::xtypes1_3::SBoundSeq& eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::array_bound_seq()
 {
     return m_array_bound_seq;
 }
@@ -1031,8 +1054,8 @@ eprosima::fastdds::dds::xtypes::SBoundSeq& eprosima::fastdds::dds::xtypes::Plain
  * @brief This function copies the value in member element_identifier
  * @param _element_identifier New value to be copied in member element_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::element_identifier(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _element_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::element_identifier(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _element_identifier)
 {
     *m_element_identifier = _element_identifier;
 }
@@ -1041,8 +1064,8 @@ void eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::element_identifier(
  * @brief This function moves the value in member element_identifier
  * @param _element_identifier New value to be moved in member element_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::element_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _element_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::element_identifier(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _element_identifier)
 {
     *m_element_identifier = std::move(_element_identifier);
 }
@@ -1051,7 +1074,7 @@ void eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::element_identifier(
  * @brief This function returns a constant reference to member element_identifier
  * @return Constant reference to member element_identifier
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::element_identifier() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::element_identifier() const
 {
     return *m_element_identifier;
 }
@@ -1060,33 +1083,35 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member element_identifier
  * @return Reference to member element_identifier
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainArraySElemDefn::element_identifier()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::element_identifier()
 {
     return *m_element_identifier;
 }
 
 
-eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::PlainArrayLElemDefn()
+
+
+eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::PlainArrayLElemDefn()
 {
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 }
 
-eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::~PlainArrayLElemDefn()
+eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::~PlainArrayLElemDefn()
 {
     delete m_element_identifier;
 }
 
-eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::PlainArrayLElemDefn(
+eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::PlainArrayLElemDefn(
         const PlainArrayLElemDefn& x)
 {
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
 }
 
-eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::PlainArrayLElemDefn(
+eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::PlainArrayLElemDefn(
         PlainArrayLElemDefn&& x) noexcept
 {
     m_header = std::move(x.m_header);
@@ -1094,17 +1119,17 @@ eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::PlainArrayLElemDefn(
     m_element_identifier = x.m_element_identifier;x.m_element_identifier = nullptr;
 }
 
-eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn& eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn& eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::operator =(
         const PlainArrayLElemDefn& x)
 {
 
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn& eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn& eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::operator =(
         PlainArrayLElemDefn&& x) noexcept
 {
 
@@ -1114,7 +1139,7 @@ eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::operator ==(
         const PlainArrayLElemDefn& x) const
 {
     return (m_header == x.m_header &&
@@ -1122,7 +1147,7 @@ bool eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::operator ==(
            m_element_identifier == x.m_element_identifier);
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::operator !=(
         const PlainArrayLElemDefn& x) const
 {
     return !(*this == x);
@@ -1132,8 +1157,8 @@ bool eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::operator !=(
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::header(
-        const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::header(
+        const eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& _header)
 {
     m_header = _header;
 }
@@ -1142,8 +1167,8 @@ void eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::header(
-        eprosima::fastdds::dds::xtypes::PlainCollectionHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::header(
+        eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -1152,7 +1177,7 @@ void eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::header() const
+const eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::header() const
 {
     return m_header;
 }
@@ -1161,7 +1186,7 @@ const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::header()
+eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::header()
 {
     return m_header;
 }
@@ -1171,8 +1196,8 @@ eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::x
  * @brief This function copies the value in member array_bound_seq
  * @param _array_bound_seq New value to be copied in member array_bound_seq
  */
-void eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::array_bound_seq(
-        const eprosima::fastdds::dds::xtypes::LBoundSeq& _array_bound_seq)
+void eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::array_bound_seq(
+        const eprosima::fastdds::dds::xtypes1_3::LBoundSeq& _array_bound_seq)
 {
     m_array_bound_seq = _array_bound_seq;
 }
@@ -1181,8 +1206,8 @@ void eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::array_bound_seq(
  * @brief This function moves the value in member array_bound_seq
  * @param _array_bound_seq New value to be moved in member array_bound_seq
  */
-void eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::array_bound_seq(
-        eprosima::fastdds::dds::xtypes::LBoundSeq&& _array_bound_seq)
+void eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::array_bound_seq(
+        eprosima::fastdds::dds::xtypes1_3::LBoundSeq&& _array_bound_seq)
 {
     m_array_bound_seq = std::move(_array_bound_seq);
 }
@@ -1191,7 +1216,7 @@ void eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::array_bound_seq(
  * @brief This function returns a constant reference to member array_bound_seq
  * @return Constant reference to member array_bound_seq
  */
-const eprosima::fastdds::dds::xtypes::LBoundSeq& eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::array_bound_seq() const
+const eprosima::fastdds::dds::xtypes1_3::LBoundSeq& eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::array_bound_seq() const
 {
     return m_array_bound_seq;
 }
@@ -1200,7 +1225,7 @@ const eprosima::fastdds::dds::xtypes::LBoundSeq& eprosima::fastdds::dds::xtypes:
  * @brief This function returns a reference to member array_bound_seq
  * @return Reference to member array_bound_seq
  */
-eprosima::fastdds::dds::xtypes::LBoundSeq& eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::array_bound_seq()
+eprosima::fastdds::dds::xtypes1_3::LBoundSeq& eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::array_bound_seq()
 {
     return m_array_bound_seq;
 }
@@ -1210,8 +1235,8 @@ eprosima::fastdds::dds::xtypes::LBoundSeq& eprosima::fastdds::dds::xtypes::Plain
  * @brief This function copies the value in member element_identifier
  * @param _element_identifier New value to be copied in member element_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::element_identifier(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _element_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::element_identifier(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _element_identifier)
 {
     *m_element_identifier = _element_identifier;
 }
@@ -1220,8 +1245,8 @@ void eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::element_identifier(
  * @brief This function moves the value in member element_identifier
  * @param _element_identifier New value to be moved in member element_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::element_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _element_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::element_identifier(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _element_identifier)
 {
     *m_element_identifier = std::move(_element_identifier);
 }
@@ -1230,7 +1255,7 @@ void eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::element_identifier(
  * @brief This function returns a constant reference to member element_identifier
  * @return Constant reference to member element_identifier
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::element_identifier() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::element_identifier() const
 {
     return *m_element_identifier;
 }
@@ -1239,41 +1264,43 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member element_identifier
  * @return Reference to member element_identifier
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn::element_identifier()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::element_identifier()
 {
     return *m_element_identifier;
 }
 
 
-eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::PlainMapSTypeDefn()
+
+
+eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::PlainMapSTypeDefn()
 {
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 
-    m_key_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_key_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 }
 
-eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::~PlainMapSTypeDefn()
+eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::~PlainMapSTypeDefn()
 {
     delete m_element_identifier;
 
     delete m_key_identifier;
 }
 
-eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::PlainMapSTypeDefn(
+eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::PlainMapSTypeDefn(
         const PlainMapSTypeDefn& x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
-    m_key_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_key_identifier = *x.m_key_identifier;
+    m_key_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_key_identifier = *x.m_key_identifier;
 }
 
-eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::PlainMapSTypeDefn(
+eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::PlainMapSTypeDefn(
         PlainMapSTypeDefn&& x) noexcept
 {
     m_header = std::move(x.m_header);
@@ -1283,19 +1310,19 @@ eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::PlainMapSTypeDefn(
     m_key_identifier = x.m_key_identifier;x.m_key_identifier = nullptr;
 }
 
-eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn& eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn& eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::operator =(
         const PlainMapSTypeDefn& x)
 {
 
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
-    m_key_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_key_identifier = *x.m_key_identifier;
+    m_key_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_key_identifier = *x.m_key_identifier;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn& eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn& eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::operator =(
         PlainMapSTypeDefn&& x) noexcept
 {
 
@@ -1307,7 +1334,7 @@ eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::operator ==(
         const PlainMapSTypeDefn& x) const
 {
     return (m_header == x.m_header &&
@@ -1317,7 +1344,7 @@ bool eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::operator ==(
            m_key_identifier == x.m_key_identifier);
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::operator !=(
         const PlainMapSTypeDefn& x) const
 {
     return !(*this == x);
@@ -1327,8 +1354,8 @@ bool eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::operator !=(
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::header(
-        const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::header(
+        const eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& _header)
 {
     m_header = _header;
 }
@@ -1337,8 +1364,8 @@ void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::header(
-        eprosima::fastdds::dds::xtypes::PlainCollectionHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::header(
+        eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -1347,7 +1374,7 @@ void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::header() const
+const eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::header() const
 {
     return m_header;
 }
@@ -1356,7 +1383,7 @@ const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::header()
+eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::header()
 {
     return m_header;
 }
@@ -1366,8 +1393,8 @@ eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::x
  * @brief This function sets a value in member bound
  * @param _bound New value for member bound
  */
-void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::bound(
-        eprosima::fastdds::dds::xtypes::SBound _bound)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::bound(
+        eprosima::fastdds::dds::xtypes1_3::SBound _bound)
 {
     m_bound = _bound;
 }
@@ -1376,7 +1403,7 @@ void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::bound(
  * @brief This function returns the value of member bound
  * @return Value of member bound
  */
-eprosima::fastdds::dds::xtypes::SBound eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::bound() const
+eprosima::fastdds::dds::xtypes1_3::SBound eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::bound() const
 {
     return m_bound;
 }
@@ -1385,7 +1412,7 @@ eprosima::fastdds::dds::xtypes::SBound eprosima::fastdds::dds::xtypes::PlainMapS
  * @brief This function returns a reference to member bound
  * @return Reference to member bound
  */
-eprosima::fastdds::dds::xtypes::SBound& eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::bound()
+eprosima::fastdds::dds::xtypes1_3::SBound& eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::bound()
 {
     return m_bound;
 }
@@ -1395,8 +1422,8 @@ eprosima::fastdds::dds::xtypes::SBound& eprosima::fastdds::dds::xtypes::PlainMap
  * @brief This function copies the value in member element_identifier
  * @param _element_identifier New value to be copied in member element_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::element_identifier(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _element_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::element_identifier(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _element_identifier)
 {
     *m_element_identifier = _element_identifier;
 }
@@ -1405,8 +1432,8 @@ void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::element_identifier(
  * @brief This function moves the value in member element_identifier
  * @param _element_identifier New value to be moved in member element_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::element_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _element_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::element_identifier(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _element_identifier)
 {
     *m_element_identifier = std::move(_element_identifier);
 }
@@ -1415,7 +1442,7 @@ void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::element_identifier(
  * @brief This function returns a constant reference to member element_identifier
  * @return Constant reference to member element_identifier
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::element_identifier() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::element_identifier() const
 {
     return *m_element_identifier;
 }
@@ -1424,7 +1451,7 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member element_identifier
  * @return Reference to member element_identifier
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::element_identifier()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::element_identifier()
 {
     return *m_element_identifier;
 }
@@ -1434,8 +1461,8 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member key_flags
  * @param _key_flags New value to be copied in member key_flags
  */
-void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::key_flags(
-        const eprosima::fastdds::dds::xtypes::CollectionElementFlag& _key_flags)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::key_flags(
+        const eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& _key_flags)
 {
     m_key_flags = _key_flags;
 }
@@ -1444,8 +1471,8 @@ void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::key_flags(
  * @brief This function moves the value in member key_flags
  * @param _key_flags New value to be moved in member key_flags
  */
-void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::key_flags(
-        eprosima::fastdds::dds::xtypes::CollectionElementFlag&& _key_flags)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::key_flags(
+        eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag&& _key_flags)
 {
     m_key_flags = std::move(_key_flags);
 }
@@ -1454,7 +1481,7 @@ void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::key_flags(
  * @brief This function returns a constant reference to member key_flags
  * @return Constant reference to member key_flags
  */
-const eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::key_flags() const
+const eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::key_flags() const
 {
     return m_key_flags;
 }
@@ -1463,7 +1490,7 @@ const eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::
  * @brief This function returns a reference to member key_flags
  * @return Reference to member key_flags
  */
-eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::key_flags()
+eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::key_flags()
 {
     return m_key_flags;
 }
@@ -1473,8 +1500,8 @@ eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::dds::x
  * @brief This function copies the value in member key_identifier
  * @param _key_identifier New value to be copied in member key_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::key_identifier(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _key_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::key_identifier(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _key_identifier)
 {
     *m_key_identifier = _key_identifier;
 }
@@ -1483,8 +1510,8 @@ void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::key_identifier(
  * @brief This function moves the value in member key_identifier
  * @param _key_identifier New value to be moved in member key_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::key_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _key_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::key_identifier(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _key_identifier)
 {
     *m_key_identifier = std::move(_key_identifier);
 }
@@ -1493,7 +1520,7 @@ void eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::key_identifier(
  * @brief This function returns a constant reference to member key_identifier
  * @return Constant reference to member key_identifier
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::key_identifier() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::key_identifier() const
 {
     return *m_key_identifier;
 }
@@ -1502,41 +1529,43 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member key_identifier
  * @return Reference to member key_identifier
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn::key_identifier()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::key_identifier()
 {
     return *m_key_identifier;
 }
 
 
-eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::PlainMapLTypeDefn()
+
+
+eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::PlainMapLTypeDefn()
 {
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 
-    m_key_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_key_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 }
 
-eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::~PlainMapLTypeDefn()
+eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::~PlainMapLTypeDefn()
 {
     delete m_element_identifier;
 
     delete m_key_identifier;
 }
 
-eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::PlainMapLTypeDefn(
+eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::PlainMapLTypeDefn(
         const PlainMapLTypeDefn& x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
-    m_key_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_key_identifier = *x.m_key_identifier;
+    m_key_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_key_identifier = *x.m_key_identifier;
 }
 
-eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::PlainMapLTypeDefn(
+eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::PlainMapLTypeDefn(
         PlainMapLTypeDefn&& x) noexcept
 {
     m_header = std::move(x.m_header);
@@ -1546,19 +1575,19 @@ eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::PlainMapLTypeDefn(
     m_key_identifier = x.m_key_identifier;x.m_key_identifier = nullptr;
 }
 
-eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn& eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn& eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::operator =(
         const PlainMapLTypeDefn& x)
 {
 
     m_header = x.m_header;
     m_bound = x.m_bound;
-    m_element_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
+    m_element_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_element_identifier = *x.m_element_identifier;
     m_key_flags = x.m_key_flags;
-    m_key_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_key_identifier = *x.m_key_identifier;
+    m_key_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_key_identifier = *x.m_key_identifier;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn& eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn& eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::operator =(
         PlainMapLTypeDefn&& x) noexcept
 {
 
@@ -1570,7 +1599,7 @@ eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::operator ==(
         const PlainMapLTypeDefn& x) const
 {
     return (m_header == x.m_header &&
@@ -1580,7 +1609,7 @@ bool eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::operator ==(
            m_key_identifier == x.m_key_identifier);
 }
 
-bool eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::operator !=(
         const PlainMapLTypeDefn& x) const
 {
     return !(*this == x);
@@ -1590,8 +1619,8 @@ bool eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::operator !=(
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::header(
-        const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::header(
+        const eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& _header)
 {
     m_header = _header;
 }
@@ -1600,8 +1629,8 @@ void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::header(
-        eprosima::fastdds::dds::xtypes::PlainCollectionHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::header(
+        eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -1610,7 +1639,7 @@ void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::header() const
+const eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::header() const
 {
     return m_header;
 }
@@ -1619,7 +1648,7 @@ const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::header()
+eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader& eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::header()
 {
     return m_header;
 }
@@ -1629,8 +1658,8 @@ eprosima::fastdds::dds::xtypes::PlainCollectionHeader& eprosima::fastdds::dds::x
  * @brief This function sets a value in member bound
  * @param _bound New value for member bound
  */
-void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::bound(
-        eprosima::fastdds::dds::xtypes::LBound _bound)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::bound(
+        eprosima::fastdds::dds::xtypes1_3::LBound _bound)
 {
     m_bound = _bound;
 }
@@ -1639,7 +1668,7 @@ void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::bound(
  * @brief This function returns the value of member bound
  * @return Value of member bound
  */
-eprosima::fastdds::dds::xtypes::LBound eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::bound() const
+eprosima::fastdds::dds::xtypes1_3::LBound eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::bound() const
 {
     return m_bound;
 }
@@ -1648,7 +1677,7 @@ eprosima::fastdds::dds::xtypes::LBound eprosima::fastdds::dds::xtypes::PlainMapL
  * @brief This function returns a reference to member bound
  * @return Reference to member bound
  */
-eprosima::fastdds::dds::xtypes::LBound& eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::bound()
+eprosima::fastdds::dds::xtypes1_3::LBound& eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::bound()
 {
     return m_bound;
 }
@@ -1658,8 +1687,8 @@ eprosima::fastdds::dds::xtypes::LBound& eprosima::fastdds::dds::xtypes::PlainMap
  * @brief This function copies the value in member element_identifier
  * @param _element_identifier New value to be copied in member element_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::element_identifier(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _element_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::element_identifier(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _element_identifier)
 {
     *m_element_identifier = _element_identifier;
 }
@@ -1668,8 +1697,8 @@ void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::element_identifier(
  * @brief This function moves the value in member element_identifier
  * @param _element_identifier New value to be moved in member element_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::element_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _element_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::element_identifier(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _element_identifier)
 {
     *m_element_identifier = std::move(_element_identifier);
 }
@@ -1678,7 +1707,7 @@ void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::element_identifier(
  * @brief This function returns a constant reference to member element_identifier
  * @return Constant reference to member element_identifier
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::element_identifier() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::element_identifier() const
 {
     return *m_element_identifier;
 }
@@ -1687,7 +1716,7 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member element_identifier
  * @return Reference to member element_identifier
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::element_identifier()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::element_identifier()
 {
     return *m_element_identifier;
 }
@@ -1697,8 +1726,8 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member key_flags
  * @param _key_flags New value to be copied in member key_flags
  */
-void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::key_flags(
-        const eprosima::fastdds::dds::xtypes::CollectionElementFlag& _key_flags)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::key_flags(
+        const eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& _key_flags)
 {
     m_key_flags = _key_flags;
 }
@@ -1707,8 +1736,8 @@ void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::key_flags(
  * @brief This function moves the value in member key_flags
  * @param _key_flags New value to be moved in member key_flags
  */
-void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::key_flags(
-        eprosima::fastdds::dds::xtypes::CollectionElementFlag&& _key_flags)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::key_flags(
+        eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag&& _key_flags)
 {
     m_key_flags = std::move(_key_flags);
 }
@@ -1717,7 +1746,7 @@ void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::key_flags(
  * @brief This function returns a constant reference to member key_flags
  * @return Constant reference to member key_flags
  */
-const eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::key_flags() const
+const eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::key_flags() const
 {
     return m_key_flags;
 }
@@ -1726,7 +1755,7 @@ const eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::
  * @brief This function returns a reference to member key_flags
  * @return Reference to member key_flags
  */
-eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::key_flags()
+eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::key_flags()
 {
     return m_key_flags;
 }
@@ -1736,8 +1765,8 @@ eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::dds::x
  * @brief This function copies the value in member key_identifier
  * @param _key_identifier New value to be copied in member key_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::key_identifier(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _key_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::key_identifier(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _key_identifier)
 {
     *m_key_identifier = _key_identifier;
 }
@@ -1746,8 +1775,8 @@ void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::key_identifier(
  * @brief This function moves the value in member key_identifier
  * @param _key_identifier New value to be moved in member key_identifier
  */
-void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::key_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _key_identifier)
+void eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::key_identifier(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _key_identifier)
 {
     *m_key_identifier = std::move(_key_identifier);
 }
@@ -1756,7 +1785,7 @@ void eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::key_identifier(
  * @brief This function returns a constant reference to member key_identifier
  * @return Constant reference to member key_identifier
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::key_identifier() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::key_identifier() const
 {
     return *m_key_identifier;
 }
@@ -1765,22 +1794,24 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member key_identifier
  * @return Reference to member key_identifier
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn::key_identifier()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::key_identifier()
 {
     return *m_key_identifier;
 }
 
 
-eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::StronglyConnectedComponentId()
+
+
+eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::StronglyConnectedComponentId()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::~StronglyConnectedComponentId()
+eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::~StronglyConnectedComponentId()
 {
 }
 
-eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::StronglyConnectedComponentId(
+eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::StronglyConnectedComponentId(
         const StronglyConnectedComponentId& x)
 {
     m_sc_component_id = x.m_sc_component_id;
@@ -1788,7 +1819,7 @@ eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::StronglyConnectedC
     m_scc_index = x.m_scc_index;
 }
 
-eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::StronglyConnectedComponentId(
+eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::StronglyConnectedComponentId(
         StronglyConnectedComponentId&& x) noexcept
 {
     m_sc_component_id = std::move(x.m_sc_component_id);
@@ -1796,7 +1827,7 @@ eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::StronglyConnectedC
     m_scc_index = x.m_scc_index;
 }
 
-eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId& eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::operator =(
+eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId& eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::operator =(
         const StronglyConnectedComponentId& x)
 {
 
@@ -1806,7 +1837,7 @@ eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId& eprosima::fastdds:
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId& eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::operator =(
+eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId& eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::operator =(
         StronglyConnectedComponentId&& x) noexcept
 {
 
@@ -1816,7 +1847,7 @@ eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId& eprosima::fastdds:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::operator ==(
         const StronglyConnectedComponentId& x) const
 {
     return (m_sc_component_id == x.m_sc_component_id &&
@@ -1824,7 +1855,7 @@ bool eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::operator ==(
            m_scc_index == x.m_scc_index);
 }
 
-bool eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::operator !=(
         const StronglyConnectedComponentId& x) const
 {
     return !(*this == x);
@@ -1834,8 +1865,8 @@ bool eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::operator !=(
  * @brief This function copies the value in member sc_component_id
  * @param _sc_component_id New value to be copied in member sc_component_id
  */
-void eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::sc_component_id(
-        const eprosima::fastdds::dds::xtypes::TypeObjectHashId& _sc_component_id)
+void eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::sc_component_id(
+        const eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId& _sc_component_id)
 {
     m_sc_component_id = _sc_component_id;
 }
@@ -1844,8 +1875,8 @@ void eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::sc_component_
  * @brief This function moves the value in member sc_component_id
  * @param _sc_component_id New value to be moved in member sc_component_id
  */
-void eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::sc_component_id(
-        eprosima::fastdds::dds::xtypes::TypeObjectHashId&& _sc_component_id)
+void eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::sc_component_id(
+        eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId&& _sc_component_id)
 {
     m_sc_component_id = std::move(_sc_component_id);
 }
@@ -1854,7 +1885,7 @@ void eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::sc_component_
  * @brief This function returns a constant reference to member sc_component_id
  * @return Constant reference to member sc_component_id
  */
-const eprosima::fastdds::dds::xtypes::TypeObjectHashId& eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::sc_component_id() const
+const eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId& eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::sc_component_id() const
 {
     return m_sc_component_id;
 }
@@ -1863,7 +1894,7 @@ const eprosima::fastdds::dds::xtypes::TypeObjectHashId& eprosima::fastdds::dds::
  * @brief This function returns a reference to member sc_component_id
  * @return Reference to member sc_component_id
  */
-eprosima::fastdds::dds::xtypes::TypeObjectHashId& eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::sc_component_id()
+eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId& eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::sc_component_id()
 {
     return m_sc_component_id;
 }
@@ -1873,7 +1904,7 @@ eprosima::fastdds::dds::xtypes::TypeObjectHashId& eprosima::fastdds::dds::xtypes
  * @brief This function sets a value in member scc_length
  * @param _scc_length New value for member scc_length
  */
-void eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::scc_length(
+void eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::scc_length(
         int32_t _scc_length)
 {
     m_scc_length = _scc_length;
@@ -1883,7 +1914,7 @@ void eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::scc_length(
  * @brief This function returns the value of member scc_length
  * @return Value of member scc_length
  */
-int32_t eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::scc_length() const
+int32_t eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::scc_length() const
 {
     return m_scc_length;
 }
@@ -1892,7 +1923,7 @@ int32_t eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::scc_length
  * @brief This function returns a reference to member scc_length
  * @return Reference to member scc_length
  */
-int32_t& eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::scc_length()
+int32_t& eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::scc_length()
 {
     return m_scc_length;
 }
@@ -1902,7 +1933,7 @@ int32_t& eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::scc_lengt
  * @brief This function sets a value in member scc_index
  * @param _scc_index New value for member scc_index
  */
-void eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::scc_index(
+void eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::scc_index(
         int32_t _scc_index)
 {
     m_scc_index = _scc_index;
@@ -1912,7 +1943,7 @@ void eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::scc_index(
  * @brief This function returns the value of member scc_index
  * @return Value of member scc_index
  */
-int32_t eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::scc_index() const
+int32_t eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::scc_index() const
 {
     return m_scc_index;
 }
@@ -1921,34 +1952,34 @@ int32_t eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::scc_index(
  * @brief This function returns a reference to member scc_index
  * @return Reference to member scc_index
  */
-int32_t& eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId::scc_index()
+int32_t& eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::scc_index()
 {
     return m_scc_index;
 }
 
 
-eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::ExtendedTypeDefn()
+eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn::ExtendedTypeDefn()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::~ExtendedTypeDefn()
+eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn::~ExtendedTypeDefn()
 {
 }
 
-eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::ExtendedTypeDefn(
+eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn::ExtendedTypeDefn(
         const ExtendedTypeDefn& x)
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::ExtendedTypeDefn(
+eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn::ExtendedTypeDefn(
         ExtendedTypeDefn&& x) noexcept
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn::operator =(
         const ExtendedTypeDefn& x)
 {
 
@@ -1957,7 +1988,7 @@ eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::operator =(
+eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn::operator =(
         ExtendedTypeDefn&& x) noexcept
 {
 
@@ -1966,30 +1997,32 @@ eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn::operator ==(
         const ExtendedTypeDefn& x) const
 {
     static_cast<void>(x);
     return true;
 }
 
-bool eprosima::fastdds::dds::xtypes::ExtendedTypeDefn::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn::operator !=(
         const ExtendedTypeDefn& x) const
 {
     return !(*this == x);
 }
 
 
-eprosima::fastdds::dds::xtypes::TypeIdentifier::TypeIdentifier()
+
+
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::TypeIdentifier()
 {
     m__d = 0;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifier::~TypeIdentifier()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::~TypeIdentifier()
 {
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifier::TypeIdentifier(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::TypeIdentifier(
         const TypeIdentifier& x)
 {
     m__d = x.m__d;
@@ -2056,7 +2089,7 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier::TypeIdentifier(
     }
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifier::TypeIdentifier(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::TypeIdentifier(
         TypeIdentifier&& x) noexcept
 {
     m__d = x.m__d;
@@ -2133,7 +2166,7 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier::TypeIdentifier(
     }
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::TypeIdentifier::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::operator =(
         const TypeIdentifier& x)
 {
     m__d = x.m__d;
@@ -2202,7 +2235,7 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::TypeIdentifier::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::operator =(
         TypeIdentifier&& x) noexcept
 {
     m__d = x.m__d;
@@ -2281,7 +2314,7 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeIdentifier::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::operator ==(
         const TypeIdentifier& x) const
 {
     if (m__d != x.m__d)
@@ -2352,13 +2385,13 @@ bool eprosima::fastdds::dds::xtypes::TypeIdentifier::operator ==(
     return false;
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeIdentifier::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::operator !=(
         const TypeIdentifier& x) const
 {
     return !(*this == x);
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::_d(
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::_d(
         uint8_t __d)
 {
     bool b = false;
@@ -2525,33 +2558,33 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifier::_d(
     m__d = __d;
 }
 
-uint8_t eprosima::fastdds::dds::xtypes::TypeIdentifier::_d() const
+uint8_t eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::_d() const
 {
     return m__d;
 }
 
-uint8_t& eprosima::fastdds::dds::xtypes::TypeIdentifier::_d()
+uint8_t& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::_d()
 {
     return m__d;
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::string_sdefn(
-        const eprosima::fastdds::dds::xtypes::StringSTypeDefn& _string_sdefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::string_sdefn(
+        const eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn& _string_sdefn)
 {
     m_string_sdefn = _string_sdefn;
     m__d = TI_STRING8_SMALL;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::string_sdefn(
-        eprosima::fastdds::dds::xtypes::StringSTypeDefn&& _string_sdefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::string_sdefn(
+        eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn&& _string_sdefn)
 {
     m_string_sdefn = std::move(_string_sdefn);
     m__d = TI_STRING8_SMALL;
 
 }
 
-const eprosima::fastdds::dds::xtypes::StringSTypeDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::string_sdefn() const
+const eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::string_sdefn() const
 {
     bool b = false;
 
@@ -2573,7 +2606,7 @@ const eprosima::fastdds::dds::xtypes::StringSTypeDefn& eprosima::fastdds::dds::x
     return m_string_sdefn;
 }
 
-eprosima::fastdds::dds::xtypes::StringSTypeDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::string_sdefn()
+eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::string_sdefn()
 {
     bool b = false;
 
@@ -2596,23 +2629,23 @@ eprosima::fastdds::dds::xtypes::StringSTypeDefn& eprosima::fastdds::dds::xtypes:
 }
 
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::string_ldefn(
-        const eprosima::fastdds::dds::xtypes::StringLTypeDefn& _string_ldefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::string_ldefn(
+        const eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn& _string_ldefn)
 {
     m_string_ldefn = _string_ldefn;
     m__d = TI_STRING8_LARGE;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::string_ldefn(
-        eprosima::fastdds::dds::xtypes::StringLTypeDefn&& _string_ldefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::string_ldefn(
+        eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn&& _string_ldefn)
 {
     m_string_ldefn = std::move(_string_ldefn);
     m__d = TI_STRING8_LARGE;
 
 }
 
-const eprosima::fastdds::dds::xtypes::StringLTypeDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::string_ldefn() const
+const eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::string_ldefn() const
 {
     bool b = false;
 
@@ -2634,7 +2667,7 @@ const eprosima::fastdds::dds::xtypes::StringLTypeDefn& eprosima::fastdds::dds::x
     return m_string_ldefn;
 }
 
-eprosima::fastdds::dds::xtypes::StringLTypeDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::string_ldefn()
+eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::string_ldefn()
 {
     bool b = false;
 
@@ -2657,23 +2690,23 @@ eprosima::fastdds::dds::xtypes::StringLTypeDefn& eprosima::fastdds::dds::xtypes:
 }
 
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::seq_sdefn(
-        const eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn& _seq_sdefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::seq_sdefn(
+        const eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn& _seq_sdefn)
 {
     m_seq_sdefn = _seq_sdefn;
     m__d = TI_PLAIN_SEQUENCE_SMALL;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::seq_sdefn(
-        eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn&& _seq_sdefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::seq_sdefn(
+        eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn&& _seq_sdefn)
 {
     m_seq_sdefn = std::move(_seq_sdefn);
     m__d = TI_PLAIN_SEQUENCE_SMALL;
 
 }
 
-const eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::seq_sdefn() const
+const eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::seq_sdefn() const
 {
     bool b = false;
 
@@ -2694,7 +2727,7 @@ const eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn& eprosima::fastdds:
     return m_seq_sdefn;
 }
 
-eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::seq_sdefn()
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::seq_sdefn()
 {
     bool b = false;
 
@@ -2716,23 +2749,23 @@ eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn& eprosima::fastdds::dds::
 }
 
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::seq_ldefn(
-        const eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn& _seq_ldefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::seq_ldefn(
+        const eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn& _seq_ldefn)
 {
     m_seq_ldefn = _seq_ldefn;
     m__d = TI_PLAIN_SEQUENCE_LARGE;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::seq_ldefn(
-        eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn&& _seq_ldefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::seq_ldefn(
+        eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn&& _seq_ldefn)
 {
     m_seq_ldefn = std::move(_seq_ldefn);
     m__d = TI_PLAIN_SEQUENCE_LARGE;
 
 }
 
-const eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::seq_ldefn() const
+const eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::seq_ldefn() const
 {
     bool b = false;
 
@@ -2753,7 +2786,7 @@ const eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn& eprosima::fastdds:
     return m_seq_ldefn;
 }
 
-eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::seq_ldefn()
+eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::seq_ldefn()
 {
     bool b = false;
 
@@ -2775,23 +2808,23 @@ eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn& eprosima::fastdds::dds::
 }
 
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::array_sdefn(
-        const eprosima::fastdds::dds::xtypes::PlainArraySElemDefn& _array_sdefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::array_sdefn(
+        const eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn& _array_sdefn)
 {
     m_array_sdefn = _array_sdefn;
     m__d = TI_PLAIN_ARRAY_SMALL;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::array_sdefn(
-        eprosima::fastdds::dds::xtypes::PlainArraySElemDefn&& _array_sdefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::array_sdefn(
+        eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn&& _array_sdefn)
 {
     m_array_sdefn = std::move(_array_sdefn);
     m__d = TI_PLAIN_ARRAY_SMALL;
 
 }
 
-const eprosima::fastdds::dds::xtypes::PlainArraySElemDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::array_sdefn() const
+const eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::array_sdefn() const
 {
     bool b = false;
 
@@ -2812,7 +2845,7 @@ const eprosima::fastdds::dds::xtypes::PlainArraySElemDefn& eprosima::fastdds::dd
     return m_array_sdefn;
 }
 
-eprosima::fastdds::dds::xtypes::PlainArraySElemDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::array_sdefn()
+eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::array_sdefn()
 {
     bool b = false;
 
@@ -2834,23 +2867,23 @@ eprosima::fastdds::dds::xtypes::PlainArraySElemDefn& eprosima::fastdds::dds::xty
 }
 
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::array_ldefn(
-        const eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn& _array_ldefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::array_ldefn(
+        const eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn& _array_ldefn)
 {
     m_array_ldefn = _array_ldefn;
     m__d = TI_PLAIN_ARRAY_LARGE;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::array_ldefn(
-        eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn&& _array_ldefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::array_ldefn(
+        eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn&& _array_ldefn)
 {
     m_array_ldefn = std::move(_array_ldefn);
     m__d = TI_PLAIN_ARRAY_LARGE;
 
 }
 
-const eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::array_ldefn() const
+const eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::array_ldefn() const
 {
     bool b = false;
 
@@ -2871,7 +2904,7 @@ const eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn& eprosima::fastdds::dd
     return m_array_ldefn;
 }
 
-eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::array_ldefn()
+eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::array_ldefn()
 {
     bool b = false;
 
@@ -2893,23 +2926,23 @@ eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn& eprosima::fastdds::dds::xty
 }
 
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::map_sdefn(
-        const eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn& _map_sdefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::map_sdefn(
+        const eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn& _map_sdefn)
 {
     m_map_sdefn = _map_sdefn;
     m__d = TI_PLAIN_MAP_SMALL;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::map_sdefn(
-        eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn&& _map_sdefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::map_sdefn(
+        eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn&& _map_sdefn)
 {
     m_map_sdefn = std::move(_map_sdefn);
     m__d = TI_PLAIN_MAP_SMALL;
 
 }
 
-const eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::map_sdefn() const
+const eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::map_sdefn() const
 {
     bool b = false;
 
@@ -2930,7 +2963,7 @@ const eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn& eprosima::fastdds::dds:
     return m_map_sdefn;
 }
 
-eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::map_sdefn()
+eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::map_sdefn()
 {
     bool b = false;
 
@@ -2952,23 +2985,23 @@ eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn& eprosima::fastdds::dds::xtype
 }
 
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::map_ldefn(
-        const eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn& _map_ldefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::map_ldefn(
+        const eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn& _map_ldefn)
 {
     m_map_ldefn = _map_ldefn;
     m__d = TI_PLAIN_MAP_LARGE;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::map_ldefn(
-        eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn&& _map_ldefn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::map_ldefn(
+        eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn&& _map_ldefn)
 {
     m_map_ldefn = std::move(_map_ldefn);
     m__d = TI_PLAIN_MAP_LARGE;
 
 }
 
-const eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::map_ldefn() const
+const eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::map_ldefn() const
 {
     bool b = false;
 
@@ -2989,7 +3022,7 @@ const eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn& eprosima::fastdds::dds:
     return m_map_ldefn;
 }
 
-eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::map_ldefn()
+eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::map_ldefn()
 {
     bool b = false;
 
@@ -3011,23 +3044,23 @@ eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn& eprosima::fastdds::dds::xtype
 }
 
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::sc_component_id(
-        const eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId& _sc_component_id)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::sc_component_id(
+        const eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId& _sc_component_id)
 {
     m_sc_component_id = _sc_component_id;
     m__d = TI_STRONGLY_CONNECTED_COMPONENT;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::sc_component_id(
-        eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId&& _sc_component_id)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::sc_component_id(
+        eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId&& _sc_component_id)
 {
     m_sc_component_id = std::move(_sc_component_id);
     m__d = TI_STRONGLY_CONNECTED_COMPONENT;
 
 }
 
-const eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId& eprosima::fastdds::dds::xtypes::TypeIdentifier::sc_component_id() const
+const eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::sc_component_id() const
 {
     bool b = false;
 
@@ -3048,7 +3081,7 @@ const eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId& eprosima::fa
     return m_sc_component_id;
 }
 
-eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId& eprosima::fastdds::dds::xtypes::TypeIdentifier::sc_component_id()
+eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::sc_component_id()
 {
     bool b = false;
 
@@ -3070,23 +3103,23 @@ eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId& eprosima::fastdds:
 }
 
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::equivalence_hash(
-        const eprosima::fastdds::dds::xtypes::EquivalenceHash& _equivalence_hash)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::equivalence_hash(
+        const eprosima::fastdds::dds::xtypes1_3::EquivalenceHash& _equivalence_hash)
 {
     m_equivalence_hash = _equivalence_hash;
     m__d = EK_COMPLETE;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::equivalence_hash(
-        eprosima::fastdds::dds::xtypes::EquivalenceHash&& _equivalence_hash)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::equivalence_hash(
+        eprosima::fastdds::dds::xtypes1_3::EquivalenceHash&& _equivalence_hash)
 {
     m_equivalence_hash = std::move(_equivalence_hash);
     m__d = EK_COMPLETE;
 
 }
 
-const eprosima::fastdds::dds::xtypes::EquivalenceHash& eprosima::fastdds::dds::xtypes::TypeIdentifier::equivalence_hash() const
+const eprosima::fastdds::dds::xtypes1_3::EquivalenceHash& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::equivalence_hash() const
 {
     bool b = false;
 
@@ -3108,7 +3141,7 @@ const eprosima::fastdds::dds::xtypes::EquivalenceHash& eprosima::fastdds::dds::x
     return m_equivalence_hash;
 }
 
-eprosima::fastdds::dds::xtypes::EquivalenceHash& eprosima::fastdds::dds::xtypes::TypeIdentifier::equivalence_hash()
+eprosima::fastdds::dds::xtypes1_3::EquivalenceHash& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::equivalence_hash()
 {
     bool b = false;
 
@@ -3131,23 +3164,23 @@ eprosima::fastdds::dds::xtypes::EquivalenceHash& eprosima::fastdds::dds::xtypes:
 }
 
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::extended_defn(
-        const eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& _extended_defn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::extended_defn(
+        const eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn& _extended_defn)
 {
     m_extended_defn = _extended_defn;
     m__d = 0;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeIdentifier::extended_defn(
-        eprosima::fastdds::dds::xtypes::ExtendedTypeDefn&& _extended_defn)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::extended_defn(
+        eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn&& _extended_defn)
 {
     m_extended_defn = std::move(_extended_defn);
     m__d = 0;
 
 }
 
-const eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::extended_defn() const
+const eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::extended_defn() const
 {
     bool b = true;
 
@@ -3179,7 +3212,7 @@ const eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& eprosima::fastdds::dds::
     return m_extended_defn;
 }
 
-eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes::TypeIdentifier::extended_defn()
+eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::extended_defn()
 {
     bool b = true;
 
@@ -3216,28 +3249,30 @@ eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& eprosima::fastdds::dds::xtypes
 
 
 
-eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue()
+
+
+eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::~ExtendedAnnotationParameterValue()
+eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue::~ExtendedAnnotationParameterValue()
 {
 }
 
-eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(
+eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(
         const ExtendedAnnotationParameterValue& x)
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(
+eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(
         ExtendedAnnotationParameterValue&& x) noexcept
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::operator =(
+eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue& eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue::operator =(
         const ExtendedAnnotationParameterValue& x)
 {
 
@@ -3246,7 +3281,7 @@ eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& eprosima::fast
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::operator =(
+eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue& eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue::operator =(
         ExtendedAnnotationParameterValue&& x) noexcept
 {
 
@@ -3255,30 +3290,32 @@ eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& eprosima::fast
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue::operator ==(
         const ExtendedAnnotationParameterValue& x) const
 {
     static_cast<void>(x);
     return true;
 }
 
-bool eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue::operator !=(
         const ExtendedAnnotationParameterValue& x) const
 {
     return !(*this == x);
 }
 
 
-eprosima::fastdds::dds::xtypes::AnnotationParameterValue::AnnotationParameterValue()
+
+
+eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::AnnotationParameterValue()
 {
     m__d = 0;
 }
 
-eprosima::fastdds::dds::xtypes::AnnotationParameterValue::~AnnotationParameterValue()
+eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::~AnnotationParameterValue()
 {
 }
 
-eprosima::fastdds::dds::xtypes::AnnotationParameterValue::AnnotationParameterValue(
+eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::AnnotationParameterValue(
         const AnnotationParameterValue& x)
 {
     m__d = x.m__d;
@@ -3382,7 +3419,7 @@ eprosima::fastdds::dds::xtypes::AnnotationParameterValue::AnnotationParameterVal
     }
 }
 
-eprosima::fastdds::dds::xtypes::AnnotationParameterValue::AnnotationParameterValue(
+eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::AnnotationParameterValue(
         AnnotationParameterValue&& x) noexcept
 {
     m__d = x.m__d;
@@ -3488,7 +3525,7 @@ eprosima::fastdds::dds::xtypes::AnnotationParameterValue::AnnotationParameterVal
     }
 }
 
-eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::operator =(
+eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::operator =(
         const AnnotationParameterValue& x)
 {
     m__d = x.m__d;
@@ -3594,7 +3631,7 @@ eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdds::dds
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::operator =(
+eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::operator =(
         AnnotationParameterValue&& x) noexcept
 {
     m__d = x.m__d;
@@ -3702,7 +3739,7 @@ eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdds::dds
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::AnnotationParameterValue::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::operator ==(
         const AnnotationParameterValue& x) const
 {
     if (m__d != x.m__d)
@@ -3810,13 +3847,13 @@ bool eprosima::fastdds::dds::xtypes::AnnotationParameterValue::operator ==(
     return false;
 }
 
-bool eprosima::fastdds::dds::xtypes::AnnotationParameterValue::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::operator !=(
         const AnnotationParameterValue& x) const
 {
     return !(*this == x);
 }
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::_d(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::_d(
         uint8_t __d)
 {
     bool b = false;
@@ -4078,17 +4115,17 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::_d(
     m__d = __d;
 }
 
-uint8_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::_d() const
+uint8_t eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::_d() const
 {
     return m__d;
 }
 
-uint8_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::_d()
+uint8_t& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::_d()
 {
     return m__d;
 }
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::boolean_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::boolean_value(
         bool _boolean_value)
 {
     m_boolean_value = _boolean_value;
@@ -4096,7 +4133,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::boolean_value(
 
 }
 
-bool eprosima::fastdds::dds::xtypes::AnnotationParameterValue::boolean_value() const
+bool eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::boolean_value() const
 {
     bool b = false;
 
@@ -4117,7 +4154,7 @@ bool eprosima::fastdds::dds::xtypes::AnnotationParameterValue::boolean_value() c
     return m_boolean_value;
 }
 
-bool& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::boolean_value()
+bool& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::boolean_value()
 {
     bool b = false;
 
@@ -4139,7 +4176,7 @@ bool& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::boolean_value()
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::byte_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::byte_value(
         uint8_t _byte_value)
 {
     m_byte_value = _byte_value;
@@ -4147,7 +4184,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::byte_value(
 
 }
 
-uint8_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::byte_value() const
+uint8_t eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::byte_value() const
 {
     bool b = false;
 
@@ -4168,7 +4205,7 @@ uint8_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::byte_value() c
     return m_byte_value;
 }
 
-uint8_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::byte_value()
+uint8_t& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::byte_value()
 {
     bool b = false;
 
@@ -4190,7 +4227,7 @@ uint8_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::byte_value()
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int8_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::int8_value(
         int8_t _int8_value)
 {
     m_int8_value = _int8_value;
@@ -4198,7 +4235,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int8_value(
 
 }
 
-int8_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int8_value() const
+int8_t eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::int8_value() const
 {
     bool b = false;
 
@@ -4219,7 +4256,7 @@ int8_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int8_value() co
     return m_int8_value;
 }
 
-int8_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int8_value()
+int8_t& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::int8_value()
 {
     bool b = false;
 
@@ -4241,7 +4278,7 @@ int8_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int8_value()
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint8_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::uint8_value(
         uint8_t _uint8_value)
 {
     m_uint8_value = _uint8_value;
@@ -4249,7 +4286,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint8_value(
 
 }
 
-uint8_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint8_value() const
+uint8_t eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::uint8_value() const
 {
     bool b = false;
 
@@ -4270,7 +4307,7 @@ uint8_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint8_value() 
     return m_uint8_value;
 }
 
-uint8_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint8_value()
+uint8_t& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::uint8_value()
 {
     bool b = false;
 
@@ -4292,7 +4329,7 @@ uint8_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint8_value()
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int16_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::int16_value(
         int16_t _int16_value)
 {
     m_int16_value = _int16_value;
@@ -4300,7 +4337,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int16_value(
 
 }
 
-int16_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int16_value() const
+int16_t eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::int16_value() const
 {
     bool b = false;
 
@@ -4321,7 +4358,7 @@ int16_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int16_value() 
     return m_int16_value;
 }
 
-int16_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int16_value()
+int16_t& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::int16_value()
 {
     bool b = false;
 
@@ -4343,7 +4380,7 @@ int16_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int16_value()
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint_16_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::uint_16_value(
         uint16_t _uint_16_value)
 {
     m_uint_16_value = _uint_16_value;
@@ -4351,7 +4388,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint_16_value(
 
 }
 
-uint16_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint_16_value() const
+uint16_t eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::uint_16_value() const
 {
     bool b = false;
 
@@ -4372,7 +4409,7 @@ uint16_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint_16_value
     return m_uint_16_value;
 }
 
-uint16_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint_16_value()
+uint16_t& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::uint_16_value()
 {
     bool b = false;
 
@@ -4394,7 +4431,7 @@ uint16_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint_16_valu
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int32_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::int32_value(
         int32_t _int32_value)
 {
     m_int32_value = _int32_value;
@@ -4402,7 +4439,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int32_value(
 
 }
 
-int32_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int32_value() const
+int32_t eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::int32_value() const
 {
     bool b = false;
 
@@ -4423,7 +4460,7 @@ int32_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int32_value() 
     return m_int32_value;
 }
 
-int32_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int32_value()
+int32_t& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::int32_value()
 {
     bool b = false;
 
@@ -4445,7 +4482,7 @@ int32_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int32_value()
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint32_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::uint32_value(
         uint32_t _uint32_value)
 {
     m_uint32_value = _uint32_value;
@@ -4453,7 +4490,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint32_value(
 
 }
 
-uint32_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint32_value() const
+uint32_t eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::uint32_value() const
 {
     bool b = false;
 
@@ -4474,7 +4511,7 @@ uint32_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint32_value(
     return m_uint32_value;
 }
 
-uint32_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint32_value()
+uint32_t& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::uint32_value()
 {
     bool b = false;
 
@@ -4496,7 +4533,7 @@ uint32_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint32_value
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int64_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::int64_value(
         int64_t _int64_value)
 {
     m_int64_value = _int64_value;
@@ -4504,7 +4541,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int64_value(
 
 }
 
-int64_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int64_value() const
+int64_t eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::int64_value() const
 {
     bool b = false;
 
@@ -4525,7 +4562,7 @@ int64_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int64_value() 
     return m_int64_value;
 }
 
-int64_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int64_value()
+int64_t& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::int64_value()
 {
     bool b = false;
 
@@ -4547,7 +4584,7 @@ int64_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::int64_value()
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint64_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::uint64_value(
         uint64_t _uint64_value)
 {
     m_uint64_value = _uint64_value;
@@ -4555,7 +4592,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint64_value(
 
 }
 
-uint64_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint64_value() const
+uint64_t eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::uint64_value() const
 {
     bool b = false;
 
@@ -4576,7 +4613,7 @@ uint64_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint64_value(
     return m_uint64_value;
 }
 
-uint64_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint64_value()
+uint64_t& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::uint64_value()
 {
     bool b = false;
 
@@ -4598,7 +4635,7 @@ uint64_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::uint64_value
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float32_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::float32_value(
         float _float32_value)
 {
     m_float32_value = _float32_value;
@@ -4606,7 +4643,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float32_value(
 
 }
 
-float eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float32_value() const
+float eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::float32_value() const
 {
     bool b = false;
 
@@ -4627,7 +4664,7 @@ float eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float32_value() 
     return m_float32_value;
 }
 
-float& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float32_value()
+float& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::float32_value()
 {
     bool b = false;
 
@@ -4649,7 +4686,7 @@ float& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float32_value()
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float64_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::float64_value(
         double _float64_value)
 {
     m_float64_value = _float64_value;
@@ -4657,7 +4694,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float64_value(
 
 }
 
-double eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float64_value() const
+double eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::float64_value() const
 {
     bool b = false;
 
@@ -4678,7 +4715,7 @@ double eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float64_value()
     return m_float64_value;
 }
 
-double& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float64_value()
+double& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::float64_value()
 {
     bool b = false;
 
@@ -4700,7 +4737,7 @@ double& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float64_value(
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float128_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::float128_value(
         long double _float128_value)
 {
     m_float128_value = _float128_value;
@@ -4708,7 +4745,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float128_value(
 
 }
 
-long double eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float128_value() const
+long double eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::float128_value() const
 {
     bool b = false;
 
@@ -4729,7 +4766,7 @@ long double eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float128_v
     return m_float128_value;
 }
 
-long double& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float128_value()
+long double& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::float128_value()
 {
     bool b = false;
 
@@ -4751,7 +4788,7 @@ long double& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::float128_
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::char_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::char_value(
         char _char_value)
 {
     m_char_value = _char_value;
@@ -4759,7 +4796,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::char_value(
 
 }
 
-char eprosima::fastdds::dds::xtypes::AnnotationParameterValue::char_value() const
+char eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::char_value() const
 {
     bool b = false;
 
@@ -4780,7 +4817,7 @@ char eprosima::fastdds::dds::xtypes::AnnotationParameterValue::char_value() cons
     return m_char_value;
 }
 
-char& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::char_value()
+char& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::char_value()
 {
     bool b = false;
 
@@ -4802,7 +4839,7 @@ char& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::char_value()
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::wchar_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::wchar_value(
         wchar_t _wchar_value)
 {
     m_wchar_value = _wchar_value;
@@ -4810,7 +4847,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::wchar_value(
 
 }
 
-wchar_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::wchar_value() const
+wchar_t eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::wchar_value() const
 {
     bool b = false;
 
@@ -4831,7 +4868,7 @@ wchar_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::wchar_value() 
     return m_wchar_value;
 }
 
-wchar_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::wchar_value()
+wchar_t& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::wchar_value()
 {
     bool b = false;
 
@@ -4853,7 +4890,7 @@ wchar_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::wchar_value()
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::enumerated_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::enumerated_value(
         int32_t _enumerated_value)
 {
     m_enumerated_value = _enumerated_value;
@@ -4861,7 +4898,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::enumerated_value(
 
 }
 
-int32_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::enumerated_value() const
+int32_t eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::enumerated_value() const
 {
     bool b = false;
 
@@ -4882,7 +4919,7 @@ int32_t eprosima::fastdds::dds::xtypes::AnnotationParameterValue::enumerated_val
     return m_enumerated_value;
 }
 
-int32_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::enumerated_value()
+int32_t& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::enumerated_value()
 {
     bool b = false;
 
@@ -4904,7 +4941,7 @@ int32_t& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::enumerated_va
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string8_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::string8_value(
         const eprosima::fastcdr::fixed_string<128>& _string8_value)
 {
     m_string8_value = _string8_value;
@@ -4912,7 +4949,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string8_value(
 
 }
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string8_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::string8_value(
         eprosima::fastcdr::fixed_string<128>&& _string8_value)
 {
     m_string8_value = std::move(_string8_value);
@@ -4920,7 +4957,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string8_value(
 
 }
 
-const eprosima::fastcdr::fixed_string<128>& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string8_value() const
+const eprosima::fastcdr::fixed_string<128>& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::string8_value() const
 {
     bool b = false;
 
@@ -4941,7 +4978,7 @@ const eprosima::fastcdr::fixed_string<128>& eprosima::fastdds::dds::xtypes::Anno
     return m_string8_value;
 }
 
-eprosima::fastcdr::fixed_string<128>& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string8_value()
+eprosima::fastcdr::fixed_string<128>& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::string8_value()
 {
     bool b = false;
 
@@ -4963,7 +5000,7 @@ eprosima::fastcdr::fixed_string<128>& eprosima::fastdds::dds::xtypes::Annotation
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string16_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::string16_value(
         const std::wstring& _string16_value)
 {
     m_string16_value = _string16_value;
@@ -4971,7 +5008,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string16_value(
 
 }
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string16_value(
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::string16_value(
         std::wstring&& _string16_value)
 {
     m_string16_value = std::move(_string16_value);
@@ -4979,7 +5016,7 @@ void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string16_value(
 
 }
 
-const std::wstring& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string16_value() const
+const std::wstring& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::string16_value() const
 {
     bool b = false;
 
@@ -5000,7 +5037,7 @@ const std::wstring& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::st
     return m_string16_value;
 }
 
-std::wstring& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string16_value()
+std::wstring& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::string16_value()
 {
     bool b = false;
 
@@ -5022,23 +5059,23 @@ std::wstring& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::string16
 }
 
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::extended_value(
-        const eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& _extended_value)
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::extended_value(
+        const eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue& _extended_value)
 {
     m_extended_value = _extended_value;
     m__d = 0;
 
 }
 
-void eprosima::fastdds::dds::xtypes::AnnotationParameterValue::extended_value(
-        eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue&& _extended_value)
+void eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::extended_value(
+        eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue&& _extended_value)
 {
     m_extended_value = std::move(_extended_value);
     m__d = 0;
 
 }
 
-const eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::extended_value() const
+const eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::extended_value() const
 {
     bool b = true;
 
@@ -5075,7 +5112,7 @@ const eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& eprosima
     return m_extended_value;
 }
 
-eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& eprosima::fastdds::dds::xtypes::AnnotationParameterValue::extended_value()
+eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue& eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::extended_value()
 {
     bool b = true;
 
@@ -5113,30 +5150,32 @@ eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& eprosima::fast
 }
 
 
-eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::AppliedAnnotationParameter()
+
+
+eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::AppliedAnnotationParameter()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::~AppliedAnnotationParameter()
+eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::~AppliedAnnotationParameter()
 {
 }
 
-eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::AppliedAnnotationParameter(
+eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::AppliedAnnotationParameter(
         const AppliedAnnotationParameter& x)
 {
     m_paramname_hash = x.m_paramname_hash;
     m_value = x.m_value;
 }
 
-eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::AppliedAnnotationParameter(
+eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::AppliedAnnotationParameter(
         AppliedAnnotationParameter&& x) noexcept
 {
     m_paramname_hash = std::move(x.m_paramname_hash);
     m_value = std::move(x.m_value);
 }
 
-eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter& eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::operator =(
+eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter& eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::operator =(
         const AppliedAnnotationParameter& x)
 {
 
@@ -5145,7 +5184,7 @@ eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter& eprosima::fastdds::d
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter& eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::operator =(
+eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter& eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::operator =(
         AppliedAnnotationParameter&& x) noexcept
 {
 
@@ -5154,14 +5193,14 @@ eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter& eprosima::fastdds::d
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::operator ==(
         const AppliedAnnotationParameter& x) const
 {
     return (m_paramname_hash == x.m_paramname_hash &&
            m_value == x.m_value);
 }
 
-bool eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::operator !=(
         const AppliedAnnotationParameter& x) const
 {
     return !(*this == x);
@@ -5171,8 +5210,8 @@ bool eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::operator !=(
  * @brief This function copies the value in member paramname_hash
  * @param _paramname_hash New value to be copied in member paramname_hash
  */
-void eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::paramname_hash(
-        const eprosima::fastdds::dds::xtypes::NameHash& _paramname_hash)
+void eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::paramname_hash(
+        const eprosima::fastdds::dds::xtypes1_3::NameHash& _paramname_hash)
 {
     m_paramname_hash = _paramname_hash;
 }
@@ -5181,8 +5220,8 @@ void eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::paramname_hash(
  * @brief This function moves the value in member paramname_hash
  * @param _paramname_hash New value to be moved in member paramname_hash
  */
-void eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::paramname_hash(
-        eprosima::fastdds::dds::xtypes::NameHash&& _paramname_hash)
+void eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::paramname_hash(
+        eprosima::fastdds::dds::xtypes1_3::NameHash&& _paramname_hash)
 {
     m_paramname_hash = std::move(_paramname_hash);
 }
@@ -5191,7 +5230,7 @@ void eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::paramname_hash(
  * @brief This function returns a constant reference to member paramname_hash
  * @return Constant reference to member paramname_hash
  */
-const eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::paramname_hash() const
+const eprosima::fastdds::dds::xtypes1_3::NameHash& eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::paramname_hash() const
 {
     return m_paramname_hash;
 }
@@ -5200,7 +5239,7 @@ const eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::
  * @brief This function returns a reference to member paramname_hash
  * @return Reference to member paramname_hash
  */
-eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::paramname_hash()
+eprosima::fastdds::dds::xtypes1_3::NameHash& eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::paramname_hash()
 {
     return m_paramname_hash;
 }
@@ -5210,8 +5249,8 @@ eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::Applie
  * @brief This function copies the value in member value
  * @param _value New value to be copied in member value
  */
-void eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::value(
-        const eprosima::fastdds::dds::xtypes::AnnotationParameterValue& _value)
+void eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::value(
+        const eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& _value)
 {
     m_value = _value;
 }
@@ -5220,8 +5259,8 @@ void eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::value(
  * @brief This function moves the value in member value
  * @param _value New value to be moved in member value
  */
-void eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::value(
-        eprosima::fastdds::dds::xtypes::AnnotationParameterValue&& _value)
+void eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::value(
+        eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue&& _value)
 {
     m_value = std::move(_value);
 }
@@ -5230,7 +5269,7 @@ void eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::value(
  * @brief This function returns a constant reference to member value
  * @return Constant reference to member value
  */
-const eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::value() const
+const eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::value() const
 {
     return m_value;
 }
@@ -5239,51 +5278,55 @@ const eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdd
  * @brief This function returns a reference to member value
  * @return Reference to member value
  */
-eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter::value()
+eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::value()
 {
     return m_value;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::AppliedAnnotation::AppliedAnnotation()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::AppliedAnnotation()
 {
-    m_annotation_typeid = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_annotation_typeid = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 
 }
 
-eprosima::fastdds::dds::xtypes::AppliedAnnotation::~AppliedAnnotation()
+eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::~AppliedAnnotation()
 {
     delete m_annotation_typeid;
 
 }
 
-eprosima::fastdds::dds::xtypes::AppliedAnnotation::AppliedAnnotation(
+eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::AppliedAnnotation(
         const AppliedAnnotation& x)
 {
-    m_annotation_typeid = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_annotation_typeid = *x.m_annotation_typeid;
+    m_annotation_typeid = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_annotation_typeid = *x.m_annotation_typeid;
     m_param_seq = x.m_param_seq;
 }
 
-eprosima::fastdds::dds::xtypes::AppliedAnnotation::AppliedAnnotation(
+eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::AppliedAnnotation(
         AppliedAnnotation&& x) noexcept
 {
     m_annotation_typeid = x.m_annotation_typeid;x.m_annotation_typeid = nullptr;
     m_param_seq = std::move(x.m_param_seq);
 }
 
-eprosima::fastdds::dds::xtypes::AppliedAnnotation& eprosima::fastdds::dds::xtypes::AppliedAnnotation::operator =(
+eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation& eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::operator =(
         const AppliedAnnotation& x)
 {
 
-    m_annotation_typeid = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_annotation_typeid = *x.m_annotation_typeid;
+    m_annotation_typeid = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_annotation_typeid = *x.m_annotation_typeid;
     m_param_seq = x.m_param_seq;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::AppliedAnnotation& eprosima::fastdds::dds::xtypes::AppliedAnnotation::operator =(
+eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation& eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::operator =(
         AppliedAnnotation&& x) noexcept
 {
 
@@ -5292,14 +5335,14 @@ eprosima::fastdds::dds::xtypes::AppliedAnnotation& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::AppliedAnnotation::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::operator ==(
         const AppliedAnnotation& x) const
 {
     return (m_annotation_typeid == x.m_annotation_typeid &&
            m_param_seq == x.m_param_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::AppliedAnnotation::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::operator !=(
         const AppliedAnnotation& x) const
 {
     return !(*this == x);
@@ -5309,8 +5352,8 @@ bool eprosima::fastdds::dds::xtypes::AppliedAnnotation::operator !=(
  * @brief This function copies the value in member annotation_typeid
  * @param _annotation_typeid New value to be copied in member annotation_typeid
  */
-void eprosima::fastdds::dds::xtypes::AppliedAnnotation::annotation_typeid(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _annotation_typeid)
+void eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::annotation_typeid(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _annotation_typeid)
 {
     *m_annotation_typeid = _annotation_typeid;
 }
@@ -5319,8 +5362,8 @@ void eprosima::fastdds::dds::xtypes::AppliedAnnotation::annotation_typeid(
  * @brief This function moves the value in member annotation_typeid
  * @param _annotation_typeid New value to be moved in member annotation_typeid
  */
-void eprosima::fastdds::dds::xtypes::AppliedAnnotation::annotation_typeid(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _annotation_typeid)
+void eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::annotation_typeid(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _annotation_typeid)
 {
     *m_annotation_typeid = std::move(_annotation_typeid);
 }
@@ -5329,7 +5372,7 @@ void eprosima::fastdds::dds::xtypes::AppliedAnnotation::annotation_typeid(
  * @brief This function returns a constant reference to member annotation_typeid
  * @return Constant reference to member annotation_typeid
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::AppliedAnnotation::annotation_typeid() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::annotation_typeid() const
 {
     return *m_annotation_typeid;
 }
@@ -5338,7 +5381,7 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member annotation_typeid
  * @return Reference to member annotation_typeid
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::AppliedAnnotation::annotation_typeid()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::annotation_typeid()
 {
     return *m_annotation_typeid;
 }
@@ -5348,8 +5391,8 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member param_seq
  * @param _param_seq New value to be copied in member param_seq
  */
-void eprosima::fastdds::dds::xtypes::AppliedAnnotation::param_seq(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationParameterSeq>& _param_seq)
+void eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::param_seq(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameterSeq>& _param_seq)
 {
     m_param_seq = _param_seq;
 }
@@ -5358,8 +5401,8 @@ void eprosima::fastdds::dds::xtypes::AppliedAnnotation::param_seq(
  * @brief This function moves the value in member param_seq
  * @param _param_seq New value to be moved in member param_seq
  */
-void eprosima::fastdds::dds::xtypes::AppliedAnnotation::param_seq(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationParameterSeq>&& _param_seq)
+void eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::param_seq(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameterSeq>&& _param_seq)
 {
     m_param_seq = std::move(_param_seq);
 }
@@ -5368,7 +5411,7 @@ void eprosima::fastdds::dds::xtypes::AppliedAnnotation::param_seq(
  * @brief This function returns a constant reference to member param_seq
  * @return Constant reference to member param_seq
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationParameterSeq>& eprosima::fastdds::dds::xtypes::AppliedAnnotation::param_seq() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameterSeq>& eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::param_seq() const
 {
     return m_param_seq;
 }
@@ -5377,23 +5420,27 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotat
  * @brief This function returns a reference to member param_seq
  * @return Reference to member param_seq
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationParameterSeq>& eprosima::fastdds::dds::xtypes::AppliedAnnotation::param_seq()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameterSeq>& eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::param_seq()
 {
     return m_param_seq;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::AppliedVerbatimAnnotation()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::AppliedVerbatimAnnotation()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::~AppliedVerbatimAnnotation()
+eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::~AppliedVerbatimAnnotation()
 {
 }
 
-eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::AppliedVerbatimAnnotation(
+eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::AppliedVerbatimAnnotation(
         const AppliedVerbatimAnnotation& x)
 {
     m_placement = x.m_placement;
@@ -5401,7 +5448,7 @@ eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::AppliedVerbatimAnnota
     m_text = x.m_text;
 }
 
-eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::AppliedVerbatimAnnotation(
+eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::AppliedVerbatimAnnotation(
         AppliedVerbatimAnnotation&& x) noexcept
 {
     m_placement = std::move(x.m_placement);
@@ -5409,7 +5456,7 @@ eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::AppliedVerbatimAnnota
     m_text = std::move(x.m_text);
 }
 
-eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation& eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::operator =(
+eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation& eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::operator =(
         const AppliedVerbatimAnnotation& x)
 {
 
@@ -5419,7 +5466,7 @@ eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation& eprosima::fastdds::dd
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation& eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::operator =(
+eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation& eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::operator =(
         AppliedVerbatimAnnotation&& x) noexcept
 {
 
@@ -5429,7 +5476,7 @@ eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation& eprosima::fastdds::dd
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::operator ==(
         const AppliedVerbatimAnnotation& x) const
 {
     return (m_placement == x.m_placement &&
@@ -5437,7 +5484,7 @@ bool eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::operator ==(
            m_text == x.m_text);
 }
 
-bool eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::operator !=(
         const AppliedVerbatimAnnotation& x) const
 {
     return !(*this == x);
@@ -5447,7 +5494,7 @@ bool eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::operator !=(
  * @brief This function copies the value in member placement
  * @param _placement New value to be copied in member placement
  */
-void eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::placement(
+void eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::placement(
         const eprosima::fastcdr::fixed_string<32>& _placement)
 {
     m_placement = _placement;
@@ -5457,7 +5504,7 @@ void eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::placement(
  * @brief This function moves the value in member placement
  * @param _placement New value to be moved in member placement
  */
-void eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::placement(
+void eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::placement(
         eprosima::fastcdr::fixed_string<32>&& _placement)
 {
     m_placement = std::move(_placement);
@@ -5467,7 +5514,7 @@ void eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::placement(
  * @brief This function returns a constant reference to member placement
  * @return Constant reference to member placement
  */
-const eprosima::fastcdr::fixed_string<32>& eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::placement() const
+const eprosima::fastcdr::fixed_string<32>& eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::placement() const
 {
     return m_placement;
 }
@@ -5476,7 +5523,7 @@ const eprosima::fastcdr::fixed_string<32>& eprosima::fastdds::dds::xtypes::Appli
  * @brief This function returns a reference to member placement
  * @return Reference to member placement
  */
-eprosima::fastcdr::fixed_string<32>& eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::placement()
+eprosima::fastcdr::fixed_string<32>& eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::placement()
 {
     return m_placement;
 }
@@ -5486,7 +5533,7 @@ eprosima::fastcdr::fixed_string<32>& eprosima::fastdds::dds::xtypes::AppliedVerb
  * @brief This function copies the value in member language
  * @param _language New value to be copied in member language
  */
-void eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::language(
+void eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::language(
         const eprosima::fastcdr::fixed_string<32>& _language)
 {
     m_language = _language;
@@ -5496,7 +5543,7 @@ void eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::language(
  * @brief This function moves the value in member language
  * @param _language New value to be moved in member language
  */
-void eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::language(
+void eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::language(
         eprosima::fastcdr::fixed_string<32>&& _language)
 {
     m_language = std::move(_language);
@@ -5506,7 +5553,7 @@ void eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::language(
  * @brief This function returns a constant reference to member language
  * @return Constant reference to member language
  */
-const eprosima::fastcdr::fixed_string<32>& eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::language() const
+const eprosima::fastcdr::fixed_string<32>& eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::language() const
 {
     return m_language;
 }
@@ -5515,7 +5562,7 @@ const eprosima::fastcdr::fixed_string<32>& eprosima::fastdds::dds::xtypes::Appli
  * @brief This function returns a reference to member language
  * @return Reference to member language
  */
-eprosima::fastcdr::fixed_string<32>& eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::language()
+eprosima::fastcdr::fixed_string<32>& eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::language()
 {
     return m_language;
 }
@@ -5525,7 +5572,7 @@ eprosima::fastcdr::fixed_string<32>& eprosima::fastdds::dds::xtypes::AppliedVerb
  * @brief This function copies the value in member text
  * @param _text New value to be copied in member text
  */
-void eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::text(
+void eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::text(
         const std::string& _text)
 {
     m_text = _text;
@@ -5535,7 +5582,7 @@ void eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::text(
  * @brief This function moves the value in member text
  * @param _text New value to be moved in member text
  */
-void eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::text(
+void eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::text(
         std::string&& _text)
 {
     m_text = std::move(_text);
@@ -5545,7 +5592,7 @@ void eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::text(
  * @brief This function returns a constant reference to member text
  * @return Constant reference to member text
  */
-const std::string& eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::text() const
+const std::string& eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::text() const
 {
     return m_text;
 }
@@ -5554,22 +5601,24 @@ const std::string& eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::te
  * @brief This function returns a reference to member text
  * @return Reference to member text
  */
-std::string& eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation::text()
+std::string& eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::text()
 {
     return m_text;
 }
 
 
-eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations()
+
+
+eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::~AppliedBuiltinMemberAnnotations()
+eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::~AppliedBuiltinMemberAnnotations()
 {
 }
 
-eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations(
+eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations(
         const AppliedBuiltinMemberAnnotations& x)
 {
     m_unit = x.m_unit;
@@ -5578,7 +5627,7 @@ eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::AppliedBuiltinM
     m_hash_id = x.m_hash_id;
 }
 
-eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations(
+eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations(
         AppliedBuiltinMemberAnnotations&& x) noexcept
 {
     m_unit = std::move(x.m_unit);
@@ -5587,7 +5636,7 @@ eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::AppliedBuiltinM
     m_hash_id = std::move(x.m_hash_id);
 }
 
-eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations& eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::operator =(
+eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::operator =(
         const AppliedBuiltinMemberAnnotations& x)
 {
 
@@ -5598,7 +5647,7 @@ eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations& eprosima::fastd
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations& eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::operator =(
+eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::operator =(
         AppliedBuiltinMemberAnnotations&& x) noexcept
 {
 
@@ -5609,7 +5658,7 @@ eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations& eprosima::fastd
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::operator ==(
         const AppliedBuiltinMemberAnnotations& x) const
 {
     return (m_unit == x.m_unit &&
@@ -5618,7 +5667,7 @@ bool eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::operator =
            m_hash_id == x.m_hash_id);
 }
 
-bool eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::operator !=(
         const AppliedBuiltinMemberAnnotations& x) const
 {
     return !(*this == x);
@@ -5628,7 +5677,7 @@ bool eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::operator !
  * @brief This function copies the value in member unit
  * @param _unit New value to be copied in member unit
  */
-void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::unit(
+void eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::unit(
         const eprosima::fastcdr::optional<std::string>& _unit)
 {
     m_unit = _unit;
@@ -5638,7 +5687,7 @@ void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::unit(
  * @brief This function moves the value in member unit
  * @param _unit New value to be moved in member unit
  */
-void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::unit(
+void eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::unit(
         eprosima::fastcdr::optional<std::string>&& _unit)
 {
     m_unit = std::move(_unit);
@@ -5648,7 +5697,7 @@ void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::unit(
  * @brief This function returns a constant reference to member unit
  * @return Constant reference to member unit
  */
-const eprosima::fastcdr::optional<std::string>& eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::unit() const
+const eprosima::fastcdr::optional<std::string>& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::unit() const
 {
     return m_unit;
 }
@@ -5657,7 +5706,7 @@ const eprosima::fastcdr::optional<std::string>& eprosima::fastdds::dds::xtypes::
  * @brief This function returns a reference to member unit
  * @return Reference to member unit
  */
-eprosima::fastcdr::optional<std::string>& eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::unit()
+eprosima::fastcdr::optional<std::string>& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::unit()
 {
     return m_unit;
 }
@@ -5667,8 +5716,8 @@ eprosima::fastcdr::optional<std::string>& eprosima::fastdds::dds::xtypes::Applie
  * @brief This function copies the value in member min
  * @param _min New value to be copied in member min
  */
-void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::min(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AnnotationParameterValue>& _min)
+void eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::min(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue>& _min)
 {
     m_min = _min;
 }
@@ -5677,8 +5726,8 @@ void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::min(
  * @brief This function moves the value in member min
  * @param _min New value to be moved in member min
  */
-void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::min(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AnnotationParameterValue>&& _min)
+void eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::min(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue>&& _min)
 {
     m_min = std::move(_min);
 }
@@ -5687,7 +5736,7 @@ void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::min(
  * @brief This function returns a constant reference to member min
  * @return Constant reference to member min
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AnnotationParameterValue>& eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::min() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue>& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::min() const
 {
     return m_min;
 }
@@ -5696,7 +5745,7 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AnnotationPara
  * @brief This function returns a reference to member min
  * @return Reference to member min
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AnnotationParameterValue>& eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::min()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue>& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::min()
 {
     return m_min;
 }
@@ -5706,8 +5755,8 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AnnotationParameterV
  * @brief This function copies the value in member max
  * @param _max New value to be copied in member max
  */
-void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::max(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AnnotationParameterValue>& _max)
+void eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::max(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue>& _max)
 {
     m_max = _max;
 }
@@ -5716,8 +5765,8 @@ void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::max(
  * @brief This function moves the value in member max
  * @param _max New value to be moved in member max
  */
-void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::max(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AnnotationParameterValue>&& _max)
+void eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::max(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue>&& _max)
 {
     m_max = std::move(_max);
 }
@@ -5726,7 +5775,7 @@ void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::max(
  * @brief This function returns a constant reference to member max
  * @return Constant reference to member max
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AnnotationParameterValue>& eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::max() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue>& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::max() const
 {
     return m_max;
 }
@@ -5735,7 +5784,7 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AnnotationPara
  * @brief This function returns a reference to member max
  * @return Reference to member max
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AnnotationParameterValue>& eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::max()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue>& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::max()
 {
     return m_max;
 }
@@ -5745,7 +5794,7 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AnnotationParameterV
  * @brief This function copies the value in member hash_id
  * @param _hash_id New value to be copied in member hash_id
  */
-void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::hash_id(
+void eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::hash_id(
         const eprosima::fastcdr::optional<std::string>& _hash_id)
 {
     m_hash_id = _hash_id;
@@ -5755,7 +5804,7 @@ void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::hash_id(
  * @brief This function moves the value in member hash_id
  * @param _hash_id New value to be moved in member hash_id
  */
-void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::hash_id(
+void eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::hash_id(
         eprosima::fastcdr::optional<std::string>&& _hash_id)
 {
     m_hash_id = std::move(_hash_id);
@@ -5765,7 +5814,7 @@ void eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::hash_id(
  * @brief This function returns a constant reference to member hash_id
  * @return Constant reference to member hash_id
  */
-const eprosima::fastcdr::optional<std::string>& eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::hash_id() const
+const eprosima::fastcdr::optional<std::string>& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::hash_id() const
 {
     return m_hash_id;
 }
@@ -5774,33 +5823,35 @@ const eprosima::fastcdr::optional<std::string>& eprosima::fastdds::dds::xtypes::
  * @brief This function returns a reference to member hash_id
  * @return Reference to member hash_id
  */
-eprosima::fastcdr::optional<std::string>& eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations::hash_id()
+eprosima::fastcdr::optional<std::string>& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::hash_id()
 {
     return m_hash_id;
 }
 
 
-eprosima::fastdds::dds::xtypes::CommonStructMember::CommonStructMember()
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonStructMember::CommonStructMember()
 {
-    m_member_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_member_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonStructMember::~CommonStructMember()
+eprosima::fastdds::dds::xtypes1_3::CommonStructMember::~CommonStructMember()
 {
     delete m_member_type_id;
 }
 
-eprosima::fastdds::dds::xtypes::CommonStructMember::CommonStructMember(
+eprosima::fastdds::dds::xtypes1_3::CommonStructMember::CommonStructMember(
         const CommonStructMember& x)
 {
     m_member_id = x.m_member_id;
     m_member_flags = x.m_member_flags;
-    m_member_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_member_type_id = *x.m_member_type_id;
+    m_member_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_member_type_id = *x.m_member_type_id;
 }
 
-eprosima::fastdds::dds::xtypes::CommonStructMember::CommonStructMember(
+eprosima::fastdds::dds::xtypes1_3::CommonStructMember::CommonStructMember(
         CommonStructMember&& x) noexcept
 {
     m_member_id = x.m_member_id;
@@ -5808,17 +5859,17 @@ eprosima::fastdds::dds::xtypes::CommonStructMember::CommonStructMember(
     m_member_type_id = x.m_member_type_id;x.m_member_type_id = nullptr;
 }
 
-eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds::xtypes::CommonStructMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonStructMember& eprosima::fastdds::dds::xtypes1_3::CommonStructMember::operator =(
         const CommonStructMember& x)
 {
 
     m_member_id = x.m_member_id;
     m_member_flags = x.m_member_flags;
-    m_member_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_member_type_id = *x.m_member_type_id;
+    m_member_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_member_type_id = *x.m_member_type_id;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds::xtypes::CommonStructMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonStructMember& eprosima::fastdds::dds::xtypes1_3::CommonStructMember::operator =(
         CommonStructMember&& x) noexcept
 {
 
@@ -5828,7 +5879,7 @@ eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonStructMember::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonStructMember::operator ==(
         const CommonStructMember& x) const
 {
     return (m_member_id == x.m_member_id &&
@@ -5836,7 +5887,7 @@ bool eprosima::fastdds::dds::xtypes::CommonStructMember::operator ==(
            m_member_type_id == x.m_member_type_id);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonStructMember::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonStructMember::operator !=(
         const CommonStructMember& x) const
 {
     return !(*this == x);
@@ -5846,8 +5897,8 @@ bool eprosima::fastdds::dds::xtypes::CommonStructMember::operator !=(
  * @brief This function sets a value in member member_id
  * @param _member_id New value for member member_id
  */
-void eprosima::fastdds::dds::xtypes::CommonStructMember::member_id(
-        eprosima::fastdds::dds::xtypes::MemberId _member_id)
+void eprosima::fastdds::dds::xtypes1_3::CommonStructMember::member_id(
+        eprosima::fastdds::dds::xtypes1_3::MemberId _member_id)
 {
     m_member_id = _member_id;
 }
@@ -5856,7 +5907,7 @@ void eprosima::fastdds::dds::xtypes::CommonStructMember::member_id(
  * @brief This function returns the value of member member_id
  * @return Value of member member_id
  */
-eprosima::fastdds::dds::xtypes::MemberId eprosima::fastdds::dds::xtypes::CommonStructMember::member_id() const
+eprosima::fastdds::dds::xtypes1_3::MemberId eprosima::fastdds::dds::xtypes1_3::CommonStructMember::member_id() const
 {
     return m_member_id;
 }
@@ -5865,7 +5916,7 @@ eprosima::fastdds::dds::xtypes::MemberId eprosima::fastdds::dds::xtypes::CommonS
  * @brief This function returns a reference to member member_id
  * @return Reference to member member_id
  */
-eprosima::fastdds::dds::xtypes::MemberId& eprosima::fastdds::dds::xtypes::CommonStructMember::member_id()
+eprosima::fastdds::dds::xtypes1_3::MemberId& eprosima::fastdds::dds::xtypes1_3::CommonStructMember::member_id()
 {
     return m_member_id;
 }
@@ -5875,8 +5926,8 @@ eprosima::fastdds::dds::xtypes::MemberId& eprosima::fastdds::dds::xtypes::Common
  * @brief This function copies the value in member member_flags
  * @param _member_flags New value to be copied in member member_flags
  */
-void eprosima::fastdds::dds::xtypes::CommonStructMember::member_flags(
-        const eprosima::fastdds::dds::xtypes::StructMemberFlag& _member_flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonStructMember::member_flags(
+        const eprosima::fastdds::dds::xtypes1_3::StructMemberFlag& _member_flags)
 {
     m_member_flags = _member_flags;
 }
@@ -5885,8 +5936,8 @@ void eprosima::fastdds::dds::xtypes::CommonStructMember::member_flags(
  * @brief This function moves the value in member member_flags
  * @param _member_flags New value to be moved in member member_flags
  */
-void eprosima::fastdds::dds::xtypes::CommonStructMember::member_flags(
-        eprosima::fastdds::dds::xtypes::StructMemberFlag&& _member_flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonStructMember::member_flags(
+        eprosima::fastdds::dds::xtypes1_3::StructMemberFlag&& _member_flags)
 {
     m_member_flags = std::move(_member_flags);
 }
@@ -5895,7 +5946,7 @@ void eprosima::fastdds::dds::xtypes::CommonStructMember::member_flags(
  * @brief This function returns a constant reference to member member_flags
  * @return Constant reference to member member_flags
  */
-const eprosima::fastdds::dds::xtypes::StructMemberFlag& eprosima::fastdds::dds::xtypes::CommonStructMember::member_flags() const
+const eprosima::fastdds::dds::xtypes1_3::StructMemberFlag& eprosima::fastdds::dds::xtypes1_3::CommonStructMember::member_flags() const
 {
     return m_member_flags;
 }
@@ -5904,7 +5955,7 @@ const eprosima::fastdds::dds::xtypes::StructMemberFlag& eprosima::fastdds::dds::
  * @brief This function returns a reference to member member_flags
  * @return Reference to member member_flags
  */
-eprosima::fastdds::dds::xtypes::StructMemberFlag& eprosima::fastdds::dds::xtypes::CommonStructMember::member_flags()
+eprosima::fastdds::dds::xtypes1_3::StructMemberFlag& eprosima::fastdds::dds::xtypes1_3::CommonStructMember::member_flags()
 {
     return m_member_flags;
 }
@@ -5914,8 +5965,8 @@ eprosima::fastdds::dds::xtypes::StructMemberFlag& eprosima::fastdds::dds::xtypes
  * @brief This function copies the value in member member_type_id
  * @param _member_type_id New value to be copied in member member_type_id
  */
-void eprosima::fastdds::dds::xtypes::CommonStructMember::member_type_id(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _member_type_id)
+void eprosima::fastdds::dds::xtypes1_3::CommonStructMember::member_type_id(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _member_type_id)
 {
     *m_member_type_id = _member_type_id;
 }
@@ -5924,8 +5975,8 @@ void eprosima::fastdds::dds::xtypes::CommonStructMember::member_type_id(
  * @brief This function moves the value in member member_type_id
  * @param _member_type_id New value to be moved in member member_type_id
  */
-void eprosima::fastdds::dds::xtypes::CommonStructMember::member_type_id(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _member_type_id)
+void eprosima::fastdds::dds::xtypes1_3::CommonStructMember::member_type_id(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _member_type_id)
 {
     *m_member_type_id = std::move(_member_type_id);
 }
@@ -5934,7 +5985,7 @@ void eprosima::fastdds::dds::xtypes::CommonStructMember::member_type_id(
  * @brief This function returns a constant reference to member member_type_id
  * @return Constant reference to member member_type_id
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CommonStructMember::member_type_id() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CommonStructMember::member_type_id() const
 {
     return *m_member_type_id;
 }
@@ -5943,22 +5994,24 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member member_type_id
  * @return Reference to member member_type_id
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CommonStructMember::member_type_id()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CommonStructMember::member_type_id()
 {
     return *m_member_type_id;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteMemberDetail::CompleteMemberDetail()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::CompleteMemberDetail()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteMemberDetail::~CompleteMemberDetail()
+eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::~CompleteMemberDetail()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteMemberDetail::CompleteMemberDetail(
+eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::CompleteMemberDetail(
         const CompleteMemberDetail& x)
 {
     m_name = x.m_name;
@@ -5966,7 +6019,7 @@ eprosima::fastdds::dds::xtypes::CompleteMemberDetail::CompleteMemberDetail(
     m_ann_custom = x.m_ann_custom;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteMemberDetail::CompleteMemberDetail(
+eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::CompleteMemberDetail(
         CompleteMemberDetail&& x) noexcept
 {
     m_name = std::move(x.m_name);
@@ -5974,7 +6027,7 @@ eprosima::fastdds::dds::xtypes::CompleteMemberDetail::CompleteMemberDetail(
     m_ann_custom = std::move(x.m_ann_custom);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xtypes::CompleteMemberDetail::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::operator =(
         const CompleteMemberDetail& x)
 {
 
@@ -5984,7 +6037,7 @@ eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xt
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xtypes::CompleteMemberDetail::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::operator =(
         CompleteMemberDetail&& x) noexcept
 {
 
@@ -5994,7 +6047,7 @@ eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xt
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteMemberDetail::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::operator ==(
         const CompleteMemberDetail& x) const
 {
     return (m_name == x.m_name &&
@@ -6002,7 +6055,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteMemberDetail::operator ==(
            m_ann_custom == x.m_ann_custom);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteMemberDetail::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::operator !=(
         const CompleteMemberDetail& x) const
 {
     return !(*this == x);
@@ -6012,8 +6065,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteMemberDetail::operator !=(
  * @brief This function copies the value in member name
  * @param _name New value to be copied in member name
  */
-void eprosima::fastdds::dds::xtypes::CompleteMemberDetail::name(
-        const eprosima::fastdds::dds::xtypes::MemberName& _name)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::name(
+        const eprosima::fastdds::dds::xtypes1_3::MemberName& _name)
 {
     m_name = _name;
 }
@@ -6022,8 +6075,8 @@ void eprosima::fastdds::dds::xtypes::CompleteMemberDetail::name(
  * @brief This function moves the value in member name
  * @param _name New value to be moved in member name
  */
-void eprosima::fastdds::dds::xtypes::CompleteMemberDetail::name(
-        eprosima::fastdds::dds::xtypes::MemberName&& _name)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::name(
+        eprosima::fastdds::dds::xtypes1_3::MemberName&& _name)
 {
     m_name = std::move(_name);
 }
@@ -6032,7 +6085,7 @@ void eprosima::fastdds::dds::xtypes::CompleteMemberDetail::name(
  * @brief This function returns a constant reference to member name
  * @return Constant reference to member name
  */
-const eprosima::fastdds::dds::xtypes::MemberName& eprosima::fastdds::dds::xtypes::CompleteMemberDetail::name() const
+const eprosima::fastdds::dds::xtypes1_3::MemberName& eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::name() const
 {
     return m_name;
 }
@@ -6041,7 +6094,7 @@ const eprosima::fastdds::dds::xtypes::MemberName& eprosima::fastdds::dds::xtypes
  * @brief This function returns a reference to member name
  * @return Reference to member name
  */
-eprosima::fastdds::dds::xtypes::MemberName& eprosima::fastdds::dds::xtypes::CompleteMemberDetail::name()
+eprosima::fastdds::dds::xtypes1_3::MemberName& eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::name()
 {
     return m_name;
 }
@@ -6051,8 +6104,8 @@ eprosima::fastdds::dds::xtypes::MemberName& eprosima::fastdds::dds::xtypes::Comp
  * @brief This function copies the value in member ann_builtin
  * @param _ann_builtin New value to be copied in member ann_builtin
  */
-void eprosima::fastdds::dds::xtypes::CompleteMemberDetail::ann_builtin(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations>& _ann_builtin)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::ann_builtin(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations>& _ann_builtin)
 {
     m_ann_builtin = _ann_builtin;
 }
@@ -6061,8 +6114,8 @@ void eprosima::fastdds::dds::xtypes::CompleteMemberDetail::ann_builtin(
  * @brief This function moves the value in member ann_builtin
  * @param _ann_builtin New value to be moved in member ann_builtin
  */
-void eprosima::fastdds::dds::xtypes::CompleteMemberDetail::ann_builtin(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations>&& _ann_builtin)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::ann_builtin(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations>&& _ann_builtin)
 {
     m_ann_builtin = std::move(_ann_builtin);
 }
@@ -6071,7 +6124,7 @@ void eprosima::fastdds::dds::xtypes::CompleteMemberDetail::ann_builtin(
  * @brief This function returns a constant reference to member ann_builtin
  * @return Constant reference to member ann_builtin
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations>& eprosima::fastdds::dds::xtypes::CompleteMemberDetail::ann_builtin() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations>& eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::ann_builtin() const
 {
     return m_ann_builtin;
 }
@@ -6080,7 +6133,7 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltin
  * @brief This function returns a reference to member ann_builtin
  * @return Reference to member ann_builtin
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations>& eprosima::fastdds::dds::xtypes::CompleteMemberDetail::ann_builtin()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations>& eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::ann_builtin()
 {
     return m_ann_builtin;
 }
@@ -6090,8 +6143,8 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMember
  * @brief This function copies the value in member ann_custom
  * @param _ann_custom New value to be copied in member ann_custom
  */
-void eprosima::fastdds::dds::xtypes::CompleteMemberDetail::ann_custom(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& _ann_custom)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::ann_custom(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& _ann_custom)
 {
     m_ann_custom = _ann_custom;
 }
@@ -6100,8 +6153,8 @@ void eprosima::fastdds::dds::xtypes::CompleteMemberDetail::ann_custom(
  * @brief This function moves the value in member ann_custom
  * @param _ann_custom New value to be moved in member ann_custom
  */
-void eprosima::fastdds::dds::xtypes::CompleteMemberDetail::ann_custom(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>&& _ann_custom)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::ann_custom(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>&& _ann_custom)
 {
     m_ann_custom = std::move(_ann_custom);
 }
@@ -6110,7 +6163,7 @@ void eprosima::fastdds::dds::xtypes::CompleteMemberDetail::ann_custom(
  * @brief This function returns a constant reference to member ann_custom
  * @return Constant reference to member ann_custom
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes::CompleteMemberDetail::ann_custom() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::ann_custom() const
 {
     return m_ann_custom;
 }
@@ -6119,34 +6172,36 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotat
  * @brief This function returns a reference to member ann_custom
  * @return Reference to member ann_custom
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes::CompleteMemberDetail::ann_custom()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::ann_custom()
 {
     return m_ann_custom;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalMemberDetail::MinimalMemberDetail()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::MinimalMemberDetail()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalMemberDetail::~MinimalMemberDetail()
+eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::~MinimalMemberDetail()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalMemberDetail::MinimalMemberDetail(
+eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::MinimalMemberDetail(
         const MinimalMemberDetail& x)
 {
     m_name_hash = x.m_name_hash;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalMemberDetail::MinimalMemberDetail(
+eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::MinimalMemberDetail(
         MinimalMemberDetail&& x) noexcept
 {
     m_name_hash = std::move(x.m_name_hash);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xtypes::MinimalMemberDetail::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::operator =(
         const MinimalMemberDetail& x)
 {
 
@@ -6154,7 +6209,7 @@ eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xty
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xtypes::MinimalMemberDetail::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::operator =(
         MinimalMemberDetail&& x) noexcept
 {
 
@@ -6162,13 +6217,13 @@ eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalMemberDetail::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::operator ==(
         const MinimalMemberDetail& x) const
 {
     return (m_name_hash == x.m_name_hash);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalMemberDetail::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::operator !=(
         const MinimalMemberDetail& x) const
 {
     return !(*this == x);
@@ -6178,8 +6233,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalMemberDetail::operator !=(
  * @brief This function copies the value in member name_hash
  * @param _name_hash New value to be copied in member name_hash
  */
-void eprosima::fastdds::dds::xtypes::MinimalMemberDetail::name_hash(
-        const eprosima::fastdds::dds::xtypes::NameHash& _name_hash)
+void eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::name_hash(
+        const eprosima::fastdds::dds::xtypes1_3::NameHash& _name_hash)
 {
     m_name_hash = _name_hash;
 }
@@ -6188,8 +6243,8 @@ void eprosima::fastdds::dds::xtypes::MinimalMemberDetail::name_hash(
  * @brief This function moves the value in member name_hash
  * @param _name_hash New value to be moved in member name_hash
  */
-void eprosima::fastdds::dds::xtypes::MinimalMemberDetail::name_hash(
-        eprosima::fastdds::dds::xtypes::NameHash&& _name_hash)
+void eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::name_hash(
+        eprosima::fastdds::dds::xtypes1_3::NameHash&& _name_hash)
 {
     m_name_hash = std::move(_name_hash);
 }
@@ -6198,7 +6253,7 @@ void eprosima::fastdds::dds::xtypes::MinimalMemberDetail::name_hash(
  * @brief This function returns a constant reference to member name_hash
  * @return Constant reference to member name_hash
  */
-const eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::MinimalMemberDetail::name_hash() const
+const eprosima::fastdds::dds::xtypes1_3::NameHash& eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::name_hash() const
 {
     return m_name_hash;
 }
@@ -6207,36 +6262,38 @@ const eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::
  * @brief This function returns a reference to member name_hash
  * @return Reference to member name_hash
  */
-eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::MinimalMemberDetail::name_hash()
+eprosima::fastdds::dds::xtypes1_3::NameHash& eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::name_hash()
 {
     return m_name_hash;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteStructMember::CompleteStructMember()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::CompleteStructMember()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructMember::~CompleteStructMember()
+eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::~CompleteStructMember()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructMember::CompleteStructMember(
+eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::CompleteStructMember(
         const CompleteStructMember& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructMember::CompleteStructMember(
+eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::CompleteStructMember(
         CompleteStructMember&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructMember& eprosima::fastdds::dds::xtypes::CompleteStructMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteStructMember& eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::operator =(
         const CompleteStructMember& x)
 {
 
@@ -6245,7 +6302,7 @@ eprosima::fastdds::dds::xtypes::CompleteStructMember& eprosima::fastdds::dds::xt
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructMember& eprosima::fastdds::dds::xtypes::CompleteStructMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteStructMember& eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::operator =(
         CompleteStructMember&& x) noexcept
 {
 
@@ -6254,14 +6311,14 @@ eprosima::fastdds::dds::xtypes::CompleteStructMember& eprosima::fastdds::dds::xt
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteStructMember::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::operator ==(
         const CompleteStructMember& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteStructMember::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::operator !=(
         const CompleteStructMember& x) const
 {
     return !(*this == x);
@@ -6271,8 +6328,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteStructMember::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructMember::common(
-        const eprosima::fastdds::dds::xtypes::CommonStructMember& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonStructMember& _common)
 {
     m_common = _common;
 }
@@ -6281,8 +6338,8 @@ void eprosima::fastdds::dds::xtypes::CompleteStructMember::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructMember::common(
-        eprosima::fastdds::dds::xtypes::CommonStructMember&& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonStructMember&& _common)
 {
     m_common = std::move(_common);
 }
@@ -6291,7 +6348,7 @@ void eprosima::fastdds::dds::xtypes::CompleteStructMember::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds::xtypes::CompleteStructMember::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonStructMember& eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::common() const
 {
     return m_common;
 }
@@ -6300,7 +6357,7 @@ const eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds::xtypes::CompleteStructMember::common()
+eprosima::fastdds::dds::xtypes1_3::CommonStructMember& eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::common()
 {
     return m_common;
 }
@@ -6310,8 +6367,8 @@ eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructMember::detail(
-        const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::detail(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -6320,8 +6377,8 @@ void eprosima::fastdds::dds::xtypes::CompleteStructMember::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructMember::detail(
-        eprosima::fastdds::dds::xtypes::CompleteMemberDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::detail(
+        eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -6330,7 +6387,7 @@ void eprosima::fastdds::dds::xtypes::CompleteStructMember::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xtypes::CompleteStructMember::detail() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::detail() const
 {
     return m_detail;
 }
@@ -6339,37 +6396,41 @@ const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::d
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xtypes::CompleteStructMember::detail()
+eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::detail()
 {
     return m_detail;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::MinimalStructMember::MinimalStructMember()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::MinimalStructMember()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructMember::~MinimalStructMember()
+eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::~MinimalStructMember()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructMember::MinimalStructMember(
+eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::MinimalStructMember(
         const MinimalStructMember& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructMember::MinimalStructMember(
+eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::MinimalStructMember(
         MinimalStructMember&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructMember& eprosima::fastdds::dds::xtypes::MinimalStructMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalStructMember& eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::operator =(
         const MinimalStructMember& x)
 {
 
@@ -6378,7 +6439,7 @@ eprosima::fastdds::dds::xtypes::MinimalStructMember& eprosima::fastdds::dds::xty
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructMember& eprosima::fastdds::dds::xtypes::MinimalStructMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalStructMember& eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::operator =(
         MinimalStructMember&& x) noexcept
 {
 
@@ -6387,14 +6448,14 @@ eprosima::fastdds::dds::xtypes::MinimalStructMember& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalStructMember::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::operator ==(
         const MinimalStructMember& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalStructMember::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::operator !=(
         const MinimalStructMember& x) const
 {
     return !(*this == x);
@@ -6404,8 +6465,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalStructMember::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructMember::common(
-        const eprosima::fastdds::dds::xtypes::CommonStructMember& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonStructMember& _common)
 {
     m_common = _common;
 }
@@ -6414,8 +6475,8 @@ void eprosima::fastdds::dds::xtypes::MinimalStructMember::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructMember::common(
-        eprosima::fastdds::dds::xtypes::CommonStructMember&& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonStructMember&& _common)
 {
     m_common = std::move(_common);
 }
@@ -6424,7 +6485,7 @@ void eprosima::fastdds::dds::xtypes::MinimalStructMember::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds::xtypes::MinimalStructMember::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonStructMember& eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::common() const
 {
     return m_common;
 }
@@ -6433,7 +6494,7 @@ const eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds::xtypes::MinimalStructMember::common()
+eprosima::fastdds::dds::xtypes1_3::CommonStructMember& eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::common()
 {
     return m_common;
 }
@@ -6443,8 +6504,8 @@ eprosima::fastdds::dds::xtypes::CommonStructMember& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructMember::detail(
-        const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::detail(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -6453,8 +6514,8 @@ void eprosima::fastdds::dds::xtypes::MinimalStructMember::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructMember::detail(
-        eprosima::fastdds::dds::xtypes::MinimalMemberDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::detail(
+        eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -6463,7 +6524,7 @@ void eprosima::fastdds::dds::xtypes::MinimalStructMember::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xtypes::MinimalStructMember::detail() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::detail() const
 {
     return m_detail;
 }
@@ -6472,35 +6533,39 @@ const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dd
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xtypes::MinimalStructMember::detail()
+eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::detail()
 {
     return m_detail;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::AppliedBuiltinTypeAnnotations()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations::AppliedBuiltinTypeAnnotations()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::~AppliedBuiltinTypeAnnotations()
+eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations::~AppliedBuiltinTypeAnnotations()
 {
 }
 
-eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::AppliedBuiltinTypeAnnotations(
+eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations::AppliedBuiltinTypeAnnotations(
         const AppliedBuiltinTypeAnnotations& x)
 {
     m_verbatim = x.m_verbatim;
 }
 
-eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::AppliedBuiltinTypeAnnotations(
+eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations::AppliedBuiltinTypeAnnotations(
         AppliedBuiltinTypeAnnotations&& x) noexcept
 {
     m_verbatim = std::move(x.m_verbatim);
 }
 
-eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations& eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::operator =(
+eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations::operator =(
         const AppliedBuiltinTypeAnnotations& x)
 {
 
@@ -6508,7 +6573,7 @@ eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations& eprosima::fastdds
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations& eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::operator =(
+eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations::operator =(
         AppliedBuiltinTypeAnnotations&& x) noexcept
 {
 
@@ -6516,13 +6581,13 @@ eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations& eprosima::fastdds
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations::operator ==(
         const AppliedBuiltinTypeAnnotations& x) const
 {
     return (m_verbatim == x.m_verbatim);
 }
 
-bool eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations::operator !=(
         const AppliedBuiltinTypeAnnotations& x) const
 {
     return !(*this == x);
@@ -6532,8 +6597,8 @@ bool eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::operator !=(
  * @brief This function copies the value in member verbatim
  * @param _verbatim New value to be copied in member verbatim
  */
-void eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::verbatim(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation>& _verbatim)
+void eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations::verbatim(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation>& _verbatim)
 {
     m_verbatim = _verbatim;
 }
@@ -6542,8 +6607,8 @@ void eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::verbatim(
  * @brief This function moves the value in member verbatim
  * @param _verbatim New value to be moved in member verbatim
  */
-void eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::verbatim(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation>&& _verbatim)
+void eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations::verbatim(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation>&& _verbatim)
 {
     m_verbatim = std::move(_verbatim);
 }
@@ -6552,7 +6617,7 @@ void eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::verbatim(
  * @brief This function returns a constant reference to member verbatim
  * @return Constant reference to member verbatim
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation>& eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::verbatim() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation>& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations::verbatim() const
 {
     return m_verbatim;
 }
@@ -6561,34 +6626,34 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedVerbati
  * @brief This function returns a reference to member verbatim
  * @return Reference to member verbatim
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation>& eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations::verbatim()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation>& eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations::verbatim()
 {
     return m_verbatim;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalTypeDetail::MinimalTypeDetail()
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail::MinimalTypeDetail()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalTypeDetail::~MinimalTypeDetail()
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail::~MinimalTypeDetail()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalTypeDetail::MinimalTypeDetail(
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail::MinimalTypeDetail(
         const MinimalTypeDetail& x)
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalTypeDetail::MinimalTypeDetail(
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail::MinimalTypeDetail(
         MinimalTypeDetail&& x) noexcept
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds::xtypes::MinimalTypeDetail::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail& eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail::operator =(
         const MinimalTypeDetail& x)
 {
 
@@ -6597,7 +6662,7 @@ eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds::xtypes::MinimalTypeDetail::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail& eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail::operator =(
         MinimalTypeDetail&& x) noexcept
 {
 
@@ -6606,30 +6671,32 @@ eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalTypeDetail::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail::operator ==(
         const MinimalTypeDetail& x) const
 {
     static_cast<void>(x);
     return true;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalTypeDetail::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail::operator !=(
         const MinimalTypeDetail& x) const
 {
     return !(*this == x);
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteTypeDetail::CompleteTypeDetail()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::CompleteTypeDetail()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteTypeDetail::~CompleteTypeDetail()
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::~CompleteTypeDetail()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteTypeDetail::CompleteTypeDetail(
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::CompleteTypeDetail(
         const CompleteTypeDetail& x)
 {
     m_ann_builtin = x.m_ann_builtin;
@@ -6637,7 +6704,7 @@ eprosima::fastdds::dds::xtypes::CompleteTypeDetail::CompleteTypeDetail(
     m_type_name = x.m_type_name;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteTypeDetail::CompleteTypeDetail(
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::CompleteTypeDetail(
         CompleteTypeDetail&& x) noexcept
 {
     m_ann_builtin = std::move(x.m_ann_builtin);
@@ -6645,7 +6712,7 @@ eprosima::fastdds::dds::xtypes::CompleteTypeDetail::CompleteTypeDetail(
     m_type_name = std::move(x.m_type_name);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteTypeDetail::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::operator =(
         const CompleteTypeDetail& x)
 {
 
@@ -6655,7 +6722,7 @@ eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteTypeDetail::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::operator =(
         CompleteTypeDetail&& x) noexcept
 {
 
@@ -6665,7 +6732,7 @@ eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteTypeDetail::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::operator ==(
         const CompleteTypeDetail& x) const
 {
     return (m_ann_builtin == x.m_ann_builtin &&
@@ -6673,7 +6740,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteTypeDetail::operator ==(
            m_type_name == x.m_type_name);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteTypeDetail::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::operator !=(
         const CompleteTypeDetail& x) const
 {
     return !(*this == x);
@@ -6683,8 +6750,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteTypeDetail::operator !=(
  * @brief This function copies the value in member ann_builtin
  * @param _ann_builtin New value to be copied in member ann_builtin
  */
-void eprosima::fastdds::dds::xtypes::CompleteTypeDetail::ann_builtin(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations>& _ann_builtin)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::ann_builtin(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations>& _ann_builtin)
 {
     m_ann_builtin = _ann_builtin;
 }
@@ -6693,8 +6760,8 @@ void eprosima::fastdds::dds::xtypes::CompleteTypeDetail::ann_builtin(
  * @brief This function moves the value in member ann_builtin
  * @param _ann_builtin New value to be moved in member ann_builtin
  */
-void eprosima::fastdds::dds::xtypes::CompleteTypeDetail::ann_builtin(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations>&& _ann_builtin)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::ann_builtin(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations>&& _ann_builtin)
 {
     m_ann_builtin = std::move(_ann_builtin);
 }
@@ -6703,7 +6770,7 @@ void eprosima::fastdds::dds::xtypes::CompleteTypeDetail::ann_builtin(
  * @brief This function returns a constant reference to member ann_builtin
  * @return Constant reference to member ann_builtin
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations>& eprosima::fastdds::dds::xtypes::CompleteTypeDetail::ann_builtin() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations>& eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::ann_builtin() const
 {
     return m_ann_builtin;
 }
@@ -6712,7 +6779,7 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltin
  * @brief This function returns a reference to member ann_builtin
  * @return Reference to member ann_builtin
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations>& eprosima::fastdds::dds::xtypes::CompleteTypeDetail::ann_builtin()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations>& eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::ann_builtin()
 {
     return m_ann_builtin;
 }
@@ -6722,8 +6789,8 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAn
  * @brief This function copies the value in member ann_custom
  * @param _ann_custom New value to be copied in member ann_custom
  */
-void eprosima::fastdds::dds::xtypes::CompleteTypeDetail::ann_custom(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& _ann_custom)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::ann_custom(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& _ann_custom)
 {
     m_ann_custom = _ann_custom;
 }
@@ -6732,8 +6799,8 @@ void eprosima::fastdds::dds::xtypes::CompleteTypeDetail::ann_custom(
  * @brief This function moves the value in member ann_custom
  * @param _ann_custom New value to be moved in member ann_custom
  */
-void eprosima::fastdds::dds::xtypes::CompleteTypeDetail::ann_custom(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>&& _ann_custom)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::ann_custom(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>&& _ann_custom)
 {
     m_ann_custom = std::move(_ann_custom);
 }
@@ -6742,7 +6809,7 @@ void eprosima::fastdds::dds::xtypes::CompleteTypeDetail::ann_custom(
  * @brief This function returns a constant reference to member ann_custom
  * @return Constant reference to member ann_custom
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes::CompleteTypeDetail::ann_custom() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::ann_custom() const
 {
     return m_ann_custom;
 }
@@ -6751,7 +6818,7 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotat
  * @brief This function returns a reference to member ann_custom
  * @return Reference to member ann_custom
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes::CompleteTypeDetail::ann_custom()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::ann_custom()
 {
     return m_ann_custom;
 }
@@ -6761,8 +6828,8 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq
  * @brief This function copies the value in member type_name
  * @param _type_name New value to be copied in member type_name
  */
-void eprosima::fastdds::dds::xtypes::CompleteTypeDetail::type_name(
-        const eprosima::fastdds::dds::xtypes::QualifiedTypeName& _type_name)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::type_name(
+        const eprosima::fastdds::dds::xtypes1_3::QualifiedTypeName& _type_name)
 {
     m_type_name = _type_name;
 }
@@ -6771,8 +6838,8 @@ void eprosima::fastdds::dds::xtypes::CompleteTypeDetail::type_name(
  * @brief This function moves the value in member type_name
  * @param _type_name New value to be moved in member type_name
  */
-void eprosima::fastdds::dds::xtypes::CompleteTypeDetail::type_name(
-        eprosima::fastdds::dds::xtypes::QualifiedTypeName&& _type_name)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::type_name(
+        eprosima::fastdds::dds::xtypes1_3::QualifiedTypeName&& _type_name)
 {
     m_type_name = std::move(_type_name);
 }
@@ -6781,7 +6848,7 @@ void eprosima::fastdds::dds::xtypes::CompleteTypeDetail::type_name(
  * @brief This function returns a constant reference to member type_name
  * @return Constant reference to member type_name
  */
-const eprosima::fastdds::dds::xtypes::QualifiedTypeName& eprosima::fastdds::dds::xtypes::CompleteTypeDetail::type_name() const
+const eprosima::fastdds::dds::xtypes1_3::QualifiedTypeName& eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::type_name() const
 {
     return m_type_name;
 }
@@ -6790,50 +6857,52 @@ const eprosima::fastdds::dds::xtypes::QualifiedTypeName& eprosima::fastdds::dds:
  * @brief This function returns a reference to member type_name
  * @return Reference to member type_name
  */
-eprosima::fastdds::dds::xtypes::QualifiedTypeName& eprosima::fastdds::dds::xtypes::CompleteTypeDetail::type_name()
+eprosima::fastdds::dds::xtypes1_3::QualifiedTypeName& eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::type_name()
 {
     return m_type_name;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteStructHeader::CompleteStructHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::CompleteStructHeader()
 {
-    m_base_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_base_type = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructHeader::~CompleteStructHeader()
+eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::~CompleteStructHeader()
 {
     delete m_base_type;
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructHeader::CompleteStructHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::CompleteStructHeader(
         const CompleteStructHeader& x)
 {
-    m_base_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_base_type = *x.m_base_type;
+    m_base_type = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_base_type = *x.m_base_type;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructHeader::CompleteStructHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::CompleteStructHeader(
         CompleteStructHeader&& x) noexcept
 {
     m_base_type = x.m_base_type;x.m_base_type = nullptr;
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructHeader& eprosima::fastdds::dds::xtypes::CompleteStructHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader& eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::operator =(
         const CompleteStructHeader& x)
 {
 
-    m_base_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_base_type = *x.m_base_type;
+    m_base_type = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_base_type = *x.m_base_type;
     m_detail = x.m_detail;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructHeader& eprosima::fastdds::dds::xtypes::CompleteStructHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader& eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::operator =(
         CompleteStructHeader&& x) noexcept
 {
 
@@ -6842,14 +6911,14 @@ eprosima::fastdds::dds::xtypes::CompleteStructHeader& eprosima::fastdds::dds::xt
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteStructHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::operator ==(
         const CompleteStructHeader& x) const
 {
     return (m_base_type == x.m_base_type &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteStructHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::operator !=(
         const CompleteStructHeader& x) const
 {
     return !(*this == x);
@@ -6859,8 +6928,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteStructHeader::operator !=(
  * @brief This function copies the value in member base_type
  * @param _base_type New value to be copied in member base_type
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructHeader::base_type(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _base_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::base_type(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _base_type)
 {
     *m_base_type = _base_type;
 }
@@ -6869,8 +6938,8 @@ void eprosima::fastdds::dds::xtypes::CompleteStructHeader::base_type(
  * @brief This function moves the value in member base_type
  * @param _base_type New value to be moved in member base_type
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructHeader::base_type(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _base_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::base_type(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _base_type)
 {
     *m_base_type = std::move(_base_type);
 }
@@ -6879,7 +6948,7 @@ void eprosima::fastdds::dds::xtypes::CompleteStructHeader::base_type(
  * @brief This function returns a constant reference to member base_type
  * @return Constant reference to member base_type
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CompleteStructHeader::base_type() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::base_type() const
 {
     return *m_base_type;
 }
@@ -6888,7 +6957,7 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member base_type
  * @return Reference to member base_type
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CompleteStructHeader::base_type()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::base_type()
 {
     return *m_base_type;
 }
@@ -6898,8 +6967,8 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructHeader::detail(
-        const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::detail(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -6908,8 +6977,8 @@ void eprosima::fastdds::dds::xtypes::CompleteStructHeader::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructHeader::detail(
-        eprosima::fastdds::dds::xtypes::CompleteTypeDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::detail(
+        eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -6918,7 +6987,7 @@ void eprosima::fastdds::dds::xtypes::CompleteStructHeader::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteStructHeader::detail() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::detail() const
 {
     return m_detail;
 }
@@ -6927,50 +6996,52 @@ const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteStructHeader::detail()
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::detail()
 {
     return m_detail;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalStructHeader::MinimalStructHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::MinimalStructHeader()
 {
-    m_base_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_base_type = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructHeader::~MinimalStructHeader()
+eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::~MinimalStructHeader()
 {
     delete m_base_type;
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructHeader::MinimalStructHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::MinimalStructHeader(
         const MinimalStructHeader& x)
 {
-    m_base_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_base_type = *x.m_base_type;
+    m_base_type = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_base_type = *x.m_base_type;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructHeader::MinimalStructHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::MinimalStructHeader(
         MinimalStructHeader&& x) noexcept
 {
     m_base_type = x.m_base_type;x.m_base_type = nullptr;
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructHeader& eprosima::fastdds::dds::xtypes::MinimalStructHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader& eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::operator =(
         const MinimalStructHeader& x)
 {
 
-    m_base_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_base_type = *x.m_base_type;
+    m_base_type = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_base_type = *x.m_base_type;
     m_detail = x.m_detail;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructHeader& eprosima::fastdds::dds::xtypes::MinimalStructHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader& eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::operator =(
         MinimalStructHeader&& x) noexcept
 {
 
@@ -6979,14 +7050,14 @@ eprosima::fastdds::dds::xtypes::MinimalStructHeader& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalStructHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::operator ==(
         const MinimalStructHeader& x) const
 {
     return (m_base_type == x.m_base_type &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalStructHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::operator !=(
         const MinimalStructHeader& x) const
 {
     return !(*this == x);
@@ -6996,8 +7067,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalStructHeader::operator !=(
  * @brief This function copies the value in member base_type
  * @param _base_type New value to be copied in member base_type
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructHeader::base_type(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _base_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::base_type(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _base_type)
 {
     *m_base_type = _base_type;
 }
@@ -7006,8 +7077,8 @@ void eprosima::fastdds::dds::xtypes::MinimalStructHeader::base_type(
  * @brief This function moves the value in member base_type
  * @param _base_type New value to be moved in member base_type
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructHeader::base_type(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _base_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::base_type(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _base_type)
 {
     *m_base_type = std::move(_base_type);
 }
@@ -7016,7 +7087,7 @@ void eprosima::fastdds::dds::xtypes::MinimalStructHeader::base_type(
  * @brief This function returns a constant reference to member base_type
  * @return Constant reference to member base_type
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::MinimalStructHeader::base_type() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::base_type() const
 {
     return *m_base_type;
 }
@@ -7025,7 +7096,7 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member base_type
  * @return Reference to member base_type
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::MinimalStructHeader::base_type()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::base_type()
 {
     return *m_base_type;
 }
@@ -7035,8 +7106,8 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructHeader::detail(
-        const eprosima::fastdds::dds::xtypes::MinimalTypeDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::detail(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -7045,8 +7116,8 @@ void eprosima::fastdds::dds::xtypes::MinimalStructHeader::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructHeader::detail(
-        eprosima::fastdds::dds::xtypes::MinimalTypeDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::detail(
+        eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -7055,7 +7126,7 @@ void eprosima::fastdds::dds::xtypes::MinimalStructHeader::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds::xtypes::MinimalStructHeader::detail() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail& eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::detail() const
 {
     return m_detail;
 }
@@ -7064,22 +7135,24 @@ const eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds:
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds::xtypes::MinimalStructHeader::detail()
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail& eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::detail()
 {
     return m_detail;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteStructType::CompleteStructType()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteStructType::CompleteStructType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructType::~CompleteStructType()
+eprosima::fastdds::dds::xtypes1_3::CompleteStructType::~CompleteStructType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructType::CompleteStructType(
+eprosima::fastdds::dds::xtypes1_3::CompleteStructType::CompleteStructType(
         const CompleteStructType& x)
 {
     m_struct_flags = x.m_struct_flags;
@@ -7087,7 +7160,7 @@ eprosima::fastdds::dds::xtypes::CompleteStructType::CompleteStructType(
     m_member_seq = x.m_member_seq;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructType::CompleteStructType(
+eprosima::fastdds::dds::xtypes1_3::CompleteStructType::CompleteStructType(
         CompleteStructType&& x) noexcept
 {
     m_struct_flags = std::move(x.m_struct_flags);
@@ -7095,7 +7168,7 @@ eprosima::fastdds::dds::xtypes::CompleteStructType::CompleteStructType(
     m_member_seq = std::move(x.m_member_seq);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructType& eprosima::fastdds::dds::xtypes::CompleteStructType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteStructType& eprosima::fastdds::dds::xtypes1_3::CompleteStructType::operator =(
         const CompleteStructType& x)
 {
 
@@ -7105,7 +7178,7 @@ eprosima::fastdds::dds::xtypes::CompleteStructType& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructType& eprosima::fastdds::dds::xtypes::CompleteStructType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteStructType& eprosima::fastdds::dds::xtypes1_3::CompleteStructType::operator =(
         CompleteStructType&& x) noexcept
 {
 
@@ -7115,7 +7188,7 @@ eprosima::fastdds::dds::xtypes::CompleteStructType& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteStructType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteStructType::operator ==(
         const CompleteStructType& x) const
 {
     return (m_struct_flags == x.m_struct_flags &&
@@ -7123,7 +7196,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteStructType::operator ==(
            m_member_seq == x.m_member_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteStructType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteStructType::operator !=(
         const CompleteStructType& x) const
 {
     return !(*this == x);
@@ -7133,8 +7206,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteStructType::operator !=(
  * @brief This function copies the value in member struct_flags
  * @param _struct_flags New value to be copied in member struct_flags
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructType::struct_flags(
-        const eprosima::fastdds::dds::xtypes::StructTypeFlag& _struct_flags)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructType::struct_flags(
+        const eprosima::fastdds::dds::xtypes1_3::StructTypeFlag& _struct_flags)
 {
     m_struct_flags = _struct_flags;
 }
@@ -7143,8 +7216,8 @@ void eprosima::fastdds::dds::xtypes::CompleteStructType::struct_flags(
  * @brief This function moves the value in member struct_flags
  * @param _struct_flags New value to be moved in member struct_flags
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructType::struct_flags(
-        eprosima::fastdds::dds::xtypes::StructTypeFlag&& _struct_flags)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructType::struct_flags(
+        eprosima::fastdds::dds::xtypes1_3::StructTypeFlag&& _struct_flags)
 {
     m_struct_flags = std::move(_struct_flags);
 }
@@ -7153,7 +7226,7 @@ void eprosima::fastdds::dds::xtypes::CompleteStructType::struct_flags(
  * @brief This function returns a constant reference to member struct_flags
  * @return Constant reference to member struct_flags
  */
-const eprosima::fastdds::dds::xtypes::StructTypeFlag& eprosima::fastdds::dds::xtypes::CompleteStructType::struct_flags() const
+const eprosima::fastdds::dds::xtypes1_3::StructTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteStructType::struct_flags() const
 {
     return m_struct_flags;
 }
@@ -7162,7 +7235,7 @@ const eprosima::fastdds::dds::xtypes::StructTypeFlag& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member struct_flags
  * @return Reference to member struct_flags
  */
-eprosima::fastdds::dds::xtypes::StructTypeFlag& eprosima::fastdds::dds::xtypes::CompleteStructType::struct_flags()
+eprosima::fastdds::dds::xtypes1_3::StructTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteStructType::struct_flags()
 {
     return m_struct_flags;
 }
@@ -7172,8 +7245,8 @@ eprosima::fastdds::dds::xtypes::StructTypeFlag& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructType::header(
-        const eprosima::fastdds::dds::xtypes::CompleteStructHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructType::header(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader& _header)
 {
     m_header = _header;
 }
@@ -7182,8 +7255,8 @@ void eprosima::fastdds::dds::xtypes::CompleteStructType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructType::header(
-        eprosima::fastdds::dds::xtypes::CompleteStructHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructType::header(
+        eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -7192,7 +7265,7 @@ void eprosima::fastdds::dds::xtypes::CompleteStructType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::CompleteStructHeader& eprosima::fastdds::dds::xtypes::CompleteStructType::header() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader& eprosima::fastdds::dds::xtypes1_3::CompleteStructType::header() const
 {
     return m_header;
 }
@@ -7201,7 +7274,7 @@ const eprosima::fastdds::dds::xtypes::CompleteStructHeader& eprosima::fastdds::d
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::CompleteStructHeader& eprosima::fastdds::dds::xtypes::CompleteStructType::header()
+eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader& eprosima::fastdds::dds::xtypes1_3::CompleteStructType::header()
 {
     return m_header;
 }
@@ -7211,8 +7284,8 @@ eprosima::fastdds::dds::xtypes::CompleteStructHeader& eprosima::fastdds::dds::xt
  * @brief This function copies the value in member member_seq
  * @param _member_seq New value to be copied in member member_seq
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructType::member_seq(
-        const eprosima::fastdds::dds::xtypes::CompleteStructMemberSeq& _member_seq)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructType::member_seq(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteStructMemberSeq& _member_seq)
 {
     m_member_seq = _member_seq;
 }
@@ -7221,8 +7294,8 @@ void eprosima::fastdds::dds::xtypes::CompleteStructType::member_seq(
  * @brief This function moves the value in member member_seq
  * @param _member_seq New value to be moved in member member_seq
  */
-void eprosima::fastdds::dds::xtypes::CompleteStructType::member_seq(
-        eprosima::fastdds::dds::xtypes::CompleteStructMemberSeq&& _member_seq)
+void eprosima::fastdds::dds::xtypes1_3::CompleteStructType::member_seq(
+        eprosima::fastdds::dds::xtypes1_3::CompleteStructMemberSeq&& _member_seq)
 {
     m_member_seq = std::move(_member_seq);
 }
@@ -7231,7 +7304,7 @@ void eprosima::fastdds::dds::xtypes::CompleteStructType::member_seq(
  * @brief This function returns a constant reference to member member_seq
  * @return Constant reference to member member_seq
  */
-const eprosima::fastdds::dds::xtypes::CompleteStructMemberSeq& eprosima::fastdds::dds::xtypes::CompleteStructType::member_seq() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteStructMemberSeq& eprosima::fastdds::dds::xtypes1_3::CompleteStructType::member_seq() const
 {
     return m_member_seq;
 }
@@ -7240,22 +7313,24 @@ const eprosima::fastdds::dds::xtypes::CompleteStructMemberSeq& eprosima::fastdds
  * @brief This function returns a reference to member member_seq
  * @return Reference to member member_seq
  */
-eprosima::fastdds::dds::xtypes::CompleteStructMemberSeq& eprosima::fastdds::dds::xtypes::CompleteStructType::member_seq()
+eprosima::fastdds::dds::xtypes1_3::CompleteStructMemberSeq& eprosima::fastdds::dds::xtypes1_3::CompleteStructType::member_seq()
 {
     return m_member_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalStructType::MinimalStructType()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalStructType::MinimalStructType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructType::~MinimalStructType()
+eprosima::fastdds::dds::xtypes1_3::MinimalStructType::~MinimalStructType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructType::MinimalStructType(
+eprosima::fastdds::dds::xtypes1_3::MinimalStructType::MinimalStructType(
         const MinimalStructType& x)
 {
     m_struct_flags = x.m_struct_flags;
@@ -7263,7 +7338,7 @@ eprosima::fastdds::dds::xtypes::MinimalStructType::MinimalStructType(
     m_member_seq = x.m_member_seq;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructType::MinimalStructType(
+eprosima::fastdds::dds::xtypes1_3::MinimalStructType::MinimalStructType(
         MinimalStructType&& x) noexcept
 {
     m_struct_flags = std::move(x.m_struct_flags);
@@ -7271,7 +7346,7 @@ eprosima::fastdds::dds::xtypes::MinimalStructType::MinimalStructType(
     m_member_seq = std::move(x.m_member_seq);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructType& eprosima::fastdds::dds::xtypes::MinimalStructType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalStructType& eprosima::fastdds::dds::xtypes1_3::MinimalStructType::operator =(
         const MinimalStructType& x)
 {
 
@@ -7281,7 +7356,7 @@ eprosima::fastdds::dds::xtypes::MinimalStructType& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructType& eprosima::fastdds::dds::xtypes::MinimalStructType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalStructType& eprosima::fastdds::dds::xtypes1_3::MinimalStructType::operator =(
         MinimalStructType&& x) noexcept
 {
 
@@ -7291,7 +7366,7 @@ eprosima::fastdds::dds::xtypes::MinimalStructType& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalStructType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalStructType::operator ==(
         const MinimalStructType& x) const
 {
     return (m_struct_flags == x.m_struct_flags &&
@@ -7299,7 +7374,7 @@ bool eprosima::fastdds::dds::xtypes::MinimalStructType::operator ==(
            m_member_seq == x.m_member_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalStructType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalStructType::operator !=(
         const MinimalStructType& x) const
 {
     return !(*this == x);
@@ -7309,8 +7384,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalStructType::operator !=(
  * @brief This function copies the value in member struct_flags
  * @param _struct_flags New value to be copied in member struct_flags
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructType::struct_flags(
-        const eprosima::fastdds::dds::xtypes::StructTypeFlag& _struct_flags)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructType::struct_flags(
+        const eprosima::fastdds::dds::xtypes1_3::StructTypeFlag& _struct_flags)
 {
     m_struct_flags = _struct_flags;
 }
@@ -7319,8 +7394,8 @@ void eprosima::fastdds::dds::xtypes::MinimalStructType::struct_flags(
  * @brief This function moves the value in member struct_flags
  * @param _struct_flags New value to be moved in member struct_flags
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructType::struct_flags(
-        eprosima::fastdds::dds::xtypes::StructTypeFlag&& _struct_flags)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructType::struct_flags(
+        eprosima::fastdds::dds::xtypes1_3::StructTypeFlag&& _struct_flags)
 {
     m_struct_flags = std::move(_struct_flags);
 }
@@ -7329,7 +7404,7 @@ void eprosima::fastdds::dds::xtypes::MinimalStructType::struct_flags(
  * @brief This function returns a constant reference to member struct_flags
  * @return Constant reference to member struct_flags
  */
-const eprosima::fastdds::dds::xtypes::StructTypeFlag& eprosima::fastdds::dds::xtypes::MinimalStructType::struct_flags() const
+const eprosima::fastdds::dds::xtypes1_3::StructTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalStructType::struct_flags() const
 {
     return m_struct_flags;
 }
@@ -7338,7 +7413,7 @@ const eprosima::fastdds::dds::xtypes::StructTypeFlag& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member struct_flags
  * @return Reference to member struct_flags
  */
-eprosima::fastdds::dds::xtypes::StructTypeFlag& eprosima::fastdds::dds::xtypes::MinimalStructType::struct_flags()
+eprosima::fastdds::dds::xtypes1_3::StructTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalStructType::struct_flags()
 {
     return m_struct_flags;
 }
@@ -7348,8 +7423,8 @@ eprosima::fastdds::dds::xtypes::StructTypeFlag& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructType::header(
-        const eprosima::fastdds::dds::xtypes::MinimalStructHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructType::header(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader& _header)
 {
     m_header = _header;
 }
@@ -7358,8 +7433,8 @@ void eprosima::fastdds::dds::xtypes::MinimalStructType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructType::header(
-        eprosima::fastdds::dds::xtypes::MinimalStructHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructType::header(
+        eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -7368,7 +7443,7 @@ void eprosima::fastdds::dds::xtypes::MinimalStructType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::MinimalStructHeader& eprosima::fastdds::dds::xtypes::MinimalStructType::header() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader& eprosima::fastdds::dds::xtypes1_3::MinimalStructType::header() const
 {
     return m_header;
 }
@@ -7377,7 +7452,7 @@ const eprosima::fastdds::dds::xtypes::MinimalStructHeader& eprosima::fastdds::dd
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::MinimalStructHeader& eprosima::fastdds::dds::xtypes::MinimalStructType::header()
+eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader& eprosima::fastdds::dds::xtypes1_3::MinimalStructType::header()
 {
     return m_header;
 }
@@ -7387,8 +7462,8 @@ eprosima::fastdds::dds::xtypes::MinimalStructHeader& eprosima::fastdds::dds::xty
  * @brief This function copies the value in member member_seq
  * @param _member_seq New value to be copied in member member_seq
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructType::member_seq(
-        const eprosima::fastdds::dds::xtypes::MinimalStructMemberSeq& _member_seq)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructType::member_seq(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalStructMemberSeq& _member_seq)
 {
     m_member_seq = _member_seq;
 }
@@ -7397,8 +7472,8 @@ void eprosima::fastdds::dds::xtypes::MinimalStructType::member_seq(
  * @brief This function moves the value in member member_seq
  * @param _member_seq New value to be moved in member member_seq
  */
-void eprosima::fastdds::dds::xtypes::MinimalStructType::member_seq(
-        eprosima::fastdds::dds::xtypes::MinimalStructMemberSeq&& _member_seq)
+void eprosima::fastdds::dds::xtypes1_3::MinimalStructType::member_seq(
+        eprosima::fastdds::dds::xtypes1_3::MinimalStructMemberSeq&& _member_seq)
 {
     m_member_seq = std::move(_member_seq);
 }
@@ -7407,7 +7482,7 @@ void eprosima::fastdds::dds::xtypes::MinimalStructType::member_seq(
  * @brief This function returns a constant reference to member member_seq
  * @return Constant reference to member member_seq
  */
-const eprosima::fastdds::dds::xtypes::MinimalStructMemberSeq& eprosima::fastdds::dds::xtypes::MinimalStructType::member_seq() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalStructMemberSeq& eprosima::fastdds::dds::xtypes1_3::MinimalStructType::member_seq() const
 {
     return m_member_seq;
 }
@@ -7416,37 +7491,41 @@ const eprosima::fastdds::dds::xtypes::MinimalStructMemberSeq& eprosima::fastdds:
  * @brief This function returns a reference to member member_seq
  * @return Reference to member member_seq
  */
-eprosima::fastdds::dds::xtypes::MinimalStructMemberSeq& eprosima::fastdds::dds::xtypes::MinimalStructType::member_seq()
+eprosima::fastdds::dds::xtypes1_3::MinimalStructMemberSeq& eprosima::fastdds::dds::xtypes1_3::MinimalStructType::member_seq()
 {
     return m_member_seq;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::CommonUnionMember::CommonUnionMember()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::CommonUnionMember()
 {
-    m_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonUnionMember::~CommonUnionMember()
+eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::~CommonUnionMember()
 {
     delete m_type_id;
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonUnionMember::CommonUnionMember(
+eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::CommonUnionMember(
         const CommonUnionMember& x)
 {
     m_member_id = x.m_member_id;
     m_member_flags = x.m_member_flags;
-    m_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_id = *x.m_type_id;
+    m_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type_id = *x.m_type_id;
     m_label_seq = x.m_label_seq;
 }
 
-eprosima::fastdds::dds::xtypes::CommonUnionMember::CommonUnionMember(
+eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::CommonUnionMember(
         CommonUnionMember&& x) noexcept
 {
     m_member_id = x.m_member_id;
@@ -7455,18 +7534,18 @@ eprosima::fastdds::dds::xtypes::CommonUnionMember::CommonUnionMember(
     m_label_seq = std::move(x.m_label_seq);
 }
 
-eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds::xtypes::CommonUnionMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonUnionMember& eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::operator =(
         const CommonUnionMember& x)
 {
 
     m_member_id = x.m_member_id;
     m_member_flags = x.m_member_flags;
-    m_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_id = *x.m_type_id;
+    m_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type_id = *x.m_type_id;
     m_label_seq = x.m_label_seq;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds::xtypes::CommonUnionMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonUnionMember& eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::operator =(
         CommonUnionMember&& x) noexcept
 {
 
@@ -7477,7 +7556,7 @@ eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonUnionMember::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::operator ==(
         const CommonUnionMember& x) const
 {
     return (m_member_id == x.m_member_id &&
@@ -7486,7 +7565,7 @@ bool eprosima::fastdds::dds::xtypes::CommonUnionMember::operator ==(
            m_label_seq == x.m_label_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonUnionMember::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::operator !=(
         const CommonUnionMember& x) const
 {
     return !(*this == x);
@@ -7496,8 +7575,8 @@ bool eprosima::fastdds::dds::xtypes::CommonUnionMember::operator !=(
  * @brief This function sets a value in member member_id
  * @param _member_id New value for member member_id
  */
-void eprosima::fastdds::dds::xtypes::CommonUnionMember::member_id(
-        eprosima::fastdds::dds::xtypes::MemberId _member_id)
+void eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::member_id(
+        eprosima::fastdds::dds::xtypes1_3::MemberId _member_id)
 {
     m_member_id = _member_id;
 }
@@ -7506,7 +7585,7 @@ void eprosima::fastdds::dds::xtypes::CommonUnionMember::member_id(
  * @brief This function returns the value of member member_id
  * @return Value of member member_id
  */
-eprosima::fastdds::dds::xtypes::MemberId eprosima::fastdds::dds::xtypes::CommonUnionMember::member_id() const
+eprosima::fastdds::dds::xtypes1_3::MemberId eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::member_id() const
 {
     return m_member_id;
 }
@@ -7515,7 +7594,7 @@ eprosima::fastdds::dds::xtypes::MemberId eprosima::fastdds::dds::xtypes::CommonU
  * @brief This function returns a reference to member member_id
  * @return Reference to member member_id
  */
-eprosima::fastdds::dds::xtypes::MemberId& eprosima::fastdds::dds::xtypes::CommonUnionMember::member_id()
+eprosima::fastdds::dds::xtypes1_3::MemberId& eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::member_id()
 {
     return m_member_id;
 }
@@ -7525,8 +7604,8 @@ eprosima::fastdds::dds::xtypes::MemberId& eprosima::fastdds::dds::xtypes::Common
  * @brief This function copies the value in member member_flags
  * @param _member_flags New value to be copied in member member_flags
  */
-void eprosima::fastdds::dds::xtypes::CommonUnionMember::member_flags(
-        const eprosima::fastdds::dds::xtypes::UnionMemberFlag& _member_flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::member_flags(
+        const eprosima::fastdds::dds::xtypes1_3::UnionMemberFlag& _member_flags)
 {
     m_member_flags = _member_flags;
 }
@@ -7535,8 +7614,8 @@ void eprosima::fastdds::dds::xtypes::CommonUnionMember::member_flags(
  * @brief This function moves the value in member member_flags
  * @param _member_flags New value to be moved in member member_flags
  */
-void eprosima::fastdds::dds::xtypes::CommonUnionMember::member_flags(
-        eprosima::fastdds::dds::xtypes::UnionMemberFlag&& _member_flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::member_flags(
+        eprosima::fastdds::dds::xtypes1_3::UnionMemberFlag&& _member_flags)
 {
     m_member_flags = std::move(_member_flags);
 }
@@ -7545,7 +7624,7 @@ void eprosima::fastdds::dds::xtypes::CommonUnionMember::member_flags(
  * @brief This function returns a constant reference to member member_flags
  * @return Constant reference to member member_flags
  */
-const eprosima::fastdds::dds::xtypes::UnionMemberFlag& eprosima::fastdds::dds::xtypes::CommonUnionMember::member_flags() const
+const eprosima::fastdds::dds::xtypes1_3::UnionMemberFlag& eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::member_flags() const
 {
     return m_member_flags;
 }
@@ -7554,7 +7633,7 @@ const eprosima::fastdds::dds::xtypes::UnionMemberFlag& eprosima::fastdds::dds::x
  * @brief This function returns a reference to member member_flags
  * @return Reference to member member_flags
  */
-eprosima::fastdds::dds::xtypes::UnionMemberFlag& eprosima::fastdds::dds::xtypes::CommonUnionMember::member_flags()
+eprosima::fastdds::dds::xtypes1_3::UnionMemberFlag& eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::member_flags()
 {
     return m_member_flags;
 }
@@ -7564,8 +7643,8 @@ eprosima::fastdds::dds::xtypes::UnionMemberFlag& eprosima::fastdds::dds::xtypes:
  * @brief This function copies the value in member type_id
  * @param _type_id New value to be copied in member type_id
  */
-void eprosima::fastdds::dds::xtypes::CommonUnionMember::type_id(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _type_id)
+void eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::type_id(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _type_id)
 {
     *m_type_id = _type_id;
 }
@@ -7574,8 +7653,8 @@ void eprosima::fastdds::dds::xtypes::CommonUnionMember::type_id(
  * @brief This function moves the value in member type_id
  * @param _type_id New value to be moved in member type_id
  */
-void eprosima::fastdds::dds::xtypes::CommonUnionMember::type_id(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _type_id)
+void eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::type_id(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _type_id)
 {
     *m_type_id = std::move(_type_id);
 }
@@ -7584,7 +7663,7 @@ void eprosima::fastdds::dds::xtypes::CommonUnionMember::type_id(
  * @brief This function returns a constant reference to member type_id
  * @return Constant reference to member type_id
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CommonUnionMember::type_id() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::type_id() const
 {
     return *m_type_id;
 }
@@ -7593,7 +7672,7 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member type_id
  * @return Reference to member type_id
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CommonUnionMember::type_id()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::type_id()
 {
     return *m_type_id;
 }
@@ -7603,8 +7682,8 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member label_seq
  * @param _label_seq New value to be copied in member label_seq
  */
-void eprosima::fastdds::dds::xtypes::CommonUnionMember::label_seq(
-        const eprosima::fastdds::dds::xtypes::UnionCaseLabelSeq& _label_seq)
+void eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::label_seq(
+        const eprosima::fastdds::dds::xtypes1_3::UnionCaseLabelSeq& _label_seq)
 {
     m_label_seq = _label_seq;
 }
@@ -7613,8 +7692,8 @@ void eprosima::fastdds::dds::xtypes::CommonUnionMember::label_seq(
  * @brief This function moves the value in member label_seq
  * @param _label_seq New value to be moved in member label_seq
  */
-void eprosima::fastdds::dds::xtypes::CommonUnionMember::label_seq(
-        eprosima::fastdds::dds::xtypes::UnionCaseLabelSeq&& _label_seq)
+void eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::label_seq(
+        eprosima::fastdds::dds::xtypes1_3::UnionCaseLabelSeq&& _label_seq)
 {
     m_label_seq = std::move(_label_seq);
 }
@@ -7623,7 +7702,7 @@ void eprosima::fastdds::dds::xtypes::CommonUnionMember::label_seq(
  * @brief This function returns a constant reference to member label_seq
  * @return Constant reference to member label_seq
  */
-const eprosima::fastdds::dds::xtypes::UnionCaseLabelSeq& eprosima::fastdds::dds::xtypes::CommonUnionMember::label_seq() const
+const eprosima::fastdds::dds::xtypes1_3::UnionCaseLabelSeq& eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::label_seq() const
 {
     return m_label_seq;
 }
@@ -7632,36 +7711,38 @@ const eprosima::fastdds::dds::xtypes::UnionCaseLabelSeq& eprosima::fastdds::dds:
  * @brief This function returns a reference to member label_seq
  * @return Reference to member label_seq
  */
-eprosima::fastdds::dds::xtypes::UnionCaseLabelSeq& eprosima::fastdds::dds::xtypes::CommonUnionMember::label_seq()
+eprosima::fastdds::dds::xtypes1_3::UnionCaseLabelSeq& eprosima::fastdds::dds::xtypes1_3::CommonUnionMember::label_seq()
 {
     return m_label_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteUnionMember::CompleteUnionMember()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::CompleteUnionMember()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionMember::~CompleteUnionMember()
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::~CompleteUnionMember()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionMember::CompleteUnionMember(
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::CompleteUnionMember(
         const CompleteUnionMember& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionMember::CompleteUnionMember(
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::CompleteUnionMember(
         CompleteUnionMember&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionMember& eprosima::fastdds::dds::xtypes::CompleteUnionMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember& eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::operator =(
         const CompleteUnionMember& x)
 {
 
@@ -7670,7 +7751,7 @@ eprosima::fastdds::dds::xtypes::CompleteUnionMember& eprosima::fastdds::dds::xty
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionMember& eprosima::fastdds::dds::xtypes::CompleteUnionMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember& eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::operator =(
         CompleteUnionMember&& x) noexcept
 {
 
@@ -7679,14 +7760,14 @@ eprosima::fastdds::dds::xtypes::CompleteUnionMember& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteUnionMember::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::operator ==(
         const CompleteUnionMember& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteUnionMember::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::operator !=(
         const CompleteUnionMember& x) const
 {
     return !(*this == x);
@@ -7696,8 +7777,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteUnionMember::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionMember::common(
-        const eprosima::fastdds::dds::xtypes::CommonUnionMember& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonUnionMember& _common)
 {
     m_common = _common;
 }
@@ -7706,8 +7787,8 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionMember::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionMember::common(
-        eprosima::fastdds::dds::xtypes::CommonUnionMember&& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonUnionMember&& _common)
 {
     m_common = std::move(_common);
 }
@@ -7716,7 +7797,7 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionMember::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds::xtypes::CompleteUnionMember::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonUnionMember& eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::common() const
 {
     return m_common;
 }
@@ -7725,7 +7806,7 @@ const eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds:
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds::xtypes::CompleteUnionMember::common()
+eprosima::fastdds::dds::xtypes1_3::CommonUnionMember& eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::common()
 {
     return m_common;
 }
@@ -7735,8 +7816,8 @@ eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds::xtype
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionMember::detail(
-        const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::detail(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -7745,8 +7826,8 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionMember::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionMember::detail(
-        eprosima::fastdds::dds::xtypes::CompleteMemberDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::detail(
+        eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -7755,7 +7836,7 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionMember::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xtypes::CompleteUnionMember::detail() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::detail() const
 {
     return m_detail;
 }
@@ -7764,37 +7845,41 @@ const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::d
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xtypes::CompleteUnionMember::detail()
+eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::detail()
 {
     return m_detail;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::MinimalUnionMember::MinimalUnionMember()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::MinimalUnionMember()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionMember::~MinimalUnionMember()
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::~MinimalUnionMember()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionMember::MinimalUnionMember(
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::MinimalUnionMember(
         const MinimalUnionMember& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionMember::MinimalUnionMember(
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::MinimalUnionMember(
         MinimalUnionMember&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionMember& eprosima::fastdds::dds::xtypes::MinimalUnionMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember& eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::operator =(
         const MinimalUnionMember& x)
 {
 
@@ -7803,7 +7888,7 @@ eprosima::fastdds::dds::xtypes::MinimalUnionMember& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionMember& eprosima::fastdds::dds::xtypes::MinimalUnionMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember& eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::operator =(
         MinimalUnionMember&& x) noexcept
 {
 
@@ -7812,14 +7897,14 @@ eprosima::fastdds::dds::xtypes::MinimalUnionMember& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalUnionMember::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::operator ==(
         const MinimalUnionMember& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalUnionMember::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::operator !=(
         const MinimalUnionMember& x) const
 {
     return !(*this == x);
@@ -7829,8 +7914,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalUnionMember::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionMember::common(
-        const eprosima::fastdds::dds::xtypes::CommonUnionMember& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonUnionMember& _common)
 {
     m_common = _common;
 }
@@ -7839,8 +7924,8 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionMember::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionMember::common(
-        eprosima::fastdds::dds::xtypes::CommonUnionMember&& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonUnionMember&& _common)
 {
     m_common = std::move(_common);
 }
@@ -7849,7 +7934,7 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionMember::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds::xtypes::MinimalUnionMember::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonUnionMember& eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::common() const
 {
     return m_common;
 }
@@ -7858,7 +7943,7 @@ const eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds:
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds::xtypes::MinimalUnionMember::common()
+eprosima::fastdds::dds::xtypes1_3::CommonUnionMember& eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::common()
 {
     return m_common;
 }
@@ -7868,8 +7953,8 @@ eprosima::fastdds::dds::xtypes::CommonUnionMember& eprosima::fastdds::dds::xtype
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionMember::detail(
-        const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::detail(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -7878,8 +7963,8 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionMember::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionMember::detail(
-        eprosima::fastdds::dds::xtypes::MinimalMemberDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::detail(
+        eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -7888,7 +7973,7 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionMember::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xtypes::MinimalUnionMember::detail() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::detail() const
 {
     return m_detail;
 }
@@ -7897,49 +7982,53 @@ const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dd
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xtypes::MinimalUnionMember::detail()
+eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember::detail()
 {
     return m_detail;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::CommonDiscriminatorMember()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::CommonDiscriminatorMember()
 {
-    m_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::~CommonDiscriminatorMember()
+eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::~CommonDiscriminatorMember()
 {
     delete m_type_id;
 }
 
-eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::CommonDiscriminatorMember(
+eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::CommonDiscriminatorMember(
         const CommonDiscriminatorMember& x)
 {
     m_member_flags = x.m_member_flags;
-    m_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_id = *x.m_type_id;
+    m_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type_id = *x.m_type_id;
 }
 
-eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::CommonDiscriminatorMember(
+eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::CommonDiscriminatorMember(
         CommonDiscriminatorMember&& x) noexcept
 {
     m_member_flags = std::move(x.m_member_flags);
     m_type_id = x.m_type_id;x.m_type_id = nullptr;
 }
 
-eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::operator =(
         const CommonDiscriminatorMember& x)
 {
 
     m_member_flags = x.m_member_flags;
-    m_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_id = *x.m_type_id;
+    m_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type_id = *x.m_type_id;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::operator =(
         CommonDiscriminatorMember&& x) noexcept
 {
 
@@ -7948,14 +8037,14 @@ eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& eprosima::fastdds::dd
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::operator ==(
         const CommonDiscriminatorMember& x) const
 {
     return (m_member_flags == x.m_member_flags &&
            m_type_id == x.m_type_id);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::operator !=(
         const CommonDiscriminatorMember& x) const
 {
     return !(*this == x);
@@ -7965,8 +8054,8 @@ bool eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::operator !=(
  * @brief This function copies the value in member member_flags
  * @param _member_flags New value to be copied in member member_flags
  */
-void eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::member_flags(
-        const eprosima::fastdds::dds::xtypes::UnionDiscriminatorFlag& _member_flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::member_flags(
+        const eprosima::fastdds::dds::xtypes1_3::UnionDiscriminatorFlag& _member_flags)
 {
     m_member_flags = _member_flags;
 }
@@ -7975,8 +8064,8 @@ void eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::member_flags(
  * @brief This function moves the value in member member_flags
  * @param _member_flags New value to be moved in member member_flags
  */
-void eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::member_flags(
-        eprosima::fastdds::dds::xtypes::UnionDiscriminatorFlag&& _member_flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::member_flags(
+        eprosima::fastdds::dds::xtypes1_3::UnionDiscriminatorFlag&& _member_flags)
 {
     m_member_flags = std::move(_member_flags);
 }
@@ -7985,7 +8074,7 @@ void eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::member_flags(
  * @brief This function returns a constant reference to member member_flags
  * @return Constant reference to member member_flags
  */
-const eprosima::fastdds::dds::xtypes::UnionDiscriminatorFlag& eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::member_flags() const
+const eprosima::fastdds::dds::xtypes1_3::UnionDiscriminatorFlag& eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::member_flags() const
 {
     return m_member_flags;
 }
@@ -7994,7 +8083,7 @@ const eprosima::fastdds::dds::xtypes::UnionDiscriminatorFlag& eprosima::fastdds:
  * @brief This function returns a reference to member member_flags
  * @return Reference to member member_flags
  */
-eprosima::fastdds::dds::xtypes::UnionDiscriminatorFlag& eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::member_flags()
+eprosima::fastdds::dds::xtypes1_3::UnionDiscriminatorFlag& eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::member_flags()
 {
     return m_member_flags;
 }
@@ -8004,8 +8093,8 @@ eprosima::fastdds::dds::xtypes::UnionDiscriminatorFlag& eprosima::fastdds::dds::
  * @brief This function copies the value in member type_id
  * @param _type_id New value to be copied in member type_id
  */
-void eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::type_id(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _type_id)
+void eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::type_id(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _type_id)
 {
     *m_type_id = _type_id;
 }
@@ -8014,8 +8103,8 @@ void eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::type_id(
  * @brief This function moves the value in member type_id
  * @param _type_id New value to be moved in member type_id
  */
-void eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::type_id(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _type_id)
+void eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::type_id(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _type_id)
 {
     *m_type_id = std::move(_type_id);
 }
@@ -8024,7 +8113,7 @@ void eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::type_id(
  * @brief This function returns a constant reference to member type_id
  * @return Constant reference to member type_id
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::type_id() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::type_id() const
 {
     return *m_type_id;
 }
@@ -8033,22 +8122,24 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member type_id
  * @return Reference to member type_id
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember::type_id()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::type_id()
 {
     return *m_type_id;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::CompleteDiscriminatorMember()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::CompleteDiscriminatorMember()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::~CompleteDiscriminatorMember()
+eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::~CompleteDiscriminatorMember()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::CompleteDiscriminatorMember(
+eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::CompleteDiscriminatorMember(
         const CompleteDiscriminatorMember& x)
 {
     m_common = x.m_common;
@@ -8056,7 +8147,7 @@ eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::CompleteDiscriminat
     m_ann_custom = x.m_ann_custom;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::CompleteDiscriminatorMember(
+eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::CompleteDiscriminatorMember(
         CompleteDiscriminatorMember&& x) noexcept
 {
     m_common = std::move(x.m_common);
@@ -8064,7 +8155,7 @@ eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::CompleteDiscriminat
     m_ann_custom = std::move(x.m_ann_custom);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::operator =(
         const CompleteDiscriminatorMember& x)
 {
 
@@ -8074,7 +8165,7 @@ eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& eprosima::fastdds::
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::operator =(
         CompleteDiscriminatorMember&& x) noexcept
 {
 
@@ -8084,7 +8175,7 @@ eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& eprosima::fastdds::
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::operator ==(
         const CompleteDiscriminatorMember& x) const
 {
     return (m_common == x.m_common &&
@@ -8092,7 +8183,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::operator ==(
            m_ann_custom == x.m_ann_custom);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::operator !=(
         const CompleteDiscriminatorMember& x) const
 {
     return !(*this == x);
@@ -8102,8 +8193,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::common(
-        const eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember& _common)
 {
     m_common = _common;
 }
@@ -8112,8 +8203,8 @@ void eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::common(
-        eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember&& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember&& _common)
 {
     m_common = std::move(_common);
 }
@@ -8122,7 +8213,7 @@ void eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::common() const
 {
     return m_common;
 }
@@ -8131,7 +8222,7 @@ const eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& eprosima::fastd
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::common()
+eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::common()
 {
     return m_common;
 }
@@ -8141,8 +8232,8 @@ eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& eprosima::fastdds::dd
  * @brief This function copies the value in member ann_builtin
  * @param _ann_builtin New value to be copied in member ann_builtin
  */
-void eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::ann_builtin(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations>& _ann_builtin)
+void eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::ann_builtin(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations>& _ann_builtin)
 {
     m_ann_builtin = _ann_builtin;
 }
@@ -8151,8 +8242,8 @@ void eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::ann_builtin(
  * @brief This function moves the value in member ann_builtin
  * @param _ann_builtin New value to be moved in member ann_builtin
  */
-void eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::ann_builtin(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations>&& _ann_builtin)
+void eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::ann_builtin(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations>&& _ann_builtin)
 {
     m_ann_builtin = std::move(_ann_builtin);
 }
@@ -8161,7 +8252,7 @@ void eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::ann_builtin(
  * @brief This function returns a constant reference to member ann_builtin
  * @return Constant reference to member ann_builtin
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations>& eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::ann_builtin() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations>& eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::ann_builtin() const
 {
     return m_ann_builtin;
 }
@@ -8170,7 +8261,7 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltin
  * @brief This function returns a reference to member ann_builtin
  * @return Reference to member ann_builtin
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations>& eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::ann_builtin()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinTypeAnnotations>& eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::ann_builtin()
 {
     return m_ann_builtin;
 }
@@ -8180,8 +8271,8 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAn
  * @brief This function copies the value in member ann_custom
  * @param _ann_custom New value to be copied in member ann_custom
  */
-void eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::ann_custom(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& _ann_custom)
+void eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::ann_custom(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& _ann_custom)
 {
     m_ann_custom = _ann_custom;
 }
@@ -8190,8 +8281,8 @@ void eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::ann_custom(
  * @brief This function moves the value in member ann_custom
  * @param _ann_custom New value to be moved in member ann_custom
  */
-void eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::ann_custom(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>&& _ann_custom)
+void eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::ann_custom(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>&& _ann_custom)
 {
     m_ann_custom = std::move(_ann_custom);
 }
@@ -8200,7 +8291,7 @@ void eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::ann_custom(
  * @brief This function returns a constant reference to member ann_custom
  * @return Constant reference to member ann_custom
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::ann_custom() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::ann_custom() const
 {
     return m_ann_custom;
 }
@@ -8209,34 +8300,36 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotat
  * @brief This function returns a reference to member ann_custom
  * @return Reference to member ann_custom
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember::ann_custom()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::ann_custom()
 {
     return m_ann_custom;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::MinimalDiscriminatorMember()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::MinimalDiscriminatorMember()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::~MinimalDiscriminatorMember()
+eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::~MinimalDiscriminatorMember()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::MinimalDiscriminatorMember(
+eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::MinimalDiscriminatorMember(
         const MinimalDiscriminatorMember& x)
 {
     m_common = x.m_common;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::MinimalDiscriminatorMember(
+eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::MinimalDiscriminatorMember(
         MinimalDiscriminatorMember&& x) noexcept
 {
     m_common = std::move(x.m_common);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::operator =(
         const MinimalDiscriminatorMember& x)
 {
 
@@ -8244,7 +8337,7 @@ eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& eprosima::fastdds::d
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::operator =(
         MinimalDiscriminatorMember&& x) noexcept
 {
 
@@ -8252,13 +8345,13 @@ eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& eprosima::fastdds::d
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::operator ==(
         const MinimalDiscriminatorMember& x) const
 {
     return (m_common == x.m_common);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::operator !=(
         const MinimalDiscriminatorMember& x) const
 {
     return !(*this == x);
@@ -8268,8 +8361,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::common(
-        const eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember& _common)
 {
     m_common = _common;
 }
@@ -8278,8 +8371,8 @@ void eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::common(
-        eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember&& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember&& _common)
 {
     m_common = std::move(_common);
 }
@@ -8288,7 +8381,7 @@ void eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::common() const
 {
     return m_common;
 }
@@ -8297,34 +8390,36 @@ const eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& eprosima::fastd
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember::common()
+eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::common()
 {
     return m_common;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteUnionHeader::CompleteUnionHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::CompleteUnionHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionHeader::~CompleteUnionHeader()
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::~CompleteUnionHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionHeader::CompleteUnionHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::CompleteUnionHeader(
         const CompleteUnionHeader& x)
 {
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionHeader::CompleteUnionHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::CompleteUnionHeader(
         CompleteUnionHeader&& x) noexcept
 {
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionHeader& eprosima::fastdds::dds::xtypes::CompleteUnionHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader& eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::operator =(
         const CompleteUnionHeader& x)
 {
 
@@ -8332,7 +8427,7 @@ eprosima::fastdds::dds::xtypes::CompleteUnionHeader& eprosima::fastdds::dds::xty
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionHeader& eprosima::fastdds::dds::xtypes::CompleteUnionHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader& eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::operator =(
         CompleteUnionHeader&& x) noexcept
 {
 
@@ -8340,13 +8435,13 @@ eprosima::fastdds::dds::xtypes::CompleteUnionHeader& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteUnionHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::operator ==(
         const CompleteUnionHeader& x) const
 {
     return (m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteUnionHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::operator !=(
         const CompleteUnionHeader& x) const
 {
     return !(*this == x);
@@ -8356,8 +8451,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteUnionHeader::operator !=(
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionHeader::detail(
-        const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::detail(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -8366,8 +8461,8 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionHeader::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionHeader::detail(
-        eprosima::fastdds::dds::xtypes::CompleteTypeDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::detail(
+        eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -8376,7 +8471,7 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionHeader::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteUnionHeader::detail() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::detail() const
 {
     return m_detail;
 }
@@ -8385,34 +8480,36 @@ const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteUnionHeader::detail()
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::detail()
 {
     return m_detail;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalUnionHeader::MinimalUnionHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::MinimalUnionHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionHeader::~MinimalUnionHeader()
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::~MinimalUnionHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionHeader::MinimalUnionHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::MinimalUnionHeader(
         const MinimalUnionHeader& x)
 {
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionHeader::MinimalUnionHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::MinimalUnionHeader(
         MinimalUnionHeader&& x) noexcept
 {
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionHeader& eprosima::fastdds::dds::xtypes::MinimalUnionHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader& eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::operator =(
         const MinimalUnionHeader& x)
 {
 
@@ -8420,7 +8517,7 @@ eprosima::fastdds::dds::xtypes::MinimalUnionHeader& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionHeader& eprosima::fastdds::dds::xtypes::MinimalUnionHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader& eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::operator =(
         MinimalUnionHeader&& x) noexcept
 {
 
@@ -8428,13 +8525,13 @@ eprosima::fastdds::dds::xtypes::MinimalUnionHeader& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalUnionHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::operator ==(
         const MinimalUnionHeader& x) const
 {
     return (m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalUnionHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::operator !=(
         const MinimalUnionHeader& x) const
 {
     return !(*this == x);
@@ -8444,8 +8541,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalUnionHeader::operator !=(
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionHeader::detail(
-        const eprosima::fastdds::dds::xtypes::MinimalTypeDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::detail(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -8454,8 +8551,8 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionHeader::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionHeader::detail(
-        eprosima::fastdds::dds::xtypes::MinimalTypeDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::detail(
+        eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -8464,7 +8561,7 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionHeader::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds::xtypes::MinimalUnionHeader::detail() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail& eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::detail() const
 {
     return m_detail;
 }
@@ -8473,22 +8570,24 @@ const eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds:
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::MinimalTypeDetail& eprosima::fastdds::dds::xtypes::MinimalUnionHeader::detail()
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail& eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::detail()
 {
     return m_detail;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteUnionType::CompleteUnionType()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::CompleteUnionType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionType::~CompleteUnionType()
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::~CompleteUnionType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionType::CompleteUnionType(
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::CompleteUnionType(
         const CompleteUnionType& x)
 {
     m_union_flags = x.m_union_flags;
@@ -8497,7 +8596,7 @@ eprosima::fastdds::dds::xtypes::CompleteUnionType::CompleteUnionType(
     m_member_seq = x.m_member_seq;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionType::CompleteUnionType(
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::CompleteUnionType(
         CompleteUnionType&& x) noexcept
 {
     m_union_flags = std::move(x.m_union_flags);
@@ -8506,7 +8605,7 @@ eprosima::fastdds::dds::xtypes::CompleteUnionType::CompleteUnionType(
     m_member_seq = std::move(x.m_member_seq);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionType& eprosima::fastdds::dds::xtypes::CompleteUnionType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionType& eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::operator =(
         const CompleteUnionType& x)
 {
 
@@ -8517,7 +8616,7 @@ eprosima::fastdds::dds::xtypes::CompleteUnionType& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionType& eprosima::fastdds::dds::xtypes::CompleteUnionType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionType& eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::operator =(
         CompleteUnionType&& x) noexcept
 {
 
@@ -8528,7 +8627,7 @@ eprosima::fastdds::dds::xtypes::CompleteUnionType& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteUnionType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::operator ==(
         const CompleteUnionType& x) const
 {
     return (m_union_flags == x.m_union_flags &&
@@ -8537,7 +8636,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteUnionType::operator ==(
            m_member_seq == x.m_member_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteUnionType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::operator !=(
         const CompleteUnionType& x) const
 {
     return !(*this == x);
@@ -8547,8 +8646,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteUnionType::operator !=(
  * @brief This function copies the value in member union_flags
  * @param _union_flags New value to be copied in member union_flags
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionType::union_flags(
-        const eprosima::fastdds::dds::xtypes::UnionTypeFlag& _union_flags)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::union_flags(
+        const eprosima::fastdds::dds::xtypes1_3::UnionTypeFlag& _union_flags)
 {
     m_union_flags = _union_flags;
 }
@@ -8557,8 +8656,8 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionType::union_flags(
  * @brief This function moves the value in member union_flags
  * @param _union_flags New value to be moved in member union_flags
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionType::union_flags(
-        eprosima::fastdds::dds::xtypes::UnionTypeFlag&& _union_flags)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::union_flags(
+        eprosima::fastdds::dds::xtypes1_3::UnionTypeFlag&& _union_flags)
 {
     m_union_flags = std::move(_union_flags);
 }
@@ -8567,7 +8666,7 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionType::union_flags(
  * @brief This function returns a constant reference to member union_flags
  * @return Constant reference to member union_flags
  */
-const eprosima::fastdds::dds::xtypes::UnionTypeFlag& eprosima::fastdds::dds::xtypes::CompleteUnionType::union_flags() const
+const eprosima::fastdds::dds::xtypes1_3::UnionTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::union_flags() const
 {
     return m_union_flags;
 }
@@ -8576,7 +8675,7 @@ const eprosima::fastdds::dds::xtypes::UnionTypeFlag& eprosima::fastdds::dds::xty
  * @brief This function returns a reference to member union_flags
  * @return Reference to member union_flags
  */
-eprosima::fastdds::dds::xtypes::UnionTypeFlag& eprosima::fastdds::dds::xtypes::CompleteUnionType::union_flags()
+eprosima::fastdds::dds::xtypes1_3::UnionTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::union_flags()
 {
     return m_union_flags;
 }
@@ -8586,8 +8685,8 @@ eprosima::fastdds::dds::xtypes::UnionTypeFlag& eprosima::fastdds::dds::xtypes::C
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionType::header(
-        const eprosima::fastdds::dds::xtypes::CompleteUnionHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::header(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader& _header)
 {
     m_header = _header;
 }
@@ -8596,8 +8695,8 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionType::header(
-        eprosima::fastdds::dds::xtypes::CompleteUnionHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::header(
+        eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -8606,7 +8705,7 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::CompleteUnionHeader& eprosima::fastdds::dds::xtypes::CompleteUnionType::header() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader& eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::header() const
 {
     return m_header;
 }
@@ -8615,7 +8714,7 @@ const eprosima::fastdds::dds::xtypes::CompleteUnionHeader& eprosima::fastdds::dd
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::CompleteUnionHeader& eprosima::fastdds::dds::xtypes::CompleteUnionType::header()
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader& eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::header()
 {
     return m_header;
 }
@@ -8625,8 +8724,8 @@ eprosima::fastdds::dds::xtypes::CompleteUnionHeader& eprosima::fastdds::dds::xty
  * @brief This function copies the value in member discriminator
  * @param _discriminator New value to be copied in member discriminator
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionType::discriminator(
-        const eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& _discriminator)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::discriminator(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember& _discriminator)
 {
     m_discriminator = _discriminator;
 }
@@ -8635,8 +8734,8 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionType::discriminator(
  * @brief This function moves the value in member discriminator
  * @param _discriminator New value to be moved in member discriminator
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionType::discriminator(
-        eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember&& _discriminator)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::discriminator(
+        eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember&& _discriminator)
 {
     m_discriminator = std::move(_discriminator);
 }
@@ -8645,7 +8744,7 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionType::discriminator(
  * @brief This function returns a constant reference to member discriminator
  * @return Constant reference to member discriminator
  */
-const eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& eprosima::fastdds::dds::xtypes::CompleteUnionType::discriminator() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::discriminator() const
 {
     return m_discriminator;
 }
@@ -8654,7 +8753,7 @@ const eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& eprosima::fas
  * @brief This function returns a reference to member discriminator
  * @return Reference to member discriminator
  */
-eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& eprosima::fastdds::dds::xtypes::CompleteUnionType::discriminator()
+eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::discriminator()
 {
     return m_discriminator;
 }
@@ -8664,8 +8763,8 @@ eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& eprosima::fastdds::
  * @brief This function copies the value in member member_seq
  * @param _member_seq New value to be copied in member member_seq
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionType::member_seq(
-        const eprosima::fastdds::dds::xtypes::CompleteUnionMemberSeq& _member_seq)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::member_seq(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteUnionMemberSeq& _member_seq)
 {
     m_member_seq = _member_seq;
 }
@@ -8674,8 +8773,8 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionType::member_seq(
  * @brief This function moves the value in member member_seq
  * @param _member_seq New value to be moved in member member_seq
  */
-void eprosima::fastdds::dds::xtypes::CompleteUnionType::member_seq(
-        eprosima::fastdds::dds::xtypes::CompleteUnionMemberSeq&& _member_seq)
+void eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::member_seq(
+        eprosima::fastdds::dds::xtypes1_3::CompleteUnionMemberSeq&& _member_seq)
 {
     m_member_seq = std::move(_member_seq);
 }
@@ -8684,7 +8783,7 @@ void eprosima::fastdds::dds::xtypes::CompleteUnionType::member_seq(
  * @brief This function returns a constant reference to member member_seq
  * @return Constant reference to member member_seq
  */
-const eprosima::fastdds::dds::xtypes::CompleteUnionMemberSeq& eprosima::fastdds::dds::xtypes::CompleteUnionType::member_seq() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteUnionMemberSeq& eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::member_seq() const
 {
     return m_member_seq;
 }
@@ -8693,22 +8792,24 @@ const eprosima::fastdds::dds::xtypes::CompleteUnionMemberSeq& eprosima::fastdds:
  * @brief This function returns a reference to member member_seq
  * @return Reference to member member_seq
  */
-eprosima::fastdds::dds::xtypes::CompleteUnionMemberSeq& eprosima::fastdds::dds::xtypes::CompleteUnionType::member_seq()
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionMemberSeq& eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::member_seq()
 {
     return m_member_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalUnionType::MinimalUnionType()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::MinimalUnionType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionType::~MinimalUnionType()
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::~MinimalUnionType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionType::MinimalUnionType(
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::MinimalUnionType(
         const MinimalUnionType& x)
 {
     m_union_flags = x.m_union_flags;
@@ -8717,7 +8818,7 @@ eprosima::fastdds::dds::xtypes::MinimalUnionType::MinimalUnionType(
     m_member_seq = x.m_member_seq;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionType::MinimalUnionType(
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::MinimalUnionType(
         MinimalUnionType&& x) noexcept
 {
     m_union_flags = std::move(x.m_union_flags);
@@ -8726,7 +8827,7 @@ eprosima::fastdds::dds::xtypes::MinimalUnionType::MinimalUnionType(
     m_member_seq = std::move(x.m_member_seq);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionType& eprosima::fastdds::dds::xtypes::MinimalUnionType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionType& eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::operator =(
         const MinimalUnionType& x)
 {
 
@@ -8737,7 +8838,7 @@ eprosima::fastdds::dds::xtypes::MinimalUnionType& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionType& eprosima::fastdds::dds::xtypes::MinimalUnionType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionType& eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::operator =(
         MinimalUnionType&& x) noexcept
 {
 
@@ -8748,7 +8849,7 @@ eprosima::fastdds::dds::xtypes::MinimalUnionType& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalUnionType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::operator ==(
         const MinimalUnionType& x) const
 {
     return (m_union_flags == x.m_union_flags &&
@@ -8757,7 +8858,7 @@ bool eprosima::fastdds::dds::xtypes::MinimalUnionType::operator ==(
            m_member_seq == x.m_member_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalUnionType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::operator !=(
         const MinimalUnionType& x) const
 {
     return !(*this == x);
@@ -8767,8 +8868,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalUnionType::operator !=(
  * @brief This function copies the value in member union_flags
  * @param _union_flags New value to be copied in member union_flags
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionType::union_flags(
-        const eprosima::fastdds::dds::xtypes::UnionTypeFlag& _union_flags)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::union_flags(
+        const eprosima::fastdds::dds::xtypes1_3::UnionTypeFlag& _union_flags)
 {
     m_union_flags = _union_flags;
 }
@@ -8777,8 +8878,8 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionType::union_flags(
  * @brief This function moves the value in member union_flags
  * @param _union_flags New value to be moved in member union_flags
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionType::union_flags(
-        eprosima::fastdds::dds::xtypes::UnionTypeFlag&& _union_flags)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::union_flags(
+        eprosima::fastdds::dds::xtypes1_3::UnionTypeFlag&& _union_flags)
 {
     m_union_flags = std::move(_union_flags);
 }
@@ -8787,7 +8888,7 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionType::union_flags(
  * @brief This function returns a constant reference to member union_flags
  * @return Constant reference to member union_flags
  */
-const eprosima::fastdds::dds::xtypes::UnionTypeFlag& eprosima::fastdds::dds::xtypes::MinimalUnionType::union_flags() const
+const eprosima::fastdds::dds::xtypes1_3::UnionTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::union_flags() const
 {
     return m_union_flags;
 }
@@ -8796,7 +8897,7 @@ const eprosima::fastdds::dds::xtypes::UnionTypeFlag& eprosima::fastdds::dds::xty
  * @brief This function returns a reference to member union_flags
  * @return Reference to member union_flags
  */
-eprosima::fastdds::dds::xtypes::UnionTypeFlag& eprosima::fastdds::dds::xtypes::MinimalUnionType::union_flags()
+eprosima::fastdds::dds::xtypes1_3::UnionTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::union_flags()
 {
     return m_union_flags;
 }
@@ -8806,8 +8907,8 @@ eprosima::fastdds::dds::xtypes::UnionTypeFlag& eprosima::fastdds::dds::xtypes::M
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionType::header(
-        const eprosima::fastdds::dds::xtypes::MinimalUnionHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::header(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader& _header)
 {
     m_header = _header;
 }
@@ -8816,8 +8917,8 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionType::header(
-        eprosima::fastdds::dds::xtypes::MinimalUnionHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::header(
+        eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -8826,7 +8927,7 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::MinimalUnionHeader& eprosima::fastdds::dds::xtypes::MinimalUnionType::header() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader& eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::header() const
 {
     return m_header;
 }
@@ -8835,7 +8936,7 @@ const eprosima::fastdds::dds::xtypes::MinimalUnionHeader& eprosima::fastdds::dds
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::MinimalUnionHeader& eprosima::fastdds::dds::xtypes::MinimalUnionType::header()
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader& eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::header()
 {
     return m_header;
 }
@@ -8845,8 +8946,8 @@ eprosima::fastdds::dds::xtypes::MinimalUnionHeader& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member discriminator
  * @param _discriminator New value to be copied in member discriminator
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionType::discriminator(
-        const eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& _discriminator)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::discriminator(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember& _discriminator)
 {
     m_discriminator = _discriminator;
 }
@@ -8855,8 +8956,8 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionType::discriminator(
  * @brief This function moves the value in member discriminator
  * @param _discriminator New value to be moved in member discriminator
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionType::discriminator(
-        eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember&& _discriminator)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::discriminator(
+        eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember&& _discriminator)
 {
     m_discriminator = std::move(_discriminator);
 }
@@ -8865,7 +8966,7 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionType::discriminator(
  * @brief This function returns a constant reference to member discriminator
  * @return Constant reference to member discriminator
  */
-const eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& eprosima::fastdds::dds::xtypes::MinimalUnionType::discriminator() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::discriminator() const
 {
     return m_discriminator;
 }
@@ -8874,7 +8975,7 @@ const eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& eprosima::fast
  * @brief This function returns a reference to member discriminator
  * @return Reference to member discriminator
  */
-eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& eprosima::fastdds::dds::xtypes::MinimalUnionType::discriminator()
+eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember& eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::discriminator()
 {
     return m_discriminator;
 }
@@ -8884,8 +8985,8 @@ eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& eprosima::fastdds::d
  * @brief This function copies the value in member member_seq
  * @param _member_seq New value to be copied in member member_seq
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionType::member_seq(
-        const eprosima::fastdds::dds::xtypes::MinimalUnionMemberSeq& _member_seq)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::member_seq(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalUnionMemberSeq& _member_seq)
 {
     m_member_seq = _member_seq;
 }
@@ -8894,8 +8995,8 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionType::member_seq(
  * @brief This function moves the value in member member_seq
  * @param _member_seq New value to be moved in member member_seq
  */
-void eprosima::fastdds::dds::xtypes::MinimalUnionType::member_seq(
-        eprosima::fastdds::dds::xtypes::MinimalUnionMemberSeq&& _member_seq)
+void eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::member_seq(
+        eprosima::fastdds::dds::xtypes1_3::MinimalUnionMemberSeq&& _member_seq)
 {
     m_member_seq = std::move(_member_seq);
 }
@@ -8904,7 +9005,7 @@ void eprosima::fastdds::dds::xtypes::MinimalUnionType::member_seq(
  * @brief This function returns a constant reference to member member_seq
  * @return Constant reference to member member_seq
  */
-const eprosima::fastdds::dds::xtypes::MinimalUnionMemberSeq& eprosima::fastdds::dds::xtypes::MinimalUnionType::member_seq() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalUnionMemberSeq& eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::member_seq() const
 {
     return m_member_seq;
 }
@@ -8913,48 +9014,50 @@ const eprosima::fastdds::dds::xtypes::MinimalUnionMemberSeq& eprosima::fastdds::
  * @brief This function returns a reference to member member_seq
  * @return Reference to member member_seq
  */
-eprosima::fastdds::dds::xtypes::MinimalUnionMemberSeq& eprosima::fastdds::dds::xtypes::MinimalUnionType::member_seq()
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionMemberSeq& eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::member_seq()
 {
     return m_member_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::CommonAnnotationParameter()
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::CommonAnnotationParameter()
 {
-    m_member_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_member_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::~CommonAnnotationParameter()
+eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::~CommonAnnotationParameter()
 {
     delete m_member_type_id;
 }
 
-eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::CommonAnnotationParameter(
+eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::CommonAnnotationParameter(
         const CommonAnnotationParameter& x)
 {
     m_member_flags = x.m_member_flags;
-    m_member_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_member_type_id = *x.m_member_type_id;
+    m_member_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_member_type_id = *x.m_member_type_id;
 }
 
-eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::CommonAnnotationParameter(
+eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::CommonAnnotationParameter(
         CommonAnnotationParameter&& x) noexcept
 {
     m_member_flags = std::move(x.m_member_flags);
     m_member_type_id = x.m_member_type_id;x.m_member_type_id = nullptr;
 }
 
-eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter& eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::operator =(
         const CommonAnnotationParameter& x)
 {
 
     m_member_flags = x.m_member_flags;
-    m_member_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_member_type_id = *x.m_member_type_id;
+    m_member_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_member_type_id = *x.m_member_type_id;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter& eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::operator =(
         CommonAnnotationParameter&& x) noexcept
 {
 
@@ -8963,14 +9066,14 @@ eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastdds::dd
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::operator ==(
         const CommonAnnotationParameter& x) const
 {
     return (m_member_flags == x.m_member_flags &&
            m_member_type_id == x.m_member_type_id);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::operator !=(
         const CommonAnnotationParameter& x) const
 {
     return !(*this == x);
@@ -8980,8 +9083,8 @@ bool eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::operator !=(
  * @brief This function copies the value in member member_flags
  * @param _member_flags New value to be copied in member member_flags
  */
-void eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::member_flags(
-        const eprosima::fastdds::dds::xtypes::AnnotationParameterFlag& _member_flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::member_flags(
+        const eprosima::fastdds::dds::xtypes1_3::AnnotationParameterFlag& _member_flags)
 {
     m_member_flags = _member_flags;
 }
@@ -8990,8 +9093,8 @@ void eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::member_flags(
  * @brief This function moves the value in member member_flags
  * @param _member_flags New value to be moved in member member_flags
  */
-void eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::member_flags(
-        eprosima::fastdds::dds::xtypes::AnnotationParameterFlag&& _member_flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::member_flags(
+        eprosima::fastdds::dds::xtypes1_3::AnnotationParameterFlag&& _member_flags)
 {
     m_member_flags = std::move(_member_flags);
 }
@@ -9000,7 +9103,7 @@ void eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::member_flags(
  * @brief This function returns a constant reference to member member_flags
  * @return Constant reference to member member_flags
  */
-const eprosima::fastdds::dds::xtypes::AnnotationParameterFlag& eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::member_flags() const
+const eprosima::fastdds::dds::xtypes1_3::AnnotationParameterFlag& eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::member_flags() const
 {
     return m_member_flags;
 }
@@ -9009,7 +9112,7 @@ const eprosima::fastdds::dds::xtypes::AnnotationParameterFlag& eprosima::fastdds
  * @brief This function returns a reference to member member_flags
  * @return Reference to member member_flags
  */
-eprosima::fastdds::dds::xtypes::AnnotationParameterFlag& eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::member_flags()
+eprosima::fastdds::dds::xtypes1_3::AnnotationParameterFlag& eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::member_flags()
 {
     return m_member_flags;
 }
@@ -9019,8 +9122,8 @@ eprosima::fastdds::dds::xtypes::AnnotationParameterFlag& eprosima::fastdds::dds:
  * @brief This function copies the value in member member_type_id
  * @param _member_type_id New value to be copied in member member_type_id
  */
-void eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::member_type_id(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _member_type_id)
+void eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::member_type_id(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _member_type_id)
 {
     *m_member_type_id = _member_type_id;
 }
@@ -9029,8 +9132,8 @@ void eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::member_type_id(
  * @brief This function moves the value in member member_type_id
  * @param _member_type_id New value to be moved in member member_type_id
  */
-void eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::member_type_id(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _member_type_id)
+void eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::member_type_id(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _member_type_id)
 {
     *m_member_type_id = std::move(_member_type_id);
 }
@@ -9039,7 +9142,7 @@ void eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::member_type_id(
  * @brief This function returns a constant reference to member member_type_id
  * @return Constant reference to member member_type_id
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::member_type_id() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::member_type_id() const
 {
     return *m_member_type_id;
 }
@@ -9048,22 +9151,24 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member member_type_id
  * @return Reference to member member_type_id
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CommonAnnotationParameter::member_type_id()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::member_type_id()
 {
     return *m_member_type_id;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::CompleteAnnotationParameter()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::CompleteAnnotationParameter()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::~CompleteAnnotationParameter()
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::~CompleteAnnotationParameter()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::CompleteAnnotationParameter(
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::CompleteAnnotationParameter(
         const CompleteAnnotationParameter& x)
 {
     m_common = x.m_common;
@@ -9071,7 +9176,7 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::CompleteAnnotationP
     m_default_value = x.m_default_value;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::CompleteAnnotationParameter(
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::CompleteAnnotationParameter(
         CompleteAnnotationParameter&& x) noexcept
 {
     m_common = std::move(x.m_common);
@@ -9079,7 +9184,7 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::CompleteAnnotationP
     m_default_value = std::move(x.m_default_value);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter& eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::operator =(
         const CompleteAnnotationParameter& x)
 {
 
@@ -9089,7 +9194,7 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter& eprosima::fastdds::
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter& eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::operator =(
         CompleteAnnotationParameter&& x) noexcept
 {
 
@@ -9099,7 +9204,7 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter& eprosima::fastdds::
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::operator ==(
         const CompleteAnnotationParameter& x) const
 {
     return (m_common == x.m_common &&
@@ -9107,7 +9212,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::operator ==(
            m_default_value == x.m_default_value);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::operator !=(
         const CompleteAnnotationParameter& x) const
 {
     return !(*this == x);
@@ -9117,8 +9222,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::common(
-        const eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter& _common)
 {
     m_common = _common;
 }
@@ -9127,8 +9232,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::common(
-        eprosima::fastdds::dds::xtypes::CommonAnnotationParameter&& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter&& _common)
 {
     m_common = std::move(_common);
 }
@@ -9137,7 +9242,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::common() const
 {
     return m_common;
 }
@@ -9146,7 +9251,7 @@ const eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastd
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::common()
+eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::common()
 {
     return m_common;
 }
@@ -9156,8 +9261,8 @@ eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastdds::dd
  * @brief This function copies the value in member name
  * @param _name New value to be copied in member name
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::name(
-        const eprosima::fastdds::dds::xtypes::MemberName& _name)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::name(
+        const eprosima::fastdds::dds::xtypes1_3::MemberName& _name)
 {
     m_name = _name;
 }
@@ -9166,8 +9271,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::name(
  * @brief This function moves the value in member name
  * @param _name New value to be moved in member name
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::name(
-        eprosima::fastdds::dds::xtypes::MemberName&& _name)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::name(
+        eprosima::fastdds::dds::xtypes1_3::MemberName&& _name)
 {
     m_name = std::move(_name);
 }
@@ -9176,7 +9281,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::name(
  * @brief This function returns a constant reference to member name
  * @return Constant reference to member name
  */
-const eprosima::fastdds::dds::xtypes::MemberName& eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::name() const
+const eprosima::fastdds::dds::xtypes1_3::MemberName& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::name() const
 {
     return m_name;
 }
@@ -9185,7 +9290,7 @@ const eprosima::fastdds::dds::xtypes::MemberName& eprosima::fastdds::dds::xtypes
  * @brief This function returns a reference to member name
  * @return Reference to member name
  */
-eprosima::fastdds::dds::xtypes::MemberName& eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::name()
+eprosima::fastdds::dds::xtypes1_3::MemberName& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::name()
 {
     return m_name;
 }
@@ -9195,8 +9300,8 @@ eprosima::fastdds::dds::xtypes::MemberName& eprosima::fastdds::dds::xtypes::Comp
  * @brief This function copies the value in member default_value
  * @param _default_value New value to be copied in member default_value
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::default_value(
-        const eprosima::fastdds::dds::xtypes::AnnotationParameterValue& _default_value)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::default_value(
+        const eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& _default_value)
 {
     m_default_value = _default_value;
 }
@@ -9205,8 +9310,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::default_value(
  * @brief This function moves the value in member default_value
  * @param _default_value New value to be moved in member default_value
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::default_value(
-        eprosima::fastdds::dds::xtypes::AnnotationParameterValue&& _default_value)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::default_value(
+        eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue&& _default_value)
 {
     m_default_value = std::move(_default_value);
 }
@@ -9215,7 +9320,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::default_value(
  * @brief This function returns a constant reference to member default_value
  * @return Constant reference to member default_value
  */
-const eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::default_value() const
+const eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::default_value() const
 {
     return m_default_value;
 }
@@ -9224,23 +9329,27 @@ const eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdd
  * @brief This function returns a reference to member default_value
  * @return Reference to member default_value
  */
-eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter::default_value()
+eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::default_value()
 {
     return m_default_value;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::MinimalAnnotationParameter()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::MinimalAnnotationParameter()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::~MinimalAnnotationParameter()
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::~MinimalAnnotationParameter()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::MinimalAnnotationParameter(
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::MinimalAnnotationParameter(
         const MinimalAnnotationParameter& x)
 {
     m_common = x.m_common;
@@ -9248,7 +9357,7 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::MinimalAnnotationPar
     m_default_value = x.m_default_value;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::MinimalAnnotationParameter(
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::MinimalAnnotationParameter(
         MinimalAnnotationParameter&& x) noexcept
 {
     m_common = std::move(x.m_common);
@@ -9256,7 +9365,7 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::MinimalAnnotationPar
     m_default_value = std::move(x.m_default_value);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter& eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::operator =(
         const MinimalAnnotationParameter& x)
 {
 
@@ -9266,7 +9375,7 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter& eprosima::fastdds::d
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter& eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::operator =(
         MinimalAnnotationParameter&& x) noexcept
 {
 
@@ -9276,7 +9385,7 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter& eprosima::fastdds::d
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::operator ==(
         const MinimalAnnotationParameter& x) const
 {
     return (m_common == x.m_common &&
@@ -9284,7 +9393,7 @@ bool eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::operator ==(
            m_default_value == x.m_default_value);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::operator !=(
         const MinimalAnnotationParameter& x) const
 {
     return !(*this == x);
@@ -9294,8 +9403,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::common(
-        const eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter& _common)
 {
     m_common = _common;
 }
@@ -9304,8 +9413,8 @@ void eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::common(
-        eprosima::fastdds::dds::xtypes::CommonAnnotationParameter&& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter&& _common)
 {
     m_common = std::move(_common);
 }
@@ -9314,7 +9423,7 @@ void eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::common() const
 {
     return m_common;
 }
@@ -9323,7 +9432,7 @@ const eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastd
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::common()
+eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::common()
 {
     return m_common;
 }
@@ -9333,8 +9442,8 @@ eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& eprosima::fastdds::dd
  * @brief This function copies the value in member name_hash
  * @param _name_hash New value to be copied in member name_hash
  */
-void eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::name_hash(
-        const eprosima::fastdds::dds::xtypes::NameHash& _name_hash)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::name_hash(
+        const eprosima::fastdds::dds::xtypes1_3::NameHash& _name_hash)
 {
     m_name_hash = _name_hash;
 }
@@ -9343,8 +9452,8 @@ void eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::name_hash(
  * @brief This function moves the value in member name_hash
  * @param _name_hash New value to be moved in member name_hash
  */
-void eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::name_hash(
-        eprosima::fastdds::dds::xtypes::NameHash&& _name_hash)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::name_hash(
+        eprosima::fastdds::dds::xtypes1_3::NameHash&& _name_hash)
 {
     m_name_hash = std::move(_name_hash);
 }
@@ -9353,7 +9462,7 @@ void eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::name_hash(
  * @brief This function returns a constant reference to member name_hash
  * @return Constant reference to member name_hash
  */
-const eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::name_hash() const
+const eprosima::fastdds::dds::xtypes1_3::NameHash& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::name_hash() const
 {
     return m_name_hash;
 }
@@ -9362,7 +9471,7 @@ const eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::
  * @brief This function returns a reference to member name_hash
  * @return Reference to member name_hash
  */
-eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::name_hash()
+eprosima::fastdds::dds::xtypes1_3::NameHash& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::name_hash()
 {
     return m_name_hash;
 }
@@ -9372,8 +9481,8 @@ eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::Minima
  * @brief This function copies the value in member default_value
  * @param _default_value New value to be copied in member default_value
  */
-void eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::default_value(
-        const eprosima::fastdds::dds::xtypes::AnnotationParameterValue& _default_value)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::default_value(
+        const eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& _default_value)
 {
     m_default_value = _default_value;
 }
@@ -9382,8 +9491,8 @@ void eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::default_value(
  * @brief This function moves the value in member default_value
  * @param _default_value New value to be moved in member default_value
  */
-void eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::default_value(
-        eprosima::fastdds::dds::xtypes::AnnotationParameterValue&& _default_value)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::default_value(
+        eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue&& _default_value)
 {
     m_default_value = std::move(_default_value);
 }
@@ -9392,7 +9501,7 @@ void eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::default_value(
  * @brief This function returns a constant reference to member default_value
  * @return Constant reference to member default_value
  */
-const eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::default_value() const
+const eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::default_value() const
 {
     return m_default_value;
 }
@@ -9401,35 +9510,39 @@ const eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdd
  * @brief This function returns a reference to member default_value
  * @return Reference to member default_value
  */
-eprosima::fastdds::dds::xtypes::AnnotationParameterValue& eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter::default_value()
+eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter::default_value()
 {
     return m_default_value;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::CompleteAnnotationHeader()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::CompleteAnnotationHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::~CompleteAnnotationHeader()
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::~CompleteAnnotationHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::CompleteAnnotationHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::CompleteAnnotationHeader(
         const CompleteAnnotationHeader& x)
 {
     m_annotation_name = x.m_annotation_name;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::CompleteAnnotationHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::CompleteAnnotationHeader(
         CompleteAnnotationHeader&& x) noexcept
 {
     m_annotation_name = std::move(x.m_annotation_name);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader& eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::operator =(
         const CompleteAnnotationHeader& x)
 {
 
@@ -9437,7 +9550,7 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader& eprosima::fastdds::dds
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader& eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::operator =(
         CompleteAnnotationHeader&& x) noexcept
 {
 
@@ -9445,13 +9558,13 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader& eprosima::fastdds::dds
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::operator ==(
         const CompleteAnnotationHeader& x) const
 {
     return (m_annotation_name == x.m_annotation_name);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::operator !=(
         const CompleteAnnotationHeader& x) const
 {
     return !(*this == x);
@@ -9461,8 +9574,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::operator !=(
  * @brief This function copies the value in member annotation_name
  * @param _annotation_name New value to be copied in member annotation_name
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::annotation_name(
-        const eprosima::fastdds::dds::xtypes::QualifiedTypeName& _annotation_name)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::annotation_name(
+        const eprosima::fastdds::dds::xtypes1_3::QualifiedTypeName& _annotation_name)
 {
     m_annotation_name = _annotation_name;
 }
@@ -9471,8 +9584,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::annotation_name(
  * @brief This function moves the value in member annotation_name
  * @param _annotation_name New value to be moved in member annotation_name
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::annotation_name(
-        eprosima::fastdds::dds::xtypes::QualifiedTypeName&& _annotation_name)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::annotation_name(
+        eprosima::fastdds::dds::xtypes1_3::QualifiedTypeName&& _annotation_name)
 {
     m_annotation_name = std::move(_annotation_name);
 }
@@ -9481,7 +9594,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::annotation_name(
  * @brief This function returns a constant reference to member annotation_name
  * @return Constant reference to member annotation_name
  */
-const eprosima::fastdds::dds::xtypes::QualifiedTypeName& eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::annotation_name() const
+const eprosima::fastdds::dds::xtypes1_3::QualifiedTypeName& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::annotation_name() const
 {
     return m_annotation_name;
 }
@@ -9490,34 +9603,34 @@ const eprosima::fastdds::dds::xtypes::QualifiedTypeName& eprosima::fastdds::dds:
  * @brief This function returns a reference to member annotation_name
  * @return Reference to member annotation_name
  */
-eprosima::fastdds::dds::xtypes::QualifiedTypeName& eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader::annotation_name()
+eprosima::fastdds::dds::xtypes1_3::QualifiedTypeName& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::annotation_name()
 {
     return m_annotation_name;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::MinimalAnnotationHeader()
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader::MinimalAnnotationHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::~MinimalAnnotationHeader()
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader::~MinimalAnnotationHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::MinimalAnnotationHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader::MinimalAnnotationHeader(
         const MinimalAnnotationHeader& x)
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::MinimalAnnotationHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader::MinimalAnnotationHeader(
         MinimalAnnotationHeader&& x) noexcept
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader::operator =(
         const MinimalAnnotationHeader& x)
 {
 
@@ -9526,7 +9639,7 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& eprosima::fastdds::dds:
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader::operator =(
         MinimalAnnotationHeader&& x) noexcept
 {
 
@@ -9535,30 +9648,32 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& eprosima::fastdds::dds:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader::operator ==(
         const MinimalAnnotationHeader& x) const
 {
     static_cast<void>(x);
     return true;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader::operator !=(
         const MinimalAnnotationHeader& x) const
 {
     return !(*this == x);
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationType::CompleteAnnotationType()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::CompleteAnnotationType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationType::~CompleteAnnotationType()
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::~CompleteAnnotationType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationType::CompleteAnnotationType(
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::CompleteAnnotationType(
         const CompleteAnnotationType& x)
 {
     m_annotation_flag = x.m_annotation_flag;
@@ -9566,7 +9681,7 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationType::CompleteAnnotationType(
     m_member_seq = x.m_member_seq;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationType::CompleteAnnotationType(
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::CompleteAnnotationType(
         CompleteAnnotationType&& x) noexcept
 {
     m_annotation_flag = std::move(x.m_annotation_flag);
@@ -9574,7 +9689,7 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationType::CompleteAnnotationType(
     m_member_seq = std::move(x.m_member_seq);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationType& eprosima::fastdds::dds::xtypes::CompleteAnnotationType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::operator =(
         const CompleteAnnotationType& x)
 {
 
@@ -9584,7 +9699,7 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationType& eprosima::fastdds::dds::
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationType& eprosima::fastdds::dds::xtypes::CompleteAnnotationType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::operator =(
         CompleteAnnotationType&& x) noexcept
 {
 
@@ -9594,7 +9709,7 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationType& eprosima::fastdds::dds::
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteAnnotationType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::operator ==(
         const CompleteAnnotationType& x) const
 {
     return (m_annotation_flag == x.m_annotation_flag &&
@@ -9602,7 +9717,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteAnnotationType::operator ==(
            m_member_seq == x.m_member_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteAnnotationType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::operator !=(
         const CompleteAnnotationType& x) const
 {
     return !(*this == x);
@@ -9612,8 +9727,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteAnnotationType::operator !=(
  * @brief This function copies the value in member annotation_flag
  * @param _annotation_flag New value to be copied in member annotation_flag
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationType::annotation_flag(
-        const eprosima::fastdds::dds::xtypes::AnnotationTypeFlag& _annotation_flag)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::annotation_flag(
+        const eprosima::fastdds::dds::xtypes1_3::AnnotationTypeFlag& _annotation_flag)
 {
     m_annotation_flag = _annotation_flag;
 }
@@ -9622,8 +9737,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationType::annotation_flag(
  * @brief This function moves the value in member annotation_flag
  * @param _annotation_flag New value to be moved in member annotation_flag
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationType::annotation_flag(
-        eprosima::fastdds::dds::xtypes::AnnotationTypeFlag&& _annotation_flag)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::annotation_flag(
+        eprosima::fastdds::dds::xtypes1_3::AnnotationTypeFlag&& _annotation_flag)
 {
     m_annotation_flag = std::move(_annotation_flag);
 }
@@ -9632,7 +9747,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationType::annotation_flag(
  * @brief This function returns a constant reference to member annotation_flag
  * @return Constant reference to member annotation_flag
  */
-const eprosima::fastdds::dds::xtypes::AnnotationTypeFlag& eprosima::fastdds::dds::xtypes::CompleteAnnotationType::annotation_flag() const
+const eprosima::fastdds::dds::xtypes1_3::AnnotationTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::annotation_flag() const
 {
     return m_annotation_flag;
 }
@@ -9641,7 +9756,7 @@ const eprosima::fastdds::dds::xtypes::AnnotationTypeFlag& eprosima::fastdds::dds
  * @brief This function returns a reference to member annotation_flag
  * @return Reference to member annotation_flag
  */
-eprosima::fastdds::dds::xtypes::AnnotationTypeFlag& eprosima::fastdds::dds::xtypes::CompleteAnnotationType::annotation_flag()
+eprosima::fastdds::dds::xtypes1_3::AnnotationTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::annotation_flag()
 {
     return m_annotation_flag;
 }
@@ -9651,8 +9766,8 @@ eprosima::fastdds::dds::xtypes::AnnotationTypeFlag& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationType::header(
-        const eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::header(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader& _header)
 {
     m_header = _header;
 }
@@ -9661,8 +9776,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationType::header(
-        eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::header(
+        eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -9671,7 +9786,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader& eprosima::fastdds::dds::xtypes::CompleteAnnotationType::header() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::header() const
 {
     return m_header;
 }
@@ -9680,7 +9795,7 @@ const eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader& eprosima::fastdd
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader& eprosima::fastdds::dds::xtypes::CompleteAnnotationType::header()
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::header()
 {
     return m_header;
 }
@@ -9690,8 +9805,8 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader& eprosima::fastdds::dds
  * @brief This function copies the value in member member_seq
  * @param _member_seq New value to be copied in member member_seq
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationType::member_seq(
-        const eprosima::fastdds::dds::xtypes::CompleteAnnotationParameterSeq& _member_seq)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::member_seq(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameterSeq& _member_seq)
 {
     m_member_seq = _member_seq;
 }
@@ -9700,8 +9815,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationType::member_seq(
  * @brief This function moves the value in member member_seq
  * @param _member_seq New value to be moved in member member_seq
  */
-void eprosima::fastdds::dds::xtypes::CompleteAnnotationType::member_seq(
-        eprosima::fastdds::dds::xtypes::CompleteAnnotationParameterSeq&& _member_seq)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::member_seq(
+        eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameterSeq&& _member_seq)
 {
     m_member_seq = std::move(_member_seq);
 }
@@ -9710,7 +9825,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAnnotationType::member_seq(
  * @brief This function returns a constant reference to member member_seq
  * @return Constant reference to member member_seq
  */
-const eprosima::fastdds::dds::xtypes::CompleteAnnotationParameterSeq& eprosima::fastdds::dds::xtypes::CompleteAnnotationType::member_seq() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameterSeq& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::member_seq() const
 {
     return m_member_seq;
 }
@@ -9719,22 +9834,24 @@ const eprosima::fastdds::dds::xtypes::CompleteAnnotationParameterSeq& eprosima::
  * @brief This function returns a reference to member member_seq
  * @return Reference to member member_seq
  */
-eprosima::fastdds::dds::xtypes::CompleteAnnotationParameterSeq& eprosima::fastdds::dds::xtypes::CompleteAnnotationType::member_seq()
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameterSeq& eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::member_seq()
 {
     return m_member_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationType::MinimalAnnotationType()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::MinimalAnnotationType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationType::~MinimalAnnotationType()
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::~MinimalAnnotationType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationType::MinimalAnnotationType(
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::MinimalAnnotationType(
         const MinimalAnnotationType& x)
 {
     m_annotation_flag = x.m_annotation_flag;
@@ -9742,7 +9859,7 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationType::MinimalAnnotationType(
     m_member_seq = x.m_member_seq;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationType::MinimalAnnotationType(
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::MinimalAnnotationType(
         MinimalAnnotationType&& x) noexcept
 {
     m_annotation_flag = std::move(x.m_annotation_flag);
@@ -9750,7 +9867,7 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationType::MinimalAnnotationType(
     m_member_seq = std::move(x.m_member_seq);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationType& eprosima::fastdds::dds::xtypes::MinimalAnnotationType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::operator =(
         const MinimalAnnotationType& x)
 {
 
@@ -9760,7 +9877,7 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationType& eprosima::fastdds::dds::x
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationType& eprosima::fastdds::dds::xtypes::MinimalAnnotationType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::operator =(
         MinimalAnnotationType&& x) noexcept
 {
 
@@ -9770,7 +9887,7 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationType& eprosima::fastdds::dds::x
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalAnnotationType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::operator ==(
         const MinimalAnnotationType& x) const
 {
     return (m_annotation_flag == x.m_annotation_flag &&
@@ -9778,7 +9895,7 @@ bool eprosima::fastdds::dds::xtypes::MinimalAnnotationType::operator ==(
            m_member_seq == x.m_member_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalAnnotationType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::operator !=(
         const MinimalAnnotationType& x) const
 {
     return !(*this == x);
@@ -9788,8 +9905,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalAnnotationType::operator !=(
  * @brief This function copies the value in member annotation_flag
  * @param _annotation_flag New value to be copied in member annotation_flag
  */
-void eprosima::fastdds::dds::xtypes::MinimalAnnotationType::annotation_flag(
-        const eprosima::fastdds::dds::xtypes::AnnotationTypeFlag& _annotation_flag)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::annotation_flag(
+        const eprosima::fastdds::dds::xtypes1_3::AnnotationTypeFlag& _annotation_flag)
 {
     m_annotation_flag = _annotation_flag;
 }
@@ -9798,8 +9915,8 @@ void eprosima::fastdds::dds::xtypes::MinimalAnnotationType::annotation_flag(
  * @brief This function moves the value in member annotation_flag
  * @param _annotation_flag New value to be moved in member annotation_flag
  */
-void eprosima::fastdds::dds::xtypes::MinimalAnnotationType::annotation_flag(
-        eprosima::fastdds::dds::xtypes::AnnotationTypeFlag&& _annotation_flag)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::annotation_flag(
+        eprosima::fastdds::dds::xtypes1_3::AnnotationTypeFlag&& _annotation_flag)
 {
     m_annotation_flag = std::move(_annotation_flag);
 }
@@ -9808,7 +9925,7 @@ void eprosima::fastdds::dds::xtypes::MinimalAnnotationType::annotation_flag(
  * @brief This function returns a constant reference to member annotation_flag
  * @return Constant reference to member annotation_flag
  */
-const eprosima::fastdds::dds::xtypes::AnnotationTypeFlag& eprosima::fastdds::dds::xtypes::MinimalAnnotationType::annotation_flag() const
+const eprosima::fastdds::dds::xtypes1_3::AnnotationTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::annotation_flag() const
 {
     return m_annotation_flag;
 }
@@ -9817,7 +9934,7 @@ const eprosima::fastdds::dds::xtypes::AnnotationTypeFlag& eprosima::fastdds::dds
  * @brief This function returns a reference to member annotation_flag
  * @return Reference to member annotation_flag
  */
-eprosima::fastdds::dds::xtypes::AnnotationTypeFlag& eprosima::fastdds::dds::xtypes::MinimalAnnotationType::annotation_flag()
+eprosima::fastdds::dds::xtypes1_3::AnnotationTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::annotation_flag()
 {
     return m_annotation_flag;
 }
@@ -9827,8 +9944,8 @@ eprosima::fastdds::dds::xtypes::AnnotationTypeFlag& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalAnnotationType::header(
-        const eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::header(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader& _header)
 {
     m_header = _header;
 }
@@ -9837,8 +9954,8 @@ void eprosima::fastdds::dds::xtypes::MinimalAnnotationType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalAnnotationType::header(
-        eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::header(
+        eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -9847,7 +9964,7 @@ void eprosima::fastdds::dds::xtypes::MinimalAnnotationType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& eprosima::fastdds::dds::xtypes::MinimalAnnotationType::header() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::header() const
 {
     return m_header;
 }
@@ -9856,7 +9973,7 @@ const eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& eprosima::fastdds
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& eprosima::fastdds::dds::xtypes::MinimalAnnotationType::header()
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::header()
 {
     return m_header;
 }
@@ -9866,8 +9983,8 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& eprosima::fastdds::dds:
  * @brief This function copies the value in member member_seq
  * @param _member_seq New value to be copied in member member_seq
  */
-void eprosima::fastdds::dds::xtypes::MinimalAnnotationType::member_seq(
-        const eprosima::fastdds::dds::xtypes::MinimalAnnotationParameterSeq& _member_seq)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::member_seq(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameterSeq& _member_seq)
 {
     m_member_seq = _member_seq;
 }
@@ -9876,8 +9993,8 @@ void eprosima::fastdds::dds::xtypes::MinimalAnnotationType::member_seq(
  * @brief This function moves the value in member member_seq
  * @param _member_seq New value to be moved in member member_seq
  */
-void eprosima::fastdds::dds::xtypes::MinimalAnnotationType::member_seq(
-        eprosima::fastdds::dds::xtypes::MinimalAnnotationParameterSeq&& _member_seq)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::member_seq(
+        eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameterSeq&& _member_seq)
 {
     m_member_seq = std::move(_member_seq);
 }
@@ -9886,7 +10003,7 @@ void eprosima::fastdds::dds::xtypes::MinimalAnnotationType::member_seq(
  * @brief This function returns a constant reference to member member_seq
  * @return Constant reference to member member_seq
  */
-const eprosima::fastdds::dds::xtypes::MinimalAnnotationParameterSeq& eprosima::fastdds::dds::xtypes::MinimalAnnotationType::member_seq() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameterSeq& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::member_seq() const
 {
     return m_member_seq;
 }
@@ -9895,48 +10012,50 @@ const eprosima::fastdds::dds::xtypes::MinimalAnnotationParameterSeq& eprosima::f
  * @brief This function returns a reference to member member_seq
  * @return Reference to member member_seq
  */
-eprosima::fastdds::dds::xtypes::MinimalAnnotationParameterSeq& eprosima::fastdds::dds::xtypes::MinimalAnnotationType::member_seq()
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameterSeq& eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::member_seq()
 {
     return m_member_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::CommonAliasBody::CommonAliasBody()
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::CommonAliasBody()
 {
-    m_related_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_related_type = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonAliasBody::~CommonAliasBody()
+eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::~CommonAliasBody()
 {
     delete m_related_type;
 }
 
-eprosima::fastdds::dds::xtypes::CommonAliasBody::CommonAliasBody(
+eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::CommonAliasBody(
         const CommonAliasBody& x)
 {
     m_related_flags = x.m_related_flags;
-    m_related_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_related_type = *x.m_related_type;
+    m_related_type = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_related_type = *x.m_related_type;
 }
 
-eprosima::fastdds::dds::xtypes::CommonAliasBody::CommonAliasBody(
+eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::CommonAliasBody(
         CommonAliasBody&& x) noexcept
 {
     m_related_flags = std::move(x.m_related_flags);
     m_related_type = x.m_related_type;x.m_related_type = nullptr;
 }
 
-eprosima::fastdds::dds::xtypes::CommonAliasBody& eprosima::fastdds::dds::xtypes::CommonAliasBody::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonAliasBody& eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::operator =(
         const CommonAliasBody& x)
 {
 
     m_related_flags = x.m_related_flags;
-    m_related_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_related_type = *x.m_related_type;
+    m_related_type = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_related_type = *x.m_related_type;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonAliasBody& eprosima::fastdds::dds::xtypes::CommonAliasBody::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonAliasBody& eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::operator =(
         CommonAliasBody&& x) noexcept
 {
 
@@ -9945,14 +10064,14 @@ eprosima::fastdds::dds::xtypes::CommonAliasBody& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonAliasBody::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::operator ==(
         const CommonAliasBody& x) const
 {
     return (m_related_flags == x.m_related_flags &&
            m_related_type == x.m_related_type);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonAliasBody::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::operator !=(
         const CommonAliasBody& x) const
 {
     return !(*this == x);
@@ -9962,8 +10081,8 @@ bool eprosima::fastdds::dds::xtypes::CommonAliasBody::operator !=(
  * @brief This function copies the value in member related_flags
  * @param _related_flags New value to be copied in member related_flags
  */
-void eprosima::fastdds::dds::xtypes::CommonAliasBody::related_flags(
-        const eprosima::fastdds::dds::xtypes::AliasMemberFlag& _related_flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::related_flags(
+        const eprosima::fastdds::dds::xtypes1_3::AliasMemberFlag& _related_flags)
 {
     m_related_flags = _related_flags;
 }
@@ -9972,8 +10091,8 @@ void eprosima::fastdds::dds::xtypes::CommonAliasBody::related_flags(
  * @brief This function moves the value in member related_flags
  * @param _related_flags New value to be moved in member related_flags
  */
-void eprosima::fastdds::dds::xtypes::CommonAliasBody::related_flags(
-        eprosima::fastdds::dds::xtypes::AliasMemberFlag&& _related_flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::related_flags(
+        eprosima::fastdds::dds::xtypes1_3::AliasMemberFlag&& _related_flags)
 {
     m_related_flags = std::move(_related_flags);
 }
@@ -9982,7 +10101,7 @@ void eprosima::fastdds::dds::xtypes::CommonAliasBody::related_flags(
  * @brief This function returns a constant reference to member related_flags
  * @return Constant reference to member related_flags
  */
-const eprosima::fastdds::dds::xtypes::AliasMemberFlag& eprosima::fastdds::dds::xtypes::CommonAliasBody::related_flags() const
+const eprosima::fastdds::dds::xtypes1_3::AliasMemberFlag& eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::related_flags() const
 {
     return m_related_flags;
 }
@@ -9991,7 +10110,7 @@ const eprosima::fastdds::dds::xtypes::AliasMemberFlag& eprosima::fastdds::dds::x
  * @brief This function returns a reference to member related_flags
  * @return Reference to member related_flags
  */
-eprosima::fastdds::dds::xtypes::AliasMemberFlag& eprosima::fastdds::dds::xtypes::CommonAliasBody::related_flags()
+eprosima::fastdds::dds::xtypes1_3::AliasMemberFlag& eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::related_flags()
 {
     return m_related_flags;
 }
@@ -10001,8 +10120,8 @@ eprosima::fastdds::dds::xtypes::AliasMemberFlag& eprosima::fastdds::dds::xtypes:
  * @brief This function copies the value in member related_type
  * @param _related_type New value to be copied in member related_type
  */
-void eprosima::fastdds::dds::xtypes::CommonAliasBody::related_type(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _related_type)
+void eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::related_type(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _related_type)
 {
     *m_related_type = _related_type;
 }
@@ -10011,8 +10130,8 @@ void eprosima::fastdds::dds::xtypes::CommonAliasBody::related_type(
  * @brief This function moves the value in member related_type
  * @param _related_type New value to be moved in member related_type
  */
-void eprosima::fastdds::dds::xtypes::CommonAliasBody::related_type(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _related_type)
+void eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::related_type(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _related_type)
 {
     *m_related_type = std::move(_related_type);
 }
@@ -10021,7 +10140,7 @@ void eprosima::fastdds::dds::xtypes::CommonAliasBody::related_type(
  * @brief This function returns a constant reference to member related_type
  * @return Constant reference to member related_type
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CommonAliasBody::related_type() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::related_type() const
 {
     return *m_related_type;
 }
@@ -10030,22 +10149,24 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member related_type
  * @return Reference to member related_type
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CommonAliasBody::related_type()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::related_type()
 {
     return *m_related_type;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteAliasBody::CompleteAliasBody()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::CompleteAliasBody()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasBody::~CompleteAliasBody()
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::~CompleteAliasBody()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasBody::CompleteAliasBody(
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::CompleteAliasBody(
         const CompleteAliasBody& x)
 {
     m_common = x.m_common;
@@ -10053,7 +10174,7 @@ eprosima::fastdds::dds::xtypes::CompleteAliasBody::CompleteAliasBody(
     m_ann_custom = x.m_ann_custom;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasBody::CompleteAliasBody(
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::CompleteAliasBody(
         CompleteAliasBody&& x) noexcept
 {
     m_common = std::move(x.m_common);
@@ -10061,7 +10182,7 @@ eprosima::fastdds::dds::xtypes::CompleteAliasBody::CompleteAliasBody(
     m_ann_custom = std::move(x.m_ann_custom);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasBody& eprosima::fastdds::dds::xtypes::CompleteAliasBody::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody& eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::operator =(
         const CompleteAliasBody& x)
 {
 
@@ -10071,7 +10192,7 @@ eprosima::fastdds::dds::xtypes::CompleteAliasBody& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasBody& eprosima::fastdds::dds::xtypes::CompleteAliasBody::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody& eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::operator =(
         CompleteAliasBody&& x) noexcept
 {
 
@@ -10081,7 +10202,7 @@ eprosima::fastdds::dds::xtypes::CompleteAliasBody& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteAliasBody::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::operator ==(
         const CompleteAliasBody& x) const
 {
     return (m_common == x.m_common &&
@@ -10089,7 +10210,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteAliasBody::operator ==(
            m_ann_custom == x.m_ann_custom);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteAliasBody::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::operator !=(
         const CompleteAliasBody& x) const
 {
     return !(*this == x);
@@ -10099,8 +10220,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteAliasBody::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasBody::common(
-        const eprosima::fastdds::dds::xtypes::CommonAliasBody& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonAliasBody& _common)
 {
     m_common = _common;
 }
@@ -10109,8 +10230,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasBody::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasBody::common(
-        eprosima::fastdds::dds::xtypes::CommonAliasBody&& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonAliasBody&& _common)
 {
     m_common = std::move(_common);
 }
@@ -10119,7 +10240,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasBody::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonAliasBody& eprosima::fastdds::dds::xtypes::CompleteAliasBody::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonAliasBody& eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::common() const
 {
     return m_common;
 }
@@ -10128,7 +10249,7 @@ const eprosima::fastdds::dds::xtypes::CommonAliasBody& eprosima::fastdds::dds::x
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonAliasBody& eprosima::fastdds::dds::xtypes::CompleteAliasBody::common()
+eprosima::fastdds::dds::xtypes1_3::CommonAliasBody& eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::common()
 {
     return m_common;
 }
@@ -10138,8 +10259,8 @@ eprosima::fastdds::dds::xtypes::CommonAliasBody& eprosima::fastdds::dds::xtypes:
  * @brief This function copies the value in member ann_builtin
  * @param _ann_builtin New value to be copied in member ann_builtin
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasBody::ann_builtin(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations>& _ann_builtin)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::ann_builtin(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations>& _ann_builtin)
 {
     m_ann_builtin = _ann_builtin;
 }
@@ -10148,8 +10269,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasBody::ann_builtin(
  * @brief This function moves the value in member ann_builtin
  * @param _ann_builtin New value to be moved in member ann_builtin
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasBody::ann_builtin(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations>&& _ann_builtin)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::ann_builtin(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations>&& _ann_builtin)
 {
     m_ann_builtin = std::move(_ann_builtin);
 }
@@ -10158,7 +10279,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasBody::ann_builtin(
  * @brief This function returns a constant reference to member ann_builtin
  * @return Constant reference to member ann_builtin
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations>& eprosima::fastdds::dds::xtypes::CompleteAliasBody::ann_builtin() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations>& eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::ann_builtin() const
 {
     return m_ann_builtin;
 }
@@ -10167,7 +10288,7 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltin
  * @brief This function returns a reference to member ann_builtin
  * @return Reference to member ann_builtin
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations>& eprosima::fastdds::dds::xtypes::CompleteAliasBody::ann_builtin()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations>& eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::ann_builtin()
 {
     return m_ann_builtin;
 }
@@ -10177,8 +10298,8 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMember
  * @brief This function copies the value in member ann_custom
  * @param _ann_custom New value to be copied in member ann_custom
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasBody::ann_custom(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& _ann_custom)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::ann_custom(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& _ann_custom)
 {
     m_ann_custom = _ann_custom;
 }
@@ -10187,8 +10308,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasBody::ann_custom(
  * @brief This function moves the value in member ann_custom
  * @param _ann_custom New value to be moved in member ann_custom
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasBody::ann_custom(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>&& _ann_custom)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::ann_custom(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>&& _ann_custom)
 {
     m_ann_custom = std::move(_ann_custom);
 }
@@ -10197,7 +10318,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasBody::ann_custom(
  * @brief This function returns a constant reference to member ann_custom
  * @return Constant reference to member ann_custom
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes::CompleteAliasBody::ann_custom() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::ann_custom() const
 {
     return m_ann_custom;
 }
@@ -10206,34 +10327,36 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotat
  * @brief This function returns a reference to member ann_custom
  * @return Reference to member ann_custom
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes::CompleteAliasBody::ann_custom()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::ann_custom()
 {
     return m_ann_custom;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalAliasBody::MinimalAliasBody()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::MinimalAliasBody()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasBody::~MinimalAliasBody()
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::~MinimalAliasBody()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasBody::MinimalAliasBody(
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::MinimalAliasBody(
         const MinimalAliasBody& x)
 {
     m_common = x.m_common;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasBody::MinimalAliasBody(
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::MinimalAliasBody(
         MinimalAliasBody&& x) noexcept
 {
     m_common = std::move(x.m_common);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasBody& eprosima::fastdds::dds::xtypes::MinimalAliasBody::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody& eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::operator =(
         const MinimalAliasBody& x)
 {
 
@@ -10241,7 +10364,7 @@ eprosima::fastdds::dds::xtypes::MinimalAliasBody& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasBody& eprosima::fastdds::dds::xtypes::MinimalAliasBody::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody& eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::operator =(
         MinimalAliasBody&& x) noexcept
 {
 
@@ -10249,13 +10372,13 @@ eprosima::fastdds::dds::xtypes::MinimalAliasBody& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalAliasBody::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::operator ==(
         const MinimalAliasBody& x) const
 {
     return (m_common == x.m_common);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalAliasBody::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::operator !=(
         const MinimalAliasBody& x) const
 {
     return !(*this == x);
@@ -10265,8 +10388,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalAliasBody::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalAliasBody::common(
-        const eprosima::fastdds::dds::xtypes::CommonAliasBody& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonAliasBody& _common)
 {
     m_common = _common;
 }
@@ -10275,8 +10398,8 @@ void eprosima::fastdds::dds::xtypes::MinimalAliasBody::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalAliasBody::common(
-        eprosima::fastdds::dds::xtypes::CommonAliasBody&& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonAliasBody&& _common)
 {
     m_common = std::move(_common);
 }
@@ -10285,7 +10408,7 @@ void eprosima::fastdds::dds::xtypes::MinimalAliasBody::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonAliasBody& eprosima::fastdds::dds::xtypes::MinimalAliasBody::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonAliasBody& eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::common() const
 {
     return m_common;
 }
@@ -10294,34 +10417,36 @@ const eprosima::fastdds::dds::xtypes::CommonAliasBody& eprosima::fastdds::dds::x
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonAliasBody& eprosima::fastdds::dds::xtypes::MinimalAliasBody::common()
+eprosima::fastdds::dds::xtypes1_3::CommonAliasBody& eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::common()
 {
     return m_common;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteAliasHeader::CompleteAliasHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::CompleteAliasHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasHeader::~CompleteAliasHeader()
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::~CompleteAliasHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasHeader::CompleteAliasHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::CompleteAliasHeader(
         const CompleteAliasHeader& x)
 {
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasHeader::CompleteAliasHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::CompleteAliasHeader(
         CompleteAliasHeader&& x) noexcept
 {
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasHeader& eprosima::fastdds::dds::xtypes::CompleteAliasHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader& eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::operator =(
         const CompleteAliasHeader& x)
 {
 
@@ -10329,7 +10454,7 @@ eprosima::fastdds::dds::xtypes::CompleteAliasHeader& eprosima::fastdds::dds::xty
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasHeader& eprosima::fastdds::dds::xtypes::CompleteAliasHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader& eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::operator =(
         CompleteAliasHeader&& x) noexcept
 {
 
@@ -10337,13 +10462,13 @@ eprosima::fastdds::dds::xtypes::CompleteAliasHeader& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteAliasHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::operator ==(
         const CompleteAliasHeader& x) const
 {
     return (m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteAliasHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::operator !=(
         const CompleteAliasHeader& x) const
 {
     return !(*this == x);
@@ -10353,8 +10478,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteAliasHeader::operator !=(
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasHeader::detail(
-        const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::detail(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -10363,8 +10488,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasHeader::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasHeader::detail(
-        eprosima::fastdds::dds::xtypes::CompleteTypeDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::detail(
+        eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -10373,7 +10498,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasHeader::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteAliasHeader::detail() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::detail() const
 {
     return m_detail;
 }
@@ -10382,34 +10507,34 @@ const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteAliasHeader::detail()
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::detail()
 {
     return m_detail;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalAliasHeader::MinimalAliasHeader()
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader::MinimalAliasHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasHeader::~MinimalAliasHeader()
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader::~MinimalAliasHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasHeader::MinimalAliasHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader::MinimalAliasHeader(
         const MinimalAliasHeader& x)
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasHeader::MinimalAliasHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader::MinimalAliasHeader(
         MinimalAliasHeader&& x) noexcept
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasHeader& eprosima::fastdds::dds::xtypes::MinimalAliasHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader& eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader::operator =(
         const MinimalAliasHeader& x)
 {
 
@@ -10418,7 +10543,7 @@ eprosima::fastdds::dds::xtypes::MinimalAliasHeader& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasHeader& eprosima::fastdds::dds::xtypes::MinimalAliasHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader& eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader::operator =(
         MinimalAliasHeader&& x) noexcept
 {
 
@@ -10427,30 +10552,32 @@ eprosima::fastdds::dds::xtypes::MinimalAliasHeader& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalAliasHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader::operator ==(
         const MinimalAliasHeader& x) const
 {
     static_cast<void>(x);
     return true;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalAliasHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader::operator !=(
         const MinimalAliasHeader& x) const
 {
     return !(*this == x);
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteAliasType::CompleteAliasType()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::CompleteAliasType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasType::~CompleteAliasType()
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::~CompleteAliasType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasType::CompleteAliasType(
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::CompleteAliasType(
         const CompleteAliasType& x)
 {
     m_alias_flags = x.m_alias_flags;
@@ -10458,7 +10585,7 @@ eprosima::fastdds::dds::xtypes::CompleteAliasType::CompleteAliasType(
     m_body = x.m_body;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasType::CompleteAliasType(
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::CompleteAliasType(
         CompleteAliasType&& x) noexcept
 {
     m_alias_flags = std::move(x.m_alias_flags);
@@ -10466,7 +10593,7 @@ eprosima::fastdds::dds::xtypes::CompleteAliasType::CompleteAliasType(
     m_body = std::move(x.m_body);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasType& eprosima::fastdds::dds::xtypes::CompleteAliasType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasType& eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::operator =(
         const CompleteAliasType& x)
 {
 
@@ -10476,7 +10603,7 @@ eprosima::fastdds::dds::xtypes::CompleteAliasType& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasType& eprosima::fastdds::dds::xtypes::CompleteAliasType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasType& eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::operator =(
         CompleteAliasType&& x) noexcept
 {
 
@@ -10486,7 +10613,7 @@ eprosima::fastdds::dds::xtypes::CompleteAliasType& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteAliasType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::operator ==(
         const CompleteAliasType& x) const
 {
     return (m_alias_flags == x.m_alias_flags &&
@@ -10494,7 +10621,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteAliasType::operator ==(
            m_body == x.m_body);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteAliasType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::operator !=(
         const CompleteAliasType& x) const
 {
     return !(*this == x);
@@ -10504,8 +10631,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteAliasType::operator !=(
  * @brief This function copies the value in member alias_flags
  * @param _alias_flags New value to be copied in member alias_flags
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasType::alias_flags(
-        const eprosima::fastdds::dds::xtypes::AliasTypeFlag& _alias_flags)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::alias_flags(
+        const eprosima::fastdds::dds::xtypes1_3::AliasTypeFlag& _alias_flags)
 {
     m_alias_flags = _alias_flags;
 }
@@ -10514,8 +10641,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasType::alias_flags(
  * @brief This function moves the value in member alias_flags
  * @param _alias_flags New value to be moved in member alias_flags
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasType::alias_flags(
-        eprosima::fastdds::dds::xtypes::AliasTypeFlag&& _alias_flags)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::alias_flags(
+        eprosima::fastdds::dds::xtypes1_3::AliasTypeFlag&& _alias_flags)
 {
     m_alias_flags = std::move(_alias_flags);
 }
@@ -10524,7 +10651,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasType::alias_flags(
  * @brief This function returns a constant reference to member alias_flags
  * @return Constant reference to member alias_flags
  */
-const eprosima::fastdds::dds::xtypes::AliasTypeFlag& eprosima::fastdds::dds::xtypes::CompleteAliasType::alias_flags() const
+const eprosima::fastdds::dds::xtypes1_3::AliasTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::alias_flags() const
 {
     return m_alias_flags;
 }
@@ -10533,7 +10660,7 @@ const eprosima::fastdds::dds::xtypes::AliasTypeFlag& eprosima::fastdds::dds::xty
  * @brief This function returns a reference to member alias_flags
  * @return Reference to member alias_flags
  */
-eprosima::fastdds::dds::xtypes::AliasTypeFlag& eprosima::fastdds::dds::xtypes::CompleteAliasType::alias_flags()
+eprosima::fastdds::dds::xtypes1_3::AliasTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::alias_flags()
 {
     return m_alias_flags;
 }
@@ -10543,8 +10670,8 @@ eprosima::fastdds::dds::xtypes::AliasTypeFlag& eprosima::fastdds::dds::xtypes::C
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasType::header(
-        const eprosima::fastdds::dds::xtypes::CompleteAliasHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::header(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader& _header)
 {
     m_header = _header;
 }
@@ -10553,8 +10680,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasType::header(
-        eprosima::fastdds::dds::xtypes::CompleteAliasHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::header(
+        eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -10563,7 +10690,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::CompleteAliasHeader& eprosima::fastdds::dds::xtypes::CompleteAliasType::header() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader& eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::header() const
 {
     return m_header;
 }
@@ -10572,7 +10699,7 @@ const eprosima::fastdds::dds::xtypes::CompleteAliasHeader& eprosima::fastdds::dd
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::CompleteAliasHeader& eprosima::fastdds::dds::xtypes::CompleteAliasType::header()
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader& eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::header()
 {
     return m_header;
 }
@@ -10582,8 +10709,8 @@ eprosima::fastdds::dds::xtypes::CompleteAliasHeader& eprosima::fastdds::dds::xty
  * @brief This function copies the value in member body
  * @param _body New value to be copied in member body
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasType::body(
-        const eprosima::fastdds::dds::xtypes::CompleteAliasBody& _body)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::body(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody& _body)
 {
     m_body = _body;
 }
@@ -10592,8 +10719,8 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasType::body(
  * @brief This function moves the value in member body
  * @param _body New value to be moved in member body
  */
-void eprosima::fastdds::dds::xtypes::CompleteAliasType::body(
-        eprosima::fastdds::dds::xtypes::CompleteAliasBody&& _body)
+void eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::body(
+        eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody&& _body)
 {
     m_body = std::move(_body);
 }
@@ -10602,7 +10729,7 @@ void eprosima::fastdds::dds::xtypes::CompleteAliasType::body(
  * @brief This function returns a constant reference to member body
  * @return Constant reference to member body
  */
-const eprosima::fastdds::dds::xtypes::CompleteAliasBody& eprosima::fastdds::dds::xtypes::CompleteAliasType::body() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody& eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::body() const
 {
     return m_body;
 }
@@ -10611,22 +10738,24 @@ const eprosima::fastdds::dds::xtypes::CompleteAliasBody& eprosima::fastdds::dds:
  * @brief This function returns a reference to member body
  * @return Reference to member body
  */
-eprosima::fastdds::dds::xtypes::CompleteAliasBody& eprosima::fastdds::dds::xtypes::CompleteAliasType::body()
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody& eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::body()
 {
     return m_body;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalAliasType::MinimalAliasType()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::MinimalAliasType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasType::~MinimalAliasType()
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::~MinimalAliasType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasType::MinimalAliasType(
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::MinimalAliasType(
         const MinimalAliasType& x)
 {
     m_alias_flags = x.m_alias_flags;
@@ -10634,7 +10763,7 @@ eprosima::fastdds::dds::xtypes::MinimalAliasType::MinimalAliasType(
     m_body = x.m_body;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasType::MinimalAliasType(
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::MinimalAliasType(
         MinimalAliasType&& x) noexcept
 {
     m_alias_flags = std::move(x.m_alias_flags);
@@ -10642,7 +10771,7 @@ eprosima::fastdds::dds::xtypes::MinimalAliasType::MinimalAliasType(
     m_body = std::move(x.m_body);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasType& eprosima::fastdds::dds::xtypes::MinimalAliasType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasType& eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::operator =(
         const MinimalAliasType& x)
 {
 
@@ -10652,7 +10781,7 @@ eprosima::fastdds::dds::xtypes::MinimalAliasType& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasType& eprosima::fastdds::dds::xtypes::MinimalAliasType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasType& eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::operator =(
         MinimalAliasType&& x) noexcept
 {
 
@@ -10662,7 +10791,7 @@ eprosima::fastdds::dds::xtypes::MinimalAliasType& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalAliasType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::operator ==(
         const MinimalAliasType& x) const
 {
     return (m_alias_flags == x.m_alias_flags &&
@@ -10670,7 +10799,7 @@ bool eprosima::fastdds::dds::xtypes::MinimalAliasType::operator ==(
            m_body == x.m_body);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalAliasType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::operator !=(
         const MinimalAliasType& x) const
 {
     return !(*this == x);
@@ -10680,8 +10809,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalAliasType::operator !=(
  * @brief This function copies the value in member alias_flags
  * @param _alias_flags New value to be copied in member alias_flags
  */
-void eprosima::fastdds::dds::xtypes::MinimalAliasType::alias_flags(
-        const eprosima::fastdds::dds::xtypes::AliasTypeFlag& _alias_flags)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::alias_flags(
+        const eprosima::fastdds::dds::xtypes1_3::AliasTypeFlag& _alias_flags)
 {
     m_alias_flags = _alias_flags;
 }
@@ -10690,8 +10819,8 @@ void eprosima::fastdds::dds::xtypes::MinimalAliasType::alias_flags(
  * @brief This function moves the value in member alias_flags
  * @param _alias_flags New value to be moved in member alias_flags
  */
-void eprosima::fastdds::dds::xtypes::MinimalAliasType::alias_flags(
-        eprosima::fastdds::dds::xtypes::AliasTypeFlag&& _alias_flags)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::alias_flags(
+        eprosima::fastdds::dds::xtypes1_3::AliasTypeFlag&& _alias_flags)
 {
     m_alias_flags = std::move(_alias_flags);
 }
@@ -10700,7 +10829,7 @@ void eprosima::fastdds::dds::xtypes::MinimalAliasType::alias_flags(
  * @brief This function returns a constant reference to member alias_flags
  * @return Constant reference to member alias_flags
  */
-const eprosima::fastdds::dds::xtypes::AliasTypeFlag& eprosima::fastdds::dds::xtypes::MinimalAliasType::alias_flags() const
+const eprosima::fastdds::dds::xtypes1_3::AliasTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::alias_flags() const
 {
     return m_alias_flags;
 }
@@ -10709,7 +10838,7 @@ const eprosima::fastdds::dds::xtypes::AliasTypeFlag& eprosima::fastdds::dds::xty
  * @brief This function returns a reference to member alias_flags
  * @return Reference to member alias_flags
  */
-eprosima::fastdds::dds::xtypes::AliasTypeFlag& eprosima::fastdds::dds::xtypes::MinimalAliasType::alias_flags()
+eprosima::fastdds::dds::xtypes1_3::AliasTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::alias_flags()
 {
     return m_alias_flags;
 }
@@ -10719,8 +10848,8 @@ eprosima::fastdds::dds::xtypes::AliasTypeFlag& eprosima::fastdds::dds::xtypes::M
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalAliasType::header(
-        const eprosima::fastdds::dds::xtypes::MinimalAliasHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::header(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader& _header)
 {
     m_header = _header;
 }
@@ -10729,8 +10858,8 @@ void eprosima::fastdds::dds::xtypes::MinimalAliasType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalAliasType::header(
-        eprosima::fastdds::dds::xtypes::MinimalAliasHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::header(
+        eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -10739,7 +10868,7 @@ void eprosima::fastdds::dds::xtypes::MinimalAliasType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::MinimalAliasHeader& eprosima::fastdds::dds::xtypes::MinimalAliasType::header() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader& eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::header() const
 {
     return m_header;
 }
@@ -10748,7 +10877,7 @@ const eprosima::fastdds::dds::xtypes::MinimalAliasHeader& eprosima::fastdds::dds
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::MinimalAliasHeader& eprosima::fastdds::dds::xtypes::MinimalAliasType::header()
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader& eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::header()
 {
     return m_header;
 }
@@ -10758,8 +10887,8 @@ eprosima::fastdds::dds::xtypes::MinimalAliasHeader& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member body
  * @param _body New value to be copied in member body
  */
-void eprosima::fastdds::dds::xtypes::MinimalAliasType::body(
-        const eprosima::fastdds::dds::xtypes::MinimalAliasBody& _body)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::body(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody& _body)
 {
     m_body = _body;
 }
@@ -10768,8 +10897,8 @@ void eprosima::fastdds::dds::xtypes::MinimalAliasType::body(
  * @brief This function moves the value in member body
  * @param _body New value to be moved in member body
  */
-void eprosima::fastdds::dds::xtypes::MinimalAliasType::body(
-        eprosima::fastdds::dds::xtypes::MinimalAliasBody&& _body)
+void eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::body(
+        eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody&& _body)
 {
     m_body = std::move(_body);
 }
@@ -10778,7 +10907,7 @@ void eprosima::fastdds::dds::xtypes::MinimalAliasType::body(
  * @brief This function returns a constant reference to member body
  * @return Constant reference to member body
  */
-const eprosima::fastdds::dds::xtypes::MinimalAliasBody& eprosima::fastdds::dds::xtypes::MinimalAliasType::body() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody& eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::body() const
 {
     return m_body;
 }
@@ -10787,36 +10916,38 @@ const eprosima::fastdds::dds::xtypes::MinimalAliasBody& eprosima::fastdds::dds::
  * @brief This function returns a reference to member body
  * @return Reference to member body
  */
-eprosima::fastdds::dds::xtypes::MinimalAliasBody& eprosima::fastdds::dds::xtypes::MinimalAliasType::body()
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody& eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::body()
 {
     return m_body;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteElementDetail::CompleteElementDetail()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::CompleteElementDetail()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteElementDetail::~CompleteElementDetail()
+eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::~CompleteElementDetail()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteElementDetail::CompleteElementDetail(
+eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::CompleteElementDetail(
         const CompleteElementDetail& x)
 {
     m_ann_builtin = x.m_ann_builtin;
     m_ann_custom = x.m_ann_custom;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteElementDetail::CompleteElementDetail(
+eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::CompleteElementDetail(
         CompleteElementDetail&& x) noexcept
 {
     m_ann_builtin = std::move(x.m_ann_builtin);
     m_ann_custom = std::move(x.m_ann_custom);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteElementDetail& eprosima::fastdds::dds::xtypes::CompleteElementDetail::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail& eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::operator =(
         const CompleteElementDetail& x)
 {
 
@@ -10825,7 +10956,7 @@ eprosima::fastdds::dds::xtypes::CompleteElementDetail& eprosima::fastdds::dds::x
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteElementDetail& eprosima::fastdds::dds::xtypes::CompleteElementDetail::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail& eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::operator =(
         CompleteElementDetail&& x) noexcept
 {
 
@@ -10834,14 +10965,14 @@ eprosima::fastdds::dds::xtypes::CompleteElementDetail& eprosima::fastdds::dds::x
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteElementDetail::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::operator ==(
         const CompleteElementDetail& x) const
 {
     return (m_ann_builtin == x.m_ann_builtin &&
            m_ann_custom == x.m_ann_custom);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteElementDetail::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::operator !=(
         const CompleteElementDetail& x) const
 {
     return !(*this == x);
@@ -10851,8 +10982,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteElementDetail::operator !=(
  * @brief This function copies the value in member ann_builtin
  * @param _ann_builtin New value to be copied in member ann_builtin
  */
-void eprosima::fastdds::dds::xtypes::CompleteElementDetail::ann_builtin(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations>& _ann_builtin)
+void eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::ann_builtin(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations>& _ann_builtin)
 {
     m_ann_builtin = _ann_builtin;
 }
@@ -10861,8 +10992,8 @@ void eprosima::fastdds::dds::xtypes::CompleteElementDetail::ann_builtin(
  * @brief This function moves the value in member ann_builtin
  * @param _ann_builtin New value to be moved in member ann_builtin
  */
-void eprosima::fastdds::dds::xtypes::CompleteElementDetail::ann_builtin(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations>&& _ann_builtin)
+void eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::ann_builtin(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations>&& _ann_builtin)
 {
     m_ann_builtin = std::move(_ann_builtin);
 }
@@ -10871,7 +11002,7 @@ void eprosima::fastdds::dds::xtypes::CompleteElementDetail::ann_builtin(
  * @brief This function returns a constant reference to member ann_builtin
  * @return Constant reference to member ann_builtin
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations>& eprosima::fastdds::dds::xtypes::CompleteElementDetail::ann_builtin() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations>& eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::ann_builtin() const
 {
     return m_ann_builtin;
 }
@@ -10880,7 +11011,7 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltin
  * @brief This function returns a reference to member ann_builtin
  * @return Reference to member ann_builtin
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations>& eprosima::fastdds::dds::xtypes::CompleteElementDetail::ann_builtin()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations>& eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::ann_builtin()
 {
     return m_ann_builtin;
 }
@@ -10890,8 +11021,8 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedBuiltinMember
  * @brief This function copies the value in member ann_custom
  * @param _ann_custom New value to be copied in member ann_custom
  */
-void eprosima::fastdds::dds::xtypes::CompleteElementDetail::ann_custom(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& _ann_custom)
+void eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::ann_custom(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& _ann_custom)
 {
     m_ann_custom = _ann_custom;
 }
@@ -10900,8 +11031,8 @@ void eprosima::fastdds::dds::xtypes::CompleteElementDetail::ann_custom(
  * @brief This function moves the value in member ann_custom
  * @param _ann_custom New value to be moved in member ann_custom
  */
-void eprosima::fastdds::dds::xtypes::CompleteElementDetail::ann_custom(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>&& _ann_custom)
+void eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::ann_custom(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>&& _ann_custom)
 {
     m_ann_custom = std::move(_ann_custom);
 }
@@ -10910,7 +11041,7 @@ void eprosima::fastdds::dds::xtypes::CompleteElementDetail::ann_custom(
  * @brief This function returns a constant reference to member ann_custom
  * @return Constant reference to member ann_custom
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes::CompleteElementDetail::ann_custom() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::ann_custom() const
 {
     return m_ann_custom;
 }
@@ -10919,48 +11050,50 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotat
  * @brief This function returns a reference to member ann_custom
  * @return Reference to member ann_custom
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes::CompleteElementDetail::ann_custom()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq>& eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::ann_custom()
 {
     return m_ann_custom;
 }
 
 
-eprosima::fastdds::dds::xtypes::CommonCollectionElement::CommonCollectionElement()
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::CommonCollectionElement()
 {
-    m_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_type = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonCollectionElement::~CommonCollectionElement()
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::~CommonCollectionElement()
 {
     delete m_type;
 }
 
-eprosima::fastdds::dds::xtypes::CommonCollectionElement::CommonCollectionElement(
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::CommonCollectionElement(
         const CommonCollectionElement& x)
 {
     m_element_flags = x.m_element_flags;
-    m_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type = *x.m_type;
+    m_type = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type = *x.m_type;
 }
 
-eprosima::fastdds::dds::xtypes::CommonCollectionElement::CommonCollectionElement(
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::CommonCollectionElement(
         CommonCollectionElement&& x) noexcept
 {
     m_element_flags = std::move(x.m_element_flags);
     m_type = x.m_type;x.m_type = nullptr;
 }
 
-eprosima::fastdds::dds::xtypes::CommonCollectionElement& eprosima::fastdds::dds::xtypes::CommonCollectionElement::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement& eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::operator =(
         const CommonCollectionElement& x)
 {
 
     m_element_flags = x.m_element_flags;
-    m_type = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type = *x.m_type;
+    m_type = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type = *x.m_type;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonCollectionElement& eprosima::fastdds::dds::xtypes::CommonCollectionElement::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement& eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::operator =(
         CommonCollectionElement&& x) noexcept
 {
 
@@ -10969,14 +11102,14 @@ eprosima::fastdds::dds::xtypes::CommonCollectionElement& eprosima::fastdds::dds:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonCollectionElement::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::operator ==(
         const CommonCollectionElement& x) const
 {
     return (m_element_flags == x.m_element_flags &&
            m_type == x.m_type);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonCollectionElement::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::operator !=(
         const CommonCollectionElement& x) const
 {
     return !(*this == x);
@@ -10986,8 +11119,8 @@ bool eprosima::fastdds::dds::xtypes::CommonCollectionElement::operator !=(
  * @brief This function copies the value in member element_flags
  * @param _element_flags New value to be copied in member element_flags
  */
-void eprosima::fastdds::dds::xtypes::CommonCollectionElement::element_flags(
-        const eprosima::fastdds::dds::xtypes::CollectionElementFlag& _element_flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::element_flags(
+        const eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& _element_flags)
 {
     m_element_flags = _element_flags;
 }
@@ -10996,8 +11129,8 @@ void eprosima::fastdds::dds::xtypes::CommonCollectionElement::element_flags(
  * @brief This function moves the value in member element_flags
  * @param _element_flags New value to be moved in member element_flags
  */
-void eprosima::fastdds::dds::xtypes::CommonCollectionElement::element_flags(
-        eprosima::fastdds::dds::xtypes::CollectionElementFlag&& _element_flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::element_flags(
+        eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag&& _element_flags)
 {
     m_element_flags = std::move(_element_flags);
 }
@@ -11006,7 +11139,7 @@ void eprosima::fastdds::dds::xtypes::CommonCollectionElement::element_flags(
  * @brief This function returns a constant reference to member element_flags
  * @return Constant reference to member element_flags
  */
-const eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::dds::xtypes::CommonCollectionElement::element_flags() const
+const eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::element_flags() const
 {
     return m_element_flags;
 }
@@ -11015,7 +11148,7 @@ const eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::
  * @brief This function returns a reference to member element_flags
  * @return Reference to member element_flags
  */
-eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::dds::xtypes::CommonCollectionElement::element_flags()
+eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::element_flags()
 {
     return m_element_flags;
 }
@@ -11025,8 +11158,8 @@ eprosima::fastdds::dds::xtypes::CollectionElementFlag& eprosima::fastdds::dds::x
  * @brief This function copies the value in member type
  * @param _type New value to be copied in member type
  */
-void eprosima::fastdds::dds::xtypes::CommonCollectionElement::type(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _type)
+void eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::type(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _type)
 {
     *m_type = _type;
 }
@@ -11035,8 +11168,8 @@ void eprosima::fastdds::dds::xtypes::CommonCollectionElement::type(
  * @brief This function moves the value in member type
  * @param _type New value to be moved in member type
  */
-void eprosima::fastdds::dds::xtypes::CommonCollectionElement::type(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _type)
+void eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::type(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _type)
 {
     *m_type = std::move(_type);
 }
@@ -11045,7 +11178,7 @@ void eprosima::fastdds::dds::xtypes::CommonCollectionElement::type(
  * @brief This function returns a constant reference to member type
  * @return Constant reference to member type
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CommonCollectionElement::type() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::type() const
 {
     return *m_type;
 }
@@ -11054,36 +11187,38 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member type
  * @return Reference to member type
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::CommonCollectionElement::type()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::type()
 {
     return *m_type;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteCollectionElement::CompleteCollectionElement()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::CompleteCollectionElement()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteCollectionElement::~CompleteCollectionElement()
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::~CompleteCollectionElement()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteCollectionElement::CompleteCollectionElement(
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::CompleteCollectionElement(
         const CompleteCollectionElement& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteCollectionElement::CompleteCollectionElement(
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::CompleteCollectionElement(
         CompleteCollectionElement&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dds::xtypes::CompleteCollectionElement::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::operator =(
         const CompleteCollectionElement& x)
 {
 
@@ -11092,7 +11227,7 @@ eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dd
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dds::xtypes::CompleteCollectionElement::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::operator =(
         CompleteCollectionElement&& x) noexcept
 {
 
@@ -11101,14 +11236,14 @@ eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dd
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteCollectionElement::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::operator ==(
         const CompleteCollectionElement& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteCollectionElement::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::operator !=(
         const CompleteCollectionElement& x) const
 {
     return !(*this == x);
@@ -11118,8 +11253,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteCollectionElement::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteCollectionElement::common(
-        const eprosima::fastdds::dds::xtypes::CommonCollectionElement& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement& _common)
 {
     m_common = _common;
 }
@@ -11128,8 +11263,8 @@ void eprosima::fastdds::dds::xtypes::CompleteCollectionElement::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteCollectionElement::common(
-        eprosima::fastdds::dds::xtypes::CommonCollectionElement&& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement&& _common)
 {
     m_common = std::move(_common);
 }
@@ -11138,7 +11273,7 @@ void eprosima::fastdds::dds::xtypes::CompleteCollectionElement::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonCollectionElement& eprosima::fastdds::dds::xtypes::CompleteCollectionElement::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement& eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::common() const
 {
     return m_common;
 }
@@ -11147,7 +11282,7 @@ const eprosima::fastdds::dds::xtypes::CommonCollectionElement& eprosima::fastdds
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonCollectionElement& eprosima::fastdds::dds::xtypes::CompleteCollectionElement::common()
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement& eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::common()
 {
     return m_common;
 }
@@ -11157,8 +11292,8 @@ eprosima::fastdds::dds::xtypes::CommonCollectionElement& eprosima::fastdds::dds:
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteCollectionElement::detail(
-        const eprosima::fastdds::dds::xtypes::CompleteElementDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::detail(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -11167,8 +11302,8 @@ void eprosima::fastdds::dds::xtypes::CompleteCollectionElement::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteCollectionElement::detail(
-        eprosima::fastdds::dds::xtypes::CompleteElementDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::detail(
+        eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -11177,7 +11312,7 @@ void eprosima::fastdds::dds::xtypes::CompleteCollectionElement::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::CompleteElementDetail& eprosima::fastdds::dds::xtypes::CompleteCollectionElement::detail() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail& eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::detail() const
 {
     return m_detail;
 }
@@ -11186,34 +11321,36 @@ const eprosima::fastdds::dds::xtypes::CompleteElementDetail& eprosima::fastdds::
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::CompleteElementDetail& eprosima::fastdds::dds::xtypes::CompleteCollectionElement::detail()
+eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail& eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::detail()
 {
     return m_detail;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalCollectionElement::MinimalCollectionElement()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::MinimalCollectionElement()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalCollectionElement::~MinimalCollectionElement()
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::~MinimalCollectionElement()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalCollectionElement::MinimalCollectionElement(
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::MinimalCollectionElement(
         const MinimalCollectionElement& x)
 {
     m_common = x.m_common;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalCollectionElement::MinimalCollectionElement(
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::MinimalCollectionElement(
         MinimalCollectionElement&& x) noexcept
 {
     m_common = std::move(x.m_common);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds::xtypes::MinimalCollectionElement::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::operator =(
         const MinimalCollectionElement& x)
 {
 
@@ -11221,7 +11358,7 @@ eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds::xtypes::MinimalCollectionElement::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::operator =(
         MinimalCollectionElement&& x) noexcept
 {
 
@@ -11229,13 +11366,13 @@ eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalCollectionElement::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::operator ==(
         const MinimalCollectionElement& x) const
 {
     return (m_common == x.m_common);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalCollectionElement::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::operator !=(
         const MinimalCollectionElement& x) const
 {
     return !(*this == x);
@@ -11245,8 +11382,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalCollectionElement::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalCollectionElement::common(
-        const eprosima::fastdds::dds::xtypes::CommonCollectionElement& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement& _common)
 {
     m_common = _common;
 }
@@ -11255,8 +11392,8 @@ void eprosima::fastdds::dds::xtypes::MinimalCollectionElement::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalCollectionElement::common(
-        eprosima::fastdds::dds::xtypes::CommonCollectionElement&& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement&& _common)
 {
     m_common = std::move(_common);
 }
@@ -11265,7 +11402,7 @@ void eprosima::fastdds::dds::xtypes::MinimalCollectionElement::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonCollectionElement& eprosima::fastdds::dds::xtypes::MinimalCollectionElement::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement& eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::common() const
 {
     return m_common;
 }
@@ -11274,34 +11411,36 @@ const eprosima::fastdds::dds::xtypes::CommonCollectionElement& eprosima::fastdds
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonCollectionElement& eprosima::fastdds::dds::xtypes::MinimalCollectionElement::common()
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement& eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::common()
 {
     return m_common;
 }
 
 
-eprosima::fastdds::dds::xtypes::CommonCollectionHeader::CommonCollectionHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader::CommonCollectionHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonCollectionHeader::~CommonCollectionHeader()
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader::~CommonCollectionHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CommonCollectionHeader::CommonCollectionHeader(
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader::CommonCollectionHeader(
         const CommonCollectionHeader& x)
 {
     m_bound = x.m_bound;
 }
 
-eprosima::fastdds::dds::xtypes::CommonCollectionHeader::CommonCollectionHeader(
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader::CommonCollectionHeader(
         CommonCollectionHeader&& x) noexcept
 {
     m_bound = x.m_bound;
 }
 
-eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds::dds::xtypes::CommonCollectionHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader& eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader::operator =(
         const CommonCollectionHeader& x)
 {
 
@@ -11309,7 +11448,7 @@ eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds::dds::
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds::dds::xtypes::CommonCollectionHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader& eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader::operator =(
         CommonCollectionHeader&& x) noexcept
 {
 
@@ -11317,13 +11456,13 @@ eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds::dds::
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonCollectionHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader::operator ==(
         const CommonCollectionHeader& x) const
 {
     return (m_bound == x.m_bound);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonCollectionHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader::operator !=(
         const CommonCollectionHeader& x) const
 {
     return !(*this == x);
@@ -11333,8 +11472,8 @@ bool eprosima::fastdds::dds::xtypes::CommonCollectionHeader::operator !=(
  * @brief This function sets a value in member bound
  * @param _bound New value for member bound
  */
-void eprosima::fastdds::dds::xtypes::CommonCollectionHeader::bound(
-        eprosima::fastdds::dds::xtypes::LBound _bound)
+void eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader::bound(
+        eprosima::fastdds::dds::xtypes1_3::LBound _bound)
 {
     m_bound = _bound;
 }
@@ -11343,7 +11482,7 @@ void eprosima::fastdds::dds::xtypes::CommonCollectionHeader::bound(
  * @brief This function returns the value of member bound
  * @return Value of member bound
  */
-eprosima::fastdds::dds::xtypes::LBound eprosima::fastdds::dds::xtypes::CommonCollectionHeader::bound() const
+eprosima::fastdds::dds::xtypes1_3::LBound eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader::bound() const
 {
     return m_bound;
 }
@@ -11352,36 +11491,38 @@ eprosima::fastdds::dds::xtypes::LBound eprosima::fastdds::dds::xtypes::CommonCol
  * @brief This function returns a reference to member bound
  * @return Reference to member bound
  */
-eprosima::fastdds::dds::xtypes::LBound& eprosima::fastdds::dds::xtypes::CommonCollectionHeader::bound()
+eprosima::fastdds::dds::xtypes1_3::LBound& eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader::bound()
 {
     return m_bound;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::CompleteCollectionHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::CompleteCollectionHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::~CompleteCollectionHeader()
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::~CompleteCollectionHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::CompleteCollectionHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::CompleteCollectionHeader(
         const CompleteCollectionHeader& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::CompleteCollectionHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::CompleteCollectionHeader(
         CompleteCollectionHeader&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader& eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::operator =(
         const CompleteCollectionHeader& x)
 {
 
@@ -11390,7 +11531,7 @@ eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdds::dds
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader& eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::operator =(
         CompleteCollectionHeader&& x) noexcept
 {
 
@@ -11399,14 +11540,14 @@ eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdds::dds
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::operator ==(
         const CompleteCollectionHeader& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::operator !=(
         const CompleteCollectionHeader& x) const
 {
     return !(*this == x);
@@ -11416,8 +11557,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::common(
-        const eprosima::fastdds::dds::xtypes::CommonCollectionHeader& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader& _common)
 {
     m_common = _common;
 }
@@ -11426,8 +11567,8 @@ void eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::common(
-        eprosima::fastdds::dds::xtypes::CommonCollectionHeader&& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader&& _common)
 {
     m_common = std::move(_common);
 }
@@ -11436,7 +11577,7 @@ void eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader& eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::common() const
 {
     return m_common;
 }
@@ -11445,7 +11586,7 @@ const eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds:
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::common()
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader& eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::common()
 {
     return m_common;
 }
@@ -11455,8 +11596,8 @@ eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds::dds::
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::detail(
-        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::CompleteTypeDetail>& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::detail(
+        const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail>& _detail)
 {
     m_detail = _detail;
 }
@@ -11465,8 +11606,8 @@ void eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::detail(
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::CompleteTypeDetail>&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::detail(
+        eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail>&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -11475,7 +11616,7 @@ void eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::CompleteTypeDetail>& eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::detail() const
+const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail>& eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::detail() const
 {
     return m_detail;
 }
@@ -11484,34 +11625,36 @@ const eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::CompleteTypeDe
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes::CompleteTypeDetail>& eprosima::fastdds::dds::xtypes::CompleteCollectionHeader::detail()
+eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail>& eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::detail()
 {
     return m_detail;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::MinimalCollectionHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::MinimalCollectionHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::~MinimalCollectionHeader()
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::~MinimalCollectionHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::MinimalCollectionHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::MinimalCollectionHeader(
         const MinimalCollectionHeader& x)
 {
     m_common = x.m_common;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::MinimalCollectionHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::MinimalCollectionHeader(
         MinimalCollectionHeader&& x) noexcept
 {
     m_common = std::move(x.m_common);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader& eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::operator =(
         const MinimalCollectionHeader& x)
 {
 
@@ -11519,7 +11662,7 @@ eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds::dds:
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader& eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::operator =(
         MinimalCollectionHeader&& x) noexcept
 {
 
@@ -11527,13 +11670,13 @@ eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds::dds:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::operator ==(
         const MinimalCollectionHeader& x) const
 {
     return (m_common == x.m_common);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::operator !=(
         const MinimalCollectionHeader& x) const
 {
     return !(*this == x);
@@ -11543,8 +11686,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::common(
-        const eprosima::fastdds::dds::xtypes::CommonCollectionHeader& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader& _common)
 {
     m_common = _common;
 }
@@ -11553,8 +11696,8 @@ void eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::common(
-        eprosima::fastdds::dds::xtypes::CommonCollectionHeader&& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader&& _common)
 {
     m_common = std::move(_common);
 }
@@ -11563,7 +11706,7 @@ void eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader& eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::common() const
 {
     return m_common;
 }
@@ -11572,22 +11715,24 @@ const eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds:
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonCollectionHeader& eprosima::fastdds::dds::xtypes::MinimalCollectionHeader::common()
+eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader& eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::common()
 {
     return m_common;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteSequenceType::CompleteSequenceType()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::CompleteSequenceType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteSequenceType::~CompleteSequenceType()
+eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::~CompleteSequenceType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteSequenceType::CompleteSequenceType(
+eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::CompleteSequenceType(
         const CompleteSequenceType& x)
 {
     m_collection_flag = x.m_collection_flag;
@@ -11595,7 +11740,7 @@ eprosima::fastdds::dds::xtypes::CompleteSequenceType::CompleteSequenceType(
     m_element = x.m_element;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteSequenceType::CompleteSequenceType(
+eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::CompleteSequenceType(
         CompleteSequenceType&& x) noexcept
 {
     m_collection_flag = std::move(x.m_collection_flag);
@@ -11603,7 +11748,7 @@ eprosima::fastdds::dds::xtypes::CompleteSequenceType::CompleteSequenceType(
     m_element = std::move(x.m_element);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteSequenceType& eprosima::fastdds::dds::xtypes::CompleteSequenceType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType& eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::operator =(
         const CompleteSequenceType& x)
 {
 
@@ -11613,7 +11758,7 @@ eprosima::fastdds::dds::xtypes::CompleteSequenceType& eprosima::fastdds::dds::xt
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteSequenceType& eprosima::fastdds::dds::xtypes::CompleteSequenceType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType& eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::operator =(
         CompleteSequenceType&& x) noexcept
 {
 
@@ -11623,7 +11768,7 @@ eprosima::fastdds::dds::xtypes::CompleteSequenceType& eprosima::fastdds::dds::xt
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteSequenceType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::operator ==(
         const CompleteSequenceType& x) const
 {
     return (m_collection_flag == x.m_collection_flag &&
@@ -11631,7 +11776,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteSequenceType::operator ==(
            m_element == x.m_element);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteSequenceType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::operator !=(
         const CompleteSequenceType& x) const
 {
     return !(*this == x);
@@ -11641,8 +11786,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteSequenceType::operator !=(
  * @brief This function copies the value in member collection_flag
  * @param _collection_flag New value to be copied in member collection_flag
  */
-void eprosima::fastdds::dds::xtypes::CompleteSequenceType::collection_flag(
-        const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& _collection_flag)
+void eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::collection_flag(
+        const eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& _collection_flag)
 {
     m_collection_flag = _collection_flag;
 }
@@ -11651,8 +11796,8 @@ void eprosima::fastdds::dds::xtypes::CompleteSequenceType::collection_flag(
  * @brief This function moves the value in member collection_flag
  * @param _collection_flag New value to be moved in member collection_flag
  */
-void eprosima::fastdds::dds::xtypes::CompleteSequenceType::collection_flag(
-        eprosima::fastdds::dds::xtypes::CollectionTypeFlag&& _collection_flag)
+void eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::collection_flag(
+        eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag&& _collection_flag)
 {
     m_collection_flag = std::move(_collection_flag);
 }
@@ -11661,7 +11806,7 @@ void eprosima::fastdds::dds::xtypes::CompleteSequenceType::collection_flag(
  * @brief This function returns a constant reference to member collection_flag
  * @return Constant reference to member collection_flag
  */
-const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtypes::CompleteSequenceType::collection_flag() const
+const eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::collection_flag() const
 {
     return m_collection_flag;
 }
@@ -11670,7 +11815,7 @@ const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds
  * @brief This function returns a reference to member collection_flag
  * @return Reference to member collection_flag
  */
-eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtypes::CompleteSequenceType::collection_flag()
+eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::collection_flag()
 {
     return m_collection_flag;
 }
@@ -11680,8 +11825,8 @@ eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteSequenceType::header(
-        const eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::header(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader& _header)
 {
     m_header = _header;
 }
@@ -11690,8 +11835,8 @@ void eprosima::fastdds::dds::xtypes::CompleteSequenceType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteSequenceType::header(
-        eprosima::fastdds::dds::xtypes::CompleteCollectionHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::header(
+        eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -11700,7 +11845,7 @@ void eprosima::fastdds::dds::xtypes::CompleteSequenceType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdds::dds::xtypes::CompleteSequenceType::header() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader& eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::header() const
 {
     return m_header;
 }
@@ -11709,7 +11854,7 @@ const eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdd
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdds::dds::xtypes::CompleteSequenceType::header()
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader& eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::header()
 {
     return m_header;
 }
@@ -11719,8 +11864,8 @@ eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdds::dds
  * @brief This function copies the value in member element
  * @param _element New value to be copied in member element
  */
-void eprosima::fastdds::dds::xtypes::CompleteSequenceType::element(
-        const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& _element)
+void eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::element(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& _element)
 {
     m_element = _element;
 }
@@ -11729,8 +11874,8 @@ void eprosima::fastdds::dds::xtypes::CompleteSequenceType::element(
  * @brief This function moves the value in member element
  * @param _element New value to be moved in member element
  */
-void eprosima::fastdds::dds::xtypes::CompleteSequenceType::element(
-        eprosima::fastdds::dds::xtypes::CompleteCollectionElement&& _element)
+void eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::element(
+        eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement&& _element)
 {
     m_element = std::move(_element);
 }
@@ -11739,7 +11884,7 @@ void eprosima::fastdds::dds::xtypes::CompleteSequenceType::element(
  * @brief This function returns a constant reference to member element
  * @return Constant reference to member element
  */
-const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dds::xtypes::CompleteSequenceType::element() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::element() const
 {
     return m_element;
 }
@@ -11748,22 +11893,24 @@ const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastd
  * @brief This function returns a reference to member element
  * @return Reference to member element
  */
-eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dds::xtypes::CompleteSequenceType::element()
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::element()
 {
     return m_element;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalSequenceType::MinimalSequenceType()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::MinimalSequenceType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalSequenceType::~MinimalSequenceType()
+eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::~MinimalSequenceType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalSequenceType::MinimalSequenceType(
+eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::MinimalSequenceType(
         const MinimalSequenceType& x)
 {
     m_collection_flag = x.m_collection_flag;
@@ -11771,7 +11918,7 @@ eprosima::fastdds::dds::xtypes::MinimalSequenceType::MinimalSequenceType(
     m_element = x.m_element;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalSequenceType::MinimalSequenceType(
+eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::MinimalSequenceType(
         MinimalSequenceType&& x) noexcept
 {
     m_collection_flag = std::move(x.m_collection_flag);
@@ -11779,7 +11926,7 @@ eprosima::fastdds::dds::xtypes::MinimalSequenceType::MinimalSequenceType(
     m_element = std::move(x.m_element);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalSequenceType& eprosima::fastdds::dds::xtypes::MinimalSequenceType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType& eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::operator =(
         const MinimalSequenceType& x)
 {
 
@@ -11789,7 +11936,7 @@ eprosima::fastdds::dds::xtypes::MinimalSequenceType& eprosima::fastdds::dds::xty
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalSequenceType& eprosima::fastdds::dds::xtypes::MinimalSequenceType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType& eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::operator =(
         MinimalSequenceType&& x) noexcept
 {
 
@@ -11799,7 +11946,7 @@ eprosima::fastdds::dds::xtypes::MinimalSequenceType& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalSequenceType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::operator ==(
         const MinimalSequenceType& x) const
 {
     return (m_collection_flag == x.m_collection_flag &&
@@ -11807,7 +11954,7 @@ bool eprosima::fastdds::dds::xtypes::MinimalSequenceType::operator ==(
            m_element == x.m_element);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalSequenceType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::operator !=(
         const MinimalSequenceType& x) const
 {
     return !(*this == x);
@@ -11817,8 +11964,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalSequenceType::operator !=(
  * @brief This function copies the value in member collection_flag
  * @param _collection_flag New value to be copied in member collection_flag
  */
-void eprosima::fastdds::dds::xtypes::MinimalSequenceType::collection_flag(
-        const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& _collection_flag)
+void eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::collection_flag(
+        const eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& _collection_flag)
 {
     m_collection_flag = _collection_flag;
 }
@@ -11827,8 +11974,8 @@ void eprosima::fastdds::dds::xtypes::MinimalSequenceType::collection_flag(
  * @brief This function moves the value in member collection_flag
  * @param _collection_flag New value to be moved in member collection_flag
  */
-void eprosima::fastdds::dds::xtypes::MinimalSequenceType::collection_flag(
-        eprosima::fastdds::dds::xtypes::CollectionTypeFlag&& _collection_flag)
+void eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::collection_flag(
+        eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag&& _collection_flag)
 {
     m_collection_flag = std::move(_collection_flag);
 }
@@ -11837,7 +11984,7 @@ void eprosima::fastdds::dds::xtypes::MinimalSequenceType::collection_flag(
  * @brief This function returns a constant reference to member collection_flag
  * @return Constant reference to member collection_flag
  */
-const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtypes::MinimalSequenceType::collection_flag() const
+const eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::collection_flag() const
 {
     return m_collection_flag;
 }
@@ -11846,7 +11993,7 @@ const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds
  * @brief This function returns a reference to member collection_flag
  * @return Reference to member collection_flag
  */
-eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtypes::MinimalSequenceType::collection_flag()
+eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::collection_flag()
 {
     return m_collection_flag;
 }
@@ -11856,8 +12003,8 @@ eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalSequenceType::header(
-        const eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::header(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader& _header)
 {
     m_header = _header;
 }
@@ -11866,8 +12013,8 @@ void eprosima::fastdds::dds::xtypes::MinimalSequenceType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalSequenceType::header(
-        eprosima::fastdds::dds::xtypes::MinimalCollectionHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::header(
+        eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -11876,7 +12023,7 @@ void eprosima::fastdds::dds::xtypes::MinimalSequenceType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds::dds::xtypes::MinimalSequenceType::header() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader& eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::header() const
 {
     return m_header;
 }
@@ -11885,7 +12032,7 @@ const eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds::dds::xtypes::MinimalSequenceType::header()
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader& eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::header()
 {
     return m_header;
 }
@@ -11895,8 +12042,8 @@ eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds::dds:
  * @brief This function copies the value in member element
  * @param _element New value to be copied in member element
  */
-void eprosima::fastdds::dds::xtypes::MinimalSequenceType::element(
-        const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& _element)
+void eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::element(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& _element)
 {
     m_element = _element;
 }
@@ -11905,8 +12052,8 @@ void eprosima::fastdds::dds::xtypes::MinimalSequenceType::element(
  * @brief This function moves the value in member element
  * @param _element New value to be moved in member element
  */
-void eprosima::fastdds::dds::xtypes::MinimalSequenceType::element(
-        eprosima::fastdds::dds::xtypes::MinimalCollectionElement&& _element)
+void eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::element(
+        eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement&& _element)
 {
     m_element = std::move(_element);
 }
@@ -11915,7 +12062,7 @@ void eprosima::fastdds::dds::xtypes::MinimalSequenceType::element(
  * @brief This function returns a constant reference to member element
  * @return Constant reference to member element
  */
-const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds::xtypes::MinimalSequenceType::element() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::element() const
 {
     return m_element;
 }
@@ -11924,34 +12071,36 @@ const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdd
  * @brief This function returns a reference to member element
  * @return Reference to member element
  */
-eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds::xtypes::MinimalSequenceType::element()
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::element()
 {
     return m_element;
 }
 
 
-eprosima::fastdds::dds::xtypes::CommonArrayHeader::CommonArrayHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::CommonArrayHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonArrayHeader::~CommonArrayHeader()
+eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::~CommonArrayHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CommonArrayHeader::CommonArrayHeader(
+eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::CommonArrayHeader(
         const CommonArrayHeader& x)
 {
     m_bound_seq = x.m_bound_seq;
 }
 
-eprosima::fastdds::dds::xtypes::CommonArrayHeader::CommonArrayHeader(
+eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::CommonArrayHeader(
         CommonArrayHeader&& x) noexcept
 {
     m_bound_seq = std::move(x.m_bound_seq);
 }
 
-eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds::xtypes::CommonArrayHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader& eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::operator =(
         const CommonArrayHeader& x)
 {
 
@@ -11959,7 +12108,7 @@ eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds::xtypes::CommonArrayHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader& eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::operator =(
         CommonArrayHeader&& x) noexcept
 {
 
@@ -11967,13 +12116,13 @@ eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonArrayHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::operator ==(
         const CommonArrayHeader& x) const
 {
     return (m_bound_seq == x.m_bound_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonArrayHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::operator !=(
         const CommonArrayHeader& x) const
 {
     return !(*this == x);
@@ -11983,8 +12132,8 @@ bool eprosima::fastdds::dds::xtypes::CommonArrayHeader::operator !=(
  * @brief This function copies the value in member bound_seq
  * @param _bound_seq New value to be copied in member bound_seq
  */
-void eprosima::fastdds::dds::xtypes::CommonArrayHeader::bound_seq(
-        const eprosima::fastdds::dds::xtypes::LBoundSeq& _bound_seq)
+void eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::bound_seq(
+        const eprosima::fastdds::dds::xtypes1_3::LBoundSeq& _bound_seq)
 {
     m_bound_seq = _bound_seq;
 }
@@ -11993,8 +12142,8 @@ void eprosima::fastdds::dds::xtypes::CommonArrayHeader::bound_seq(
  * @brief This function moves the value in member bound_seq
  * @param _bound_seq New value to be moved in member bound_seq
  */
-void eprosima::fastdds::dds::xtypes::CommonArrayHeader::bound_seq(
-        eprosima::fastdds::dds::xtypes::LBoundSeq&& _bound_seq)
+void eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::bound_seq(
+        eprosima::fastdds::dds::xtypes1_3::LBoundSeq&& _bound_seq)
 {
     m_bound_seq = std::move(_bound_seq);
 }
@@ -12003,7 +12152,7 @@ void eprosima::fastdds::dds::xtypes::CommonArrayHeader::bound_seq(
  * @brief This function returns a constant reference to member bound_seq
  * @return Constant reference to member bound_seq
  */
-const eprosima::fastdds::dds::xtypes::LBoundSeq& eprosima::fastdds::dds::xtypes::CommonArrayHeader::bound_seq() const
+const eprosima::fastdds::dds::xtypes1_3::LBoundSeq& eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::bound_seq() const
 {
     return m_bound_seq;
 }
@@ -12012,36 +12161,38 @@ const eprosima::fastdds::dds::xtypes::LBoundSeq& eprosima::fastdds::dds::xtypes:
  * @brief This function returns a reference to member bound_seq
  * @return Reference to member bound_seq
  */
-eprosima::fastdds::dds::xtypes::LBoundSeq& eprosima::fastdds::dds::xtypes::CommonArrayHeader::bound_seq()
+eprosima::fastdds::dds::xtypes1_3::LBoundSeq& eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::bound_seq()
 {
     return m_bound_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteArrayHeader::CompleteArrayHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::CompleteArrayHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteArrayHeader::~CompleteArrayHeader()
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::~CompleteArrayHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteArrayHeader::CompleteArrayHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::CompleteArrayHeader(
         const CompleteArrayHeader& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteArrayHeader::CompleteArrayHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::CompleteArrayHeader(
         CompleteArrayHeader&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteArrayHeader& eprosima::fastdds::dds::xtypes::CompleteArrayHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader& eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::operator =(
         const CompleteArrayHeader& x)
 {
 
@@ -12050,7 +12201,7 @@ eprosima::fastdds::dds::xtypes::CompleteArrayHeader& eprosima::fastdds::dds::xty
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteArrayHeader& eprosima::fastdds::dds::xtypes::CompleteArrayHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader& eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::operator =(
         CompleteArrayHeader&& x) noexcept
 {
 
@@ -12059,14 +12210,14 @@ eprosima::fastdds::dds::xtypes::CompleteArrayHeader& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteArrayHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::operator ==(
         const CompleteArrayHeader& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteArrayHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::operator !=(
         const CompleteArrayHeader& x) const
 {
     return !(*this == x);
@@ -12076,8 +12227,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteArrayHeader::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteArrayHeader::common(
-        const eprosima::fastdds::dds::xtypes::CommonArrayHeader& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader& _common)
 {
     m_common = _common;
 }
@@ -12086,8 +12237,8 @@ void eprosima::fastdds::dds::xtypes::CompleteArrayHeader::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteArrayHeader::common(
-        eprosima::fastdds::dds::xtypes::CommonArrayHeader&& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader&& _common)
 {
     m_common = std::move(_common);
 }
@@ -12096,7 +12247,7 @@ void eprosima::fastdds::dds::xtypes::CompleteArrayHeader::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds::xtypes::CompleteArrayHeader::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader& eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::common() const
 {
     return m_common;
 }
@@ -12105,7 +12256,7 @@ const eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds:
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds::xtypes::CompleteArrayHeader::common()
+eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader& eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::common()
 {
     return m_common;
 }
@@ -12115,8 +12266,8 @@ eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds::xtype
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteArrayHeader::detail(
-        const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::detail(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -12125,8 +12276,8 @@ void eprosima::fastdds::dds::xtypes::CompleteArrayHeader::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteArrayHeader::detail(
-        eprosima::fastdds::dds::xtypes::CompleteTypeDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::detail(
+        eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -12135,7 +12286,7 @@ void eprosima::fastdds::dds::xtypes::CompleteArrayHeader::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteArrayHeader::detail() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::detail() const
 {
     return m_detail;
 }
@@ -12144,34 +12295,36 @@ const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteArrayHeader::detail()
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::detail()
 {
     return m_detail;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalArrayHeader::MinimalArrayHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::MinimalArrayHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalArrayHeader::~MinimalArrayHeader()
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::~MinimalArrayHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalArrayHeader::MinimalArrayHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::MinimalArrayHeader(
         const MinimalArrayHeader& x)
 {
     m_common = x.m_common;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalArrayHeader::MinimalArrayHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::MinimalArrayHeader(
         MinimalArrayHeader&& x) noexcept
 {
     m_common = std::move(x.m_common);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalArrayHeader& eprosima::fastdds::dds::xtypes::MinimalArrayHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader& eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::operator =(
         const MinimalArrayHeader& x)
 {
 
@@ -12179,7 +12332,7 @@ eprosima::fastdds::dds::xtypes::MinimalArrayHeader& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalArrayHeader& eprosima::fastdds::dds::xtypes::MinimalArrayHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader& eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::operator =(
         MinimalArrayHeader&& x) noexcept
 {
 
@@ -12187,13 +12340,13 @@ eprosima::fastdds::dds::xtypes::MinimalArrayHeader& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalArrayHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::operator ==(
         const MinimalArrayHeader& x) const
 {
     return (m_common == x.m_common);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalArrayHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::operator !=(
         const MinimalArrayHeader& x) const
 {
     return !(*this == x);
@@ -12203,8 +12356,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalArrayHeader::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalArrayHeader::common(
-        const eprosima::fastdds::dds::xtypes::CommonArrayHeader& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader& _common)
 {
     m_common = _common;
 }
@@ -12213,8 +12366,8 @@ void eprosima::fastdds::dds::xtypes::MinimalArrayHeader::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalArrayHeader::common(
-        eprosima::fastdds::dds::xtypes::CommonArrayHeader&& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader&& _common)
 {
     m_common = std::move(_common);
 }
@@ -12223,7 +12376,7 @@ void eprosima::fastdds::dds::xtypes::MinimalArrayHeader::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds::xtypes::MinimalArrayHeader::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader& eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::common() const
 {
     return m_common;
 }
@@ -12232,22 +12385,24 @@ const eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds:
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonArrayHeader& eprosima::fastdds::dds::xtypes::MinimalArrayHeader::common()
+eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader& eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::common()
 {
     return m_common;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteArrayType::CompleteArrayType()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::CompleteArrayType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteArrayType::~CompleteArrayType()
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::~CompleteArrayType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteArrayType::CompleteArrayType(
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::CompleteArrayType(
         const CompleteArrayType& x)
 {
     m_collection_flag = x.m_collection_flag;
@@ -12255,7 +12410,7 @@ eprosima::fastdds::dds::xtypes::CompleteArrayType::CompleteArrayType(
     m_element = x.m_element;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteArrayType::CompleteArrayType(
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::CompleteArrayType(
         CompleteArrayType&& x) noexcept
 {
     m_collection_flag = std::move(x.m_collection_flag);
@@ -12263,7 +12418,7 @@ eprosima::fastdds::dds::xtypes::CompleteArrayType::CompleteArrayType(
     m_element = std::move(x.m_element);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteArrayType& eprosima::fastdds::dds::xtypes::CompleteArrayType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayType& eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::operator =(
         const CompleteArrayType& x)
 {
 
@@ -12273,7 +12428,7 @@ eprosima::fastdds::dds::xtypes::CompleteArrayType& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteArrayType& eprosima::fastdds::dds::xtypes::CompleteArrayType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayType& eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::operator =(
         CompleteArrayType&& x) noexcept
 {
 
@@ -12283,7 +12438,7 @@ eprosima::fastdds::dds::xtypes::CompleteArrayType& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteArrayType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::operator ==(
         const CompleteArrayType& x) const
 {
     return (m_collection_flag == x.m_collection_flag &&
@@ -12291,7 +12446,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteArrayType::operator ==(
            m_element == x.m_element);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteArrayType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::operator !=(
         const CompleteArrayType& x) const
 {
     return !(*this == x);
@@ -12301,8 +12456,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteArrayType::operator !=(
  * @brief This function copies the value in member collection_flag
  * @param _collection_flag New value to be copied in member collection_flag
  */
-void eprosima::fastdds::dds::xtypes::CompleteArrayType::collection_flag(
-        const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& _collection_flag)
+void eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::collection_flag(
+        const eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& _collection_flag)
 {
     m_collection_flag = _collection_flag;
 }
@@ -12311,8 +12466,8 @@ void eprosima::fastdds::dds::xtypes::CompleteArrayType::collection_flag(
  * @brief This function moves the value in member collection_flag
  * @param _collection_flag New value to be moved in member collection_flag
  */
-void eprosima::fastdds::dds::xtypes::CompleteArrayType::collection_flag(
-        eprosima::fastdds::dds::xtypes::CollectionTypeFlag&& _collection_flag)
+void eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::collection_flag(
+        eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag&& _collection_flag)
 {
     m_collection_flag = std::move(_collection_flag);
 }
@@ -12321,7 +12476,7 @@ void eprosima::fastdds::dds::xtypes::CompleteArrayType::collection_flag(
  * @brief This function returns a constant reference to member collection_flag
  * @return Constant reference to member collection_flag
  */
-const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtypes::CompleteArrayType::collection_flag() const
+const eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::collection_flag() const
 {
     return m_collection_flag;
 }
@@ -12330,7 +12485,7 @@ const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds
  * @brief This function returns a reference to member collection_flag
  * @return Reference to member collection_flag
  */
-eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtypes::CompleteArrayType::collection_flag()
+eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::collection_flag()
 {
     return m_collection_flag;
 }
@@ -12340,8 +12495,8 @@ eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteArrayType::header(
-        const eprosima::fastdds::dds::xtypes::CompleteArrayHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::header(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader& _header)
 {
     m_header = _header;
 }
@@ -12350,8 +12505,8 @@ void eprosima::fastdds::dds::xtypes::CompleteArrayType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteArrayType::header(
-        eprosima::fastdds::dds::xtypes::CompleteArrayHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::header(
+        eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -12360,7 +12515,7 @@ void eprosima::fastdds::dds::xtypes::CompleteArrayType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::CompleteArrayHeader& eprosima::fastdds::dds::xtypes::CompleteArrayType::header() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader& eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::header() const
 {
     return m_header;
 }
@@ -12369,7 +12524,7 @@ const eprosima::fastdds::dds::xtypes::CompleteArrayHeader& eprosima::fastdds::dd
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::CompleteArrayHeader& eprosima::fastdds::dds::xtypes::CompleteArrayType::header()
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader& eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::header()
 {
     return m_header;
 }
@@ -12379,8 +12534,8 @@ eprosima::fastdds::dds::xtypes::CompleteArrayHeader& eprosima::fastdds::dds::xty
  * @brief This function copies the value in member element
  * @param _element New value to be copied in member element
  */
-void eprosima::fastdds::dds::xtypes::CompleteArrayType::element(
-        const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& _element)
+void eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::element(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& _element)
 {
     m_element = _element;
 }
@@ -12389,8 +12544,8 @@ void eprosima::fastdds::dds::xtypes::CompleteArrayType::element(
  * @brief This function moves the value in member element
  * @param _element New value to be moved in member element
  */
-void eprosima::fastdds::dds::xtypes::CompleteArrayType::element(
-        eprosima::fastdds::dds::xtypes::CompleteCollectionElement&& _element)
+void eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::element(
+        eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement&& _element)
 {
     m_element = std::move(_element);
 }
@@ -12399,7 +12554,7 @@ void eprosima::fastdds::dds::xtypes::CompleteArrayType::element(
  * @brief This function returns a constant reference to member element
  * @return Constant reference to member element
  */
-const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dds::xtypes::CompleteArrayType::element() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::element() const
 {
     return m_element;
 }
@@ -12408,22 +12563,24 @@ const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastd
  * @brief This function returns a reference to member element
  * @return Reference to member element
  */
-eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dds::xtypes::CompleteArrayType::element()
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::element()
 {
     return m_element;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalArrayType::MinimalArrayType()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::MinimalArrayType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalArrayType::~MinimalArrayType()
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::~MinimalArrayType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalArrayType::MinimalArrayType(
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::MinimalArrayType(
         const MinimalArrayType& x)
 {
     m_collection_flag = x.m_collection_flag;
@@ -12431,7 +12588,7 @@ eprosima::fastdds::dds::xtypes::MinimalArrayType::MinimalArrayType(
     m_element = x.m_element;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalArrayType::MinimalArrayType(
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::MinimalArrayType(
         MinimalArrayType&& x) noexcept
 {
     m_collection_flag = std::move(x.m_collection_flag);
@@ -12439,7 +12596,7 @@ eprosima::fastdds::dds::xtypes::MinimalArrayType::MinimalArrayType(
     m_element = std::move(x.m_element);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalArrayType& eprosima::fastdds::dds::xtypes::MinimalArrayType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayType& eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::operator =(
         const MinimalArrayType& x)
 {
 
@@ -12449,7 +12606,7 @@ eprosima::fastdds::dds::xtypes::MinimalArrayType& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalArrayType& eprosima::fastdds::dds::xtypes::MinimalArrayType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayType& eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::operator =(
         MinimalArrayType&& x) noexcept
 {
 
@@ -12459,7 +12616,7 @@ eprosima::fastdds::dds::xtypes::MinimalArrayType& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalArrayType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::operator ==(
         const MinimalArrayType& x) const
 {
     return (m_collection_flag == x.m_collection_flag &&
@@ -12467,7 +12624,7 @@ bool eprosima::fastdds::dds::xtypes::MinimalArrayType::operator ==(
            m_element == x.m_element);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalArrayType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::operator !=(
         const MinimalArrayType& x) const
 {
     return !(*this == x);
@@ -12477,8 +12634,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalArrayType::operator !=(
  * @brief This function copies the value in member collection_flag
  * @param _collection_flag New value to be copied in member collection_flag
  */
-void eprosima::fastdds::dds::xtypes::MinimalArrayType::collection_flag(
-        const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& _collection_flag)
+void eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::collection_flag(
+        const eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& _collection_flag)
 {
     m_collection_flag = _collection_flag;
 }
@@ -12487,8 +12644,8 @@ void eprosima::fastdds::dds::xtypes::MinimalArrayType::collection_flag(
  * @brief This function moves the value in member collection_flag
  * @param _collection_flag New value to be moved in member collection_flag
  */
-void eprosima::fastdds::dds::xtypes::MinimalArrayType::collection_flag(
-        eprosima::fastdds::dds::xtypes::CollectionTypeFlag&& _collection_flag)
+void eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::collection_flag(
+        eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag&& _collection_flag)
 {
     m_collection_flag = std::move(_collection_flag);
 }
@@ -12497,7 +12654,7 @@ void eprosima::fastdds::dds::xtypes::MinimalArrayType::collection_flag(
  * @brief This function returns a constant reference to member collection_flag
  * @return Constant reference to member collection_flag
  */
-const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtypes::MinimalArrayType::collection_flag() const
+const eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::collection_flag() const
 {
     return m_collection_flag;
 }
@@ -12506,7 +12663,7 @@ const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds
  * @brief This function returns a reference to member collection_flag
  * @return Reference to member collection_flag
  */
-eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtypes::MinimalArrayType::collection_flag()
+eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::collection_flag()
 {
     return m_collection_flag;
 }
@@ -12516,8 +12673,8 @@ eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalArrayType::header(
-        const eprosima::fastdds::dds::xtypes::MinimalArrayHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::header(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader& _header)
 {
     m_header = _header;
 }
@@ -12526,8 +12683,8 @@ void eprosima::fastdds::dds::xtypes::MinimalArrayType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalArrayType::header(
-        eprosima::fastdds::dds::xtypes::MinimalArrayHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::header(
+        eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -12536,7 +12693,7 @@ void eprosima::fastdds::dds::xtypes::MinimalArrayType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::MinimalArrayHeader& eprosima::fastdds::dds::xtypes::MinimalArrayType::header() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader& eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::header() const
 {
     return m_header;
 }
@@ -12545,7 +12702,7 @@ const eprosima::fastdds::dds::xtypes::MinimalArrayHeader& eprosima::fastdds::dds
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::MinimalArrayHeader& eprosima::fastdds::dds::xtypes::MinimalArrayType::header()
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader& eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::header()
 {
     return m_header;
 }
@@ -12555,8 +12712,8 @@ eprosima::fastdds::dds::xtypes::MinimalArrayHeader& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member element
  * @param _element New value to be copied in member element
  */
-void eprosima::fastdds::dds::xtypes::MinimalArrayType::element(
-        const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& _element)
+void eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::element(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& _element)
 {
     m_element = _element;
 }
@@ -12565,8 +12722,8 @@ void eprosima::fastdds::dds::xtypes::MinimalArrayType::element(
  * @brief This function moves the value in member element
  * @param _element New value to be moved in member element
  */
-void eprosima::fastdds::dds::xtypes::MinimalArrayType::element(
-        eprosima::fastdds::dds::xtypes::MinimalCollectionElement&& _element)
+void eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::element(
+        eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement&& _element)
 {
     m_element = std::move(_element);
 }
@@ -12575,7 +12732,7 @@ void eprosima::fastdds::dds::xtypes::MinimalArrayType::element(
  * @brief This function returns a constant reference to member element
  * @return Constant reference to member element
  */
-const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds::xtypes::MinimalArrayType::element() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::element() const
 {
     return m_element;
 }
@@ -12584,22 +12741,24 @@ const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdd
  * @brief This function returns a reference to member element
  * @return Reference to member element
  */
-eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds::xtypes::MinimalArrayType::element()
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::element()
 {
     return m_element;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteMapType::CompleteMapType()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteMapType::CompleteMapType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteMapType::~CompleteMapType()
+eprosima::fastdds::dds::xtypes1_3::CompleteMapType::~CompleteMapType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteMapType::CompleteMapType(
+eprosima::fastdds::dds::xtypes1_3::CompleteMapType::CompleteMapType(
         const CompleteMapType& x)
 {
     m_collection_flag = x.m_collection_flag;
@@ -12608,7 +12767,7 @@ eprosima::fastdds::dds::xtypes::CompleteMapType::CompleteMapType(
     m_element = x.m_element;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteMapType::CompleteMapType(
+eprosima::fastdds::dds::xtypes1_3::CompleteMapType::CompleteMapType(
         CompleteMapType&& x) noexcept
 {
     m_collection_flag = std::move(x.m_collection_flag);
@@ -12617,7 +12776,7 @@ eprosima::fastdds::dds::xtypes::CompleteMapType::CompleteMapType(
     m_element = std::move(x.m_element);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteMapType& eprosima::fastdds::dds::xtypes::CompleteMapType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteMapType& eprosima::fastdds::dds::xtypes1_3::CompleteMapType::operator =(
         const CompleteMapType& x)
 {
 
@@ -12628,7 +12787,7 @@ eprosima::fastdds::dds::xtypes::CompleteMapType& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteMapType& eprosima::fastdds::dds::xtypes::CompleteMapType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteMapType& eprosima::fastdds::dds::xtypes1_3::CompleteMapType::operator =(
         CompleteMapType&& x) noexcept
 {
 
@@ -12639,7 +12798,7 @@ eprosima::fastdds::dds::xtypes::CompleteMapType& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteMapType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteMapType::operator ==(
         const CompleteMapType& x) const
 {
     return (m_collection_flag == x.m_collection_flag &&
@@ -12648,7 +12807,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteMapType::operator ==(
            m_element == x.m_element);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteMapType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteMapType::operator !=(
         const CompleteMapType& x) const
 {
     return !(*this == x);
@@ -12658,8 +12817,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteMapType::operator !=(
  * @brief This function copies the value in member collection_flag
  * @param _collection_flag New value to be copied in member collection_flag
  */
-void eprosima::fastdds::dds::xtypes::CompleteMapType::collection_flag(
-        const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& _collection_flag)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMapType::collection_flag(
+        const eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& _collection_flag)
 {
     m_collection_flag = _collection_flag;
 }
@@ -12668,8 +12827,8 @@ void eprosima::fastdds::dds::xtypes::CompleteMapType::collection_flag(
  * @brief This function moves the value in member collection_flag
  * @param _collection_flag New value to be moved in member collection_flag
  */
-void eprosima::fastdds::dds::xtypes::CompleteMapType::collection_flag(
-        eprosima::fastdds::dds::xtypes::CollectionTypeFlag&& _collection_flag)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMapType::collection_flag(
+        eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag&& _collection_flag)
 {
     m_collection_flag = std::move(_collection_flag);
 }
@@ -12678,7 +12837,7 @@ void eprosima::fastdds::dds::xtypes::CompleteMapType::collection_flag(
  * @brief This function returns a constant reference to member collection_flag
  * @return Constant reference to member collection_flag
  */
-const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtypes::CompleteMapType::collection_flag() const
+const eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteMapType::collection_flag() const
 {
     return m_collection_flag;
 }
@@ -12687,7 +12846,7 @@ const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds
  * @brief This function returns a reference to member collection_flag
  * @return Reference to member collection_flag
  */
-eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtypes::CompleteMapType::collection_flag()
+eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteMapType::collection_flag()
 {
     return m_collection_flag;
 }
@@ -12697,8 +12856,8 @@ eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteMapType::header(
-        const eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMapType::header(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader& _header)
 {
     m_header = _header;
 }
@@ -12707,8 +12866,8 @@ void eprosima::fastdds::dds::xtypes::CompleteMapType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteMapType::header(
-        eprosima::fastdds::dds::xtypes::CompleteCollectionHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMapType::header(
+        eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -12717,7 +12876,7 @@ void eprosima::fastdds::dds::xtypes::CompleteMapType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdds::dds::xtypes::CompleteMapType::header() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader& eprosima::fastdds::dds::xtypes1_3::CompleteMapType::header() const
 {
     return m_header;
 }
@@ -12726,7 +12885,7 @@ const eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdd
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdds::dds::xtypes::CompleteMapType::header()
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader& eprosima::fastdds::dds::xtypes1_3::CompleteMapType::header()
 {
     return m_header;
 }
@@ -12736,8 +12895,8 @@ eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& eprosima::fastdds::dds
  * @brief This function copies the value in member key
  * @param _key New value to be copied in member key
  */
-void eprosima::fastdds::dds::xtypes::CompleteMapType::key(
-        const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& _key)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMapType::key(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& _key)
 {
     m_key = _key;
 }
@@ -12746,8 +12905,8 @@ void eprosima::fastdds::dds::xtypes::CompleteMapType::key(
  * @brief This function moves the value in member key
  * @param _key New value to be moved in member key
  */
-void eprosima::fastdds::dds::xtypes::CompleteMapType::key(
-        eprosima::fastdds::dds::xtypes::CompleteCollectionElement&& _key)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMapType::key(
+        eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement&& _key)
 {
     m_key = std::move(_key);
 }
@@ -12756,7 +12915,7 @@ void eprosima::fastdds::dds::xtypes::CompleteMapType::key(
  * @brief This function returns a constant reference to member key
  * @return Constant reference to member key
  */
-const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dds::xtypes::CompleteMapType::key() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds::dds::xtypes1_3::CompleteMapType::key() const
 {
     return m_key;
 }
@@ -12765,7 +12924,7 @@ const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastd
  * @brief This function returns a reference to member key
  * @return Reference to member key
  */
-eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dds::xtypes::CompleteMapType::key()
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds::dds::xtypes1_3::CompleteMapType::key()
 {
     return m_key;
 }
@@ -12775,8 +12934,8 @@ eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dd
  * @brief This function copies the value in member element
  * @param _element New value to be copied in member element
  */
-void eprosima::fastdds::dds::xtypes::CompleteMapType::element(
-        const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& _element)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMapType::element(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& _element)
 {
     m_element = _element;
 }
@@ -12785,8 +12944,8 @@ void eprosima::fastdds::dds::xtypes::CompleteMapType::element(
  * @brief This function moves the value in member element
  * @param _element New value to be moved in member element
  */
-void eprosima::fastdds::dds::xtypes::CompleteMapType::element(
-        eprosima::fastdds::dds::xtypes::CompleteCollectionElement&& _element)
+void eprosima::fastdds::dds::xtypes1_3::CompleteMapType::element(
+        eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement&& _element)
 {
     m_element = std::move(_element);
 }
@@ -12795,7 +12954,7 @@ void eprosima::fastdds::dds::xtypes::CompleteMapType::element(
  * @brief This function returns a constant reference to member element
  * @return Constant reference to member element
  */
-const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dds::xtypes::CompleteMapType::element() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds::dds::xtypes1_3::CompleteMapType::element() const
 {
     return m_element;
 }
@@ -12804,22 +12963,24 @@ const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastd
  * @brief This function returns a reference to member element
  * @return Reference to member element
  */
-eprosima::fastdds::dds::xtypes::CompleteCollectionElement& eprosima::fastdds::dds::xtypes::CompleteMapType::element()
+eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds::dds::xtypes1_3::CompleteMapType::element()
 {
     return m_element;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalMapType::MinimalMapType()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalMapType::MinimalMapType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalMapType::~MinimalMapType()
+eprosima::fastdds::dds::xtypes1_3::MinimalMapType::~MinimalMapType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalMapType::MinimalMapType(
+eprosima::fastdds::dds::xtypes1_3::MinimalMapType::MinimalMapType(
         const MinimalMapType& x)
 {
     m_collection_flag = x.m_collection_flag;
@@ -12828,7 +12989,7 @@ eprosima::fastdds::dds::xtypes::MinimalMapType::MinimalMapType(
     m_element = x.m_element;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalMapType::MinimalMapType(
+eprosima::fastdds::dds::xtypes1_3::MinimalMapType::MinimalMapType(
         MinimalMapType&& x) noexcept
 {
     m_collection_flag = std::move(x.m_collection_flag);
@@ -12837,7 +12998,7 @@ eprosima::fastdds::dds::xtypes::MinimalMapType::MinimalMapType(
     m_element = std::move(x.m_element);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalMapType& eprosima::fastdds::dds::xtypes::MinimalMapType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalMapType& eprosima::fastdds::dds::xtypes1_3::MinimalMapType::operator =(
         const MinimalMapType& x)
 {
 
@@ -12848,7 +13009,7 @@ eprosima::fastdds::dds::xtypes::MinimalMapType& eprosima::fastdds::dds::xtypes::
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalMapType& eprosima::fastdds::dds::xtypes::MinimalMapType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalMapType& eprosima::fastdds::dds::xtypes1_3::MinimalMapType::operator =(
         MinimalMapType&& x) noexcept
 {
 
@@ -12859,7 +13020,7 @@ eprosima::fastdds::dds::xtypes::MinimalMapType& eprosima::fastdds::dds::xtypes::
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalMapType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalMapType::operator ==(
         const MinimalMapType& x) const
 {
     return (m_collection_flag == x.m_collection_flag &&
@@ -12868,7 +13029,7 @@ bool eprosima::fastdds::dds::xtypes::MinimalMapType::operator ==(
            m_element == x.m_element);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalMapType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalMapType::operator !=(
         const MinimalMapType& x) const
 {
     return !(*this == x);
@@ -12878,8 +13039,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalMapType::operator !=(
  * @brief This function copies the value in member collection_flag
  * @param _collection_flag New value to be copied in member collection_flag
  */
-void eprosima::fastdds::dds::xtypes::MinimalMapType::collection_flag(
-        const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& _collection_flag)
+void eprosima::fastdds::dds::xtypes1_3::MinimalMapType::collection_flag(
+        const eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& _collection_flag)
 {
     m_collection_flag = _collection_flag;
 }
@@ -12888,8 +13049,8 @@ void eprosima::fastdds::dds::xtypes::MinimalMapType::collection_flag(
  * @brief This function moves the value in member collection_flag
  * @param _collection_flag New value to be moved in member collection_flag
  */
-void eprosima::fastdds::dds::xtypes::MinimalMapType::collection_flag(
-        eprosima::fastdds::dds::xtypes::CollectionTypeFlag&& _collection_flag)
+void eprosima::fastdds::dds::xtypes1_3::MinimalMapType::collection_flag(
+        eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag&& _collection_flag)
 {
     m_collection_flag = std::move(_collection_flag);
 }
@@ -12898,7 +13059,7 @@ void eprosima::fastdds::dds::xtypes::MinimalMapType::collection_flag(
  * @brief This function returns a constant reference to member collection_flag
  * @return Constant reference to member collection_flag
  */
-const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtypes::MinimalMapType::collection_flag() const
+const eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalMapType::collection_flag() const
 {
     return m_collection_flag;
 }
@@ -12907,7 +13068,7 @@ const eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds
  * @brief This function returns a reference to member collection_flag
  * @return Reference to member collection_flag
  */
-eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtypes::MinimalMapType::collection_flag()
+eprosima::fastdds::dds::xtypes1_3::CollectionTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalMapType::collection_flag()
 {
     return m_collection_flag;
 }
@@ -12917,8 +13078,8 @@ eprosima::fastdds::dds::xtypes::CollectionTypeFlag& eprosima::fastdds::dds::xtyp
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalMapType::header(
-        const eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalMapType::header(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader& _header)
 {
     m_header = _header;
 }
@@ -12927,8 +13088,8 @@ void eprosima::fastdds::dds::xtypes::MinimalMapType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalMapType::header(
-        eprosima::fastdds::dds::xtypes::MinimalCollectionHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalMapType::header(
+        eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -12937,7 +13098,7 @@ void eprosima::fastdds::dds::xtypes::MinimalMapType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds::dds::xtypes::MinimalMapType::header() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader& eprosima::fastdds::dds::xtypes1_3::MinimalMapType::header() const
 {
     return m_header;
 }
@@ -12946,7 +13107,7 @@ const eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds::dds::xtypes::MinimalMapType::header()
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader& eprosima::fastdds::dds::xtypes1_3::MinimalMapType::header()
 {
     return m_header;
 }
@@ -12956,8 +13117,8 @@ eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& eprosima::fastdds::dds:
  * @brief This function copies the value in member key
  * @param _key New value to be copied in member key
  */
-void eprosima::fastdds::dds::xtypes::MinimalMapType::key(
-        const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& _key)
+void eprosima::fastdds::dds::xtypes1_3::MinimalMapType::key(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& _key)
 {
     m_key = _key;
 }
@@ -12966,8 +13127,8 @@ void eprosima::fastdds::dds::xtypes::MinimalMapType::key(
  * @brief This function moves the value in member key
  * @param _key New value to be moved in member key
  */
-void eprosima::fastdds::dds::xtypes::MinimalMapType::key(
-        eprosima::fastdds::dds::xtypes::MinimalCollectionElement&& _key)
+void eprosima::fastdds::dds::xtypes1_3::MinimalMapType::key(
+        eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement&& _key)
 {
     m_key = std::move(_key);
 }
@@ -12976,7 +13137,7 @@ void eprosima::fastdds::dds::xtypes::MinimalMapType::key(
  * @brief This function returns a constant reference to member key
  * @return Constant reference to member key
  */
-const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds::xtypes::MinimalMapType::key() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::dds::xtypes1_3::MinimalMapType::key() const
 {
     return m_key;
 }
@@ -12985,7 +13146,7 @@ const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdd
  * @brief This function returns a reference to member key
  * @return Reference to member key
  */
-eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds::xtypes::MinimalMapType::key()
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::dds::xtypes1_3::MinimalMapType::key()
 {
     return m_key;
 }
@@ -12995,8 +13156,8 @@ eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds
  * @brief This function copies the value in member element
  * @param _element New value to be copied in member element
  */
-void eprosima::fastdds::dds::xtypes::MinimalMapType::element(
-        const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& _element)
+void eprosima::fastdds::dds::xtypes1_3::MinimalMapType::element(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& _element)
 {
     m_element = _element;
 }
@@ -13005,8 +13166,8 @@ void eprosima::fastdds::dds::xtypes::MinimalMapType::element(
  * @brief This function moves the value in member element
  * @param _element New value to be moved in member element
  */
-void eprosima::fastdds::dds::xtypes::MinimalMapType::element(
-        eprosima::fastdds::dds::xtypes::MinimalCollectionElement&& _element)
+void eprosima::fastdds::dds::xtypes1_3::MinimalMapType::element(
+        eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement&& _element)
 {
     m_element = std::move(_element);
 }
@@ -13015,7 +13176,7 @@ void eprosima::fastdds::dds::xtypes::MinimalMapType::element(
  * @brief This function returns a constant reference to member element
  * @return Constant reference to member element
  */
-const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds::xtypes::MinimalMapType::element() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::dds::xtypes1_3::MinimalMapType::element() const
 {
     return m_element;
 }
@@ -13024,37 +13185,39 @@ const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdd
  * @brief This function returns a reference to member element
  * @return Reference to member element
  */
-eprosima::fastdds::dds::xtypes::MinimalCollectionElement& eprosima::fastdds::dds::xtypes::MinimalMapType::element()
+eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::dds::xtypes1_3::MinimalMapType::element()
 {
     return m_element;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::CommonEnumeratedLiteral()
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::CommonEnumeratedLiteral()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::~CommonEnumeratedLiteral()
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::~CommonEnumeratedLiteral()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::CommonEnumeratedLiteral(
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::CommonEnumeratedLiteral(
         const CommonEnumeratedLiteral& x)
 {
     m_value = x.m_value;
     m_flags = x.m_flags;
 }
 
-eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::CommonEnumeratedLiteral(
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::CommonEnumeratedLiteral(
         CommonEnumeratedLiteral&& x) noexcept
 {
     m_value = x.m_value;
     m_flags = std::move(x.m_flags);
 }
 
-eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral& eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::operator =(
         const CommonEnumeratedLiteral& x)
 {
 
@@ -13063,7 +13226,7 @@ eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds::dds:
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral& eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::operator =(
         CommonEnumeratedLiteral&& x) noexcept
 {
 
@@ -13072,14 +13235,14 @@ eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds::dds:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::operator ==(
         const CommonEnumeratedLiteral& x) const
 {
     return (m_value == x.m_value &&
            m_flags == x.m_flags);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::operator !=(
         const CommonEnumeratedLiteral& x) const
 {
     return !(*this == x);
@@ -13089,7 +13252,7 @@ bool eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::operator !=(
  * @brief This function sets a value in member value
  * @param _value New value for member value
  */
-void eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::value(
+void eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::value(
         int32_t _value)
 {
     m_value = _value;
@@ -13099,7 +13262,7 @@ void eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::value(
  * @brief This function returns the value of member value
  * @return Value of member value
  */
-int32_t eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::value() const
+int32_t eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::value() const
 {
     return m_value;
 }
@@ -13108,7 +13271,7 @@ int32_t eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::value() const
  * @brief This function returns a reference to member value
  * @return Reference to member value
  */
-int32_t& eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::value()
+int32_t& eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::value()
 {
     return m_value;
 }
@@ -13118,8 +13281,8 @@ int32_t& eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::value()
  * @brief This function copies the value in member flags
  * @param _flags New value to be copied in member flags
  */
-void eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::flags(
-        const eprosima::fastdds::dds::xtypes::EnumeratedLiteralFlag& _flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::flags(
+        const eprosima::fastdds::dds::xtypes1_3::EnumeratedLiteralFlag& _flags)
 {
     m_flags = _flags;
 }
@@ -13128,8 +13291,8 @@ void eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::flags(
  * @brief This function moves the value in member flags
  * @param _flags New value to be moved in member flags
  */
-void eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::flags(
-        eprosima::fastdds::dds::xtypes::EnumeratedLiteralFlag&& _flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::flags(
+        eprosima::fastdds::dds::xtypes1_3::EnumeratedLiteralFlag&& _flags)
 {
     m_flags = std::move(_flags);
 }
@@ -13138,7 +13301,7 @@ void eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::flags(
  * @brief This function returns a constant reference to member flags
  * @return Constant reference to member flags
  */
-const eprosima::fastdds::dds::xtypes::EnumeratedLiteralFlag& eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::flags() const
+const eprosima::fastdds::dds::xtypes1_3::EnumeratedLiteralFlag& eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::flags() const
 {
     return m_flags;
 }
@@ -13147,36 +13310,38 @@ const eprosima::fastdds::dds::xtypes::EnumeratedLiteralFlag& eprosima::fastdds::
  * @brief This function returns a reference to member flags
  * @return Reference to member flags
  */
-eprosima::fastdds::dds::xtypes::EnumeratedLiteralFlag& eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral::flags()
+eprosima::fastdds::dds::xtypes1_3::EnumeratedLiteralFlag& eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::flags()
 {
     return m_flags;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::CompleteEnumeratedLiteral()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::CompleteEnumeratedLiteral()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::~CompleteEnumeratedLiteral()
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::~CompleteEnumeratedLiteral()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::CompleteEnumeratedLiteral(
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::CompleteEnumeratedLiteral(
         const CompleteEnumeratedLiteral& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::CompleteEnumeratedLiteral(
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::CompleteEnumeratedLiteral(
         CompleteEnumeratedLiteral&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral& eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::operator =(
         const CompleteEnumeratedLiteral& x)
 {
 
@@ -13185,7 +13350,7 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral& eprosima::fastdds::dd
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral& eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::operator =(
         CompleteEnumeratedLiteral&& x) noexcept
 {
 
@@ -13194,14 +13359,14 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral& eprosima::fastdds::dd
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::operator ==(
         const CompleteEnumeratedLiteral& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::operator !=(
         const CompleteEnumeratedLiteral& x) const
 {
     return !(*this == x);
@@ -13211,8 +13376,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::common(
-        const eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral& _common)
 {
     m_common = _common;
 }
@@ -13221,8 +13386,8 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::common(
-        eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral&& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral&& _common)
 {
     m_common = std::move(_common);
 }
@@ -13231,7 +13396,7 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::common() const
 {
     return m_common;
 }
@@ -13240,7 +13405,7 @@ const eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::common()
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::common()
 {
     return m_common;
 }
@@ -13250,8 +13415,8 @@ eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds::dds:
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::detail(
-        const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::detail(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -13260,8 +13425,8 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::detail(
-        eprosima::fastdds::dds::xtypes::CompleteMemberDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::detail(
+        eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -13270,7 +13435,7 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::detail() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::detail() const
 {
     return m_detail;
 }
@@ -13279,37 +13444,41 @@ const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::d
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral::detail()
+eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::detail()
 {
     return m_detail;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::MinimalEnumeratedLiteral()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::MinimalEnumeratedLiteral()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::~MinimalEnumeratedLiteral()
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::~MinimalEnumeratedLiteral()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::MinimalEnumeratedLiteral(
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::MinimalEnumeratedLiteral(
         const MinimalEnumeratedLiteral& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::MinimalEnumeratedLiteral(
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::MinimalEnumeratedLiteral(
         MinimalEnumeratedLiteral&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral& eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::operator =(
         const MinimalEnumeratedLiteral& x)
 {
 
@@ -13318,7 +13487,7 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral& eprosima::fastdds::dds
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral& eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::operator =(
         MinimalEnumeratedLiteral&& x) noexcept
 {
 
@@ -13327,14 +13496,14 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral& eprosima::fastdds::dds
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::operator ==(
         const MinimalEnumeratedLiteral& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::operator !=(
         const MinimalEnumeratedLiteral& x) const
 {
     return !(*this == x);
@@ -13344,8 +13513,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::common(
-        const eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral& _common)
 {
     m_common = _common;
 }
@@ -13354,8 +13523,8 @@ void eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::common(
-        eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral&& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral&& _common)
 {
     m_common = std::move(_common);
 }
@@ -13364,7 +13533,7 @@ void eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::common() const
 {
     return m_common;
 }
@@ -13373,7 +13542,7 @@ const eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::common()
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::common()
 {
     return m_common;
 }
@@ -13383,8 +13552,8 @@ eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& eprosima::fastdds::dds:
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::detail(
-        const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::detail(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -13393,8 +13562,8 @@ void eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::detail(
-        eprosima::fastdds::dds::xtypes::MinimalMemberDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::detail(
+        eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -13403,7 +13572,7 @@ void eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::detail() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::detail() const
 {
     return m_detail;
 }
@@ -13412,35 +13581,39 @@ const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dd
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral::detail()
+eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral::detail()
 {
     return m_detail;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::CommonEnumeratedHeader()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader::CommonEnumeratedHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::~CommonEnumeratedHeader()
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader::~CommonEnumeratedHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::CommonEnumeratedHeader(
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader::CommonEnumeratedHeader(
         const CommonEnumeratedHeader& x)
 {
     m_bit_bound = x.m_bit_bound;
 }
 
-eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::CommonEnumeratedHeader(
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader::CommonEnumeratedHeader(
         CommonEnumeratedHeader&& x) noexcept
 {
     m_bit_bound = x.m_bit_bound;
 }
 
-eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader::operator =(
         const CommonEnumeratedHeader& x)
 {
 
@@ -13448,7 +13621,7 @@ eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds::dds::
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader::operator =(
         CommonEnumeratedHeader&& x) noexcept
 {
 
@@ -13456,13 +13629,13 @@ eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds::dds::
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader::operator ==(
         const CommonEnumeratedHeader& x) const
 {
     return (m_bit_bound == x.m_bit_bound);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader::operator !=(
         const CommonEnumeratedHeader& x) const
 {
     return !(*this == x);
@@ -13472,8 +13645,8 @@ bool eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::operator !=(
  * @brief This function sets a value in member bit_bound
  * @param _bit_bound New value for member bit_bound
  */
-void eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::bit_bound(
-        eprosima::fastdds::dds::xtypes::BitBound _bit_bound)
+void eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader::bit_bound(
+        eprosima::fastdds::dds::xtypes1_3::BitBound _bit_bound)
 {
     m_bit_bound = _bit_bound;
 }
@@ -13482,7 +13655,7 @@ void eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::bit_bound(
  * @brief This function returns the value of member bit_bound
  * @return Value of member bit_bound
  */
-eprosima::fastdds::dds::xtypes::BitBound eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::bit_bound() const
+eprosima::fastdds::dds::xtypes1_3::BitBound eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader::bit_bound() const
 {
     return m_bit_bound;
 }
@@ -13491,36 +13664,38 @@ eprosima::fastdds::dds::xtypes::BitBound eprosima::fastdds::dds::xtypes::CommonE
  * @brief This function returns a reference to member bit_bound
  * @return Reference to member bit_bound
  */
-eprosima::fastdds::dds::xtypes::BitBound& eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader::bit_bound()
+eprosima::fastdds::dds::xtypes1_3::BitBound& eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader::bit_bound()
 {
     return m_bit_bound;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::CompleteEnumeratedHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::CompleteEnumeratedHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::~CompleteEnumeratedHeader()
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::~CompleteEnumeratedHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::CompleteEnumeratedHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::CompleteEnumeratedHeader(
         const CompleteEnumeratedHeader& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::CompleteEnumeratedHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::CompleteEnumeratedHeader(
         CompleteEnumeratedHeader&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::operator =(
         const CompleteEnumeratedHeader& x)
 {
 
@@ -13529,7 +13704,7 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& eprosima::fastdds::dds
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::operator =(
         CompleteEnumeratedHeader&& x) noexcept
 {
 
@@ -13538,14 +13713,14 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& eprosima::fastdds::dds
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::operator ==(
         const CompleteEnumeratedHeader& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::operator !=(
         const CompleteEnumeratedHeader& x) const
 {
     return !(*this == x);
@@ -13555,8 +13730,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::common(
-        const eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader& _common)
 {
     m_common = _common;
 }
@@ -13565,8 +13740,8 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::common(
-        eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader&& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader&& _common)
 {
     m_common = std::move(_common);
 }
@@ -13575,7 +13750,7 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::common() const
 {
     return m_common;
 }
@@ -13584,7 +13759,7 @@ const eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds:
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::common()
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::common()
 {
     return m_common;
 }
@@ -13594,8 +13769,8 @@ eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds::dds::
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::detail(
-        const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::detail(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -13604,8 +13779,8 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::detail(
-        eprosima::fastdds::dds::xtypes::CompleteTypeDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::detail(
+        eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -13614,7 +13789,7 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::detail() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::detail() const
 {
     return m_detail;
 }
@@ -13623,34 +13798,36 @@ const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader::detail()
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::detail()
 {
     return m_detail;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::MinimalEnumeratedHeader()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::MinimalEnumeratedHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::~MinimalEnumeratedHeader()
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::~MinimalEnumeratedHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::MinimalEnumeratedHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::MinimalEnumeratedHeader(
         const MinimalEnumeratedHeader& x)
 {
     m_common = x.m_common;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::MinimalEnumeratedHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::MinimalEnumeratedHeader(
         MinimalEnumeratedHeader&& x) noexcept
 {
     m_common = std::move(x.m_common);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::operator =(
         const MinimalEnumeratedHeader& x)
 {
 
@@ -13658,7 +13835,7 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& eprosima::fastdds::dds:
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::operator =(
         MinimalEnumeratedHeader&& x) noexcept
 {
 
@@ -13666,13 +13843,13 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& eprosima::fastdds::dds:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::operator ==(
         const MinimalEnumeratedHeader& x) const
 {
     return (m_common == x.m_common);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::operator !=(
         const MinimalEnumeratedHeader& x) const
 {
     return !(*this == x);
@@ -13682,8 +13859,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::common(
-        const eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader& _common)
 {
     m_common = _common;
 }
@@ -13692,8 +13869,8 @@ void eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::common(
-        eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader&& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader&& _common)
 {
     m_common = std::move(_common);
 }
@@ -13702,7 +13879,7 @@ void eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::common() const
 {
     return m_common;
 }
@@ -13711,22 +13888,24 @@ const eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds:
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader::common()
+eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::common()
 {
     return m_common;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::CompleteEnumeratedType()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::CompleteEnumeratedType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::~CompleteEnumeratedType()
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::~CompleteEnumeratedType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::CompleteEnumeratedType(
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::CompleteEnumeratedType(
         const CompleteEnumeratedType& x)
 {
     m_enum_flags = x.m_enum_flags;
@@ -13734,7 +13913,7 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::CompleteEnumeratedType(
     m_literal_seq = x.m_literal_seq;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::CompleteEnumeratedType(
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::CompleteEnumeratedType(
         CompleteEnumeratedType&& x) noexcept
 {
     m_enum_flags = std::move(x.m_enum_flags);
@@ -13742,7 +13921,7 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::CompleteEnumeratedType(
     m_literal_seq = std::move(x.m_literal_seq);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::operator =(
         const CompleteEnumeratedType& x)
 {
 
@@ -13752,7 +13931,7 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& eprosima::fastdds::dds::
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::operator =(
         CompleteEnumeratedType&& x) noexcept
 {
 
@@ -13762,7 +13941,7 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& eprosima::fastdds::dds::
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::operator ==(
         const CompleteEnumeratedType& x) const
 {
     return (m_enum_flags == x.m_enum_flags &&
@@ -13770,7 +13949,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::operator ==(
            m_literal_seq == x.m_literal_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::operator !=(
         const CompleteEnumeratedType& x) const
 {
     return !(*this == x);
@@ -13780,8 +13959,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::operator !=(
  * @brief This function copies the value in member enum_flags
  * @param _enum_flags New value to be copied in member enum_flags
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::enum_flags(
-        const eprosima::fastdds::dds::xtypes::EnumTypeFlag& _enum_flags)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::enum_flags(
+        const eprosima::fastdds::dds::xtypes1_3::EnumTypeFlag& _enum_flags)
 {
     m_enum_flags = _enum_flags;
 }
@@ -13790,8 +13969,8 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::enum_flags(
  * @brief This function moves the value in member enum_flags
  * @param _enum_flags New value to be moved in member enum_flags
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::enum_flags(
-        eprosima::fastdds::dds::xtypes::EnumTypeFlag&& _enum_flags)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::enum_flags(
+        eprosima::fastdds::dds::xtypes1_3::EnumTypeFlag&& _enum_flags)
 {
     m_enum_flags = std::move(_enum_flags);
 }
@@ -13800,7 +13979,7 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::enum_flags(
  * @brief This function returns a constant reference to member enum_flags
  * @return Constant reference to member enum_flags
  */
-const eprosima::fastdds::dds::xtypes::EnumTypeFlag& eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::enum_flags() const
+const eprosima::fastdds::dds::xtypes1_3::EnumTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::enum_flags() const
 {
     return m_enum_flags;
 }
@@ -13809,7 +13988,7 @@ const eprosima::fastdds::dds::xtypes::EnumTypeFlag& eprosima::fastdds::dds::xtyp
  * @brief This function returns a reference to member enum_flags
  * @return Reference to member enum_flags
  */
-eprosima::fastdds::dds::xtypes::EnumTypeFlag& eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::enum_flags()
+eprosima::fastdds::dds::xtypes1_3::EnumTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::enum_flags()
 {
     return m_enum_flags;
 }
@@ -13819,8 +13998,8 @@ eprosima::fastdds::dds::xtypes::EnumTypeFlag& eprosima::fastdds::dds::xtypes::Co
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::header(
-        const eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::header(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader& _header)
 {
     m_header = _header;
 }
@@ -13829,8 +14008,8 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::header(
-        eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::header(
+        eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -13839,7 +14018,7 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::header() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::header() const
 {
     return m_header;
 }
@@ -13848,7 +14027,7 @@ const eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& eprosima::fastdd
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::header()
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::header()
 {
     return m_header;
 }
@@ -13858,8 +14037,8 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& eprosima::fastdds::dds
  * @brief This function copies the value in member literal_seq
  * @param _literal_seq New value to be copied in member literal_seq
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::literal_seq(
-        const eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteralSeq& _literal_seq)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::literal_seq(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteralSeq& _literal_seq)
 {
     m_literal_seq = _literal_seq;
 }
@@ -13868,8 +14047,8 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::literal_seq(
  * @brief This function moves the value in member literal_seq
  * @param _literal_seq New value to be moved in member literal_seq
  */
-void eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::literal_seq(
-        eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteralSeq&& _literal_seq)
+void eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::literal_seq(
+        eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteralSeq&& _literal_seq)
 {
     m_literal_seq = std::move(_literal_seq);
 }
@@ -13878,7 +14057,7 @@ void eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::literal_seq(
  * @brief This function returns a constant reference to member literal_seq
  * @return Constant reference to member literal_seq
  */
-const eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteralSeq& eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::literal_seq() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteralSeq& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::literal_seq() const
 {
     return m_literal_seq;
 }
@@ -13887,22 +14066,24 @@ const eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteralSeq& eprosima::fa
  * @brief This function returns a reference to member literal_seq
  * @return Reference to member literal_seq
  */
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteralSeq& eprosima::fastdds::dds::xtypes::CompleteEnumeratedType::literal_seq()
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteralSeq& eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::literal_seq()
 {
     return m_literal_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::MinimalEnumeratedType()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::MinimalEnumeratedType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::~MinimalEnumeratedType()
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::~MinimalEnumeratedType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::MinimalEnumeratedType(
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::MinimalEnumeratedType(
         const MinimalEnumeratedType& x)
 {
     m_enum_flags = x.m_enum_flags;
@@ -13910,7 +14091,7 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::MinimalEnumeratedType(
     m_literal_seq = x.m_literal_seq;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::MinimalEnumeratedType(
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::MinimalEnumeratedType(
         MinimalEnumeratedType&& x) noexcept
 {
     m_enum_flags = std::move(x.m_enum_flags);
@@ -13918,7 +14099,7 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::MinimalEnumeratedType(
     m_literal_seq = std::move(x.m_literal_seq);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::operator =(
         const MinimalEnumeratedType& x)
 {
 
@@ -13928,7 +14109,7 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& eprosima::fastdds::dds::x
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::operator =(
         MinimalEnumeratedType&& x) noexcept
 {
 
@@ -13938,7 +14119,7 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& eprosima::fastdds::dds::x
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::operator ==(
         const MinimalEnumeratedType& x) const
 {
     return (m_enum_flags == x.m_enum_flags &&
@@ -13946,7 +14127,7 @@ bool eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::operator ==(
            m_literal_seq == x.m_literal_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::operator !=(
         const MinimalEnumeratedType& x) const
 {
     return !(*this == x);
@@ -13956,8 +14137,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::operator !=(
  * @brief This function copies the value in member enum_flags
  * @param _enum_flags New value to be copied in member enum_flags
  */
-void eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::enum_flags(
-        const eprosima::fastdds::dds::xtypes::EnumTypeFlag& _enum_flags)
+void eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::enum_flags(
+        const eprosima::fastdds::dds::xtypes1_3::EnumTypeFlag& _enum_flags)
 {
     m_enum_flags = _enum_flags;
 }
@@ -13966,8 +14147,8 @@ void eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::enum_flags(
  * @brief This function moves the value in member enum_flags
  * @param _enum_flags New value to be moved in member enum_flags
  */
-void eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::enum_flags(
-        eprosima::fastdds::dds::xtypes::EnumTypeFlag&& _enum_flags)
+void eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::enum_flags(
+        eprosima::fastdds::dds::xtypes1_3::EnumTypeFlag&& _enum_flags)
 {
     m_enum_flags = std::move(_enum_flags);
 }
@@ -13976,7 +14157,7 @@ void eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::enum_flags(
  * @brief This function returns a constant reference to member enum_flags
  * @return Constant reference to member enum_flags
  */
-const eprosima::fastdds::dds::xtypes::EnumTypeFlag& eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::enum_flags() const
+const eprosima::fastdds::dds::xtypes1_3::EnumTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::enum_flags() const
 {
     return m_enum_flags;
 }
@@ -13985,7 +14166,7 @@ const eprosima::fastdds::dds::xtypes::EnumTypeFlag& eprosima::fastdds::dds::xtyp
  * @brief This function returns a reference to member enum_flags
  * @return Reference to member enum_flags
  */
-eprosima::fastdds::dds::xtypes::EnumTypeFlag& eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::enum_flags()
+eprosima::fastdds::dds::xtypes1_3::EnumTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::enum_flags()
 {
     return m_enum_flags;
 }
@@ -13995,8 +14176,8 @@ eprosima::fastdds::dds::xtypes::EnumTypeFlag& eprosima::fastdds::dds::xtypes::Mi
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::header(
-        const eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::header(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader& _header)
 {
     m_header = _header;
 }
@@ -14005,8 +14186,8 @@ void eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::header(
-        eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::header(
+        eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -14015,7 +14196,7 @@ void eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::header() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::header() const
 {
     return m_header;
 }
@@ -14024,7 +14205,7 @@ const eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& eprosima::fastdds
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::header()
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::header()
 {
     return m_header;
 }
@@ -14034,8 +14215,8 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& eprosima::fastdds::dds:
  * @brief This function copies the value in member literal_seq
  * @param _literal_seq New value to be copied in member literal_seq
  */
-void eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::literal_seq(
-        const eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteralSeq& _literal_seq)
+void eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::literal_seq(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteralSeq& _literal_seq)
 {
     m_literal_seq = _literal_seq;
 }
@@ -14044,8 +14225,8 @@ void eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::literal_seq(
  * @brief This function moves the value in member literal_seq
  * @param _literal_seq New value to be moved in member literal_seq
  */
-void eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::literal_seq(
-        eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteralSeq&& _literal_seq)
+void eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::literal_seq(
+        eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteralSeq&& _literal_seq)
 {
     m_literal_seq = std::move(_literal_seq);
 }
@@ -14054,7 +14235,7 @@ void eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::literal_seq(
  * @brief This function returns a constant reference to member literal_seq
  * @return Constant reference to member literal_seq
  */
-const eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteralSeq& eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::literal_seq() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteralSeq& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::literal_seq() const
 {
     return m_literal_seq;
 }
@@ -14063,36 +14244,38 @@ const eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteralSeq& eprosima::fas
  * @brief This function returns a reference to member literal_seq
  * @return Reference to member literal_seq
  */
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteralSeq& eprosima::fastdds::dds::xtypes::MinimalEnumeratedType::literal_seq()
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteralSeq& eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::literal_seq()
 {
     return m_literal_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::CommonBitflag::CommonBitflag()
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonBitflag::CommonBitflag()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitflag::~CommonBitflag()
+eprosima::fastdds::dds::xtypes1_3::CommonBitflag::~CommonBitflag()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitflag::CommonBitflag(
+eprosima::fastdds::dds::xtypes1_3::CommonBitflag::CommonBitflag(
         const CommonBitflag& x)
 {
     m_position = x.m_position;
     m_flags = x.m_flags;
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitflag::CommonBitflag(
+eprosima::fastdds::dds::xtypes1_3::CommonBitflag::CommonBitflag(
         CommonBitflag&& x) noexcept
 {
     m_position = x.m_position;
     m_flags = std::move(x.m_flags);
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xtypes::CommonBitflag::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonBitflag& eprosima::fastdds::dds::xtypes1_3::CommonBitflag::operator =(
         const CommonBitflag& x)
 {
 
@@ -14101,7 +14284,7 @@ eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xtypes::C
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xtypes::CommonBitflag::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonBitflag& eprosima::fastdds::dds::xtypes1_3::CommonBitflag::operator =(
         CommonBitflag&& x) noexcept
 {
 
@@ -14110,14 +14293,14 @@ eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xtypes::C
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonBitflag::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonBitflag::operator ==(
         const CommonBitflag& x) const
 {
     return (m_position == x.m_position &&
            m_flags == x.m_flags);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonBitflag::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonBitflag::operator !=(
         const CommonBitflag& x) const
 {
     return !(*this == x);
@@ -14127,7 +14310,7 @@ bool eprosima::fastdds::dds::xtypes::CommonBitflag::operator !=(
  * @brief This function sets a value in member position
  * @param _position New value for member position
  */
-void eprosima::fastdds::dds::xtypes::CommonBitflag::position(
+void eprosima::fastdds::dds::xtypes1_3::CommonBitflag::position(
         uint16_t _position)
 {
     m_position = _position;
@@ -14137,7 +14320,7 @@ void eprosima::fastdds::dds::xtypes::CommonBitflag::position(
  * @brief This function returns the value of member position
  * @return Value of member position
  */
-uint16_t eprosima::fastdds::dds::xtypes::CommonBitflag::position() const
+uint16_t eprosima::fastdds::dds::xtypes1_3::CommonBitflag::position() const
 {
     return m_position;
 }
@@ -14146,7 +14329,7 @@ uint16_t eprosima::fastdds::dds::xtypes::CommonBitflag::position() const
  * @brief This function returns a reference to member position
  * @return Reference to member position
  */
-uint16_t& eprosima::fastdds::dds::xtypes::CommonBitflag::position()
+uint16_t& eprosima::fastdds::dds::xtypes1_3::CommonBitflag::position()
 {
     return m_position;
 }
@@ -14156,8 +14339,8 @@ uint16_t& eprosima::fastdds::dds::xtypes::CommonBitflag::position()
  * @brief This function copies the value in member flags
  * @param _flags New value to be copied in member flags
  */
-void eprosima::fastdds::dds::xtypes::CommonBitflag::flags(
-        const eprosima::fastdds::dds::xtypes::BitflagFlag& _flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonBitflag::flags(
+        const eprosima::fastdds::dds::xtypes1_3::BitflagFlag& _flags)
 {
     m_flags = _flags;
 }
@@ -14166,8 +14349,8 @@ void eprosima::fastdds::dds::xtypes::CommonBitflag::flags(
  * @brief This function moves the value in member flags
  * @param _flags New value to be moved in member flags
  */
-void eprosima::fastdds::dds::xtypes::CommonBitflag::flags(
-        eprosima::fastdds::dds::xtypes::BitflagFlag&& _flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonBitflag::flags(
+        eprosima::fastdds::dds::xtypes1_3::BitflagFlag&& _flags)
 {
     m_flags = std::move(_flags);
 }
@@ -14176,7 +14359,7 @@ void eprosima::fastdds::dds::xtypes::CommonBitflag::flags(
  * @brief This function returns a constant reference to member flags
  * @return Constant reference to member flags
  */
-const eprosima::fastdds::dds::xtypes::BitflagFlag& eprosima::fastdds::dds::xtypes::CommonBitflag::flags() const
+const eprosima::fastdds::dds::xtypes1_3::BitflagFlag& eprosima::fastdds::dds::xtypes1_3::CommonBitflag::flags() const
 {
     return m_flags;
 }
@@ -14185,36 +14368,38 @@ const eprosima::fastdds::dds::xtypes::BitflagFlag& eprosima::fastdds::dds::xtype
  * @brief This function returns a reference to member flags
  * @return Reference to member flags
  */
-eprosima::fastdds::dds::xtypes::BitflagFlag& eprosima::fastdds::dds::xtypes::CommonBitflag::flags()
+eprosima::fastdds::dds::xtypes1_3::BitflagFlag& eprosima::fastdds::dds::xtypes1_3::CommonBitflag::flags()
 {
     return m_flags;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteBitflag::CompleteBitflag()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::CompleteBitflag()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitflag::~CompleteBitflag()
+eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::~CompleteBitflag()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitflag::CompleteBitflag(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::CompleteBitflag(
         const CompleteBitflag& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitflag::CompleteBitflag(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::CompleteBitflag(
         CompleteBitflag&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitflag& eprosima::fastdds::dds::xtypes::CompleteBitflag::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitflag& eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::operator =(
         const CompleteBitflag& x)
 {
 
@@ -14223,7 +14408,7 @@ eprosima::fastdds::dds::xtypes::CompleteBitflag& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitflag& eprosima::fastdds::dds::xtypes::CompleteBitflag::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitflag& eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::operator =(
         CompleteBitflag&& x) noexcept
 {
 
@@ -14232,14 +14417,14 @@ eprosima::fastdds::dds::xtypes::CompleteBitflag& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteBitflag::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::operator ==(
         const CompleteBitflag& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteBitflag::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::operator !=(
         const CompleteBitflag& x) const
 {
     return !(*this == x);
@@ -14249,8 +14434,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteBitflag::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitflag::common(
-        const eprosima::fastdds::dds::xtypes::CommonBitflag& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonBitflag& _common)
 {
     m_common = _common;
 }
@@ -14259,8 +14444,8 @@ void eprosima::fastdds::dds::xtypes::CompleteBitflag::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitflag::common(
-        eprosima::fastdds::dds::xtypes::CommonBitflag&& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonBitflag&& _common)
 {
     m_common = std::move(_common);
 }
@@ -14269,7 +14454,7 @@ void eprosima::fastdds::dds::xtypes::CompleteBitflag::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xtypes::CompleteBitflag::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonBitflag& eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::common() const
 {
     return m_common;
 }
@@ -14278,7 +14463,7 @@ const eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xty
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xtypes::CompleteBitflag::common()
+eprosima::fastdds::dds::xtypes1_3::CommonBitflag& eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::common()
 {
     return m_common;
 }
@@ -14288,8 +14473,8 @@ eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xtypes::C
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitflag::detail(
-        const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::detail(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -14298,8 +14483,8 @@ void eprosima::fastdds::dds::xtypes::CompleteBitflag::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitflag::detail(
-        eprosima::fastdds::dds::xtypes::CompleteMemberDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::detail(
+        eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -14308,7 +14493,7 @@ void eprosima::fastdds::dds::xtypes::CompleteBitflag::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xtypes::CompleteBitflag::detail() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::detail() const
 {
     return m_detail;
 }
@@ -14317,37 +14502,41 @@ const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::d
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xtypes::CompleteBitflag::detail()
+eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::detail()
 {
     return m_detail;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::MinimalBitflag::MinimalBitflag()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::MinimalBitflag()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitflag::~MinimalBitflag()
+eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::~MinimalBitflag()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitflag::MinimalBitflag(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::MinimalBitflag(
         const MinimalBitflag& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitflag::MinimalBitflag(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::MinimalBitflag(
         MinimalBitflag&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitflag& eprosima::fastdds::dds::xtypes::MinimalBitflag::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitflag& eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::operator =(
         const MinimalBitflag& x)
 {
 
@@ -14356,7 +14545,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitflag& eprosima::fastdds::dds::xtypes::
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitflag& eprosima::fastdds::dds::xtypes::MinimalBitflag::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitflag& eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::operator =(
         MinimalBitflag&& x) noexcept
 {
 
@@ -14365,14 +14554,14 @@ eprosima::fastdds::dds::xtypes::MinimalBitflag& eprosima::fastdds::dds::xtypes::
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalBitflag::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::operator ==(
         const MinimalBitflag& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalBitflag::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::operator !=(
         const MinimalBitflag& x) const
 {
     return !(*this == x);
@@ -14382,8 +14571,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalBitflag::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitflag::common(
-        const eprosima::fastdds::dds::xtypes::CommonBitflag& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonBitflag& _common)
 {
     m_common = _common;
 }
@@ -14392,8 +14581,8 @@ void eprosima::fastdds::dds::xtypes::MinimalBitflag::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitflag::common(
-        eprosima::fastdds::dds::xtypes::CommonBitflag&& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonBitflag&& _common)
 {
     m_common = std::move(_common);
 }
@@ -14402,7 +14591,7 @@ void eprosima::fastdds::dds::xtypes::MinimalBitflag::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xtypes::MinimalBitflag::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonBitflag& eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::common() const
 {
     return m_common;
 }
@@ -14411,7 +14600,7 @@ const eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xty
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xtypes::MinimalBitflag::common()
+eprosima::fastdds::dds::xtypes1_3::CommonBitflag& eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::common()
 {
     return m_common;
 }
@@ -14421,8 +14610,8 @@ eprosima::fastdds::dds::xtypes::CommonBitflag& eprosima::fastdds::dds::xtypes::M
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitflag::detail(
-        const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::detail(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -14431,8 +14620,8 @@ void eprosima::fastdds::dds::xtypes::MinimalBitflag::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitflag::detail(
-        eprosima::fastdds::dds::xtypes::MinimalMemberDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::detail(
+        eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -14441,7 +14630,7 @@ void eprosima::fastdds::dds::xtypes::MinimalBitflag::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xtypes::MinimalBitflag::detail() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::detail() const
 {
     return m_detail;
 }
@@ -14450,35 +14639,39 @@ const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dd
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::MinimalMemberDetail& eprosima::fastdds::dds::xtypes::MinimalBitflag::detail()
+eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::xtypes1_3::MinimalBitflag::detail()
 {
     return m_detail;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::CommonBitmaskHeader()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader::CommonBitmaskHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::~CommonBitmaskHeader()
+eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader::~CommonBitmaskHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::CommonBitmaskHeader(
+eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader::CommonBitmaskHeader(
         const CommonBitmaskHeader& x)
 {
     m_bit_bound = x.m_bit_bound;
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::CommonBitmaskHeader(
+eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader::CommonBitmaskHeader(
         CommonBitmaskHeader&& x) noexcept
 {
     m_bit_bound = x.m_bit_bound;
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitmaskHeader& eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader& eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader::operator =(
         const CommonBitmaskHeader& x)
 {
 
@@ -14486,7 +14679,7 @@ eprosima::fastdds::dds::xtypes::CommonBitmaskHeader& eprosima::fastdds::dds::xty
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitmaskHeader& eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader& eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader::operator =(
         CommonBitmaskHeader&& x) noexcept
 {
 
@@ -14494,13 +14687,13 @@ eprosima::fastdds::dds::xtypes::CommonBitmaskHeader& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader::operator ==(
         const CommonBitmaskHeader& x) const
 {
     return (m_bit_bound == x.m_bit_bound);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader::operator !=(
         const CommonBitmaskHeader& x) const
 {
     return !(*this == x);
@@ -14510,8 +14703,8 @@ bool eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::operator !=(
  * @brief This function sets a value in member bit_bound
  * @param _bit_bound New value for member bit_bound
  */
-void eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::bit_bound(
-        eprosima::fastdds::dds::xtypes::BitBound _bit_bound)
+void eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader::bit_bound(
+        eprosima::fastdds::dds::xtypes1_3::BitBound _bit_bound)
 {
     m_bit_bound = _bit_bound;
 }
@@ -14520,7 +14713,7 @@ void eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::bit_bound(
  * @brief This function returns the value of member bit_bound
  * @return Value of member bit_bound
  */
-eprosima::fastdds::dds::xtypes::BitBound eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::bit_bound() const
+eprosima::fastdds::dds::xtypes1_3::BitBound eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader::bit_bound() const
 {
     return m_bit_bound;
 }
@@ -14529,7 +14722,7 @@ eprosima::fastdds::dds::xtypes::BitBound eprosima::fastdds::dds::xtypes::CommonB
  * @brief This function returns a reference to member bit_bound
  * @return Reference to member bit_bound
  */
-eprosima::fastdds::dds::xtypes::BitBound& eprosima::fastdds::dds::xtypes::CommonBitmaskHeader::bit_bound()
+eprosima::fastdds::dds::xtypes1_3::BitBound& eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader::bit_bound()
 {
     return m_bit_bound;
 }
@@ -14537,16 +14730,18 @@ eprosima::fastdds::dds::xtypes::BitBound& eprosima::fastdds::dds::xtypes::Common
 
 
 
-eprosima::fastdds::dds::xtypes::CompleteBitmaskType::CompleteBitmaskType()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::CompleteBitmaskType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitmaskType::~CompleteBitmaskType()
+eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::~CompleteBitmaskType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitmaskType::CompleteBitmaskType(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::CompleteBitmaskType(
         const CompleteBitmaskType& x)
 {
     m_bitmask_flags = x.m_bitmask_flags;
@@ -14554,7 +14749,7 @@ eprosima::fastdds::dds::xtypes::CompleteBitmaskType::CompleteBitmaskType(
     m_flag_seq = x.m_flag_seq;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitmaskType::CompleteBitmaskType(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::CompleteBitmaskType(
         CompleteBitmaskType&& x) noexcept
 {
     m_bitmask_flags = std::move(x.m_bitmask_flags);
@@ -14562,7 +14757,7 @@ eprosima::fastdds::dds::xtypes::CompleteBitmaskType::CompleteBitmaskType(
     m_flag_seq = std::move(x.m_flag_seq);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitmaskType& eprosima::fastdds::dds::xtypes::CompleteBitmaskType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType& eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::operator =(
         const CompleteBitmaskType& x)
 {
 
@@ -14572,7 +14767,7 @@ eprosima::fastdds::dds::xtypes::CompleteBitmaskType& eprosima::fastdds::dds::xty
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitmaskType& eprosima::fastdds::dds::xtypes::CompleteBitmaskType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType& eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::operator =(
         CompleteBitmaskType&& x) noexcept
 {
 
@@ -14582,7 +14777,7 @@ eprosima::fastdds::dds::xtypes::CompleteBitmaskType& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteBitmaskType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::operator ==(
         const CompleteBitmaskType& x) const
 {
     return (m_bitmask_flags == x.m_bitmask_flags &&
@@ -14590,7 +14785,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteBitmaskType::operator ==(
            m_flag_seq == x.m_flag_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteBitmaskType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::operator !=(
         const CompleteBitmaskType& x) const
 {
     return !(*this == x);
@@ -14600,8 +14795,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteBitmaskType::operator !=(
  * @brief This function copies the value in member bitmask_flags
  * @param _bitmask_flags New value to be copied in member bitmask_flags
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitmaskType::bitmask_flags(
-        const eprosima::fastdds::dds::xtypes::BitmaskTypeFlag& _bitmask_flags)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::bitmask_flags(
+        const eprosima::fastdds::dds::xtypes1_3::BitmaskTypeFlag& _bitmask_flags)
 {
     m_bitmask_flags = _bitmask_flags;
 }
@@ -14610,8 +14805,8 @@ void eprosima::fastdds::dds::xtypes::CompleteBitmaskType::bitmask_flags(
  * @brief This function moves the value in member bitmask_flags
  * @param _bitmask_flags New value to be moved in member bitmask_flags
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitmaskType::bitmask_flags(
-        eprosima::fastdds::dds::xtypes::BitmaskTypeFlag&& _bitmask_flags)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::bitmask_flags(
+        eprosima::fastdds::dds::xtypes1_3::BitmaskTypeFlag&& _bitmask_flags)
 {
     m_bitmask_flags = std::move(_bitmask_flags);
 }
@@ -14620,7 +14815,7 @@ void eprosima::fastdds::dds::xtypes::CompleteBitmaskType::bitmask_flags(
  * @brief This function returns a constant reference to member bitmask_flags
  * @return Constant reference to member bitmask_flags
  */
-const eprosima::fastdds::dds::xtypes::BitmaskTypeFlag& eprosima::fastdds::dds::xtypes::CompleteBitmaskType::bitmask_flags() const
+const eprosima::fastdds::dds::xtypes1_3::BitmaskTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::bitmask_flags() const
 {
     return m_bitmask_flags;
 }
@@ -14629,7 +14824,7 @@ const eprosima::fastdds::dds::xtypes::BitmaskTypeFlag& eprosima::fastdds::dds::x
  * @brief This function returns a reference to member bitmask_flags
  * @return Reference to member bitmask_flags
  */
-eprosima::fastdds::dds::xtypes::BitmaskTypeFlag& eprosima::fastdds::dds::xtypes::CompleteBitmaskType::bitmask_flags()
+eprosima::fastdds::dds::xtypes1_3::BitmaskTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::bitmask_flags()
 {
     return m_bitmask_flags;
 }
@@ -14639,8 +14834,8 @@ eprosima::fastdds::dds::xtypes::BitmaskTypeFlag& eprosima::fastdds::dds::xtypes:
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitmaskType::header(
-        const eprosima::fastdds::dds::xtypes::CompleteBitmaskHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::header(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskHeader& _header)
 {
     m_header = _header;
 }
@@ -14649,8 +14844,8 @@ void eprosima::fastdds::dds::xtypes::CompleteBitmaskType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitmaskType::header(
-        eprosima::fastdds::dds::xtypes::CompleteBitmaskHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::header(
+        eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -14659,7 +14854,7 @@ void eprosima::fastdds::dds::xtypes::CompleteBitmaskType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::CompleteBitmaskHeader& eprosima::fastdds::dds::xtypes::CompleteBitmaskType::header() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskHeader& eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::header() const
 {
     return m_header;
 }
@@ -14668,7 +14863,7 @@ const eprosima::fastdds::dds::xtypes::CompleteBitmaskHeader& eprosima::fastdds::
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::CompleteBitmaskHeader& eprosima::fastdds::dds::xtypes::CompleteBitmaskType::header()
+eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskHeader& eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::header()
 {
     return m_header;
 }
@@ -14678,8 +14873,8 @@ eprosima::fastdds::dds::xtypes::CompleteBitmaskHeader& eprosima::fastdds::dds::x
  * @brief This function copies the value in member flag_seq
  * @param _flag_seq New value to be copied in member flag_seq
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitmaskType::flag_seq(
-        const eprosima::fastdds::dds::xtypes::CompleteBitflagSeq& _flag_seq)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::flag_seq(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteBitflagSeq& _flag_seq)
 {
     m_flag_seq = _flag_seq;
 }
@@ -14688,8 +14883,8 @@ void eprosima::fastdds::dds::xtypes::CompleteBitmaskType::flag_seq(
  * @brief This function moves the value in member flag_seq
  * @param _flag_seq New value to be moved in member flag_seq
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitmaskType::flag_seq(
-        eprosima::fastdds::dds::xtypes::CompleteBitflagSeq&& _flag_seq)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::flag_seq(
+        eprosima::fastdds::dds::xtypes1_3::CompleteBitflagSeq&& _flag_seq)
 {
     m_flag_seq = std::move(_flag_seq);
 }
@@ -14698,7 +14893,7 @@ void eprosima::fastdds::dds::xtypes::CompleteBitmaskType::flag_seq(
  * @brief This function returns a constant reference to member flag_seq
  * @return Constant reference to member flag_seq
  */
-const eprosima::fastdds::dds::xtypes::CompleteBitflagSeq& eprosima::fastdds::dds::xtypes::CompleteBitmaskType::flag_seq() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteBitflagSeq& eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::flag_seq() const
 {
     return m_flag_seq;
 }
@@ -14707,22 +14902,24 @@ const eprosima::fastdds::dds::xtypes::CompleteBitflagSeq& eprosima::fastdds::dds
  * @brief This function returns a reference to member flag_seq
  * @return Reference to member flag_seq
  */
-eprosima::fastdds::dds::xtypes::CompleteBitflagSeq& eprosima::fastdds::dds::xtypes::CompleteBitmaskType::flag_seq()
+eprosima::fastdds::dds::xtypes1_3::CompleteBitflagSeq& eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType::flag_seq()
 {
     return m_flag_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalBitmaskType::MinimalBitmaskType()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::MinimalBitmaskType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitmaskType::~MinimalBitmaskType()
+eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::~MinimalBitmaskType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitmaskType::MinimalBitmaskType(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::MinimalBitmaskType(
         const MinimalBitmaskType& x)
 {
     m_bitmask_flags = x.m_bitmask_flags;
@@ -14730,7 +14927,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitmaskType::MinimalBitmaskType(
     m_flag_seq = x.m_flag_seq;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitmaskType::MinimalBitmaskType(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::MinimalBitmaskType(
         MinimalBitmaskType&& x) noexcept
 {
     m_bitmask_flags = std::move(x.m_bitmask_flags);
@@ -14738,7 +14935,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitmaskType::MinimalBitmaskType(
     m_flag_seq = std::move(x.m_flag_seq);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitmaskType& eprosima::fastdds::dds::xtypes::MinimalBitmaskType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType& eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::operator =(
         const MinimalBitmaskType& x)
 {
 
@@ -14748,7 +14945,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitmaskType& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitmaskType& eprosima::fastdds::dds::xtypes::MinimalBitmaskType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType& eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::operator =(
         MinimalBitmaskType&& x) noexcept
 {
 
@@ -14758,7 +14955,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitmaskType& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalBitmaskType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::operator ==(
         const MinimalBitmaskType& x) const
 {
     return (m_bitmask_flags == x.m_bitmask_flags &&
@@ -14766,7 +14963,7 @@ bool eprosima::fastdds::dds::xtypes::MinimalBitmaskType::operator ==(
            m_flag_seq == x.m_flag_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalBitmaskType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::operator !=(
         const MinimalBitmaskType& x) const
 {
     return !(*this == x);
@@ -14776,8 +14973,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalBitmaskType::operator !=(
  * @brief This function copies the value in member bitmask_flags
  * @param _bitmask_flags New value to be copied in member bitmask_flags
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitmaskType::bitmask_flags(
-        const eprosima::fastdds::dds::xtypes::BitmaskTypeFlag& _bitmask_flags)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::bitmask_flags(
+        const eprosima::fastdds::dds::xtypes1_3::BitmaskTypeFlag& _bitmask_flags)
 {
     m_bitmask_flags = _bitmask_flags;
 }
@@ -14786,8 +14983,8 @@ void eprosima::fastdds::dds::xtypes::MinimalBitmaskType::bitmask_flags(
  * @brief This function moves the value in member bitmask_flags
  * @param _bitmask_flags New value to be moved in member bitmask_flags
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitmaskType::bitmask_flags(
-        eprosima::fastdds::dds::xtypes::BitmaskTypeFlag&& _bitmask_flags)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::bitmask_flags(
+        eprosima::fastdds::dds::xtypes1_3::BitmaskTypeFlag&& _bitmask_flags)
 {
     m_bitmask_flags = std::move(_bitmask_flags);
 }
@@ -14796,7 +14993,7 @@ void eprosima::fastdds::dds::xtypes::MinimalBitmaskType::bitmask_flags(
  * @brief This function returns a constant reference to member bitmask_flags
  * @return Constant reference to member bitmask_flags
  */
-const eprosima::fastdds::dds::xtypes::BitmaskTypeFlag& eprosima::fastdds::dds::xtypes::MinimalBitmaskType::bitmask_flags() const
+const eprosima::fastdds::dds::xtypes1_3::BitmaskTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::bitmask_flags() const
 {
     return m_bitmask_flags;
 }
@@ -14805,7 +15002,7 @@ const eprosima::fastdds::dds::xtypes::BitmaskTypeFlag& eprosima::fastdds::dds::x
  * @brief This function returns a reference to member bitmask_flags
  * @return Reference to member bitmask_flags
  */
-eprosima::fastdds::dds::xtypes::BitmaskTypeFlag& eprosima::fastdds::dds::xtypes::MinimalBitmaskType::bitmask_flags()
+eprosima::fastdds::dds::xtypes1_3::BitmaskTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::bitmask_flags()
 {
     return m_bitmask_flags;
 }
@@ -14815,8 +15012,8 @@ eprosima::fastdds::dds::xtypes::BitmaskTypeFlag& eprosima::fastdds::dds::xtypes:
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitmaskType::header(
-        const eprosima::fastdds::dds::xtypes::MinimalBitmaskHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::header(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskHeader& _header)
 {
     m_header = _header;
 }
@@ -14825,8 +15022,8 @@ void eprosima::fastdds::dds::xtypes::MinimalBitmaskType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitmaskType::header(
-        eprosima::fastdds::dds::xtypes::MinimalBitmaskHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::header(
+        eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -14835,7 +15032,7 @@ void eprosima::fastdds::dds::xtypes::MinimalBitmaskType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::MinimalBitmaskHeader& eprosima::fastdds::dds::xtypes::MinimalBitmaskType::header() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskHeader& eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::header() const
 {
     return m_header;
 }
@@ -14844,7 +15041,7 @@ const eprosima::fastdds::dds::xtypes::MinimalBitmaskHeader& eprosima::fastdds::d
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::MinimalBitmaskHeader& eprosima::fastdds::dds::xtypes::MinimalBitmaskType::header()
+eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskHeader& eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::header()
 {
     return m_header;
 }
@@ -14854,8 +15051,8 @@ eprosima::fastdds::dds::xtypes::MinimalBitmaskHeader& eprosima::fastdds::dds::xt
  * @brief This function copies the value in member flag_seq
  * @param _flag_seq New value to be copied in member flag_seq
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitmaskType::flag_seq(
-        const eprosima::fastdds::dds::xtypes::MinimalBitflagSeq& _flag_seq)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::flag_seq(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalBitflagSeq& _flag_seq)
 {
     m_flag_seq = _flag_seq;
 }
@@ -14864,8 +15061,8 @@ void eprosima::fastdds::dds::xtypes::MinimalBitmaskType::flag_seq(
  * @brief This function moves the value in member flag_seq
  * @param _flag_seq New value to be moved in member flag_seq
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitmaskType::flag_seq(
-        eprosima::fastdds::dds::xtypes::MinimalBitflagSeq&& _flag_seq)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::flag_seq(
+        eprosima::fastdds::dds::xtypes1_3::MinimalBitflagSeq&& _flag_seq)
 {
     m_flag_seq = std::move(_flag_seq);
 }
@@ -14874,7 +15071,7 @@ void eprosima::fastdds::dds::xtypes::MinimalBitmaskType::flag_seq(
  * @brief This function returns a constant reference to member flag_seq
  * @return Constant reference to member flag_seq
  */
-const eprosima::fastdds::dds::xtypes::MinimalBitflagSeq& eprosima::fastdds::dds::xtypes::MinimalBitmaskType::flag_seq() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalBitflagSeq& eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::flag_seq() const
 {
     return m_flag_seq;
 }
@@ -14883,22 +15080,24 @@ const eprosima::fastdds::dds::xtypes::MinimalBitflagSeq& eprosima::fastdds::dds:
  * @brief This function returns a reference to member flag_seq
  * @return Reference to member flag_seq
  */
-eprosima::fastdds::dds::xtypes::MinimalBitflagSeq& eprosima::fastdds::dds::xtypes::MinimalBitmaskType::flag_seq()
+eprosima::fastdds::dds::xtypes1_3::MinimalBitflagSeq& eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::flag_seq()
 {
     return m_flag_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::CommonBitfield::CommonBitfield()
+
+
+eprosima::fastdds::dds::xtypes1_3::CommonBitfield::CommonBitfield()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitfield::~CommonBitfield()
+eprosima::fastdds::dds::xtypes1_3::CommonBitfield::~CommonBitfield()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitfield::CommonBitfield(
+eprosima::fastdds::dds::xtypes1_3::CommonBitfield::CommonBitfield(
         const CommonBitfield& x)
 {
     m_position = x.m_position;
@@ -14907,7 +15106,7 @@ eprosima::fastdds::dds::xtypes::CommonBitfield::CommonBitfield(
     m_holder_type = x.m_holder_type;
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitfield::CommonBitfield(
+eprosima::fastdds::dds::xtypes1_3::CommonBitfield::CommonBitfield(
         CommonBitfield&& x) noexcept
 {
     m_position = x.m_position;
@@ -14916,7 +15115,7 @@ eprosima::fastdds::dds::xtypes::CommonBitfield::CommonBitfield(
     m_holder_type = x.m_holder_type;
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xtypes::CommonBitfield::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonBitfield& eprosima::fastdds::dds::xtypes1_3::CommonBitfield::operator =(
         const CommonBitfield& x)
 {
 
@@ -14927,7 +15126,7 @@ eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xtypes::
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xtypes::CommonBitfield::operator =(
+eprosima::fastdds::dds::xtypes1_3::CommonBitfield& eprosima::fastdds::dds::xtypes1_3::CommonBitfield::operator =(
         CommonBitfield&& x) noexcept
 {
 
@@ -14938,7 +15137,7 @@ eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xtypes::
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonBitfield::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CommonBitfield::operator ==(
         const CommonBitfield& x) const
 {
     return (m_position == x.m_position &&
@@ -14947,7 +15146,7 @@ bool eprosima::fastdds::dds::xtypes::CommonBitfield::operator ==(
            m_holder_type == x.m_holder_type);
 }
 
-bool eprosima::fastdds::dds::xtypes::CommonBitfield::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CommonBitfield::operator !=(
         const CommonBitfield& x) const
 {
     return !(*this == x);
@@ -14957,7 +15156,7 @@ bool eprosima::fastdds::dds::xtypes::CommonBitfield::operator !=(
  * @brief This function sets a value in member position
  * @param _position New value for member position
  */
-void eprosima::fastdds::dds::xtypes::CommonBitfield::position(
+void eprosima::fastdds::dds::xtypes1_3::CommonBitfield::position(
         uint16_t _position)
 {
     m_position = _position;
@@ -14967,7 +15166,7 @@ void eprosima::fastdds::dds::xtypes::CommonBitfield::position(
  * @brief This function returns the value of member position
  * @return Value of member position
  */
-uint16_t eprosima::fastdds::dds::xtypes::CommonBitfield::position() const
+uint16_t eprosima::fastdds::dds::xtypes1_3::CommonBitfield::position() const
 {
     return m_position;
 }
@@ -14976,7 +15175,7 @@ uint16_t eprosima::fastdds::dds::xtypes::CommonBitfield::position() const
  * @brief This function returns a reference to member position
  * @return Reference to member position
  */
-uint16_t& eprosima::fastdds::dds::xtypes::CommonBitfield::position()
+uint16_t& eprosima::fastdds::dds::xtypes1_3::CommonBitfield::position()
 {
     return m_position;
 }
@@ -14986,8 +15185,8 @@ uint16_t& eprosima::fastdds::dds::xtypes::CommonBitfield::position()
  * @brief This function copies the value in member flags
  * @param _flags New value to be copied in member flags
  */
-void eprosima::fastdds::dds::xtypes::CommonBitfield::flags(
-        const eprosima::fastdds::dds::xtypes::BitsetMemberFlag& _flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonBitfield::flags(
+        const eprosima::fastdds::dds::xtypes1_3::BitsetMemberFlag& _flags)
 {
     m_flags = _flags;
 }
@@ -14996,8 +15195,8 @@ void eprosima::fastdds::dds::xtypes::CommonBitfield::flags(
  * @brief This function moves the value in member flags
  * @param _flags New value to be moved in member flags
  */
-void eprosima::fastdds::dds::xtypes::CommonBitfield::flags(
-        eprosima::fastdds::dds::xtypes::BitsetMemberFlag&& _flags)
+void eprosima::fastdds::dds::xtypes1_3::CommonBitfield::flags(
+        eprosima::fastdds::dds::xtypes1_3::BitsetMemberFlag&& _flags)
 {
     m_flags = std::move(_flags);
 }
@@ -15006,7 +15205,7 @@ void eprosima::fastdds::dds::xtypes::CommonBitfield::flags(
  * @brief This function returns a constant reference to member flags
  * @return Constant reference to member flags
  */
-const eprosima::fastdds::dds::xtypes::BitsetMemberFlag& eprosima::fastdds::dds::xtypes::CommonBitfield::flags() const
+const eprosima::fastdds::dds::xtypes1_3::BitsetMemberFlag& eprosima::fastdds::dds::xtypes1_3::CommonBitfield::flags() const
 {
     return m_flags;
 }
@@ -15015,7 +15214,7 @@ const eprosima::fastdds::dds::xtypes::BitsetMemberFlag& eprosima::fastdds::dds::
  * @brief This function returns a reference to member flags
  * @return Reference to member flags
  */
-eprosima::fastdds::dds::xtypes::BitsetMemberFlag& eprosima::fastdds::dds::xtypes::CommonBitfield::flags()
+eprosima::fastdds::dds::xtypes1_3::BitsetMemberFlag& eprosima::fastdds::dds::xtypes1_3::CommonBitfield::flags()
 {
     return m_flags;
 }
@@ -15025,7 +15224,7 @@ eprosima::fastdds::dds::xtypes::BitsetMemberFlag& eprosima::fastdds::dds::xtypes
  * @brief This function sets a value in member bitcount
  * @param _bitcount New value for member bitcount
  */
-void eprosima::fastdds::dds::xtypes::CommonBitfield::bitcount(
+void eprosima::fastdds::dds::xtypes1_3::CommonBitfield::bitcount(
         uint8_t _bitcount)
 {
     m_bitcount = _bitcount;
@@ -15035,7 +15234,7 @@ void eprosima::fastdds::dds::xtypes::CommonBitfield::bitcount(
  * @brief This function returns the value of member bitcount
  * @return Value of member bitcount
  */
-uint8_t eprosima::fastdds::dds::xtypes::CommonBitfield::bitcount() const
+uint8_t eprosima::fastdds::dds::xtypes1_3::CommonBitfield::bitcount() const
 {
     return m_bitcount;
 }
@@ -15044,7 +15243,7 @@ uint8_t eprosima::fastdds::dds::xtypes::CommonBitfield::bitcount() const
  * @brief This function returns a reference to member bitcount
  * @return Reference to member bitcount
  */
-uint8_t& eprosima::fastdds::dds::xtypes::CommonBitfield::bitcount()
+uint8_t& eprosima::fastdds::dds::xtypes1_3::CommonBitfield::bitcount()
 {
     return m_bitcount;
 }
@@ -15054,8 +15253,8 @@ uint8_t& eprosima::fastdds::dds::xtypes::CommonBitfield::bitcount()
  * @brief This function sets a value in member holder_type
  * @param _holder_type New value for member holder_type
  */
-void eprosima::fastdds::dds::xtypes::CommonBitfield::holder_type(
-        eprosima::fastdds::dds::xtypes::TypeKind _holder_type)
+void eprosima::fastdds::dds::xtypes1_3::CommonBitfield::holder_type(
+        eprosima::fastdds::dds::xtypes1_3::TypeKind _holder_type)
 {
     m_holder_type = _holder_type;
 }
@@ -15064,7 +15263,7 @@ void eprosima::fastdds::dds::xtypes::CommonBitfield::holder_type(
  * @brief This function returns the value of member holder_type
  * @return Value of member holder_type
  */
-eprosima::fastdds::dds::xtypes::TypeKind eprosima::fastdds::dds::xtypes::CommonBitfield::holder_type() const
+eprosima::fastdds::dds::xtypes1_3::TypeKind eprosima::fastdds::dds::xtypes1_3::CommonBitfield::holder_type() const
 {
     return m_holder_type;
 }
@@ -15073,36 +15272,38 @@ eprosima::fastdds::dds::xtypes::TypeKind eprosima::fastdds::dds::xtypes::CommonB
  * @brief This function returns a reference to member holder_type
  * @return Reference to member holder_type
  */
-eprosima::fastdds::dds::xtypes::TypeKind& eprosima::fastdds::dds::xtypes::CommonBitfield::holder_type()
+eprosima::fastdds::dds::xtypes1_3::TypeKind& eprosima::fastdds::dds::xtypes1_3::CommonBitfield::holder_type()
 {
     return m_holder_type;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteBitfield::CompleteBitfield()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::CompleteBitfield()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitfield::~CompleteBitfield()
+eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::~CompleteBitfield()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitfield::CompleteBitfield(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::CompleteBitfield(
         const CompleteBitfield& x)
 {
     m_common = x.m_common;
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitfield::CompleteBitfield(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::CompleteBitfield(
         CompleteBitfield&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitfield& eprosima::fastdds::dds::xtypes::CompleteBitfield::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitfield& eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::operator =(
         const CompleteBitfield& x)
 {
 
@@ -15111,7 +15312,7 @@ eprosima::fastdds::dds::xtypes::CompleteBitfield& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitfield& eprosima::fastdds::dds::xtypes::CompleteBitfield::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitfield& eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::operator =(
         CompleteBitfield&& x) noexcept
 {
 
@@ -15120,14 +15321,14 @@ eprosima::fastdds::dds::xtypes::CompleteBitfield& eprosima::fastdds::dds::xtypes
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteBitfield::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::operator ==(
         const CompleteBitfield& x) const
 {
     return (m_common == x.m_common &&
            m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteBitfield::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::operator !=(
         const CompleteBitfield& x) const
 {
     return !(*this == x);
@@ -15137,8 +15338,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteBitfield::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitfield::common(
-        const eprosima::fastdds::dds::xtypes::CommonBitfield& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonBitfield& _common)
 {
     m_common = _common;
 }
@@ -15147,8 +15348,8 @@ void eprosima::fastdds::dds::xtypes::CompleteBitfield::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitfield::common(
-        eprosima::fastdds::dds::xtypes::CommonBitfield&& _common)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonBitfield&& _common)
 {
     m_common = std::move(_common);
 }
@@ -15157,7 +15358,7 @@ void eprosima::fastdds::dds::xtypes::CompleteBitfield::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xtypes::CompleteBitfield::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonBitfield& eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::common() const
 {
     return m_common;
 }
@@ -15166,7 +15367,7 @@ const eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xtypes::CompleteBitfield::common()
+eprosima::fastdds::dds::xtypes1_3::CommonBitfield& eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::common()
 {
     return m_common;
 }
@@ -15176,8 +15377,8 @@ eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitfield::detail(
-        const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::detail(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -15186,8 +15387,8 @@ void eprosima::fastdds::dds::xtypes::CompleteBitfield::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitfield::detail(
-        eprosima::fastdds::dds::xtypes::CompleteMemberDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::detail(
+        eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -15196,7 +15397,7 @@ void eprosima::fastdds::dds::xtypes::CompleteBitfield::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xtypes::CompleteBitfield::detail() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::detail() const
 {
     return m_detail;
 }
@@ -15205,37 +15406,41 @@ const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::d
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::CompleteMemberDetail& eprosima::fastdds::dds::xtypes::CompleteBitfield::detail()
+eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::detail()
 {
     return m_detail;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::MinimalBitfield::MinimalBitfield()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::MinimalBitfield()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitfield::~MinimalBitfield()
+eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::~MinimalBitfield()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitfield::MinimalBitfield(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::MinimalBitfield(
         const MinimalBitfield& x)
 {
     m_common = x.m_common;
     m_name_hash = x.m_name_hash;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitfield::MinimalBitfield(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::MinimalBitfield(
         MinimalBitfield&& x) noexcept
 {
     m_common = std::move(x.m_common);
     m_name_hash = std::move(x.m_name_hash);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitfield& eprosima::fastdds::dds::xtypes::MinimalBitfield::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitfield& eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::operator =(
         const MinimalBitfield& x)
 {
 
@@ -15244,7 +15449,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitfield& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitfield& eprosima::fastdds::dds::xtypes::MinimalBitfield::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitfield& eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::operator =(
         MinimalBitfield&& x) noexcept
 {
 
@@ -15253,14 +15458,14 @@ eprosima::fastdds::dds::xtypes::MinimalBitfield& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalBitfield::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::operator ==(
         const MinimalBitfield& x) const
 {
     return (m_common == x.m_common &&
            m_name_hash == x.m_name_hash);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalBitfield::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::operator !=(
         const MinimalBitfield& x) const
 {
     return !(*this == x);
@@ -15270,8 +15475,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalBitfield::operator !=(
  * @brief This function copies the value in member common
  * @param _common New value to be copied in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitfield::common(
-        const eprosima::fastdds::dds::xtypes::CommonBitfield& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::common(
+        const eprosima::fastdds::dds::xtypes1_3::CommonBitfield& _common)
 {
     m_common = _common;
 }
@@ -15280,8 +15485,8 @@ void eprosima::fastdds::dds::xtypes::MinimalBitfield::common(
  * @brief This function moves the value in member common
  * @param _common New value to be moved in member common
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitfield::common(
-        eprosima::fastdds::dds::xtypes::CommonBitfield&& _common)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::common(
+        eprosima::fastdds::dds::xtypes1_3::CommonBitfield&& _common)
 {
     m_common = std::move(_common);
 }
@@ -15290,7 +15495,7 @@ void eprosima::fastdds::dds::xtypes::MinimalBitfield::common(
  * @brief This function returns a constant reference to member common
  * @return Constant reference to member common
  */
-const eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xtypes::MinimalBitfield::common() const
+const eprosima::fastdds::dds::xtypes1_3::CommonBitfield& eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::common() const
 {
     return m_common;
 }
@@ -15299,7 +15504,7 @@ const eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member common
  * @return Reference to member common
  */
-eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xtypes::MinimalBitfield::common()
+eprosima::fastdds::dds::xtypes1_3::CommonBitfield& eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::common()
 {
     return m_common;
 }
@@ -15309,8 +15514,8 @@ eprosima::fastdds::dds::xtypes::CommonBitfield& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member name_hash
  * @param _name_hash New value to be copied in member name_hash
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitfield::name_hash(
-        const eprosima::fastdds::dds::xtypes::NameHash& _name_hash)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::name_hash(
+        const eprosima::fastdds::dds::xtypes1_3::NameHash& _name_hash)
 {
     m_name_hash = _name_hash;
 }
@@ -15319,8 +15524,8 @@ void eprosima::fastdds::dds::xtypes::MinimalBitfield::name_hash(
  * @brief This function moves the value in member name_hash
  * @param _name_hash New value to be moved in member name_hash
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitfield::name_hash(
-        eprosima::fastdds::dds::xtypes::NameHash&& _name_hash)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::name_hash(
+        eprosima::fastdds::dds::xtypes1_3::NameHash&& _name_hash)
 {
     m_name_hash = std::move(_name_hash);
 }
@@ -15329,7 +15534,7 @@ void eprosima::fastdds::dds::xtypes::MinimalBitfield::name_hash(
  * @brief This function returns a constant reference to member name_hash
  * @return Constant reference to member name_hash
  */
-const eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::MinimalBitfield::name_hash() const
+const eprosima::fastdds::dds::xtypes1_3::NameHash& eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::name_hash() const
 {
     return m_name_hash;
 }
@@ -15338,35 +15543,39 @@ const eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::
  * @brief This function returns a reference to member name_hash
  * @return Reference to member name_hash
  */
-eprosima::fastdds::dds::xtypes::NameHash& eprosima::fastdds::dds::xtypes::MinimalBitfield::name_hash()
+eprosima::fastdds::dds::xtypes1_3::NameHash& eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::name_hash()
 {
     return m_name_hash;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::CompleteBitsetHeader()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader::CompleteBitsetHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::~CompleteBitsetHeader()
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader::~CompleteBitsetHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::CompleteBitsetHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader::CompleteBitsetHeader(
         const CompleteBitsetHeader& x)
 {
     m_detail = x.m_detail;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::CompleteBitsetHeader(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader::CompleteBitsetHeader(
         CompleteBitsetHeader&& x) noexcept
 {
     m_detail = std::move(x.m_detail);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader& eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader::operator =(
         const CompleteBitsetHeader& x)
 {
 
@@ -15374,7 +15583,7 @@ eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& eprosima::fastdds::dds::xt
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader& eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader::operator =(
         CompleteBitsetHeader&& x) noexcept
 {
 
@@ -15382,13 +15591,13 @@ eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& eprosima::fastdds::dds::xt
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader::operator ==(
         const CompleteBitsetHeader& x) const
 {
     return (m_detail == x.m_detail);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader::operator !=(
         const CompleteBitsetHeader& x) const
 {
     return !(*this == x);
@@ -15398,8 +15607,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::operator !=(
  * @brief This function copies the value in member detail
  * @param _detail New value to be copied in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::detail(
-        const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader::detail(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& _detail)
 {
     m_detail = _detail;
 }
@@ -15408,8 +15617,8 @@ void eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::detail(
  * @brief This function moves the value in member detail
  * @param _detail New value to be moved in member detail
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::detail(
-        eprosima::fastdds::dds::xtypes::CompleteTypeDetail&& _detail)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader::detail(
+        eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail&& _detail)
 {
     m_detail = std::move(_detail);
 }
@@ -15418,7 +15627,7 @@ void eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::detail(
  * @brief This function returns a constant reference to member detail
  * @return Constant reference to member detail
  */
-const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::detail() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader::detail() const
 {
     return m_detail;
 }
@@ -15427,34 +15636,34 @@ const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds
  * @brief This function returns a reference to member detail
  * @return Reference to member detail
  */
-eprosima::fastdds::dds::xtypes::CompleteTypeDetail& eprosima::fastdds::dds::xtypes::CompleteBitsetHeader::detail()
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader::detail()
 {
     return m_detail;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::MinimalBitsetHeader()
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader::MinimalBitsetHeader()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::~MinimalBitsetHeader()
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader::~MinimalBitsetHeader()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::MinimalBitsetHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader::MinimalBitsetHeader(
         const MinimalBitsetHeader& x)
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::MinimalBitsetHeader(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader::MinimalBitsetHeader(
         MinimalBitsetHeader&& x) noexcept
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader& eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader::operator =(
         const MinimalBitsetHeader& x)
 {
 
@@ -15463,7 +15672,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& eprosima::fastdds::dds::xty
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader& eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader::operator =(
         MinimalBitsetHeader&& x) noexcept
 {
 
@@ -15472,30 +15681,32 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader::operator ==(
         const MinimalBitsetHeader& x) const
 {
     static_cast<void>(x);
     return true;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalBitsetHeader::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader::operator !=(
         const MinimalBitsetHeader& x) const
 {
     return !(*this == x);
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetType::CompleteBitsetType()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::CompleteBitsetType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetType::~CompleteBitsetType()
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::~CompleteBitsetType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetType::CompleteBitsetType(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::CompleteBitsetType(
         const CompleteBitsetType& x)
 {
     m_bitset_flags = x.m_bitset_flags;
@@ -15503,7 +15714,7 @@ eprosima::fastdds::dds::xtypes::CompleteBitsetType::CompleteBitsetType(
     m_field_seq = x.m_field_seq;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetType::CompleteBitsetType(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::CompleteBitsetType(
         CompleteBitsetType&& x) noexcept
 {
     m_bitset_flags = std::move(x.m_bitset_flags);
@@ -15511,7 +15722,7 @@ eprosima::fastdds::dds::xtypes::CompleteBitsetType::CompleteBitsetType(
     m_field_seq = std::move(x.m_field_seq);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetType& eprosima::fastdds::dds::xtypes::CompleteBitsetType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType& eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::operator =(
         const CompleteBitsetType& x)
 {
 
@@ -15521,7 +15732,7 @@ eprosima::fastdds::dds::xtypes::CompleteBitsetType& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetType& eprosima::fastdds::dds::xtypes::CompleteBitsetType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType& eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::operator =(
         CompleteBitsetType&& x) noexcept
 {
 
@@ -15531,7 +15742,7 @@ eprosima::fastdds::dds::xtypes::CompleteBitsetType& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteBitsetType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::operator ==(
         const CompleteBitsetType& x) const
 {
     return (m_bitset_flags == x.m_bitset_flags &&
@@ -15539,7 +15750,7 @@ bool eprosima::fastdds::dds::xtypes::CompleteBitsetType::operator ==(
            m_field_seq == x.m_field_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteBitsetType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::operator !=(
         const CompleteBitsetType& x) const
 {
     return !(*this == x);
@@ -15549,8 +15760,8 @@ bool eprosima::fastdds::dds::xtypes::CompleteBitsetType::operator !=(
  * @brief This function copies the value in member bitset_flags
  * @param _bitset_flags New value to be copied in member bitset_flags
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitsetType::bitset_flags(
-        const eprosima::fastdds::dds::xtypes::BitsetTypeFlag& _bitset_flags)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::bitset_flags(
+        const eprosima::fastdds::dds::xtypes1_3::BitsetTypeFlag& _bitset_flags)
 {
     m_bitset_flags = _bitset_flags;
 }
@@ -15559,8 +15770,8 @@ void eprosima::fastdds::dds::xtypes::CompleteBitsetType::bitset_flags(
  * @brief This function moves the value in member bitset_flags
  * @param _bitset_flags New value to be moved in member bitset_flags
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitsetType::bitset_flags(
-        eprosima::fastdds::dds::xtypes::BitsetTypeFlag&& _bitset_flags)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::bitset_flags(
+        eprosima::fastdds::dds::xtypes1_3::BitsetTypeFlag&& _bitset_flags)
 {
     m_bitset_flags = std::move(_bitset_flags);
 }
@@ -15569,7 +15780,7 @@ void eprosima::fastdds::dds::xtypes::CompleteBitsetType::bitset_flags(
  * @brief This function returns a constant reference to member bitset_flags
  * @return Constant reference to member bitset_flags
  */
-const eprosima::fastdds::dds::xtypes::BitsetTypeFlag& eprosima::fastdds::dds::xtypes::CompleteBitsetType::bitset_flags() const
+const eprosima::fastdds::dds::xtypes1_3::BitsetTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::bitset_flags() const
 {
     return m_bitset_flags;
 }
@@ -15578,7 +15789,7 @@ const eprosima::fastdds::dds::xtypes::BitsetTypeFlag& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member bitset_flags
  * @return Reference to member bitset_flags
  */
-eprosima::fastdds::dds::xtypes::BitsetTypeFlag& eprosima::fastdds::dds::xtypes::CompleteBitsetType::bitset_flags()
+eprosima::fastdds::dds::xtypes1_3::BitsetTypeFlag& eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::bitset_flags()
 {
     return m_bitset_flags;
 }
@@ -15588,8 +15799,8 @@ eprosima::fastdds::dds::xtypes::BitsetTypeFlag& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitsetType::header(
-        const eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::header(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader& _header)
 {
     m_header = _header;
 }
@@ -15598,8 +15809,8 @@ void eprosima::fastdds::dds::xtypes::CompleteBitsetType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitsetType::header(
-        eprosima::fastdds::dds::xtypes::CompleteBitsetHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::header(
+        eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -15608,7 +15819,7 @@ void eprosima::fastdds::dds::xtypes::CompleteBitsetType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& eprosima::fastdds::dds::xtypes::CompleteBitsetType::header() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader& eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::header() const
 {
     return m_header;
 }
@@ -15617,7 +15828,7 @@ const eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& eprosima::fastdds::d
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& eprosima::fastdds::dds::xtypes::CompleteBitsetType::header()
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetHeader& eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::header()
 {
     return m_header;
 }
@@ -15627,8 +15838,8 @@ eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& eprosima::fastdds::dds::xt
  * @brief This function copies the value in member field_seq
  * @param _field_seq New value to be copied in member field_seq
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitsetType::field_seq(
-        const eprosima::fastdds::dds::xtypes::CompleteBitfieldSeq& _field_seq)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::field_seq(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteBitfieldSeq& _field_seq)
 {
     m_field_seq = _field_seq;
 }
@@ -15637,8 +15848,8 @@ void eprosima::fastdds::dds::xtypes::CompleteBitsetType::field_seq(
  * @brief This function moves the value in member field_seq
  * @param _field_seq New value to be moved in member field_seq
  */
-void eprosima::fastdds::dds::xtypes::CompleteBitsetType::field_seq(
-        eprosima::fastdds::dds::xtypes::CompleteBitfieldSeq&& _field_seq)
+void eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::field_seq(
+        eprosima::fastdds::dds::xtypes1_3::CompleteBitfieldSeq&& _field_seq)
 {
     m_field_seq = std::move(_field_seq);
 }
@@ -15647,7 +15858,7 @@ void eprosima::fastdds::dds::xtypes::CompleteBitsetType::field_seq(
  * @brief This function returns a constant reference to member field_seq
  * @return Constant reference to member field_seq
  */
-const eprosima::fastdds::dds::xtypes::CompleteBitfieldSeq& eprosima::fastdds::dds::xtypes::CompleteBitsetType::field_seq() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteBitfieldSeq& eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::field_seq() const
 {
     return m_field_seq;
 }
@@ -15656,22 +15867,24 @@ const eprosima::fastdds::dds::xtypes::CompleteBitfieldSeq& eprosima::fastdds::dd
  * @brief This function returns a reference to member field_seq
  * @return Reference to member field_seq
  */
-eprosima::fastdds::dds::xtypes::CompleteBitfieldSeq& eprosima::fastdds::dds::xtypes::CompleteBitsetType::field_seq()
+eprosima::fastdds::dds::xtypes1_3::CompleteBitfieldSeq& eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::field_seq()
 {
     return m_field_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetType::MinimalBitsetType()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::MinimalBitsetType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetType::~MinimalBitsetType()
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::~MinimalBitsetType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetType::MinimalBitsetType(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::MinimalBitsetType(
         const MinimalBitsetType& x)
 {
     m_bitset_flags = x.m_bitset_flags;
@@ -15679,7 +15892,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetType::MinimalBitsetType(
     m_field_seq = x.m_field_seq;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetType::MinimalBitsetType(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::MinimalBitsetType(
         MinimalBitsetType&& x) noexcept
 {
     m_bitset_flags = std::move(x.m_bitset_flags);
@@ -15687,7 +15900,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetType::MinimalBitsetType(
     m_field_seq = std::move(x.m_field_seq);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetType& eprosima::fastdds::dds::xtypes::MinimalBitsetType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType& eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::operator =(
         const MinimalBitsetType& x)
 {
 
@@ -15697,7 +15910,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetType& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetType& eprosima::fastdds::dds::xtypes::MinimalBitsetType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType& eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::operator =(
         MinimalBitsetType&& x) noexcept
 {
 
@@ -15707,7 +15920,7 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetType& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalBitsetType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::operator ==(
         const MinimalBitsetType& x) const
 {
     return (m_bitset_flags == x.m_bitset_flags &&
@@ -15715,7 +15928,7 @@ bool eprosima::fastdds::dds::xtypes::MinimalBitsetType::operator ==(
            m_field_seq == x.m_field_seq);
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalBitsetType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::operator !=(
         const MinimalBitsetType& x) const
 {
     return !(*this == x);
@@ -15725,8 +15938,8 @@ bool eprosima::fastdds::dds::xtypes::MinimalBitsetType::operator !=(
  * @brief This function copies the value in member bitset_flags
  * @param _bitset_flags New value to be copied in member bitset_flags
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitsetType::bitset_flags(
-        const eprosima::fastdds::dds::xtypes::BitsetTypeFlag& _bitset_flags)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::bitset_flags(
+        const eprosima::fastdds::dds::xtypes1_3::BitsetTypeFlag& _bitset_flags)
 {
     m_bitset_flags = _bitset_flags;
 }
@@ -15735,8 +15948,8 @@ void eprosima::fastdds::dds::xtypes::MinimalBitsetType::bitset_flags(
  * @brief This function moves the value in member bitset_flags
  * @param _bitset_flags New value to be moved in member bitset_flags
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitsetType::bitset_flags(
-        eprosima::fastdds::dds::xtypes::BitsetTypeFlag&& _bitset_flags)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::bitset_flags(
+        eprosima::fastdds::dds::xtypes1_3::BitsetTypeFlag&& _bitset_flags)
 {
     m_bitset_flags = std::move(_bitset_flags);
 }
@@ -15745,7 +15958,7 @@ void eprosima::fastdds::dds::xtypes::MinimalBitsetType::bitset_flags(
  * @brief This function returns a constant reference to member bitset_flags
  * @return Constant reference to member bitset_flags
  */
-const eprosima::fastdds::dds::xtypes::BitsetTypeFlag& eprosima::fastdds::dds::xtypes::MinimalBitsetType::bitset_flags() const
+const eprosima::fastdds::dds::xtypes1_3::BitsetTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::bitset_flags() const
 {
     return m_bitset_flags;
 }
@@ -15754,7 +15967,7 @@ const eprosima::fastdds::dds::xtypes::BitsetTypeFlag& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member bitset_flags
  * @return Reference to member bitset_flags
  */
-eprosima::fastdds::dds::xtypes::BitsetTypeFlag& eprosima::fastdds::dds::xtypes::MinimalBitsetType::bitset_flags()
+eprosima::fastdds::dds::xtypes1_3::BitsetTypeFlag& eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::bitset_flags()
 {
     return m_bitset_flags;
 }
@@ -15764,8 +15977,8 @@ eprosima::fastdds::dds::xtypes::BitsetTypeFlag& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitsetType::header(
-        const eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::header(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader& _header)
 {
     m_header = _header;
 }
@@ -15774,8 +15987,8 @@ void eprosima::fastdds::dds::xtypes::MinimalBitsetType::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitsetType::header(
-        eprosima::fastdds::dds::xtypes::MinimalBitsetHeader&& _header)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::header(
+        eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader&& _header)
 {
     m_header = std::move(_header);
 }
@@ -15784,7 +15997,7 @@ void eprosima::fastdds::dds::xtypes::MinimalBitsetType::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& eprosima::fastdds::dds::xtypes::MinimalBitsetType::header() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader& eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::header() const
 {
     return m_header;
 }
@@ -15793,7 +16006,7 @@ const eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& eprosima::fastdds::dd
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& eprosima::fastdds::dds::xtypes::MinimalBitsetType::header()
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader& eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::header()
 {
     return m_header;
 }
@@ -15803,8 +16016,8 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& eprosima::fastdds::dds::xty
  * @brief This function copies the value in member field_seq
  * @param _field_seq New value to be copied in member field_seq
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitsetType::field_seq(
-        const eprosima::fastdds::dds::xtypes::MinimalBitfieldSeq& _field_seq)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::field_seq(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalBitfieldSeq& _field_seq)
 {
     m_field_seq = _field_seq;
 }
@@ -15813,8 +16026,8 @@ void eprosima::fastdds::dds::xtypes::MinimalBitsetType::field_seq(
  * @brief This function moves the value in member field_seq
  * @param _field_seq New value to be moved in member field_seq
  */
-void eprosima::fastdds::dds::xtypes::MinimalBitsetType::field_seq(
-        eprosima::fastdds::dds::xtypes::MinimalBitfieldSeq&& _field_seq)
+void eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::field_seq(
+        eprosima::fastdds::dds::xtypes1_3::MinimalBitfieldSeq&& _field_seq)
 {
     m_field_seq = std::move(_field_seq);
 }
@@ -15823,7 +16036,7 @@ void eprosima::fastdds::dds::xtypes::MinimalBitsetType::field_seq(
  * @brief This function returns a constant reference to member field_seq
  * @return Constant reference to member field_seq
  */
-const eprosima::fastdds::dds::xtypes::MinimalBitfieldSeq& eprosima::fastdds::dds::xtypes::MinimalBitsetType::field_seq() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalBitfieldSeq& eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::field_seq() const
 {
     return m_field_seq;
 }
@@ -15832,34 +16045,34 @@ const eprosima::fastdds::dds::xtypes::MinimalBitfieldSeq& eprosima::fastdds::dds
  * @brief This function returns a reference to member field_seq
  * @return Reference to member field_seq
  */
-eprosima::fastdds::dds::xtypes::MinimalBitfieldSeq& eprosima::fastdds::dds::xtypes::MinimalBitsetType::field_seq()
+eprosima::fastdds::dds::xtypes1_3::MinimalBitfieldSeq& eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::field_seq()
 {
     return m_field_seq;
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteExtendedType::CompleteExtendedType()
+eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType::CompleteExtendedType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::CompleteExtendedType::~CompleteExtendedType()
+eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType::~CompleteExtendedType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteExtendedType::CompleteExtendedType(
+eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType::CompleteExtendedType(
         const CompleteExtendedType& x)
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteExtendedType::CompleteExtendedType(
+eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType::CompleteExtendedType(
         CompleteExtendedType&& x) noexcept
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::CompleteExtendedType& eprosima::fastdds::dds::xtypes::CompleteExtendedType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType& eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType::operator =(
         const CompleteExtendedType& x)
 {
 
@@ -15868,7 +16081,7 @@ eprosima::fastdds::dds::xtypes::CompleteExtendedType& eprosima::fastdds::dds::xt
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteExtendedType& eprosima::fastdds::dds::xtypes::CompleteExtendedType::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType& eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType::operator =(
         CompleteExtendedType&& x) noexcept
 {
 
@@ -15877,30 +16090,32 @@ eprosima::fastdds::dds::xtypes::CompleteExtendedType& eprosima::fastdds::dds::xt
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteExtendedType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType::operator ==(
         const CompleteExtendedType& x) const
 {
     static_cast<void>(x);
     return true;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteExtendedType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType::operator !=(
         const CompleteExtendedType& x) const
 {
     return !(*this == x);
 }
 
 
-eprosima::fastdds::dds::xtypes::CompleteTypeObject::CompleteTypeObject()
+
+
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::CompleteTypeObject()
 {
     m__d = 0;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteTypeObject::~CompleteTypeObject()
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::~CompleteTypeObject()
 {
 }
 
-eprosima::fastdds::dds::xtypes::CompleteTypeObject::CompleteTypeObject(
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::CompleteTypeObject(
         const CompleteTypeObject& x)
 {
     m__d = x.m__d;
@@ -15964,7 +16179,7 @@ eprosima::fastdds::dds::xtypes::CompleteTypeObject::CompleteTypeObject(
     }
 }
 
-eprosima::fastdds::dds::xtypes::CompleteTypeObject::CompleteTypeObject(
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::CompleteTypeObject(
         CompleteTypeObject&& x) noexcept
 {
     m__d = x.m__d;
@@ -16038,7 +16253,7 @@ eprosima::fastdds::dds::xtypes::CompleteTypeObject::CompleteTypeObject(
     }
 }
 
-eprosima::fastdds::dds::xtypes::CompleteTypeObject& eprosima::fastdds::dds::xtypes::CompleteTypeObject::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::operator =(
         const CompleteTypeObject& x)
 {
     m__d = x.m__d;
@@ -16104,7 +16319,7 @@ eprosima::fastdds::dds::xtypes::CompleteTypeObject& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteTypeObject& eprosima::fastdds::dds::xtypes::CompleteTypeObject::operator =(
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::operator =(
         CompleteTypeObject&& x) noexcept
 {
     m__d = x.m__d;
@@ -16180,7 +16395,7 @@ eprosima::fastdds::dds::xtypes::CompleteTypeObject& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteTypeObject::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::operator ==(
         const CompleteTypeObject& x) const
 {
     if (m__d != x.m__d)
@@ -16248,13 +16463,13 @@ bool eprosima::fastdds::dds::xtypes::CompleteTypeObject::operator ==(
     return false;
 }
 
-bool eprosima::fastdds::dds::xtypes::CompleteTypeObject::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::operator !=(
         const CompleteTypeObject& x) const
 {
     return !(*this == x);
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::_d(
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::_d(
         uint8_t __d)
 {
     bool b = false;
@@ -16412,33 +16627,33 @@ void eprosima::fastdds::dds::xtypes::CompleteTypeObject::_d(
     m__d = __d;
 }
 
-uint8_t eprosima::fastdds::dds::xtypes::CompleteTypeObject::_d() const
+uint8_t eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::_d() const
 {
     return m__d;
 }
 
-uint8_t& eprosima::fastdds::dds::xtypes::CompleteTypeObject::_d()
+uint8_t& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::_d()
 {
     return m__d;
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::alias_type(
-        const eprosima::fastdds::dds::xtypes::CompleteAliasType& _alias_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::alias_type(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteAliasType& _alias_type)
 {
     m_alias_type = _alias_type;
     m__d = TK_ALIAS;
 
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::alias_type(
-        eprosima::fastdds::dds::xtypes::CompleteAliasType&& _alias_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::alias_type(
+        eprosima::fastdds::dds::xtypes1_3::CompleteAliasType&& _alias_type)
 {
     m_alias_type = std::move(_alias_type);
     m__d = TK_ALIAS;
 
 }
 
-const eprosima::fastdds::dds::xtypes::CompleteAliasType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::alias_type() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteAliasType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::alias_type() const
 {
     bool b = false;
 
@@ -16459,7 +16674,7 @@ const eprosima::fastdds::dds::xtypes::CompleteAliasType& eprosima::fastdds::dds:
     return m_alias_type;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAliasType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::alias_type()
+eprosima::fastdds::dds::xtypes1_3::CompleteAliasType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::alias_type()
 {
     bool b = false;
 
@@ -16481,23 +16696,23 @@ eprosima::fastdds::dds::xtypes::CompleteAliasType& eprosima::fastdds::dds::xtype
 }
 
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::annotation_type(
-        const eprosima::fastdds::dds::xtypes::CompleteAnnotationType& _annotation_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::annotation_type(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType& _annotation_type)
 {
     m_annotation_type = _annotation_type;
     m__d = TK_ANNOTATION;
 
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::annotation_type(
-        eprosima::fastdds::dds::xtypes::CompleteAnnotationType&& _annotation_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::annotation_type(
+        eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType&& _annotation_type)
 {
     m_annotation_type = std::move(_annotation_type);
     m__d = TK_ANNOTATION;
 
 }
 
-const eprosima::fastdds::dds::xtypes::CompleteAnnotationType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::annotation_type() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::annotation_type() const
 {
     bool b = false;
 
@@ -16518,7 +16733,7 @@ const eprosima::fastdds::dds::xtypes::CompleteAnnotationType& eprosima::fastdds:
     return m_annotation_type;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteAnnotationType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::annotation_type()
+eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::annotation_type()
 {
     bool b = false;
 
@@ -16540,23 +16755,23 @@ eprosima::fastdds::dds::xtypes::CompleteAnnotationType& eprosima::fastdds::dds::
 }
 
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::struct_type(
-        const eprosima::fastdds::dds::xtypes::CompleteStructType& _struct_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::struct_type(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteStructType& _struct_type)
 {
     m_struct_type = _struct_type;
     m__d = TK_STRUCTURE;
 
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::struct_type(
-        eprosima::fastdds::dds::xtypes::CompleteStructType&& _struct_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::struct_type(
+        eprosima::fastdds::dds::xtypes1_3::CompleteStructType&& _struct_type)
 {
     m_struct_type = std::move(_struct_type);
     m__d = TK_STRUCTURE;
 
 }
 
-const eprosima::fastdds::dds::xtypes::CompleteStructType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::struct_type() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteStructType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::struct_type() const
 {
     bool b = false;
 
@@ -16577,7 +16792,7 @@ const eprosima::fastdds::dds::xtypes::CompleteStructType& eprosima::fastdds::dds
     return m_struct_type;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteStructType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::struct_type()
+eprosima::fastdds::dds::xtypes1_3::CompleteStructType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::struct_type()
 {
     bool b = false;
 
@@ -16599,23 +16814,23 @@ eprosima::fastdds::dds::xtypes::CompleteStructType& eprosima::fastdds::dds::xtyp
 }
 
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::union_type(
-        const eprosima::fastdds::dds::xtypes::CompleteUnionType& _union_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::union_type(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteUnionType& _union_type)
 {
     m_union_type = _union_type;
     m__d = TK_UNION;
 
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::union_type(
-        eprosima::fastdds::dds::xtypes::CompleteUnionType&& _union_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::union_type(
+        eprosima::fastdds::dds::xtypes1_3::CompleteUnionType&& _union_type)
 {
     m_union_type = std::move(_union_type);
     m__d = TK_UNION;
 
 }
 
-const eprosima::fastdds::dds::xtypes::CompleteUnionType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::union_type() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteUnionType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::union_type() const
 {
     bool b = false;
 
@@ -16636,7 +16851,7 @@ const eprosima::fastdds::dds::xtypes::CompleteUnionType& eprosima::fastdds::dds:
     return m_union_type;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteUnionType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::union_type()
+eprosima::fastdds::dds::xtypes1_3::CompleteUnionType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::union_type()
 {
     bool b = false;
 
@@ -16658,23 +16873,23 @@ eprosima::fastdds::dds::xtypes::CompleteUnionType& eprosima::fastdds::dds::xtype
 }
 
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::bitset_type(
-        const eprosima::fastdds::dds::xtypes::CompleteBitsetType& _bitset_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::bitset_type(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType& _bitset_type)
 {
     m_bitset_type = _bitset_type;
     m__d = TK_BITSET;
 
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::bitset_type(
-        eprosima::fastdds::dds::xtypes::CompleteBitsetType&& _bitset_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::bitset_type(
+        eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType&& _bitset_type)
 {
     m_bitset_type = std::move(_bitset_type);
     m__d = TK_BITSET;
 
 }
 
-const eprosima::fastdds::dds::xtypes::CompleteBitsetType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::bitset_type() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::bitset_type() const
 {
     bool b = false;
 
@@ -16695,7 +16910,7 @@ const eprosima::fastdds::dds::xtypes::CompleteBitsetType& eprosima::fastdds::dds
     return m_bitset_type;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitsetType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::bitset_type()
+eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::bitset_type()
 {
     bool b = false;
 
@@ -16717,23 +16932,23 @@ eprosima::fastdds::dds::xtypes::CompleteBitsetType& eprosima::fastdds::dds::xtyp
 }
 
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::sequence_type(
-        const eprosima::fastdds::dds::xtypes::CompleteSequenceType& _sequence_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::sequence_type(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType& _sequence_type)
 {
     m_sequence_type = _sequence_type;
     m__d = TK_SEQUENCE;
 
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::sequence_type(
-        eprosima::fastdds::dds::xtypes::CompleteSequenceType&& _sequence_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::sequence_type(
+        eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType&& _sequence_type)
 {
     m_sequence_type = std::move(_sequence_type);
     m__d = TK_SEQUENCE;
 
 }
 
-const eprosima::fastdds::dds::xtypes::CompleteSequenceType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::sequence_type() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::sequence_type() const
 {
     bool b = false;
 
@@ -16754,7 +16969,7 @@ const eprosima::fastdds::dds::xtypes::CompleteSequenceType& eprosima::fastdds::d
     return m_sequence_type;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteSequenceType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::sequence_type()
+eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::sequence_type()
 {
     bool b = false;
 
@@ -16776,23 +16991,23 @@ eprosima::fastdds::dds::xtypes::CompleteSequenceType& eprosima::fastdds::dds::xt
 }
 
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::array_type(
-        const eprosima::fastdds::dds::xtypes::CompleteArrayType& _array_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::array_type(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteArrayType& _array_type)
 {
     m_array_type = _array_type;
     m__d = TK_ARRAY;
 
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::array_type(
-        eprosima::fastdds::dds::xtypes::CompleteArrayType&& _array_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::array_type(
+        eprosima::fastdds::dds::xtypes1_3::CompleteArrayType&& _array_type)
 {
     m_array_type = std::move(_array_type);
     m__d = TK_ARRAY;
 
 }
 
-const eprosima::fastdds::dds::xtypes::CompleteArrayType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::array_type() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteArrayType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::array_type() const
 {
     bool b = false;
 
@@ -16813,7 +17028,7 @@ const eprosima::fastdds::dds::xtypes::CompleteArrayType& eprosima::fastdds::dds:
     return m_array_type;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteArrayType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::array_type()
+eprosima::fastdds::dds::xtypes1_3::CompleteArrayType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::array_type()
 {
     bool b = false;
 
@@ -16835,23 +17050,23 @@ eprosima::fastdds::dds::xtypes::CompleteArrayType& eprosima::fastdds::dds::xtype
 }
 
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::map_type(
-        const eprosima::fastdds::dds::xtypes::CompleteMapType& _map_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::map_type(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteMapType& _map_type)
 {
     m_map_type = _map_type;
     m__d = TK_MAP;
 
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::map_type(
-        eprosima::fastdds::dds::xtypes::CompleteMapType&& _map_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::map_type(
+        eprosima::fastdds::dds::xtypes1_3::CompleteMapType&& _map_type)
 {
     m_map_type = std::move(_map_type);
     m__d = TK_MAP;
 
 }
 
-const eprosima::fastdds::dds::xtypes::CompleteMapType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::map_type() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteMapType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::map_type() const
 {
     bool b = false;
 
@@ -16872,7 +17087,7 @@ const eprosima::fastdds::dds::xtypes::CompleteMapType& eprosima::fastdds::dds::x
     return m_map_type;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteMapType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::map_type()
+eprosima::fastdds::dds::xtypes1_3::CompleteMapType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::map_type()
 {
     bool b = false;
 
@@ -16894,23 +17109,23 @@ eprosima::fastdds::dds::xtypes::CompleteMapType& eprosima::fastdds::dds::xtypes:
 }
 
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::enumerated_type(
-        const eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& _enumerated_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::enumerated_type(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType& _enumerated_type)
 {
     m_enumerated_type = _enumerated_type;
     m__d = TK_ENUM;
 
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::enumerated_type(
-        eprosima::fastdds::dds::xtypes::CompleteEnumeratedType&& _enumerated_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::enumerated_type(
+        eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType&& _enumerated_type)
 {
     m_enumerated_type = std::move(_enumerated_type);
     m__d = TK_ENUM;
 
 }
 
-const eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::enumerated_type() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::enumerated_type() const
 {
     bool b = false;
 
@@ -16931,7 +17146,7 @@ const eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& eprosima::fastdds:
     return m_enumerated_type;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::enumerated_type()
+eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::enumerated_type()
 {
     bool b = false;
 
@@ -16953,23 +17168,23 @@ eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& eprosima::fastdds::dds::
 }
 
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::bitmask_type(
-        const eprosima::fastdds::dds::xtypes::CompleteBitmaskType& _bitmask_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::bitmask_type(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType& _bitmask_type)
 {
     m_bitmask_type = _bitmask_type;
     m__d = TK_BITMASK;
 
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::bitmask_type(
-        eprosima::fastdds::dds::xtypes::CompleteBitmaskType&& _bitmask_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::bitmask_type(
+        eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType&& _bitmask_type)
 {
     m_bitmask_type = std::move(_bitmask_type);
     m__d = TK_BITMASK;
 
 }
 
-const eprosima::fastdds::dds::xtypes::CompleteBitmaskType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::bitmask_type() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::bitmask_type() const
 {
     bool b = false;
 
@@ -16990,7 +17205,7 @@ const eprosima::fastdds::dds::xtypes::CompleteBitmaskType& eprosima::fastdds::dd
     return m_bitmask_type;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteBitmaskType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::bitmask_type()
+eprosima::fastdds::dds::xtypes1_3::CompleteBitmaskType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::bitmask_type()
 {
     bool b = false;
 
@@ -17012,23 +17227,23 @@ eprosima::fastdds::dds::xtypes::CompleteBitmaskType& eprosima::fastdds::dds::xty
 }
 
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::extended_type(
-        const eprosima::fastdds::dds::xtypes::CompleteExtendedType& _extended_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::extended_type(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType& _extended_type)
 {
     m_extended_type = _extended_type;
     m__d = 0;
 
 }
 
-void eprosima::fastdds::dds::xtypes::CompleteTypeObject::extended_type(
-        eprosima::fastdds::dds::xtypes::CompleteExtendedType&& _extended_type)
+void eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::extended_type(
+        eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType&& _extended_type)
 {
     m_extended_type = std::move(_extended_type);
     m__d = 0;
 
 }
 
-const eprosima::fastdds::dds::xtypes::CompleteExtendedType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::extended_type() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::extended_type() const
 {
     bool b = true;
 
@@ -17057,7 +17272,7 @@ const eprosima::fastdds::dds::xtypes::CompleteExtendedType& eprosima::fastdds::d
     return m_extended_type;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteExtendedType& eprosima::fastdds::dds::xtypes::CompleteTypeObject::extended_type()
+eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType& eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::extended_type()
 {
     bool b = true;
 
@@ -17087,28 +17302,28 @@ eprosima::fastdds::dds::xtypes::CompleteExtendedType& eprosima::fastdds::dds::xt
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalExtendedType::MinimalExtendedType()
+eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType::MinimalExtendedType()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::MinimalExtendedType::~MinimalExtendedType()
+eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType::~MinimalExtendedType()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalExtendedType::MinimalExtendedType(
+eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType::MinimalExtendedType(
         const MinimalExtendedType& x)
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalExtendedType::MinimalExtendedType(
+eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType::MinimalExtendedType(
         MinimalExtendedType&& x) noexcept
 {
     static_cast<void>(x);
 }
 
-eprosima::fastdds::dds::xtypes::MinimalExtendedType& eprosima::fastdds::dds::xtypes::MinimalExtendedType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType& eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType::operator =(
         const MinimalExtendedType& x)
 {
 
@@ -17117,7 +17332,7 @@ eprosima::fastdds::dds::xtypes::MinimalExtendedType& eprosima::fastdds::dds::xty
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalExtendedType& eprosima::fastdds::dds::xtypes::MinimalExtendedType::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType& eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType::operator =(
         MinimalExtendedType&& x) noexcept
 {
 
@@ -17126,30 +17341,32 @@ eprosima::fastdds::dds::xtypes::MinimalExtendedType& eprosima::fastdds::dds::xty
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalExtendedType::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType::operator ==(
         const MinimalExtendedType& x) const
 {
     static_cast<void>(x);
     return true;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalExtendedType::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType::operator !=(
         const MinimalExtendedType& x) const
 {
     return !(*this == x);
 }
 
 
-eprosima::fastdds::dds::xtypes::MinimalTypeObject::MinimalTypeObject()
+
+
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::MinimalTypeObject()
 {
     m__d = 0;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalTypeObject::~MinimalTypeObject()
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::~MinimalTypeObject()
 {
 }
 
-eprosima::fastdds::dds::xtypes::MinimalTypeObject::MinimalTypeObject(
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::MinimalTypeObject(
         const MinimalTypeObject& x)
 {
     m__d = x.m__d;
@@ -17213,7 +17430,7 @@ eprosima::fastdds::dds::xtypes::MinimalTypeObject::MinimalTypeObject(
     }
 }
 
-eprosima::fastdds::dds::xtypes::MinimalTypeObject::MinimalTypeObject(
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::MinimalTypeObject(
         MinimalTypeObject&& x) noexcept
 {
     m__d = x.m__d;
@@ -17287,7 +17504,7 @@ eprosima::fastdds::dds::xtypes::MinimalTypeObject::MinimalTypeObject(
     }
 }
 
-eprosima::fastdds::dds::xtypes::MinimalTypeObject& eprosima::fastdds::dds::xtypes::MinimalTypeObject::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::operator =(
         const MinimalTypeObject& x)
 {
     m__d = x.m__d;
@@ -17353,7 +17570,7 @@ eprosima::fastdds::dds::xtypes::MinimalTypeObject& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalTypeObject& eprosima::fastdds::dds::xtypes::MinimalTypeObject::operator =(
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::operator =(
         MinimalTypeObject&& x) noexcept
 {
     m__d = x.m__d;
@@ -17429,7 +17646,7 @@ eprosima::fastdds::dds::xtypes::MinimalTypeObject& eprosima::fastdds::dds::xtype
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalTypeObject::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::operator ==(
         const MinimalTypeObject& x) const
 {
     if (m__d != x.m__d)
@@ -17497,13 +17714,13 @@ bool eprosima::fastdds::dds::xtypes::MinimalTypeObject::operator ==(
     return false;
 }
 
-bool eprosima::fastdds::dds::xtypes::MinimalTypeObject::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::operator !=(
         const MinimalTypeObject& x) const
 {
     return !(*this == x);
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::_d(
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::_d(
         uint8_t __d)
 {
     bool b = false;
@@ -17661,33 +17878,33 @@ void eprosima::fastdds::dds::xtypes::MinimalTypeObject::_d(
     m__d = __d;
 }
 
-uint8_t eprosima::fastdds::dds::xtypes::MinimalTypeObject::_d() const
+uint8_t eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::_d() const
 {
     return m__d;
 }
 
-uint8_t& eprosima::fastdds::dds::xtypes::MinimalTypeObject::_d()
+uint8_t& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::_d()
 {
     return m__d;
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::alias_type(
-        const eprosima::fastdds::dds::xtypes::MinimalAliasType& _alias_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::alias_type(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalAliasType& _alias_type)
 {
     m_alias_type = _alias_type;
     m__d = TK_ALIAS;
 
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::alias_type(
-        eprosima::fastdds::dds::xtypes::MinimalAliasType&& _alias_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::alias_type(
+        eprosima::fastdds::dds::xtypes1_3::MinimalAliasType&& _alias_type)
 {
     m_alias_type = std::move(_alias_type);
     m__d = TK_ALIAS;
 
 }
 
-const eprosima::fastdds::dds::xtypes::MinimalAliasType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::alias_type() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalAliasType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::alias_type() const
 {
     bool b = false;
 
@@ -17708,7 +17925,7 @@ const eprosima::fastdds::dds::xtypes::MinimalAliasType& eprosima::fastdds::dds::
     return m_alias_type;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAliasType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::alias_type()
+eprosima::fastdds::dds::xtypes1_3::MinimalAliasType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::alias_type()
 {
     bool b = false;
 
@@ -17730,23 +17947,23 @@ eprosima::fastdds::dds::xtypes::MinimalAliasType& eprosima::fastdds::dds::xtypes
 }
 
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::annotation_type(
-        const eprosima::fastdds::dds::xtypes::MinimalAnnotationType& _annotation_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::annotation_type(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType& _annotation_type)
 {
     m_annotation_type = _annotation_type;
     m__d = TK_ANNOTATION;
 
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::annotation_type(
-        eprosima::fastdds::dds::xtypes::MinimalAnnotationType&& _annotation_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::annotation_type(
+        eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType&& _annotation_type)
 {
     m_annotation_type = std::move(_annotation_type);
     m__d = TK_ANNOTATION;
 
 }
 
-const eprosima::fastdds::dds::xtypes::MinimalAnnotationType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::annotation_type() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::annotation_type() const
 {
     bool b = false;
 
@@ -17767,7 +17984,7 @@ const eprosima::fastdds::dds::xtypes::MinimalAnnotationType& eprosima::fastdds::
     return m_annotation_type;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalAnnotationType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::annotation_type()
+eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::annotation_type()
 {
     bool b = false;
 
@@ -17789,23 +18006,23 @@ eprosima::fastdds::dds::xtypes::MinimalAnnotationType& eprosima::fastdds::dds::x
 }
 
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::struct_type(
-        const eprosima::fastdds::dds::xtypes::MinimalStructType& _struct_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::struct_type(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalStructType& _struct_type)
 {
     m_struct_type = _struct_type;
     m__d = TK_STRUCTURE;
 
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::struct_type(
-        eprosima::fastdds::dds::xtypes::MinimalStructType&& _struct_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::struct_type(
+        eprosima::fastdds::dds::xtypes1_3::MinimalStructType&& _struct_type)
 {
     m_struct_type = std::move(_struct_type);
     m__d = TK_STRUCTURE;
 
 }
 
-const eprosima::fastdds::dds::xtypes::MinimalStructType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::struct_type() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalStructType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::struct_type() const
 {
     bool b = false;
 
@@ -17826,7 +18043,7 @@ const eprosima::fastdds::dds::xtypes::MinimalStructType& eprosima::fastdds::dds:
     return m_struct_type;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalStructType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::struct_type()
+eprosima::fastdds::dds::xtypes1_3::MinimalStructType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::struct_type()
 {
     bool b = false;
 
@@ -17848,23 +18065,23 @@ eprosima::fastdds::dds::xtypes::MinimalStructType& eprosima::fastdds::dds::xtype
 }
 
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::union_type(
-        const eprosima::fastdds::dds::xtypes::MinimalUnionType& _union_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::union_type(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalUnionType& _union_type)
 {
     m_union_type = _union_type;
     m__d = TK_UNION;
 
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::union_type(
-        eprosima::fastdds::dds::xtypes::MinimalUnionType&& _union_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::union_type(
+        eprosima::fastdds::dds::xtypes1_3::MinimalUnionType&& _union_type)
 {
     m_union_type = std::move(_union_type);
     m__d = TK_UNION;
 
 }
 
-const eprosima::fastdds::dds::xtypes::MinimalUnionType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::union_type() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalUnionType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::union_type() const
 {
     bool b = false;
 
@@ -17885,7 +18102,7 @@ const eprosima::fastdds::dds::xtypes::MinimalUnionType& eprosima::fastdds::dds::
     return m_union_type;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalUnionType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::union_type()
+eprosima::fastdds::dds::xtypes1_3::MinimalUnionType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::union_type()
 {
     bool b = false;
 
@@ -17907,23 +18124,23 @@ eprosima::fastdds::dds::xtypes::MinimalUnionType& eprosima::fastdds::dds::xtypes
 }
 
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::bitset_type(
-        const eprosima::fastdds::dds::xtypes::MinimalBitsetType& _bitset_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::bitset_type(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType& _bitset_type)
 {
     m_bitset_type = _bitset_type;
     m__d = TK_BITSET;
 
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::bitset_type(
-        eprosima::fastdds::dds::xtypes::MinimalBitsetType&& _bitset_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::bitset_type(
+        eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType&& _bitset_type)
 {
     m_bitset_type = std::move(_bitset_type);
     m__d = TK_BITSET;
 
 }
 
-const eprosima::fastdds::dds::xtypes::MinimalBitsetType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::bitset_type() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::bitset_type() const
 {
     bool b = false;
 
@@ -17944,7 +18161,7 @@ const eprosima::fastdds::dds::xtypes::MinimalBitsetType& eprosima::fastdds::dds:
     return m_bitset_type;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitsetType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::bitset_type()
+eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::bitset_type()
 {
     bool b = false;
 
@@ -17966,23 +18183,23 @@ eprosima::fastdds::dds::xtypes::MinimalBitsetType& eprosima::fastdds::dds::xtype
 }
 
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::sequence_type(
-        const eprosima::fastdds::dds::xtypes::MinimalSequenceType& _sequence_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::sequence_type(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType& _sequence_type)
 {
     m_sequence_type = _sequence_type;
     m__d = TK_SEQUENCE;
 
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::sequence_type(
-        eprosima::fastdds::dds::xtypes::MinimalSequenceType&& _sequence_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::sequence_type(
+        eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType&& _sequence_type)
 {
     m_sequence_type = std::move(_sequence_type);
     m__d = TK_SEQUENCE;
 
 }
 
-const eprosima::fastdds::dds::xtypes::MinimalSequenceType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::sequence_type() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::sequence_type() const
 {
     bool b = false;
 
@@ -18003,7 +18220,7 @@ const eprosima::fastdds::dds::xtypes::MinimalSequenceType& eprosima::fastdds::dd
     return m_sequence_type;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalSequenceType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::sequence_type()
+eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::sequence_type()
 {
     bool b = false;
 
@@ -18025,23 +18242,23 @@ eprosima::fastdds::dds::xtypes::MinimalSequenceType& eprosima::fastdds::dds::xty
 }
 
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::array_type(
-        const eprosima::fastdds::dds::xtypes::MinimalArrayType& _array_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::array_type(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalArrayType& _array_type)
 {
     m_array_type = _array_type;
     m__d = TK_ARRAY;
 
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::array_type(
-        eprosima::fastdds::dds::xtypes::MinimalArrayType&& _array_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::array_type(
+        eprosima::fastdds::dds::xtypes1_3::MinimalArrayType&& _array_type)
 {
     m_array_type = std::move(_array_type);
     m__d = TK_ARRAY;
 
 }
 
-const eprosima::fastdds::dds::xtypes::MinimalArrayType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::array_type() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalArrayType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::array_type() const
 {
     bool b = false;
 
@@ -18062,7 +18279,7 @@ const eprosima::fastdds::dds::xtypes::MinimalArrayType& eprosima::fastdds::dds::
     return m_array_type;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalArrayType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::array_type()
+eprosima::fastdds::dds::xtypes1_3::MinimalArrayType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::array_type()
 {
     bool b = false;
 
@@ -18084,23 +18301,23 @@ eprosima::fastdds::dds::xtypes::MinimalArrayType& eprosima::fastdds::dds::xtypes
 }
 
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::map_type(
-        const eprosima::fastdds::dds::xtypes::MinimalMapType& _map_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::map_type(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalMapType& _map_type)
 {
     m_map_type = _map_type;
     m__d = TK_MAP;
 
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::map_type(
-        eprosima::fastdds::dds::xtypes::MinimalMapType&& _map_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::map_type(
+        eprosima::fastdds::dds::xtypes1_3::MinimalMapType&& _map_type)
 {
     m_map_type = std::move(_map_type);
     m__d = TK_MAP;
 
 }
 
-const eprosima::fastdds::dds::xtypes::MinimalMapType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::map_type() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalMapType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::map_type() const
 {
     bool b = false;
 
@@ -18121,7 +18338,7 @@ const eprosima::fastdds::dds::xtypes::MinimalMapType& eprosima::fastdds::dds::xt
     return m_map_type;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalMapType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::map_type()
+eprosima::fastdds::dds::xtypes1_3::MinimalMapType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::map_type()
 {
     bool b = false;
 
@@ -18143,23 +18360,23 @@ eprosima::fastdds::dds::xtypes::MinimalMapType& eprosima::fastdds::dds::xtypes::
 }
 
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::enumerated_type(
-        const eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& _enumerated_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::enumerated_type(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType& _enumerated_type)
 {
     m_enumerated_type = _enumerated_type;
     m__d = TK_ENUM;
 
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::enumerated_type(
-        eprosima::fastdds::dds::xtypes::MinimalEnumeratedType&& _enumerated_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::enumerated_type(
+        eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType&& _enumerated_type)
 {
     m_enumerated_type = std::move(_enumerated_type);
     m__d = TK_ENUM;
 
 }
 
-const eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::enumerated_type() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::enumerated_type() const
 {
     bool b = false;
 
@@ -18180,7 +18397,7 @@ const eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& eprosima::fastdds::
     return m_enumerated_type;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::enumerated_type()
+eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::enumerated_type()
 {
     bool b = false;
 
@@ -18202,23 +18419,23 @@ eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& eprosima::fastdds::dds::x
 }
 
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::bitmask_type(
-        const eprosima::fastdds::dds::xtypes::MinimalBitmaskType& _bitmask_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::bitmask_type(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType& _bitmask_type)
 {
     m_bitmask_type = _bitmask_type;
     m__d = TK_BITMASK;
 
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::bitmask_type(
-        eprosima::fastdds::dds::xtypes::MinimalBitmaskType&& _bitmask_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::bitmask_type(
+        eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType&& _bitmask_type)
 {
     m_bitmask_type = std::move(_bitmask_type);
     m__d = TK_BITMASK;
 
 }
 
-const eprosima::fastdds::dds::xtypes::MinimalBitmaskType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::bitmask_type() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::bitmask_type() const
 {
     bool b = false;
 
@@ -18239,7 +18456,7 @@ const eprosima::fastdds::dds::xtypes::MinimalBitmaskType& eprosima::fastdds::dds
     return m_bitmask_type;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalBitmaskType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::bitmask_type()
+eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::bitmask_type()
 {
     bool b = false;
 
@@ -18261,23 +18478,23 @@ eprosima::fastdds::dds::xtypes::MinimalBitmaskType& eprosima::fastdds::dds::xtyp
 }
 
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::extended_type(
-        const eprosima::fastdds::dds::xtypes::MinimalExtendedType& _extended_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::extended_type(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType& _extended_type)
 {
     m_extended_type = _extended_type;
     m__d = 0;
 
 }
 
-void eprosima::fastdds::dds::xtypes::MinimalTypeObject::extended_type(
-        eprosima::fastdds::dds::xtypes::MinimalExtendedType&& _extended_type)
+void eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::extended_type(
+        eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType&& _extended_type)
 {
     m_extended_type = std::move(_extended_type);
     m__d = 0;
 
 }
 
-const eprosima::fastdds::dds::xtypes::MinimalExtendedType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::extended_type() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::extended_type() const
 {
     bool b = true;
 
@@ -18306,7 +18523,7 @@ const eprosima::fastdds::dds::xtypes::MinimalExtendedType& eprosima::fastdds::dd
     return m_extended_type;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalExtendedType& eprosima::fastdds::dds::xtypes::MinimalTypeObject::extended_type()
+eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType& eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::extended_type()
 {
     bool b = true;
 
@@ -18336,16 +18553,18 @@ eprosima::fastdds::dds::xtypes::MinimalExtendedType& eprosima::fastdds::dds::xty
 }
 
 
-eprosima::fastdds::dds::xtypes::TypeObject::TypeObject()
+
+
+eprosima::fastdds::dds::xtypes1_3::TypeObject::TypeObject()
 {
     m__d = EK_COMPLETE;
 }
 
-eprosima::fastdds::dds::xtypes::TypeObject::~TypeObject()
+eprosima::fastdds::dds::xtypes1_3::TypeObject::~TypeObject()
 {
 }
 
-eprosima::fastdds::dds::xtypes::TypeObject::TypeObject(
+eprosima::fastdds::dds::xtypes1_3::TypeObject::TypeObject(
         const TypeObject& x)
 {
     m__d = x.m__d;
@@ -18366,7 +18585,7 @@ eprosima::fastdds::dds::xtypes::TypeObject::TypeObject(
     }
 }
 
-eprosima::fastdds::dds::xtypes::TypeObject::TypeObject(
+eprosima::fastdds::dds::xtypes1_3::TypeObject::TypeObject(
         TypeObject&& x) noexcept
 {
     m__d = x.m__d;
@@ -18389,7 +18608,7 @@ eprosima::fastdds::dds::xtypes::TypeObject::TypeObject(
     }
 }
 
-eprosima::fastdds::dds::xtypes::TypeObject& eprosima::fastdds::dds::xtypes::TypeObject::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeObject& eprosima::fastdds::dds::xtypes1_3::TypeObject::operator =(
         const TypeObject& x)
 {
     m__d = x.m__d;
@@ -18412,7 +18631,7 @@ eprosima::fastdds::dds::xtypes::TypeObject& eprosima::fastdds::dds::xtypes::Type
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::TypeObject& eprosima::fastdds::dds::xtypes::TypeObject::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeObject& eprosima::fastdds::dds::xtypes1_3::TypeObject::operator =(
         TypeObject&& x) noexcept
 {
     m__d = x.m__d;
@@ -18437,7 +18656,7 @@ eprosima::fastdds::dds::xtypes::TypeObject& eprosima::fastdds::dds::xtypes::Type
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeObject::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::TypeObject::operator ==(
         const TypeObject& x) const
 {
     if (m__d != x.m__d)
@@ -18462,13 +18681,13 @@ bool eprosima::fastdds::dds::xtypes::TypeObject::operator ==(
     return false;
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeObject::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::TypeObject::operator !=(
         const TypeObject& x) const
 {
     return !(*this == x);
 }
 
-void eprosima::fastdds::dds::xtypes::TypeObject::_d(
+void eprosima::fastdds::dds::xtypes1_3::TypeObject::_d(
         uint8_t __d)
 {
     bool b = false;
@@ -18510,33 +18729,33 @@ void eprosima::fastdds::dds::xtypes::TypeObject::_d(
     m__d = __d;
 }
 
-uint8_t eprosima::fastdds::dds::xtypes::TypeObject::_d() const
+uint8_t eprosima::fastdds::dds::xtypes1_3::TypeObject::_d() const
 {
     return m__d;
 }
 
-uint8_t& eprosima::fastdds::dds::xtypes::TypeObject::_d()
+uint8_t& eprosima::fastdds::dds::xtypes1_3::TypeObject::_d()
 {
     return m__d;
 }
 
-void eprosima::fastdds::dds::xtypes::TypeObject::complete(
-        const eprosima::fastdds::dds::xtypes::CompleteTypeObject& _complete)
+void eprosima::fastdds::dds::xtypes1_3::TypeObject::complete(
+        const eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject& _complete)
 {
     m_complete = _complete;
     m__d = EK_COMPLETE;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeObject::complete(
-        eprosima::fastdds::dds::xtypes::CompleteTypeObject&& _complete)
+void eprosima::fastdds::dds::xtypes1_3::TypeObject::complete(
+        eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject&& _complete)
 {
     m_complete = std::move(_complete);
     m__d = EK_COMPLETE;
 
 }
 
-const eprosima::fastdds::dds::xtypes::CompleteTypeObject& eprosima::fastdds::dds::xtypes::TypeObject::complete() const
+const eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject& eprosima::fastdds::dds::xtypes1_3::TypeObject::complete() const
 {
     bool b = false;
 
@@ -18557,7 +18776,7 @@ const eprosima::fastdds::dds::xtypes::CompleteTypeObject& eprosima::fastdds::dds
     return m_complete;
 }
 
-eprosima::fastdds::dds::xtypes::CompleteTypeObject& eprosima::fastdds::dds::xtypes::TypeObject::complete()
+eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject& eprosima::fastdds::dds::xtypes1_3::TypeObject::complete()
 {
     bool b = false;
 
@@ -18579,23 +18798,23 @@ eprosima::fastdds::dds::xtypes::CompleteTypeObject& eprosima::fastdds::dds::xtyp
 }
 
 
-void eprosima::fastdds::dds::xtypes::TypeObject::minimal(
-        const eprosima::fastdds::dds::xtypes::MinimalTypeObject& _minimal)
+void eprosima::fastdds::dds::xtypes1_3::TypeObject::minimal(
+        const eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject& _minimal)
 {
     m_minimal = _minimal;
     m__d = EK_MINIMAL;
 
 }
 
-void eprosima::fastdds::dds::xtypes::TypeObject::minimal(
-        eprosima::fastdds::dds::xtypes::MinimalTypeObject&& _minimal)
+void eprosima::fastdds::dds::xtypes1_3::TypeObject::minimal(
+        eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject&& _minimal)
 {
     m_minimal = std::move(_minimal);
     m__d = EK_MINIMAL;
 
 }
 
-const eprosima::fastdds::dds::xtypes::MinimalTypeObject& eprosima::fastdds::dds::xtypes::TypeObject::minimal() const
+const eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject& eprosima::fastdds::dds::xtypes1_3::TypeObject::minimal() const
 {
     bool b = false;
 
@@ -18616,7 +18835,7 @@ const eprosima::fastdds::dds::xtypes::MinimalTypeObject& eprosima::fastdds::dds:
     return m_minimal;
 }
 
-eprosima::fastdds::dds::xtypes::MinimalTypeObject& eprosima::fastdds::dds::xtypes::TypeObject::minimal()
+eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject& eprosima::fastdds::dds::xtypes1_3::TypeObject::minimal()
 {
     bool b = false;
 
@@ -18640,44 +18859,48 @@ eprosima::fastdds::dds::xtypes::MinimalTypeObject& eprosima::fastdds::dds::xtype
 
 
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::TypeIdentifierTypeObjectPair()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::TypeIdentifierTypeObjectPair()
 {
-    m_type_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_type_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::~TypeIdentifierTypeObjectPair()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::~TypeIdentifierTypeObjectPair()
 {
     delete m_type_identifier;
 
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::TypeIdentifierTypeObjectPair(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::TypeIdentifierTypeObjectPair(
         const TypeIdentifierTypeObjectPair& x)
 {
-    m_type_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_identifier = *x.m_type_identifier;
+    m_type_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type_identifier = *x.m_type_identifier;
     m_type_object = x.m_type_object;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::TypeIdentifierTypeObjectPair(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::TypeIdentifierTypeObjectPair(
         TypeIdentifierTypeObjectPair&& x) noexcept
 {
     m_type_identifier = x.m_type_identifier;x.m_type_identifier = nullptr;
     m_type_object = std::move(x.m_type_object);
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair& eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::operator =(
         const TypeIdentifierTypeObjectPair& x)
 {
 
-    m_type_identifier = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_identifier = *x.m_type_identifier;
+    m_type_identifier = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type_identifier = *x.m_type_identifier;
     m_type_object = x.m_type_object;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair& eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::operator =(
         TypeIdentifierTypeObjectPair&& x) noexcept
 {
 
@@ -18686,14 +18909,14 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair& eprosima::fastdds:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::operator ==(
         const TypeIdentifierTypeObjectPair& x) const
 {
     return (m_type_identifier == x.m_type_identifier &&
            m_type_object == x.m_type_object);
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::operator !=(
         const TypeIdentifierTypeObjectPair& x) const
 {
     return !(*this == x);
@@ -18703,8 +18926,8 @@ bool eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::operator !=(
  * @brief This function copies the value in member type_identifier
  * @param _type_identifier New value to be copied in member type_identifier
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::type_identifier(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _type_identifier)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::type_identifier(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _type_identifier)
 {
     *m_type_identifier = _type_identifier;
 }
@@ -18713,8 +18936,8 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::type_identifi
  * @brief This function moves the value in member type_identifier
  * @param _type_identifier New value to be moved in member type_identifier
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _type_identifier)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::type_identifier(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _type_identifier)
 {
     *m_type_identifier = std::move(_type_identifier);
 }
@@ -18723,7 +18946,7 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::type_identifi
  * @brief This function returns a constant reference to member type_identifier
  * @return Constant reference to member type_identifier
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::type_identifier() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::type_identifier() const
 {
     return *m_type_identifier;
 }
@@ -18732,7 +18955,7 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member type_identifier
  * @return Reference to member type_identifier
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::type_identifier()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::type_identifier()
 {
     return *m_type_identifier;
 }
@@ -18742,8 +18965,8 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member type_object
  * @param _type_object New value to be copied in member type_object
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::type_object(
-        const eprosima::fastdds::dds::xtypes::TypeObject& _type_object)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::type_object(
+        const eprosima::fastdds::dds::xtypes1_3::TypeObject& _type_object)
 {
     m_type_object = _type_object;
 }
@@ -18752,8 +18975,8 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::type_object(
  * @brief This function moves the value in member type_object
  * @param _type_object New value to be moved in member type_object
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::type_object(
-        eprosima::fastdds::dds::xtypes::TypeObject&& _type_object)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::type_object(
+        eprosima::fastdds::dds::xtypes1_3::TypeObject&& _type_object)
 {
     m_type_object = std::move(_type_object);
 }
@@ -18762,7 +18985,7 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::type_object(
  * @brief This function returns a constant reference to member type_object
  * @return Constant reference to member type_object
  */
-const eprosima::fastdds::dds::xtypes::TypeObject& eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::type_object() const
+const eprosima::fastdds::dds::xtypes1_3::TypeObject& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::type_object() const
 {
     return m_type_object;
 }
@@ -18771,53 +18994,57 @@ const eprosima::fastdds::dds::xtypes::TypeObject& eprosima::fastdds::dds::xtypes
  * @brief This function returns a reference to member type_object
  * @return Reference to member type_object
  */
-eprosima::fastdds::dds::xtypes::TypeObject& eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair::type_object()
+eprosima::fastdds::dds::xtypes1_3::TypeObject& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::type_object()
 {
     return m_type_object;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierPair::TypeIdentifierPair()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::TypeIdentifierPair()
 {
-    m_type_identifier1 = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_type_identifier1 = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
-    m_type_identifier2 = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_type_identifier2 = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierPair::~TypeIdentifierPair()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::~TypeIdentifierPair()
 {
     delete m_type_identifier1;
     delete m_type_identifier2;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierPair::TypeIdentifierPair(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::TypeIdentifierPair(
         const TypeIdentifierPair& x)
 {
-    m_type_identifier1 = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_identifier1 = *x.m_type_identifier1;
-    m_type_identifier2 = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_identifier2 = *x.m_type_identifier2;
+    m_type_identifier1 = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type_identifier1 = *x.m_type_identifier1;
+    m_type_identifier2 = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type_identifier2 = *x.m_type_identifier2;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierPair::TypeIdentifierPair(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::TypeIdentifierPair(
         TypeIdentifierPair&& x) noexcept
 {
     m_type_identifier1 = x.m_type_identifier1;x.m_type_identifier1 = nullptr;
     m_type_identifier2 = x.m_type_identifier2;x.m_type_identifier2 = nullptr;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierPair& eprosima::fastdds::dds::xtypes::TypeIdentifierPair::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::operator =(
         const TypeIdentifierPair& x)
 {
 
-    m_type_identifier1 = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_identifier1 = *x.m_type_identifier1;
-    m_type_identifier2 = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_identifier2 = *x.m_type_identifier2;
+    m_type_identifier1 = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type_identifier1 = *x.m_type_identifier1;
+    m_type_identifier2 = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type_identifier2 = *x.m_type_identifier2;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierPair& eprosima::fastdds::dds::xtypes::TypeIdentifierPair::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::operator =(
         TypeIdentifierPair&& x) noexcept
 {
 
@@ -18826,14 +19053,14 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierPair& eprosima::fastdds::dds::xtyp
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeIdentifierPair::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::operator ==(
         const TypeIdentifierPair& x) const
 {
     return (m_type_identifier1 == x.m_type_identifier1 &&
            m_type_identifier2 == x.m_type_identifier2);
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeIdentifierPair::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::operator !=(
         const TypeIdentifierPair& x) const
 {
     return !(*this == x);
@@ -18843,8 +19070,8 @@ bool eprosima::fastdds::dds::xtypes::TypeIdentifierPair::operator !=(
  * @brief This function copies the value in member type_identifier1
  * @param _type_identifier1 New value to be copied in member type_identifier1
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierPair::type_identifier1(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _type_identifier1)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::type_identifier1(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _type_identifier1)
 {
     *m_type_identifier1 = _type_identifier1;
 }
@@ -18853,8 +19080,8 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierPair::type_identifier1(
  * @brief This function moves the value in member type_identifier1
  * @param _type_identifier1 New value to be moved in member type_identifier1
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierPair::type_identifier1(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _type_identifier1)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::type_identifier1(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _type_identifier1)
 {
     *m_type_identifier1 = std::move(_type_identifier1);
 }
@@ -18863,7 +19090,7 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierPair::type_identifier1(
  * @brief This function returns a constant reference to member type_identifier1
  * @return Constant reference to member type_identifier1
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::TypeIdentifierPair::type_identifier1() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::type_identifier1() const
 {
     return *m_type_identifier1;
 }
@@ -18872,7 +19099,7 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member type_identifier1
  * @return Reference to member type_identifier1
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::TypeIdentifierPair::type_identifier1()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::type_identifier1()
 {
     return *m_type_identifier1;
 }
@@ -18882,8 +19109,8 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::
  * @brief This function copies the value in member type_identifier2
  * @param _type_identifier2 New value to be copied in member type_identifier2
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierPair::type_identifier2(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _type_identifier2)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::type_identifier2(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _type_identifier2)
 {
     *m_type_identifier2 = _type_identifier2;
 }
@@ -18892,8 +19119,8 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierPair::type_identifier2(
  * @brief This function moves the value in member type_identifier2
  * @param _type_identifier2 New value to be moved in member type_identifier2
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierPair::type_identifier2(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _type_identifier2)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::type_identifier2(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _type_identifier2)
 {
     *m_type_identifier2 = std::move(_type_identifier2);
 }
@@ -18902,7 +19129,7 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierPair::type_identifier2(
  * @brief This function returns a constant reference to member type_identifier2
  * @return Constant reference to member type_identifier2
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::TypeIdentifierPair::type_identifier2() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::type_identifier2() const
 {
     return *m_type_identifier2;
 }
@@ -18911,51 +19138,55 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member type_identifier2
  * @return Reference to member type_identifier2
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::TypeIdentifierPair::type_identifier2()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair::type_identifier2()
 {
     return *m_type_identifier2;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::TypeIdentfierWithSize()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::TypeIdentfierWithSize()
 {
-    m_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();
+    m_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();
 
 
 
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::~TypeIdentfierWithSize()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::~TypeIdentfierWithSize()
 {
     delete m_type_id;
 
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::TypeIdentfierWithSize(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::TypeIdentfierWithSize(
         const TypeIdentfierWithSize& x)
 {
-    m_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_id = *x.m_type_id;
+    m_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type_id = *x.m_type_id;
     m_typeobject_serialized_size = x.m_typeobject_serialized_size;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::TypeIdentfierWithSize(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::TypeIdentfierWithSize(
         TypeIdentfierWithSize&& x) noexcept
 {
     m_type_id = x.m_type_id;x.m_type_id = nullptr;
     m_typeobject_serialized_size = x.m_typeobject_serialized_size;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize& eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::operator =(
         const TypeIdentfierWithSize& x)
 {
 
-    m_type_id = new eprosima::fastdds::dds::xtypes::TypeIdentifier();*m_type_id = *x.m_type_id;
+    m_type_id = new eprosima::fastdds::dds::xtypes1_3::TypeIdentifier();*m_type_id = *x.m_type_id;
     m_typeobject_serialized_size = x.m_typeobject_serialized_size;
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize& eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::operator =(
         TypeIdentfierWithSize&& x) noexcept
 {
 
@@ -18964,14 +19195,14 @@ eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& eprosima::fastdds::dds::x
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::operator ==(
         const TypeIdentfierWithSize& x) const
 {
     return (m_type_id == x.m_type_id &&
            m_typeobject_serialized_size == x.m_typeobject_serialized_size);
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::operator !=(
         const TypeIdentfierWithSize& x) const
 {
     return !(*this == x);
@@ -18981,8 +19212,8 @@ bool eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::operator !=(
  * @brief This function copies the value in member type_id
  * @param _type_id New value to be copied in member type_id
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::type_id(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifier& _type_id)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::type_id(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& _type_id)
 {
     *m_type_id = _type_id;
 }
@@ -18991,8 +19222,8 @@ void eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::type_id(
  * @brief This function moves the value in member type_id
  * @param _type_id New value to be moved in member type_id
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::type_id(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier&& _type_id)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::type_id(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifier&& _type_id)
 {
     *m_type_id = std::move(_type_id);
 }
@@ -19001,7 +19232,7 @@ void eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::type_id(
  * @brief This function returns a constant reference to member type_id
  * @return Constant reference to member type_id
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::type_id() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::type_id() const
 {
     return *m_type_id;
 }
@@ -19010,7 +19241,7 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xt
  * @brief This function returns a reference to member type_id
  * @return Reference to member type_id
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::type_id()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::type_id()
 {
     return *m_type_id;
 }
@@ -19020,7 +19251,7 @@ eprosima::fastdds::dds::xtypes::TypeIdentifier& eprosima::fastdds::dds::xtypes::
  * @brief This function sets a value in member typeobject_serialized_size
  * @param _typeobject_serialized_size New value for member typeobject_serialized_size
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::typeobject_serialized_size(
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::typeobject_serialized_size(
         uint32_t _typeobject_serialized_size)
 {
     m_typeobject_serialized_size = _typeobject_serialized_size;
@@ -19030,7 +19261,7 @@ void eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::typeobject_serialize
  * @brief This function returns the value of member typeobject_serialized_size
  * @return Value of member typeobject_serialized_size
  */
-uint32_t eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::typeobject_serialized_size() const
+uint32_t eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::typeobject_serialized_size() const
 {
     return m_typeobject_serialized_size;
 }
@@ -19039,23 +19270,29 @@ uint32_t eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::typeobject_seria
  * @brief This function returns a reference to member typeobject_serialized_size
  * @return Reference to member typeobject_serialized_size
  */
-uint32_t& eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize::typeobject_serialized_size()
+uint32_t& eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::typeobject_serialized_size()
 {
     return m_typeobject_serialized_size;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::TypeIdentifierWithDependencies()
+
+
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::TypeIdentifierWithDependencies()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::~TypeIdentifierWithDependencies()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::~TypeIdentifierWithDependencies()
 {
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::TypeIdentifierWithDependencies(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::TypeIdentifierWithDependencies(
         const TypeIdentifierWithDependencies& x)
 {
     m_typeid_with_size = x.m_typeid_with_size;
@@ -19063,7 +19300,7 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::TypeIdentifierWi
     m_dependent_typeids = x.m_dependent_typeids;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::TypeIdentifierWithDependencies(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::TypeIdentifierWithDependencies(
         TypeIdentifierWithDependencies&& x) noexcept
 {
     m_typeid_with_size = std::move(x.m_typeid_with_size);
@@ -19071,7 +19308,7 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::TypeIdentifierWi
     m_dependent_typeids = std::move(x.m_dependent_typeids);
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::operator =(
         const TypeIdentifierWithDependencies& x)
 {
 
@@ -19081,7 +19318,7 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::fastdd
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::operator =(
         TypeIdentifierWithDependencies&& x) noexcept
 {
 
@@ -19091,7 +19328,7 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::fastdd
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::operator ==(
         const TypeIdentifierWithDependencies& x) const
 {
     return (m_typeid_with_size == x.m_typeid_with_size &&
@@ -19099,7 +19336,7 @@ bool eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::operator ==
            m_dependent_typeids == x.m_dependent_typeids);
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::operator !=(
         const TypeIdentifierWithDependencies& x) const
 {
     return !(*this == x);
@@ -19109,8 +19346,8 @@ bool eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::operator !=
  * @brief This function copies the value in member typeid_with_size
  * @param _typeid_with_size New value to be copied in member typeid_with_size
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::typeid_with_size(
-        const eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& _typeid_with_size)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::typeid_with_size(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize& _typeid_with_size)
 {
     m_typeid_with_size = _typeid_with_size;
 }
@@ -19119,8 +19356,8 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::typeid_with
  * @brief This function moves the value in member typeid_with_size
  * @param _typeid_with_size New value to be moved in member typeid_with_size
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::typeid_with_size(
-        eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize&& _typeid_with_size)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::typeid_with_size(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize&& _typeid_with_size)
 {
     m_typeid_with_size = std::move(_typeid_with_size);
 }
@@ -19129,7 +19366,7 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::typeid_with
  * @brief This function returns a constant reference to member typeid_with_size
  * @return Constant reference to member typeid_with_size
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::typeid_with_size() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::typeid_with_size() const
 {
     return m_typeid_with_size;
 }
@@ -19138,7 +19375,7 @@ const eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& eprosima::fastdds::
  * @brief This function returns a reference to member typeid_with_size
  * @return Reference to member typeid_with_size
  */
-eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::typeid_with_size()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::typeid_with_size()
 {
     return m_typeid_with_size;
 }
@@ -19148,7 +19385,7 @@ eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& eprosima::fastdds::dds::x
  * @brief This function sets a value in member dependent_typeid_count
  * @param _dependent_typeid_count New value for member dependent_typeid_count
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::dependent_typeid_count(
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::dependent_typeid_count(
         int32_t _dependent_typeid_count)
 {
     m_dependent_typeid_count = _dependent_typeid_count;
@@ -19158,7 +19395,7 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::dependent_t
  * @brief This function returns the value of member dependent_typeid_count
  * @return Value of member dependent_typeid_count
  */
-int32_t eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::dependent_typeid_count() const
+int32_t eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::dependent_typeid_count() const
 {
     return m_dependent_typeid_count;
 }
@@ -19167,7 +19404,7 @@ int32_t eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::dependen
  * @brief This function returns a reference to member dependent_typeid_count
  * @return Reference to member dependent_typeid_count
  */
-int32_t& eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::dependent_typeid_count()
+int32_t& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::dependent_typeid_count()
 {
     return m_dependent_typeid_count;
 }
@@ -19177,8 +19414,8 @@ int32_t& eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::depende
  * @brief This function copies the value in member dependent_typeids
  * @param _dependent_typeids New value to be copied in member dependent_typeids
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::dependent_typeids(
-        const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>& _dependent_typeids)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::dependent_typeids(
+        const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>& _dependent_typeids)
 {
     m_dependent_typeids = _dependent_typeids;
 }
@@ -19187,8 +19424,8 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::dependent_t
  * @brief This function moves the value in member dependent_typeids
  * @param _dependent_typeids New value to be moved in member dependent_typeids
  */
-void eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::dependent_typeids(
-        std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>&& _dependent_typeids)
+void eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::dependent_typeids(
+        std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>&& _dependent_typeids)
 {
     m_dependent_typeids = std::move(_dependent_typeids);
 }
@@ -19197,7 +19434,7 @@ void eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::dependent_t
  * @brief This function returns a constant reference to member dependent_typeids
  * @return Constant reference to member dependent_typeids
  */
-const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>& eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::dependent_typeids() const
+const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::dependent_typeids() const
 {
     return m_dependent_typeids;
 }
@@ -19206,37 +19443,41 @@ const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>& eprosi
  * @brief This function returns a reference to member dependent_typeids
  * @return Reference to member dependent_typeids
  */
-std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>& eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies::dependent_typeids()
+std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>& eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies::dependent_typeids()
 {
     return m_dependent_typeids;
 }
 
 
 
-eprosima::fastdds::dds::xtypes::TypeInformation::TypeInformation()
+
+
+
+
+eprosima::fastdds::dds::xtypes1_3::TypeInformation::TypeInformation()
 {
 
 }
 
-eprosima::fastdds::dds::xtypes::TypeInformation::~TypeInformation()
+eprosima::fastdds::dds::xtypes1_3::TypeInformation::~TypeInformation()
 {
 }
 
-eprosima::fastdds::dds::xtypes::TypeInformation::TypeInformation(
+eprosima::fastdds::dds::xtypes1_3::TypeInformation::TypeInformation(
         const TypeInformation& x)
 {
     m_minimal = x.m_minimal;
     m_complete = x.m_complete;
 }
 
-eprosima::fastdds::dds::xtypes::TypeInformation::TypeInformation(
+eprosima::fastdds::dds::xtypes1_3::TypeInformation::TypeInformation(
         TypeInformation&& x) noexcept
 {
     m_minimal = std::move(x.m_minimal);
     m_complete = std::move(x.m_complete);
 }
 
-eprosima::fastdds::dds::xtypes::TypeInformation& eprosima::fastdds::dds::xtypes::TypeInformation::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeInformation& eprosima::fastdds::dds::xtypes1_3::TypeInformation::operator =(
         const TypeInformation& x)
 {
 
@@ -19245,7 +19486,7 @@ eprosima::fastdds::dds::xtypes::TypeInformation& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-eprosima::fastdds::dds::xtypes::TypeInformation& eprosima::fastdds::dds::xtypes::TypeInformation::operator =(
+eprosima::fastdds::dds::xtypes1_3::TypeInformation& eprosima::fastdds::dds::xtypes1_3::TypeInformation::operator =(
         TypeInformation&& x) noexcept
 {
 
@@ -19254,14 +19495,14 @@ eprosima::fastdds::dds::xtypes::TypeInformation& eprosima::fastdds::dds::xtypes:
     return *this;
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeInformation::operator ==(
+bool eprosima::fastdds::dds::xtypes1_3::TypeInformation::operator ==(
         const TypeInformation& x) const
 {
     return (m_minimal == x.m_minimal &&
            m_complete == x.m_complete);
 }
 
-bool eprosima::fastdds::dds::xtypes::TypeInformation::operator !=(
+bool eprosima::fastdds::dds::xtypes1_3::TypeInformation::operator !=(
         const TypeInformation& x) const
 {
     return !(*this == x);
@@ -19271,8 +19512,8 @@ bool eprosima::fastdds::dds::xtypes::TypeInformation::operator !=(
  * @brief This function copies the value in member minimal
  * @param _minimal New value to be copied in member minimal
  */
-void eprosima::fastdds::dds::xtypes::TypeInformation::minimal(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& _minimal)
+void eprosima::fastdds::dds::xtypes1_3::TypeInformation::minimal(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies& _minimal)
 {
     m_minimal = _minimal;
 }
@@ -19281,8 +19522,8 @@ void eprosima::fastdds::dds::xtypes::TypeInformation::minimal(
  * @brief This function moves the value in member minimal
  * @param _minimal New value to be moved in member minimal
  */
-void eprosima::fastdds::dds::xtypes::TypeInformation::minimal(
-        eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies&& _minimal)
+void eprosima::fastdds::dds::xtypes1_3::TypeInformation::minimal(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies&& _minimal)
 {
     m_minimal = std::move(_minimal);
 }
@@ -19291,7 +19532,7 @@ void eprosima::fastdds::dds::xtypes::TypeInformation::minimal(
  * @brief This function returns a constant reference to member minimal
  * @return Constant reference to member minimal
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::fastdds::dds::xtypes::TypeInformation::minimal() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies& eprosima::fastdds::dds::xtypes1_3::TypeInformation::minimal() const
 {
     return m_minimal;
 }
@@ -19300,7 +19541,7 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::
  * @brief This function returns a reference to member minimal
  * @return Reference to member minimal
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::fastdds::dds::xtypes::TypeInformation::minimal()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies& eprosima::fastdds::dds::xtypes1_3::TypeInformation::minimal()
 {
     return m_minimal;
 }
@@ -19310,8 +19551,8 @@ eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::fastdd
  * @brief This function copies the value in member complete
  * @param _complete New value to be copied in member complete
  */
-void eprosima::fastdds::dds::xtypes::TypeInformation::complete(
-        const eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& _complete)
+void eprosima::fastdds::dds::xtypes1_3::TypeInformation::complete(
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies& _complete)
 {
     m_complete = _complete;
 }
@@ -19320,8 +19561,8 @@ void eprosima::fastdds::dds::xtypes::TypeInformation::complete(
  * @brief This function moves the value in member complete
  * @param _complete New value to be moved in member complete
  */
-void eprosima::fastdds::dds::xtypes::TypeInformation::complete(
-        eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies&& _complete)
+void eprosima::fastdds::dds::xtypes1_3::TypeInformation::complete(
+        eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies&& _complete)
 {
     m_complete = std::move(_complete);
 }
@@ -19330,7 +19571,7 @@ void eprosima::fastdds::dds::xtypes::TypeInformation::complete(
  * @brief This function returns a constant reference to member complete
  * @return Constant reference to member complete
  */
-const eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::fastdds::dds::xtypes::TypeInformation::complete() const
+const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies& eprosima::fastdds::dds::xtypes1_3::TypeInformation::complete() const
 {
     return m_complete;
 }
@@ -19339,10 +19580,12 @@ const eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::
  * @brief This function returns a reference to member complete
  * @return Reference to member complete
  */
-eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& eprosima::fastdds::dds::xtypes::TypeInformation::complete()
+eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies& eprosima::fastdds::dds::xtypes1_3::TypeInformation::complete()
 {
     return m_complete;
 }
+
+
 
 
 
