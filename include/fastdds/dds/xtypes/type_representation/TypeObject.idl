@@ -5,7 +5,7 @@
 module eprosima {
 module fastdds {
 module dds {
-module xtypes {
+module xtypes1_3 {
 
 // ---------- Equivalence Kinds -------------------
 typedef octet EquivalenceKind;
