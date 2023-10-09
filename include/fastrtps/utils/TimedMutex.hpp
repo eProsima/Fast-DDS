@@ -23,10 +23,16 @@
 #include <iostream>
 
 #if defined(_WIN32)
+
+#if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
+#include <mutex>
+#else
 #include <thread>
 extern int clock_gettime(
         int,
         struct timespec* tv);
+#endif // if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
+
 #elif _GTHREAD_USE_MUTEX_TIMEDLOCK
 #include <mutex>
 #else
@@ -38,14 +44,12 @@ namespace fastrtps {
 
 #if defined(_WIN32)
 
+#if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
+using TimedMutex = std::timed_mutex;
+using RecursiveTimedMutex = std::recursive_timed_mutex;
+#else
 class TimedMutex
 {
-    // On MSVC 19.36.32528.95 `xtime` was changed into `_timespec64`.
-    // See https://github.com/eProsima/Fast-DDS/issues/3451
-    // See https://github.com/microsoft/STL/pull/3594
-#if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
-    using xtime = _timespec64;
-#endif  // _MSC_FULL_VER check
 
 public:
 
@@ -190,6 +194,8 @@ private:
 
     _Mtx_t mutex_;
 };
+#endif // if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
+
 #elif _GTHREAD_USE_MUTEX_TIMEDLOCK || !defined(__unix__)
 using TimedMutex = std::timed_mutex;
 using RecursiveTimedMutex = std::recursive_timed_mutex;
