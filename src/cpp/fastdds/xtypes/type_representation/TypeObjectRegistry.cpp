@@ -17,26 +17,78 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-namespace xtypes {
+namespace xtypes1_3 {
 
-TypeObjectRegistry::~TypeObjectRegistry()
-{
-}
-
-void TypeObjectRegistry::register_type_object_info(
+ReturnCode_t TypeObjectRegistry::register_type_object(
         const std::string& type_name,
-        const TypeObjectInfo& type_object_info)
+        const CompleteTypeObject& complete_type_object)
 {
     static_cast<void>(type_name);
-    static_cast<void>(type_object_info);
+    static_cast<void>(complete_type_object);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-TypeObjectInfo TypeObjectRegistry::get_type_object_info(
-        const std::string& type_name)
+ReturnCode_t TypeObjectRegistry::register_type_identifier(
+        const std::string& type_name,
+        const TypeIdentifier& type_identifier)
 {
     static_cast<void>(type_name);
-    TypeObjectInfo type_object_info;
-    return type_object_info;
+    static_cast<void>(type_identifier);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t TypeObjectRegistry::get_type_objects(
+        const std::string& type_name,
+        const TypeObjectPair& type_objects)
+{
+    static_cast<void>(type_name);
+    static_cast<void>(type_objects);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t TypeObjectRegistry::get_type_identifiers(
+        const std::string& type_name,
+        const TypeIdentifierPair& type_identifiers)
+{
+    static_cast<void>(type_name);
+    static_cast<void>(type_identifiers);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t TypeObjectRegistry::register_type_object(
+        const TypeIdentifier& type_identifier,
+        const TypeObject& type_object)
+{
+    static_cast<void>(type_identifier);
+    static_cast<void>(type_object);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t TypeObjectRegistry::get_type_object(
+        const TypeIdentifier& type_identifier,
+        TypeObject& type_object)
+{
+    static_cast<void>(type_identifier);
+    static_cast<void>(type_object);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t TypeObjectRegistry::get_type_information(
+        const std::string& type_name,
+        TypeInformation& type_information)
+{
+    static_cast<void>(type_name);
+    static_cast<void>(type_information);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t TypeObjectRegistry::are_types_compatible(
+        const TypeIdentifierPair& type_identifiers,
+        const TypeConsistencyEnforcementQosPolicy& type_consistency_qos)
+{
+    static_cast<void>(type_identifiers);
+    static_cast<void>(type_consistency_qos);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 } // xtypes
