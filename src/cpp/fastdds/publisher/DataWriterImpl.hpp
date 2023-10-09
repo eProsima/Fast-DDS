@@ -590,7 +590,7 @@ protected:
     static void set_qos(
             DataWriterQos& to,
             const DataWriterQos& from,
-            bool is_default);
+            bool update_immutable);
 
     /**
      * Extends the check_qos() call, including the check for

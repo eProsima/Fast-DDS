@@ -1634,14 +1634,14 @@ LivelinessLostStatus& DataWriterImpl::update_liveliness_lost_status(
 void DataWriterImpl::set_qos(
         DataWriterQos& to,
         const DataWriterQos& from,
-        bool is_default)
+        bool update_immutable)
 {
-    if (is_default && !(to.durability() == from.durability()))
+    if (update_immutable && !(to.durability() == from.durability()))
     {
         to.durability() = from.durability();
         to.durability().hasChanged = true;
     }
-    if (is_default && !(to.durability_service() == from.durability_service()))
+    if (update_immutable && !(to.durability_service() == from.durability_service()))
     {
         to.durability_service() = from.durability_service();
         to.durability_service().hasChanged = true;
@@ -1656,27 +1656,27 @@ void DataWriterImpl::set_qos(
         to.latency_budget() = from.latency_budget();
         to.latency_budget().hasChanged = true;
     }
-    if (is_default && !(to.liveliness() == from.liveliness()))
+    if (update_immutable && !(to.liveliness() == from.liveliness()))
     {
         to.liveliness() = from.liveliness();
         to.liveliness().hasChanged = true;
     }
-    if (is_default && !(to.reliability() == from.reliability()))
+    if (update_immutable && !(to.reliability() == from.reliability()))
     {
         to.reliability() = from.reliability();
         to.reliability().hasChanged = true;
     }
-    if (is_default && !(to.destination_order() == from.destination_order()))
+    if (update_immutable && !(to.destination_order() == from.destination_order()))
     {
         to.destination_order() = from.destination_order();
         to.destination_order().hasChanged = true;
     }
-    if (is_default && !(to.history() == from.history()))
+    if (update_immutable && !(to.history() == from.history()))
     {
         to.history() = from.history();
         to.history().hasChanged = true;
     }
-    if (is_default && !(to.resource_limits() == from.resource_limits()))
+    if (update_immutable && !(to.resource_limits() == from.resource_limits()))
     {
         to.resource_limits() = from.resource_limits();
         to.resource_limits().hasChanged = true;
@@ -1696,7 +1696,7 @@ void DataWriterImpl::set_qos(
         to.user_data() = from.user_data();
         to.user_data().hasChanged = true;
     }
-    if (is_default && !(to.ownership() == from.ownership()))
+    if (update_immutable && !(to.ownership() == from.ownership()))
     {
         to.ownership() = from.ownership();
         to.ownership().hasChanged = true;
@@ -1710,7 +1710,7 @@ void DataWriterImpl::set_qos(
     {
         to.writer_data_lifecycle() = from.writer_data_lifecycle();
     }
-    if (is_default && !(to.publish_mode() == from.publish_mode()))
+    if (update_immutable && !(to.publish_mode() == from.publish_mode()))
     {
         to.publish_mode() = from.publish_mode();
     }
@@ -1719,27 +1719,27 @@ void DataWriterImpl::set_qos(
         to.representation() = from.representation();
         to.representation().hasChanged = true;
     }
-    if (is_default && !(to.properties() == from.properties()))
+    if (update_immutable && !(to.properties() == from.properties()))
     {
         to.properties() = from.properties();
     }
-    if (is_default && !(to.reliable_writer_qos() == from.reliable_writer_qos()))
+    if (update_immutable && !(to.reliable_writer_qos() == from.reliable_writer_qos()))
     {
         to.reliable_writer_qos() = from.reliable_writer_qos();
     }
-    if (is_default && !(to.endpoint() == from.endpoint()))
+    if (update_immutable && !(to.endpoint() == from.endpoint()))
     {
         to.endpoint() = from.endpoint();
     }
-    if (is_default && !(to.writer_resource_limits() == from.writer_resource_limits()))
+    if (update_immutable && !(to.writer_resource_limits() == from.writer_resource_limits()))
     {
         to.writer_resource_limits() = from.writer_resource_limits();
     }
-    if (is_default && !(to.throughput_controller() == from.throughput_controller()))
+    if (update_immutable && !(to.throughput_controller() == from.throughput_controller()))
     {
         to.throughput_controller() = from.throughput_controller();
     }
-    if (is_default && !(to.data_sharing() == from.data_sharing()))
+    if (update_immutable && !(to.data_sharing() == from.data_sharing()))
     {
         to.data_sharing() = from.data_sharing();
     }
