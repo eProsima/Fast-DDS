@@ -1103,7 +1103,8 @@ TEST_F(XMLProfileParserTests, extract_profiles_nok)
                     <%s></%s>\
                 </profiles>\
             ";
-    char xml[500];
+    constexpr size_t xml_len {500};
+    char xml[xml_len];
 
     std::vector<std::string> elements {
         "participant",
@@ -1116,7 +1117,7 @@ TEST_F(XMLProfileParserTests, extract_profiles_nok)
 
     for (const std::string& e : elements)
     {
-        sprintf(xml, xml_p, e.c_str(), e.c_str());
+        snprintf(xml, xml_len, xml_p, e.c_str(), e.c_str());
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         EXPECT_EQ(xmlparser::XMLP_ret::XML_NOK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
         xmlparser::XMLProfileManager::DeleteInstance();
@@ -1148,7 +1149,8 @@ TEST_F(XMLProfileParserTests, extract_profiles_error)
                         </%s>\
                     </profiles>\
                 ";
-        char xml[500];
+        constexpr size_t xml_len {500};
+        char xml[xml_len];
 
         std::vector<std::string> elements {
             "participant",
@@ -1161,7 +1163,7 @@ TEST_F(XMLProfileParserTests, extract_profiles_error)
 
         for (const std::string& e : elements)
         {
-            sprintf(xml, xml_p, e.c_str(), e.c_str());
+            snprintf(xml, xml_len, xml_p, e.c_str(), e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
             xmlparser::XMLProfileManager::DeleteInstance();
@@ -1197,15 +1199,16 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
                 <rtps></rtps>\
             </participant>\
         </profiles>";
-        char xml[500];
+        constexpr size_t xml_len {500};
+        char xml[xml_len];
 
         // empty name
-        sprintf(xml, xml_p, "");
+        snprintf(xml, xml_len, xml_p, "");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
 
         // same profile name twice
-        sprintf(xml, xml_p, "test_name");
+        snprintf(xml, xml_len, xml_p, "test_name");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
         EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
@@ -1221,7 +1224,8 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
             <%s profile_name=\"%s\" %s>\
             </%s>\
         </profiles>";
-        char xml[500];
+        constexpr size_t xml_len {500};
+        char xml[xml_len];
 
         std::vector<std::string> elements {
             "publisher",
@@ -1232,17 +1236,17 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
         for (const std::string& e : elements)
         {
             // empty profile name
-            sprintf(xml, xml_p, e.c_str(), "", "", e.c_str());
+            snprintf(xml, xml_len, xml_p, e.c_str(), "", "", e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
 
             // default profile
-            sprintf(xml, xml_p, e.c_str(), "default_name_1", "is_default_profile=\"true\"", e.c_str());
+            snprintf(xml, xml_len, xml_p, e.c_str(), "default_name_1", "is_default_profile=\"true\"", e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
 
             // same profile name twice
-            sprintf(xml, xml_p, e.c_str(), "test_name", "", e.c_str());
+            snprintf(xml, xml_len, xml_p, e.c_str(), "test_name", "", e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
@@ -1258,7 +1262,8 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
             <%s profile_name=\"%s\" service_name=\"serv\" request_type=\"req\" reply_type=\"reply\">\
             </%s>\
         </profiles>";
-        char xml[500];
+        constexpr size_t xml_len {500};
+        char xml[xml_len];
 
         std::vector<std::string> elements {
             "requester",
@@ -1268,12 +1273,12 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
         for (const std::string& e : elements)
         {
             // empty profile name
-            sprintf(xml, xml_p, e.c_str(), "", e.c_str());
+            snprintf(xml, xml_len, xml_p, e.c_str(), "", e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
 
             // same profile name twice
-            sprintf(xml, xml_p, e.c_str(), "test_name", e.c_str());
+            snprintf(xml, xml_len, xml_p, e.c_str(), "test_name", e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
@@ -1435,7 +1440,8 @@ TEST_F(XMLProfileParserTests, loadXMLFile)
                     <bad_tag></bad_tag>\
                 </%s>\
                 ";
-        char xml[500];
+        constexpr size_t xml_len {500};
+        char xml[xml_len];
 
         std::vector<std::string> elements {
             "profiles",
@@ -1447,7 +1453,7 @@ TEST_F(XMLProfileParserTests, loadXMLFile)
 
         for (const std::string& e : elements)
         {
-            sprintf(xml, xml_p, e.c_str(), e.c_str());
+            snprintf(xml, xml_len, xml_p, e.c_str(), e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             xml_doc.SaveFile(filename);
             EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLFile(filename));

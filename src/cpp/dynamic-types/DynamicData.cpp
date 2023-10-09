@@ -4289,6 +4289,7 @@ void DynamicData::sort_member_ids(
         ++curID;
     }
 #else
+    static_cast<void>(index);
     while (curID <= values_.size())
     {
         auto it = values_.find(curID);

@@ -96,16 +96,17 @@ void UserDefinedTransportExampleWriter::sendData()
     waitformatching();
     for (int i = 0; i < 10; i++)
     {
-        CacheChange_t* ch = my_writer->new_change([]() -> int32_t {
-            return 255;
-        }, ALIVE);
+        CacheChange_t* ch = my_writer->new_change([]() -> int32_t
+                        {
+                            return 255;
+                        }, ALIVE);
 #if defined(_WIN32)
         ch->serializedPayload.length =
                 sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %d", i) + 1;
 #else
         ch->serializedPayload.length =
-                sprintf((char*)ch->serializedPayload.data, "My example string %d", i) + 1;
-#endif
+                snprintf((char*)ch->serializedPayload.data, 255, "My example string %d", i) + 1;
+#endif // if defined(_WIN32)
         printf("Sending: %s\n", (char*)ch->serializedPayload.data);
         my_history->add_change(ch);
 

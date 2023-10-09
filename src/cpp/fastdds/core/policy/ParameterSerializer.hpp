@@ -473,13 +473,13 @@ inline bool ParameterSerializer<ParameterStatusInfo_t>::read_content_from_cdr_me
     }
     parameter.length = parameter_length;
     //octet status = msg.buffer[msg.pos + 3];
-    bool valid = true;
     fastrtps::rtps::octet tmp;
     //Remove the front three octets, take the fourth
+    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message, &tmp);
     valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, &tmp);
     valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, &tmp);
-    valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, &tmp);
-    return fastrtps::rtps::CDRMessage::readOctet(cdr_message, &parameter.status);
+    valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, &parameter.status);
+    return valid;
 }
 
 template<>

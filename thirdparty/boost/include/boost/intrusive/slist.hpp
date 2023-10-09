@@ -1942,6 +1942,7 @@ class slist_impl
          return;
       }
       size_t node_count = 0;
+      static_cast<void>(node_count);
       const_node_ptr p = header_ptr;
       while (true)
       {
