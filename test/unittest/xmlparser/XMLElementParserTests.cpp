@@ -4189,6 +4189,75 @@ TEST_F(XMLParserTests, getXMLThreadSettings)
 }
 
 /*
+ * This test checks parsing of thread_settings with port elements.
+ */
+TEST_F(XMLParserTests, getXMLThreadSettingsWithPort)
+{
+    /* Define the test cases */
+    std::vector<std::pair<std::vector<std::string>, XMLP_ret>> test_cases =
+    {
+        {{"12345", "", "12", "12", "12", "12", ""}, XMLP_ret::XML_OK},
+        {{"12345", "", "-1", "12", "12", "12", ""}, XMLP_ret::XML_OK},
+        {{"12345", "", "12", "-1", "12", "12", ""}, XMLP_ret::XML_OK},
+        {{"12345", "", "12", "12", "12", "-1", ""}, XMLP_ret::XML_OK},
+        {{"12345", "", "-2", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
+        {{"-1", "", "12", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
+        {{"a", "", "12", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
+        {{"a", "wrong_attr=\"12\"", "12", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
+        {{"12345", "", "12", "-2", "12", "12", ""}, XMLP_ret::XML_ERROR},
+        {{"12345", "", "12", "-2", "-1", "12", ""}, XMLP_ret::XML_ERROR},
+        {{"12345", "", "12", "12", "12", "-2", ""}, XMLP_ret::XML_ERROR},
+        {{"12345", "", "a", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
+        {{"12345", "", "12", "a", "12", "12", ""}, XMLP_ret::XML_ERROR},
+        {{"12345", "", "12", "12", "a", "12", ""}, XMLP_ret::XML_ERROR},
+        {{"12345", "", "12", "12", "12", "a", ""}, XMLP_ret::XML_ERROR},
+        {{"12345", "", "12", "12", "12", "12", "<stack_size>12</stack_size>"}, XMLP_ret::XML_ERROR},
+        {{"12345", "", "12", "12", "12", "12", "<wrong_tag>12</wrong_tag>"}, XMLP_ret::XML_ERROR},
+    };
+
+    /* Run the tests */
+    for (auto test_case : test_cases)
+    {
+        std::vector<std::string>& params = test_case.first;
+        XMLP_ret& expectation = test_case.second;
+
+        using namespace eprosima::fastdds::rtps;
+        ThreadSettings thread_settings;
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* titleElement;
+
+        // Create XML snippet
+        std::string xml =
+                "<thread_settings port=\"" + params[0] + "\" " + params[1] + ">"
+                "    <scheduling_policy>" + params[2] + "</scheduling_policy>"
+                "    <priority>" + params[3] + "</priority>"
+                "    <affinity>" + params[4] + "</affinity>"
+                "    <stack_size>" + params[5] + "</stack_size>"
+                + params[6] +
+                "</thread_settings>";
+
+        // Parse the XML snippet
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+
+        // Extract ThreadSetting
+        titleElement = xml_doc.RootElement();
+        uint32_t port;
+        ASSERT_EQ(expectation,
+                XMLParserTest::getXMLThreadSettingsWithPort_wrapper(titleElement, thread_settings, port));
+
+        // Validate in the OK cases
+        if (expectation == XMLP_ret::XML_OK)
+        {
+            ASSERT_EQ(port, static_cast<uint32_t>(std::stoi(params[0])));
+            ASSERT_EQ(thread_settings.scheduling_policy, static_cast<int32_t>(std::stoi(params[2])));
+            ASSERT_EQ(thread_settings.priority, static_cast<int32_t>(std::stoi(params[3])));
+            ASSERT_EQ(thread_settings.affinity, static_cast<uint32_t>(std::stoi(params[4])));
+            ASSERT_EQ(thread_settings.stack_size, static_cast<int32_t>(std::stoi(params[5])));
+        }
+    }
+}
+
+/*
  * This test checks parsing of entity factory qos elements.
  */
 TEST_F(XMLParserTests, getXMLEntityFactoryQos)

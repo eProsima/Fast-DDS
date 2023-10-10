@@ -15,6 +15,7 @@
 #ifndef XML_PARSER_H_
 #define XML_PARSER_H_
 
+#include <cstdint>
 #include <cstdio>
 #include <map>
 #include <memory>
@@ -643,6 +644,15 @@ protected:
     RTPS_DllAPI static XMLP_ret getXMLThreadSettings(
             tinyxml2::XMLElement& elem,
             fastdds::rtps::ThreadSettings& thread_setting);
+
+    /*
+        Return XMLP_ret::XML_OK when OK, XMLP_ret::XML_NOK when port attribute is not present, and
+        XMLP_ret::XML_ERROR if error
+     */
+    RTPS_DllAPI static XMLP_ret getXMLThreadSettingsWithPort(
+            tinyxml2::XMLElement& elem,
+            fastdds::rtps::ThreadSettings& thread_setting,
+            uint32_t& port);
 
     RTPS_DllAPI static XMLP_ret getXMLEntityFactoryQos(
             tinyxml2::XMLElement& elem,

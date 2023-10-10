@@ -4479,21 +4479,86 @@ XMLP_ret XMLParser::getXMLThreadSettings(
             </xs:all>
         </xs:complexType>
      */
+    uint32_t port = 0;
+    return getXMLThreadSettingsWithPort(elem, thread_setting,
+                   port) != XMLP_ret::XML_ERROR ? XMLP_ret::XML_OK : XMLP_ret::XML_ERROR;
+}
+
+XMLP_ret XMLParser::getXMLThreadSettingsWithPort(
+        tinyxml2::XMLElement& elem,
+        fastdds::rtps::ThreadSettings& thread_setting,
+        uint32_t& port)
+{
+    /*
+        <xs:complexType name="threadSettingsWithPortType">
+            <xs:complexContent>
+                <xs:extension base="threadSettingsType">
+                    <xs:attribute name="port" type="uint32" use="optional"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+     */
 
     /*
      * The are 4 allowed elements, all their min occurrences are 0, and their max are 1.
+     * In case port is not present, return NOK instead of ERROR
      */
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    bool port_found = false;
+    for (const tinyxml2::XMLAttribute* attrib = elem.FirstAttribute(); attrib != nullptr; attrib = attrib->Next())
+    {
+        if (strcmp(attrib->Name(), PORT) == 0)
+        {
+            try
+            {
+                std::string temp = attrib->Value();
+                temp.erase(std::remove_if(temp.begin(), temp.end(), [](unsigned char c)
+                        {
+                            return std::isspace(c);
+                        }), temp.end());
+                if (attrib->Value()[0] == '-')
+                {
+                    throw std::invalid_argument("Negative value detected");
+                }
+                port = static_cast<uint32_t>(std::stoul(attrib->Value()));
+                port_found = true;
+            }
+            catch (std::invalid_argument& except)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Found wrong value " << attrib->Value() << " for port attribute. " <<
+                        except.what());
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Found wrong attribute " << attrib->Name() << " in 'thread_settings");
+            ret = XMLP_ret::XML_ERROR;
+            break;
+        }
+    }
+
+    // Set ret to NOK is port attribute was not present
+    if (ret == XMLP_ret::XML_OK && !port_found)
+    {
+        ret = XMLP_ret::XML_NOK;
+    }
+
     const uint8_t ident = 1;
     std::set<std::string> tags_present;
 
-    for (tinyxml2::XMLElement* current_elem = elem.FirstChildElement(); current_elem != nullptr;
+    for (tinyxml2::XMLElement* current_elem = elem.FirstChildElement();
+            current_elem != nullptr && ret != XMLP_ret::XML_ERROR;
             current_elem = current_elem->NextSiblingElement())
     {
         const char* name = current_elem->Name();
         if (tags_present.count(name) != 0)
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'thread_settings'. Tag: " << name);
-            return XMLP_ret::XML_ERROR;
+            ret = XMLP_ret::XML_ERROR;
+            break;
         }
         tags_present.emplace(name);
 
@@ -4503,7 +4568,8 @@ XMLP_ret XMLParser::getXMLThreadSettings(
             if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.scheduling_policy, ident) ||
                     thread_setting.scheduling_policy < -1)
             {
-                return XMLP_ret::XML_ERROR;
+                ret = XMLP_ret::XML_ERROR;
+                break;
             }
         }
         else if (strcmp(current_elem->Name(), PRIORITY) == 0)
@@ -4512,7 +4578,8 @@ XMLP_ret XMLParser::getXMLThreadSettings(
             if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.priority, ident) ||
                     thread_setting.priority < -1)
             {
-                return XMLP_ret::XML_ERROR;
+                ret = XMLP_ret::XML_ERROR;
+                break;
             }
         }
         else if (strcmp(current_elem->Name(), AFFINITY) == 0)
@@ -4520,7 +4587,8 @@ XMLP_ret XMLParser::getXMLThreadSettings(
             // affinity - uint64Type
             if (XMLP_ret::XML_OK != getXMLUint(current_elem, &thread_setting.affinity, ident))
             {
-                return XMLP_ret::XML_ERROR;
+                ret = XMLP_ret::XML_ERROR;
+                break;
             }
         }
         else if (strcmp(current_elem->Name(), STACK_SIZE) == 0)
@@ -4529,16 +4597,18 @@ XMLP_ret XMLParser::getXMLThreadSettings(
             if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.stack_size, ident) ||
                     thread_setting.stack_size < -1)
             {
-                return XMLP_ret::XML_ERROR;
+                ret = XMLP_ret::XML_ERROR;
+                break;
             }
         }
         else
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Found incorrect tag '" << current_elem->Name() << "'");
-            return XMLP_ret::XML_ERROR;
+            ret = XMLP_ret::XML_ERROR;
+            break;
         }
     }
-    return XMLP_ret::XML_OK;
+    return ret;
 }
 
 XMLP_ret XMLParser::getXMLEntityFactoryQos(

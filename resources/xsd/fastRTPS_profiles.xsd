@@ -1726,6 +1726,8 @@
     </xs:complexType>
 
     <!--Thread Settings Type:
+        | ╠ att. port        [uint32]
+        |
         ├ scheduling_policy  [int32],
         ├ priority           [int32],
         ├ affinity           [uint64],
@@ -1739,6 +1741,29 @@
         </xs:all>
     </xs:complexType>
 
+    <!--Thread Settings Type:
+        | ╠ att. port        [uint32]
+        |
+        ├ scheduling_policy  [int32],
+        ├ priority           [int32],
+        ├ affinity           [uint64],
+        └ stack_size         [int32]-->
+    <xs:complexType name="threadSettingsWithPortType">
+        <xs:complexContent>
+            <xs:extension base="threadSettingsType">
+                <xs:attribute name="port" type="uint32" use="optional"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <!--Reception Threads list Type:
+        └ reception_thread  [0~*]-->
+    <xs:complexType name="receptionThreadsListType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="reception_thread" type="threadSettingsWithPortType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
 
     <!--| PRIMITIVE TYPES DEFINITION |-->

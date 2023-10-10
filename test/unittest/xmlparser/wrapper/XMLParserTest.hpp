@@ -602,6 +602,14 @@ public:
         return getXMLThreadSettings(*p_root, thread_settings);
     }
 
+    static XMLP_ret getXMLThreadSettingsWithPort_wrapper(
+            tinyxml2::XMLElement* p_root,
+            eprosima::fastdds::rtps::ThreadSettings& thread_settings,
+            uint32_t& port)
+    {
+        return getXMLThreadSettingsWithPort(*p_root, thread_settings, port);
+    }
+
     static XMLP_ret getXMLEntityFactoryQos_wrapper(
             tinyxml2::XMLElement* p_root,
             eprosima::fastdds::dds::EntityFactoryQosPolicy& entity_factory)

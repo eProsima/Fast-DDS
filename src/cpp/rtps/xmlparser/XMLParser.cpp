@@ -1139,9 +1139,42 @@ XMLP_ret XMLParser::parseXMLReceptionThreads(
         tinyxml2::XMLElement& p_root,
         fastdds::rtps::PortBasedTransportDescriptor::ReceptionThreadsConfigMap& reception_threads)
 {
-    static_cast<void>(p_root);
-    static_cast<void>(reception_threads);
-    return XMLP_ret::XML_NOK;
+    /*
+        <xs:complexType name="receptionThreadsListType">
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="reception_thread" type="threadSettingsType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+     */
+
+    /*
+     * The only allowed element is <reception_thread>
+     */
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    for (tinyxml2::XMLElement* p_element = p_root.FirstChildElement(); p_element != nullptr;
+            p_element = p_element->NextSiblingElement())
+    {
+        if (strcmp(p_element->Name(), RECEPTION_THREAD) == 0)
+        {
+            uint32_t port = 0;
+            fastdds::rtps::ThreadSettings thread_settings;
+            ret = getXMLThreadSettingsWithPort(*p_element, thread_settings, port);
+            if (XMLP_ret::XML_OK != ret || reception_threads.count(port) != 0)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing reception_threads thread settings. Port: " << port);
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+            reception_threads[port] = thread_settings;
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing reception_threads. Wrong tag: " << p_element->Name());
+            ret = XMLP_ret::XML_ERROR;
+            break;
+        }
+    }
+    return ret;
 }
 
 XMLP_ret XMLParser::parseXMLLibrarySettings(
