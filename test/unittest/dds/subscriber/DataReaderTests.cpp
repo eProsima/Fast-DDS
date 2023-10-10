@@ -3632,14 +3632,14 @@ TEST_F(DataReaderTests, UpdateInmutableQos)
     reader_qos.data_sharing().add_domain_id(static_cast<uint16_t>(12));
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.data_sharing().data_sharing_listener_thread().priority =
+            reader_qos.data_sharing().data_sharing_listener_thread().priority + 1;
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
     // Unique network flows
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.properties().properties().push_back({"fastdds.unique_network_flows", "true"});
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
-
-    // Datasharing listener thread
-    reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.data_sharing_listener_thread().priority = reader_qos.data_sharing_listener_thread().priority + 1;
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     /* Cleanup */

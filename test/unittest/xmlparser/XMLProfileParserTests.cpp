@@ -3884,6 +3884,162 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
     }
 }
 
+/**
+ * This test checks positive and negative cases for parsing of DataReader ThreadSettings
+ */
+TEST_F(XMLProfileParserBasicTests, datareader_thread_settings)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+    struct TestCase
+    {
+        std::string title;
+        std::string xml;
+        xmlparser::XMLP_ret result;
+        ThreadSettings data_sharing_listener_thread;
+    };
+
+    ThreadSettings default_thread_settings;
+    ThreadSettings modified_thread_settings;
+    modified_thread_settings.scheduling_policy = 12;
+    modified_thread_settings.priority = 12;
+    modified_thread_settings.affinity = 12;
+    modified_thread_settings.stack_size = 12;
+
+    std::vector<TestCase> test_cases =
+    {
+        {
+            "data_sharing_listener_thread_ok",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <data_reader profile_name="datareader" is_default_profile="true">
+                            <qos>
+                                <data_sharing>
+                                    <kind>AUTOMATIC</kind>
+                                    <data_sharing_listener_thread>
+                                        <scheduling_policy>12</scheduling_policy>
+                                        <priority>12</priority>
+                                        <affinity>12</affinity>
+                                        <stack_size>12</stack_size>
+                                    </data_sharing_listener_thread>
+                                </data_sharing>
+                            </qos>
+                        </data_reader>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_OK,
+            modified_thread_settings
+        },
+        {
+            "data_sharing_listener_thread_empty",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <data_reader profile_name="datareader" is_default_profile="true">
+                            <qos>
+                                <data_sharing>
+                                    <kind>AUTOMATIC</kind>
+                                    <data_sharing_listener_thread>
+                                    </data_sharing_listener_thread>
+                                </data_sharing>
+                            </qos>
+                        </data_reader>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_OK,
+            default_thread_settings,
+        },
+        {
+            "no_data_sharing_listener_thread",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <data_reader profile_name="datareader" is_default_profile="true">
+                            <qos>
+                                <data_sharing>
+                                    <kind>AUTOMATIC</kind>
+                                </data_sharing>
+                            </qos>
+                        </data_reader>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_OK,
+            default_thread_settings,
+        },
+        {
+            "data_sharing_listener_thread_wrong_value",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <data_reader profile_name="datareader" is_default_profile="true">
+                            <qos>
+                                <data_sharing>
+                                    <kind>AUTOMATIC</kind>
+                                    <data_sharing_listener_thread>
+                                        <scheduling_policy>aa</scheduling_policy>
+                                        <priority>0</priority>
+                                        <affinity>0</affinity>
+                                        <stack_size>0</stack_size>
+                                    </data_sharing_listener_thread>
+                                </data_sharing>
+                            </qos>
+                        </participant>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            default_thread_settings,
+        },
+        {
+            "data_sharing_listener_thread_wrong_tag",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <data_reader profile_name="datareader" is_default_profile="true">
+                            <qos>
+                                <data_sharing>
+                                    <kind>AUTOMATIC</kind>
+                                    <data_sharing_listener_thread>
+                                        <wrong>-1</wrong>
+                                        <priority>0</priority>
+                                        <affinity>0</affinity>
+                                        <stack_size>0</stack_size>
+                                    </data_sharing_listener_thread>
+                                </data_sharing>
+                            </qos>
+                        </participant>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            default_thread_settings,
+        },
+    };
+
+    for (const TestCase& test : test_cases)
+    {
+        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length())) <<
+            " test_case = [" << test.title << "]";
+        if (test.result == xmlparser::XMLP_ret::XML_OK)
+        {
+            SubscriberAttributes profile_attr;
+            ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+                    xmlparser::XMLProfileManager::fillSubscriberAttributes("datareader", profile_attr));
+
+            SubscriberAttributes default_attr;
+            xmlparser::XMLProfileManager::getDefaultSubscriberAttributes(default_attr);
+
+            ASSERT_EQ(profile_attr, default_attr);
+            ASSERT_EQ(profile_attr.qos.data_sharing.data_sharing_listener_thread(), test.data_sharing_listener_thread);
+        }
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+}
+
 INSTANTIATE_TEST_SUITE_P(XMLProfileParserTests, XMLProfileParserTests, testing::Values(false));
 INSTANTIATE_TEST_SUITE_P(XMLProfileParserEnvVarTests, XMLProfileParserTests, testing::Values(true));
 
