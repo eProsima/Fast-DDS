@@ -429,7 +429,7 @@ void DynamicDataHelper::print_member(
             std::cout << "<union>" << std::endl;
             DynamicData* st_data = data->loan_value(type->get_id());
             DynamicTypeMember member;
-            desc->get_type()->get_member(member, data->union_id_);
+            desc->get_type()->get_member(member, st_data->union_id_);
             print_member(st_data, &member, tabs + "\t");
             break;
         }
