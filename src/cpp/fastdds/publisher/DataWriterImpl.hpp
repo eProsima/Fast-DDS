@@ -500,7 +500,7 @@ protected:
     static void set_qos(
             DataWriterQos& to,
             const DataWriterQos& from,
-            bool is_default);
+            bool update_immutable);
 
     static ReturnCode_t check_qos(
             const DataWriterQos& qos);
