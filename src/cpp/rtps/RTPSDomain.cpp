@@ -144,7 +144,7 @@ RTPSParticipant* RTPSDomainImpl::createParticipant(
         if (!filename.empty() && SystemInfo::file_exists(filename))
         {
             // Create filewatch
-            instance->file_watch_handle_ = SystemInfo::watch_file(filename, RTPSDomainImpl::file_watch_callback);
+            instance->file_watch_handle_ = SystemInfo::watch_file(filename, RTPSDomainImpl::file_watch_callback, {}, {});
         }
         else if (!filename.empty())
         {
