@@ -229,7 +229,7 @@ FileWatchHandle SystemInfo::watch_file(
                                // No-op
                                break;
                        }
-                   }));
+                   }, {}, {}));
 #else // defined(_WIN32) || defined(__unix__)
     static_cast<void>(filename);
     static_cast<void>(callback);
