@@ -165,6 +165,7 @@ set(${PROJECT_NAME}_source_files
     dynamic-types/BuiltinAnnotationsTypeObject.cpp
     dynamic-types/DynamicDataHelper.cpp
 
+    fastdds/xtypes/exception/Exception.cpp
     fastdds/xtypes/type_representation/TypeObject.cxx
     fastdds/xtypes/type_representation/TypeObjectUtils.cpp
     fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
