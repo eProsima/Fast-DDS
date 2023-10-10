@@ -161,6 +161,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         UDPv4TransportDescriptor descriptor;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
+        descriptor.default_reception_threads(m_att.builtin_transports_reception_threads);
         if (is_intraprocess_only())
         {
             // Avoid multicast leaving the host for intraprocess-only participants

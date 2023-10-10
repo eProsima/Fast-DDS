@@ -116,27 +116,28 @@
         |
         ├ domainID [uint32], (0~232)
         └ rtps     [0~1]
-            ├ name                              [string],
-            ├ defaultUnicastLocatorList         [0~1],
-            ├ defaultMulticastLocatorList       [0~1],
-            ├ default_external_unicast_locators [0~1],
-            ├ ignore_non_matching_locators      [bool],
-            ├ sendSocketBufferSize              [uint32],
-            ├ listenSocketBufferSize            [uint32],
-            ├ builtin                           [0~1],
-            ├ port                              [0~1],
-            ├ participantID                     [int32],
-            ├ userTransports                    [0~1],
-            |   └ transport_id                  [1~*] [string],
-            ├ useBuiltinTransports              [bool],
-            ├ propertiesPolicy                  [0~1],
-            ├ allocation                        [0~1],
-            ├ userData                          [0~1],
-            ├ prefix                            [0~1],
-            ├ builtin_controllers_sender_thread [threadSettingsType],
-            ├ timed_events_thread               [threadSettingsType],
-            ├ discovery_server_thread           [threadSettingsType],
-            └ security_log_thread               [threadSettingsType]-->
+            ├ name                                 [string],
+            ├ defaultUnicastLocatorList            [0~1],
+            ├ defaultMulticastLocatorList          [0~1],
+            ├ default_external_unicast_locators    [0~1],
+            ├ ignore_non_matching_locators         [bool],
+            ├ sendSocketBufferSize                 [uint32],
+            ├ listenSocketBufferSize               [uint32],
+            ├ builtin                              [0~1],
+            ├ port                                 [0~1],
+            ├ participantID                        [int32],
+            ├ userTransports                       [0~1],
+            |   └ transport_id                     [1~*] [string],
+            ├ useBuiltinTransports                 [bool],
+            ├ propertiesPolicy                     [0~1],
+            ├ allocation                           [0~1],
+            ├ userData                             [0~1],
+            ├ prefix                               [0~1],
+            ├ builtin_controllers_sender_thread    [threadSettingsType],
+            ├ timed_events_thread                  [threadSettingsType],
+            ├ discovery_server_thread              [threadSettingsType],
+            ├ builtin_transports_reception_threads [threadSettingsType],
+            └ security_log_thread                  [threadSettingsType]-->
     <!-- TODO:  How to ensure that the userTransports identifiers exist in transport descriptors in the XML file? -->
     <xs:complexType name="participantProfileType">
         <xs:all>
@@ -169,6 +170,7 @@
                         <xs:element name="builtin_controllers_sender_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="timed_events_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="discovery_server_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtin_transports_reception_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="security_log_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
                     </xs:all>
                 </xs:complexType>

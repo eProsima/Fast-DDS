@@ -2198,6 +2198,15 @@ XMLP_ret XMLParser::fillDataNode(
                 return XMLP_ret::XML_ERROR;
             }
         }
+        else if (strcmp(name, BUILTIN_TRANSPORTS_RECEPTION_THREADS) == 0)
+        {
+            if (XMLP_ret::XML_OK !=
+                    getXMLThreadSettings(*p_aux0,
+                    participant_node.get()->rtps.builtin_transports_reception_threads))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
 #if HAVE_SECURITY
         else if (strcmp(name, SECURITY_LOG_THREAD) == 0)
         {
