@@ -25,6 +25,7 @@
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
+#include <fastdds/rtps/transport/SocketTransportDescriptor.h>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
@@ -219,9 +220,20 @@ protected:
     RTPS_DllAPI static XMLP_ret parseXMLTransportData(
             tinyxml2::XMLElement* p_root);
 
+    RTPS_DllAPI static XMLP_ret validateXMLTransportElements(
+            tinyxml2::XMLElement& p_root);
+
     RTPS_DllAPI static XMLP_ret parseXMLCommonTransportData(
             tinyxml2::XMLElement* p_root,
             sp_transport_t p_transport);
+
+    RTPS_DllAPI static XMLP_ret parseXMLPortBasedTransportData(
+            tinyxml2::XMLElement* p_root,
+            std::shared_ptr<fastdds::rtps::PortBasedTransportDescriptor> p_transport);
+
+    RTPS_DllAPI static XMLP_ret parseXMLSocketTransportData(
+            tinyxml2::XMLElement* p_root,
+            std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport);
 
     RTPS_DllAPI static XMLP_ret parseXMLCommonTCPTransportData(
             tinyxml2::XMLElement* p_root,
