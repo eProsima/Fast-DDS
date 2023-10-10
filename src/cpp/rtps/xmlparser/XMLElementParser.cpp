@@ -2112,10 +2112,25 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
     /*
         <xs:complexType name="dataSharingQosPolicyType">
             <xs:all>
-                <xs:element name="kind" type="datasharingQosKindType" minOccurs="1"/>
-                <xs:element name="shared_dir" type="stringType" minOccurs="0"/>
-                <xs:element name="domain_ids" type="domainIdVectorType" minOccurs="0"/>
-                <xs:element name="max_domains" type="uint32Type" minOccurs="0"/>
+                <xs:element name="kind" minOccurs="1" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="AUTOMATIC"/>
+                            <xs:enumeration value="ON"/>
+                            <xs:enumeration value="OFF"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="shared_dir" type="string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="domain_ids" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="domainId" type="domainIDType" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="max_domains" type="uint32" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="data_sharing_listener_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
      */
@@ -2216,6 +2231,14 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
             {
                 // Not even one
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << DOMAIN_IDS << "' without content");
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, DATA_SHARING_LISTENER_THREAD) == 0)
+        {
+            // data_sharing_listener_thread
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*p_aux0, data_sharing.data_sharing_listener_thread()))
+            {
                 return XMLP_ret::XML_ERROR;
             }
         }

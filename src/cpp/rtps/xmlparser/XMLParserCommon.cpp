@@ -154,6 +154,7 @@ const char* USER_DEF_ID = "userDefinedID";
 const char* ENTITY_ID = "entityID";
 const char* MATCHED_SUBSCRIBERS_ALLOCATION = "matchedSubscribersAllocation";
 const char* MATCHED_PUBLISHERS_ALLOCATION = "matchedPublishersAllocation";
+const char* DATA_SHARING_LISTENER_THREAD = "data_sharing_listener_thread";
 
 ///
 const char* IGN_NON_MATCHING_LOCS = "ignore_non_matching_locators";

@@ -1372,11 +1372,12 @@
 
     <!--| QoS POLICY TYPES DEFINITION |-->
     <!--QoS Data Sharing:
-        ├ kind         [string] ("AUTOMATIC", "ON", "OFF"),
-        ├ shared_dir   [string],
-        ├ domain_ids   [0~*],
-        |   └ domainID [uint32] (0~232)
-        └ max_domains  [uint32] -->
+        ├ kind                         [string] ("AUTOMATIC", "ON", "OFF"),
+        ├ shared_dir                   [string],
+        ├ domain_ids                   [0~*],
+        |   └ domainID                 [uint32] (0~232)
+        ├ max_domains                  [uint32]
+        └ data_sharing_listener_thread [0~1]-->
     <xs:complexType name="dataSharingQosPolicyType">
         <xs:all>
             <xs:element name="kind" minOccurs="1" maxOccurs="1">
@@ -1397,6 +1398,7 @@
                 </xs:complexType>
             </xs:element>
             <xs:element name="max_domains" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="data_sharing_listener_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
