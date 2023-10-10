@@ -98,9 +98,6 @@ protected:
 
     MemberId get_union_id() const;
 
-    ReturnCode_t set_union_id(
-            MemberId id);
-
     void update_union_discriminator();
 
     void sort_member_ids(
@@ -779,6 +776,9 @@ public:
     {
         discriminator_value_ = value;
     }
+
+    ReturnCode_t set_union_id(
+            MemberId id);
 
 };
 
