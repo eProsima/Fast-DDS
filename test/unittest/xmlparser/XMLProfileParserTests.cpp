@@ -3647,6 +3647,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
         ThreadSettings builtin_controllers_sender_thread;
         ThreadSettings timed_events_thread;
         ThreadSettings discovery_server_thread;
+        ThreadSettings builtin_transports_reception_threads;
 #if HAVE_SECURITY
         ThreadSettings security_log_thread;
 #endif // if HAVE_SECURITY
@@ -3683,6 +3684,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             modified_thread_settings,
             default_thread_settings,
             default_thread_settings,
+            default_thread_settings,
             default_thread_settings
         },
         {
@@ -3705,6 +3707,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
                 </dds>)",
             xmlparser::XMLP_ret::XML_ERROR,
             modified_thread_settings,
+            default_thread_settings,
             default_thread_settings,
             default_thread_settings,
             default_thread_settings
@@ -3731,6 +3734,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             default_thread_settings,
             modified_thread_settings,
             default_thread_settings,
+            default_thread_settings,
             default_thread_settings
         },
         {
@@ -3754,6 +3758,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             xmlparser::XMLP_ret::XML_ERROR,
             default_thread_settings,
             modified_thread_settings,
+            default_thread_settings,
             default_thread_settings,
             default_thread_settings
         },
@@ -3779,6 +3784,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             default_thread_settings,
             default_thread_settings,
             modified_thread_settings,
+            default_thread_settings,
             default_thread_settings
         },
         {
@@ -3800,6 +3806,57 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
                     </profiles>
                 </dds>)",
             xmlparser::XMLP_ret::XML_ERROR,
+            default_thread_settings,
+            default_thread_settings,
+            modified_thread_settings,
+            default_thread_settings,
+            default_thread_settings
+        },
+        {
+            "builtin_transports_reception_threads_ok",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <participant profile_name="participant" is_default_profile="true">
+                        <rtps>
+                            <builtin_transports_reception_threads>
+                                <scheduling_policy>12</scheduling_policy>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </builtin_transports_reception_threads>
+                        </rtps>
+                        </participant>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_OK,
+            default_thread_settings,
+            default_thread_settings,
+            default_thread_settings,
+            modified_thread_settings,
+            default_thread_settings
+        },
+        {
+            "builtin_transports_reception_threads_nok",
+            R"(
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                    <profiles>
+                        <participant profile_name="participant" is_default_profile="true">
+                        <rtps>
+                            <builtin_transports_reception_threads>
+                                <wrong>12</wrong>
+                                <priority>12</priority>
+                                <affinity>12</affinity>
+                                <stack_size>12</stack_size>
+                            </builtin_transports_reception_threads>
+                        </rtps>
+                        </participant>
+                    </profiles>
+                </dds>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            default_thread_settings,
             default_thread_settings,
             default_thread_settings,
             modified_thread_settings,
@@ -3828,6 +3885,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             default_thread_settings,
             default_thread_settings,
             default_thread_settings,
+            default_thread_settings,
             modified_thread_settings
         },
         {
@@ -3849,6 +3907,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
                     </profiles>
                 </dds>)",
             xmlparser::XMLP_ret::XML_ERROR,
+            default_thread_settings,
             default_thread_settings,
             default_thread_settings,
             default_thread_settings,
@@ -3876,6 +3935,8 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             ASSERT_EQ(profile_attr.rtps.builtin_controllers_sender_thread, test.builtin_controllers_sender_thread);
             ASSERT_EQ(profile_attr.rtps.timed_events_thread, test.timed_events_thread);
             ASSERT_EQ(profile_attr.rtps.discovery_server_thread, test.discovery_server_thread);
+            ASSERT_EQ(profile_attr.rtps.builtin_transports_reception_threads,
+                    test.builtin_transports_reception_threads);
 #if HAVE_SECURITY
             ASSERT_EQ(profile_attr.rtps.security_log_thread, test.security_log_thread);
 #endif // if HAVE_SECURITY

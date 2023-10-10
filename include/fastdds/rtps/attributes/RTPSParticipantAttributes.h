@@ -492,7 +492,8 @@ public:
 #if HAVE_SECURITY
                (this->security_log_thread == b.security_log_thread) &&
 #endif // if HAVE_SECURITY
-               (this->discovery_server_thread == b.discovery_server_thread);
+               (this->discovery_server_thread == b.discovery_server_thread) &&
+               (this->builtin_transports_reception_threads == b.builtin_transports_reception_threads);
 
     }
 
@@ -593,6 +594,9 @@ public:
 
     //! Thread settings for the discovery server thread
     fastdds::rtps::ThreadSettings discovery_server_thread;
+
+    //! Thread settings for the builtin transports reception threads
+    fastdds::rtps::ThreadSettings builtin_transports_reception_threads;
 
 #if HAVE_SECURITY
     //! Thread settings for the security log thread

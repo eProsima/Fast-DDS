@@ -165,6 +165,12 @@
                     <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
                     <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
                 </discovery_server_thread>
+                <builtin_transports_reception_threads>
+                    <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                    <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                    <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                    <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+                </builtin_transports_reception_threads>
                 <security_log_thread>
                     <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
                     <priority>${XML_PROFILES_ENV_VAR_159}</priority>
