@@ -776,20 +776,19 @@ void DynamicDataHelper::print_member(
         }
         case TK_MAP:
         {
+            // TODO: refactor when not only basic types supported
             std::cout << "<map>" << std::endl;
             DynamicData* st_data = data->loan_value(type->get_id());
-            std::map<types::MemberId, types::DynamicTypeMember*> members;
-            desc->get_type()->get_all_members(members);
-            size_t size = data->get_item_count();
+            DynamicType_ptr key_type = st_data->get_type()->get_descriptor()->get_key_element_type();
+            DynamicType_ptr value_type = st_data->get_type()->get_descriptor()->get_element_type();
+            size_t size = st_data->get_item_count();
             for (size_t i = 0; i < size; ++i)
             {
                 size_t index = i * 2;
-                MemberId id = data->get_member_id_at_index(static_cast<uint32_t>(index));
-                std::cout << "Key: ";
-                print_member(st_data, members[id], tabs + "\t");
-                id = data->get_member_id_at_index(static_cast<uint32_t>(index + 1));
-                std::cout << "Value: ";
-                print_member(st_data, members[id], tabs + "\t");
+                std::cout << "\tKey: ";
+                print_basic_element(st_data, index, key_type->get_kind());
+                std::cout << "\tValue: ";
+                print_basic_element(st_data, index + 1, value_type->get_kind());
             }
             data->return_loaned_value(st_data);
             break;
