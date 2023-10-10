@@ -1398,7 +1398,7 @@ bool DataReaderImpl::can_qos_be_updated(
             from.reliable_reader_qos().disable_positive_ACKs.enabled)
     {
         updatable = false;
-        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+        logWarning(RTPS_QOS_CHECK,
                 "Positive ACKs QoS cannot be changed after the creation of a DataReader.");
     }
     return updatable;

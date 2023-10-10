@@ -1770,7 +1770,7 @@ bool DataWriterImpl::can_qos_be_updated(
             from.reliable_writer_qos().disable_positive_acks.enabled)
     {
         updatable = false;
-        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+        logWarning(RTPS_QOS_CHECK,
                 "Only the period of Positive ACKs can be changed after the creation of a DataWriter.");
     }
     return updatable;
