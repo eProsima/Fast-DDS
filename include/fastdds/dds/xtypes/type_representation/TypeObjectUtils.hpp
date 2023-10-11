@@ -26,11 +26,14 @@
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastrtps/fastrtps_dll.h>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace xtypes1_3 {
+
+using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
 class TypeObjectUtils
 {
@@ -133,9 +136,9 @@ public:
     /**
      * @brief Build UnionTypeFlag instance.
      *
-     * @param extensibility_kind extensibility annotation value.
-     * @param nested nested annotation value.
-     * @param autoid_hash autoid annotation has HASH value.
+     * @param[in] extensibility_kind extensibility annotation value.
+     * @param[in] nested nested annotation value.
+     * @param[in] autoid_hash autoid annotation has HASH value.
      * @return UnionTypeFlag instance. 
      */
     RTPS_DllAPI static UnionTypeFlag build_union_type_flag(
@@ -195,9 +198,9 @@ public:
      *
      * @pre bound > 0 (INVALID_SBOUND)
      * @pre element_identifier has been initialized.
-     * @param header PlainCollectionHeader to be set.
-     * @param bound Sequence bound.
-     * @param element_identifier Sequence element TypeIdentifier.
+     * @param[in] header PlainCollectionHeader to be set.
+     * @param[in] bound Sequence bound.
+     * @param[in] element_identifier Sequence element TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. The given bound is 0.
      *              2. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
@@ -215,9 +218,9 @@ public:
      *
      * @pre bound > 255
      * @pre element_identifier has been initialized.
-     * @param header PlainCollectionHeader to be set.
-     * @param bound Sequence bound.
-     * @param element_identifier Sequence element TypeIdentifier.
+     * @param[in] header PlainCollectionHeader to be set.
+     * @param[in] bound Sequence bound.
+     * @param[in] element_identifier Sequence element TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. Bound lower than 256.
      *              2. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
@@ -251,9 +254,9 @@ public:
      *
      * @pre Any element in array_bound_seq must be greater than 0 (INVALID_SBOUND)
      * @pre element_identifier has been initialized.
-     * @param header PlainCollectionHeader to be set.
-     * @param array_bound_seq Bounds for the array dimensions.
-     * @param element_identifier Array element TypeIdentifier.
+     * @param[in] header PlainCollectionHeader to be set.
+     * @param[in] array_bound_seq Bounds for the array dimensions.
+     * @param[in] element_identifier Array element TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. Any given bound in array_bound_seq is 0.
      *              2. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
@@ -271,9 +274,9 @@ public:
      *
      * @pre At least one element of array_bound_seq must be greater than 255 and no element must be 0 (INVALID_SBOUND)
      * @pre element_identifier has been initialized.
-     * @param header PlainCollectionHeader to be set.
-     * @param array_bound_seq Bounds for the array dimensions.
-     * @param element_identifier Array element TypeIdentifier.
+     * @param[in] header PlainCollectionHeader to be set.
+     * @param[in] array_bound_seq Bounds for the array dimensions.
+     * @param[in] element_identifier Array element TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. Any given bound in array_bound_seq is 0.
      *              2. There is no dimension with a bound greater than 255.
@@ -292,11 +295,11 @@ public:
      *
      * @pre bound > 0 (INVALID_SBOUND)
      * @pre Both element_identifier and key_identifier have been initialized.
-     * @param header PlainCollectionHeader to be set.
-     * @param bound Map bound.
-     * @param element_identifier Map element TypeIdentifier.
-     * @param key_flags Flags applying to map key.
-     * @param key_identifier Map key TypeIdentifier.
+     * @param[in] header PlainCollectionHeader to be set.
+     * @param[in] bound Map bound.
+     * @param[in] element_identifier Map element TypeIdentifier.
+     * @param[in] key_flags Flags applying to map key.
+     * @param[in] key_identifier Map key TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. Given bound is zero (INVALID_SBOUND)
      *              2. Inconsistent element_identifier EquivalenceKind with the one contained in the header.
@@ -320,20 +323,20 @@ public:
      *
      * @pre bound > 255
      * @pre Both element_identifier and key_identifier have been initialized.
-     * @param header PlainCollectionHeader to be set.
-     * @param bound Map bound.
-     * @param element_identifier Map element TypeIdentifier.
-     * @param key_flags Flags applying to map key.
-     * @param key_identifier Map key TypeIdentifier.
+     * @param[in] header PlainCollectionHeader to be set.
+     * @param[in] bound Map bound.
+     * @param[in] element_identifier Map element TypeIdentifier.
+     * @param[in] key_flags Flags applying to map key.
+     * @param[in] key_identifier Map key TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. Given bound is lower than 256
-     *              2. Any given TypeIdentifier is not initialized (TK_NONE)
-     *              3. Inconsistent element_identifier EquivalenceKind with the one contained in the header.
-     *              4. Direct hash key_identifier or indirect hash TypeIdentifier with exception to string/wstring.
+     *              2. Inconsistent element_identifier EquivalenceKind with the one contained in the header.
+     *              3. Direct hash key_identifier or indirect hash TypeIdentifier with exception to string/wstring.
      *                 XTypes v1.3 Clause 7.2.2.4.3: Implementers of this specification need only support key elements
      *                 of signed and unsigned integer types and of narrow and wide string types.
-     *              5. Inconsistent key_flags.
-     *              6. Inconsistent PlainCollectionHeader (only in Debug build mode).
+     *              4. Inconsistent key_flags.
+     *              5. Inconsistent header (only in Debug build mode).
+     *              6. Inconsistent element_identifier or key_identifier (only in Debug build mode).
      * @return const PlainMapLTypeDefn instance.
      */
     RTPS_DllAPI static const PlainMapLTypeDefn build_plain_map_l_type_defn(
@@ -342,6 +345,173 @@ public:
             const TypeIdentifier& element_identifier,
             const CollectionElementFlag key_flags,
             const TypeIdentifier& key_identifier);
+
+    /**
+     * @brief Build StronglyConnectedComponentId instance.
+     *
+     * @param[in] sc_component_id Strongly Connected Component (SCC) ID.
+     * @param[in] scc_length Number of components within SCC.
+     * @param[in] scc_index Identify specific component within SCC.
+     * @return const StronglyConnectedComponentId instance.
+     */
+    RTPS_DllAPI static const StronglyConnectedComponentId build_strongly_connected_component_id(
+            const TypeObjectHashId& sc_component_id,
+            long scc_length,
+            long scc_index);
+
+    /**
+     * @brief Build ExtendedTypeDefn instance (empty. Available for future extension).
+     *
+     * @return const ExtendedTypeDefn instance.
+     */
+    RTPS_DllAPI static const ExtendedTypeDefn build_extended_type_defn();
+
+    /*************** Register Indirect Hash TypeIdentifiers ***************************/
+    /**
+     * Primitive types are registered when TypeObjectRegistry is instantiated.
+     */
+
+    /**
+     * @brief Register small string/wstring TypeIdentifier into TypeObjectRegistry.
+     *
+     * @param[in] string StringSTypeDefn union member to set.
+     * @param[in] type_name Type name to be registered.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given member is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
+     *                      the given type_name.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_s_string_type_identifier(
+            const StringSTypeDefn& string,
+            const std::string& type_name);
+
+    /**
+     * @brief Register large string/wstring TypeIdentifier into TypeObjectRegistry.
+     *
+     * @param[in] string StringLTypeDefn union member to set.
+     * @param[in] type_name Type name to be registered.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given member is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
+     *                      the given type_name.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_l_string_type_identifier(
+            const StringLTypeDefn& string,
+            const std::string& type_name);
+
+    /**
+     * @brief Register small sequence TypeIdentifier into TypeObjectRegistry.
+     *
+     * @param[in] plain_seq PlainSequenceSElemDefn union member to set.
+     * @param[in] type_name Type name to be registered.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given member is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
+     *                      the given type_name.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_s_sequence_type_identifier(
+            const PlainSequenceSElemDefn& plain_seq,
+            const std::string& type_name);
+
+    /**
+     * @brief Register large sequence TypeIdentifier into TypeObjectRegistry.
+     *
+     * @param[in] plain_seq PlainSequenceLElemDefn union member to set.
+     * @param[in] type_name Type name to be registered.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given member is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
+     *                      the given type_name.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_l_sequence_type_identifier(
+            const PlainSequenceLElemDefn& plain_seq,
+            const std::string& type_name);
+
+    /**
+     * @brief Register small array TypeIdentifier into TypeObjectRegistry.
+     *
+     * @param[in] plain_array PlainArraySElemDefn union member to set.
+     * @param[in] type_name Type name to be registered.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given member is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
+     *                      the given type_name.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_s_array_type_identifier(
+            const PlainArraySElemDefn& plain_array,
+            const std::string& type_name);
+
+    /**
+     * @brief Register large array TypeIdentifier into TypeObjectRegistry.
+     *
+     * @param[in] plain_array PlainArrayLElemDefn union member to set.
+     * @param[in] type_name Type name to be registered.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given member is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
+     *                      the given type_name.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_l_array_type_identifier(
+            const PlainArrayLElemDefn& plain_array,
+            const std::string& type_name);
+
+    /**
+     * @brief Register small map TypeIdentifier into TypeObjectRegistry.
+     *
+     * @param[in] plain_map PlainMapSTypeDefn union member to set.
+     * @param[in] type_name Type name to be registered.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given member is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
+     *                      the given type_name.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_s_map_type_identifier(
+            const PlainMapSTypeDefn& plain_map,
+            const std::string& type_name);
+
+    /**
+     * @brief Register large map TypeIdentifier into TypeObjectRegistry.
+     *
+     * @param[in] plain_map PlainMapLTypeDefn union member to set.
+     * @param[in] type_name Type name to be registered.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given member is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
+     *                      the given type_name.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_l_map_type_identifier(
+            const PlainMapLTypeDefn& plain_map,
+            const std::string& type_name);
+
+    /**
+     * @brief Register StronglyConnectedComponent TypeIdentifier into TypeObjectRegistry.
+     *
+     * @param[in] scc StronglyConnectedComponent union member to set.
+     * @param[in] type_name Type name to be registered.
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
+     *                      the given type_name.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_scc_type_identifier(
+            const StronglyConnectedComponentId& scc,
+            const std::string& type_name);
 
 private:
 
@@ -379,8 +549,8 @@ protected:
     /**
      * @brief Set the extensibility kind in a given TypeFlag.
      * 
-     * @param type_flag Bitmask to be set.
-     * @param extensibility_kind ExtensibilityKind.
+     * @param[in out] type_flag Bitmask to be set.
+     * @param[in] extensibility_kind ExtensibilityKind.
      */
     static void set_extensibility_kind(
             TypeFlag& type_flag,
@@ -396,7 +566,7 @@ protected:
      *          descriptive TypeIdentifier. They are recognized by the contained PlainCollectionHeader having
      *          EquivalenceKind set to EK_BOTH.
      *
-     * @param type_identifier TypeIdentifier to check.
+     * @param[in] type_identifier TypeIdentifier to check.
      * @return true if the given TypeIdentifier is fully-descriptive. false otherwise.
      */
     static bool is_fully_descriptive_type_identifier(
@@ -407,7 +577,7 @@ protected:
      *        XTypes v1.3 Clause 7.3.4.6.3
      *        These are HASH TypeIdentifiers with discriminator EK_MINIMAL, EK_COMPLETE or TI_STRONG_COMPONENT.
      *
-     * @param type_identifier TypeIdentifier to check.
+     * @param[in] type_identifier TypeIdentifier to check.
      * @return true if the given TypeIdentifier is direct hash. false otherwise.
      */
     static bool is_direct_hash_type_identifier(
@@ -422,18 +592,23 @@ protected:
      *           TI_PLAIN_ARRAY_LARGE, TI_PLAIN_MAP_SMALL, or TI_PLAIN_MAP_LARGE.
      *        2. Having the contained PlainCollectionHeader with EquivalenceKind EK_MINIMAL or EK_COMPLETE.
      *
-     * @param type_identifier TypeIdentifier to check.
+     * @param[in] type_identifier TypeIdentifier to check.
      * @return true if the given TypeIdentifier is indirect hash. false otherwise.
      */
     static bool is_indirect_hash_type_identifier(
             const TypeIdentifier& type_identifier);
 
-    /*************** Consistent methods (Debug) ***************************/
+    /*************** Consistency methods (Debug) ***************************/
+
+    /**
+     * TypeObjectHashId is always consistent. Default constructor already sets the discriminator to one valid value.
+     * Union setters prevent changing the discriminator value without setting the corresponding union member.
+     */
 
     /**
      * @brief Check SBound consistency: must be different from 0.
      *
-     * @param bound SBound to be checked.
+     * @param[in] bound SBound to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given SBound is not
      *            consistent.
      */
@@ -443,7 +618,7 @@ protected:
     /**
      * @brief Check LBound consistency: must be greater than 255.
      *
-     * @param bound LBound to be checked.
+     * @param[in] bound LBound to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given LBound is not
      *            consistent.
      */
@@ -454,7 +629,7 @@ protected:
      * @brief Check that the array_bound_seq is consistent: non-empty.
      *
      * @tparam T Either SBoundSeq or LBoundSeq
-     * @param array Sequence to be checked.
+     * @param[in] array Sequence to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given array is not
      *            consistent.
      */
@@ -471,7 +646,7 @@ protected:
     /**
      * @brief Check SBoundSeq consistency.
      *
-     * @param bound_seq Instance to be checked.
+     * @param[in] bound_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given SBoundSeq is
      *            not consistent.
      */
@@ -481,7 +656,7 @@ protected:
     /**
      * @brief Check LBoundSeq consistency.
      *
-     * @param bound_seq Instance to be checked.
+     * @param[in] bound_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given LBoundSeq is
      *            not consistent.
      */
@@ -492,7 +667,7 @@ protected:
      * @brief Check MemberFlag consistency: At least one of the bits corresponding to the try construct annotation must
      *        be set.
      * 
-     * @param member_flags MemberFlag to be checked.
+     * @param[in] member_flags MemberFlag to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given MemberFlag is not
      *            consistent.
      */
@@ -504,7 +679,7 @@ protected:
      *          - CollectionElementFlag consistent
      *          - Consistent EquivalenceKind
      *
-     * @param header PlainCollectionHeader to be checked.
+     * @param[in] header PlainCollectionHeader to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainCollectionHeader
      *            is not consistent.
      */
@@ -516,8 +691,8 @@ protected:
      *        1. TypeIdentifier initialized
      *        2. Consistency of EquivalenceKinds
      *
-     * @param header PlainCollectionHeader to be checked.
-     * @param element_identifier TypeIdentifier to be checked.
+     * @param[in] header PlainCollectionHeader to be checked.
+     * @param[in] element_identifier TypeIdentifier to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given parameters are not
      *            consistent.
      */
@@ -531,7 +706,7 @@ protected:
      *        and unsigned integer types and of narrow and wide string types.
      *        In Debug mode, this method also checks that the string/wstring bound is consistent.
      *
-     * @param key_identifier TypeIdentifier to be checked.
+     * @param[in] key_identifier TypeIdentifier to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given TypeIdentifier is not
      *            consistent.
      */
@@ -541,7 +716,7 @@ protected:
     /**
      * @brief Check StringSTypeDefn consistency.
      *
-     * @param string Instance to be checked.
+     * @param[in] string Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given StringSTypeDefn is not
      *            consistent.
      */
@@ -551,7 +726,7 @@ protected:
     /**
      * @brief Check StringLTypeDefn consistency.
      *
-     * @param string Instance to be checked.
+     * @param[in] string Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given StringLTypeDefn is not
      *            consistent.
      */
@@ -561,7 +736,7 @@ protected:
     /**
      * @brief Check PlainSequenceSElemDefn consistency.
      *
-     * @param plain_seq Instance to be checked.
+     * @param[in] plain_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainSequenceSElemDefn
      *            is not consistent.
      */
@@ -571,7 +746,7 @@ protected:
     /**
      * @brief Check PlainSequenceLElemDefn consistency.
      *
-     * @param plain_seq Instance to be checked.
+     * @param[in] plain_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainSequenceLElemDefn
      *            is not consistent.
      */
@@ -581,7 +756,7 @@ protected:
     /**
      * @brief Check PlainArraySElemDefn consistency.
      *
-     * @param plain_array Instance to be checked.
+     * @param[in] plain_array Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainArraySElemDefn is
      *            not consistent.
      */
@@ -591,7 +766,7 @@ protected:
     /**
      * @brief Check PlainArrayLElemDefn consistency.
      *
-     * @param plain_array Instance to be checked.
+     * @param[in] plain_array Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainArrayLElemDefn is
      *            not consistent.
      */
@@ -601,7 +776,7 @@ protected:
     /**
      * @brief Check PlainMapSTypeDefn consistency.
      *
-     * @param plain_map Instance to be checked.
+     * @param[in] plain_map Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainMapSTypeDefn is
      *            not consistent.
      */
@@ -611,7 +786,7 @@ protected:
     /**
      * @brief Check PlainMapLTypeDefn consistency.
      *
-     * @param plain_map Instance to be checked.
+     * @param[in] plain_map Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainMapLTypeDefn is
      *            not consistent.
      */
@@ -621,7 +796,7 @@ protected:
     /**
      * @brief Check TypeIdentifier consistency.
      *
-     * @param plain_map Instance to be checked.
+     * @param[in] plain_map Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given TypeIdentifier is
      *            not consistent.
      */
