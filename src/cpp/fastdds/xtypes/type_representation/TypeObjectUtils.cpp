@@ -204,7 +204,7 @@ const PlainSequenceSElemDefn TypeObjectUtils::build_plain_sequence_s_elem_defn(
     plain_collection_header_consistency(header);
 #endif // !defined(NDEBUG)
     s_bound_consistency(bound);
-    sequence_array_type_identifier_header_consistency(header, element_identifier);
+    plain_collection_type_identifier_header_consistency(header, element_identifier);
     PlainSequenceSElemDefn plain_sequence_s_elem_defn;
     plain_sequence_s_elem_defn.header(header);
     plain_sequence_s_elem_defn.bound(bound);
@@ -221,7 +221,7 @@ const PlainSequenceLElemDefn TypeObjectUtils::build_plain_sequence_l_elem_defn(
     plain_collection_header_consistency(header);
 #endif // !defined(NDEBUG)
     l_bound_consistency(bound);
-    sequence_array_type_identifier_header_consistency(header, element_identifier);
+    plain_collection_type_identifier_header_consistency(header, element_identifier);
     PlainSequenceLElemDefn plain_sequence_l_elem_defn;
     plain_sequence_l_elem_defn.header(header);
     plain_sequence_l_elem_defn.bound(bound);
@@ -242,7 +242,7 @@ const PlainArraySElemDefn TypeObjectUtils::build_plain_array_s_elem_defn(
     {
         s_bound_consistency(bound);
     }
-    sequence_array_type_identifier_header_consistency(header, element_identifier);
+    plain_collection_type_identifier_header_consistency(header, element_identifier);
     PlainArraySElemDefn plain_array_s_elem_defn;
     plain_array_s_elem_defn.header(header);
     plain_array_s_elem_defn.array_bound_seq(array_bound_seq);
@@ -275,12 +275,58 @@ const PlainArrayLElemDefn TypeObjectUtils::build_plain_array_l_elem_defn(
     {
         throw InvalidArgumentError("no large bound in array_bound_seq");
     }
-    sequence_array_type_identifier_header_consistency(header, element_identifier);
+    plain_collection_type_identifier_header_consistency(header, element_identifier);
     PlainArrayLElemDefn plain_array_l_elem_defn;
     plain_array_l_elem_defn.header(header);
     plain_array_l_elem_defn.array_bound_seq(array_bound_seq);
     plain_array_l_elem_defn.element_identifier(element_identifier);
     return plain_array_l_elem_defn;
+}
+
+const PlainMapSTypeDefn TypeObjectUtils::build_plain_map_s_type_defn(
+        const PlainCollectionHeader& header,
+        const SBound bound,
+        const TypeIdentifier& element_identifier,
+        const CollectionElementFlag key_flags,
+        const TypeIdentifier& key_identifier)
+{
+#if !defined(NDEBUG)
+    plain_collection_header_consistency(header);
+#endif // !defined(NDEBUG)
+    s_bound_consistency(bound);
+    plain_collection_type_identifier_header_consistency(header, element_identifier);
+    member_flag_consistency(key_flags);
+    map_key_type_identifier_consistency(key_identifier);
+    PlainMapSTypeDefn plain_map_s_type_defn;
+    plain_map_s_type_defn.header(header);
+    plain_map_s_type_defn.bound(bound);
+    plain_map_s_type_defn.element_identifier(element_identifier);
+    plain_map_s_type_defn.key_flags(key_flags);
+    plain_map_s_type_defn.key_identifier(key_identifier);
+    return plain_map_s_type_defn;
+}
+
+const PlainMapLTypeDefn TypeObjectUtils::build_plain_map_l_type_defn(
+        const PlainCollectionHeader& header,
+        const LBound bound,
+        const TypeIdentifier& element_identifier,
+        const CollectionElementFlag key_flags,
+        const TypeIdentifier& key_identifier)
+{
+#if !defined(NDEBUG)
+    plain_collection_header_consistency(header);
+#endif // !defined(NDEBUG)
+    l_bound_consistency(bound);
+    plain_collection_type_identifier_header_consistency(header, element_identifier);
+    member_flag_consistency(key_flags);
+    map_key_type_identifier_consistency(key_identifier);
+    PlainMapLTypeDefn plain_map_l_type_defn;
+    plain_map_l_type_defn.header(header);
+    plain_map_l_type_defn.bound(bound);
+    plain_map_l_type_defn.element_identifier(element_identifier);
+    plain_map_l_type_defn.key_flags(key_flags);
+    plain_map_l_type_defn.key_identifier(key_identifier);
+    return plain_map_l_type_defn;
 }
 
 void TypeObjectUtils::set_try_construct_behavior(
@@ -422,7 +468,7 @@ void TypeObjectUtils::plain_collection_header_consistency(
 }
 #endif // !defined(NDEBUG)
 
-void TypeObjectUtils::sequence_array_type_identifier_header_consistency(
+void TypeObjectUtils::plain_collection_type_identifier_header_consistency(
         const PlainCollectionHeader& header,
         const TypeIdentifier& element_identifier)
 {
@@ -435,6 +481,30 @@ void TypeObjectUtils::sequence_array_type_identifier_header_consistency(
     {
         throw InvalidArgumentError("Inconsistency between given header and element_identifier parameters");
     }
+}
+
+void TypeObjectUtils::map_key_type_identifier_consistency(
+        const TypeIdentifier& key_identifier)
+{
+    if (key_identifier._d() != TK_INT8 || key_identifier._d() != TK_UINT8 || key_identifier._d() != TK_INT16 ||
+        key_identifier._d() != TK_UINT16 || key_identifier._d() != TK_INT32 || key_identifier._d() != TK_UINT32 ||
+        key_identifier._d() != TK_INT64 || key_identifier._d() != TK_UINT64 ||
+        key_identifier._d() != TI_STRING8_SMALL || key_identifier._d() != TI_STRING8_LARGE ||
+        key_identifier._d() != TI_STRING16_SMALL || key_identifier._d() != TI_STRING16_LARGE)
+    {
+        throw InvalidArgumentError(
+            "Inconsistent key identifier: only signed/unsigned integer types and w/string keys are supported");
+    }
+#if !defined(NDEBUG)
+    if (key_identifier._d() == TI_STRING8_SMALL || key_identifier._d() == TI_STRING16_SMALL)
+    {
+        s_bound_consistency(key_identifier.string_sdefn().bound());
+    }
+    else if (key_identifier._d() == TI_STRING8_LARGE || key_identifier._d() == TI_STRING16_LARGE)
+    {
+        l_bound_consistency(key_identifier.string_ldefn().bound());
+    }
+#endif // !defined(NDEBUG)
 }
 
 } // xtypes1_3

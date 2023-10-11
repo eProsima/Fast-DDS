@@ -41,10 +41,8 @@ public:
      *
      * @param[in] discriminator TypeObjectHashId discriminator to be set.
      * @param[in] hash StronglyConnectedComponent equivalence hash to be set.
-     *
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given discriminator is not
      *            EK_COMPLETE/EK_MINIMAL.
-     *
      * @return const TypeObjectHashId instance.
      */
     RTPS_DllAPI static const TypeObjectHashId build_type_object_hash_id(
@@ -184,10 +182,8 @@ public:
      * @param equiv_kind EquivalenceKind: EK_MINIMAL/EK_COMPLETE/EK_BOTH
      * @param element_flags CollectionElementFlags to be set. This element must be constructed with the corresponding
      *                      builder to ensure its consistency.
-     *
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError if the given element_flags are inconsistent.
      *            This exception is only thrown in Debug build mode.
-     *
      * @return const PlainCollectionHeader instance.
      */
     RTPS_DllAPI static const PlainCollectionHeader build_plain_collection_header(
@@ -202,13 +198,11 @@ public:
      * @param header PlainCollectionHeader to be set.
      * @param bound Sequence bound.
      * @param element_identifier Sequence element TypeIdentifier.
-     *
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. The given bound is 0.
      *              2. Non-initialized TypeIdentifier (TK_NONE).
      *              3. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
      *              4. Inconsistent PlainCollectionHeader (only in Debug build mode).
-     *
      * @return const PlainSequenceSElemDefn instance.
      */
     RTPS_DllAPI static const PlainSequenceSElemDefn build_plain_sequence_s_elem_defn(
@@ -224,13 +218,11 @@ public:
      * @param header PlainCollectionHeader to be set.
      * @param bound Sequence bound.
      * @param element_identifier Sequence element TypeIdentifier.
-     *
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. Bound lower than 256.
      *              2. Non-initialized TypeIdentifier (TK_NONE).
      *              3. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
      *              4. Inconsistent PlainCollectionHeader (only in Debug build mode).
-     *
      * @return const PlainSequenceLElemDefn instance.
      */
     RTPS_DllAPI static const PlainSequenceLElemDefn build_plain_sequence_l_elem_defn(
@@ -262,13 +254,11 @@ public:
      * @param header PlainCollectionHeader to be set.
      * @param array_bound_seq Bounds for the array dimensions.
      * @param element_identifier Array element TypeIdentifier.
-     *
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. Any given bound in array_bound_seq is 0.
      *              2. Non-initialized TypeIdentifier (TK_NONE).
      *              3. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
      *              4. Inconsistent PlainCollectionHeader (only in Debug build mode).
-     *
      * @return const PlainArraySElemDefn instance.
      */
     RTPS_DllAPI static const PlainArraySElemDefn build_plain_array_s_elem_defn(
@@ -284,14 +274,12 @@ public:
      * @param header PlainCollectionHeader to be set.
      * @param array_bound_seq Bounds for the array dimensions.
      * @param element_identifier Array element TypeIdentifier.
-     *
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. Any given bound in array_bound_seq is 0.
      *              2. There is no dimension with a bound greater than 255.
      *              2. Non-initialized TypeIdentifier (TK_NONE).
      *              3. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
      *              4. Inconsistent PlainCollectionHeader (only in Debug build mode).
-     *
      * @return const PlainArrayLElemDefn instance.
      */
     RTPS_DllAPI static const PlainArrayLElemDefn build_plain_array_l_elem_defn(
@@ -299,11 +287,69 @@ public:
             const LBoundSeq& array_bound_seq,
             const TypeIdentifier& element_identifier);
 
+    /**
+     * @brief Build PlainMapSTypeDefn instance.
+     *
+     * @pre bound > 0 (INVALID_SBOUND)
+     * @pre Both element_identifier and key_identifier have been initialized.
+     * @param header PlainCollectionHeader to be set.
+     * @param bound Map bound.
+     * @param element_identifier Map element TypeIdentifier.
+     * @param key_flags Flags applying to map key.
+     * @param key_identifier Map key TypeIdentifier.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
+     *              1. Given bound is zero (INVALID_SBOUND)
+     *              2. Any given TypeIdentifier is not initialized (TK_NONE)
+     *              3. Inconsistent element_identifier EquivalenceKind with the one contained in the header.
+     *              4. Direct hash key_identifier or indirect hash TypeIdentifier with exception to string/wstring.
+     *                 XTypes v1.3 Clause 7.2.2.4.3: Implementers of this specification need only support key elements
+     *                 of signed and unsigned integer types and of narrow and wide string types.
+     *              5. Inconsistent key_flags.
+     *              6. Inconsistent PlainCollectionHeader (only in Debug build mode).
+     * @return const PlainMapSTypeDefn instance.
+     */
+    RTPS_DllAPI static const PlainMapSTypeDefn build_plain_map_s_type_defn(
+            const PlainCollectionHeader& header,
+            const SBound bound,
+            const TypeIdentifier& element_identifier,
+            const CollectionElementFlag key_flags,
+            const TypeIdentifier& key_identifier);
+
+    /**
+     * @brief Build PlainMapLTypeDefn instance.
+     *
+     * @pre bound > 255
+     * @pre Both element_identifier and key_identifier have been initialized.
+     * @param header PlainCollectionHeader to be set.
+     * @param bound Map bound.
+     * @param element_identifier Map element TypeIdentifier.
+     * @param key_flags Flags applying to map key.
+     * @param key_identifier Map key TypeIdentifier.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
+     *              1. Given bound is lower than 256
+     *              2. Any given TypeIdentifier is not initialized (TK_NONE)
+     *              3. Inconsistent element_identifier EquivalenceKind with the one contained in the header.
+     *              4. Direct hash key_identifier or indirect hash TypeIdentifier with exception to string/wstring.
+     *                 XTypes v1.3 Clause 7.2.2.4.3: Implementers of this specification need only support key elements
+     *                 of signed and unsigned integer types and of narrow and wide string types.
+     *              5. Inconsistent key_flags.
+     *              6. Inconsistent PlainCollectionHeader (only in Debug build mode).
+     * @return const PlainMapLTypeDefn instance.
+     */
+    RTPS_DllAPI static const PlainMapLTypeDefn build_plain_map_l_type_defn(
+            const PlainCollectionHeader& header,
+            const LBound bound,
+            const TypeIdentifier& element_identifier,
+            const CollectionElementFlag key_flags,
+            const TypeIdentifier& key_identifier);
+
 private:
 
     // Class with only static methods
     TypeObjectUtils() = delete;
     ~TypeObjectUtils() = delete;
+
+protected:
 
     // Auxiliary methods
     /**
@@ -457,9 +503,22 @@ private:
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given parameters are not
      *            consistent.
      */
-    static void sequence_array_type_identifier_header_consistency(
+    static void plain_collection_type_identifier_header_consistency(
             const PlainCollectionHeader& header,
             const TypeIdentifier& element_identifier);
+
+    /**
+     * @brief Check map key_identifier consistency.
+     *        XTypes v1.3 Clause 7.2.2.4.3: Implementers of this specification need only support key elements of signed
+     *        and unsigned integer types and of narrow and wide string types.
+     *        In Debug mode, this method also checks that the string/wstring bound is consistent.
+     *
+     * @param key_identifier TypeIdentifier to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given TypeIdentifier is not
+     *            consistent.
+     */
+    static void map_key_type_identifier_consistency(
+            const TypeIdentifier& key_identifier);
 
 };
 
