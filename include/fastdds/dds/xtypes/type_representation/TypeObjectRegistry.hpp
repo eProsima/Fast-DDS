@@ -165,7 +165,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_type_identifiers(
             const std::string& type_name,
-            TypeIdentifierPair& type_identifiers);
+            const TypeIdentifierPair& type_identifiers);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
     // Only DomainParticipantFactory is allowed to instantiate the TypeObjectRegistry class.

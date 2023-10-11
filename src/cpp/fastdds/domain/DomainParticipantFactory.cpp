@@ -36,6 +36,7 @@
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/log/LogResources.hpp>
+
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
@@ -61,6 +62,7 @@ DomainParticipantFactory::DomainParticipantFactory()
     , rtps_domain_(fastrtps::rtps::RTPSDomainImpl::get_instance())
     , log_resources_(detail::get_log_resources())
 {
+    type_object_registry_ = std::make_shared<xtypes1_3::TypeObjectRegistry>();
 }
 
 DomainParticipantFactory::~DomainParticipantFactory()
@@ -413,7 +415,7 @@ ReturnCode_t DomainParticipantFactory::set_qos(
         return RETCODE_IMMUTABLE_POLICY;
     }
     set_qos(factory_qos_, qos, false);
-    return RETCODE_OK;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 xtypes::TypeObjectRegistry& DomainParticipantFactory::type_object_registry()
