@@ -1713,6 +1713,11 @@ bool RTPSParticipantImpl::createReceiverResources(
             }
         }
 
+        if (!ret)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Could not create the specified receiver resource");
+        }
+
         ret_val |= !newItemsBuffer.empty();
 
         for (auto it_buffer = newItemsBuffer.begin(); it_buffer != newItemsBuffer.end(); ++it_buffer)
