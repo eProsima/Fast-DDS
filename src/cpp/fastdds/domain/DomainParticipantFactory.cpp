@@ -19,12 +19,14 @@
 
 #include <thread>
 
-#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/log/LogResources.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/utils/QosConverters.hpp>
@@ -59,6 +61,7 @@ DomainParticipantFactory::DomainParticipantFactory()
     , rtps_domain_(fastrtps::rtps::RTPSDomainImpl::get_instance())
     , log_resources_(detail::get_log_resources())
 {
+    type_object_registry_ = std::make_shared<xtypes1_3::TypeObjectRegistry>();
 }
 
 DomainParticipantFactory::~DomainParticipantFactory()
@@ -412,6 +415,11 @@ ReturnCode_t DomainParticipantFactory::set_qos(
     }
     set_qos(factory_qos_, qos, false);
     return ReturnCode_t::RETCODE_OK;
+}
+
+std::shared_ptr<xtypes1_3::TypeObjectRegistry> DomainParticipantFactory::type_object_registry()
+{
+    return type_object_registry_;
 }
 
 void DomainParticipantFactory::reset_default_participant_qos()
