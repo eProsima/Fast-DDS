@@ -81,6 +81,8 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_s_elem_defn_inconsistencies)
 {
     TypeIdentifier test_identifier;
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::TRIM, false);
+    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
+        EquivalenceKindValue::EK_COMPLETE, flags);
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
@@ -90,17 +92,15 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_s_elem_defn_inconsistencies)
     // Inconsistent header EquivalenceKind
     EXPECT_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
         wrong_header, 10, test_identifier), InvalidArgumentError);
+    // Non-initialized TypeIdentifier
+    EXPECT_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
+        complete_header, 10, test_identifier), InvalidArgumentError);
 #endif // !defined(NDEBUG)
-    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::EK_COMPLETE, flags);
     // Check SBound consistency
     SBound wrong_bound = 0;
     EXPECT_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
         complete_header, wrong_bound, test_identifier), InvalidArgumentError);
 
-    // Non-initialized TypeIdentifier
-    EXPECT_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
-        complete_header, 10, test_identifier), InvalidArgumentError);
     // Primitive TypeIdentifier
     EXPECT_NO_THROW(test_identifier._d(TK_BOOLEAN));
     // TypeIdentifier inconsistent with complete header
@@ -116,9 +116,6 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_s_elem_defn_inconsistencies)
     // TypeIdentifier consistent with fully-descriptive header
     EXPECT_NO_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
         fully_descriptive_header, 10, test_identifier));
-    
-    // TODO(jlbueno) Add case of plain collection.
-
     // Change discriminator to EK_COMPLETE
     EquivalenceHash hash;
     test_identifier.equivalence_hash(hash);
@@ -149,6 +146,8 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_l_elem_defn_inconsistencies)
 {
     TypeIdentifier test_identifier;
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::TRIM, false);
+    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
+        EquivalenceKindValue::EK_COMPLETE, flags);
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
@@ -158,17 +157,15 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_l_elem_defn_inconsistencies)
     // Inconsistent header EquivalenceKind
     EXPECT_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
         wrong_header, 256, test_identifier), InvalidArgumentError);
+    // Non-initialized TypeIdentifier
+    EXPECT_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
+        complete_header, 256, test_identifier), InvalidArgumentError);
 #endif // !defined(NDEBUG)
-    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::EK_COMPLETE, flags);
     // Check LBound consistency
     LBound wrong_bound = 255;
     EXPECT_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
         complete_header, wrong_bound, test_identifier), InvalidArgumentError);
 
-    // Non-initialized TypeIdentifier
-    EXPECT_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
-        complete_header, 256, test_identifier), InvalidArgumentError);
     // Primitive TypeIdentifier
     EXPECT_NO_THROW(test_identifier._d(TK_BOOLEAN));
     // TypeIdentifier inconsistent with complete header
@@ -184,9 +181,6 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_l_elem_defn_inconsistencies)
     // TypeIdentifier consistent with fully-descriptive header
     EXPECT_NO_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
         fully_descriptive_header, 256, test_identifier));
-    
-    // TODO(jlbueno) Add case of plain collection.
-
     // Change discriminator to EK_COMPLETE
     EquivalenceHash hash;
     test_identifier.equivalence_hash(hash);
@@ -219,6 +213,8 @@ TEST(TypeObjectUtilsTests, build_plain_array_s_elem_defn_inconsistencies)
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::TRIM, false);
     SBoundSeq bound_seq;
     TypeObjectUtils::add_array_dimension(bound_seq, 10);
+    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
+        EquivalenceKindValue::EK_COMPLETE, flags);
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
@@ -228,9 +224,10 @@ TEST(TypeObjectUtilsTests, build_plain_array_s_elem_defn_inconsistencies)
     // Inconsistent header EquivalenceKind
     EXPECT_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
         wrong_header, bound_seq, test_identifier), InvalidArgumentError);
+    // Non-initialized TypeIdentifier
+    EXPECT_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
+        complete_header, bound_seq, test_identifier), InvalidArgumentError);
 #endif // !defined(NDEBUG)
-    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::EK_COMPLETE, flags);
     // Check SBoundSeq consistency
     SBoundSeq wrong_bound_seq;
     // Empty array_bound_seq
@@ -242,9 +239,6 @@ TEST(TypeObjectUtilsTests, build_plain_array_s_elem_defn_inconsistencies)
     EXPECT_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
         complete_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
 
-    // Non-initialized TypeIdentifier
-    EXPECT_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
-        complete_header, bound_seq, test_identifier), InvalidArgumentError);
     // Primitive TypeIdentifier
     EXPECT_NO_THROW(test_identifier._d(TK_BOOLEAN));
     // TypeIdentifier inconsistent with complete header
@@ -260,9 +254,6 @@ TEST(TypeObjectUtilsTests, build_plain_array_s_elem_defn_inconsistencies)
     // TypeIdentifier consistent with fully-descriptive header
     EXPECT_NO_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
         fully_descriptive_header, bound_seq, test_identifier));
-    
-    // TODO(jlbueno) Add case of plain collection.
-
     // Change discriminator to EK_COMPLETE
     EquivalenceHash hash;
     test_identifier.equivalence_hash(hash);
@@ -295,6 +286,8 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::TRIM, false);
     LBoundSeq bound_seq;
     TypeObjectUtils::add_array_dimension(bound_seq, 256);
+    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
+        EquivalenceKindValue::EK_COMPLETE, flags);
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
@@ -304,9 +297,10 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
     // Inconsistent header EquivalenceKind
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
         wrong_header, bound_seq, test_identifier), InvalidArgumentError);
+    // Non-initialized TypeIdentifier
+    EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
+        complete_header, bound_seq, test_identifier), InvalidArgumentError);
 #endif // !defined(NDEBUG)
-    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::EK_COMPLETE, flags);
     // Check SBoundSeq consistency
     LBoundSeq wrong_bound_seq;
     // Empty array_bound_seq
@@ -317,9 +311,6 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
         complete_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
 
-    // Non-initialized TypeIdentifier
-    EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
-        complete_header, bound_seq, test_identifier), InvalidArgumentError);
     // Primitive TypeIdentifier
     EXPECT_NO_THROW(test_identifier._d(TK_BOOLEAN));
     // TypeIdentifier inconsistent with complete header
@@ -343,9 +334,6 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
     TypeObjectUtils::add_array_dimension(wrong_bound_seq, 0);
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
         complete_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
-
-    // TODO(jlbueno) Add case of plain collection.
-
     // Change discriminator to EK_COMPLETE
     EquivalenceHash hash;
     test_identifier.equivalence_hash(hash);
@@ -377,6 +365,8 @@ TEST(TypeObjectUtilsTests, build_plain_map_s_elem_defn_inconsistencies)
     TypeIdentifier test_identifier;
     TypeIdentifier key_identifier;
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::TRIM, false);
+    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
+        EquivalenceKindValue::EK_COMPLETE, flags);
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
@@ -386,17 +376,15 @@ TEST(TypeObjectUtilsTests, build_plain_map_s_elem_defn_inconsistencies)
     // Inconsistent header EquivalenceKind
     EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
         wrong_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // Non-initialized TypeIdentifier
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        complete_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
 #endif // !defined(NDEBUG)
-    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::EK_COMPLETE, flags);
     // Check SBound consistency
     SBound wrong_bound = 0;
     EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
         complete_header, wrong_bound, test_identifier, flags, key_identifier), InvalidArgumentError);
 
-    // Non-initialized TypeIdentifier
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
-        complete_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
     // Primitive TypeIdentifier
     EXPECT_NO_THROW(test_identifier._d(TK_BOOLEAN));
     // TypeIdentifier inconsistent with complete header
@@ -413,9 +401,11 @@ TEST(TypeObjectUtilsTests, build_plain_map_s_elem_defn_inconsistencies)
     CollectionElementFlag wrong_flags = 0;
     EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
         fully_descriptive_header, 10, test_identifier, wrong_flags, key_identifier), InvalidArgumentError);
+#if !defined(NDEBUG)
     // Uninitialized key_identifier
     EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
         fully_descriptive_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+#endif // !defined(NDEBUG)
     // Non-integer key identifier
     EXPECT_NO_THROW(key_identifier._d(TK_FLOAT32));
     EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
@@ -435,9 +425,6 @@ TEST(TypeObjectUtilsTests, build_plain_map_s_elem_defn_inconsistencies)
     EXPECT_NO_THROW(key_identifier.string_sdefn(string_type_def));
     EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
         fully_descriptive_header, 10, test_identifier, flags, key_identifier));
-    
-    // TODO(jlbueno) Add case of plain collection.
-
     // Change discriminator to EK_COMPLETE
     EquivalenceHash hash;
     test_identifier.equivalence_hash(hash);
@@ -469,6 +456,8 @@ TEST(TypeObjectUtilsTests, build_plain_map_l_elem_defn_inconsistencies)
     TypeIdentifier test_identifier;
     TypeIdentifier key_identifier;
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::TRIM, false);
+    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
+        EquivalenceKindValue::EK_COMPLETE, flags);
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
@@ -478,17 +467,15 @@ TEST(TypeObjectUtilsTests, build_plain_map_l_elem_defn_inconsistencies)
     // Inconsistent header EquivalenceKind
     EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
         wrong_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // Non-initialized TypeIdentifier
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        complete_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
 #endif // !defined(NDEBUG)
-    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::EK_COMPLETE, flags);
     // Check LBound consistency
     LBound wrong_bound = 255;
     EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
         complete_header, wrong_bound, test_identifier, flags, key_identifier), InvalidArgumentError);
 
-    // Non-initialized TypeIdentifier
-    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
-        complete_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
     // Primitive TypeIdentifier
     EXPECT_NO_THROW(test_identifier._d(TK_BOOLEAN));
     // TypeIdentifier inconsistent with complete header
@@ -505,9 +492,11 @@ TEST(TypeObjectUtilsTests, build_plain_map_l_elem_defn_inconsistencies)
     CollectionElementFlag wrong_flags = 0;
     EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
         fully_descriptive_header, 1000, test_identifier, wrong_flags, key_identifier), InvalidArgumentError);
+#if !defined(NDEBUG)
     // Uninitialized key_identifier
     EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
         fully_descriptive_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+#endif // !defined(NDEBUG)
     // Non-integer key identifier
     EXPECT_NO_THROW(key_identifier._d(TK_FLOAT32));
     EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
@@ -527,9 +516,6 @@ TEST(TypeObjectUtilsTests, build_plain_map_l_elem_defn_inconsistencies)
     EXPECT_NO_THROW(key_identifier.string_sdefn(string_type_def));
     EXPECT_NO_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
         fully_descriptive_header, 1000, test_identifier, flags, key_identifier));
-    
-    // TODO(jlbueno) Add case of plain collection.
-
     // Change discriminator to EK_COMPLETE
     EquivalenceHash hash;
     test_identifier.equivalence_hash(hash);

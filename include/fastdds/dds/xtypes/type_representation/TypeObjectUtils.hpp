@@ -200,9 +200,9 @@ public:
      * @param element_identifier Sequence element TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. The given bound is 0.
-     *              2. Non-initialized TypeIdentifier (TK_NONE).
-     *              3. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
-     *              4. Inconsistent PlainCollectionHeader (only in Debug build mode).
+     *              2. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
+     *              3. Inconsistent header (only in Debug build mode).
+     *              4. Inconsistent element_identifier (only in Debug build mode).
      * @return const PlainSequenceSElemDefn instance.
      */
     RTPS_DllAPI static const PlainSequenceSElemDefn build_plain_sequence_s_elem_defn(
@@ -220,9 +220,9 @@ public:
      * @param element_identifier Sequence element TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. Bound lower than 256.
-     *              2. Non-initialized TypeIdentifier (TK_NONE).
-     *              3. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
-     *              4. Inconsistent PlainCollectionHeader (only in Debug build mode).
+     *              2. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
+     *              3. Inconsistent header (only in Debug build mode).
+     *              4. Inconsistent element_identifier (only in Debug build mode).
      * @return const PlainSequenceLElemDefn instance.
      */
     RTPS_DllAPI static const PlainSequenceLElemDefn build_plain_sequence_l_elem_defn(
@@ -256,9 +256,9 @@ public:
      * @param element_identifier Array element TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. Any given bound in array_bound_seq is 0.
-     *              2. Non-initialized TypeIdentifier (TK_NONE).
-     *              3. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
-     *              4. Inconsistent PlainCollectionHeader (only in Debug build mode).
+     *              2. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
+     *              3. Inconsistent header (only in Debug build mode).
+     *              4. Inconsistent element_identifier (only in Debug build mode).
      * @return const PlainArraySElemDefn instance.
      */
     RTPS_DllAPI static const PlainArraySElemDefn build_plain_array_s_elem_defn(
@@ -277,9 +277,9 @@ public:
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. Any given bound in array_bound_seq is 0.
      *              2. There is no dimension with a bound greater than 255.
-     *              2. Non-initialized TypeIdentifier (TK_NONE).
      *              3. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
-     *              4. Inconsistent PlainCollectionHeader (only in Debug build mode).
+     *              4. Inconsistent header (only in Debug build mode).
+     *              5. Inconsistent element_identifier (only in Debug build mode).
      * @return const PlainArrayLElemDefn instance.
      */
     RTPS_DllAPI static const PlainArrayLElemDefn build_plain_array_l_elem_defn(
@@ -299,13 +299,13 @@ public:
      * @param key_identifier Map key TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception
      *              1. Given bound is zero (INVALID_SBOUND)
-     *              2. Any given TypeIdentifier is not initialized (TK_NONE)
-     *              3. Inconsistent element_identifier EquivalenceKind with the one contained in the header.
-     *              4. Direct hash key_identifier or indirect hash TypeIdentifier with exception to string/wstring.
+     *              2. Inconsistent element_identifier EquivalenceKind with the one contained in the header.
+     *              3. Direct hash key_identifier or indirect hash TypeIdentifier with exception to string/wstring.
      *                 XTypes v1.3 Clause 7.2.2.4.3: Implementers of this specification need only support key elements
      *                 of signed and unsigned integer types and of narrow and wide string types.
-     *              5. Inconsistent key_flags.
-     *              6. Inconsistent PlainCollectionHeader (only in Debug build mode).
+     *              4. Inconsistent key_flags.
+     *              5. Inconsistent header (only in Debug build mode).
+     *              6. Inconsistent element_identifier or key_identifier (only in Debug build mode).
      * @return const PlainMapSTypeDefn instance.
      */
     RTPS_DllAPI static const PlainMapSTypeDefn build_plain_map_s_type_defn(
@@ -468,7 +468,26 @@ protected:
         }
     }
 
-#if !defined(NDEBUG)
+    /**
+     * @brief Check SBoundSeq consistency.
+     *
+     * @param bound_seq Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given SBoundSeq is
+     *            not consistent.
+     */
+    static void s_bound_seq_consistency(
+            const SBoundSeq& bound_seq);
+
+    /**
+     * @brief Check LBoundSeq consistency.
+     *
+     * @param bound_seq Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given LBoundSeq is
+     *            not consistent.
+     */
+    static void l_bound_seq_consistency(
+            const LBoundSeq& bound_seq);
+
     /**
      * @brief Check MemberFlag consistency: At least one of the bits corresponding to the try construct annotation must
      *        be set.
@@ -491,7 +510,6 @@ protected:
      */
     static void plain_collection_header_consistency(
             const PlainCollectionHeader& header);
-#endif // !defined(NDEBUG)
 
     /**
      * @brief Check consistency between a given PlainCollectionHeader and the related TypeIdentifier:
@@ -519,6 +537,96 @@ protected:
      */
     static void map_key_type_identifier_consistency(
             const TypeIdentifier& key_identifier);
+
+    /**
+     * @brief Check StringSTypeDefn consistency.
+     *
+     * @param string Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given StringSTypeDefn is not
+     *            consistent.
+     */
+    static void string_sdefn_consistency(
+            const StringSTypeDefn& string);
+
+    /**
+     * @brief Check StringLTypeDefn consistency.
+     *
+     * @param string Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given StringLTypeDefn is not
+     *            consistent.
+     */
+    static void string_ldefn_consistency(
+            const StringLTypeDefn& string);
+
+    /**
+     * @brief Check PlainSequenceSElemDefn consistency.
+     *
+     * @param plain_seq Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainSequenceSElemDefn
+     *            is not consistent.
+     */
+    static void seq_sdefn_consistency(
+            const PlainSequenceSElemDefn& plain_seq);
+
+    /**
+     * @brief Check PlainSequenceLElemDefn consistency.
+     *
+     * @param plain_seq Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainSequenceLElemDefn
+     *            is not consistent.
+     */
+    static void seq_ldefn_consistency(
+            const PlainSequenceLElemDefn& plain_seq);
+
+    /**
+     * @brief Check PlainArraySElemDefn consistency.
+     *
+     * @param plain_array Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainArraySElemDefn is
+     *            not consistent.
+     */
+    static void array_sdefn_consistency(
+            const PlainArraySElemDefn& plain_array);
+
+    /**
+     * @brief Check PlainArrayLElemDefn consistency.
+     *
+     * @param plain_array Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainArrayLElemDefn is
+     *            not consistent.
+     */
+    static void array_ldefn_consistency(
+            const PlainArrayLElemDefn& plain_array);
+
+    /**
+     * @brief Check PlainMapSTypeDefn consistency.
+     *
+     * @param plain_map Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainMapSTypeDefn is
+     *            not consistent.
+     */
+    static void map_sdefn_consistency(
+            const PlainMapSTypeDefn& plain_map);
+
+    /**
+     * @brief Check PlainMapLTypeDefn consistency.
+     *
+     * @param plain_map Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainMapLTypeDefn is
+     *            not consistent.
+     */
+    static void map_ldefn_consistency(
+            const PlainMapLTypeDefn& plain_map);
+
+    /**
+     * @brief Check TypeIdentifier consistency.
+     *
+     * @param plain_map Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given TypeIdentifier is
+     *            not consistent.
+     */
+    static void type_identifier_consistency(
+            const TypeIdentifier& type_identifier);
 
 };
 
