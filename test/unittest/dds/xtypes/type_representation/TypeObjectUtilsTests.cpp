@@ -370,6 +370,190 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
         fully_descriptive_header, bound_seq, test_identifier), InvalidArgumentError);
 }
+
+// Build PlainMapSTypeDefn with inconsistent parameters.
+TEST(TypeObjectUtilsTests, build_plain_map_s_elem_defn_inconsistencies)
+{
+    TypeIdentifier test_identifier;
+    TypeIdentifier key_identifier;
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::TRIM, false);
+#if !defined(NDEBUG)
+    PlainCollectionHeader wrong_header;
+    // Inconsistent header CollectionElementFlags
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        wrong_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+    wrong_header.element_flags(flags);
+    // Inconsistent header EquivalenceKind
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        wrong_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+#endif // !defined(NDEBUG)
+    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
+        EquivalenceKindValue::EK_COMPLETE, flags);
+    // Check SBound consistency
+    SBound wrong_bound = 0;
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        complete_header, wrong_bound, test_identifier, flags, key_identifier), InvalidArgumentError);
+
+    // Non-initialized TypeIdentifier
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        complete_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // Primitive TypeIdentifier
+    EXPECT_NO_THROW(test_identifier._d(TK_BOOLEAN));
+    // TypeIdentifier inconsistent with complete header
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        complete_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+    PlainCollectionHeader minimal_header = TypeObjectUtils::build_plain_collection_header(
+        EquivalenceKindValue::EK_MINIMAL, flags);
+    // TypeIdentifier inconsistent with minimal header
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        minimal_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+    PlainCollectionHeader fully_descriptive_header = TypeObjectUtils::build_plain_collection_header(
+        EquivalenceKindValue::EK_BOTH, flags);
+    // Wrong key_flags
+    CollectionElementFlag wrong_flags = 0;
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        fully_descriptive_header, 10, test_identifier, wrong_flags, key_identifier), InvalidArgumentError);
+    // Uninitialized key_identifier
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        fully_descriptive_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // Non-integer key identifier
+    EXPECT_NO_THROW(key_identifier._d(TK_FLOAT32));
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        fully_descriptive_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // TypeIdentifier consistent with fully-descriptive header and integer key identifier
+    EXPECT_NO_THROW(key_identifier._d(TK_INT64));
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        fully_descriptive_header, 10, test_identifier, flags, key_identifier));
+#if !defined(NDEBUG)
+    // Inconsistent string TypeIdentifier
+    StringSTypeDefn wrong_string_type_def;
+    EXPECT_NO_THROW(key_identifier.string_sdefn(wrong_string_type_def));
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        fully_descriptive_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+#endif // !defined(NDEBUG)
+    StringSTypeDefn string_type_def = TypeObjectUtils::build_string_s_type_defn(50);
+    EXPECT_NO_THROW(key_identifier.string_sdefn(string_type_def));
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        fully_descriptive_header, 10, test_identifier, flags, key_identifier));
+    
+    // TODO(jlbueno) Add case of plain collection.
+
+    // Change discriminator to EK_COMPLETE
+    EquivalenceHash hash;
+    test_identifier.equivalence_hash(hash);
+    // TypeIdentifier consistent with complete header
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        complete_header, 10, test_identifier, flags, key_identifier));
+    // TypeIdentifier inconsistent with minimal header
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        minimal_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // TypeIdentifier inconsistent with fully-descriptive header
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        fully_descriptive_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // Change discriminator to EK_MINIMAL
+    EXPECT_NO_THROW(test_identifier._d(EK_MINIMAL));
+    // TypeIdentifier inconsistent with complete header
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        complete_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // TypeIdentifier consistent with minimal header
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        minimal_header, 10, test_identifier, flags, key_identifier));
+    // TypeIdentifier inconsistent with fully-descriptive header
+    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+        fully_descriptive_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+}
+
+// Build PlainMapLTypeDefn with inconsistent parameters.
+TEST(TypeObjectUtilsTests, build_plain_map_l_elem_defn_inconsistencies)
+{
+    TypeIdentifier test_identifier;
+    TypeIdentifier key_identifier;
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::TRIM, false);
+#if !defined(NDEBUG)
+    PlainCollectionHeader wrong_header;
+    // Inconsistent header CollectionElementFlags
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        wrong_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+    wrong_header.element_flags(flags);
+    // Inconsistent header EquivalenceKind
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        wrong_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+#endif // !defined(NDEBUG)
+    PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
+        EquivalenceKindValue::EK_COMPLETE, flags);
+    // Check LBound consistency
+    LBound wrong_bound = 255;
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        complete_header, wrong_bound, test_identifier, flags, key_identifier), InvalidArgumentError);
+
+    // Non-initialized TypeIdentifier
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        complete_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // Primitive TypeIdentifier
+    EXPECT_NO_THROW(test_identifier._d(TK_BOOLEAN));
+    // TypeIdentifier inconsistent with complete header
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        complete_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+    PlainCollectionHeader minimal_header = TypeObjectUtils::build_plain_collection_header(
+        EquivalenceKindValue::EK_MINIMAL, flags);
+    // TypeIdentifier inconsistent with minimal header
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        minimal_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+    PlainCollectionHeader fully_descriptive_header = TypeObjectUtils::build_plain_collection_header(
+        EquivalenceKindValue::EK_BOTH, flags);
+    // Wrong key_flags
+    CollectionElementFlag wrong_flags = 0;
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        fully_descriptive_header, 1000, test_identifier, wrong_flags, key_identifier), InvalidArgumentError);
+    // Uninitialized key_identifier
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        fully_descriptive_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // Non-integer key identifier
+    EXPECT_NO_THROW(key_identifier._d(TK_FLOAT32));
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        fully_descriptive_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // TypeIdentifier consistent with fully-descriptive header and integer key identifier
+    EXPECT_NO_THROW(key_identifier._d(TK_INT64));
+    EXPECT_NO_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        fully_descriptive_header, 1000, test_identifier, flags, key_identifier));
+#if !defined(NDEBUG)
+    // Inconsistent string TypeIdentifier
+    StringSTypeDefn wrong_string_type_def;
+    EXPECT_NO_THROW(key_identifier.string_sdefn(wrong_string_type_def));
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        fully_descriptive_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+#endif // !defined(NDEBUG)
+    StringSTypeDefn string_type_def = TypeObjectUtils::build_string_s_type_defn(50);
+    EXPECT_NO_THROW(key_identifier.string_sdefn(string_type_def));
+    EXPECT_NO_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        fully_descriptive_header, 1000, test_identifier, flags, key_identifier));
+    
+    // TODO(jlbueno) Add case of plain collection.
+
+    // Change discriminator to EK_COMPLETE
+    EquivalenceHash hash;
+    test_identifier.equivalence_hash(hash);
+    // TypeIdentifier consistent with complete header
+    EXPECT_NO_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        complete_header, 1000, test_identifier, flags, key_identifier));
+    // TypeIdentifier inconsistent with minimal header
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        minimal_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // TypeIdentifier inconsistent with fully-descriptive header
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        fully_descriptive_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // Change discriminator to EK_MINIMAL
+    EXPECT_NO_THROW(test_identifier._d(EK_MINIMAL));
+    // TypeIdentifier inconsistent with complete header
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        complete_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+    // TypeIdentifier consistent with minimal header
+    EXPECT_NO_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        minimal_header, 1000, test_identifier, flags, key_identifier));
+    // TypeIdentifier inconsistent with fully-descriptive header
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+        fully_descriptive_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
+}
 */
 
 } // xtypes1_3
