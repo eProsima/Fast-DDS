@@ -270,11 +270,11 @@ public:
             const DomainParticipantFactoryQos& qos);
 
     /**
-     * @brief Return the TypeObjectRegistry shared pointer to access the API.
+     * @brief Return the TypeObjectRegistry member to access the API.
      *
-     * @return std::shared_ptr<xtypes1_3::TypeObjectRegistry>
+     * @return const xtypes1_3::TypeObjectRegistry reference.
      */
-    RTPS_DllAPI std::shared_ptr<xtypes1_3::TypeObjectRegistry> type_object_registry();
+    RTPS_DllAPI xtypes1_3::TypeObjectRegistry& type_object_registry();
 
 protected:
 
@@ -323,7 +323,7 @@ protected:
 
     std::shared_ptr<detail::LogResources> log_resources_;
 
-    std::shared_ptr<fastdds::dds::xtypes1_3::TypeObjectRegistry> type_object_registry_;
+    xtypes1_3::TypeObjectRegistry type_object_registry_;
 
     /**
      * This mutex guards the access to load the profiles.

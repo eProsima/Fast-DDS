@@ -344,7 +344,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_string_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.string_sdefn(string);
-    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
         type_identifier);
 }
 
@@ -357,7 +357,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_string_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.string_ldefn(string);
-    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
         type_identifier);
 }
 
@@ -370,7 +370,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_sequence_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.seq_sdefn(plain_seq);
-    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
         type_identifier);
 }
 
@@ -383,7 +383,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_sequence_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.seq_ldefn(plain_seq);
-    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
         type_identifier);
 }
 
@@ -396,7 +396,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_array_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.array_sdefn(plain_array);
-    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
         type_identifier);
 }
 
@@ -409,7 +409,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_array_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.array_ldefn(plain_array);
-    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
         type_identifier);
 }
 
@@ -422,7 +422,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_map_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.map_sdefn(plain_map);
-    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
         type_identifier);
 }
 
@@ -435,7 +435,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_map_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.map_ldefn(plain_map);
-    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
         type_identifier);
 }
 
