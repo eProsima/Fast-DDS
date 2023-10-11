@@ -3758,7 +3758,11 @@ XMLP_ret XMLParser::getXMLUint(
 
     auto to_uint64 = [](const char* str, unsigned long int* value) -> bool
             {
-                if (sscanf( str, "%lu", value) == 1)
+#ifdef _WIN32
+                if (sscanf_s(str, "%lu", value) == 1)
+#else
+                if (sscanf(str, "%lu", value) == 1)
+#endif // ifdef _WIN32
                 {
                     return true;
                 }
