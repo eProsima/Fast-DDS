@@ -1089,6 +1089,8 @@ void WLP::update_liveliness_changed_status(
         int32_t alive_change,
         int32_t not_alive_change)
 {
+    std::unique_lock<RecursiveTimedMutex> lock(reader->getMutex());
+
     reader->liveliness_changed_status_.alive_count += alive_change;
     reader->liveliness_changed_status_.alive_count_change += alive_change;
     reader->liveliness_changed_status_.not_alive_count += not_alive_change;
