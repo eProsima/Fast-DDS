@@ -28,9 +28,28 @@
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/TypesBase.h>
 
+namespace std {
+template<>
+struct hash<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>
+{
+        std::size_t operator()(
+                const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& k) const
+        {
+            // The collection only has direct hash TypeIdentifiers so the EquivalenceHash can be used.
+            return (static_cast<size_t>(k.equivalence_hash()[0]) << 16) |
+                   (static_cast<size_t>(k.equivalence_hash()[1]) << 8) |
+                   (static_cast<size_t>(k.equivalence_hash()[2]));
+        }
+};
+
+} // std
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+class DomainParticipantFactory;
+
 namespace xtypes1_3 {
 
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
@@ -116,6 +135,13 @@ public:
             const std::string& type_name,
             const TypeIdentifierPair& type_identifiers);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+    // Only DomainParticipantFactory is allowed to instantiate the TypeObjectRegistry class.
+    // It cannot be protected as the standard library needs to access the constructor to allocate the resources.
+    // Rule of zero: resource managing types.
+    TypeObjectRegistry() = default;
+#endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 protected:
 
     /**
@@ -176,10 +202,6 @@ protected:
     ReturnCode_t are_types_compatible(
             const TypeIdentifierPair& type_identifiers,
             const TypeConsistencyEnforcementQosPolicy& type_consistency_qos);
-
-    // Only DomainParticipantFactory is allowed to instantiate the TypeObjectRegistry class
-    // Rule of zero: resource managing types.
-    TypeObjectRegistry() = default;
 
     // Collection of local TypeIdentifiers hashed by type_name.
     // TypeIdentifierPair contains both the minimal and complete TypeObject TypeIdentifiers.
