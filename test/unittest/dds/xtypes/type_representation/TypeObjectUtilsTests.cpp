@@ -542,6 +542,141 @@ TEST(TypeObjectUtilsTests, build_plain_map_l_elem_defn_inconsistencies)
 }
 */
 
+// Register small string/wstring. This test does not check member consistency (only checked in Debug build mode).
+TEST(TypeObjectUtilsTests, register_s_string)
+{
+    StringSTypeDefn string_defn = TypeObjectUtils::build_string_s_type_defn(32);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_string_type_identifier(string_defn,
+        "test"));
+    // Registering twice the same TypeIdentifier should not fail
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_string_type_identifier(string_defn,
+        "test"));
+    // Registering another TypeIdentifier with the same name should return RETCODE_BAD_PARAMETER
+    StringSTypeDefn another_string_defn = TypeObjectUtils::build_string_s_type_defn(100);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_string_type_identifier(
+        another_string_defn, "test"));
+}
+
+// Register large string/wstring. This test does not check member consistency (only checked in Debug build mode).
+TEST(TypeObjectUtilsTests, register_l_string)
+{
+    StringLTypeDefn string_defn = TypeObjectUtils::build_string_l_type_defn(1000);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_string_type_identifier(string_defn,
+        "test"));
+    // Registering twice the same TypeIdentifier should not fail
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_string_type_identifier(string_defn,
+        "test"));
+    // Registering another TypeIdentifier with the same name should return RETCODE_BAD_PARAMETER
+    StringLTypeDefn another_string_defn = TypeObjectUtils::build_string_l_type_defn(2000);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_string_type_identifier(
+        another_string_defn, "test"));
+}
+
+// Register small sequence. This test does not check member consistency (only checked in Debug build mode).
+TEST(TypeObjectUtilsTests, register_s_sequence)
+{
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::USE_DEFAULT, false);
+    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EquivalenceKindValue::EK_BOTH, flags);
+    TypeIdentifier primitive_identifier;
+    primitive_identifier._d(TK_FLOAT128);
+    PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
+        header, 255, primitive_identifier);
+    primitive_identifier._d(TK_INT16);
+    PlainSequenceSElemDefn another_plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
+        header, 255, primitive_identifier);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_sequence_type_identifier(plain_seq,
+        "test"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_sequence_type_identifier(plain_seq,
+        "test"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_sequence_type_identifier(
+        another_plain_seq, "test"));
+}
+
+// Register large sequence. This test does not check member consistency (only checked in Debug build mode).
+TEST(TypeObjectUtilsTests, register_l_sequence)
+{
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::USE_DEFAULT, false);
+    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EquivalenceKindValue::EK_BOTH, flags);
+    TypeIdentifier primitive_identifier;
+    primitive_identifier._d(TK_FLOAT128);
+    PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
+        header, 256, primitive_identifier);
+    primitive_identifier._d(TK_INT16);
+    PlainSequenceLElemDefn another_plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
+        header, 256, primitive_identifier);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_sequence_type_identifier(plain_seq,
+        "test"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_sequence_type_identifier(plain_seq,
+        "test"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_sequence_type_identifier(
+        another_plain_seq, "test"));
+}
+
+// Register small array. This test does not check member consistency (only checked in Debug build mode).
+TEST(TypeObjectUtilsTests, register_s_array)
+{
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::USE_DEFAULT, false);
+    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EquivalenceKindValue::EK_BOTH, flags);
+    TypeIdentifier primitive_identifier;
+    primitive_identifier._d(TK_FLOAT128);
+    SBoundSeq array_bounds;
+    TypeObjectUtils::add_array_dimension(array_bounds, 26);
+    PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(header, array_bounds,
+        primitive_identifier);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_array_type_identifier(plain_array,
+        "test"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_array_type_identifier(plain_array,
+        "test"));
+    TypeObjectUtils::add_array_dimension(array_bounds, 100);
+    PlainArraySElemDefn another_plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(header, array_bounds,
+        primitive_identifier);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_array_type_identifier(
+        another_plain_array, "test"));
+}
+
+// Register large array. This test does not check member consistency (only checked in Debug build mode).
+TEST(TypeObjectUtilsTests, register_l_array)
+{
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::USE_DEFAULT, false);
+    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EquivalenceKindValue::EK_BOTH, flags);
+    TypeIdentifier primitive_identifier;
+    primitive_identifier._d(TK_FLOAT128);
+    LBoundSeq array_bounds;
+    TypeObjectUtils::add_array_dimension(array_bounds, 260);
+    PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(header, array_bounds,
+        primitive_identifier);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_array_type_identifier(plain_array,
+        "test"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_array_type_identifier(plain_array,
+        "test"));
+    TypeObjectUtils::add_array_dimension(array_bounds, 1000);
+    PlainArrayLElemDefn another_plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(header, array_bounds,
+        primitive_identifier);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_array_type_identifier(
+        another_plain_array, "test"));
+}
+
+// Register small map. This test does not check member consistency (only checked in Debug build mode).
+TEST(TypeObjectUtilsTests, register_s_map)
+{
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::USE_DEFAULT, false);
+    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EquivalenceKindValue::EK_BOTH, flags);
+    TypeIdentifier primitive_identifier;
+    primitive_identifier._d(TK_UINT32);
+    PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(header, 10, primitive_identifier, flags,
+        primitive_identifier);
+    TypeIdentifier key_identifier;
+    key_identifier._d(TK_INT8);
+    PlainMapSTypeDefn another_plain_map = TypeObjectUtils::build_plain_map_s_type_defn(header, 10, primitive_identifier,
+        flags, key_identifier);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_map_type_identifier(plain_map,
+        "test"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_map_type_identifier(plain_map,
+        "test"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_map_type_identifier(
+        another_plain_map, "test"));
+}
+
 } // xtypes1_3
 } // dds
 } // fastdds
