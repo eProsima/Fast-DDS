@@ -18,6 +18,7 @@
 
 #include <fastcdr/exceptions/BadParamException.h>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastdds/dds/log/Log.hpp>
@@ -313,6 +314,145 @@ const PlainMapLTypeDefn TypeObjectUtils::build_plain_map_l_type_defn(
     plain_map_l_type_defn.key_flags(key_flags);
     plain_map_l_type_defn.key_identifier(key_identifier);
     return plain_map_l_type_defn;
+}
+
+const StronglyConnectedComponentId TypeObjectUtils::build_strongly_connected_component_id(
+        const TypeObjectHashId& sc_component_id,
+        long scc_length,
+        long scc_index)
+{
+    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "StronglyConnectedComponents not yet supported.");
+    StronglyConnectedComponentId scc_id;
+    scc_id.sc_component_id(sc_component_id);
+    scc_id.scc_length(scc_length);
+    scc_id.scc_index(scc_index);
+    return scc_id;
+}
+
+const ExtendedTypeDefn TypeObjectUtils::build_extended_type_defn()
+{
+    ExtendedTypeDefn extended_type_defn;
+    return extended_type_defn;
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_s_string_type_identifier(
+        const StringSTypeDefn& string,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    string_sdefn_consistency(string);
+#endif // !defined(NDEBUG)
+    TypeIdentifier type_identifier;
+    type_identifier.string_sdefn(string);
+    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+        type_identifier);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_l_string_type_identifier(
+        const StringLTypeDefn& string,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    string_ldefn_consistency(string);
+#endif // !defined(NDEBUG)
+    TypeIdentifier type_identifier;
+    type_identifier.string_ldefn(string);
+    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+        type_identifier);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_s_sequence_type_identifier(
+        const PlainSequenceSElemDefn& plain_seq,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    seq_sdefn_consistency(plain_seq);
+#endif // !defined(NDEBUG)
+    TypeIdentifier type_identifier;
+    type_identifier.seq_sdefn(plain_seq);
+    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+        type_identifier);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_l_sequence_type_identifier(
+        const PlainSequenceLElemDefn& plain_seq,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    seq_ldefn_consistency(plain_seq);
+#endif // !defined(NDEBUG)
+    TypeIdentifier type_identifier;
+    type_identifier.seq_ldefn(plain_seq);
+    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+        type_identifier);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_s_array_type_identifier(
+        const PlainArraySElemDefn& plain_array,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    array_sdefn_consistency(plain_array);
+#endif // !defined(NDEBUG)
+    TypeIdentifier type_identifier;
+    type_identifier.array_sdefn(plain_array);
+    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+        type_identifier);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_l_array_type_identifier(
+        const PlainArrayLElemDefn& plain_array,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    array_ldefn_consistency(plain_array);
+#endif // !defined(NDEBUG)
+    TypeIdentifier type_identifier;
+    type_identifier.array_ldefn(plain_array);
+    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+        type_identifier);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_s_map_type_identifier(
+        const PlainMapSTypeDefn& plain_map,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    map_sdefn_consistency(plain_map);
+#endif // !defined(NDEBUG)
+    TypeIdentifier type_identifier;
+    type_identifier.map_sdefn(plain_map);
+    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+        type_identifier);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_l_map_type_identifier(
+        const PlainMapLTypeDefn& plain_map,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    map_ldefn_consistency(plain_map);
+#endif // !defined(NDEBUG)
+    TypeIdentifier type_identifier;
+    type_identifier.map_ldefn(plain_map);
+    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+        type_identifier);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_scc_type_identifier(
+        const StronglyConnectedComponentId& scc,
+        const std::string& type_name)
+{
+/*
+    TypeIdentifier type_identifier;
+    type_identifier.sc_component_id(scc);
+    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+        type_identifier);
+*/
+    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "StronglyConnectedComponents not yet supported.");
+    static_cast<void>(scc);
+    static_cast<void>(type_name);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 void TypeObjectUtils::set_try_construct_behavior(
@@ -622,15 +762,18 @@ void TypeObjectUtils::type_identifier_consistency(
 
         case TI_PLAIN_MAP_LARGE:
             map_ldefn_consistency(type_identifier.map_ldefn());
+            break;
 
         case TI_STRONGLY_CONNECTED_COMPONENT:
-            // TODO(jlbueno)
+            // No inconsistency rule apply.
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "StronglyConnectedComponents not yet supported.");
+            break;
 
         case EK_COMPLETE:
         case EK_MINIMAL:
             // TODO(jlbueno)
 
-        // Primitive TypeIdentifiers
+        // Primitive TypeIdentifiers/ExtendedTypeDefn: no inconsistency rule apply.
         default:
             break;
     }
