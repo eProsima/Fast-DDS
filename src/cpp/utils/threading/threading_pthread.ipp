@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdio>
+#include <cstring>
 #include <limits>
 
 #include <pthread.h>
-#include <stdio.h>
-#include <string.h>
 #include <sys/resource.h>
 #include <sys/sysinfo.h>
 #include <sys/time.h>

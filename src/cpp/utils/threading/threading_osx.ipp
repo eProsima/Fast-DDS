@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdio>
+#include <cstring>
 #include <limits>
 
 #include <pthread.h>
-#include <string.h>
-#include <stdio.h>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
