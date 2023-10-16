@@ -455,6 +455,156 @@ ReturnCode_t TypeObjectUtils::build_and_register_scc_type_identifier(
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
+const ExtendedAnnotationParameterValue TypeObjectUtils::build_extended_annotation_parameter_value()
+{
+    ExtendedAnnotationParameterValue extended_annotation_parameter_value;
+    return extended_annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        bool boolean_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.boolean_value(boolean_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value_byte(
+        uint8_t byte_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.byte_value(byte_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        int8_t int8_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.int8_value(int8_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        uint8_t uint8_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.uint8_value(uint8_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        int16_t int16_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.int16_value(int16_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        uint16_t uint16_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.uint_16_value(uint16_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        int32_t int32_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.int32_value(int32_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        uint32_t uint32_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.uint32_value(uint32_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        int64_t int64_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.int64_value(int64_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        uint64_t uint64_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.uint64_value(uint64_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        float float32_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.float32_value(float32_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        double float64_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.float64_value(float64_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        long double float128_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.float128_value(float128_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        char char_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.char_value(char_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        wchar_t wchar_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.wchar_value(wchar_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value_enum(
+        int32_t enumerated_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.enumerated_value(enumerated_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+        eprosima::fastcdr::fixed_string<128> string8_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.string8_value(string8_value);
+    return annotation_parameter_value;
+}
+
+const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
+       std::wstring string16_value)
+{
+    AnnotationParameterValue annotation_parameter_value;
+    annotation_parameter_value.string16_value(string16_value);
+    return annotation_parameter_value;
+}
+
 void TypeObjectUtils::set_try_construct_behavior(
         MemberFlag& member_flag,
         TryConstructKind try_construct_kind)
