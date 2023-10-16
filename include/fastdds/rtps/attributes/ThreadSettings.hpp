@@ -17,6 +17,7 @@
  */
 
 #include <cstdint>
+#include <limits>
 
 #include <fastrtps/fastrtps_dll.h>
 
@@ -50,13 +51,13 @@ struct RTPS_DllAPI ThreadSettings
      * @brief The thread's priority.
      *
      * Configures the thread's priority.
-     * A value of 0 indicates system default.
+     * A value of -2^31 indicates system default.
      *
      * This value is platform specific and it is used as-is to configure the specific platform thread.
      * Setting this value to something other than the default one may require different privileges
      * on different platforms.
      */
-    int32_t priority = 0;
+    int32_t priority = std::numeric_limits<int32_t>::min();
 
     /**
      * @brief The thread's affinity.
