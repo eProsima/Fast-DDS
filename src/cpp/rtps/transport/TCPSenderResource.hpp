@@ -83,7 +83,7 @@ public:
         {
             auto chaining_sender = dynamic_cast<ChainingSenderResource*>(sender_resource);
 
-            if(chaining_sender)
+            if (chaining_sender)
             {
                 returned_resource = dynamic_cast<TCPSenderResource*>(chaining_sender->lower_sender_cast());
             }

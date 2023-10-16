@@ -720,7 +720,7 @@ Locator_t IPLocator::WanToLanLocator(
 
     for (size_t i = 8; i < 12; i++)
     {
-        out.address[i+4] = out.address[i];
+        out.address[i + 4] = out.address[i];
         out.address[i] = 0;
     }
 
