@@ -195,12 +195,12 @@ TEST(ChainingTransportTests, basic_test)
 //! a WAN listening address (TCP server)
 TEST(ChainingTransportTests, tcp_client_server_with_wan_correct_sender_resources)
 {
-    std::atomic<int> times_writer_init_function_called;
-    std::atomic<int> times_writer_receive_function_called;
-    std::atomic<int> times_writer_send_function_called;
-    std::atomic<int> times_reader_init_function_called;
-    std::atomic<int> times_reader_receive_function_called;
-    std::atomic<int> times_reader_send_function_called;
+    std::atomic<int> times_writer_init_function_called {0};
+    std::atomic<int> times_writer_receive_function_called{0};
+    std::atomic<int> times_writer_send_function_called{0};
+    std::atomic<int> times_reader_init_function_called{0};
+    std::atomic<int> times_reader_receive_function_called{0};
+    std::atomic<int> times_reader_send_function_called{0};
 
     eprosima::fastrtps::rtps::PropertyPolicy test_property_policy;
     test_property_policy.properties().push_back({test_property_name, test_property_value});
