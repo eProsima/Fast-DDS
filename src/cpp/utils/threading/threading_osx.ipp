@@ -59,10 +59,18 @@ static void configure_current_thread_scheduler(
 {
     pthread_t self_tid = pthread_self();
     sched_param param;
+    sched_param current_param;
+    int current_class;
     int result = 0;
+    bool change_priority = (std::numeric_limits<int32_t>::min() != sched_priority);
     
+    // Get current scheduling parameters
+    memset(&current_param, 0, sizeof(current_param));
+    pthread_getschedparam(self_tid, &current_class, &current_param);
+        
     memset(&param, 0, sizeof(param));
     param.sched_priority = 0;
+    sched_class = (sched_class == -1) ? current_class : sched_class;
     
     //
     // Set Scheduler Class and Priority       
@@ -82,7 +90,7 @@ static void configure_current_thread_scheduler(
         // Sched OTHER has a nice value, that we pull from the priority parameter.
         // 
         
-        if(sched_class == SCHED_OTHER)
+        if(sched_class == SCHED_OTHER && change_priority)
         {            
             result = setpriority(PRIO_PROCESS, gettid(), sched_priority);
         }                
@@ -94,7 +102,7 @@ static void configure_current_thread_scheduler(
         // RT Policies use a different priority numberspace.
         //
         
-        param.sched_priority = sched_priority;
+        param.sched_priority = change_priority ? sched_priority : current_param.sched_priority;
         result = pthread_setschedparam(self_tid, sched_class, &param);
     }
 
