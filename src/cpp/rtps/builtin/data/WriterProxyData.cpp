@@ -1172,7 +1172,7 @@ void WriterProxyData::set_remote_unicast_locators(
     remote_locators_.unicast.clear();
     for (const Locator_t& locator : locators)
     {
-        if (network.is_locator_allowed(locator))
+        if (!network.is_local_locator(locator) || network.is_locator_allowed(locator))
         {
             remote_locators_.add_unicast_locator(locator);
         }
@@ -1192,7 +1192,7 @@ void WriterProxyData::set_multicast_locators(
     remote_locators_.multicast.clear();
     for (const Locator_t& locator : locators)
     {
-        if (network.is_locator_allowed(locator))
+        if (!network.is_local_locator(locator) || network.is_locator_allowed(locator))
         {
             remote_locators_.add_multicast_locator(locator);
         }
@@ -1215,7 +1215,7 @@ void WriterProxyData::set_remote_locators(
 
     for (const Locator_t& locator : locators.unicast)
     {
-        if (network.is_locator_allowed(locator))
+        if (!network.is_local_locator(locator) || network.is_locator_allowed(locator))
         {
             remote_locators_.add_unicast_locator(locator);
         }
@@ -1225,7 +1225,7 @@ void WriterProxyData::set_remote_locators(
     {
         for (const Locator_t& locator : locators.multicast)
         {
-            if (network.is_locator_allowed(locator))
+            if (!network.is_local_locator(locator) || network.is_locator_allowed(locator))
             {
                 remote_locators_.add_multicast_locator(locator);
             }

@@ -347,7 +347,7 @@ bool PDPSimple::createPDPEndpoints()
             LocatorList_t fixed_locators;
             for (const Locator_t& loc : mp_builtin->m_initialPeersList)
             {
-                if (network.is_locator_allowed(loc))
+                if (!network.is_local_locator(loc) || network.is_locator_allowed(loc))
                 {
                     // Add initial peers locator without transformation as we don't know whether the
                     // remote transport will allow localhost
