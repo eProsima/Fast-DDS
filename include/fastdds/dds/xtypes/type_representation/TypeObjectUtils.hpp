@@ -22,6 +22,9 @@
 
 #include <string>
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
+
 #include <fastdds/dds/xtypes/common.hpp>
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.h>
@@ -512,6 +515,176 @@ public:
     RTPS_DllAPI static ReturnCode_t build_and_register_scc_type_identifier(
             const StronglyConnectedComponentId& scc,
             const std::string& type_name);
+
+    /*************** Annotation usage ***************************/
+    /**
+     * @brief Build ExtendedAnnotationParameterValue instance (empty. Available for future extension).
+     *
+     * @return const ExtendedAnnotationParameterValue instance.
+     */
+    RTPS_DllAPI static const ExtendedAnnotationParameterValue build_extended_annotation_parameter_value();
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param boolean_value Boolean value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            bool boolean_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param byte_value Byte value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value_byte(
+            uint8_t byte_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param int8_value Int8 value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            int8_t int8_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param uint8_value Unsigned int8 value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            uint8_t uint8_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param int16_value Short value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            int16_t int16_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param uint16_value Unsigned short value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            uint16_t uint16_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param int32_value Long value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            int32_t int32_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param uint32_value Unsigned long value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            uint32_t uint32_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param int64_value Long long value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            int64_t int64_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param uint64_value Unsigned long long value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            uint64_t uint64_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param float32_value Float value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            float float32_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param float64_value Double value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            double float64_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param float128_value Long double value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            long double float128_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param char_value Char value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            char char_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param wchar_value Wide char value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            wchar_t wchar_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param enumerated_value Enumerated value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value_enum(
+            int32_t enumerated_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param string8_value String value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            eprosima::fastcdr::fixed_string<128> string8_value);
+
+    /**
+     * @brief Build AnnotationParameterValue instance.
+     *
+     * @param string16_value Wide string value to set in the union.
+     * @return const AnnotationParameterValue instance. 
+     */
+    RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
+            std::wstring string16_value);
 
 private:
 
