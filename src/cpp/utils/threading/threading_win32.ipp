@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <limits>
 #include <sstream>
 #include <string>
 #include <processthreadsapi.h>
@@ -58,7 +59,7 @@ void set_name_to_current_thread(
 static void configure_current_thread_priority(
         int32_t priority)
 {
-    if (priority != 0)
+    if (priority != std::numeric_limits<int32_t>::min())
     {
         if (0 == SetThreadPriority(GetCurrentThread(), priority))
         {
