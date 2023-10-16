@@ -42,6 +42,7 @@ struct RTPS_DllAPI ThreadSettings
      * A value of -1 indicates system default.
      *
      * This value is platform specific and it is used as-is to configure the specific platform thread.
+     * It is ignored on Windows platforms.
      * Setting this value to something other than the default one may require different privileges
      * on different platforms.
      */
@@ -62,7 +63,9 @@ struct RTPS_DllAPI ThreadSettings
     /**
      * @brief The thread's affinity.
      *
-     * On some systems, this is a bit mask for setting the threads affinity to each core individually.
+     * On some systems (Windows, Linux), this is a bit mask for setting the threads affinity to each core individually.
+     * On MacOS, this sets the affinity tag for the thread, and the OS tries to share the L2 cache between threads
+     * with the same affinity.
      * A value of 0 indicates no particular affinity.
      *
      * This value is platform specific and it is used as-is to configure the specific platform thread.
