@@ -78,7 +78,8 @@ jobs:
           cat src/fastrtps/.github/workflows/config/tsan_colcon.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --metas src/fastrtps/.github/workflows/config/tsan_colcon.meta
+            --metas src/fastrtps/.github/workflows/config/tsan_colcon.meta \
+            --cmake-args -DCMAKE_BUILD_TYPE=Debug
 
       - name: Run tests Fast DDS
         run: |

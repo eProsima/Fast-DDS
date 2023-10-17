@@ -5,7 +5,7 @@
         {
             "cmake-args":
             [
-                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCOMPILE_EXAMPLES=OFF",
                 "-DEPROSIMA_BUILD_TESTS=ON",
                 "-DGTEST_INDIVIDUAL=ON",
                 "-DRTPS_API_TESTS=ON",
