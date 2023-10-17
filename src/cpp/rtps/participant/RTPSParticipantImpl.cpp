@@ -1645,7 +1645,7 @@ bool RTPSParticipantImpl::createReceiverResources(
 
         if (!ret)
         {
-            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Could not create the specified receiver resource");
+            logError(RTPS_PARTICIPANT, "Could not create the specified receiver resource");
         }
 
         ret_val |= !newItemsBuffer.empty();
