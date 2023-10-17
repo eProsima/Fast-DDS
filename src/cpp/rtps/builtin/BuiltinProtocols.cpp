@@ -179,7 +179,7 @@ void BuiltinProtocols::filter_server_remote_locators(
         LocatorList_t allowed_locators;
         for (Locator_t& loc : rs.metatrafficUnicastLocatorList)
         {
-            if (!nf.is_local_locator(loc) || nf.is_locator_allowed(loc))
+            if (nf.is_locator_remote_or_allowed(loc))
             {
                 allowed_locators.push_back(loc);
             }
