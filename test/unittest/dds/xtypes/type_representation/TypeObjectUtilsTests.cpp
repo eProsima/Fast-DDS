@@ -677,6 +677,63 @@ TEST(TypeObjectUtilsTests, register_s_map)
         another_plain_map, "test"));
 }
 
+// Build CommonAnnotationParameter with non-empty flags
+TEST(TypeObjectUtilsTests, build_common_annotation_parameter_non_empty_flags)
+{
+    AnnotationParameterFlag non_empty_flags = 1;
+    AnnotationParameterFlag empty_flags = 0;
+    TypeIdentifier type_id;
+    EXPECT_NO_THROW(type_id._d(TK_INT16));
+    EXPECT_THROW(CommonAnnotationParameter common = TypeObjectUtils::build_common_annotation_parameter(non_empty_flags,
+        type_id), InvalidArgumentError);
+    EXPECT_NO_THROW(CommonAnnotationParameter common = TypeObjectUtils::build_common_annotation_parameter(empty_flags,
+        type_id));
+}
+
+// Build CompleteAnnotationType with non-empty flags
+TEST(TypeObjectUtilsTests, build_complete_annotation_type_non_empty_flags)
+{
+    AnnotationTypeFlag non_empty_flags = 1;
+    AnnotationTypeFlag empty_flags = 0;
+    CompleteAnnotationHeader header;
+    CompleteAnnotationParameterSeq sequence;
+    EXPECT_THROW(CompleteAnnotationType annotation = TypeObjectUtils::build_complete_annotation_type(non_empty_flags,
+        header, sequence), InvalidArgumentError);
+    EXPECT_NO_THROW(CompleteAnnotationType annotation = TypeObjectUtils::build_complete_annotation_type(empty_flags,
+        header, sequence));
+}
+
+// Build CommonAliasBody with non-empty flags
+TEST(TypeObjectUtilsTests, build_common_alias_body_non_empty_flags)
+{
+    AliasMemberFlag non_empty_flags = 1;
+    AliasMemberFlag empty_flags = 0;
+    TypeIdentifier type_id;
+    EXPECT_NO_THROW(type_id._d(TK_INT16));
+    EXPECT_THROW(CommonAliasBody common = TypeObjectUtils::build_common_alias_body(non_empty_flags,
+        type_id), InvalidArgumentError);
+    EXPECT_NO_THROW(CommonAliasBody common = TypeObjectUtils::build_common_alias_body(empty_flags,
+        type_id));
+}
+
+// Build CompleteAliasType with non-empty flags
+TEST(TypeObjectUtilsTests, build_complete_alias_type_non_empty_flags)
+{
+    AliasTypeFlag non_empty_flags = 1;
+    AliasTypeFlag empty_flags = 0;
+    CompleteAliasHeader header;
+    TypeIdentifier type_id;
+    type_id._d(TK_CHAR8);
+    CommonAliasBody common = TypeObjectUtils::build_common_alias_body(0, type_id);
+    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> ann_builtin;
+    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
+    CompleteAliasBody body = TypeObjectUtils::build_complete_alias_body(common, ann_builtin, ann_custom);
+    EXPECT_THROW(CompleteAliasType alias = TypeObjectUtils::build_complete_alias_type(non_empty_flags,
+        header, body), InvalidArgumentError);
+    EXPECT_NO_THROW(CompleteAliasType alias = TypeObjectUtils::build_complete_alias_type(empty_flags,
+        header, body));
+}
+
 } // xtypes1_3
 } // dds
 } // fastdds

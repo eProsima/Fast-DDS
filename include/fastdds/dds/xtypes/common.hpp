@@ -21,7 +21,7 @@
 #define _FASTDDS_DDS_XTYPES_COMMON_HPP_
 
 /**
- * @brief Extensibility kinds
+ * @brief Extensibility kinds (@extensibility annotation)
  */
 enum ExtensibilityKind
 {
@@ -31,7 +31,7 @@ enum ExtensibilityKind
 };
 
 /**
- * @brief Try construct kinds
+ * @brief Try construct kinds (@try_construct annotation)
  */
 enum TryConstructKind
 {
@@ -48,6 +48,19 @@ enum EquivalenceKindValue
     EK_MINIMAL,
     EK_COMPLETE,
     EK_BOTH
+};
+
+/**
+ * @brief PlacementKind values (@verbatim annotation)
+ */
+enum PlacementKindValue
+{
+    BEGIN_FILE,
+    BEFORE_DECLARATION,
+    BEGIN_DECLARATION,
+    END_DECLARATION,
+    AFTER_DECLARATION,
+    END_FILE
 };
 
 #endif // _FASTDDS_DDS_XTYPES_COMMON_HPP_
