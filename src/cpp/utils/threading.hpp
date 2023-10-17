@@ -100,30 +100,6 @@ std::thread create_thread(
                    });
 }
 
-/**
- * @brief Create and start a thread with custom name.
- *
- * This wrapper will create a thread on which the incoming functor will be called after
- * applying giving it a custom name.
- *
- * @param[in]  func      Functor with the logic to be run on the created thread.
- * @param[in]  name      Name (format) for the created thread.
- * @param[in]  args      Additional arguments to complete the thread name.
- *                       See @ref set_name_to_current_thread for details.
- */
-template<typename Functor, typename ... Args>
-std::thread create_thread(
-        const Functor& func,
-        const char* name,
-        Args... args)
-{
-    return std::thread([&]()
-                   {
-                       set_name_to_current_thread(name, args ...);
-                       func();
-                   });
-}
-
 } // eprosima
 
 #endif  // UTILS__THREADING_HPP_
