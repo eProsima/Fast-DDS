@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/TypesBase.h>
 
@@ -47,8 +48,6 @@ struct hash<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-class DomainParticipantFactory;
 
 namespace xtypes1_3 {
 
@@ -75,6 +74,9 @@ struct TypeObjectPair
 // non-plain TypeObject and the non-plain TypeObject serialized sizes.
 class TypeObjectRegistry
 {
+
+    friend class TypeObjectUtils;
+
 public:
 
     /**

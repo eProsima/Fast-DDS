@@ -22,11 +22,19 @@
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/utils/md5.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace xtypes1_3 {
+
+constexpr const char* begin_declaration_file = "begin-declaration-file";
+constexpr const char* before_declaration = "before-declaration";
+constexpr const char* begin_declaration = "begin-declaration";
+constexpr const char* end_declaration = "end-declaration";
+constexpr const char* after_declaration = "after-declaration";
+constexpr const char* end_declaration_file = "end-declaration-file";
 
 const TypeObjectHashId TypeObjectUtils::build_type_object_hash_id(
         uint8_t discriminator,
@@ -78,7 +86,9 @@ StructMemberFlag TypeObjectUtils::build_struct_member_flag(
     }
     if (key)
     {
+        // XTypes v1.3 Clause 7.2.2.4.4.4.8 Key members shall always have their "must understand" attribute set to true. 
         struct_member_flag |= MemberFlagBits::IS_KEY;
+        struct_member_flag |= MemberFlagBits::IS_MUST_UNDERSTAND;
     }
     if (external)
     {
@@ -590,7 +600,7 @@ const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value
 }
 
 const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
-        eprosima::fastcdr::fixed_string<128> string8_value)
+        const eprosima::fastcdr::fixed_string<128>& string8_value)
 {
     AnnotationParameterValue annotation_parameter_value;
     annotation_parameter_value.string8_value(string8_value);
@@ -598,11 +608,528 @@ const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value
 }
 
 const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
-       std::wstring string16_value)
+       const std::wstring& string16_value)
 {
     AnnotationParameterValue annotation_parameter_value;
     annotation_parameter_value.string16_value(string16_value);
     return annotation_parameter_value;
+}
+
+const AppliedAnnotationParameter TypeObjectUtils::build_applied_annotation_parameter(
+        const NameHash& paramname_hash,
+        const AnnotationParameterValue& value)
+{
+    AppliedAnnotationParameter applied_annotation_parameter;
+    applied_annotation_parameter.paramname_hash(paramname_hash);
+    applied_annotation_parameter.value(value);
+    return applied_annotation_parameter;
+}
+
+void TypeObjectUtils::add_applied_annotation_parameter(
+        AppliedAnnotationParameterSeq& param_seq,
+        const AppliedAnnotationParameter& param)
+{
+    param_seq.push_back(param);
+}
+
+const AppliedAnnotation TypeObjectUtils::build_applied_annotation(
+        const TypeIdentifier& annotation_typeid,
+        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
+{
+#if !defined(NDEBUG)
+    if (!is_direct_hash_type_identifier(annotation_typeid))
+    {
+        throw InvalidArgumentError("Annotation TypeIdentifier is not a HASH TypeIdentifier");
+    }
+#endif // !defined(NDEBUG)
+    AppliedAnnotation applied_annotation;
+    applied_annotation.annotation_typeid(annotation_typeid);
+    if (param_seq.has_value())
+    {
+        applied_annotation.param_seq(param_seq);
+    }
+    return applied_annotation;
+}
+
+const AppliedVerbatimAnnotation TypeObjectUtils::build_applied_verbatim_annotation(
+        PlacementKindValue placement,
+        const eprosima::fastcdr::fixed_string<32>& language,
+        const std::string& text)
+{
+    AppliedVerbatimAnnotation applied_verbatim_annotation;
+    switch (placement)
+    {
+        case PlacementKindValue::AFTER_DECLARATION:
+            applied_verbatim_annotation.placement(after_declaration);
+            break;
+        case PlacementKindValue::BEFORE_DECLARATION:
+            applied_verbatim_annotation.placement(before_declaration);
+            break;
+        case PlacementKindValue::BEGIN_DECLARATION:
+            applied_verbatim_annotation.placement(begin_declaration);
+            break;
+        case PlacementKindValue::BEGIN_FILE:
+            applied_verbatim_annotation.placement(begin_declaration_file);
+            break;
+        case PlacementKindValue::END_DECLARATION:
+            applied_verbatim_annotation.placement(end_declaration);
+            break;
+        case PlacementKindValue::END_FILE:
+            applied_verbatim_annotation.placement(end_declaration_file);
+            break;
+        default:
+            break;
+    }
+    applied_verbatim_annotation.language(language);
+    applied_verbatim_annotation.text(text);
+    return applied_verbatim_annotation;
+}
+
+const AppliedBuiltinMemberAnnotations TypeObjectUtils::build_applied_builtin_member_annotations(
+        const eprosima::fastcdr::optional<std::string>& unit,
+        const eprosima::fastcdr::optional<AnnotationParameterValue>& min,
+        const eprosima::fastcdr::optional<AnnotationParameterValue>& max,
+        const eprosima::fastcdr::optional<std::string>& hash_id)
+{
+    AppliedBuiltinMemberAnnotations applied_builtin_member_annotations;
+    if (unit.has_value())
+    {
+        applied_builtin_member_annotations.unit(unit);
+    }
+    if (min.has_value())
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "@min annotation not yet supported.");
+    }
+    if (max.has_value())
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "@max annotation not yet supported.");
+    }
+    if (hash_id.has_value())
+    {
+        applied_builtin_member_annotations.hash_id(hash_id);
+    }
+    return applied_builtin_member_annotations;
+}
+
+const CommonStructMember TypeObjectUtils::build_common_struct_member(
+        MemberId member_id,
+        StructMemberFlag member_flags,
+        const TypeIdentifier& member_type_id)
+{
+#if !defined(NDEBUG)
+    struct_member_flag_consistency(member_flags);
+    type_identifier_consistency(member_type_id);
+#endif // !defined(NDEBUG)
+    CommonStructMember common_struct_member;
+    common_struct_member.member_id(member_id);
+    common_struct_member.member_flags(member_flags);
+    common_struct_member.member_type_id(member_type_id);
+    return common_struct_member;
+}
+
+void TypeObjectUtils::add_applied_annotation_parameter(
+        AppliedAnnotationSeq& ann_custom_seq,
+        const AppliedAnnotation& ann_custom)
+{
+#if !defined(NDEBUG)
+    applied_annotation_consistency(ann_custom);
+#endif // !defined(NDEBUG)
+    ann_custom_seq.push_back(ann_custom);
+}
+
+const CompleteMemberDetail TypeObjectUtils::build_complete_member_detail(
+        const MemberName& name,
+        const eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>& ann_builtin,
+        const eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom)
+{
+    CompleteMemberDetail complete_member_detail;
+    complete_member_detail.name(name);
+    if (ann_builtin.has_value())
+    {
+        complete_member_detail.ann_builtin(ann_builtin);
+    }
+    if (ann_custom.has_value())
+    {
+#if !defined(NDEBUG)
+        applied_annotation_seq_consistency(ann_custom.value());
+#endif // !defined(NDEBUG)
+        complete_member_detail.ann_custom(ann_custom);
+    }
+    return complete_member_detail;
+}
+
+const CompleteStructMember TypeObjectUtils::build_complete_struct_member(
+        const CommonStructMember& common,
+        const CompleteMemberDetail& detail)
+{
+#if !defined(NDEBUG)
+    common_struct_member_consistency(common);
+    complete_member_detail_consistency(detail);
+#endif
+    CompleteStructMember complete_struct_member;
+    complete_struct_member.common(common);
+    complete_struct_member.detail(detail);
+    return complete_struct_member;
+}
+
+const AppliedBuiltinTypeAnnotations TypeObjectUtils::build_applied_builtin_type_annotations(
+        const eprosima::fastcdr::optional<AppliedVerbatimAnnotation>& verbatim)
+{
+    AppliedBuiltinTypeAnnotations applied_builtin_type_annotations;
+    if (verbatim.has_value())
+    {
+        applied_builtin_type_annotations.verbatim(verbatim);
+    }
+    return applied_builtin_type_annotations;
+}
+
+const CompleteTypeDetail TypeObjectUtils::build_complete_type_detail(
+        const eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>& ann_builtin,
+        const eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom,
+        const QualifiedTypeName& type_name)
+{
+    CompleteTypeDetail complete_type_detail;
+    if (ann_builtin.has_value())
+    {
+        complete_type_detail.ann_builtin(ann_builtin);
+    }
+    if (ann_custom.has_value())
+    {
+#if !defined(NDEBUG)
+        applied_annotation_seq_consistency(ann_custom.value());
+#endif // !defined(NDEBUG)
+        complete_type_detail.ann_custom(ann_custom);
+    }
+    complete_type_detail.type_name(type_name);
+    return complete_type_detail;
+}
+
+const CompleteStructHeader TypeObjectUtils::build_complete_struct_header(
+        const TypeIdentifier& base_type,
+        const CompleteTypeDetail& detail)
+{
+#if !defined(NDEBUG)
+    if (!is_direct_hash_type_identifier(base_type))
+    {
+        throw InvalidArgumentError("Base TypeIdentifier must be direct HASH TypeIdentifier");
+    }
+    complete_type_detail_consistency(detail);
+#endif // !defined(NDEBUG)
+    CompleteStructHeader complete_struct_header;
+    complete_struct_header.base_type(base_type);
+    complete_struct_header.detail(detail);
+    return complete_struct_header;
+}
+
+void TypeObjectUtils::add_complete_struct_member(
+        CompleteStructMemberSeq& member_seq,
+        const CompleteStructMember& member)
+{
+#if !defined(NDEBUG)
+    complete_struct_member_consistency(member);
+#endif // !defined(NDEBUG)
+    member_seq.push_back(member);
+}
+
+const CompleteStructType TypeObjectUtils::build_complete_struct_type(
+        StructTypeFlag struct_flags,
+        const CompleteStructHeader& header,
+        const CompleteStructMemberSeq& member_seq)
+{
+#if !defined(NDEBUG)
+    type_flag_consistency(struct_flags);
+    complete_struct_header_consistency(header);
+    complete_struct_member_seq_consistency(member_seq);
+#endif // !defined(NDEBUG)
+    CompleteStructType complete_struct_type;
+    complete_struct_type.struct_flags(struct_flags);
+    complete_struct_type.header(header);
+    complete_struct_type.member_seq(member_seq);
+    return complete_struct_type;
+}
+
+void TypeObjectUtils::add_union_case_label(
+        UnionCaseLabelSeq& label_seq,
+        int32_t label)
+{
+    label_seq.push_back(label);
+}
+
+const CommonUnionMember TypeObjectUtils::build_common_union_member(
+        MemberId member_id,
+        UnionMemberFlag member_flags,
+        const TypeIdentifier& type_id,
+        const UnionCaseLabelSeq& label_seq)
+{
+#if !defined(NDEBUG)
+    member_flag_consistency(member_flags);
+    type_identifier_consistency(type_id);
+#endif // !defined(NDEBUG)
+    CommonUnionMember common_union_member;
+    common_union_member.member_id(member_id);
+    common_union_member.member_flags(member_flags);
+    common_union_member.type_id(type_id);
+    common_union_member.label_seq(label_seq);
+    return common_union_member;
+}
+
+const CompleteUnionMember TypeObjectUtils::build_complete_union_member(
+        const CommonUnionMember& common,
+        const CompleteMemberDetail& detail)
+{
+#if !defined(NDEBUG)
+    common_union_member_consistency(common);
+    complete_member_detail_consistency(detail);
+#endif // !defined(NDEBUG)
+    CompleteUnionMember complete_union_member;
+    complete_union_member.common(common);
+    complete_union_member.detail(detail);
+    return complete_union_member;
+}
+
+void TypeObjectUtils::add_complete_union_member(
+        CompleteUnionMemberSeq& complete_union_member_seq,
+        const CompleteUnionMember& member)
+{
+#if !defined(NDEBUG)
+    complete_union_member_consistency(member);
+#endif // !defined(NDEBUG)
+    complete_union_member_seq.push_back(member);
+}
+
+const CommonDiscriminatorMember TypeObjectUtils::build_common_discriminator_member(
+        UnionDiscriminatorFlag member_flags,
+        const TypeIdentifier& type_id)
+{
+#if !defined(NDEBUG)
+    member_flag_consistency(member_flags);
+    common_discriminator_member_type_identifier_consistency(type_id);
+#endif
+    CommonDiscriminatorMember common_discriminator_member;
+    common_discriminator_member.member_flags(member_flags);
+    common_discriminator_member.type_id(type_id);
+    return common_discriminator_member;
+}
+
+const CompleteDiscriminatorMember TypeObjectUtils::build_complete_discriminator_member(
+        const CommonDiscriminatorMember& common,
+        const eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>& ann_builtin,
+        const eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom)
+{
+#if !defined(NDEBUG)
+    common_discriminator_member_consistency(common);
+    if (ann_custom.has_value())
+    {
+        applied_annotation_seq_consistency(ann_custom.value());
+    }
+#endif // !defined(NDEBUG)
+    CompleteDiscriminatorMember complete_discriminator_member;
+    complete_discriminator_member.common(common);
+    if (ann_builtin.has_value())
+    {
+        complete_discriminator_member.ann_builtin(ann_builtin);
+    }
+    if (ann_custom.has_value())
+    {
+        complete_discriminator_member.ann_custom(ann_custom);
+    }
+    return complete_discriminator_member;
+}
+
+const CompleteUnionHeader TypeObjectUtils::build_complete_union_header(
+        const CompleteTypeDetail& detail)
+{
+#if !defined(NDEBUG)
+    complete_type_detail_consistency(detail);
+#endif // !defined(NDEBUG)
+    CompleteUnionHeader complete_union_header;
+    complete_union_header.detail(detail);
+    return complete_union_header;
+}
+
+const CompleteUnionType TypeObjectUtils::build_complete_union_type(
+        UnionTypeFlag union_flags,
+        const CompleteUnionHeader& header,
+        const CompleteDiscriminatorMember& discriminator,
+        const CompleteUnionMemberSeq& member_seq)
+{
+#if !defined(NDEBUG)
+    type_flag_consistency(union_flags);
+    complete_union_header_consistency(header);
+    complete_discriminator_member_consistency(discriminator);
+    complete_union_member_seq_consistency(member_seq);
+#endif // !defined(NDEBUG)
+    CompleteUnionType complete_union_type;
+    complete_union_type.union_flags(union_flags);
+    complete_union_type.header(header);
+    complete_union_type.discriminator(discriminator);
+    complete_union_type.member_seq(member_seq);
+    return complete_union_type;
+}
+
+const CommonAnnotationParameter TypeObjectUtils::build_common_annotation_parameter(
+        AnnotationParameterFlag member_flags,
+        const TypeIdentifier& member_type_id)
+{
+#if !defined(NDEBUG)
+    type_identifier_consistency(member_type_id);
+#endif
+    empty_flags_consistency(member_flags);
+    CommonAnnotationParameter common_annotation_parameter;
+    common_annotation_parameter.member_flags(member_flags);
+    common_annotation_parameter.member_type_id(member_type_id);
+    return common_annotation_parameter;
+}
+
+const CompleteAnnotationParameter TypeObjectUtils::build_complete_annotation_parameter(
+        const CommonAnnotationParameter& common,
+        const MemberName& name,
+        const AnnotationParameterValue& default_value)
+{
+#if !defined(NDEBUG)
+    common_annotation_parameter_consistency(common);
+    common_annotation_parameter_type_identifier_default_value_consistency(common.member_type_id(), default_value);
+#endif // !defined(NDEBUG)
+    CompleteAnnotationParameter complete_annotation_parameter;
+    complete_annotation_parameter.common(common);
+    complete_annotation_parameter.name(name);
+    complete_annotation_parameter.default_value(default_value);
+    return complete_annotation_parameter;
+}
+
+void TypeObjectUtils::add_complete_annotation_parameter(
+        CompleteAnnotationParameterSeq& sequence,
+        const CompleteAnnotationParameter& param)
+{
+#if !defined(NDEBUG)
+    complete_annotation_parameter_consistency(param);
+#endif
+    sequence.push_back(param);
+}
+
+const CompleteAnnotationHeader TypeObjectUtils::build_complete_annotation_header(
+        const QualifiedTypeName& annotation_name)
+{
+    CompleteAnnotationHeader complete_annotation_header;
+    complete_annotation_header.annotation_name(annotation_name);
+    return complete_annotation_header;
+}
+
+const CompleteAnnotationType TypeObjectUtils::build_complete_annotation_type(
+        AnnotationTypeFlag annotation_flag,
+        const CompleteAnnotationHeader& header,
+        const CompleteAnnotationParameterSeq& member_seq)
+{
+    empty_flags_consistency(annotation_flag);
+#if !defined(NDEBUG)
+    complete_annotation_parameter_seq_consistency(member_seq);
+#endif // !defined(NDEBUG)
+    CompleteAnnotationType complete_annotation_type;
+    complete_annotation_type.annotation_flag(annotation_flag);
+    complete_annotation_type.header(header);
+    complete_annotation_type.member_seq(member_seq);
+    return complete_annotation_type;
+}
+
+const CommonAliasBody TypeObjectUtils::build_common_alias_body(
+        AliasMemberFlag related_flags,
+        const TypeIdentifier& related_type)
+{
+    empty_flags_consistency(related_flags);
+#if !defined(NDEBUG)
+    type_identifier_consistency(related_type);
+#endif // !defined(NDEBUG)
+    CommonAliasBody common_alias_body;
+    common_alias_body.related_flags(related_flags);
+    common_alias_body.related_type(related_type);
+    return common_alias_body;
+}
+
+const CompleteAliasBody TypeObjectUtils::build_complete_alias_body(
+        const CommonAliasBody& common,
+        const eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>& ann_builtin,
+        const eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom)
+{
+#if !defined(NDEBUG)
+    common_alias_body_consistency(common);
+    if (ann_custom.has_value())
+    {
+        applied_annotation_seq_consistency(ann_custom.value());
+    }
+#endif // !defined(NDEBUG)
+    CompleteAliasBody complete_alias_body;
+    complete_alias_body.common(common);
+    if (ann_builtin.has_value())
+    {
+        complete_alias_body.ann_builtin(ann_builtin);
+    }
+    if (ann_custom.has_value())
+    {
+        complete_alias_body.ann_custom(ann_custom);
+    }
+    return complete_alias_body;
+}
+
+const CompleteAliasHeader TypeObjectUtils::build_complete_alias_header(
+        const CompleteTypeDetail& detail)
+{
+#if !defined(NDEBUG)
+    complete_type_detail_consistency(detail);
+#endif // !defined(NDEBUG)
+    CompleteAliasHeader complete_alias_header;
+    complete_alias_header.detail(detail);
+    return complete_alias_header;
+}
+
+const CompleteAliasType TypeObjectUtils::build_complete_alias_type(
+        AliasTypeFlag alias_flags,
+        const CompleteAliasHeader& header,
+        const CompleteAliasBody& body)
+{
+    empty_flags_consistency(alias_flags);
+#if !defined(NDEBUG)
+    complete_alias_header_consistency(header);
+    complete_alias_body_consistency(body);
+#endif // !defined(NDEBUF)
+    CompleteAliasType complete_alias_type;
+    complete_alias_type.alias_flags(alias_flags);
+    complete_alias_type.header(header);
+    complete_alias_type.body(body);
+    return complete_alias_type;
+}
+
+const CompleteElementDetail TypeObjectUtils::build_complete_element_detail(
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>& ann_builtin,
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom)
+{
+#if !defined(NDEBUG)
+    if (ann_custom.has_value())
+    {
+        applied_annotation_seq_consistency(ann_custom.value());
+    }
+#endif // !defined(NDEBUG)
+    CompleteElementDetail complete_element_detail;
+    if (ann_builtin.has_value())
+    {
+        complete_element_detail.ann_builtin(ann_builtin);
+    }
+    if (ann_custom.has_value())
+    {
+        complete_element_detail.ann_custom(ann_custom);
+    }
+    return complete_element_detail;
+}
+
+const NameHash TypeObjectUtils::name_hash(
+        const std::string& name)
+{
+    NameHash name_hashed;
+    MD5 hash(name);
+    for (size_t i = 0; i < name_hashed.size(); i++)
+    {
+        name_hashed[i] = hash.digest[i];
+    }
+    return name_hashed;
 }
 
 void TypeObjectUtils::set_try_construct_behavior(
@@ -761,6 +1288,31 @@ void TypeObjectUtils::member_flag_consistency(
     if (!(member_flags & MemberFlagBits::TRY_CONSTRUCT1 || member_flags & MemberFlagBits::TRY_CONSTRUCT2))
     {
         throw InvalidArgumentError("Inconsistent MemberFlag: INVALID TryConstructKind");
+    }
+}
+
+void TypeObjectUtils::struct_member_flag_consistency(
+        StructMemberFlag member_flags)
+{
+    member_flag_consistency(member_flags);
+    if (member_flags & MemberFlagBits::IS_KEY && member_flags & MemberFlagBits::IS_OPTIONAL)
+    {
+        throw InvalidArgumentError("Keyed members cannot be optional");
+    }
+    if (member_flags & MemberFlagBits::IS_KEY && !(member_flags & MemberFlagBits::IS_MUST_UNDERSTAND))
+    {
+        throw InvalidArgumentError("Keyed members must have their \"must understand\" attribute set to true");
+    }
+}
+
+void TypeObjectUtils::type_flag_consistency(
+        TypeFlag type_flag)
+{
+    if ((type_flag & TypeFlagBits::IS_APPENDABLE && type_flag & TypeFlagBits::IS_FINAL) ||
+        (type_flag & TypeFlagBits::IS_APPENDABLE && type_flag & TypeFlagBits::IS_MUTABLE) ||
+        (type_flag & TypeFlagBits::IS_FINAL && type_flag & TypeFlagBits::IS_MUTABLE))
+    {
+        throw InvalidArgumentError("Exactly one extensibility flag must be set");
     }
 }
 
@@ -926,6 +1478,284 @@ void TypeObjectUtils::type_identifier_consistency(
         // Primitive TypeIdentifiers/ExtendedTypeDefn: no inconsistency rule apply.
         default:
             break;
+    }
+}
+
+void TypeObjectUtils::applied_annotation_consistency(
+        const AppliedAnnotation& applied_annotation)
+{
+    if (!is_direct_hash_type_identifier(applied_annotation.annotation_typeid()))
+    {
+        throw InvalidArgumentError("Annotation TypeIdentifier is not a HASH TypeIdentifier");
+    }
+}
+
+void TypeObjectUtils::applied_annotation_seq_consistency(
+        const AppliedAnnotationSeq& applied_annotation_seq)
+{
+    for (size_t i = 0; i < applied_annotation_seq.size(); i++)
+    {
+        applied_annotation_consistency(applied_annotation_seq[i]);
+    }
+}
+
+void TypeObjectUtils::common_struct_member_consistency(
+        const CommonStructMember& common_struct_member)
+{
+    struct_member_flag_consistency(common_struct_member.member_flags());
+    type_identifier_consistency(common_struct_member.member_type_id());
+}
+
+void TypeObjectUtils::complete_member_detail_consistency(
+        const CompleteMemberDetail& complete_member_detail)
+{
+    if (complete_member_detail.ann_custom().has_value())
+    {
+        applied_annotation_seq_consistency(complete_member_detail.ann_custom().value());
+    }
+}
+
+void TypeObjectUtils::complete_type_detail_consistency(
+        const CompleteTypeDetail& complete_type_detail)
+{
+    if (complete_type_detail.ann_custom().has_value())
+    {
+        applied_annotation_seq_consistency(complete_type_detail.ann_custom().value());
+    }
+}
+
+void TypeObjectUtils::complete_struct_member_consistency(
+        const CompleteStructMember& complete_struct_member)
+{
+    common_struct_member_consistency(complete_struct_member.common());
+    complete_member_detail_consistency(complete_struct_member.detail());
+}
+
+void TypeObjectUtils::complete_struct_member_seq_consistency(
+        const CompleteStructMemberSeq& complete_struct_member_seq)
+{
+    for (size_t i = 0; i < complete_struct_member_seq.size(); i++)
+    {
+        complete_struct_member_consistency(complete_struct_member_seq[i]);
+    }
+}
+
+void TypeObjectUtils::complete_struct_header_consistency(
+        const CompleteStructHeader& complete_struct_header)
+{
+    if (!is_direct_hash_type_identifier(complete_struct_header.base_type()))
+    {
+        throw InvalidArgumentError("Base TypeIdentifier must be direct HASH TypeIdentifier");
+    }
+    complete_type_detail_consistency(complete_struct_header.detail());
+}
+
+void TypeObjectUtils::common_union_member_consistency(
+        const CommonUnionMember& common_union_member)
+{
+    member_flag_consistency(common_union_member.member_flags());
+    type_identifier_consistency(common_union_member.type_id());
+}
+
+void TypeObjectUtils::complete_union_member_consistency(
+        const CompleteUnionMember& complete_union_member)
+{
+    common_union_member_consistency(complete_union_member.common());
+    complete_member_detail_consistency(complete_union_member.detail());
+}
+
+void TypeObjectUtils::complete_union_member_seq_consistency(
+        const CompleteUnionMemberSeq& complete_member_union_seq)
+{
+    for (size_t i = 0; i < complete_member_union_seq.size(); i++)
+    {
+        complete_union_member_consistency(complete_member_union_seq[i]);
+    }
+}
+
+void TypeObjectUtils::common_discriminator_member_type_identifier_consistency(
+        const TypeIdentifier& type_id)
+{
+    if (type_id._d() != TK_BOOLEAN && type_id._d() != TK_BYTE && type_id._d() != TK_CHAR8 && type_id._d() != TK_CHAR16
+        && type_id._d() != TK_INT8 && type_id._d() != TK_UINT8 && type_id._d() != TK_INT16 && type_id._d() != TK_UINT16
+        && type_id._d() != TK_INT32 && type_id._d() != TK_UINT32 && type_id._d() != TK_INT64
+        && type_id._d() != TK_UINT64 && type_id._d() != EK_COMPLETE && type_id._d() != EK_MINIMAL)
+    {
+        throw InvalidArgumentError("Inconsistent CommonDiscriminatorMember TypeIdentifier");
+    }
+    TypeObject type_object;
+    if (type_id._d() == EK_COMPLETE)
+    {
+        if (ReturnCode_t::RETCODE_OK ==
+            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
+        {
+            if (type_object.complete()._d() == TK_ALIAS)
+            {
+                common_discriminator_member_type_identifier_consistency(
+                    type_object.complete().alias_type().body().common().related_type());
+            }
+            else if (type_object.complete()._d() != TK_ENUM)
+            {
+                throw InvalidArgumentError("Inconsistent CommonDiscriminatorMember TypeIdentifier");
+            }
+        }
+    }
+    else if (type_id._d() == EK_MINIMAL)
+    {
+        if (ReturnCode_t::RETCODE_OK ==
+            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
+        {
+            if (type_object.minimal()._d() == TK_ALIAS)
+            {
+                common_discriminator_member_type_identifier_consistency(
+                    type_object.minimal().alias_type().body().common().related_type());
+            }
+            else if (type_object.minimal()._d() != TK_ENUM)
+            {
+                throw InvalidArgumentError("Inconsistent CommonDiscriminatorMember TypeIdentifier");
+            }
+        }
+    }
+}
+
+void TypeObjectUtils::common_discriminator_member_consistency(
+        const CommonDiscriminatorMember& common_discriminator_member)
+{
+    member_flag_consistency(common_discriminator_member.member_flags());
+    common_discriminator_member_type_identifier_consistency(common_discriminator_member.type_id());
+}
+
+void TypeObjectUtils::complete_union_header_consistency(
+        const CompleteUnionHeader& complete_union_header)
+{
+    complete_type_detail_consistency(complete_union_header.detail());
+}
+
+void TypeObjectUtils::complete_discriminator_member_consistency(
+        const CompleteDiscriminatorMember& complete_discriminator_member)
+{
+    common_discriminator_member_consistency(complete_discriminator_member.common());
+    if (complete_discriminator_member.ann_custom().has_value())
+    {
+        applied_annotation_seq_consistency(complete_discriminator_member.ann_custom().value());
+    }
+}
+
+void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_consistency(
+        const TypeIdentifier& type_id,
+        const AnnotationParameterValue& value)
+{
+    TypeObject type_object;
+    // Primitive types
+    if (((type_id._d() > 0 && type_id._d() <= 0x0D) || (type_id._d() == TK_CHAR8 || type_id._d() == TK_CHAR16)) &&
+        (type_id._d() != value._d()))
+    {
+        throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+    }
+    // String
+    else if ((type_id._d() == TI_STRING8_SMALL || type_id._d() == TI_STRING8_LARGE) && value._d() != TK_STRING8)
+    {
+        throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+    }
+    // Wstring
+    else if ((type_id._d() == TI_STRING16_SMALL || type_id._d() == TI_STRING16_LARGE) && value._d() != TK_STRING16)
+    {
+        throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+    }
+    // Enum
+    else if (type_id._d() == EK_MINIMAL && value._d() == TK_ENUM)
+    {
+        if (ReturnCode_t::RETCODE_OK ==
+            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
+        {
+            if (type_object.minimal()._d() == TK_ALIAS)
+            {
+                common_annotation_parameter_type_identifier_default_value_consistency(
+                    type_object.minimal().alias_type().body().common().related_type(), value);
+            }
+            else if (type_object.minimal()._d() != TK_ENUM)
+            {
+                throw InvalidArgumentError(
+                    "Given annotation parameter value is inconsistent with given TypeIdentifier");
+            }
+        }
+    }
+    else if (type_id._d() == EK_COMPLETE && value._d() == TK_ENUM)
+    {
+        if (ReturnCode_t::RETCODE_OK ==
+            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
+        {
+            if (type_object.complete()._d() == TK_ALIAS)
+            {
+                common_annotation_parameter_type_identifier_default_value_consistency(
+                    type_object.complete().alias_type().body().common().related_type(), value);
+            }
+            else if (type_object.complete()._d() != TK_ENUM)
+            {
+                throw InvalidArgumentError(
+                    "Given annotation parameter value is inconsistent with given TypeIdentifier");
+            }
+        }
+    }
+    else
+    {
+        throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+    }
+}
+
+void TypeObjectUtils::common_annotation_parameter_consistency(
+        const CommonAnnotationParameter& common_annotation_parameter)
+{
+    empty_flags_consistency(common_annotation_parameter.member_flags());
+    type_identifier_consistency(common_annotation_parameter.member_type_id());
+}
+
+void TypeObjectUtils::complete_annotation_parameter_consistency(
+        const CompleteAnnotationParameter& complete_annotation_parameter)
+{
+    common_annotation_parameter_consistency(complete_annotation_parameter.common());
+    common_annotation_parameter_type_identifier_default_value_consistency(
+        complete_annotation_parameter.common().member_type_id(), complete_annotation_parameter.default_value());
+}
+
+void TypeObjectUtils::complete_annotation_parameter_seq_consistency(
+        const CompleteAnnotationParameterSeq& complete_annotation_parameter_seq)
+{
+    for (size_t i = 0; i < complete_annotation_parameter_seq.size(); i++)
+    {
+        complete_annotation_parameter_consistency(complete_annotation_parameter_seq[i]);
+    }
+}
+
+void TypeObjectUtils::common_alias_body_consistency(
+        const CommonAliasBody& common_alias_body)
+{
+    empty_flags_consistency(common_alias_body.related_flags());
+    type_identifier_consistency(common_alias_body.related_type());
+}
+
+void TypeObjectUtils::complete_alias_body_consistency(
+        const CompleteAliasBody& complete_alias_body)
+{
+    common_alias_body_consistency(complete_alias_body.common());
+    if (complete_alias_body.ann_custom().has_value())
+    {
+        applied_annotation_seq_consistency(complete_alias_body.ann_custom().value());
+    }
+}
+
+void TypeObjectUtils::complete_alias_header_consistency(
+        const CompleteAliasHeader& complete_alias_header)
+{
+    complete_type_detail_consistency(complete_alias_header.detail());
+}
+
+void TypeObjectUtils::complete_element_detail_consistency(
+        const CompleteElementDetail& complete_element_detail)
+{
+    if (complete_element_detail.ann_custom().has_value())
+    {
+        applied_annotation_seq_consistency(complete_element_detail.ann_custom().value());
     }
 }
 
