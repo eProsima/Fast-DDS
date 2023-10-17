@@ -106,13 +106,13 @@ jobs:
         continue-on-error: true
         run: |
           # Create a dir for the exports
-          $exports = New-Item -ItemType Directory -Path ./ws/exports
+          $exports = New-Item -ItemType Directory -Path ./exports
           # Move to the reports dir
-          pushd ./ws/build/fastdds/reports
+          pushd ./log/latest_test/fastrtps
           # Install the report parser module
           Find-Module -Repository PSGallery -Name SanReportParser | Install-Module -Scope CurrentUser -Force
           # Parse the report files
-          $rp = Show-Tsan (gci)
+          $rp = Show-Tsan -Path ./stdout_stderr.log
           # filter duplicates
           $rp = $rp | group md5hash | % { $_.group[0] }
           # Export raw data
@@ -158,7 +158,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: sanitation-report
-          path: /home/runner/work/ws/exports/*
+          path: exports/*
 
       - name: Check on failures
         if: ${{ steps.report_summary.outcome == 'failure' }}
