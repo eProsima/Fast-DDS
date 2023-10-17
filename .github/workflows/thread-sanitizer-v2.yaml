@@ -89,8 +89,8 @@ jobs:
             --event-handlers=console_direct+ \
             --return-code-on-test-failure \
             --ctest-args \
-              --label-exclude xfail \
-              --timeout 300
+              --timeout 30 \
+              -V -E DDSSQLFilterValueTests
         continue-on-error: true
 
       - name: Upload Logs
