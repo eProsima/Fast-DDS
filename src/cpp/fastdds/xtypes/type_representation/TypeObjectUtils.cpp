@@ -1318,11 +1318,11 @@ void TypeObjectUtils::plain_collection_type_identifier_header_consistency(
 void TypeObjectUtils::map_key_type_identifier_consistency(
         const TypeIdentifier& key_identifier)
 {
-    if (key_identifier._d() != TK_INT8 || key_identifier._d() != TK_UINT8 || key_identifier._d() != TK_INT16 ||
-        key_identifier._d() != TK_UINT16 || key_identifier._d() != TK_INT32 || key_identifier._d() != TK_UINT32 ||
-        key_identifier._d() != TK_INT64 || key_identifier._d() != TK_UINT64 ||
-        key_identifier._d() != TI_STRING8_SMALL || key_identifier._d() != TI_STRING8_LARGE ||
-        key_identifier._d() != TI_STRING16_SMALL || key_identifier._d() != TI_STRING16_LARGE)
+    if (key_identifier._d() != TK_INT8 && key_identifier._d() != TK_UINT8 && key_identifier._d() != TK_INT16 &&
+        key_identifier._d() != TK_UINT16 && key_identifier._d() != TK_INT32 && key_identifier._d() != TK_UINT32 &&
+        key_identifier._d() != TK_INT64 && key_identifier._d() != TK_UINT64 &&
+        key_identifier._d() != TI_STRING8_SMALL && key_identifier._d() != TI_STRING8_LARGE &&
+        key_identifier._d() != TI_STRING16_SMALL && key_identifier._d() != TI_STRING16_LARGE)
     {
         throw InvalidArgumentError(
             "Inconsistent key identifier: only signed/unsigned integer types and w/string keys are supported");
