@@ -1120,6 +1120,20 @@ const CompleteElementDetail TypeObjectUtils::build_complete_element_detail(
     return complete_element_detail;
 }
 
+const CommonCollectionElement TypeObjectUtils::build_common_collection_element(
+        CollectionElementFlag element_flags,
+        const TypeIdentifier& type)
+{
+#if !defined(NDEBUG)
+    member_flag_consistency(element_flags);
+    type_identifier_consistency(type);
+#endif // !defined(NDEBUG)
+    CommonCollectionElement common_collection_element;
+    common_collection_element.element_flags(element_flags);
+    common_collection_element.type(type);
+    return common_collection_element;
+}
+
 const NameHash TypeObjectUtils::name_hash(
         const std::string& name)
 {
@@ -1757,6 +1771,13 @@ void TypeObjectUtils::complete_element_detail_consistency(
     {
         applied_annotation_seq_consistency(complete_element_detail.ann_custom().value());
     }
+}
+
+void TypeObjectUtils::common_collection_element_consistency(
+        const CommonCollectionElement& common_collection_element)
+{
+    member_flag_consistency(common_collection_element.element_flags());
+    type_identifier_consistency(common_collection_element.type());
 }
 
 } // xtypes1_3

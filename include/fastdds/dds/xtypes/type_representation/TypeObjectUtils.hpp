@@ -1198,6 +1198,20 @@ public:
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>& ann_builtin,
             eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom);
 
+    /**
+     * @brief Build CommonCollectionElement instance.
+     *
+     * @param element_flags CollectionElementFlag.
+     * @param type TypeIdentifier.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given collection element flags are not consistent (only in Debug build mode).
+     *              2. Given TypeIdentifier is not consistent (only in Debug build mode).
+     * @return const CommonCollectionElement instance
+     */
+    RTPS_DllAPI static const CommonCollectionElement build_common_collection_element(
+            CollectionElementFlag element_flags,
+            const TypeIdentifier& type);
+
     /*************** Auxiliary public methods ***************************/
 
     /**
@@ -1771,6 +1785,16 @@ protected:
      */
     static void complete_element_detail_consistency(
             const CompleteElementDetail& complete_element_detail);
+
+    /**
+     * @brief Check CommonCollectionElement consistency.
+     *
+     * @param[in] common_collection_element Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CommonCollectionElement is not consistent.
+     */
+    static void common_collection_element_consistency(
+            const CommonCollectionElement& common_collection_element);
 
 };
 
