@@ -209,14 +209,14 @@ const PlainCollectionHeader TypeObjectUtils::build_plain_collection_header(
 const PlainSequenceSElemDefn TypeObjectUtils::build_plain_sequence_s_elem_defn(
         const PlainCollectionHeader& header,
         SBound bound,
-        const TypeIdentifier& element_identifier)
+        const eprosima::fastcdr::external<TypeIdentifier>& element_identifier)
 {
 #if !defined(NDEBUG)
     plain_collection_header_consistency(header);
-    type_identifier_consistency(element_identifier);
+    type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
     s_bound_consistency(bound);
-    plain_collection_type_identifier_header_consistency(header, element_identifier);
+    plain_collection_type_identifier_header_consistency(header, *element_identifier);
     PlainSequenceSElemDefn plain_sequence_s_elem_defn;
     plain_sequence_s_elem_defn.header(header);
     plain_sequence_s_elem_defn.bound(bound);
@@ -227,14 +227,14 @@ const PlainSequenceSElemDefn TypeObjectUtils::build_plain_sequence_s_elem_defn(
 const PlainSequenceLElemDefn TypeObjectUtils::build_plain_sequence_l_elem_defn(
         const PlainCollectionHeader& header,
         LBound bound,
-        const TypeIdentifier& element_identifier)
+        const eprosima::fastcdr::external<TypeIdentifier>& element_identifier)
 {
 #if !defined(NDEBUG)
     plain_collection_header_consistency(header);
-    type_identifier_consistency(element_identifier);
+    type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
     l_bound_consistency(bound);
-    plain_collection_type_identifier_header_consistency(header, element_identifier);
+    plain_collection_type_identifier_header_consistency(header, *element_identifier);
     PlainSequenceLElemDefn plain_sequence_l_elem_defn;
     plain_sequence_l_elem_defn.header(header);
     plain_sequence_l_elem_defn.bound(bound);
@@ -245,14 +245,14 @@ const PlainSequenceLElemDefn TypeObjectUtils::build_plain_sequence_l_elem_defn(
 const PlainArraySElemDefn TypeObjectUtils::build_plain_array_s_elem_defn(
         const PlainCollectionHeader& header,
         const SBoundSeq& array_bound_seq,
-        const TypeIdentifier& element_identifier)
+        const eprosima::fastcdr::external<TypeIdentifier>& element_identifier)
 {
 #if !defined(NDEBUG)
     plain_collection_header_consistency(header);
-    type_identifier_consistency(element_identifier);
+    type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
     s_bound_seq_consistency(array_bound_seq);
-    plain_collection_type_identifier_header_consistency(header, element_identifier);
+    plain_collection_type_identifier_header_consistency(header, *element_identifier);
     PlainArraySElemDefn plain_array_s_elem_defn;
     plain_array_s_elem_defn.header(header);
     plain_array_s_elem_defn.array_bound_seq(array_bound_seq);
@@ -263,14 +263,14 @@ const PlainArraySElemDefn TypeObjectUtils::build_plain_array_s_elem_defn(
 const PlainArrayLElemDefn TypeObjectUtils::build_plain_array_l_elem_defn(
         const PlainCollectionHeader& header,
         const LBoundSeq& array_bound_seq,
-        const TypeIdentifier& element_identifier)
+        const eprosima::fastcdr::external<TypeIdentifier>& element_identifier)
 {
 #if !defined(NDEBUG)
     plain_collection_header_consistency(header);
-    type_identifier_consistency(element_identifier);
+    type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
     l_bound_seq_consistency(array_bound_seq);
-    plain_collection_type_identifier_header_consistency(header, element_identifier);
+    plain_collection_type_identifier_header_consistency(header, *element_identifier);
     PlainArrayLElemDefn plain_array_l_elem_defn;
     plain_array_l_elem_defn.header(header);
     plain_array_l_elem_defn.array_bound_seq(array_bound_seq);
@@ -281,18 +281,18 @@ const PlainArrayLElemDefn TypeObjectUtils::build_plain_array_l_elem_defn(
 const PlainMapSTypeDefn TypeObjectUtils::build_plain_map_s_type_defn(
         const PlainCollectionHeader& header,
         const SBound bound,
-        const TypeIdentifier& element_identifier,
+        const eprosima::fastcdr::external<TypeIdentifier>& element_identifier,
         const CollectionElementFlag key_flags,
-        const TypeIdentifier& key_identifier)
+        const eprosima::fastcdr::external<TypeIdentifier>& key_identifier)
 {
 #if !defined(NDEBUG)
     plain_collection_header_consistency(header);
-    type_identifier_consistency(element_identifier);
+    type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
     s_bound_consistency(bound);
-    plain_collection_type_identifier_header_consistency(header, element_identifier);
+    plain_collection_type_identifier_header_consistency(header, *element_identifier);
     member_flag_consistency(key_flags);
-    map_key_type_identifier_consistency(key_identifier);
+    map_key_type_identifier_consistency(*key_identifier);
     PlainMapSTypeDefn plain_map_s_type_defn;
     plain_map_s_type_defn.header(header);
     plain_map_s_type_defn.bound(bound);
@@ -305,18 +305,18 @@ const PlainMapSTypeDefn TypeObjectUtils::build_plain_map_s_type_defn(
 const PlainMapLTypeDefn TypeObjectUtils::build_plain_map_l_type_defn(
         const PlainCollectionHeader& header,
         const LBound bound,
-        const TypeIdentifier& element_identifier,
+        const eprosima::fastcdr::external<TypeIdentifier>& element_identifier,
         const CollectionElementFlag key_flags,
-        const TypeIdentifier& key_identifier)
+        const eprosima::fastcdr::external<TypeIdentifier>& key_identifier)
 {
 #if !defined(NDEBUG)
     plain_collection_header_consistency(header);
-    type_identifier_consistency(element_identifier);
+    type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
     l_bound_consistency(bound);
-    plain_collection_type_identifier_header_consistency(header, element_identifier);
+    plain_collection_type_identifier_header_consistency(header, *element_identifier);
     member_flag_consistency(key_flags);
-    map_key_type_identifier_consistency(key_identifier);
+    map_key_type_identifier_consistency(*key_identifier);
     PlainMapLTypeDefn plain_map_l_type_defn;
     plain_map_l_type_defn.header(header);
     plain_map_l_type_defn.bound(bound);
@@ -644,10 +644,7 @@ const AppliedAnnotation TypeObjectUtils::build_applied_annotation(
 #endif // !defined(NDEBUG)
     AppliedAnnotation applied_annotation;
     applied_annotation.annotation_typeid(annotation_typeid);
-    if (param_seq.has_value())
-    {
-        applied_annotation.param_seq(param_seq);
-    }
+    applied_annotation.param_seq(param_seq);
     return applied_annotation;
 }
 
@@ -692,10 +689,7 @@ const AppliedBuiltinMemberAnnotations TypeObjectUtils::build_applied_builtin_mem
         const eprosima::fastcdr::optional<std::string>& hash_id)
 {
     AppliedBuiltinMemberAnnotations applied_builtin_member_annotations;
-    if (unit.has_value())
-    {
-        applied_builtin_member_annotations.unit(unit);
-    }
+    applied_builtin_member_annotations.unit(unit);
     if (min.has_value())
     {
         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "@min annotation not yet supported.");
@@ -704,10 +698,7 @@ const AppliedBuiltinMemberAnnotations TypeObjectUtils::build_applied_builtin_mem
     {
         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "@max annotation not yet supported.");
     }
-    if (hash_id.has_value())
-    {
-        applied_builtin_member_annotations.hash_id(hash_id);
-    }
+    applied_builtin_member_annotations.hash_id(hash_id);
     return applied_builtin_member_annotations;
 }
 
@@ -742,19 +733,16 @@ const CompleteMemberDetail TypeObjectUtils::build_complete_member_detail(
         const eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>& ann_builtin,
         const eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom)
 {
-    CompleteMemberDetail complete_member_detail;
-    complete_member_detail.name(name);
-    if (ann_builtin.has_value())
-    {
-        complete_member_detail.ann_builtin(ann_builtin);
-    }
+#if !defined(NDEBUG)
     if (ann_custom.has_value())
     {
-#if !defined(NDEBUG)
         applied_annotation_seq_consistency(ann_custom.value());
-#endif // !defined(NDEBUG)
-        complete_member_detail.ann_custom(ann_custom);
     }
+#endif // !defined(NDEBUG)
+    CompleteMemberDetail complete_member_detail;
+    complete_member_detail.name(name);
+    complete_member_detail.ann_builtin(ann_builtin);
+    complete_member_detail.ann_custom(ann_custom);
     return complete_member_detail;
 }
 
@@ -776,10 +764,7 @@ const AppliedBuiltinTypeAnnotations TypeObjectUtils::build_applied_builtin_type_
         const eprosima::fastcdr::optional<AppliedVerbatimAnnotation>& verbatim)
 {
     AppliedBuiltinTypeAnnotations applied_builtin_type_annotations;
-    if (verbatim.has_value())
-    {
-        applied_builtin_type_annotations.verbatim(verbatim);
-    }
+    applied_builtin_type_annotations.verbatim(verbatim);
     return applied_builtin_type_annotations;
 }
 
@@ -788,18 +773,15 @@ const CompleteTypeDetail TypeObjectUtils::build_complete_type_detail(
         const eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom,
         const QualifiedTypeName& type_name)
 {
-    CompleteTypeDetail complete_type_detail;
-    if (ann_builtin.has_value())
-    {
-        complete_type_detail.ann_builtin(ann_builtin);
-    }
+#if !defined(NDEBUG)
     if (ann_custom.has_value())
     {
-#if !defined(NDEBUG)
         applied_annotation_seq_consistency(ann_custom.value());
-#endif // !defined(NDEBUG)
-        complete_type_detail.ann_custom(ann_custom);
     }
+#endif // !defined(NDEBUG)
+    CompleteTypeDetail complete_type_detail;
+    complete_type_detail.ann_builtin(ann_builtin);
+    complete_type_detail.ann_custom(ann_custom);
     complete_type_detail.type_name(type_name);
     return complete_type_detail;
 }
@@ -925,14 +907,8 @@ const CompleteDiscriminatorMember TypeObjectUtils::build_complete_discriminator_
 #endif // !defined(NDEBUG)
     CompleteDiscriminatorMember complete_discriminator_member;
     complete_discriminator_member.common(common);
-    if (ann_builtin.has_value())
-    {
-        complete_discriminator_member.ann_builtin(ann_builtin);
-    }
-    if (ann_custom.has_value())
-    {
-        complete_discriminator_member.ann_custom(ann_custom);
-    }
+    complete_discriminator_member.ann_builtin(ann_builtin);
+    complete_discriminator_member.ann_custom(ann_custom);
     return complete_discriminator_member;
 }
 
@@ -1059,14 +1035,8 @@ const CompleteAliasBody TypeObjectUtils::build_complete_alias_body(
 #endif // !defined(NDEBUG)
     CompleteAliasBody complete_alias_body;
     complete_alias_body.common(common);
-    if (ann_builtin.has_value())
-    {
-        complete_alias_body.ann_builtin(ann_builtin);
-    }
-    if (ann_custom.has_value())
-    {
-        complete_alias_body.ann_custom(ann_custom);
-    }
+    complete_alias_body.ann_builtin(ann_builtin);
+    complete_alias_body.ann_custom(ann_custom);
     return complete_alias_body;
 }
 
@@ -1109,14 +1079,8 @@ const CompleteElementDetail TypeObjectUtils::build_complete_element_detail(
     }
 #endif // !defined(NDEBUG)
     CompleteElementDetail complete_element_detail;
-    if (ann_builtin.has_value())
-    {
-        complete_element_detail.ann_builtin(ann_builtin);
-    }
-    if (ann_custom.has_value())
-    {
-        complete_element_detail.ann_custom(ann_custom);
-    }
+    complete_element_detail.ann_builtin(ann_builtin);
+    complete_element_detail.ann_custom(ann_custom);
     return complete_element_detail;
 }
 
@@ -1334,7 +1298,7 @@ void TypeObjectUtils::plain_collection_header_consistency(
         const PlainCollectionHeader& header)
 {
     member_flag_consistency(header.element_flags());
-    if (header.equiv_kind() != EK_COMPLETE || header.equiv_kind() != EK_MINIMAL || header.equiv_kind() != EK_BOTH)
+    if (header.equiv_kind() != EK_COMPLETE && header.equiv_kind() != EK_MINIMAL && header.equiv_kind() != EK_BOTH)
     {
         throw InvalidArgumentError("Inconsistent PlainCollectionHeader, invalid EquivalenceKind");
     }
@@ -1385,8 +1349,8 @@ void TypeObjectUtils::seq_sdefn_consistency(
 {
     plain_collection_header_consistency(plain_seq.header());
     s_bound_consistency(plain_seq.bound());
-    type_identifier_consistency(plain_seq.element_identifier());
-    plain_collection_type_identifier_header_consistency(plain_seq.header(), plain_seq.element_identifier());
+    type_identifier_consistency(*plain_seq.element_identifier());
+    plain_collection_type_identifier_header_consistency(plain_seq.header(), *plain_seq.element_identifier());
 }
 
 void TypeObjectUtils::seq_ldefn_consistency(
@@ -1394,8 +1358,8 @@ void TypeObjectUtils::seq_ldefn_consistency(
 {
     plain_collection_header_consistency(plain_seq.header());
     l_bound_consistency(plain_seq.bound());
-    type_identifier_consistency(plain_seq.element_identifier());
-    plain_collection_type_identifier_header_consistency(plain_seq.header(), plain_seq.element_identifier());
+    type_identifier_consistency(*plain_seq.element_identifier());
+    plain_collection_type_identifier_header_consistency(plain_seq.header(), *plain_seq.element_identifier());
 }
 
 void TypeObjectUtils::array_sdefn_consistency(
@@ -1403,8 +1367,8 @@ void TypeObjectUtils::array_sdefn_consistency(
 {
     plain_collection_header_consistency(plain_array.header());
     s_bound_seq_consistency(plain_array.array_bound_seq());
-    type_identifier_consistency(plain_array.element_identifier());
-    plain_collection_type_identifier_header_consistency(plain_array.header(), plain_array.element_identifier());
+    type_identifier_consistency(*plain_array.element_identifier());
+    plain_collection_type_identifier_header_consistency(plain_array.header(), *plain_array.element_identifier());
 }
 
 void TypeObjectUtils::array_ldefn_consistency(
@@ -1412,8 +1376,8 @@ void TypeObjectUtils::array_ldefn_consistency(
 {
     plain_collection_header_consistency(plain_array.header());
     l_bound_seq_consistency(plain_array.array_bound_seq());
-    type_identifier_consistency(plain_array.element_identifier());
-    plain_collection_type_identifier_header_consistency(plain_array.header(), plain_array.element_identifier());
+    type_identifier_consistency(*plain_array.element_identifier());
+    plain_collection_type_identifier_header_consistency(plain_array.header(), *plain_array.element_identifier());
 }
 
 void TypeObjectUtils::map_sdefn_consistency(
@@ -1421,10 +1385,10 @@ void TypeObjectUtils::map_sdefn_consistency(
 {
     plain_collection_header_consistency(plain_map.header());
     s_bound_consistency(plain_map.bound());
-    type_identifier_consistency(plain_map.element_identifier());
-    plain_collection_type_identifier_header_consistency(plain_map.header(), plain_map.element_identifier());
+    type_identifier_consistency(*plain_map.element_identifier());
+    plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
     member_flag_consistency(plain_map.key_flags());
-    map_key_type_identifier_consistency(plain_map.key_identifier());
+    map_key_type_identifier_consistency(*plain_map.key_identifier());
 }
 
 void TypeObjectUtils::map_ldefn_consistency(
@@ -1432,10 +1396,10 @@ void TypeObjectUtils::map_ldefn_consistency(
 {
     plain_collection_header_consistency(plain_map.header());
     l_bound_consistency(plain_map.bound());
-    type_identifier_consistency(plain_map.element_identifier());
-    plain_collection_type_identifier_header_consistency(plain_map.header(), plain_map.element_identifier());
+    type_identifier_consistency(*plain_map.element_identifier());
+    plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
     member_flag_consistency(plain_map.key_flags());
-    map_key_type_identifier_consistency(plain_map.key_identifier());
+    map_key_type_identifier_consistency(*plain_map.key_identifier());
 }
 
 void TypeObjectUtils::type_identifier_consistency(
