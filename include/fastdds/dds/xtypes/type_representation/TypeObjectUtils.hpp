@@ -214,7 +214,7 @@ public:
     RTPS_DllAPI static const PlainSequenceSElemDefn build_plain_sequence_s_elem_defn(
             const PlainCollectionHeader& header,
             SBound s_bound,
-            const TypeIdentifier& element_identifier);
+            const eprosima::fastcdr::external<TypeIdentifier>& element_identifier);
 
     /**
      * @brief Build PlainSequenceLElemDefn instance.
@@ -234,7 +234,7 @@ public:
     RTPS_DllAPI static const PlainSequenceLElemDefn build_plain_sequence_l_elem_defn(
             const PlainCollectionHeader& header,
             LBound bound,
-            const TypeIdentifier& element_identifier);
+            const eprosima::fastcdr::external<TypeIdentifier>& element_identifier);
 
     /**
      * @brief Add dimension bound to the array bound sequence.
@@ -270,7 +270,7 @@ public:
     RTPS_DllAPI static const PlainArraySElemDefn build_plain_array_s_elem_defn(
             const PlainCollectionHeader& header,
             const SBoundSeq& array_bound_seq,
-            const TypeIdentifier& element_identifier);
+            const eprosima::fastcdr::external<TypeIdentifier>& element_identifier);
 
     /**
      * @brief Build PlainArrayLElemDefn instance.
@@ -291,7 +291,7 @@ public:
     RTPS_DllAPI static const PlainArrayLElemDefn build_plain_array_l_elem_defn(
             const PlainCollectionHeader& header,
             const LBoundSeq& array_bound_seq,
-            const TypeIdentifier& element_identifier);
+            const eprosima::fastcdr::external<TypeIdentifier>& element_identifier);
 
     /**
      * @brief Build PlainMapSTypeDefn instance.
@@ -317,9 +317,9 @@ public:
     RTPS_DllAPI static const PlainMapSTypeDefn build_plain_map_s_type_defn(
             const PlainCollectionHeader& header,
             const SBound bound,
-            const TypeIdentifier& element_identifier,
+            const eprosima::fastcdr::external<TypeIdentifier>& element_identifier,
             const CollectionElementFlag key_flags,
-            const TypeIdentifier& key_identifier);
+            const eprosima::fastcdr::external<TypeIdentifier>& key_identifier);
 
     /**
      * @brief Build PlainMapLTypeDefn instance.
@@ -345,9 +345,9 @@ public:
     RTPS_DllAPI static const PlainMapLTypeDefn build_plain_map_l_type_defn(
             const PlainCollectionHeader& header,
             const LBound bound,
-            const TypeIdentifier& element_identifier,
+            const eprosima::fastcdr::external<TypeIdentifier>& element_identifier,
             const CollectionElementFlag key_flags,
-            const TypeIdentifier& key_identifier);
+            const eprosima::fastcdr::external<TypeIdentifier>& key_identifier);
 
     /**
      * @brief Build StronglyConnectedComponentId instance.
