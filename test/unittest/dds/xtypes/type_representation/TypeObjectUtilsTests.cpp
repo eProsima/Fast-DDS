@@ -328,11 +328,11 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
     // At least one dimension should be large
     TypeObjectUtils::add_array_dimension(wrong_bound_seq, 256);
     EXPECT_NO_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
-        complete_header, wrong_bound_seq, test_identifier));
+        fully_descriptive_header, wrong_bound_seq, test_identifier));
     // Zero element
     TypeObjectUtils::add_array_dimension(wrong_bound_seq, 0);
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
-        complete_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
+        fully_descriptive_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
     // Change discriminator to EK_COMPLETE
     EquivalenceHash hash;
     test_identifier->equivalence_hash(hash);
