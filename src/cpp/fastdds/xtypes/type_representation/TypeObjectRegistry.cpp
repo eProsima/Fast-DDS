@@ -91,6 +91,22 @@ ReturnCode_t TypeObjectRegistry::are_types_compatible(
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
+ReturnCode_t TypeObjectRegistry::get_type_dependencies(
+        const TypeIdentifierSeq& type_identifiers,
+        std::unordered_set<TypeIdentfierWithSize> type_dependencies)
+{
+    static_cast<void>(type_identifiers);
+    static_cast<void>(type_dependencies);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t TypeObjectRegistry::is_type_identifier_known(
+        const TypeIdentifier& type_identifier)
+{
+    static_cast<void>(type_identifier);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 } // xtypes
 } // dds
 } // fastdds
