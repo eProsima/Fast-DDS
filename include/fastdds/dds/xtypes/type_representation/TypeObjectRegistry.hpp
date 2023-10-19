@@ -20,8 +20,9 @@
 #ifndef _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTREGISTRY_HPP_
 #define _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTREGISTRY_HPP_
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.h>
@@ -33,14 +34,24 @@ namespace std {
 template<>
 struct hash<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>
 {
-        std::size_t operator()(
-                const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& k) const
-        {
-            // The collection only has direct hash TypeIdentifiers so the EquivalenceHash can be used.
-            return (static_cast<size_t>(k.equivalence_hash()[0]) << 16) |
-                   (static_cast<size_t>(k.equivalence_hash()[1]) << 8) |
-                   (static_cast<size_t>(k.equivalence_hash()[2]));
-        }
+    std::size_t operator()(
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& k) const
+    {
+        // The collection only has direct hash TypeIdentifiers so the EquivalenceHash can be used.
+        return (static_cast<size_t>(k.equivalence_hash()[0]) << 16) |
+                (static_cast<size_t>(k.equivalence_hash()[1]) << 8) |
+                (static_cast<size_t>(k.equivalence_hash()[2]));
+    }
+};
+
+template<>
+struct hash<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>
+{
+    std::size_t operator()(
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize& k) const
+    {
+        return static_cast<size_t>(k.typeobject_serialized_size());
+    }
 };
 
 } // std
@@ -204,6 +215,29 @@ protected:
     ReturnCode_t are_types_compatible(
             const TypeIdentifierPair& type_identifiers,
             const TypeConsistencyEnforcementQosPolicy& type_consistency_qos);
+
+    /**
+     * @brief Get the type dependencies of the given type identifiers.
+     *
+     * @param[in] type_identifiers Sequence with the queried TypeIdentifiers.
+     * @param[out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
+     *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.
+     */
+    ReturnCode_t get_type_dependencies(
+            const TypeIdentifierSeq& type_identifiers,
+            std::unordered_set<TypeIdentfierWithSize> type_dependencies);
+
+    /**
+     * @brief Check if the given TypeIdentifier is known by the registry.
+     *
+     * @param[in] type_identifier TypeIdentifier to query.
+     * @return ReturnCode_t RETCODE_OK if TypeIdentifier is known.
+     *                      RETCODE_NO_DATA if TypeIdentifier is unknown.
+     */
+    ReturnCode_t is_type_identifier_known(
+            const TypeIdentifier& type_identifier);
 
     // Collection of local TypeIdentifiers hashed by type_name.
     // TypeIdentifierPair contains both the minimal and complete TypeObject TypeIdentifiers.
