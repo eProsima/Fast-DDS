@@ -1556,7 +1556,7 @@ public:
 
 private:
 
-    std::array<int32_t, 2> m_my_array{0};
+    std::array<int32_t, 2> m_my_array{{0}};
 
 };
 /*!
@@ -1647,7 +1647,7 @@ public:
 
 private:
 
-    std::array<int32_t, 2> m_my_array_equal{0};
+    std::array<int32_t, 2> m_my_array_equal{{0}};
 
 };
 /*!
@@ -1738,7 +1738,7 @@ public:
 
 private:
 
-    std::array<uint8_t, 2> m_my_array{0};
+    std::array<uint8_t, 2> m_my_array{{0}};
 
 };
 /*!
@@ -1829,7 +1829,7 @@ public:
 
 private:
 
-    std::array<std::array<int32_t, 2>, 2> m_my_array { {{0}} };
+    std::array<std::array<int32_t, 2>, 2> m_my_array {{ {{0}} }};
 
 };
 /*!
@@ -1920,7 +1920,7 @@ public:
 
 private:
 
-    std::array<int32_t, 5> m_my_array{0};
+    std::array<int32_t, 5> m_my_array{{0}};
 
 };
 /*!

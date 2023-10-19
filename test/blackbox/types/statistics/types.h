@@ -159,7 +159,7 @@ namespace eprosima {
 
                 private:
 
-                    std::array<uint8_t, 4> m_value{0};
+                    std::array<uint8_t, 4> m_value{{0}};
 
                 };
                 /*!
@@ -250,7 +250,7 @@ namespace eprosima {
 
                 private:
 
-                    std::array<uint8_t, 12> m_value{0};
+                    std::array<uint8_t, 12> m_value{{0}};
 
                 };
                 /*!
@@ -726,7 +726,7 @@ namespace eprosima {
 
                     int32_t m_kind{0};
                     uint32_t m_port{0};
-                    std::array<uint8_t, 16> m_address{0};
+                    std::array<uint8_t, 16> m_address{{0}};
 
                 };
             } // namespace detail

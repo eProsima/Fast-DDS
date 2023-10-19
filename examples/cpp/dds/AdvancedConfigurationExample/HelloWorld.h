@@ -176,7 +176,7 @@ public:
 private:
 
     uint32_t m_index{0};
-    std::array<char, 20> m_message{0};
+    std::array<char, 20> m_message{{0}};
 
 };
 

@@ -1877,7 +1877,7 @@ public:
 
 private:
 
-    std::array<std::array<std::array<int32_t, 2>, 2>, 2> m_my_array{ {{ {{0}} }} };
+    std::array<std::array<std::array<int32_t, 2>, 2>, 2> m_my_array{{ {{ {{0}} }} }};
 
 };
 typedef std::array<std::array<int32_t, 2>, 2> MyArray;
@@ -1970,7 +1970,7 @@ public:
 
 private:
 
-    std::array<std::array<MyArray, 2>, 2> m_my_array_array{ {{ {{ {{0}} }} }} };
+    std::array<std::array<MyArray, 2>, 2> m_my_array_array{{ {{ {{ {{0}} }} }} }};
 
 };
 /*!
