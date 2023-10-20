@@ -35,6 +35,9 @@ constexpr const char* begin_declaration = "begin-declaration";
 constexpr const char* end_declaration = "end-declaration";
 constexpr const char* after_declaration = "after-declaration";
 constexpr const char* end_declaration_file = "end-declaration-file";
+constexpr const EnumeratedLiteralFlag enum_literal_flag_mask = MemberFlagBits::TRY_CONSTRUCT1 |
+    MemberFlagBits::TRY_CONSTRUCT2 | MemberFlagBits::IS_EXTERNAL | MemberFlagBits::IS_OPTIONAL |
+    MemberFlagBits::IS_MUST_UNDERSTAND | MemberFlagBits::IS_KEY;
 
 const TypeObjectHashId TypeObjectUtils::build_type_object_hash_id(
         uint8_t discriminator,
@@ -162,7 +165,7 @@ UnionTypeFlag TypeObjectUtils::build_union_type_flag(
 const StringSTypeDefn TypeObjectUtils::build_string_s_type_defn(
         SBound bound)
 {
-    s_bound_consistency(bound);
+    bound_consistency(bound);
     StringSTypeDefn string_s_type_defn;
     string_s_type_defn.bound(bound);
     return string_s_type_defn;
@@ -215,7 +218,7 @@ const PlainSequenceSElemDefn TypeObjectUtils::build_plain_sequence_s_elem_defn(
     plain_collection_header_consistency(header);
     type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
-    s_bound_consistency(bound);
+    bound_consistency(bound);
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
     PlainSequenceSElemDefn plain_sequence_s_elem_defn;
     plain_sequence_s_elem_defn.header(header);
@@ -251,7 +254,7 @@ const PlainArraySElemDefn TypeObjectUtils::build_plain_array_s_elem_defn(
     plain_collection_header_consistency(header);
     type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
-    s_bound_seq_consistency(array_bound_seq);
+    array_bound_seq_consistency(array_bound_seq);
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
     PlainArraySElemDefn plain_array_s_elem_defn;
     plain_array_s_elem_defn.header(header);
@@ -289,7 +292,7 @@ const PlainMapSTypeDefn TypeObjectUtils::build_plain_map_s_type_defn(
     plain_collection_header_consistency(header);
     type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
-    s_bound_consistency(bound);
+    bound_consistency(bound);
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
     member_flag_consistency(key_flags);
     map_key_type_identifier_consistency(*key_identifier);
@@ -328,8 +331,8 @@ const PlainMapLTypeDefn TypeObjectUtils::build_plain_map_l_type_defn(
 
 const StronglyConnectedComponentId TypeObjectUtils::build_strongly_connected_component_id(
         const TypeObjectHashId& sc_component_id,
-        long scc_length,
-        long scc_index)
+        int32_t scc_length,
+        int32_t scc_index)
 {
     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "StronglyConnectedComponents not yet supported.");
     StronglyConnectedComponentId scc_id;
@@ -629,6 +632,7 @@ void TypeObjectUtils::add_applied_annotation_parameter(
         AppliedAnnotationParameterSeq& param_seq,
         const AppliedAnnotationParameter& param)
 {
+    // TODO(jlbueno): check uniqueness
     param_seq.push_back(param);
 }
 
@@ -724,6 +728,7 @@ void TypeObjectUtils::add_applied_annotation_parameter(
 {
 #if !defined(NDEBUG)
     applied_annotation_consistency(ann_custom);
+    // TODO(jlbueno): check uniqueness
 #endif // !defined(NDEBUG)
     ann_custom_seq.push_back(ann_custom);
 }
@@ -809,6 +814,7 @@ void TypeObjectUtils::add_complete_struct_member(
 {
 #if !defined(NDEBUG)
     complete_struct_member_consistency(member);
+    // TODO(jlbueno): check uniqueness
 #endif // !defined(NDEBUG)
     member_seq.push_back(member);
 }
@@ -834,6 +840,7 @@ void TypeObjectUtils::add_union_case_label(
         UnionCaseLabelSeq& label_seq,
         int32_t label)
 {
+    // TODO(jlbueno): check uniqueness
     label_seq.push_back(label);
 }
 
@@ -875,6 +882,7 @@ void TypeObjectUtils::add_complete_union_member(
 {
 #if !defined(NDEBUG)
     complete_union_member_consistency(member);
+    // TODO(jlbueno): check uniqueness
 #endif // !defined(NDEBUG)
     complete_union_member_seq.push_back(member);
 }
@@ -979,6 +987,7 @@ void TypeObjectUtils::add_complete_annotation_parameter(
 {
 #if !defined(NDEBUG)
     complete_annotation_parameter_consistency(param);
+    // TODO(jlbueno): check uniqueness
 #endif
     sequence.push_back(param);
 }
@@ -1098,6 +1107,473 @@ const CommonCollectionElement TypeObjectUtils::build_common_collection_element(
     return common_collection_element;
 }
 
+const CompleteCollectionElement TypeObjectUtils::build_complete_collection_element(
+        const CommonCollectionElement& common,
+        const CompleteElementDetail& detail)
+{
+#if !defined(NDEBUG)
+    common_collection_element_consistency(common);
+    complete_element_detail_consistency(detail);
+#endif // !defined(NDEBUG)
+    CompleteCollectionElement complete_collection_element;
+    complete_collection_element.common(common);
+    complete_collection_element.detail(detail);
+    return complete_collection_element;
+}
+
+const CommonCollectionHeader TypeObjectUtils::build_common_collection_header(
+        LBound bound)
+{
+    bound_consistency(bound);
+    CommonCollectionHeader common_collection_header;
+    common_collection_header.bound(bound);
+    return common_collection_header;
+}
+
+const CompleteCollectionHeader TypeObjectUtils::build_complete_collection_header(
+        const CommonCollectionHeader& common,
+        const eprosima::fastcdr::optional<CompleteTypeDetail>& detail)
+{
+#if !defined(NDEBUG)
+    common_collection_header_consistency(common);
+    if (detail.has_value())
+    {
+        complete_type_detail_consistency(detail.value());
+    }
+#endif // !defined(NDEBUG)
+    CompleteCollectionHeader complete_collection_header;
+    complete_collection_header.common(common);
+    complete_collection_header.detail(detail);
+    return complete_collection_header;
+}
+
+const CompleteSequenceType TypeObjectUtils::build_complete_sequence_type(
+        CollectionTypeFlag collection_flag,
+        const CompleteCollectionHeader& header,
+        const CompleteCollectionElement& element)
+{
+    empty_flags_consistency(collection_flag);
+#if !defined(NDEBUG)
+    complete_collection_header_consistency(header);
+    complete_collection_element_consistency(element);
+#endif // !defined(NDEBUG)
+    CompleteSequenceType complete_sequence_type;
+    complete_sequence_type.collection_flag(collection_flag);
+    complete_sequence_type.header(header);
+    complete_sequence_type.element(element);
+    return complete_sequence_type;
+}
+
+const CommonArrayHeader TypeObjectUtils::build_common_array_header(
+        const LBoundSeq& bound_seq)
+{
+    array_bound_seq_consistency(bound_seq);
+    CommonArrayHeader common_array_header;
+    common_array_header.bound_seq(bound_seq);
+    return common_array_header;
+}
+
+const CompleteArrayHeader TypeObjectUtils::build_complete_array_header(
+        const CommonArrayHeader& common,
+        const CompleteTypeDetail& detail)
+{
+#if !defined(NDEBUG)
+    common_array_header_consistency(common);
+    complete_type_detail_consistency(detail);
+#endif // !defined(NDEBUG)
+    CompleteArrayHeader complete_array_header;
+    complete_array_header.common(common);
+    complete_array_header.detail(detail);
+    return complete_array_header;
+}
+
+const CompleteArrayType TypeObjectUtils::build_complete_array_type(
+        CollectionTypeFlag collection_flag,
+        const CompleteArrayHeader& header,
+        const CompleteCollectionElement& element)
+{
+    empty_flags_consistency(collection_flag);
+#if !defined(NDEBUG)
+    complete_array_header_consistency(header);
+    complete_collection_element_consistency(element);
+#endif // !defined(NDEBUG)
+    CompleteArrayType complete_array_type;
+    complete_array_type.collection_flag(collection_flag);
+    complete_array_type.header(header);
+    complete_array_type.element(element);
+    return complete_array_type;
+}
+
+const CompleteMapType TypeObjectUtils::build_complete_map_type(
+        CollectionElementFlag collection_flag,
+        const CompleteCollectionHeader& header,
+        const CompleteCollectionElement& key,
+        const CompleteCollectionElement& element)
+{
+    empty_flags_consistency(collection_flag);
+#if !defined(NDEBUG)
+    complete_collection_header_consistency(header);
+    complete_collection_element_consistency(key);
+    complete_collection_element_consistency(element);
+#endif // !defined(NDEBUG)
+    map_key_type_identifier_consistency(key.common().type());
+    CompleteMapType complete_map_type;
+    complete_map_type.collection_flag(collection_flag);
+    complete_map_type.header(header);
+    complete_map_type.key(key);
+    complete_map_type.element(element);
+    return complete_map_type;
+}
+
+const CommonEnumeratedLiteral TypeObjectUtils::build_common_enumerated_literal(
+        int32_t value,
+        EnumeratedLiteralFlag flags)
+{
+#if !defined(NDEBUG)
+    enumerated_literal_flag_consistency(flags);
+#endif // !defined(NDEBUG)
+    CommonEnumeratedLiteral common_enumerated_literal;
+    common_enumerated_literal.value(value);
+    common_enumerated_literal.flags(flags);
+    return common_enumerated_literal;
+}
+
+const CompleteEnumeratedLiteral TypeObjectUtils::build_complete_enumerated_literal(
+        const CommonEnumeratedLiteral& common,
+        const CompleteMemberDetail& detail)
+{
+#if !defined(NDEBUG)
+    common_enumerated_literal_consistency(common);
+    complete_member_detail_consistency(detail);
+#endif // !defined(NDEBUG)
+    CompleteEnumeratedLiteral complete_enumerated_literal;
+    complete_enumerated_literal.common(common);
+    complete_enumerated_literal.detail(detail);
+    return complete_enumerated_literal;
+}
+
+void TypeObjectUtils::add_complete_enumerated_literal(
+        CompleteEnumeratedLiteralSeq& sequence,
+        const CompleteEnumeratedLiteral& enum_literal)
+{
+#if !defined(NDEBUG)
+    complete_enumerated_literal_consistency(enum_literal);
+    // TODO(jlbueno): check uniqueness
+#endif // !defined(NDEBUG)
+    sequence.push_back(enum_literal);
+}
+
+const CommonEnumeratedHeader TypeObjectUtils::build_common_enumerated_header(
+        BitBound bit_bound,
+        bool bitmask)
+{
+    if (bitmask)
+    {
+        bitmask_bit_bound_consistency(bit_bound);
+    }
+    else
+    {
+        enum_bit_bound_consistency(bit_bound);
+    }
+    CommonEnumeratedHeader common_enumerated_header;
+    common_enumerated_header.bit_bound(bit_bound);
+    return common_enumerated_header;
+}
+
+const CompleteEnumeratedHeader TypeObjectUtils::build_complete_enumerated_header(
+        const CommonEnumeratedHeader& common,
+        const CompleteTypeDetail& detail,
+        bool bitmask)
+{
+#if !defined(NDEBUG)
+    common_enumerated_header_consistency(common, bitmask);
+    complete_type_detail_consistency(detail);
+#endif // !defined(NDEBUG)
+    CompleteEnumeratedHeader complete_enumerated_header;
+    complete_enumerated_header.common(common);
+    complete_enumerated_header.detail(detail);
+    return complete_enumerated_header;
+}
+
+const CompleteEnumeratedType TypeObjectUtils::build_complete_enumerated_type(
+        EnumTypeFlag enum_flags,
+        const CompleteEnumeratedHeader& header,
+        const CompleteEnumeratedLiteralSeq& literal_seq)
+{
+    empty_flags_consistency(enum_flags);
+#if !defined(NDEBUG)
+    complete_enumerated_header_consistency(header);
+    complete_enumerated_literal_seq_consistency(literal_seq);
+#endif // !defined(NDEBUG)
+    CompleteEnumeratedType complete_enumerated_type;
+    complete_enumerated_type.enum_flags(enum_flags);
+    complete_enumerated_type.header(header);
+    complete_enumerated_type.literal_seq(literal_seq);
+    return complete_enumerated_type;
+}
+
+const CommonBitflag TypeObjectUtils::build_common_bitflag(
+        uint16_t position,
+        BitflagFlag flags)
+{
+    bit_position_consistency(position);
+    empty_flags_consistency(flags);
+    CommonBitflag common_bitflag;
+    common_bitflag.position(position);
+    common_bitflag.flags(flags);
+    return common_bitflag;
+}
+
+const CompleteBitflag TypeObjectUtils::build_complete_bitflag(
+        const CommonBitflag& common,
+        const CompleteMemberDetail& detail)
+{
+#if !defined(NDEBUG)
+    common_bitflag_consistency(common);
+    complete_member_detail_consistency(detail);
+#endif // !defined(NDEBUG)
+    CompleteBitflag complete_bitflag;
+    complete_bitflag.common(common);
+    complete_bitflag.detail(detail);
+    return complete_bitflag;
+}
+
+void TypeObjectUtils::add_complete_bitflag(
+        CompleteBitflagSeq& sequence,
+        const CompleteBitflag& bitflag)
+{
+#if !defined(NDEBUG)
+    complete_bitflag_consistency(bitflag);
+    // TODO(jlbueno): check uniqueness
+#endif // !defined(NDEBUG)
+    sequence.push_back(bitflag);
+}
+
+const CompleteBitmaskType TypeObjectUtils::build_complete_bitmask_type(
+        BitmaskTypeFlag bitmask_flags,
+        const CompleteBitmaskHeader& header,
+        const CompleteBitflagSeq& flag_seq)
+{
+    empty_flags_consistency(bitmask_flags);
+#if !defined(NDEBUG)
+    complete_enumerated_header_consistency(header, true);
+    complete_bitflag_seq_consistency(flag_seq);
+#endif // !defined(NDEBUG)
+    CompleteBitmaskType complete_bitmask_type;
+    complete_bitmask_type.bitmask_flags(bitmask_flags);
+    complete_bitmask_type.header(header);
+    complete_bitmask_type.flag_seq(flag_seq);
+    return complete_bitmask_type;
+}
+
+const CommonBitfield TypeObjectUtils::build_common_bitfield(
+        uint16_t position,
+        BitsetMemberFlag flags,
+        uint8_t bitcount,
+        TypeKind holder_type)
+{
+    bit_position_consistency(position);
+    empty_flags_consistency(flags);
+    bitmask_bit_bound_consistency(bitcount);
+    bitmask_bit_bound_consistency(bitcount + position);
+    bitfield_holder_type_consistency(holder_type, bitcount);
+    CommonBitfield common_bitfield;
+    common_bitfield.position(position);
+    common_bitfield.flags(flags);
+    common_bitfield.bitcount(bitcount);
+    common_bitfield.holder_type(holder_type);
+    return common_bitfield;
+}
+
+const CompleteBitfield TypeObjectUtils::build_complete_bitfield(
+        const CommonBitfield& common,
+        const CompleteMemberDetail& detail)
+{
+#if !defined(NDEBUG)
+    common_bitfield_consistency(common);
+    complete_member_detail_consistency(detail);
+#endif // !defined(NDEBUG)
+    CompleteBitfield complete_bitfield;
+    complete_bitfield.common(common);
+    complete_bitfield.detail(detail);
+    return complete_bitfield;
+}
+
+void TypeObjectUtils::add_complete_bitfield(
+        CompleteBitfieldSeq& sequence,
+        const CompleteBitfield& bitfield)
+{
+#if !defined(NDEBUG)
+    complete_bitfield_consistency(bitfield);
+    // TODO(jlbueno): check uniqueness and no overlapping.
+#endif // !defined(NDEBUG)
+    sequence.push_back(bitfield);
+}
+
+const CompleteBitsetHeader TypeObjectUtils::build_complete_bitset_header(
+        const CompleteTypeDetail& detail)
+{
+#if !defined(NDEBUG)
+    complete_type_detail_consistency(detail);
+#endif // !defined(NDEBUG)
+    CompleteBitsetHeader complete_bitset_header;
+    complete_bitset_header.detail(detail);
+    return complete_bitset_header;
+}
+
+const CompleteBitsetType TypeObjectUtils::build_complete_bitset_type(
+        BitsetTypeFlag bitset_flags,
+        const CompleteBitsetHeader& header,
+        const CompleteBitfieldSeq& field_seq)
+{
+    empty_flags_consistency(bitset_flags);
+#if !defined(NDEBUG)
+    complete_bitset_header_consistency(header);
+    complete_bitfield_seq_consistency(field_seq);
+#endif // !defined(NDEBUG)
+    CompleteBitsetType complete_bitset_type;
+    complete_bitset_type.bitset_flags(bitset_flags);
+    complete_bitset_type.header(header);
+    complete_bitset_type.field_seq(field_seq);
+    return complete_bitset_type;
+}
+
+const CompleteExtendedType TypeObjectUtils::build_complete_extended_type()
+{
+    CompleteExtendedType complete_extended_type;
+    return complete_extended_type;
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_alias_type_object(
+        const CompleteAliasType& alias_type,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    complete_alias_type_consistency(alias_type);
+#endif // !defined(NDEBUG)
+    CompleteTypeObject type_object;
+    type_object.alias_type(alias_type);
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
+        type_object);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_annotation_type_object(
+        const CompleteAnnotationType& annotation_type,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    complete_annotation_type_consistency(annotation_type);
+#endif // !defined(NDEBUG)
+    CompleteTypeObject type_object;
+    type_object.annotation_type(annotation_type);
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
+        type_object);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_struct_type_object(
+        const CompleteStructType& struct_type,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    complete_struct_type_consistency(struct_type);
+#endif // !defined(NDEBUG)
+    CompleteTypeObject type_object;
+    type_object.struct_type(struct_type);
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
+        type_object);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_union_type_object(
+        const CompleteUnionType& union_type,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    complete_union_type_consistency(union_type);
+#endif // !defined(NDEBUG)
+    CompleteTypeObject type_object;
+    type_object.union_type(union_type);
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
+        type_object);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_bitset_type_object(
+        const CompleteBitsetType& bitset_type,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    complete_bitset_type_consistency(bitset_type);
+#endif // !defined(NDEBUG)
+    CompleteTypeObject type_object;
+    type_object.bitset_type(bitset_type);
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
+        type_object);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_sequence_type_object(
+        const CompleteSequenceType& sequence_type,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    complete_sequence_type_consistency(sequence_type);
+#endif // !defined(NDEBUG)
+    CompleteTypeObject type_object;
+    type_object.sequence_type(sequence_type);
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
+        type_object);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_array_type_object(
+        const CompleteArrayType& array_type,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    complete_array_type_consistency(array_type);
+#endif // !defined(NDEBUG)
+    CompleteTypeObject type_object;
+    type_object.array_type(array_type);
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
+        type_object);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_map_type_object(
+        const CompleteMapType& map_type,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    complete_map_type_consistency(map_type);
+#endif // !defined(NDEBUG)
+    CompleteTypeObject type_object;
+    type_object.map_type(map_type);
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
+        type_object);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_enumerated_type_object(
+        const CompleteEnumeratedType& enumerated_type,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    complete_enumerated_type_consistency(enumerated_type);
+#endif // !defined(NDEBUG)
+    CompleteTypeObject type_object;
+    type_object.enumerated_type(enumerated_type);
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
+        type_object);
+}
+
+ReturnCode_t TypeObjectUtils::build_and_register_bitmask_type_object(
+        const CompleteBitmaskType& bitmask_type,
+        const std::string& type_name)
+{
+#if !defined(NDEBUG)
+    complete_bitmask_type_consistency(bitmask_type);
+#endif // !defined(NDEBUG)
+    CompleteTypeObject type_object;
+    type_object.bitmask_type(bitmask_type);
+    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
+        type_object);
+}
+
 const NameHash TypeObjectUtils::name_hash(
         const std::string& name)
 {
@@ -1210,15 +1686,6 @@ bool TypeObjectUtils::is_indirect_hash_type_identifier(
     return indirect_hash;
 }
 
-void TypeObjectUtils::s_bound_consistency(
-        SBound bound)
-{
-    if (INVALID_SBOUND == bound)
-    {
-        throw InvalidArgumentError("bound parameter must be greater than 0");
-    }
-}
-
 void TypeObjectUtils::l_bound_consistency(
         LBound bound)
 {
@@ -1228,20 +1695,13 @@ void TypeObjectUtils::l_bound_consistency(
     }
 }
 
-void TypeObjectUtils::s_bound_seq_consistency(
-        const SBoundSeq& bound_seq)
-{
-    array_bound_seq_consistency(bound_seq);
-    for (SBound bound : bound_seq)
-    {
-        s_bound_consistency(bound);
-    }
-}
-
 void TypeObjectUtils::l_bound_seq_consistency(
         const LBoundSeq& bound_seq)
 {
-    array_bound_seq_consistency(bound_seq);
+    if (bound_seq.empty())
+    {
+        throw InvalidArgumentError("array_bound_seq parameter must not be empty");
+    }
     bool large_dimension = false;
     for (LBound lbound : bound_seq)
     {
@@ -1294,6 +1754,15 @@ void TypeObjectUtils::type_flag_consistency(
     }
 }
 
+void TypeObjectUtils::enumerated_literal_flag_consistency(
+        EnumeratedLiteralFlag enumerated_literal_flag)
+{
+    if ((enumerated_literal_flag & enum_literal_flag_mask) != 0)
+    {
+        throw InvalidArgumentError("Only default flag applies to enumerated literals");
+    }
+}
+
 void TypeObjectUtils::plain_collection_header_consistency(
         const PlainCollectionHeader& header)
 {
@@ -1335,7 +1804,7 @@ void TypeObjectUtils::map_key_type_identifier_consistency(
 void TypeObjectUtils::string_sdefn_consistency(
         const StringSTypeDefn& string)
 {
-    s_bound_consistency(string.bound());
+    bound_consistency(string.bound());
 }
 
 void TypeObjectUtils::string_ldefn_consistency(
@@ -1348,7 +1817,7 @@ void TypeObjectUtils::seq_sdefn_consistency(
         const PlainSequenceSElemDefn& plain_seq)
 {
     plain_collection_header_consistency(plain_seq.header());
-    s_bound_consistency(plain_seq.bound());
+    bound_consistency(plain_seq.bound());
     type_identifier_consistency(*plain_seq.element_identifier());
     plain_collection_type_identifier_header_consistency(plain_seq.header(), *plain_seq.element_identifier());
 }
@@ -1366,7 +1835,7 @@ void TypeObjectUtils::array_sdefn_consistency(
         const PlainArraySElemDefn& plain_array)
 {
     plain_collection_header_consistency(plain_array.header());
-    s_bound_seq_consistency(plain_array.array_bound_seq());
+    array_bound_seq_consistency(plain_array.array_bound_seq());
     type_identifier_consistency(*plain_array.element_identifier());
     plain_collection_type_identifier_header_consistency(plain_array.header(), *plain_array.element_identifier());
 }
@@ -1384,7 +1853,7 @@ void TypeObjectUtils::map_sdefn_consistency(
         const PlainMapSTypeDefn& plain_map)
 {
     plain_collection_header_consistency(plain_map.header());
-    s_bound_consistency(plain_map.bound());
+    bound_consistency(plain_map.bound());
     type_identifier_consistency(*plain_map.element_identifier());
     plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
     member_flag_consistency(plain_map.key_flags());
@@ -1474,6 +1943,7 @@ void TypeObjectUtils::applied_annotation_seq_consistency(
     for (size_t i = 0; i < applied_annotation_seq.size(); i++)
     {
         applied_annotation_consistency(applied_annotation_seq[i]);
+        // TODO(jlbueno): check uniqueness of applied annotations.
     }
 }
 
@@ -1515,17 +1985,27 @@ void TypeObjectUtils::complete_struct_member_seq_consistency(
     for (size_t i = 0; i < complete_struct_member_seq.size(); i++)
     {
         complete_struct_member_consistency(complete_struct_member_seq[i]);
+        // TODO(jlbueno): check uniqueness of MemberId.
     }
 }
 
 void TypeObjectUtils::complete_struct_header_consistency(
         const CompleteStructHeader& complete_struct_header)
 {
-    if (!is_direct_hash_type_identifier(complete_struct_header.base_type()))
+    if (complete_struct_header.base_type()._d() != TK_NONE &&
+        !is_direct_hash_type_identifier(complete_struct_header.base_type()))
     {
         throw InvalidArgumentError("Base TypeIdentifier must be direct HASH TypeIdentifier");
     }
     complete_type_detail_consistency(complete_struct_header.detail());
+}
+
+void TypeObjectUtils::complete_struct_type_consistency(
+        const CompleteStructType& complete_struct_type)
+{
+    type_flag_consistency(complete_struct_type.struct_flags());
+    complete_struct_header_consistency(complete_struct_type.header());
+    complete_struct_member_seq_consistency(complete_struct_type.member_seq());
 }
 
 void TypeObjectUtils::common_union_member_consistency(
@@ -1548,6 +2028,7 @@ void TypeObjectUtils::complete_union_member_seq_consistency(
     for (size_t i = 0; i < complete_member_union_seq.size(); i++)
     {
         complete_union_member_consistency(complete_member_union_seq[i]);
+        // TODO(jlbueno): check uniqueness of UnionMember Id. At least one member.
     }
 }
 
@@ -1617,6 +2098,15 @@ void TypeObjectUtils::complete_discriminator_member_consistency(
     {
         applied_annotation_seq_consistency(complete_discriminator_member.ann_custom().value());
     }
+}
+
+void TypeObjectUtils::complete_union_type_consistency(
+        const CompleteUnionType& complete_union_type)
+{
+    type_flag_consistency(complete_union_type.union_flags());
+    complete_union_header_consistency(complete_union_type.header());
+    complete_discriminator_member_consistency(complete_union_type.discriminator());
+    complete_union_member_seq_consistency(complete_union_type.member_seq());
 }
 
 void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_consistency(
@@ -1702,7 +2192,15 @@ void TypeObjectUtils::complete_annotation_parameter_seq_consistency(
     for (size_t i = 0; i < complete_annotation_parameter_seq.size(); i++)
     {
         complete_annotation_parameter_consistency(complete_annotation_parameter_seq[i]);
+        // TODO(jlbueno): check uniqueness of applied annotation parameter
     }
+}
+
+void TypeObjectUtils::complete_annotation_type_consistency(
+        const CompleteAnnotationType& complete_annotation_type)
+{
+    empty_flags_consistency(complete_annotation_type.annotation_flag());
+    complete_annotation_parameter_seq_consistency(complete_annotation_type.member_seq());
 }
 
 void TypeObjectUtils::common_alias_body_consistency(
@@ -1728,6 +2226,14 @@ void TypeObjectUtils::complete_alias_header_consistency(
     complete_type_detail_consistency(complete_alias_header.detail());
 }
 
+void TypeObjectUtils::complete_alias_type_consistency(
+        const CompleteAliasType& complete_alias_type)
+{
+    empty_flags_consistency(complete_alias_type.alias_flags());
+    complete_alias_header_consistency(complete_alias_type.header());
+    complete_alias_body_consistency(complete_alias_type.body());
+}
+
 void TypeObjectUtils::complete_element_detail_consistency(
         const CompleteElementDetail& complete_element_detail)
 {
@@ -1742,6 +2248,252 @@ void TypeObjectUtils::common_collection_element_consistency(
 {
     member_flag_consistency(common_collection_element.element_flags());
     type_identifier_consistency(common_collection_element.type());
+}
+
+void TypeObjectUtils::complete_collection_element_consistency(
+        const CompleteCollectionElement& complete_collection_element)
+{
+    common_collection_element_consistency(complete_collection_element.common());
+    complete_element_detail_consistency(complete_collection_element.detail());
+}
+
+void TypeObjectUtils::common_collection_header_consistency(
+        const CommonCollectionHeader& common_collection_header)
+{
+    bound_consistency(common_collection_header.bound());
+}
+
+void TypeObjectUtils::complete_collection_header_consistency(
+        const CompleteCollectionHeader& complete_collection_header)
+{
+    common_collection_header_consistency(complete_collection_header.common());
+    if (complete_collection_header.detail().has_value())
+    {
+        complete_type_detail_consistency(complete_collection_header.detail().value());
+    }
+}
+
+void TypeObjectUtils::complete_sequence_type_consistency(
+        const CompleteSequenceType& complete_sequence_type)
+{
+    empty_flags_consistency(complete_sequence_type.collection_flag());
+    complete_collection_header_consistency(complete_sequence_type.header());
+    complete_collection_element_consistency(complete_sequence_type.element());
+}
+
+void TypeObjectUtils::common_array_header_consistency(
+        const CommonArrayHeader& common_array_header)
+{
+    array_bound_seq_consistency(common_array_header.bound_seq());
+}
+
+void TypeObjectUtils::complete_array_header_consistency(
+        const CompleteArrayHeader& complete_array_header)
+{
+    common_array_header_consistency(complete_array_header.common());
+    complete_type_detail_consistency(complete_array_header.detail());
+}
+
+void TypeObjectUtils::complete_array_type_consistency(
+        const CompleteArrayType& complete_array_type)
+{
+    empty_flags_consistency(complete_array_type.collection_flag());
+    complete_array_header_consistency(complete_array_type.header());
+    complete_collection_element_consistency(complete_array_type.element());
+}
+
+void TypeObjectUtils::complete_map_type_consistency(
+        const CompleteMapType& complete_map_type)
+{
+    empty_flags_consistency(complete_map_type.collection_flag());
+    complete_collection_header_consistency(complete_map_type.header());
+    map_key_type_identifier_consistency(complete_map_type.key().common().type());
+    complete_collection_element_consistency(complete_map_type.key());
+    complete_collection_element_consistency(complete_map_type.element());
+}
+
+void TypeObjectUtils::common_enumerated_literal_consistency(
+        const CommonEnumeratedLiteral& common_enumerated_literal)
+{
+    enumerated_literal_flag_consistency(common_enumerated_literal.flags());
+}
+
+void TypeObjectUtils::complete_enumerated_literal_consistency(
+        const CompleteEnumeratedLiteral& complete_enumerated_literal)
+{
+    common_enumerated_literal_consistency(complete_enumerated_literal.common());
+    complete_member_detail_consistency(complete_enumerated_literal.detail());
+}
+
+void TypeObjectUtils::complete_enumerated_literal_seq_consistency(
+        const CompleteEnumeratedLiteralSeq& complete_enumerated_literal_seq)
+{
+    for (size_t i = 0; i < complete_enumerated_literal_seq.size(); i++)
+    {
+        complete_enumerated_literal_consistency(complete_enumerated_literal_seq[i]);
+        // TODO(jlbueno): check uniqueness of default literal and literal value. At least one literal.
+    }
+}
+
+void TypeObjectUtils::enum_bit_bound_consistency(
+        BitBound bit_bound)
+{
+    if (bit_bound == 0 || bit_bound > 32)
+    {
+        throw InvalidArgumentError("Enumeration bit_bound must take a value between 1 and 32");
+    }
+}
+
+void TypeObjectUtils::bitmask_bit_bound_consistency(
+        BitBound bit_bound)
+{
+    if (bit_bound == 0 || bit_bound > 64)
+    {
+        throw InvalidArgumentError("Bitmask bit_bound must be greater than zero and no greater than 64");
+    }
+}
+
+void TypeObjectUtils::common_enumerated_header_consistency(
+        const CommonEnumeratedHeader& common_enumerated_header,
+        bool bitmask)
+{
+    if (bitmask)
+    {
+        bitmask_bit_bound_consistency(common_enumerated_header.bit_bound());
+    }
+    else
+    {
+        enum_bit_bound_consistency(common_enumerated_header.bit_bound());
+    }
+}
+
+void TypeObjectUtils::complete_enumerated_header_consistency(
+        const CompleteEnumeratedHeader& complete_enumerated_header,
+        bool bitmask)
+{
+    common_enumerated_header_consistency(complete_enumerated_header.common(), bitmask);
+    complete_type_detail_consistency(complete_enumerated_header.detail());
+}
+
+void TypeObjectUtils::complete_enumerated_type_consistency(
+        const CompleteEnumeratedType& complete_enumerated_type)
+{
+    empty_flags_consistency(complete_enumerated_type.enum_flags());
+    complete_enumerated_header_consistency(complete_enumerated_type.header());
+    complete_enumerated_literal_seq_consistency(complete_enumerated_type.literal_seq());
+}
+
+void TypeObjectUtils::bit_position_consistency(
+        uint16_t position)
+{
+    if (position >= 64)
+    {
+        throw InvalidArgumentError("Bitflag/Bitfield position must take a value under 64");
+    }
+}
+
+void TypeObjectUtils::common_bitflag_consistency(
+        const CommonBitflag& common_bitflag)
+{
+    bit_position_consistency(common_bitflag.position());
+    empty_flags_consistency(common_bitflag.flags());
+}
+
+void TypeObjectUtils::complete_bitflag_consistency(
+        const CompleteBitflag& complete_bitflag)
+{
+    common_bitflag_consistency(complete_bitflag.common());
+    complete_member_detail_consistency(complete_bitflag.detail());
+    // TODO(jlbueno): check consistency between @bit_bound annotation and CommonBitflag
+}
+
+void TypeObjectUtils::complete_bitflag_seq_consistency(
+        const CompleteBitflagSeq& complete_bitflag_seq)
+{
+    for (size_t i = 0; i < complete_bitflag_seq.size(); i++)
+    {
+        complete_bitflag_consistency(complete_bitflag_seq[i]);
+        // TODO(jlbueno): check uniqueness
+    }
+}
+
+void TypeObjectUtils::complete_bitmask_type_consistency(
+        const CompleteBitmaskType& complete_bitmask_type)
+{
+    empty_flags_consistency(complete_bitmask_type.bitmask_flags());
+    complete_enumerated_header_consistency(complete_bitmask_type.header(), true);
+    complete_bitflag_seq_consistency(complete_bitmask_type.flag_seq());
+}
+
+void TypeObjectUtils::bitfield_holder_type_consistency(
+        TypeKind holder_type,
+        uint8_t bitcount)
+{
+    if (holder_type != TK_BOOLEAN && holder_type != TK_BYTE && holder_type != TK_INT16 && holder_type != TK_INT32 &&
+        holder_type != TK_INT64 && holder_type != TK_UINT16 && holder_type != TK_UINT32 && holder_type != TK_UINT64 &&
+        holder_type != TK_INT8 && holder_type != TK_UINT8)
+    {
+        throw InvalidArgumentError("Inconsistent bitfield holder type");
+    }
+    if (bitcount < 9 && holder_type == TK_BOOLEAN)
+    {
+        throw InvalidArgumentError("Inconsistent bitfield holder type");
+    }
+    else if ((bitcount < 17 && bitcount > 8) && (holder_type == TK_BOOLEAN || holder_type == TK_BYTE ||
+        holder_type == TK_INT8 || holder_type == TK_UINT8))
+    {
+        throw InvalidArgumentError("Inconsistent bitfield holder type");
+    }
+    else if ((bitcount < 33 && bitcount > 16) && (holder_type != TK_INT64 && holder_type != TK_UINT64 &&
+        holder_type != TK_INT32 && holder_type != TK_UINT32))
+    {
+        throw InvalidArgumentError("Inconsistent bitfield holder type");
+    }
+    else if (bitcount > 32 && (holder_type != TK_INT64 && holder_type != TK_UINT64))
+    {
+        throw InvalidArgumentError("Inconsistent bitfield holder type");
+    }
+}
+
+void TypeObjectUtils::common_bitfield_consistency(
+        const CommonBitfield& common_bitfield)
+{
+    bit_position_consistency(common_bitfield.position());
+    empty_flags_consistency(common_bitfield.flags());
+    bitmask_bit_bound_consistency(common_bitfield.bitcount());
+    bitmask_bit_bound_consistency(common_bitfield.bitcount() + common_bitfield.position());
+    bitfield_holder_type_consistency(common_bitfield.holder_type(), common_bitfield.bitcount());
+}
+
+void TypeObjectUtils::complete_bitfield_consistency(
+        const CompleteBitfield& complete_bitfield)
+{
+    common_bitfield_consistency(complete_bitfield.common());
+    complete_member_detail_consistency(complete_bitfield.detail());
+}
+
+void TypeObjectUtils::complete_bitfield_seq_consistency(
+        const CompleteBitfieldSeq& complete_bitfield_seq)
+{
+    for (size_t i = 0; i < complete_bitfield_seq.size(); i++)
+    {
+        complete_bitfield_consistency(complete_bitfield_seq[i]);
+        // TODO(jlbueno): check uniqueness and no overlapping.
+    }
+}
+
+void TypeObjectUtils::complete_bitset_header_consistency(
+        const CompleteBitsetHeader& complete_bitset_header)
+{
+    complete_type_detail_consistency(complete_bitset_header.detail());
+}
+
+void TypeObjectUtils::complete_bitset_type_consistency(
+        const CompleteBitsetType& complete_bitset_type)
+{
+    empty_flags_consistency(complete_bitset_type.bitset_flags());
+    complete_bitset_header_consistency(complete_bitset_type.header());
+    complete_bitfield_seq_consistency(complete_bitset_type.field_seq());
 }
 
 } // xtypes1_3
