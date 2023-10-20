@@ -359,8 +359,8 @@ public:
      */
     RTPS_DllAPI static const StronglyConnectedComponentId build_strongly_connected_component_id(
             const TypeObjectHashId& sc_component_id,
-            long scc_length,
-            long scc_index);
+            int32_t scc_length,
+            int32_t scc_index);
 
     /**
      * @brief Build ExtendedTypeDefn instance (empty. Available for future extension).
@@ -384,7 +384,7 @@ public:
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_s_string_type_identifier(
             const StringSTypeDefn& string,
@@ -400,7 +400,7 @@ public:
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_l_string_type_identifier(
             const StringLTypeDefn& string,
@@ -416,7 +416,7 @@ public:
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_s_sequence_type_identifier(
             const PlainSequenceSElemDefn& plain_seq,
@@ -432,7 +432,7 @@ public:
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_l_sequence_type_identifier(
             const PlainSequenceLElemDefn& plain_seq,
@@ -448,7 +448,7 @@ public:
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_s_array_type_identifier(
             const PlainArraySElemDefn& plain_array,
@@ -464,7 +464,7 @@ public:
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_l_array_type_identifier(
             const PlainArrayLElemDefn& plain_array,
@@ -480,7 +480,7 @@ public:
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_s_map_type_identifier(
             const PlainMapSTypeDefn& plain_map,
@@ -496,7 +496,7 @@ public:
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_l_map_type_identifier(
             const PlainMapLTypeDefn& plain_map,
@@ -510,7 +510,7 @@ public:
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_scc_type_identifier(
             const StronglyConnectedComponentId& scc,
@@ -1201,8 +1201,8 @@ public:
     /**
      * @brief Build CommonCollectionElement instance.
      *
-     * @param element_flags CollectionElementFlag.
-     * @param type TypeIdentifier.
+     * @param[in] element_flags CollectionElementFlag.
+     * @param[in] type TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
      *              1. Given collection element flags are not consistent (only in Debug build mode).
      *              2. Given TypeIdentifier is not consistent (only in Debug build mode).
@@ -1211,6 +1211,597 @@ public:
     RTPS_DllAPI static const CommonCollectionElement build_common_collection_element(
             CollectionElementFlag element_flags,
             const TypeIdentifier& type);
+
+    /**
+     * @brief Build CompleteCollectionElement instance.
+     *
+     * @param[in] common CommonCollectionElement.
+     * @param[in] detail CompleteElementDetail.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given CommonCollectionElement is not consistent (only in Debug build mode).
+     *              2. Given CompleteElementDetail is not consistent (only in Debug build mode).
+     * @return const CompleteCollectionElement instance
+     */
+    RTPS_DllAPI static const CompleteCollectionElement build_complete_collection_element(
+            const CommonCollectionElement& common,
+            const CompleteElementDetail& detail);
+
+    /**
+     * MinimalCollectionElement constructed from CompleteCollectionElement.
+     */
+
+    /**
+     * @brief Build CommonCollectionHeader instance.
+     *
+     * @param[in] bound Collection bound.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given bound is not
+     *            consistent.
+     * @return const CommonCollectionHeader instance.
+     */
+    RTPS_DllAPI static const CommonCollectionHeader build_common_collection_header(
+            LBound bound);
+
+    /**
+     * @brief Build CompleteCollectionHeader instance.
+     *
+     * @param[in] common CommonCollectionHeader
+     * @param[in] detail CompleteTypeDetail
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given CommonCollectionHeader is inconsistent (only in Debug build mode).
+     *              2. Given CompleteTypeDetail is inconsistent (only in Debug build mode).
+     * @return const CompleteCollectionHeader instance.
+     */
+    RTPS_DllAPI static const CompleteCollectionHeader build_complete_collection_header(
+            const CommonCollectionHeader& common,
+            const eprosima::fastcdr::optional<CompleteTypeDetail>& detail);
+
+    /**
+     * MinimalCollectionHeader constructed from CompleteCollectionHeader.
+     */
+
+    /*************** Sequence: ******************************************/
+
+    /**
+     * @brief Build CompleteSequenceType instance.
+     *
+     * @param[in] collection_flag collection type flag: unused. No flags apply. It must be 0.
+     * @param[in] header CompleteCollectionHeader.
+     * @param[in] element CompleteCollectionElement.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Any collection flag is set.
+     *              2. Given header is inconsistent (only in Debug build mode).
+     *              3. Given element is inconsistent (only in Debug build mode).
+     * @return const CompleteSequenceType instance
+     */
+    RTPS_DllAPI static const CompleteSequenceType build_complete_sequence_type(
+            CollectionTypeFlag collection_flag,
+            const CompleteCollectionHeader& header,
+            const CompleteCollectionElement& element);
+
+    /**
+     * MinimalSequenceType constructed from CompleteSequenceType.
+     */
+
+    /*************** Array: *********************************************/
+
+    /**
+     * @brief Build CommonArrayHeader instance.
+     *
+     * @param[in] bound_seq Sequence of the dimension's bounds.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if any given bound is 0 (invalid).
+     * @return const CommonArrayHeader instance.
+     */
+    RTPS_DllAPI static const CommonArrayHeader build_common_array_header(
+            const LBoundSeq& bound_seq);
+
+    /**
+     * @brief Build CompleteArrayHeader instance.
+     *
+     * @param[in] common CommonArrayHeader.
+     * @param[in] detail CompleteTypeDetail.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given CommonArrayHeader is inconsistent (only in Debug build mode).
+     *              2. Given CompleteTypeDetail is inconsistent (only in Debug build mode).
+     * @return const CompleteArrayHeader instance.
+     */
+    RTPS_DllAPI static const CompleteArrayHeader build_complete_array_header(
+            const CommonArrayHeader& common,
+            const CompleteTypeDetail& detail);
+
+    /**
+     * MinimalArrayHeader constructed from CompleteArrayHeader.
+     */
+
+    /**
+     * @brief Build CompleteArrayType instance.
+     *
+     * @param[in] collection_flag collection type flag: unused. No flags apply. It must be 0.
+     * @param[in] header CompleteArrayHeader.
+     * @param[in] element CompleteCollectionElement.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Any collection flag is set.
+     *              2. Given header is inconsistent (only in Debug build mode).
+     *              3. Given element is inconsistent (only in Debug build mode).
+     * @return const CompleteArrayType instance.
+     */
+    RTPS_DllAPI static const CompleteArrayType build_complete_array_type(
+            CollectionTypeFlag collection_flag,
+            const CompleteArrayHeader& header,
+            const CompleteCollectionElement& element);
+
+    /**
+     * MinimalArrayType constructed from CompleteArrayType.
+     */
+
+    /*************** Map: ***********************************************/
+
+    /**
+     * @brief Build CompleteMapType instance.
+     *
+     * @param[in] collection_flag collection type flag: unused. No flags apply. It must be 0.
+     * @param[in] header CompleteArrayHeader.
+     * @param[in] key CompleteCollectionElement describing map key.
+     * @param[in] element CompleteCollectionElement describing map element.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Any collection flag is set.
+     *              2. Given header is inconsistent (only in Debug build mode).
+     *              3. Given key TypeIdentifier is inconsistent.
+     *              4. Given key description is inconsistent (only in Debug build mode).
+     *              5. Given element is inconsistent (only in Debug build mode).
+     * @return const CompleteMapType instance.
+     */
+    RTPS_DllAPI static const CompleteMapType build_complete_map_type(
+            CollectionTypeFlag collection_flag,
+            const CompleteCollectionHeader& header,
+            const CompleteCollectionElement& key,
+            const CompleteCollectionElement& element);
+
+    /**
+     * MinimalMapType constructed from CompleteMapType.
+     */
+
+    /*************** Enumeration: **************************************/
+
+    /**
+     * @brief Build CommonEnumeratedLiteral instance.
+     *
+     * @param[in] value Enumerated literal value.
+     * @param[in] flags Enumerated literal flags: only default flag apply.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if any other flag different from
+     *            default is set (only in Debug build mode).
+     * @return const CommonEnumeratedLiteral instance.
+     */
+    RTPS_DllAPI static const CommonEnumeratedLiteral build_common_enumerated_literal(
+            int32_t value,
+            EnumeratedLiteralFlag flags);
+
+    /**
+     * @brief Build CompleteEnumeratedLiteral instance.
+     *
+     * @param[in] common CommonEnumeratedLiteral.
+     * @param[in] detail CompleteMemberDetail.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given CommonEnumeratedLiteral is inconsistent (only in Debug build mode).
+     *              2. Given CompleteMemberDetail is inconsistent (only in Debug build mode).
+     * @return const CompleteEnumeratedLiteral instance.
+     */
+    RTPS_DllAPI static const CompleteEnumeratedLiteral build_complete_enumerated_literal(
+            const CommonEnumeratedLiteral& common,
+            const CompleteMemberDetail& detail);
+
+    /**
+     * @brief Add CompleteEnumeratedLiteral to sequence.
+     *
+     * @param[in] sequence Sequence to be modified.
+     * @param[in out] enum_literal CompleteEnumeratedLiteral to be added.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given
+     *            CommonEnumeratedLiteral is not consistent (only in Debug build mode).
+     */
+    RTPS_DllAPI static void add_complete_enumerated_literal(
+            CompleteEnumeratedLiteralSeq& sequence,
+            const CompleteEnumeratedLiteral& enum_literal);
+
+    /**
+     * MinimalEnumeratedLiteral constructed from CompleteEnumeratedLiteral.
+     */
+
+    /**
+     * @brief Build CommonEnumeratedHeader instance.
+     *
+     * @param[in] bit_bound XTypes v1.3 Clause 7.3.1.2.1.5 It is important to note that the value member of the
+     *                      [@bit_bound] annotation may take any value from 1 to 32, inclusive, when this annotation is
+     *                      applied to an enumerated type.
+     * @param[in] bitmask Flag in case that the header being built corresponds to a Bitmask. By default is false.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given bit_bound is not
+     *            consistent.
+     * @return const CommonEnumeratedHeader instance.
+     */
+    RTPS_DllAPI static const CommonEnumeratedHeader build_common_enumerated_header(
+            BitBound bit_bound,
+            bool bitmask = false);
+
+    /**
+     * @brief Build CompleteEnumeratedHeader instance.
+     *
+     * @param[in] common CommonEnumeratedHeader.
+     * @param[in] detail CompleteTypeDetail.
+     * @param[in] bitmask flag set if the given header corresponds to a bitmask. Only required in Debug build mode.
+     *                    Set to false by default.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given CommonEnumeratedHeader is inconsistent (only in Debug build mode).
+     *              2. Given CompleteTypeDetail is inconsistent (only in Debug build mode).
+     * @return const CompleteEnumeratedHeader instance.
+     */
+    RTPS_DllAPI static const CompleteEnumeratedHeader build_complete_enumerated_header(
+            const CommonEnumeratedHeader& common,
+            const CompleteTypeDetail& detail,
+            bool bitmask = false);
+
+    /**
+     * MinimalEnumeratedHeader constructed from CompleteEnumeratedHeader.
+     */
+
+    /**
+     * @brief Build CompleteEnumeratedType instance.
+     *
+     * @param[in] enum_flags Enumeration flags: unused. No flags apply. It must be 0.
+     * @param[in] header CompleteEnumeratedHeader.
+     * @param[in] literal_seq Sequence of CompleteEnumeratedLiterals.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Any flag is set.
+     *              2. Given CompleteEnumeratedHeader is inconsistent (only in Debug build mode).
+     *              3. Given CompleteEnumeratedLiteralSeq is inconsistent (only in Debug build mode).
+     * @return const CompleteEnumeratedType instance.
+     */
+    RTPS_DllAPI static const CompleteEnumeratedType build_complete_enumerated_type(
+            EnumTypeFlag enum_flags,
+            const CompleteEnumeratedHeader& header,
+            const CompleteEnumeratedLiteralSeq& literal_seq);
+
+    /**
+     * MinimalEnumeratedType constructed from CompleteEnumeratedType.
+     */
+
+    /*************** Bitmask: *******************************************/
+
+    /**
+     * @brief Build CommonBitflag instance.
+     *
+     * @param[in] position Bit position in the bitmask.
+     * @param[in] flags Bit flags: unused. No flags apply. It must be 0.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. any given flag is set.
+     *              2. given position is inconsistent. XTypes v1.3 Clause 7.2.2.4.1.2 Each bit in this subset is
+     *                 identified by name and by an index, numbered from 0 to (bound-1). The bound must be greater than
+     *                 zero and no greater than 64.
+     * @return const CommonBitflag instance.
+     */
+    RTPS_DllAPI static const CommonBitflag build_common_bitflag(
+            uint16_t position,
+            BitflagFlag flags);
+
+    /**
+     * @brief Build CompleteBitflag instance.
+     *
+     * @param[in] common CommonBitflag.
+     * @param[in] detail CompleteMemberDetail.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given CommonBitflag is inconsistent (only in Debug build mode).
+     *              2. Given CompleteMemberDetail is inconsistent (only in Debug build mode).
+     * @return const CompleteBitflag instance.
+     */
+    RTPS_DllAPI static const CompleteBitflag build_complete_bitflag(
+            const CommonBitflag& common,
+            const CompleteMemberDetail& detail);
+
+    /**
+     * @brief Add complete bitflag to the sequence.
+     *
+     * @param[in out] sequence Sequence to be modified.
+     * @param[in] bitflag CompleteBitflag to be added.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given bitflag is
+     *            inconsistent (only in Debug build mode).
+     */
+    RTPS_DllAPI static void add_complete_bitflag(
+            CompleteBitflagSeq& sequence,
+            const CompleteBitflag& bitflag);
+
+    /**
+     * MinimalBitflag constructed from CompleteBitflag.
+     */
+
+    /**
+     * CommonBitmaskHeader is not used.
+     * CompleteBitmaskHeader is defined as CompleteEnumeratedHeader.
+     * MinimalBitmaskHeader is defined as MinimalEnumeratedHeader.
+     */
+
+    /**
+     * @brief Build CompleteBitmaskType instance.
+     *
+     * @param[in] bitmask_flags Bitmask flags: unused. No flags apply. It must be 0.
+     * @param[in] header CompleteBitmaskHeader/CompleteEnumeratedHeader
+     * @param[in] flag_seq Sequence of CompleteBitflag.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. any given flag is set.
+     *              2. Given header is inconsistent (only in Debug build mode).
+     *              3. Given Bitflag sequence is inconsistent (only in Debug build mode).
+     * @return const CompleteBitmaskType instance.
+     */
+    RTPS_DllAPI static const CompleteBitmaskType build_complete_bitmask_type(
+            BitmaskTypeFlag bitmask_flags,
+            const CompleteBitmaskHeader& header,
+            const CompleteBitflagSeq& flag_seq);
+
+    /*************** Bitset: ********************************************/
+
+    /**
+     * @brief Build CommonBitfield instance.
+     *
+     * @param[in] position Bitfield starting position bit.
+     * @param[in] flags Bitfield flags: unused. No flags apply. It must be 0.
+     * @param[in] bitcount Bitfield number of bits. IDL v4.2 Clause 7.4.13.4.3.2 The first one (<positive_int_const>) is
+     *                 the number of bits that can be stored (its [bitfield] size). The maximum value is 64.
+     * @param[in] holder_type Type used to manipulate the bitfield. IDL v4.2 Clause 7.4.13.4.3.2 The second optional one
+     *                    (<destination_type>) specifies the type that will be used to manipulate the bit field as a
+     *                    whole. This type can be boolean, octet or any integer type either signed or unsigned.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given position is not consistent.
+     *              2. Any flag is set.
+     *              3. Given bitcount is not consistent.
+     *              4. Given holder_type is not consistent.
+     * @return const CommonBitfield instance.
+     */
+    RTPS_DllAPI static const CommonBitfield build_common_bitfield(
+            uint16_t position,
+            BitsetMemberFlag flags,
+            uint8_t bitcount,
+            TypeKind holder_type);
+
+    /**
+     * @brief Build CompleteBitfield instance.
+     *
+     * @param[in] common CommonBitfield.
+     * @param[in] detail CompleteMemberDetail.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given CommonBitfield is inconsistent (only Debug build mode).
+     *              2. Give CompleteMemberDetail is inconsistent (only Debug build mode).
+     * @return const CompleteBitfield instance.
+     */
+    RTPS_DllAPI static const CompleteBitfield build_complete_bitfield(
+            const CommonBitfield& common,
+            const CompleteMemberDetail& detail);
+
+    /**
+     * @brief Add complete bitfield to the sequence.
+     *
+     * @param[in out] sequence Sequence to be modified.
+     * @param[in] bitfield CompleteBitfield to be added.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given bitfield is
+     *            inconsistent (only in Debug build mode).
+     */
+    RTPS_DllAPI static void add_complete_bitfield(
+            CompleteBitfieldSeq& sequence,
+            const CompleteBitfield& bitfield);
+
+    /**
+     * MinimalBitfield constructed from CompleteBitfield.
+     */
+
+    /**
+     * @brief Build CompleteBitsetHeader instance.
+     *
+     * @param[in] detail CompleteTypeDetail
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given CompleteTypeDetail is
+     *            inconsistent (only in Debug build mode).
+     * @return const CompleteBitsetHeader instance.
+     */
+    RTPS_DllAPI static const CompleteBitsetHeader build_complete_bitset_header(
+            const CompleteTypeDetail& detail);
+
+    /**
+     * MinimalBitsetHeader constructed from CompleteBitsetHeader.
+     */
+
+    /**
+     * @brief Build CompleteBitsetType instance.
+     *
+     * @param[in] bitset_flags Bitset flags: unused. No flags apply. It must be 0.
+     * @param[in] header CompleteBitsetHeader.
+     * @param[in] field_seq Sequence of complete bitfields.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Any given flag is set.
+     *              2. Given header is inconsistent (only in Debug build mode).
+     *              3. Given bitfield sequence is inconsistent (only in Debug build mode).
+     * @return const CompleteBitsetType instance.
+     */
+    RTPS_DllAPI static const CompleteBitsetType build_complete_bitset_type(
+            BitsetTypeFlag bitset_flags,
+            const CompleteBitsetHeader& header,
+            const CompleteBitfieldSeq& field_seq);
+
+    /**
+     * MinimalBitsetType constructed from CompleteBitsetType.
+     */
+
+    /*************** Type Object: ***************************************/
+
+    /**
+     * @brief Build CompleteExtendedType instance. (empty. Available for future extension)
+     *
+     * @return const CompleteExtendedType instance.
+     */
+    RTPS_DllAPI static const CompleteExtendedType build_complete_extended_type();
+
+    /**
+     * @brief Register alias TypeObject into TypeObjectRegistry.
+     *        CompleteAliasType is provided and the minimal TypeObject is constructed from the complete one.
+     *
+     * @param[in] alias_type CompleteAliasType.
+     * @param[in] type_name Name to be registered in the registry.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given type is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with
+     *                      the given type_name.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_alias_type_object(
+            const CompleteAliasType& alias_type,
+            const std::string& type_name);
+
+    /**
+     * @brief Register annotation TypeObject into TypeObjectRegistry.
+     *        CompleteAnnotationType is provided and the minimal TypeObject is constructed from the complete one.
+     *
+     * @param[in] annotation_type CompleteAnnotationType.
+     * @param[in] type_name Name to be registered in the registry.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given type is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with
+     *                      the given type_name.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_annotation_type_object(
+            const CompleteAnnotationType& annotation_type,
+            const std::string& type_name);
+
+    /**
+     * @brief Register structure TypeObject into TypeObjectRegistry.
+     *        CompleteStructType is provided and the minimal TypeObject is constructed from the complete one.
+     *
+     * @param[in] struct_type CompleteStructType.
+     * @param[in] type_name Name to be registered in the registry.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given type is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with
+     *                      the given type_name.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_struct_type_object(
+            const CompleteStructType& struct_type,
+            const std::string& type_name);
+
+    /**
+     * @brief Register union TypeObject into TypeObjectRegistry.
+     *        CompleteUnionType is provided and the minimal TypeObject is constructed from the complete one.
+     *
+     * @param[in] union_type CompleteUnionType.
+     * @param[in] type_name Name to be registered in the registry.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given type is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with
+     *                      the given type_name.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_union_type_object(
+            const CompleteUnionType& union_type,
+            const std::string& type_name);
+
+    /**
+     * @brief Register bitset TypeObject into TypeObjectRegistry.
+     *        CompleteBitsetType is provided and the minimal TypeObject is constructed from the complete one.
+     *
+     * @param[in] bitset_type CompleteBitsetType.
+     * @param[in] type_name Name to be registered in the registry.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given type is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with
+     *                      the given type_name.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_bitset_type_object(
+            const CompleteBitsetType& bitset_type,
+            const std::string& type_name);
+
+    /**
+     * @brief Register sequence TypeObject into TypeObjectRegistry.
+     *        CompleteSequenceType is provided and the minimal TypeObject is constructed from the complete one.
+     *
+     * @param[in] sequence_type CompleteSequenceType.
+     * @param[in] type_name Name to be registered in the registry.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given type is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with
+     *                      the given type_name.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_sequence_type_object(
+            const CompleteSequenceType& sequence_type,
+            const std::string& type_name);
+
+    /**
+     * @brief Register array TypeObject into TypeObjectRegistry.
+     *        CompleteArrayType is provided and the minimal TypeObject is constructed from the complete one.
+     *
+     * @param[in] array_type CompleteArrayType.
+     * @param[in] type_name Name to be registered in the registry.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given type is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with
+     *                      the given type_name.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_array_type_object(
+            const CompleteArrayType& array_type,
+            const std::string& type_name);
+
+    /**
+     * @brief Register map TypeObject into TypeObjectRegistry.
+     *        CompleteMapType is provided and the minimal TypeObject is constructed from the complete one.
+     *
+     * @param[in] map_type CompleteMapType.
+     * @param[in] type_name Name to be registered in the registry.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given type is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with
+     *                      the given type_name.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_map_type_object(
+            const CompleteMapType& map_type,
+            const std::string& type_name);
+
+    /**
+     * @brief Register enumeration TypeObject into TypeObjectRegistry.
+     *        CompleteEnumeratedType is provided and the minimal TypeObject is constructed from the complete one.
+     *
+     * @param[in] enumerated_type CompleteEnumeratedType.
+     * @param[in] type_name Name to be registered in the registry.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given type is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with
+     *                      the given type_name.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_enumerated_type_object(
+            const CompleteEnumeratedType& enumerated_type,
+            const std::string& type_name);
+
+    /**
+     * @brief Register bitmask TypeObject into TypeObjectRegistry.
+     *        CompleteBitmaskType is provided and the minimal TypeObject is constructed from the complete one.
+     *
+     * @param[in] bitmask_type CompleteBitmaskType.
+     * @param[in] type_name Name to be registered in the registry.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given type is inconsistent
+     *            (only in Debug build mode).
+     * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
+     *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with
+     *                      the given type_name.
+     *                      RETCODE_BAD_PARAMETER if type_name is empty.
+     */
+    RTPS_DllAPI static ReturnCode_t build_and_register_bitmask_type_object(
+            const CompleteBitmaskType& bitmask_type,
+            const std::string& type_name);
 
     /*************** Auxiliary public methods ***************************/
 
@@ -1317,14 +1908,22 @@ protected:
      */
 
     /**
-     * @brief Check SBound consistency: must be different from 0.
+     * @brief Check bound consistency: must be different from 0.
      *
-     * @param[in] bound SBound to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given SBound is not
+     * @tparam Either SBound or LBound.
+     * @param[in] bound Bound to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given bound is not
      *            consistent.
      */
-    static void s_bound_consistency(
-            SBound bound);
+    template<typename T>
+    static void bound_consistency(
+            T bound)
+    {
+        if (INVALID_LBOUND == bound)
+        {
+            throw InvalidArgumentError("bound parameter must be greater than 0");
+        }
+    }
 
     /**
      * @brief Check LBound consistency: must be greater than 255.
@@ -1352,17 +1951,11 @@ protected:
         {
             throw InvalidArgumentError("array_bound_seq parameter must not be empty");
         }
+        for (auto bound : array)
+        {
+            bound_consistency(bound);
+        }
     }
-
-    /**
-     * @brief Check SBoundSeq consistency.
-     *
-     * @param[in] bound_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given SBoundSeq is
-     *            not consistent.
-     */
-    static void s_bound_seq_consistency(
-            const SBoundSeq& bound_seq);
 
     /**
      * @brief Check LBoundSeq consistency.
@@ -1406,6 +1999,34 @@ protected:
      */
     static void type_flag_consistency(
             TypeFlag type_flag);
+
+    /**
+     * @brief Check empty flags consistency.
+     *
+     * @tparam T Either MemberFlag or TypeFlag.
+     * @param[in] flags Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            flags are not consistent: empty (0).
+     */
+    template<typename T>
+    static void empty_flags_consistency(
+            T flags)
+    {
+        if (flags != 0)
+        {
+            throw InvalidArgumentError("Flags should be empty. No flags apply");
+        }
+    }
+
+    /**
+     * @brief Check EnumeratedLiteralFlag consistency: any flag different from default are not set.
+     *
+     * @param[in] enumerated_literal_flag Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given EnumeratedLiteralFlag
+     *            is not consistent.
+     */
+    static void enumerated_literal_flag_consistency(
+            EnumeratedLiteralFlag enumerated_literal_flag);
 
     /**
      * @brief Check PlainCollectionHeader consistency:
@@ -1617,6 +2238,16 @@ protected:
             const CompleteStructHeader& complete_struct_header);
 
     /**
+     * @brief Check CompleteStructType consistency.
+     *
+     * @param[in] complete_struct_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CompleteStructType
+     *            is not consistent.
+     */
+    static void complete_struct_type_consistency(
+            const CompleteStructType& complete_struct_type);
+
+    /**
      * @brief Check CommonUnionMember consistency.
      *
      * @param[in] common_union_member Instance to be checked.
@@ -1687,22 +2318,14 @@ protected:
             const CompleteDiscriminatorMember& complete_discriminator_member);
 
     /**
-     * @brief Check empty flags consistency.
+     * @brief Check CompleteUnionType consistency.
      *
-     * @tparam T Either MemberFlag or TypeFlag.
-     * @param[in] flags Instance to be checked.
+     * @param[in] complete_union_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
-     *            flags are not consistent: empty (0).
+     *            CompleteUnionType is not consistent.
      */
-    template<typename T>
-    static void empty_flags_consistency(
-            T flags)
-    {
-        if (flags != 0)
-        {
-            throw InvalidArgumentError("Flags should be empty. No flags apply");
-        }
-    }
+    static void complete_union_type_consistency(
+            const CompleteUnionType& complete_union_type);
 
     /**
      * @brief Check that the annotation value is of the same type as the given TypeIdentifier.
@@ -1747,6 +2370,16 @@ protected:
             const CompleteAnnotationParameterSeq& complete_annotation_parameter_seq);
 
     /**
+     * @brief Check CompleteAnnotationType consistency.
+     *
+     * @param[in] complete_annotation_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteAnnotationType is not consistent.
+     */
+    static void complete_annotation_type_consistency(
+            const CompleteAnnotationType& complete_annotation_type);
+
+    /**
      * @brief Check CommonAliasBody consistency.
      *
      * @param[in] common_alias_body Instance to be checked.
@@ -1777,6 +2410,16 @@ protected:
             const CompleteAliasHeader& complete_alias_header);
 
     /**
+     * @brief Check CompleteAliasType consistency.
+     *
+     * @param[in] complete_alias_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteAliasType is not consistent.
+     */
+    static void complete_alias_type_consistency(
+            const CompleteAliasType& complete_alias_type);
+
+    /**
      * @brief Check CompleteElementDetail consistency.
      *
      * @param[in] complete_element_detail Instance to be checked.
@@ -1795,6 +2438,281 @@ protected:
      */
     static void common_collection_element_consistency(
             const CommonCollectionElement& common_collection_element);
+
+    /**
+     * @brief Check CompleteCollectionElement consistency.
+     *
+     * @param[in] complete_collection_element Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteCollectionElement is not consistent.
+     */
+    static void complete_collection_element_consistency(
+            const CompleteCollectionElement& complete_collection_element);
+
+    /**
+     * @brief Check CommonCollectionHeader consistency.
+     *
+     * @param[in] common_collection_header Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CommonCollectionHeader is not consistent.
+     */
+    static void common_collection_header_consistency(
+            const CommonCollectionHeader& common_collection_header);
+
+    /**
+     * @brief Check CompleteCollectionHeader consistency.
+     *
+     * @param[in] complete_collection_header Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteCollectionHeader is not consistent.
+     */
+    static void complete_collection_header_consistency(
+            const CompleteCollectionHeader& complete_collection_header);
+
+    /**
+     * @brief Check CompleteSequenceType consistency.
+     *
+     * @param[in] complete_sequence_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteSequenceType is not consistent.
+     */
+    static void complete_sequence_type_consistency(
+            const CompleteSequenceType& complete_sequence_type);
+
+    /**
+     * @brief Check CommonArrayHeader consistency.
+     *
+     * @param[in] common_array_header Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CommonArrayHeader is not consistent.
+     */
+    static void common_array_header_consistency(
+            const CommonArrayHeader& common_array_header);
+
+    /**
+     * @brief Check CompleteArrayHeader consistency.
+     *
+     * @param[in] complete_array_header Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteArrayHeader is not consistent.
+     */
+    static void complete_array_header_consistency(
+            const CompleteArrayHeader& complete_array_header);
+
+    /**
+     * @brief Check CompleteArrayType consistency.
+     *
+     * @param[in] complete_array_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteArrayType is not consistent.
+     */
+    static void complete_array_type_consistency(
+            const CompleteArrayType& complete_array_type);
+
+    /**
+     * @brief Check CompleteMapType consistency.
+     *
+     * @param[in] complete_map_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteMapType is not consistent.
+     */
+    static void complete_map_type_consistency(
+            const CompleteMapType& complete_map_type);
+
+    /**
+     * @brief Check CommonEnumeratedLiteral consistency.
+     *
+     * @param[in] common_enumerated_literal Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CommonEnumeratedLiteral is not consistent.
+     */
+    static void common_enumerated_literal_consistency(
+            const CommonEnumeratedLiteral& common_enumerated_literal);
+
+    /**
+     * @brief Check CompleteEnumeratedLiteral consistency.
+     *
+     * @param[in] complete_enumerated_literal Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteEnumeratedLiteral is not consistent.
+     */
+    static void complete_enumerated_literal_consistency(
+            const CompleteEnumeratedLiteral& complete_enumerated_literal);
+
+    /**
+     * @brief Check CompleteEnumeratedLiteralSeq consistency.
+     *
+     * @param[in] complete_enumerated_literal_seq Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteEnumeratedLiteralSeq is not consistent.
+     */
+    static void complete_enumerated_literal_seq_consistency(
+            const CompleteEnumeratedLiteralSeq& complete_enumerated_literal_seq);
+
+    /**
+     * @brief Check enumeration BitBound consistency.
+     *
+     * @param[in] bit_bound Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            BitBound is not consistent.
+     */
+    static void enum_bit_bound_consistency(
+            BitBound bit_bound);
+
+    /**
+     * @brief Check bitmask BitBound consistency.
+     *
+     * @param[in] bit_bound Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            BitBound is not consistent.
+     */
+    static void bitmask_bit_bound_consistency(
+            BitBound bit_bound);
+
+    /**
+     * @brief Check CommonEnumeratedHeader consistency.
+     *
+     * @param[in] common_enumerated_header Instance to be checked.
+     * @param[in] bitmask flag in case that the header corresponds to a Bitmask. By default is false.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CommonEnumeratedHeader is not consistent.
+     */
+    static void common_enumerated_header_consistency(
+            const CommonEnumeratedHeader& common_enumerated_header,
+            bool bitmask = false);
+
+    /**
+     * @brief Check CompleteEnumeratedHeader consistency.
+     *
+     * @param[in] complete_enumerated_header Instance to be checked.
+     * @param[in] bitmask Flag in case that the header corresponds to a Bitmask. By default is false.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteEnumeratedHeader is not consistent.
+     */
+    static void complete_enumerated_header_consistency(
+            const CompleteEnumeratedHeader& complete_enumerated_header,
+            bool bitmask = false);
+
+    /**
+     * @brief Check CompleteEnumeratedType consistency.
+     *
+     * @param[in] complete_enumerated_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteEnumeratedType is not consistent.
+     */
+    static void complete_enumerated_type_consistency(
+            const CompleteEnumeratedType& complete_enumerated_type);
+
+    /**
+     * @brief Check bitflag position consistency.
+     *
+     * @param[in] position Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            bitflag position is not consistent.
+     */
+    static void bit_position_consistency(
+            uint16_t position);
+
+    /**
+     * @brief Check CommonBitflag consistency.
+     *
+     * @param[in] common_bitflag Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CommonBitflag is not consistent.
+     */
+    static void common_bitflag_consistency(
+            const CommonBitflag& common_bitflag);
+
+    /**
+     * @brief Check CompleteBitflag consistency.
+     *
+     * @param[in] complete_bitflag Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteBitflag is not consistent.
+     */
+    static void complete_bitflag_consistency(
+            const CompleteBitflag& complete_bitflag);
+
+    /**
+     * @brief Check CompleteBitflagSeq consistency.
+     *
+     * @param[in] complete_bitflag_seq Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteBitflagSeq is not consistent.
+     */
+    static void complete_bitflag_seq_consistency(
+            const CompleteBitflagSeq& complete_bitflag_seq);
+
+    /**
+     * @brief Check CompleteBitmaskType consistency.
+     *
+     * @param[in] complete_bitmask_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteBitmaskType is not consistent.
+     */
+    static void complete_bitmask_type_consistency(
+            const CompleteBitmaskType& complete_bitmask_type);
+
+    /**
+     * @brief Check consistency between the holder type and the bitcount.
+     *
+     * @param[in] holder_type TypeKind of the bitfield holder type.
+     * @param[in] bitcount Bitfield number of bits.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given data is inconsistent.
+     */
+    static void bitfield_holder_type_consistency(
+            TypeKind holder_type,
+            uint8_t bitcount);
+
+    /**
+     * @brief Check CommonBitfield consistency.
+     *
+     * @param[in] common_bitfield Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CommonBitfield is not consistent.
+     */
+    static void common_bitfield_consistency(
+            const CommonBitfield& common_bitfield);
+
+    /**
+     * @brief Check CompleteBitfield consistency.
+     *
+     * @param[in] complete_bitfield Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteBitfield is not consistent.
+     */
+    static void complete_bitfield_consistency(
+            const CompleteBitfield& complete_bitfield);
+
+    /**
+     * @brief Check CompleteBitfieldSeq consistency.
+     *
+     * @param[in] complete_bitfield_seq Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteBitfieldSeq is not consistent.
+     */
+    static void complete_bitfield_seq_consistency(
+            const CompleteBitfieldSeq& complete_bitfield_seq);
+
+    /**
+     * @brief Check CompleteBitsetHeader consistency.
+     *
+     * @param[in] complete_bitset_header Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteBitsetHeader is not consistent.
+     */
+    static void complete_bitset_header_consistency(
+            const CompleteBitsetHeader& complete_bitset_header);
+
+    /**
+     * @brief Check CompleteBitsetType consistency.
+     *
+     * @param[in] complete_bitset_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteBitsetType is not consistent.
+     */
+    static void complete_bitset_type_consistency(
+            const CompleteBitsetType& complete_bitset_type);
 
 };
 
