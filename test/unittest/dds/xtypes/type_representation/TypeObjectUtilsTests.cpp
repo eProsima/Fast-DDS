@@ -545,14 +545,17 @@ TEST(TypeObjectUtilsTests, register_s_string)
 {
     StringSTypeDefn string_defn = TypeObjectUtils::build_string_s_type_defn(32);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_string_type_identifier(string_defn,
-        "test"));
+        "small_string"));
     // Registering twice the same TypeIdentifier should not fail
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_string_type_identifier(string_defn,
-        "test"));
+        "small_string"));
     // Registering another TypeIdentifier with the same name should return RETCODE_BAD_PARAMETER
     StringSTypeDefn another_string_defn = TypeObjectUtils::build_string_s_type_defn(100);
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_string_type_identifier(
-        another_string_defn, "test"));
+        another_string_defn, "small_string"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_string_type_identifier(
+        another_string_defn, type_name));
 }
 
 // Register large string/wstring. This test does not check member consistency (only checked in Debug build mode).
@@ -560,14 +563,17 @@ TEST(TypeObjectUtilsTests, register_l_string)
 {
     StringLTypeDefn string_defn = TypeObjectUtils::build_string_l_type_defn(1000);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_string_type_identifier(string_defn,
-        "test"));
+        "large_string"));
     // Registering twice the same TypeIdentifier should not fail
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_string_type_identifier(string_defn,
-        "test"));
+        "large_string"));
     // Registering another TypeIdentifier with the same name should return RETCODE_BAD_PARAMETER
     StringLTypeDefn another_string_defn = TypeObjectUtils::build_string_l_type_defn(2000);
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_string_type_identifier(
-        another_string_defn, "test"));
+        another_string_defn, "large_string"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_string_type_identifier(
+        another_string_defn, type_name));
 }
 
 // Register small sequence. This test does not check member consistency (only checked in Debug build mode).
@@ -583,11 +589,14 @@ TEST(TypeObjectUtilsTests, register_s_sequence)
     PlainSequenceSElemDefn another_plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
         header, 255, primitive_identifier);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_sequence_type_identifier(plain_seq,
-        "test"));
+        "small_sequence"));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_sequence_type_identifier(plain_seq,
-        "test"));
+        "small_sequence"));
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_sequence_type_identifier(
-        another_plain_seq, "test"));
+        another_plain_seq, "small_sequence"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_sequence_type_identifier(
+        another_plain_seq, type_name));
 }
 
 // Register large sequence. This test does not check member consistency (only checked in Debug build mode).
@@ -603,11 +612,14 @@ TEST(TypeObjectUtilsTests, register_l_sequence)
     PlainSequenceLElemDefn another_plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
         header, 256, primitive_identifier);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_sequence_type_identifier(plain_seq,
-        "test"));
+        "large_sequence"));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_sequence_type_identifier(plain_seq,
-        "test"));
+        "large_sequence"));
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_sequence_type_identifier(
-        another_plain_seq, "test"));
+        another_plain_seq, "large_sequence"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_sequence_type_identifier(
+        another_plain_seq, type_name));
 }
 
 // Register small array. This test does not check member consistency (only checked in Debug build mode).
@@ -622,14 +634,17 @@ TEST(TypeObjectUtilsTests, register_s_array)
     PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(header, array_bounds,
         primitive_identifier);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_array_type_identifier(plain_array,
-        "test"));
+        "small_array"));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_array_type_identifier(plain_array,
-        "test"));
+        "small_array"));
     TypeObjectUtils::add_array_dimension(array_bounds, 100);
     PlainArraySElemDefn another_plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(header, array_bounds,
         primitive_identifier);
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_array_type_identifier(
-        another_plain_array, "test"));
+        another_plain_array, "small_array"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_array_type_identifier(
+        another_plain_array, type_name));
 }
 
 // Register large array. This test does not check member consistency (only checked in Debug build mode).
@@ -644,14 +659,17 @@ TEST(TypeObjectUtilsTests, register_l_array)
     PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(header, array_bounds,
         primitive_identifier);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_array_type_identifier(plain_array,
-        "test"));
+        "large_array"));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_array_type_identifier(plain_array,
-        "test"));
+        "large_array"));
     TypeObjectUtils::add_array_dimension(array_bounds, 1000);
     PlainArrayLElemDefn another_plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(header, array_bounds,
         primitive_identifier);
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_array_type_identifier(
-        another_plain_array, "test"));
+        another_plain_array, "large_array"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_array_type_identifier(
+        another_plain_array, type_name));
 }
 
 // Register small map. This test does not check member consistency (only checked in Debug build mode).
@@ -668,11 +686,14 @@ TEST(TypeObjectUtilsTests, register_s_map)
     PlainMapSTypeDefn another_plain_map = TypeObjectUtils::build_plain_map_s_type_defn(header, 10, primitive_identifier,
         flags, key_identifier);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_map_type_identifier(plain_map,
-        "test"));
+        "small_map"));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_map_type_identifier(plain_map,
-        "test"));
+        "small_map"));
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_map_type_identifier(
-        another_plain_map, "test"));
+        another_plain_map, "small_map"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_map_type_identifier(
+        another_plain_map, type_name));
 }
 
 // Register large map. This test does not check member consistency (only checked in Debug build mode).
@@ -689,11 +710,14 @@ TEST(TypeObjectUtilsTests, register_l_map)
     PlainMapLTypeDefn other_plain_map = TypeObjectUtils::build_plain_map_l_type_defn(header, 500, primitive_identifier,
         flags, key_identifier);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_map_type_identifier(plain_map,
-        "test"));
+        "large_map"));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_map_type_identifier(plain_map,
-        "test"));
+        "large_map"));
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_map_type_identifier(
-        other_plain_map, "test"));
+        other_plain_map, "large_map"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_map_type_identifier(
+        other_plain_map, type_name));
 }
 
 // Build CommonAnnotationParameter with non-empty flags
@@ -751,6 +775,482 @@ TEST(TypeObjectUtilsTests, build_complete_alias_type_non_empty_flags)
         header, body), InvalidArgumentError);
     EXPECT_NO_THROW(CompleteAliasType alias = TypeObjectUtils::build_complete_alias_type(empty_flags,
         header, body));
+}
+
+// Build CommonCollectionHeader with invalid bound
+TEST(TypeObjectUtilsTests, build_common_collection_header_invalid_bound)
+{
+    LBound bound = 0;
+    EXPECT_THROW(CommonCollectionHeader header = TypeObjectUtils::build_common_collection_header(bound),
+        InvalidArgumentError);
+    bound = 10;
+    EXPECT_NO_THROW(CommonCollectionHeader header = TypeObjectUtils::build_common_collection_header(bound));
+}
+
+// Build CompleteSequenceType with non-empty flags.
+TEST(TypeObjectUtilsTests, build_complete_sequence_type_non_empty_flags)
+{
+    CollectionTypeFlag non_empty_flags = 1;
+    CollectionTypeFlag empty_flags = 0;
+    CommonCollectionHeader common_header = TypeObjectUtils::build_common_collection_header(356);
+    CompleteCollectionHeader header = TypeObjectUtils::build_complete_collection_header(common_header,
+        eprosima::fastcdr::optional<CompleteTypeDetail>());
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::USE_DEFAULT, true);
+    TypeIdentifier type_id;
+    type_id._d(TK_FLOAT128);
+    CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
+    CompleteElementDetail detail;
+    CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element, detail);
+    EXPECT_THROW(CompleteSequenceType sequence = TypeObjectUtils::build_complete_sequence_type(non_empty_flags, header,
+        element), InvalidArgumentError);
+    EXPECT_NO_THROW(CompleteSequenceType sequence = TypeObjectUtils::build_complete_sequence_type(empty_flags, header,
+        element));
+}
+
+// Build CommonArrayHeader with invalid bound
+TEST(TypeObjectUtilsTests, build_common_array_header_invalid_bound)
+{
+    LBoundSeq array_bounds;
+    EXPECT_THROW(CommonArrayHeader header = TypeObjectUtils::build_common_array_header(array_bounds),
+        InvalidArgumentError);
+    TypeObjectUtils::add_array_dimension(array_bounds, 150);
+    EXPECT_NO_THROW(CommonArrayHeader header = TypeObjectUtils::build_common_array_header(array_bounds));
+    TypeObjectUtils::add_array_dimension(array_bounds, 0);
+    EXPECT_THROW(CommonArrayHeader header = TypeObjectUtils::build_common_array_header(array_bounds),
+        InvalidArgumentError);
+}
+
+// Build CompleteArrayType with non-empty flags.
+TEST(TypeObjectUtilsTests, build_complete_array_type_non_empty_flags)
+{
+    CollectionTypeFlag non_empty_flags = 1;
+    CollectionTypeFlag empty_flags = 0;
+    LBoundSeq array_bounds;
+    TypeObjectUtils::add_array_dimension(array_bounds, 356);
+    CommonArrayHeader common_header = TypeObjectUtils::build_common_array_header(array_bounds);
+    CompleteTypeDetail type_detail;
+    CompleteArrayHeader header = TypeObjectUtils::build_complete_array_header(common_header, type_detail);
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::USE_DEFAULT, true);
+    TypeIdentifier type_id;
+    type_id._d(TK_FLOAT128);
+    CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
+    CompleteElementDetail detail;
+    CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element, detail);
+    EXPECT_THROW(CompleteArrayType array = TypeObjectUtils::build_complete_array_type(non_empty_flags, header,
+        element), InvalidArgumentError);
+    EXPECT_NO_THROW(CompleteArrayType array = TypeObjectUtils::build_complete_array_type(empty_flags, header,
+        element));
+}
+
+// Build CompleteMapType with non-empty flags.
+TEST(TypeObjectUtilsTests, build_complete_map_type_non_empty_flags)
+{
+    CollectionTypeFlag non_empty_flags = 1;
+    CollectionTypeFlag empty_flags = 0;
+    CommonCollectionHeader common_header = TypeObjectUtils::build_common_collection_header(356);
+    CompleteCollectionHeader header = TypeObjectUtils::build_complete_collection_header(common_header,
+        eprosima::fastcdr::optional<CompleteTypeDetail>());
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::USE_DEFAULT, true);
+    TypeIdentifier type_id;
+    type_id._d(TK_INT16);
+    CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
+    CompleteElementDetail detail;
+    CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(non_empty_flags, header,
+        element, element), InvalidArgumentError);
+    EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+        element, element));
+}
+
+// Build CompleteMapType with inconsistent key TypeIdentifier.
+TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
+{
+    CollectionTypeFlag empty_flags = 0;
+    CommonCollectionHeader common_header = TypeObjectUtils::build_common_collection_header(356);
+    CompleteCollectionHeader header = TypeObjectUtils::build_complete_collection_header(common_header,
+        eprosima::fastcdr::optional<CompleteTypeDetail>());
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::USE_DEFAULT, true);
+    TypeIdentifier type_id;
+    type_id._d(TK_FLOAT32);
+    CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
+    CompleteElementDetail detail;
+    CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+        element, element), InvalidArgumentError);
+    TypeIdentifier key_type_id;
+    key_type_id._d(TK_INT32);
+    CommonCollectionElement common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    CompleteCollectionElement key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+        key, element));
+}
+
+// Build CommonEnumeratedHeader with inconsistent bit bound
+TEST(TypeObjectUtilsTests, build_common_enumerated_header_inconsistent_bit_bound)
+{
+    BitBound bit_bound = 0;
+    EXPECT_THROW(CommonEnumeratedHeader header = TypeObjectUtils::build_common_enumerated_header(bit_bound),
+        InvalidArgumentError);
+    bit_bound = 16;
+    EXPECT_NO_THROW(CommonEnumeratedHeader header = TypeObjectUtils::build_common_enumerated_header(bit_bound));
+    bit_bound = 33;
+    EXPECT_THROW(CommonEnumeratedHeader header = TypeObjectUtils::build_common_enumerated_header(bit_bound),
+        InvalidArgumentError);
+}
+
+// Build CompleteEnumeratedType with non-empty flags
+TEST(TypeObjectUtilsTests, build_complete_enumerated_type_non_empty_flags)
+{
+    EnumTypeFlag empty_flags = 0;
+    EnumTypeFlag non_empty_flags = 1;
+    CommonEnumeratedHeader common_header = TypeObjectUtils::build_common_enumerated_header(32);
+    CompleteTypeDetail type_detail;
+    CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common_header, type_detail);
+    CommonEnumeratedLiteral common_literal = TypeObjectUtils::build_common_enumerated_literal(1, 0);
+    CompleteMemberDetail member_detail;
+    CompleteEnumeratedLiteral literal = TypeObjectUtils::build_complete_enumerated_literal(common_literal,
+        member_detail);
+    CompleteEnumeratedLiteralSeq literal_seq;
+    TypeObjectUtils::add_complete_enumerated_literal(literal_seq, literal);
+    EXPECT_THROW(CompleteEnumeratedType enumeration = TypeObjectUtils::build_complete_enumerated_type(non_empty_flags,
+        header, literal_seq), InvalidArgumentError);
+    EXPECT_NO_THROW(CompleteEnumeratedType enumeration = TypeObjectUtils::build_complete_enumerated_type(empty_flags,
+        header, literal_seq));
+}
+
+// Build CommonBitflag with inconsistent data
+TEST(TypeObjectUtilsTests, build_common_bitflag_inconsistent_data)
+{
+    BitflagFlag empty_flags = 0;
+    BitflagFlag non_empty_flags = 1;
+    EXPECT_THROW(CommonBitflag bitflag = TypeObjectUtils::build_common_bitflag(65, non_empty_flags),
+        InvalidArgumentError);
+    EXPECT_THROW(CommonBitflag bitflag = TypeObjectUtils::build_common_bitflag(65, empty_flags),
+        InvalidArgumentError);
+    EXPECT_THROW(CommonBitflag bitflag = TypeObjectUtils::build_common_bitflag(32, non_empty_flags),
+        InvalidArgumentError);
+    EXPECT_NO_THROW(CommonBitflag bitflag = TypeObjectUtils::build_common_bitflag(32, empty_flags));
+}
+
+// Build CompleteBitmaskType with non-empty flags
+TEST(TypeObjectUtilsTests, build_complete_bitmask_type_non_empty_flags)
+{
+    EnumTypeFlag empty_flags = 0;
+    EnumTypeFlag non_empty_flags = 1;
+    CommonEnumeratedHeader common_header = TypeObjectUtils::build_common_enumerated_header(64, true);
+    CompleteTypeDetail type_detail;
+    CompleteBitmaskHeader header = TypeObjectUtils::build_complete_enumerated_header(common_header, type_detail, true);
+    CompleteBitflag bitflag;
+    CompleteBitflagSeq bitflag_seq;
+    TypeObjectUtils::add_complete_bitflag(bitflag_seq, bitflag);
+    EXPECT_THROW(CompleteBitmaskType bitmask = TypeObjectUtils::build_complete_bitmask_type(non_empty_flags, header,
+        bitflag_seq), InvalidArgumentError);
+    EXPECT_NO_THROW(CompleteBitmaskType bitmask = TypeObjectUtils::build_complete_bitmask_type(empty_flags, header,
+        bitflag_seq));
+}
+
+// Build CommonBitfield with inconsistent data
+TEST(TypeObjectUtilsTests, build_common_bitfield_inconsistent_data)
+{
+    BitsetMemberFlag empty_flags = 0;
+    BitsetMemberFlag non_empty_flags = 1;
+    EXPECT_THROW(CommonBitfield bitfield = TypeObjectUtils::build_common_bitfield(65, non_empty_flags, 0, TK_FLOAT128),
+        InvalidArgumentError);
+    EXPECT_THROW(CommonBitfield bitfield = TypeObjectUtils::build_common_bitfield(32, non_empty_flags, 0, TK_FLOAT128),
+        InvalidArgumentError);
+    EXPECT_THROW(CommonBitfield bitfield = TypeObjectUtils::build_common_bitfield(65, empty_flags, 0, TK_FLOAT128),
+        InvalidArgumentError);
+    EXPECT_THROW(CommonBitfield bitfield = TypeObjectUtils::build_common_bitfield(65, non_empty_flags, 3, TK_FLOAT128),
+        InvalidArgumentError);
+    EXPECT_THROW(CommonBitfield bitfield = TypeObjectUtils::build_common_bitfield(65, non_empty_flags, 0, TK_BYTE),
+        InvalidArgumentError);
+    EXPECT_NO_THROW(CommonBitfield bitfield = TypeObjectUtils::build_common_bitfield(32, empty_flags, 3, TK_BYTE));
+    EXPECT_THROW(CommonBitfield bitfield = TypeObjectUtils::build_common_bitfield(32, empty_flags, 3, TK_BOOLEAN),
+        InvalidArgumentError);
+    EXPECT_THROW(CommonBitfield bitfield = TypeObjectUtils::build_common_bitfield(32, empty_flags, 15, TK_BYTE),
+        InvalidArgumentError);
+    EXPECT_THROW(CommonBitfield bitfield = TypeObjectUtils::build_common_bitfield(32, empty_flags, 27, TK_UINT16),
+        InvalidArgumentError);
+    EXPECT_THROW(CommonBitfield bitfield = TypeObjectUtils::build_common_bitfield(0, empty_flags, 33, TK_INT32),
+        InvalidArgumentError);
+    EXPECT_NO_THROW(CommonBitfield bitfield = TypeObjectUtils::build_common_bitfield(0, empty_flags, 64, TK_INT64));
+    EXPECT_THROW(CommonBitfield bitfield = TypeObjectUtils::build_common_bitfield(1, empty_flags, 64, TK_UINT64),
+        InvalidArgumentError);
+}
+
+// Build CompleteBitsetType with non-empty flags
+TEST(TypeObjectUtilsTests, build_complete_bitset_type_non_empty_flags)
+{
+    BitsetTypeFlag empty_flags = 0;
+    BitsetTypeFlag non_empty_flags = 1;
+    CommonBitfield common_bitfield = TypeObjectUtils::build_common_bitfield(0, empty_flags, 3, TK_BYTE);
+    CompleteBitfield bitfield = TypeObjectUtils::build_complete_bitfield(common_bitfield, CompleteMemberDetail());
+    CompleteBitfieldSeq bitfield_seq;
+    TypeObjectUtils::add_complete_bitfield(bitfield_seq, bitfield);
+    EXPECT_THROW(CompleteBitsetType bitset = TypeObjectUtils::build_complete_bitset_type(non_empty_flags,
+        CompleteBitsetHeader(), bitfield_seq), InvalidArgumentError);
+    EXPECT_NO_THROW(CompleteBitsetType bitset = TypeObjectUtils::build_complete_bitset_type(empty_flags,
+        CompleteBitsetHeader(), bitfield_seq));
+}
+
+// Register alias TypeObject
+TEST(TypeObjectUtilsTests, register_alias_type_object)
+{
+    TypeIdentifier related_type;
+    related_type._d(TK_CHAR16);
+    CommonAliasBody common_body = TypeObjectUtils::build_common_alias_body(0, related_type);
+    CompleteAliasBody body = TypeObjectUtils::build_complete_alias_body(common_body,
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteAliasType alias = TypeObjectUtils::build_complete_alias_type(0, CompleteAliasHeader(), body);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_alias_type_object(alias, "alias"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_alias_type_object(alias, "alias"));
+    CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>(),
+        "alias_name");
+    CompleteAliasHeader header = TypeObjectUtils::build_complete_alias_header(detail);
+    CompleteAliasType other_alias = TypeObjectUtils::build_complete_alias_type(0, header, body);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_alias_type_object(other_alias,
+        "alias"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_alias_type_object(other_alias,
+        type_name));
+}
+
+// Register annotation TypeObject
+TEST(TypeObjectUtilsTests, register_annotation_type_object)
+{
+    CompleteAnnotationHeader header = TypeObjectUtils::build_complete_annotation_header("annotation_name");
+    CompleteAnnotationType annotation = TypeObjectUtils::build_complete_annotation_type(0, header,
+        CompleteAnnotationParameterSeq());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(annotation,
+        "annotation"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(annotation,
+        "annotation"));
+    CompleteAnnotationHeader other_header = TypeObjectUtils::build_complete_annotation_header("other_annotation_name");
+    CompleteAnnotationType other_annotation = TypeObjectUtils::build_complete_annotation_type(0, other_header,
+        CompleteAnnotationParameterSeq());
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_annotation_type_object(
+        other_annotation, "annotation"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_annotation_type_object(
+        other_annotation, type_name));
+}
+
+// Register structure TypeObject
+TEST(TypeObjectUtilsTests, register_structure_type_object)
+{
+    StructTypeFlag flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::APPENDABLE, false, false);
+    CompleteStructType structure = TypeObjectUtils::build_complete_struct_type(flags, CompleteStructHeader(),
+        CompleteStructMemberSeq());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_struct_type_object(structure,
+        "structure"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_struct_type_object(structure,
+        "structure"));
+    StructTypeFlag other_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::FINAL, false, false);
+    CompleteStructType other_structure = TypeObjectUtils::build_complete_struct_type(other_flags,
+        CompleteStructHeader(), CompleteStructMemberSeq());
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_struct_type_object(
+        other_structure, "structure"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_struct_type_object(
+        other_structure, type_name));
+}
+
+// Register union TypeObject
+TEST(TypeObjectUtilsTests, register_union_type_object)
+{
+    UnionTypeFlag flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::APPENDABLE, false, false);
+    UnionDiscriminatorFlag discr_flags = TypeObjectUtils::build_union_discriminator_flag(TryConstructKind::USE_DEFAULT,
+        false);
+    TypeIdentifier discriminator_type_id;
+    discriminator_type_id._d(TK_BYTE);
+    CommonDiscriminatorMember discr_member = TypeObjectUtils::build_common_discriminator_member(discr_flags,
+        discriminator_type_id);
+    CompleteDiscriminatorMember discriminator = TypeObjectUtils::build_complete_discriminator_member(discr_member,
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::TRIM, false, false);
+    TypeIdentifier type_id;
+    type_id._d(TK_FLOAT128);
+    UnionCaseLabelSeq case_labels;
+    TypeObjectUtils::add_union_case_label(case_labels, 5);
+    CommonUnionMember common_member = TypeObjectUtils::build_common_union_member(3, member_flags, type_id, case_labels);
+    CompleteUnionMember member = TypeObjectUtils::build_complete_union_member(common_member, CompleteMemberDetail());
+    CompleteUnionMemberSeq member_seq;
+    TypeObjectUtils::add_complete_union_member(member_seq, member);
+    CompleteUnionType union_type = TypeObjectUtils::build_complete_union_type(flags, CompleteUnionHeader(),
+        discriminator, member_seq);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_union_type_object(union_type, "union"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_union_type_object(union_type, "union"));
+    UnionTypeFlag other_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::MUTABLE, false, false);
+    CompleteUnionType other_union_type = TypeObjectUtils::build_complete_union_type(other_flags, CompleteUnionHeader(),
+        discriminator, member_seq);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_union_type_object(
+        other_union_type, "union"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_union_type_object(
+        other_union_type, type_name));
+}
+
+// Register bitset TypeObject
+TEST(TypeObjectUtilsTests, register_bitset_type_object)
+{
+    CommonBitfield common_bitfield = TypeObjectUtils::build_common_bitfield(0, 0, 3, TK_BYTE);
+    CompleteBitfield bitfield = TypeObjectUtils::build_complete_bitfield(common_bitfield, CompleteMemberDetail());
+    CompleteBitfieldSeq bitfield_seq;
+    TypeObjectUtils::add_complete_bitfield(bitfield_seq, bitfield);
+    CompleteBitsetType bitset = TypeObjectUtils::build_complete_bitset_type(0, CompleteBitsetHeader(), bitfield_seq);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitset_type_object(bitset, "bitset"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitset_type_object(bitset, "bitset"));
+    CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>(),
+        "bitset");
+    CompleteBitsetHeader header = TypeObjectUtils::build_complete_bitset_header(detail);
+    CompleteBitsetType other_bitset = TypeObjectUtils::build_complete_bitset_type(0, header, bitfield_seq);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_bitset_type_object(
+        other_bitset, "bitset"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_bitset_type_object(
+        other_bitset, type_name));
+}
+
+// Register sequence TypeObject
+TEST(TypeObjectUtilsTests, register_sequence_type_object)
+{
+    CommonCollectionHeader common_header = TypeObjectUtils::build_common_collection_header(356);
+    CompleteCollectionHeader header = TypeObjectUtils::build_complete_collection_header(common_header,
+        eprosima::fastcdr::optional<CompleteTypeDetail>());
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::USE_DEFAULT, true);
+    TypeIdentifier type_id;
+    type_id._d(TK_FLOAT128);
+    CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
+    CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element,
+        CompleteElementDetail());
+    CompleteSequenceType sequence = TypeObjectUtils::build_complete_sequence_type(0, header, element);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_sequence_type_object(sequence, "sequence"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_sequence_type_object(sequence, "sequence"));
+    CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>(),
+        "sequence");
+    CompleteCollectionHeader other_header = TypeObjectUtils::build_complete_collection_header(common_header, detail);
+    CompleteSequenceType other_sequence = TypeObjectUtils::build_complete_sequence_type(0, other_header, element);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_sequence_type_object(
+        other_sequence, "sequence"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_sequence_type_object(
+        other_sequence, type_name));
+}
+
+// Register array TypeObject
+TEST(TypeObjectUtilsTests, register_array_type_object)
+{
+    LBoundSeq array_bounds;
+    TypeObjectUtils::add_array_dimension(array_bounds, 356);
+    CommonArrayHeader common_header = TypeObjectUtils::build_common_array_header(array_bounds);
+    CompleteArrayHeader header = TypeObjectUtils::build_complete_array_header(common_header, CompleteTypeDetail());
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::USE_DEFAULT, true);
+    TypeIdentifier type_id;
+    type_id._d(TK_FLOAT128);
+    CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
+    CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element,
+        CompleteElementDetail());
+    CompleteArrayType array = TypeObjectUtils::build_complete_array_type(0, header, element);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_array_type_object(array, "array"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_array_type_object(array, "array"));
+    type_id._d(TK_INT16);
+    CommonCollectionElement other_common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
+    CompleteCollectionElement other_element = TypeObjectUtils::build_complete_collection_element(other_common_element,
+        CompleteElementDetail());
+    CompleteArrayType other_array = TypeObjectUtils::build_complete_array_type(0, header, other_element);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_array_type_object(other_array,
+        "array"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_array_type_object(other_array,
+        type_name));
+}
+
+// Register map TypeObject
+TEST(TypeObjectUtilsTests, register_map_type_object)
+{
+    CommonCollectionHeader common_header = TypeObjectUtils::build_common_collection_header(356);
+    CompleteCollectionHeader header = TypeObjectUtils::build_complete_collection_header(common_header,
+        eprosima::fastcdr::optional<CompleteTypeDetail>());
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::USE_DEFAULT, true);
+    TypeIdentifier type_id;
+    type_id._d(TK_INT16);
+    CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
+    CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element,
+        CompleteElementDetail());
+    CompleteMapType map = TypeObjectUtils::build_complete_map_type(0, header, element, element);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_map_type_object(map, "map"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_map_type_object(map, "map"));
+    type_id._d(TK_INT32);
+    CommonCollectionElement key_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
+    CompleteCollectionElement key = TypeObjectUtils::build_complete_collection_element(key_element,
+        CompleteElementDetail());
+    CompleteMapType other_map = TypeObjectUtils::build_complete_map_type(0, header, key, element);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_map_type_object(other_map,
+        "map"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_map_type_object(other_map,
+        type_name));
+}
+
+// Register enumeration TypeObject
+TEST(TypeObjectUtilsTests, register_enumerated_type_object)
+{
+    CommonEnumeratedHeader common_header = TypeObjectUtils::build_common_enumerated_header(32);
+    CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common_header,
+        CompleteTypeDetail());
+    CommonEnumeratedLiteral common_literal = TypeObjectUtils::build_common_enumerated_literal(1, 0);
+    CompleteEnumeratedLiteral literal = TypeObjectUtils::build_complete_enumerated_literal(common_literal,
+        CompleteMemberDetail());
+    CompleteEnumeratedLiteralSeq literal_seq;
+    TypeObjectUtils::add_complete_enumerated_literal(literal_seq, literal);
+    CompleteEnumeratedType enumeration = TypeObjectUtils::build_complete_enumerated_type(0, header, literal_seq);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_enumerated_type_object(enumeration,
+        "enum"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_enumerated_type_object(enumeration,
+        "enum"));
+    CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>(),
+        "enumeration");
+    CompleteEnumeratedHeader other_header = TypeObjectUtils::build_complete_enumerated_header(common_header, detail);
+    CompleteEnumeratedType other_enumeration = TypeObjectUtils::build_complete_enumerated_type(0, other_header,
+        literal_seq);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_enumerated_type_object(other_enumeration,
+        "enum"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_enumerated_type_object(other_enumeration,
+        type_name));
+}
+
+// Register bitmask TypeObject
+TEST(TypeObjectUtilsTests, register_bitmask_type_object)
+{
+    CommonEnumeratedHeader common_header = TypeObjectUtils::build_common_enumerated_header(64, true);
+    CompleteTypeDetail type_detail;
+    CompleteBitmaskHeader header = TypeObjectUtils::build_complete_enumerated_header(common_header, type_detail, true);
+    CompleteBitflag bitflag;
+    CompleteBitflagSeq bitflag_seq;
+    TypeObjectUtils::add_complete_bitflag(bitflag_seq, bitflag);
+    CompleteBitmaskType bitmask = TypeObjectUtils::build_complete_bitmask_type(0, header, bitflag_seq);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitmask_type_object(bitmask, "bitmask"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitmask_type_object(bitmask, "bitmask"));
+    CommonBitflag common = TypeObjectUtils::build_common_bitflag(1, 0);
+    CompleteBitflag other_bitflag = TypeObjectUtils::build_complete_bitflag(common, CompleteMemberDetail());
+    TypeObjectUtils::add_complete_bitflag(bitflag_seq, other_bitflag);
+    CompleteBitmaskType other_bitmask = TypeObjectUtils::build_complete_bitmask_type(0, header, bitflag_seq);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
+        "bitmask"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
+        type_name));
 }
 
 } // xtypes1_3
