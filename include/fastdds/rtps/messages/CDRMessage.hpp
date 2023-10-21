@@ -1205,9 +1205,7 @@ inline bool CDRMessage::readParticipantGenericMessage(
     {
         return false;
     }
-    if (!CDRMessage::readString(msg, &message.message_c
-
-            lass_id()))
+    if (!CDRMessage::readString(msg, &message.message_class_id()))
     {
         return false;
     }
