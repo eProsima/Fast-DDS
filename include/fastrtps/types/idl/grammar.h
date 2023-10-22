@@ -304,8 +304,8 @@ struct enum_dcl : seq<kw_enum, identifier, open_brace, enumerator, star<comma, e
 struct union_forward_dcl : seq<kw_union, identifier> {};
 struct element_spec : seq<star<annotation_appl>, type_spec, declarator> {};
 struct case_label : sor<seq<kw_case, const_expr, colon>, seq<kw_default, colon>> {};
-struct case_branch : seq<plus<case_label>, element_spec, semicolon> {};
-struct switch_body : plus<case_branch> {};
+struct switch_case : seq<plus<case_label>, element_spec, semicolon> {};
+struct switch_body : plus<switch_case> {};
 struct switch_type_spec : sor<integer_type, char_type, boolean_type, wide_char_type, octet_type, scoped_name> {};
 struct union_def : seq<kw_union, identifier, kw_switch, open_parentheses, switch_type_spec, close_parentheses, open_brace, switch_body, close_brace> {};
 struct union_dcl : sor<union_def, union_forward_dcl> {};

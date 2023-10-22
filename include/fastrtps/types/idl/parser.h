@@ -303,7 +303,18 @@ public:
     bool success = false;
 
     v1_3::DynamicType_ptr get_type(
-            std::map<std::string, std::string>& state);
+            std::map<std::string, std::string>& state,
+            const std::string& type);
+
+    std::vector<std::string> split_string(const std::string& str, char delimiter) {
+        std::vector<std::string> tokens;
+        std::string token;
+        std::istringstream ss(str);
+        while (std::getline(ss, token, delimiter)) {
+            tokens.push_back(token);
+        }
+        return tokens;
+    }
 
     //std::map<std::string, DynamicType::Ptr> get_all_types(
     //        bool scope = false)
@@ -406,6 +417,18 @@ struct action<identifier>
             {
                 std::string elem = state["type"] + "," + in.string();
                 evaluated += evaluated.empty() ? elem : ";" + elem;
+            }
+        }
+        else if (state.count("union_name"))
+        {
+            if (state["union_name"].empty())
+            {
+                state["union_name"] += in.string();
+            }
+            else
+            {
+                state["union_member_types"] += state["type"];
+                state["union_member_names"] += in.string();
             }
         }
         else if (state.count("alias"))
@@ -706,8 +729,8 @@ load_literal_action(fixed_pt_literal, fixed, long double, create_float128_type()
             auto it = operands.rbegin(); \
             v1_3::DynamicData_ptr s1 = *it++, s2 = *it, res; \
             v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance(); \
-            v1_3::DynamicTypeBuilder_cptr builder = nullptr; \
-            v1_3::DynamicType_ptr xtype = nullptr; \
+            v1_3::DynamicTypeBuilder_cptr builder; \
+            v1_3::DynamicType_ptr xtype; \
  \
             TypeKind pt = promotion_type(s1, s2); \
  \
@@ -769,8 +792,8 @@ load_literal_action(fixed_pt_literal, fixed, long double, create_float128_type()
             auto it = operands.rbegin(); \
             v1_3::DynamicData_ptr s1 = *it++, s2 = *it, res; \
             v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance(); \
-            v1_3::DynamicTypeBuilder_cptr builder = nullptr; \
-            v1_3::DynamicType_ptr xtype = nullptr; \
+            v1_3::DynamicTypeBuilder_cptr builder; \
+            v1_3::DynamicType_ptr xtype; \
  \
             TypeKind pt = promotion_type(s1, s2); \
  \
@@ -820,8 +843,8 @@ load_literal_action(fixed_pt_literal, fixed, long double, create_float128_type()
             auto it = operands.rbegin(); \
             v1_3::DynamicData_ptr s1 = *it++, s2 = *it, res; \
             v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance(); \
-            v1_3::DynamicTypeBuilder_cptr builder = nullptr; \
-            v1_3::DynamicType_ptr xtype = nullptr; \
+            v1_3::DynamicTypeBuilder_cptr builder; \
+            v1_3::DynamicType_ptr xtype; \
  \
             TypeKind pt = promotion_type(s1, s2); \
  \
@@ -971,8 +994,8 @@ struct action<struct_forward_dcl>
             std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
-        const std::string& name = state["struct"];
         Module& module = ctx->module();
+        const std::string& name = state["struct"];
         if (module.has_symbol(name, false))
         {
             EPROSIMA_LOG_ERROR(IDLPARSER, "Struct " << name << " was already declared.");
@@ -1002,8 +1025,8 @@ struct action<union_forward_dcl>
             std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
-        const std::string& name = state["identifier"];
         Module& module = ctx->module();
+        const std::string& name = state["union_name"];
         if (module.has_symbol(name, false))
         {
             EPROSIMA_LOG_ERROR(IDLPARSER, "Union " << name << " was already declared.");
@@ -1017,7 +1040,13 @@ struct action<union_forward_dcl>
         builder->set_name(name);
         auto union_type = builder->build();
         EPROSIMA_LOG_INFO(IDLPARSER, "Found forward union declaration: " << name);
-        module.union_switch(std::move(const_cast<v1_3::DynamicType&>(*union_type)));
+        module.union_switch(union_type);
+
+        state.erase("union_name");
+        state.erase("union_discriminant");
+        state.erase("union_labels");
+        state.erase("union_member_types");
+        state.erase("union_member_names");
     }
 
 };
@@ -1033,13 +1062,16 @@ struct action<const_dcl>
             std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
-        const std::string& name = state["identifier"];
         Module& module = ctx->module();
 
+        const std::string& name = state["identifier"];
         EPROSIMA_LOG_INFO(IDLPARSER, "Found const: " << name);
         module.create_constant(name, operands.back());
         operands.pop_back();
-        if (operands.empty())   evaluated.clear();
+        if (operands.empty())
+        {
+            evaluated.clear();
+        }
     }
 
 };
@@ -1049,11 +1081,11 @@ struct action<kw_enum>
 {
     template<typename Input>
     static void apply(
-        const Input& in,
-        Context* ctx,
-        std::map<std::string, std::string>& state,
-        std::string& evaluated,
-        std::vector<v1_3::DynamicData_ptr>& operands)
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         // Set state["enum"] to empty string to indicate that next identifier is enum
         state["enum"] = "";
@@ -1066,13 +1098,12 @@ struct action<enum_dcl>
 {
     template<typename Input>
     static void apply(
-        const Input& in,
-        Context* ctx,
-        std::map<std::string, std::string>& state,
-        std::string& evaluated,
-        std::vector<v1_3::DynamicData_ptr>& operands)
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
-        const std::string& name = state["enum"];
         Module& module = ctx->module();
 
         std::istringstream ss(evaluated);
@@ -1096,6 +1127,8 @@ struct action<enum_dcl>
             builder->add_member(i, tokens[i]);
             module.create_constant(tokens[i], data, false, true); // Mark it as "from_enum"
         }
+
+        const std::string& name = state["enum"];
         builder->set_name(name);
         auto enum_type = builder->build();
         EPROSIMA_LOG_INFO(IDLPARSER, "Found enum: " << name);
@@ -1112,11 +1145,11 @@ struct action<kw_struct>
 {
     template<typename Input>
     static void apply(
-        const Input& in,
-        Context* ctx,
-        std::map<std::string, std::string>& state,
-        std::string& evaluated,
-        std::vector<v1_3::DynamicData_ptr>& operands)
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         // Set state["struct"] to empty string to indicate that next identifier is struct
         state["struct"] = "";
@@ -1129,13 +1162,12 @@ struct action<struct_def>
 {
     template<typename Input>
     static void apply(
-        const Input& in,
-        Context* ctx,
-        std::map<std::string, std::string>& state,
-        std::string& evaluated,
-        std::vector<v1_3::DynamicData_ptr>& operands)
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
-        const std::string& struct_name = state["struct"];
         Module& module = ctx->module();
 
         std::istringstream ss(evaluated);
@@ -1157,9 +1189,11 @@ struct action<struct_def>
 
         for (int i = 0; i < types.size(); i++)
         {
-            auto member_type = ctx->get_type(state);
+            auto member_type = ctx->get_type(state, state["type"]);
             builder->add_member(i, types[i], member_type);
         }
+
+        const std::string& struct_name = state["struct"];
         builder->set_name(struct_name);
         auto struct_type = builder->build();
         EPROSIMA_LOG_INFO(IDLPARSER, "Found struct: " << struct_name);
@@ -1172,15 +1206,170 @@ struct action<struct_def>
 };
 
 template<>
+struct action<kw_union>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        // Create empty states to indicate the start of parsing union
+        state["union_name"] = "";
+        state["union_discriminant"] = "";
+        state["union_labels"] = "";
+        state["union_member_names"] = "";
+        state["union_member_types"] = "";
+    }
+
+};
+
+template<>
+struct action<case_label>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        Module& module = ctx->module();
+        std::string label;
+
+        for (char c : in.string())
+        {
+            if (std::isdigit(c)) {
+                label += c;
+            }
+        }
+        if (label.empty() && in.string().find("default") != std::string::npos)
+        {
+            if (state["union_labels"].empty() || state["union_labels"].back() == ';')
+            {
+                state["union_labels"] += "default";
+            }
+            else
+            {
+                state["union_labels"] += ",default";
+            }
+        }
+        else
+        {
+            if (state["union_labels"].empty() || state["union_labels"].back() == ';')
+            {
+                state["union_labels"] += label;
+            }
+            else
+            {
+                state["union_labels"] += "," + label;
+            }
+        }
+
+        if (state["union_discriminant"].empty())
+        {
+            state["union_discriminant"] = state["type"];
+        }
+    }
+
+};
+
+template<>
+struct action<switch_case>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        Module& module = ctx->module();
+
+        state["union_labels"] += ";";
+        state["union_member_types"] += ";";
+        state["union_member_names"] += ";";
+    }
+
+};
+
+template<>
+struct action<union_def>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        Module& module = ctx->module();
+
+        auto discriminant_type = ctx->get_type(state, state["union_discriminant"]);
+        v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
+        v1_3::DynamicTypeBuilder_ptr builder = factory.create_union_type(*discriminant_type);
+
+        const std::string& union_name = state["union_name"];
+        std::vector<std::string> label_groups = ctx->split_string(state["union_labels"], ';');
+        std::vector<std::string> types = ctx->split_string(state["union_member_types"], ';');
+        std::vector<std::string> names = ctx->split_string(state["union_member_names"], ';');
+
+        std::vector<std::vector<uint64_t>> labels;
+        int idx = 0;
+        for (int i = 0; i < label_groups.size(); i++)
+        {
+            if (label_groups[i].empty()) continue; // Skip empty strings
+            std::vector<std::string> numbers_str = ctx->split_string(label_groups[i], ',');
+            std::vector<uint64_t> numbers;
+            for (const auto& num_str : numbers_str)
+            {
+                if (num_str == "default")
+                {
+                    numbers.push_back(std::numeric_limits<uint64_t>::max());
+                    idx = i; // mark the index of default label
+                }
+                else
+                {
+                    numbers.push_back(std::stoi(num_str));
+                }
+            }
+            if (!numbers.empty())   labels.push_back(numbers);
+        }
+
+        for (int i = 0; i < types.size(); i++)
+        {
+            auto member_type = ctx->get_type(state, types[i]);
+            builder->add_member(v1_3::MemberId{ i }, names[i], member_type, "", labels[i], i == idx ? true : false);
+        }
+        builder->set_name(union_name);
+        auto union_type = builder->build();
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found union: " << union_name);
+        module.union_switch(union_type);
+
+        state.erase("union_name");
+        state.erase("union_discriminant");
+        state.erase("union_labels");
+        state.erase("union_member_types");
+        state.erase("union_member_names");
+    }
+
+};
+
+template<>
 struct action<kw_typedef>
 {
     template<typename Input>
     static void apply(
-        const Input& in,
-        Context* ctx,
-        std::map<std::string, std::string>& state,
-        std::string& evaluated,
-        std::vector<v1_3::DynamicData_ptr>& operands)
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         // Set state["alias"] to empty string to indicate the start of parsing alias
         state["alias"] = "";
@@ -1193,11 +1382,11 @@ struct action<fixed_array_size>
 {
     template<typename Input>
     static void apply(
-        const Input& in,
-        Context* ctx,
-        std::map<std::string, std::string>& state,
-        std::string& evaluated,
-        std::vector<v1_3::DynamicData_ptr>& operands)
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         if (state.count("alias") && !state["alias"].empty())
         {
@@ -1223,11 +1412,11 @@ struct action<typedef_dcl>
 {
     template<typename Input>
     static void apply(
-        const Input& in,
-        Context* ctx,
-        std::map<std::string, std::string>& state,
-        std::string& evaluated,
-        std::vector<v1_3::DynamicData_ptr>& operands)
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         Module& module = ctx->module();
 
@@ -1243,7 +1432,7 @@ struct action<typedef_dcl>
             sizes.push_back(std::stoi(size));
         }
 
-        auto type = ctx->get_type(state);
+        auto type = ctx->get_type(state, state["type"]);
         if (sizes.empty())
         {
             module.create_alias(type, name);
@@ -1413,83 +1602,84 @@ private:
     Context* context_;
 
     v1_3::DynamicType_ptr type_spec(
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            const std::string& type)
     {
         v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
-        v1_3::DynamicTypeBuilder_cptr builder = nullptr;
-        v1_3::DynamicType_ptr type = nullptr;
+        v1_3::DynamicTypeBuilder_cptr builder;
+        v1_3::DynamicType_ptr dtype;
 
-        if (state["type"] == "boolean")
+        if (type == "boolean")
         {
             builder = factory.create_bool_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "int8")
+        else if (type == "int8")
         {
             builder = factory.create_char8_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "uint8")
+        else if (type == "uint8")
         {
             builder = factory.create_byte_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "int16")
+        else if (type == "int16")
         {
             builder = factory.create_int16_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "uint16")
+        else if (type == "uint16")
         {
             builder = factory.create_uint16_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "int32")
+        else if (type == "int32")
         {
             builder = factory.create_int32_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "uint32")
+        else if (type == "uint32")
         {
             builder = factory.create_uint32_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "int64")
+        else if (type == "int64")
         {
             builder = factory.create_int64_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "uint64")
+        else if (type == "uint64")
         {
             builder = factory.create_uint64_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "float")
+        else if (type == "float")
         {
             builder = factory.create_float32_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "double")
+        else if (type == "double")
         {
             builder = factory.create_float64_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "long double")
+        else if (type == "long double")
         {
             builder = factory.create_float128_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "char")
+        else if (type == "char")
         {
             builder = factory.create_char8_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "wchar" || state["type"] == "char16")
+        else if (type == "wchar" || type == "char16")
         {
             builder = factory.create_char16_type();
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "string")
+        else if (type == "string")
         {
             if (state.count("string_size"))
             {
@@ -1500,9 +1690,9 @@ private:
             {
                 builder = factory.create_string_type();
             }
-            type = builder->build();
+            dtype = builder->build();
         }
-        else if (state["type"] == "wstring")
+        else if (type == "wstring")
         {
             if (state.count("wstring_size"))
             {
@@ -1513,23 +1703,24 @@ private:
             {
                 builder = factory.create_wstring_type();
             }
-            type = builder->build();
+            dtype = builder->build();
         }
         else
         {
-            type = context_->module().type(state["type"]);
+            dtype = context_->module().type(type);
         }
 
-        return type;
+        return dtype;
     }
 
 }; // class Parser
 
 
 v1_3::DynamicType_ptr Context::get_type(
-        std::map<std::string, std::string>& state)
+        std::map<std::string, std::string>& state,
+        const std::string& type)
 {
-    return parser_->type_spec(state);
+    return parser_->type_spec(state, type);
 }
 
 } // namespace idl
