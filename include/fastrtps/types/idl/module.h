@@ -273,8 +273,8 @@ public:
     }
 
     bool create_alias(
-            v1_3::DynamicType_ptr type,
-            const std::string& name)
+            const std::string& name,
+            v1_3::DynamicType_ptr type)
     {
         if (name.find("::") != std::string::npos || has_alias(name))
         {

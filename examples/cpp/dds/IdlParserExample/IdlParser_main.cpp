@@ -104,6 +104,20 @@ int main(
     )";
     idl::Context context06 = idl::parse(test06);
 
+    std::string test07 =
+            R"(
+        union MyUnion switch (int32) {
+            case 0:
+            case 1:
+                long myLong;
+            case 2:
+                double myDouble;
+            default:
+                char myChar;
+        };
+    )";
+    idl::Context context07 = idl::parse(test07);
+
     Log::Flush();
     Log::Reset();
 
