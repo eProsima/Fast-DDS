@@ -35,6 +35,7 @@
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/shared_memory/SharedMemWatchdog.hpp>
 
 using namespace eprosima::fastrtps::xmlparser;
 
@@ -155,6 +156,8 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         const StatusMask& mask)
 {
     load_profiles();
+
+    RTPSDomain::set_filewatch_thread_config(factory_qos_.file_watch_threads(), factory_qos_.file_watch_threads());
 
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
@@ -422,6 +425,8 @@ void DomainParticipantFactory::set_qos(
     (void) first_time;
     //As all the Qos can always be updated and none of them need to be sent
     to = from;
+
+    rtps::SharedMemWatchdog::set_thread_settings(to.shm_watchdog_thread());
 }
 
 ReturnCode_t DomainParticipantFactory::check_qos(

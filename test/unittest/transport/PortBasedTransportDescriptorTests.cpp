@@ -65,7 +65,7 @@ TEST_F(PortBasedTransportDescriptorTests, get_thread_config_for_port)
     PortBasedTransportDescriptor::ReceptionThreadsConfigMap set_settings;
     set_settings[1234].scheduling_policy = 33;
     set_settings[1234].priority = 33;
-    set_settings[1234].cpu_mask = 33;
+    set_settings[1234].affinity = 33;
     set_settings[1234].stack_size = 33;
 
     ASSERT_TRUE(reception_threads(set_settings));
@@ -86,7 +86,7 @@ TEST_F(PortBasedTransportDescriptorTests, set_thread_config_for_port)
     PortBasedTransportDescriptor::ReceptionThreadsConfigMap set_settings;
     set_settings[1234].scheduling_policy = 33;
     set_settings[1234].priority = 33;
-    set_settings[1234].cpu_mask = 33;
+    set_settings[1234].affinity = 33;
     set_settings[1234].stack_size = 33;
     ASSERT_TRUE(reception_threads(set_settings));
 
@@ -116,7 +116,7 @@ TEST_F(PortBasedTransportDescriptorTests, set_default_reception_threads)
     ThreadSettings set_settings;
     set_settings.scheduling_policy = 33;
     set_settings.priority = 33;
-    set_settings.cpu_mask = 33;
+    set_settings.affinity = 33;
     set_settings.stack_size = 33;
 
     ASSERT_NE(initial_settings, set_settings);
@@ -137,7 +137,7 @@ TEST_F(PortBasedTransportDescriptorTests, set_reception_threads)
     PortBasedTransportDescriptor::ReceptionThreadsConfigMap set_settings;
     set_settings[1234].scheduling_policy = 33;
     set_settings[1234].priority = 33;
-    set_settings[1234].cpu_mask = 33;
+    set_settings[1234].affinity = 33;
     set_settings[1234].stack_size = 33;
 
     ASSERT_NE(initial_settings, set_settings);
@@ -170,7 +170,7 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         ThreadSettings set_settings;
         set_settings.scheduling_policy = 33;
         set_settings.priority = 33;
-        set_settings.cpu_mask = 33;
+        set_settings.affinity = 33;
         set_settings.stack_size = 33;
         other.default_reception_threads(set_settings);
         ASSERT_FALSE(*this == other);
@@ -185,7 +185,7 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         PortBasedTransportDescriptor::ReceptionThreadsConfigMap set_settings_map;
         set_settings_map[1234].scheduling_policy = 33;
         set_settings_map[1234].priority = 33;
-        set_settings_map[1234].cpu_mask = 33;
+        set_settings_map[1234].affinity = 33;
         set_settings_map[1234].stack_size = 33;
         ASSERT_TRUE(other.reception_threads(set_settings_map));
         ASSERT_FALSE(*this == other);
@@ -202,7 +202,7 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         ThreadSettings set_settings;
         set_settings.scheduling_policy = 33;
         set_settings.priority = 33;
-        set_settings.cpu_mask = 33;
+        set_settings.affinity = 33;
         set_settings.stack_size = 33;
         other.default_reception_threads(set_settings);
 
@@ -220,7 +220,7 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         PortBasedTransportDescriptor::ReceptionThreadsConfigMap set_settings_map;
         set_settings_map[1234].scheduling_policy = 33;
         set_settings_map[1234].priority = 33;
-        set_settings_map[1234].cpu_mask = 33;
+        set_settings_map[1234].affinity = 33;
         set_settings_map[1234].stack_size = 33;
         ASSERT_TRUE(other.reception_threads(set_settings_map));
 
@@ -236,14 +236,14 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         ThreadSettings set_settings;
         set_settings.scheduling_policy = 33;
         set_settings.priority = 33;
-        set_settings.cpu_mask = 33;
+        set_settings.affinity = 33;
         set_settings.stack_size = 33;
         other.default_reception_threads(set_settings);
 
         PortBasedTransportDescriptor::ReceptionThreadsConfigMap set_settings_map;
         set_settings_map[1234].scheduling_policy = 33;
         set_settings_map[1234].priority = 33;
-        set_settings_map[1234].cpu_mask = 33;
+        set_settings_map[1234].affinity = 33;
         set_settings_map[1234].stack_size = 33;
         ASSERT_TRUE(other.reception_threads(set_settings_map));
 
@@ -261,14 +261,14 @@ TEST_F(PortBasedTransportDescriptorTests, equal_operator)
         ThreadSettings set_settings;
         set_settings.scheduling_policy = 33;
         set_settings.priority = 33;
-        set_settings.cpu_mask = 33;
+        set_settings.affinity = 33;
         set_settings.stack_size = 33;
         other.default_reception_threads(set_settings);
 
         PortBasedTransportDescriptor::ReceptionThreadsConfigMap set_settings_map;
         set_settings_map[1234].scheduling_policy = 33;
         set_settings_map[1234].priority = 33;
-        set_settings_map[1234].cpu_mask = 33;
+        set_settings_map[1234].affinity = 33;
         set_settings_map[1234].stack_size = 33;
         ASSERT_TRUE(other.reception_threads(set_settings_map));
 

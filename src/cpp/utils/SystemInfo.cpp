@@ -214,7 +214,9 @@ const std::string& SystemInfo::get_environment_file()
 
 FileWatchHandle SystemInfo::watch_file(
         std::string filename,
-        std::function<void()> callback)
+        std::function<void()> callback,
+        const fastdds::rtps::ThreadSettings& watch_thread_config,
+        const fastdds::rtps::ThreadSettings& callback_thread_config)
 {
 #if defined(_WIN32) || defined(__unix__)
     return FileWatchHandle (new filewatch::FileWatch<std::string>(filename,
@@ -229,10 +231,12 @@ FileWatchHandle SystemInfo::watch_file(
                                // No-op
                                break;
                        }
-                   }));
+                   }, watch_thread_config, callback_thread_config));
 #else // defined(_WIN32) || defined(__unix__)
     static_cast<void>(filename);
     static_cast<void>(callback);
+    static_cast<void>(watch_thread_config);
+    static_cast<void>(callback_thread_config);
     return FileWatchHandle();
 #endif // defined(_WIN32) || defined(__unix__)
 }

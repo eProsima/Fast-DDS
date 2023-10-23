@@ -18,6 +18,7 @@
 #ifndef _FASTDDS_RTPS_SECURITY_LOGGING_LOGTOPIC_H_
 #define _FASTDDS_RTPS_SECURITY_LOGGING_LOGTOPIC_H_
 
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/security/logging/Logging.h>
 #include <fastdds/rtps/security/logging/BuiltinLoggingType.h>
 
@@ -43,7 +44,8 @@ class LogTopic final : public Logging
 public:
 
     LogTopic(
-            std::function<void()> thread_init_cb = {});
+            uint32_t thread_id = 0,
+            const fastdds::rtps::ThreadSettings& thr_config = {});
     ~LogTopic();
 
 private:

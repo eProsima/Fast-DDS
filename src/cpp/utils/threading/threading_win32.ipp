@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <limits>
 #include <sstream>
 #include <string>
 #include <processthreadsapi.h>
+
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
 namespace eprosima {
 
@@ -51,6 +54,37 @@ void set_name_to_current_thread(
         uint32_t arg2)
 {
     set_name_to_current_thread_impl(fmt, arg1, arg2);
+}
+
+static void configure_current_thread_priority(
+        int32_t priority)
+{
+    if (priority != std::numeric_limits<int32_t>::min())
+    {
+        if (0 == SetThreadPriority(GetCurrentThread(), priority))
+        {
+            EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << GetLastError() << "' configuring priority for thread " << GetCurrentThread());
+        }
+    }
+}
+
+static void configure_current_thread_affinity(
+        uint64_t affinity_mask)
+{
+    if (affinity_mask != 0)
+    {
+        if (0 == SetThreadAffinityMask(GetCurrentThread(), affinity_mask))
+        {
+            EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << GetLastError() << "' configuring affinity for thread " << GetCurrentThread());
+        }
+    }
+}
+
+void apply_thread_settings_to_current_thread(
+        const fastdds::rtps::ThreadSettings& settings)
+{
+    configure_current_thread_priority(settings.priority);
+    configure_current_thread_affinity(settings.affinity);
 }
 
 }  // namespace eprosima

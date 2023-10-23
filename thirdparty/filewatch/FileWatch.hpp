@@ -23,6 +23,8 @@
 #ifndef FILEWATCHER_H
 #define FILEWATCHER_H
 
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
+
 #include <utils/threading.hpp>
 
 #ifdef _WIN32
@@ -67,6 +69,7 @@
 #include <utility>
 #include <vector>
 
+namespace eprosima {
 namespace filewatch {
     enum class Event {
         added,
@@ -93,35 +96,33 @@ namespace filewatch {
 
     public:
 
-        FileWatch(T path, UnderpinningRegex pattern, std::function<void(const T& file, const Event event_type)> callback) :
-            _path(path),
-            _pattern(pattern),
-            _callback(callback),
-            _directory(get_directory(path))
+        FileWatch(
+                T path,
+                UnderpinningRegex pattern,
+                std::function<void(const T& file, const Event event_type)> callback,
+                const fastdds::rtps::ThreadSettings& watch_thread_config,
+                const fastdds::rtps::ThreadSettings& callback_thread_config)
+            : _path(path)
+            , _pattern(pattern)
+            , _callback(callback)
+            , _directory(get_directory(path))
         {
-            init();
+            init(watch_thread_config, callback_thread_config);
         }
 
-        FileWatch(T path, std::function<void(const T& file, const Event event_type)> callback) :
-            FileWatch<T>(path, UnderpinningRegex(_regex_all), callback) {}
+        FileWatch(
+                T path,
+                std::function<void(const T& file, const Event event_type)> callback,
+                const fastdds::rtps::ThreadSettings& watch_thread_config,
+                const fastdds::rtps::ThreadSettings& callback_thread_config)
+            : FileWatch<T>(path, UnderpinningRegex(_regex_all), callback, watch_thread_config, callback_thread_config) {}
 
         ~FileWatch() {
             destroy();
         }
 
-        FileWatch(const FileWatch<T>& other) : FileWatch<T>(other._path, other._callback) {}
-
-        FileWatch<T>& operator=(const FileWatch<T>& other)
-        {
-            if (this == &other) { return *this; }
-
-            destroy();
-            _path = other._path;
-            _callback = other._callback;
-            _directory = get_directory(other._path);
-            init();
-            return *this;
-        }
+        FileWatch(const FileWatch<T>& other) = delete;
+        FileWatch<T>& operator=(const FileWatch<T>& other) = delete;
 
         // Const memeber varibles don't let me implent moves nicely, if moves are really wanted std::unique_ptr should be used and move that.
         FileWatch<T>(FileWatch<T>&&) = delete;
@@ -201,7 +202,9 @@ namespace filewatch {
         const static std::size_t event_size = (sizeof(struct inotify_event));
 #endif // __unix__
 
-        void init()
+        void init(
+            const fastdds::rtps::ThreadSettings& watch_thread_config = {},
+            const fastdds::rtps::ThreadSettings& callback_thread_config = {})
         {
 #ifdef _WIN32
             _close_event = CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -209,9 +212,8 @@ namespace filewatch {
                 throw std::system_error(GetLastError(), std::system_category());
             }
 #endif // WIN32
-            _callback_thread = std::move(std::thread([this]() {
+            _callback_thread = create_thread([this]() {
                 try {
-                    eprosima::set_name_to_current_thread("dds.fwatch.cb");
                     callback_thread();
                 } catch (...) {
                     try {
@@ -219,10 +221,9 @@ namespace filewatch {
                     }
                     catch (...) {} // set_exception() may throw too
                 }
-            }));
-            _watch_thread = std::move(std::thread([this]() {
+            }, callback_thread_config, "dds.fwatch.cb");
+            _watch_thread = create_thread([this]() {
                 try {
-                    eprosima::set_name_to_current_thread("dds.fwatch");
                     monitor_directory();
                 } catch (...) {
                     try {
@@ -230,7 +231,7 @@ namespace filewatch {
                     }
                     catch (...) {} // set_exception() may throw too
                 }
-            }));
+            }, watch_thread_config, "dds.fwatch");
 
             std::future<void> future = _running.get_future();
             future.get(); //block until the monitor_directory is up and running
@@ -624,5 +625,6 @@ namespace filewatch {
 
     template<class T> constexpr typename FileWatch<T>::C FileWatch<T>::_regex_all[];
     template<class T> constexpr typename FileWatch<T>::C FileWatch<T>::_this_directory[];
-}
+}  // namespace filewatch
+}  // namespace eprosima
 #endif
