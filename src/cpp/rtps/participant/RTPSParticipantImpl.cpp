@@ -180,6 +180,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             shm_transport.segment_size(segment_size_udp_equivalent);
             // Use same default max_message_size on both UDP and SHM
             shm_transport.max_message_size(descriptor.max_message_size());
+            shm_transport.default_reception_threads(m_att.builtin_transports_reception_threads);
             has_shm_transport_ |= m_network_Factory.RegisterTransport(&shm_transport);
         }
 #endif // ifdef SHM_TRANSPORT_BUILTIN

@@ -1552,12 +1552,6 @@ bool DataReaderImpl::can_qos_be_updated(
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "Data sharing configuration cannot be changed after the creation of a DataReader.");
     }
-    if (!(to.data_sharing().data_sharing_listener_thread() == from.data_sharing().data_sharing_listener_thread()))
-    {
-        updatable = false;
-        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
-                "data_sharing_listener_thread cannot be changed after the DataReader is enabled");
-    }
     if (qos_has_unique_network_request(to) != qos_has_unique_network_request(from))
     {
         updatable = false;

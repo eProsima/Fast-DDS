@@ -4138,13 +4138,14 @@ TEST_F(XMLParserTests, getXMLThreadSettings)
         {{"12", "-1", "12", "12", ""}, XMLP_ret::XML_OK},
         {{"12", "12", "12", "-1", ""}, XMLP_ret::XML_OK},
         {{"-2", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
-        {{"12", "-2", "12", "12", ""}, XMLP_ret::XML_ERROR},
-        {{"12", "-2", "-1", "12", ""}, XMLP_ret::XML_ERROR},
         {{"12", "12", "12", "-2", ""}, XMLP_ret::XML_ERROR},
         {{"a", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
         {{"12", "a", "12", "12", ""}, XMLP_ret::XML_ERROR},
         {{"12", "12", "a", "12", ""}, XMLP_ret::XML_ERROR},
         {{"12", "12", "12", "a", ""}, XMLP_ret::XML_ERROR},
+        {{"12", "12", "12", "12", "<scheduling_policy>12</scheduling_policy>"}, XMLP_ret::XML_ERROR},
+        {{"12", "12", "12", "12", "<priority>12</priority>"}, XMLP_ret::XML_ERROR},
+        {{"12", "12", "12", "12", "<affinity>12</affinity>"}, XMLP_ret::XML_ERROR},
         {{"12", "12", "12", "12", "<stack_size>12</stack_size>"}, XMLP_ret::XML_ERROR},
         {{"12", "12", "12", "12", "<wrong_tag>12</wrong_tag>"}, XMLP_ret::XML_ERROR},
     };
@@ -4182,7 +4183,7 @@ TEST_F(XMLParserTests, getXMLThreadSettings)
         {
             ASSERT_EQ(thread_settings.scheduling_policy, static_cast<int32_t>(std::stoi(params[0])));
             ASSERT_EQ(thread_settings.priority, static_cast<int32_t>(std::stoi(params[1])));
-            ASSERT_EQ(thread_settings.affinity, static_cast<uint32_t>(std::stoi(params[2])));
+            ASSERT_EQ(thread_settings.affinity, static_cast<uint64_t>(std::stoi(params[2])));
             ASSERT_EQ(thread_settings.stack_size, static_cast<int32_t>(std::stoi(params[3])));
         }
     }
@@ -4204,8 +4205,6 @@ TEST_F(XMLParserTests, getXMLThreadSettingsWithPort)
         {{"-1", "", "12", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
         {{"a", "", "12", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
         {{"a", "wrong_attr=\"12\"", "12", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
-        {{"12345", "", "12", "-2", "12", "12", ""}, XMLP_ret::XML_ERROR},
-        {{"12345", "", "12", "-2", "-1", "12", ""}, XMLP_ret::XML_ERROR},
         {{"12345", "", "12", "12", "12", "-2", ""}, XMLP_ret::XML_ERROR},
         {{"12345", "", "a", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
         {{"12345", "", "12", "a", "12", "12", ""}, XMLP_ret::XML_ERROR},

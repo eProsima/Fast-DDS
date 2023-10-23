@@ -142,15 +142,18 @@ public:
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param qos Structure to be filled.
-     * @param log_error Flag to log an error if the profile_name is not found.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
+     * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret fillDomainParticipantFactoryQos(
             const std::string& profile_name,
             fastdds::dds::DomainParticipantFactoryQos& qos,
             bool log_error = true);
 
-    //!Fills qos with the default values.
+    /**
+     * Fills input domain participant factory qos with the default values.
+     * @param qos Structure to be filled.
+     */
     RTPS_DllAPI static void getDefaultDomainParticipantFactoryQos(
             fastdds::dds::DomainParticipantFactoryQos& qos);
 

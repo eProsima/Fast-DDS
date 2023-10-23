@@ -3075,6 +3075,20 @@ TEST_F(XMLParserTests, parseXMLReceptionThreads)
             xmlparser::XMLP_ret::XML_ERROR,
             {}
         },
+        {
+            "reception_threads_no_attribute",
+            R"(
+                <reception_threads>
+                    <reception_thread>
+                        <scheduling_policy>12</scheduling_policy>
+                        <priority>12</priority>
+                        <affinity>12</affinity>
+                        <stack_size>12</stack_size>
+                    </reception_thread>
+                </reception_threads>)",
+            xmlparser::XMLP_ret::XML_ERROR,
+            {}
+        },
     };
 
     for (auto test_case : test_cases)

@@ -3274,7 +3274,7 @@ TEST_F(XMLProfileParserBasicTests, log_thread_settings_qos)
         },
     };
 
-    EXPECT_CALL(*log_mock, SetThreadConfig()).Times(2);
+    EXPECT_CALL(*log_mock, SetThreadConfig()).Times(1);
     for (const TestCase& test : test_cases)
     {
         EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length())) <<

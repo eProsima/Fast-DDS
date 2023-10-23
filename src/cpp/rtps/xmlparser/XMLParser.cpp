@@ -1550,6 +1550,8 @@ XMLP_ret XMLParser::parseLogConfig(
 
     std::set<std::string> tags_present;
     tinyxml2::XMLElement* p_element = p_aux0->FirstChildElement();
+    fastdds::rtps::ThreadSettings thread_settings;
+    bool set_thread_settings = false;
 
     while (ret == XMLP_ret::XML_OK && nullptr != p_element)
     {
@@ -1594,11 +1596,10 @@ XMLP_ret XMLParser::parseLogConfig(
             }
             else if (strcmp(tag, THREAD_SETTINGS) == 0)
             {
-                fastdds::rtps::ThreadSettings thread_settings;
                 ret = getXMLThreadSettings(*p_element, thread_settings);
                 if (ret == XMLP_ret::XML_OK)
                 {
-                    fastdds::dds::Log::SetThreadConfig(thread_settings);
+                    set_thread_settings = true;
                 }
                 else
                 {
@@ -1616,6 +1617,11 @@ XMLP_ret XMLParser::parseLogConfig(
         {
             p_element = p_element->NextSiblingElement();
         }
+    }
+
+    if (ret == XMLP_ret::XML_OK && set_thread_settings)
+    {
+        fastdds::dds::Log::SetThreadConfig(thread_settings);
     }
 
     return ret;
@@ -2216,7 +2222,7 @@ XMLP_ret XMLParser::fillDataNode(
             }
         }
 #endif // if HAVE_SECURITY
-        else
+        else if (strcmp(name, SECURITY_LOG_THREAD) != 0)
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'rtpsParticipantAttributesType'. Name: " << name);
             return XMLP_ret::XML_ERROR;

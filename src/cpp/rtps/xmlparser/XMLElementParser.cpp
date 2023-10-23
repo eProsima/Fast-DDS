@@ -4602,8 +4602,7 @@ XMLP_ret XMLParser::getXMLThreadSettingsWithPort(
         else if (strcmp(current_elem->Name(), PRIORITY) == 0)
         {
             // priority - int32Type
-            if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.priority, ident) ||
-                    thread_setting.priority < -1)
+            if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.priority, ident))
             {
                 ret = XMLP_ret::XML_ERROR;
                 break;
