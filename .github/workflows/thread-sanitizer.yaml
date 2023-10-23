@@ -6,6 +6,14 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
         default: 'master'
+      optional_cmake_args:
+        description: 'Optional CMake Compilation Flags'
+        required: false
+        type: string
+      optional_ctest_args:
+        description: 'Optional CTest Testing Flags'
+        required: false
+        type: string
 
   push:
     branches:
@@ -89,7 +97,7 @@ jobs:
           colcon build \
             --event-handlers=console_direct+ \
             --metas src/fastrtps/.github/workflows/config/tsan_colcon.meta \
-            --cmake-args -DCMAKE_BUILD_TYPE=Debug
+            --cmake-args -DCMAKE_BUILD_TYPE=Debug ${{ inputs.optional_cmake_args }}
 
       - name: Run tests Fast DDS
         run: |
@@ -100,7 +108,7 @@ jobs:
             --return-code-on-test-failure \
             --ctest-args \
               --timeout 30 \
-              -V -E DDSSQLFilterValueTests
+              -V -E DDSSQLFilterValueTests  ${{ inputs.optional_ctest_args }}
         continue-on-error: true
 
       - name: Upload Logs
