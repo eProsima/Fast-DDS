@@ -89,7 +89,7 @@ jobs:
       - name: Install GTest
         uses: eProsima/eProsima-CI/ubuntu/install_gtest@v0
         with:
-          version: v1.12.1
+          version: release-1.11.0
 
       - name: Build workspace
         run: |
