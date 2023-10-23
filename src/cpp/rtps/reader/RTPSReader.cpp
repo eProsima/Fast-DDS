@@ -130,6 +130,7 @@ void RTPSReader::init(
             datasharing_listener_.reset(new DataSharingListener(
                         notification,
                         att.endpoint.data_sharing_configuration().shm_directory(),
+                        att.data_sharing_listener_thread,
                         att.matched_writers_allocation,
                         this));
 

@@ -48,6 +48,10 @@ set(FIXEDSIZEQUEUETESTS_SOURCE
 
 set(SYSTEMINFOTESTS_SOURCE
     SystemInfoTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
 include_directories(mock/)

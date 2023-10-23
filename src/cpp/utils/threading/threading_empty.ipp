@@ -32,4 +32,9 @@ void set_name_to_current_thread(
 {
 }
 
+void apply_thread_settings_to_current_thread(
+        const fastdds::rtps::ThreadSettings& /*settings*/)
+{
+}
+
 }  // namespace eprosima

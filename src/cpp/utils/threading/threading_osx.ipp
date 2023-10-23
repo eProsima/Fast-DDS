@@ -12,9 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdio>
+#include <cstring>
+#include <limits>
+
 #include <pthread.h>
-#include <string.h>
-#include <stdio.h>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
 namespace eprosima {
 
@@ -46,6 +51,83 @@ void set_name_to_current_thread(
         uint32_t arg2)
 {
     set_name_to_current_thread_impl(fmt, arg1, arg2);
+}
+
+static void configure_current_thread_scheduler(
+        int sched_class,
+        int sched_priority)
+{
+    pthread_t self_tid = pthread_self();
+    sched_param param;
+    sched_param current_param;
+    int current_class;
+    int result = 0;
+    bool change_priority = (std::numeric_limits<int32_t>::min() != sched_priority);
+    
+    // Get current scheduling parameters
+    memset(&current_param, 0, sizeof(current_param));
+    pthread_getschedparam(self_tid, &current_class, &current_param);
+        
+    memset(&param, 0, sizeof(param));
+    param.sched_priority = 0;
+    sched_class = (sched_class == -1) ? current_class : sched_class;
+    
+    //
+    // Set Scheduler Class and Priority       
+    //
+    
+    if((sched_class == SCHED_OTHER) ||
+       (sched_class == SCHED_BATCH) ||
+       (sched_class == SCHED_IDLE)) 
+    {               
+        //
+        // BATCH and IDLE do not have explicit priority values.
+        // - Requires priorty value to be zero (0).
+        
+        result = pthread_setschedparam(self_tid, sched_class, &param);
+
+        //
+        // Sched OTHER has a nice value, that we pull from the priority parameter.
+        // 
+        
+        if(sched_class == SCHED_OTHER && change_priority)
+        {            
+            result = setpriority(PRIO_PROCESS, gettid(), sched_priority);
+        }                
+    }
+    else if((sched_class == SCHED_FIFO) ||
+            (sched_class == SCHED_RR))
+    {
+        //
+        // RT Policies use a different priority numberspace.
+        //
+        
+        param.sched_priority = change_priority ? sched_priority : current_param.sched_priority;
+        result = pthread_setschedparam(self_tid, sched_class, &param);
+    }
+
+    if (0 != result)
+    {
+        EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << strerror(result) << "' configuring scheduler for thread " << self_tid);
+    }
+}
+
+static void configure_current_thread_affinity(
+        uint64_t affinity)
+{
+    if (affinity <= static_cast<uint64_t>(std::numeric_limits<integer_t>::max()))
+    {
+        thread_affinity_policy_data_t policy = { static_cast<integer_t>(affinity) };
+        pthread_t self_tid = pthread_self();
+        thread_policy_set(pthread_mach_thread_np(self_tid), THREAD_AFFINITY_POLICY, (thread_policy_t)&policy, 1);
+    }
+}
+
+void apply_thread_settings_to_current_thread(
+        const fastdds::rtps::ThreadSettings& settings)
+{
+    configure_current_thread_scheduler(settings.scheduling_policy, settings.priority);
+    configure_current_thread_affinity(settings.affinity);
 }
 
 }  // namespace eprosima
