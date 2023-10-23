@@ -77,7 +77,7 @@ public:
      * @return The ThreadSettings for the given port.
      */
     virtual RTPS_DllAPI const ThreadSettings& get_thread_config_for_port(
-            uint32_t port);
+            uint32_t port) const;
 
     virtual RTPS_DllAPI bool set_thread_config_for_port(
             const uint32_t& port,

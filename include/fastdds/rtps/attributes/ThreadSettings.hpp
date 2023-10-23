@@ -17,6 +17,7 @@
  */
 
 #include <cstdint>
+#include <limits>
 
 #include <fastrtps/fastrtps_dll.h>
 
@@ -41,6 +42,7 @@ struct RTPS_DllAPI ThreadSettings
      * A value of -1 indicates system default.
      *
      * This value is platform specific and it is used as-is to configure the specific platform thread.
+     * It is ignored on Windows platforms.
      * Setting this value to something other than the default one may require different privileges
      * on different platforms.
      */
@@ -50,25 +52,27 @@ struct RTPS_DllAPI ThreadSettings
      * @brief The thread's priority.
      *
      * Configures the thread's priority.
-     * A value of 0 indicates system default.
+     * A value of -2^31 indicates system default.
      *
      * This value is platform specific and it is used as-is to configure the specific platform thread.
      * Setting this value to something other than the default one may require different privileges
      * on different platforms.
      */
-    int32_t priority = 0;
+    int32_t priority = std::numeric_limits<int32_t>::min();
 
     /**
-     * @brief The thread's core affinity.
+     * @brief The thread's affinity.
      *
-     * cpu_mask is a bit mask for setting the threads affinity to each core individually.
+     * On some systems (Windows, Linux), this is a bit mask for setting the threads affinity to each core individually.
+     * On MacOS, this sets the affinity tag for the thread, and the OS tries to share the L2 cache between threads
+     * with the same affinity.
      * A value of 0 indicates no particular affinity.
      *
      * This value is platform specific and it is used as-is to configure the specific platform thread.
      * Setting this value to something other than the default one may require different privileges
      * on different platforms.
      */
-    uint32_t cpu_mask = 0;
+    uint64_t affinity = 0;
 
     /**
      * @brief The thread's stack size in bytes.

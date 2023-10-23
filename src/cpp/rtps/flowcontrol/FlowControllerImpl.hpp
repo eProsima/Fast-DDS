@@ -1062,7 +1062,10 @@ private:
         if (async_mode.running.compare_exchange_strong(expected, true))
         {
             // Code for initializing the asynchronous thread.
-            async_mode.thread = std::thread(&FlowControllerImpl::run, this);
+            async_mode.thread = create_thread([this]()
+                            {
+                                run();
+                            }, thread_settings_, "dds.asyn.%u.%u", participant_id_, async_index_);
         }
     }
 
@@ -1341,8 +1344,6 @@ private:
      */
     void run()
     {
-        set_name_to_current_thread("dds.asyn.%u.%u", participant_id_, async_index_);
-
         while (async_mode.running)
         {
             // There are writers interested in removing a sample.

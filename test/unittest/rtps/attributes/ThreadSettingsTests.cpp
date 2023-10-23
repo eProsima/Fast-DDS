@@ -27,49 +27,49 @@ TEST(ThreadSettingsTests, EqualOperators)
     // Fixed scheduling_policy cases
     settings_2.scheduling_policy = settings_1.scheduling_policy;
     settings_2.priority = settings_1.priority + 1;
-    settings_2.cpu_mask = settings_1.cpu_mask;
+    settings_2.affinity = settings_1.affinity;
     settings_2.stack_size = settings_1.stack_size;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
 
     settings_2.scheduling_policy = settings_1.scheduling_policy;
     settings_2.priority = settings_1.priority;
-    settings_2.cpu_mask = settings_1.cpu_mask + 1;
+    settings_2.affinity = settings_1.affinity + 1;
     settings_2.stack_size = settings_1.stack_size;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
 
     settings_2.scheduling_policy = settings_1.scheduling_policy;
     settings_2.priority = settings_1.priority;
-    settings_2.cpu_mask = settings_1.cpu_mask;
+    settings_2.affinity = settings_1.affinity;
     settings_2.stack_size = settings_1.stack_size + 1;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
 
     settings_2.scheduling_policy = settings_1.scheduling_policy;
     settings_2.priority = settings_1.priority + 1;
-    settings_2.cpu_mask = settings_1.cpu_mask + 1;
+    settings_2.affinity = settings_1.affinity + 1;
     settings_2.stack_size = settings_1.stack_size;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
 
     settings_2.scheduling_policy = settings_1.scheduling_policy;
     settings_2.priority = settings_1.priority;
-    settings_2.cpu_mask = settings_1.cpu_mask + 1;
+    settings_2.affinity = settings_1.affinity + 1;
     settings_2.stack_size = settings_1.stack_size + 1;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
 
     settings_2.scheduling_policy = settings_1.scheduling_policy;
     settings_2.priority = settings_1.priority + 1;
-    settings_2.cpu_mask = settings_1.cpu_mask;
+    settings_2.affinity = settings_1.affinity;
     settings_2.stack_size = settings_1.stack_size + 1;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
 
     settings_2.scheduling_policy = settings_1.scheduling_policy;
     settings_2.priority = settings_1.priority + 1;
-    settings_2.cpu_mask = settings_1.cpu_mask + 1;
+    settings_2.affinity = settings_1.affinity + 1;
     settings_2.stack_size = settings_1.stack_size + 1;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
@@ -77,43 +77,43 @@ TEST(ThreadSettingsTests, EqualOperators)
     // Fixed priority cases (not already covered)
     settings_2.scheduling_policy = settings_1.scheduling_policy + 1;
     settings_2.priority = settings_1.priority;
-    settings_2.cpu_mask = settings_1.cpu_mask;
+    settings_2.affinity = settings_1.affinity;
     settings_2.stack_size = settings_1.stack_size;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
 
     settings_2.scheduling_policy = settings_1.scheduling_policy + 1;
     settings_2.priority = settings_1.priority;
-    settings_2.cpu_mask = settings_1.cpu_mask + 1;
+    settings_2.affinity = settings_1.affinity + 1;
     settings_2.stack_size = settings_1.stack_size;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
 
     settings_2.scheduling_policy = settings_1.scheduling_policy + 1;
     settings_2.priority = settings_1.priority;
-    settings_2.cpu_mask = settings_1.cpu_mask;
+    settings_2.affinity = settings_1.affinity;
     settings_2.stack_size = settings_1.stack_size + 1;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
 
     settings_2.scheduling_policy = settings_1.scheduling_policy + 1;
     settings_2.priority = settings_1.priority;
-    settings_2.cpu_mask = settings_1.cpu_mask + 1;
+    settings_2.affinity = settings_1.affinity + 1;
     settings_2.stack_size = settings_1.stack_size + 1;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
 
-    // Fixed cpu_mask cases (not already covered)
+    // Fixed affinity cases (not already covered)
     settings_2.scheduling_policy = settings_1.scheduling_policy + 1;
     settings_2.priority = settings_1.priority + 1;
-    settings_2.cpu_mask = settings_1.cpu_mask;
+    settings_2.affinity = settings_1.affinity;
     settings_2.stack_size = settings_1.stack_size;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
 
     settings_2.scheduling_policy = settings_1.scheduling_policy + 1;
     settings_2.priority = settings_1.priority + 1;
-    settings_2.cpu_mask = settings_1.cpu_mask;
+    settings_2.affinity = settings_1.affinity;
     settings_2.stack_size = settings_1.stack_size + 1;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
@@ -121,14 +121,14 @@ TEST(ThreadSettingsTests, EqualOperators)
     // Fixed stack_size cases (not already covered)
     settings_2.scheduling_policy = settings_1.scheduling_policy + 1;
     settings_2.priority = settings_1.priority + 1;
-    settings_2.cpu_mask = settings_1.cpu_mask + 1;
+    settings_2.affinity = settings_1.affinity + 1;
     settings_2.stack_size = settings_1.stack_size;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
 
     settings_2.scheduling_policy = settings_1.scheduling_policy + 1;
     settings_2.priority = settings_1.priority + 1;
-    settings_2.cpu_mask = settings_1.cpu_mask;
+    settings_2.affinity = settings_1.affinity;
     settings_2.stack_size = settings_1.stack_size + 1;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);
@@ -136,7 +136,7 @@ TEST(ThreadSettingsTests, EqualOperators)
     // All different
     settings_2.scheduling_policy = settings_1.scheduling_policy + 1;
     settings_2.priority = settings_1.priority + 1;
-    settings_2.cpu_mask = settings_1.cpu_mask + 1;
+    settings_2.affinity = settings_1.affinity + 1;
     settings_2.stack_size = settings_1.stack_size + 1;
     ASSERT_FALSE(settings_1 == settings_2);
     ASSERT_TRUE(settings_1 != settings_2);

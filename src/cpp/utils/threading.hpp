@@ -15,7 +15,16 @@
 #ifndef UTILS__THREADING_HPP_
 #define UTILS__THREADING_HPP_
 
+#include <thread>
+
 namespace eprosima {
+
+// Forward declare dependencies
+namespace fastdds {
+namespace rtps {
+struct ThreadSettings;
+} // namespace rtps
+} // namespace fastdds
 
 /**
  * @brief Give a name to the thread calling this function.
@@ -54,6 +63,42 @@ void set_name_to_current_thread(
         const char* fmt,
         uint32_t arg1,
         uint32_t arg2);
+
+
+/**
+ * @brief Apply thread settings to the thread calling this function.
+ *
+ * @param[in]  settings  Thread settings to apply.
+ */
+void apply_thread_settings_to_current_thread(
+        const fastdds::rtps::ThreadSettings& settings);
+
+/**
+ * @brief Create and start a thread with custom settings and name.
+ *
+ * This wrapper will create a thread on which the incoming functor will be called after
+ * applying giving it a custom name and applying the thread settings.
+ *
+ * @param[in]  func      Functor with the logic to be run on the created thread.
+ * @param[in]  settings  Thread settings to apply to the created thread.
+ * @param[in]  name      Name (format) for the created thread.
+ * @param[in]  args      Additional arguments to complete the thread name.
+ *                       See @ref set_name_to_current_thread for details.
+ */
+template<typename Functor, typename ... Args>
+std::thread create_thread(
+        Functor func,
+        const fastdds::rtps::ThreadSettings& settings,
+        const char* name,
+        Args... args)
+{
+    return std::thread([=]()
+                   {
+                       apply_thread_settings_to_current_thread(settings);
+                       set_name_to_current_thread(name, args ...);
+                       func();
+                   });
+}
 
 } // eprosima
 

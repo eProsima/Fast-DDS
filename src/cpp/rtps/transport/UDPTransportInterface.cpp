@@ -231,7 +231,7 @@ UDPChannelResource* UDPTransportInterface::CreateInputChannelResource(
     eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sInterface,
                     IPLocator::getPhysicalPort(locator), is_multicast);
     UDPChannelResource* p_channel_resource = new UDPChannelResource(this, unicastSocket, maxMsgSize, locator,
-                    sInterface, receiver);
+                    sInterface, receiver, configuration()->get_thread_config_for_port(locator.port));
     return p_channel_resource;
 }
 

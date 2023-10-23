@@ -24,6 +24,7 @@
 #include <set>
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/history/IChangePool.h>
@@ -53,6 +54,18 @@ class RTPSDomainImpl;
 class RTPSDomain
 {
 public:
+
+    /**
+     * Method to set the configuration of the threads created by the file watcher for the environment file.
+     * In order for these settings to take effect, this method must be called before the first call
+     * to @ref createParticipant.
+     *
+     * @param watch_thread     Settings for the thread watching the environment file.
+     * @param callback_thread  Settings for the thread executing the callback when the environment file changed.
+     */
+    RTPS_DllAPI static void set_filewatch_thread_config(
+            const fastdds::rtps::ThreadSettings& watch_thread,
+            const fastdds::rtps::ThreadSettings& callback_thread);
 
     /**
      * Method to shut down all RTPSParticipants, readers, writers, etc.

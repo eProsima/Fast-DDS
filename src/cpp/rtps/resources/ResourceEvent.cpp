@@ -16,13 +16,14 @@
  * @file ResourceEvent.cpp
  */
 
+#include <cassert>
+#include <thread>
+
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/dds/log/Log.hpp>
 
 #include "TimedEventImpl.h"
-
-#include <cassert>
-#include <thread>
+#include <utils/threading.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -304,7 +305,9 @@ void ResourceEvent::do_timer_actions()
 }
 
 void ResourceEvent::init_thread(
-        std::function<void()> configure_cb)
+        const fastdds::rtps::ThreadSettings& thread_cfg,
+        const char* name_fmt,
+        uint32_t thread_id)
 {
     std::lock_guard<TimedMutex> lock(mutex_);
 
@@ -312,14 +315,10 @@ void ResourceEvent::init_thread(
     stop_.store(false);
     resize_collections();
 
-    thread_ = std::thread([this, configure_cb]()
+    thread_ = eprosima::create_thread([this]()
                     {
-                        if (configure_cb)
-                        {
-                            configure_cb();
-                        }
                         event_service();
-                    });
+                    }, thread_cfg, name_fmt, thread_id);
 }
 
 } /* namespace rtps */
