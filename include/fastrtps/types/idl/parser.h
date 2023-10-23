@@ -375,7 +375,6 @@ struct action
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         std::cout << "Rule: " << typeid(Rule).name() << " " << in.string() << std::endl;
@@ -391,7 +390,6 @@ struct action<identifier>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         if (state.count("enum_name"))
@@ -452,7 +450,6 @@ struct action<identifier>
             const Input& in, \
             Context * ctx, \
             std::map<std::string, std::string>& state, \
-            std::string& evaluated, \
             std::vector<v1_3::DynamicData_ptr>& operands) \
         { \
             std::cout << "load_type_action: " << typeid(Rule).name() << " " \
@@ -485,7 +482,6 @@ struct action<char_type>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         switch (ctx->char_translation)
@@ -512,7 +508,6 @@ struct action<wide_char_type>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         switch (ctx->wchar_type)
@@ -537,7 +532,6 @@ struct action<positive_int_const>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["positive_int_const"] = in.string();
@@ -554,7 +548,6 @@ struct action<positive_int_const>
             const Input& in, \
             Context * ctx, \
             std::map<std::string, std::string>& state, \
-            std::string& evaluated, \
             std::vector<v1_3::DynamicData_ptr>& operands) \
         { \
             std::cout << "load_stringsize_action: " << typeid(Rule).name() << " " \
@@ -630,13 +623,12 @@ struct action<boolean_literal>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         std::cout << "boolean_literal: " << typeid(boolean_literal).name()
                   << " " << in.string() << std::endl;
 
-        evaluated += (evaluated.empty() ? "" : ";") + std::string{"bool"};
+        state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"bool"};
 
         struct custom_tf : std::numpunct<char>
         {
@@ -677,13 +669,12 @@ struct action<boolean_literal>
             const Input& in, \
             Context * ctx, \
             std::map<std::string, std::string>& state, \
-            std::string& evaluated, \
             std::vector<v1_3::DynamicData_ptr>& operands) \
         { \
             std::cout << "load_literal_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
  \
-            evaluated += (evaluated.empty() ? "" : ";") + std::string{#id}; \
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
  \
             std::istringstream ss(in.string()); \
             type res; \
@@ -715,13 +706,12 @@ load_literal_action(fixed_pt_literal, fixed, long double, create_float128_type()
             const Input& in, \
             Context * ctx, \
             std::map<std::string, std::string>& state, \
-            std::string& evaluated, \
             std::vector<v1_3::DynamicData_ptr>& operands) \
         { \
             std::cout << "float_op_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
  \
-            evaluated += (evaluated.empty() ? "" : ";") + std::string{#id}; \
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
  \
             /* calculate the result */ \
             auto it = operands.rbegin(); \
@@ -778,13 +768,12 @@ load_literal_action(fixed_pt_literal, fixed, long double, create_float128_type()
             const Input& in, \
             Context * ctx, \
             std::map<std::string, std::string>& state, \
-            std::string& evaluated, \
             std::vector<v1_3::DynamicData_ptr>& operands) \
         { \
             std::cout << "int_op_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
  \
-            evaluated += (evaluated.empty() ? "" : ";") + std::string{#id}; \
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
  \
             /* calculate the result */ \
             auto it = operands.rbegin(); \
@@ -829,13 +818,12 @@ load_literal_action(fixed_pt_literal, fixed, long double, create_float128_type()
             const Input& in, \
             Context * ctx, \
             std::map<std::string, std::string>& state, \
-            std::string& evaluated, \
             std::vector<v1_3::DynamicData_ptr>& operands) \
         { \
             std::cout << "bool_op_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
  \
-            evaluated += (evaluated.empty() ? "" : ";") + std::string{#id}; \
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
  \
             /* calculate the result */ \
             auto it = operands.rbegin(); \
@@ -902,13 +890,12 @@ struct action<minus_exec>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         std::cout << "minus_exec: " << typeid(minus_exec).name() << " "
                   << in.string() << std::endl;
 
-        evaluated += (evaluated.empty() ? "" : ";") + std::string{"minus"};
+        state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"minus"};
 
         if (TypeKind::TK_UINT64 == operands.back()->get_kind())
         {
@@ -936,13 +923,12 @@ struct action<plus_exec>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         // noop
         std::cout << "plus_exec: " << typeid(plus_exec).name() << " "
                   << in.string() << std::endl;
-        evaluated += (evaluated.empty() ? "" : ";") + std::string{"plus"};
+        state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"plus"};
     }
 
 };
@@ -955,13 +941,12 @@ struct action<inv_exec>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         std::cout << "inv_exec: " << typeid(inv_exec).name() << " "
                   << in.string() << std::endl;
 
-        evaluated += (evaluated.empty() ? "" : ";") + std::string{"inv"};
+        state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"inv"};
 
         if (TypeKind::TK_UINT64 == operands.back()->get_kind())
         {
@@ -989,7 +974,6 @@ struct action<struct_forward_dcl>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         Module& module = ctx->module();
@@ -1022,7 +1006,6 @@ struct action<union_forward_dcl>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         Module& module = ctx->module();
@@ -1059,7 +1042,6 @@ struct action<const_dcl>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         Module& module = ctx->module();
@@ -1070,7 +1052,7 @@ struct action<const_dcl>
         operands.pop_back();
         if (operands.empty())
         {
-            evaluated.clear();
+            state["evaluated_expr"].clear();
         }
     }
 
@@ -1084,7 +1066,6 @@ struct action<kw_enum>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         // Create empty enum states to indicate the start of parsing enum
@@ -1102,7 +1083,6 @@ struct action<enum_dcl>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         Module& module = ctx->module();
@@ -1142,7 +1122,6 @@ struct action<kw_struct>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         // Create empty struct states to indicate the start of parsing struct
@@ -1161,7 +1140,6 @@ struct action<struct_def>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         Module& module = ctx->module();
@@ -1199,7 +1177,6 @@ struct action<kw_union>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         // Create empty union states to indicate the start of parsing union
@@ -1220,7 +1197,6 @@ struct action<case_label>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         Module& module = ctx->module();
@@ -1271,7 +1247,6 @@ struct action<switch_case>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         Module& module = ctx->module();
@@ -1291,7 +1266,6 @@ struct action<union_def>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         Module& module = ctx->module();
@@ -1354,7 +1328,6 @@ struct action<kw_typedef>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         // Create empty alias states to indicate the start of parsing alias
@@ -1372,7 +1345,6 @@ struct action<fixed_array_size>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         if (state.count("alias") && !state["alias"].empty())
@@ -1402,7 +1374,6 @@ struct action<typedef_dcl>
             const Input& in,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         Module& module = ctx->module();
@@ -1485,8 +1456,6 @@ public:
             Context& context)
     {
         memory_input<> input_mem(idl_string, "idlparser");
-        std::map<std::string, std::string> parsing_state;
-        std::vector<v1_3::DynamicData_ptr> operands;
 
         std::size_t issues = tao::TAO_PEGTL_NAMESPACE::analyze<document>(-1);
         if (issues > 0)
@@ -1498,9 +1467,12 @@ public:
 
         context.parser_ = shared_from_this();
         context_ = &context;
-        std::string evaluated;
-        if (tao::TAO_PEGTL_NAMESPACE::parse<document, action>(input_mem, context_, parsing_state, evaluated,
-                operands) && input_mem.empty())
+
+        std::map<std::string, std::string> parsing_state;
+        std::vector<v1_3::DynamicData_ptr> operands;
+        parsing_state["evaluated_expr"] = "";
+
+        if (tao::TAO_PEGTL_NAMESPACE::parse<document, action>(input_mem, context_, parsing_state, operands) && input_mem.empty())
         {
             context_->success = true;
             EPROSIMA_LOG_INFO(IDLPARSER, "IDL parsing succeeded.");
