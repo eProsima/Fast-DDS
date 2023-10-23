@@ -21,7 +21,7 @@ bool ThreadSettings::operator ==(
 {
     return (scheduling_policy == rhs.scheduling_policy &&
            priority == rhs.priority &&
-           cpu_mask == rhs.cpu_mask &&
+           affinity == rhs.affinity &&
            stack_size == rhs.stack_size);
 }
 

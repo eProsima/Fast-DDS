@@ -38,7 +38,7 @@ bool PortBasedTransportDescriptor::operator ==(
 }
 
 const ThreadSettings& PortBasedTransportDescriptor::get_thread_config_for_port(
-        uint32_t port)
+        uint32_t port) const
 {
     auto search = reception_threads_.find(port);
     if (search != reception_threads_.end())

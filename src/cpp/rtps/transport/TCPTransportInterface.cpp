@@ -196,11 +196,10 @@ void TCPTransportInterface::clean()
     alive_.store(false);
 
     keep_alive_event_.cancel();
-    if (io_service_timers_thread_)
+    if (io_service_timers_thread_.joinable())
     {
         io_service_timers_.stop();
-        io_service_timers_thread_->join();
-        io_service_timers_thread_ = nullptr;
+        io_service_timers_thread_.join();
     }
 
     {
@@ -242,11 +241,10 @@ void TCPTransportInterface::clean()
         }
     }
 
-    if (io_service_thread_)
+    if (io_service_thread_.joinable())
     {
         io_service_.stop();
-        io_service_thread_->join();
-        io_service_thread_ = nullptr;
+        io_service_thread_.join();
     }
 }
 
@@ -455,7 +453,6 @@ bool TCPTransportInterface::init(
 
     auto ioServiceFunction = [&]()
             {
-                set_name_to_current_thread("dds.tcp_accept");
 #if ASIO_VERSION >= 101200
                 asio::executor_work_guard<asio::io_service::executor_type> work(io_service_.get_executor());
 #else
@@ -463,21 +460,22 @@ bool TCPTransportInterface::init(
 #endif // if ASIO_VERSION >= 101200
                 io_service_.run();
             };
-    io_service_thread_ = std::make_shared<std::thread>(ioServiceFunction);
+    io_service_thread_ = create_thread(ioServiceFunction, configuration()->accept_thread, "dds.tcp_accept");
 
     if (0 < configuration()->keep_alive_frequency_ms)
     {
-        io_service_timers_thread_ = std::make_shared<std::thread>([&]()
-                        {
-                            set_name_to_current_thread("dds.tcp_keep");
+        auto ioServiceTimersFunction = [&]()
+                {
 #if ASIO_VERSION >= 101200
-                            asio::executor_work_guard<asio::io_service::executor_type> work(io_service_timers_.
+                    asio::executor_work_guard<asio::io_service::executor_type> work(io_service_timers_.
                                     get_executor());
 #else
-                            io_service::work work(io_service_timers_);
+                    io_service::work work(io_service_timers_);
 #endif // if ASIO_VERSION >= 101200
-                            io_service_timers_.run();
-                        });
+                    io_service_timers_.run();
+                };
+        io_service_timers_thread_ = create_thread(ioServiceTimersFunction,
+                        configuration()->keep_alive_thread, "dds.tcp_keep");
     }
 
     return true;
@@ -835,6 +833,20 @@ void TCPTransportInterface::keep_alive()
        }
        EPROSIMA_LOG_INFO(RTCP, "End perform_rtcp_management_thread " << channel->locator());
      */
+}
+
+void TCPTransportInterface::create_listening_thread(
+        const std::shared_ptr<TCPChannelResource>& channel)
+{
+    std::weak_ptr<TCPChannelResource> channel_weak_ptr = channel;
+    std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
+    auto fn = [this, channel_weak_ptr, rtcp_manager_weak_ptr]()
+            {
+                perform_listen_operation(channel_weak_ptr, rtcp_manager_weak_ptr);
+            };
+    uint32_t port = channel->local_endpoint().port();
+    const ThreadSettings& thr_config = configuration()->get_thread_config_for_port(port);
+    channel->thread(create_thread(fn, thr_config, "dds.tcp.%u", port));
 }
 
 void TCPTransportInterface::perform_listen_operation(
@@ -1340,10 +1352,7 @@ void TCPTransportInterface::SocketAccepted(
             }
 
             channel->set_options(configuration());
-            std::weak_ptr<TCPChannelResource> channel_weak_ptr = channel;
-            std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-            channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                    channel_weak_ptr, rtcp_manager_weak_ptr));
+            create_listening_thread(channel);
 
             EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
                     << IPLocator::to_string(locator) << ", remote: "
@@ -1387,10 +1396,7 @@ void TCPTransportInterface::SecureSocketAccepted(
             }
 
             secure_channel->set_options(configuration());
-            std::weak_ptr<TCPChannelResource> channel_weak_ptr = secure_channel;
-            std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-            secure_channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                    channel_weak_ptr, rtcp_manager_weak_ptr));
+            create_listening_thread(secure_channel);
 
             EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
                                                                     << ", remote: " << socket->lowest_layer().remote_endpoint().address()
@@ -1432,10 +1438,7 @@ void TCPTransportInterface::SocketConnected(
                 {
                     channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
                     channel->set_options(configuration());
-
-                    std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-                    channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                            channel_weak_ptr, rtcp_manager_weak_ptr));
+                    create_listening_thread(channel);
                 }
             }
             else
