@@ -1,6 +1,14 @@
 {
     "names":
     {
+        "fastcdr":
+        {
+            "cmake-args":
+            [
+                "-DCMAKE_C_FLAGS='-fsanitize=thread -O2 -g -fno-omit-frame-pointer'",
+                "-DCMAKE_CXX_FLAGS='-fsanitize=thread -O2 -g -fno-omit-frame-pointer'"
+            ]
+        },
         "fastrtps":
         {
             "cmake-args":
