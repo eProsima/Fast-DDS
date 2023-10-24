@@ -1298,8 +1298,6 @@ public:
         return matched_;
     }
 
-private:
-
     const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
     {
         return participant_guid_;
