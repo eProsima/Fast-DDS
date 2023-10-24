@@ -34,7 +34,7 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define HelloWorld_max_cdr_typesize 264ULL;
+#define HelloWorld_max_cdr_typesize 29ULL;
 #define HelloWorld_max_key_cdr_typesize 0ULL;
 
 HelloWorld::HelloWorld()
@@ -137,7 +137,11 @@ void HelloWorld::deserialize(
 {
 
     dcdr >> m_index;
-    dcdr >> m_message;
+    {
+        std::string aux;
+        dcdr >> aux;
+        m_message = aux.c_str();
+    }
 }
 
 /*!
@@ -173,7 +177,7 @@ uint32_t& HelloWorld::index()
  * @param _message New value to be copied in member message
  */
 void HelloWorld::message(
-        const std::string& _message)
+        const eprosima::fastrtps::fixed_string<20>& _message)
 {
     m_message = _message;
 }
@@ -183,7 +187,7 @@ void HelloWorld::message(
  * @param _message New value to be moved in member message
  */
 void HelloWorld::message(
-        std::string&& _message)
+        eprosima::fastrtps::fixed_string<20>&& _message)
 {
     m_message = std::move(_message);
 }
@@ -192,7 +196,7 @@ void HelloWorld::message(
  * @brief This function returns a constant reference to member message
  * @return Constant reference to member message
  */
-const std::string& HelloWorld::message() const
+const eprosima::fastrtps::fixed_string<20>& HelloWorld::message() const
 {
     return m_message;
 }
@@ -201,7 +205,7 @@ const std::string& HelloWorld::message() const
  * @brief This function returns a reference to member message
  * @return Reference to member message
  */
-std::string& HelloWorld::message()
+eprosima::fastrtps::fixed_string<20>& HelloWorld::message()
 {
     return m_message;
 }
