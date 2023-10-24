@@ -16,6 +16,7 @@
 #include <cstring>
 #include <limits>
 
+#include <mach/mach.h>
 #include <pthread.h>
 
 #include <fastdds/dds/log/Log.hpp>
