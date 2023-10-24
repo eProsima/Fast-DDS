@@ -890,9 +890,9 @@ bool WLP::send_liveliness_message(
 
     if (change != nullptr)
     {
-        change->serializedPayload.encapsulation = (uint16_t)PL_DEFAULT_ENCAPSULATION;
+        change->serializedPayload.encapsulation = (uint16_t)DEFAULT_ENCAPSULATION;
         change->serializedPayload.data[0] = 0;
-        change->serializedPayload.data[1] = PL_DEFAULT_ENCAPSULATION;
+        change->serializedPayload.data[1] = DEFAULT_ENCAPSULATION;
         change->serializedPayload.data[2] = 0;
         change->serializedPayload.data[3] = 0;
 

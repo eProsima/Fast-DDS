@@ -16,29 +16,35 @@
  * @file WLPListener.cpp
  *
  */
-
 #include <fastdds/rtps/builtin/liveliness/WLPListener.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include <fastdds/rtps/history/ReaderHistory.h>
-
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
-
-#include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/writer/LivelinessManager.h>
-#include <fastdds/dds/log/Log.hpp>
-
+#include <cstdint>
+#include <cstring>
 #include <mutex>
+#include <vector>
 
-
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/LivelinessManager.h>
+#include <fastrtps/qos/QosPolicies.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
-
-WLPListener::WLPListener(WLP* plwp)
+WLPListener::WLPListener(
+        WLP* plwp)
     : mp_WLP(plwp)
 {
 }
@@ -47,8 +53,6 @@ WLPListener::~WLPListener()
 {
 }
 
-typedef std::vector<WriterProxy*>::iterator WPIT;
-
 void WLPListener::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const changeIN)
@@ -56,55 +60,84 @@ void WLPListener::onNewCacheChangeAdded(
     std::lock_guard<std::recursive_mutex> guard2(*mp_WLP->mp_builtinProtocols->mp_PDP->getMutex());
 
     GuidPrefix_t guidP;
-    LivelinessQosPolicyKind livelinessKind;
+    LivelinessQosPolicyKind livelinessKind = AUTOMATIC_LIVELINESS_QOS;
     CacheChange_t* change = (CacheChange_t*)changeIN;
-    if(!computeKey(change))
+    if (!computeKey(change))
     {
-        logWarning(RTPS_LIVELINESS,"Problem obtaining the Key");
+        logWarning(RTPS_LIVELINESS, "Problem obtaining the Key");
         return;
     }
     //Check the serializedPayload:
     auto history = reader->getHistory();
-    for(auto ch = history->changesBegin(); ch!=history->changesEnd(); ++ch)
+    for (auto ch = history->changesBegin(); ch != history->changesEnd(); ++ch)
     {
-        if((*ch)->instanceHandle == change->instanceHandle && (*ch)->sequenceNumber < change->sequenceNumber)
+        if ((*ch)->instanceHandle == change->instanceHandle && (*ch)->sequenceNumber < change->sequenceNumber)
         {
             history->remove_change(*ch);
             break;
         }
     }
-    if (change->serializedPayload.length > 0)
+
+    // Serialized payload should have at least 4 bytes of representation header, 12 of GuidPrefix,
+    // 4 of kind, and 4 of length.
+    constexpr uint32_t participant_msg_data_kind_size = 4;
+    constexpr uint32_t participant_msg_data_length_size = 4;
+    constexpr uint32_t min_serialized_length = SerializedPayload_t::representation_header_size
+            + GuidPrefix_t::size
+            + participant_msg_data_kind_size
+            + participant_msg_data_length_size;
+
+    if (change->serializedPayload.length >= min_serialized_length)
     {
-        if (PL_CDR_BE == change->serializedPayload.data[1])
-        {
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-        }
-        else
-        {
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-        }
+        constexpr uint32_t participant_msg_data_kind_pos = 16;
+        constexpr uint32_t encapsulation_pos = 1;
+        uint32_t data_length = 0;
 
-        for(size_t i = 0; i<12; ++i)
-        {
-            guidP.value[i] = change->serializedPayload.data[i + 4];
-        }
-        livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[19]-0x01);
+        // Extract encapsulation from the second byte of the representation header. Done prior to
+        // creating the CDRMessage_t, as the CDRMessage_t ctor uses it for its own state.
+        change->serializedPayload.encapsulation =
+                static_cast<uint16_t>(change->serializedPayload.data[encapsulation_pos]);
 
+        // Create CDR message from buffer to deserialize contents for further validation
+        CDRMessage_t cdr_message(change->serializedPayload);
+
+        bool message_ok = (
+            // Skip representation header
+            CDRMessage::skip(&cdr_message, SerializedPayload_t::representation_header_size)
+            // Extract GuidPrefix
+            && CDRMessage::readData(&cdr_message, guidP.value, GuidPrefix_t::size)
+            // Skip kind, it will be validated later
+            && CDRMessage::skip(&cdr_message, participant_msg_data_kind_size)
+            // Extract and validate liveliness kind
+            && get_wlp_kind(&change->serializedPayload.data[participant_msg_data_kind_pos], livelinessKind)
+            // Extract data length
+            && CDRMessage::readUInt32(&cdr_message, &data_length)
+            // Check that serialized length is correctly set
+            && (change->serializedPayload.length >= min_serialized_length + data_length));
+
+        if (!message_ok)
+        {
+            logInfo(RTPS_LIVELINESS, "Ignoring incorrect WLP ParticipantDataMessage");
+            history->remove_change(change);
+            return;
+        }
     }
     else
     {
-        if(!separateKey(
+        if (!separateKey(
                     change->instanceHandle,
                     &guidP,
                     &livelinessKind))
         {
+            logInfo(RTPS_LIVELINESS, "Ignoring not WLP ParticipantDataMessage");
+            history->remove_change(change);
             return;
         }
     }
 
-    if(guidP == reader->getGuid().guidPrefix)
+    if (guidP == reader->getGuid().guidPrefix)
     {
-        logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring");
+        logInfo(RTPS_LIVELINESS, "Message from own RTPSParticipant, ignoring");
         history->remove_change(change);
         return;
     }
@@ -129,20 +162,22 @@ bool WLPListener::separateKey(
         GuidPrefix_t* guidP,
         LivelinessQosPolicyKind* liveliness)
 {
-    for(uint8_t i=0;i<12;++i)
+    bool ret = get_wlp_kind(&key.value[12], *liveliness);
+    if (ret)
     {
-        guidP->value[i] = key.value[i];
+        // Extract GuidPrefix
+        memcpy(guidP->value, key.value, 12);
     }
-    *liveliness = (LivelinessQosPolicyKind)key.value[15];
-    return true;
+    return ret;
 }
 
-bool WLPListener::computeKey(CacheChange_t* change)
+bool WLPListener::computeKey(
+        CacheChange_t* change)
 {
-    if(change->instanceHandle == c_InstanceHandle_Unknown)
+    if (change->instanceHandle == c_InstanceHandle_Unknown)
     {
         SerializedPayload_t* pl = &change->serializedPayload;
-        if(pl->length >= 20)
+        if (pl->length >= 20)
         {
             memcpy(change->instanceHandle.value, pl->data + 4, 16);
             return true;
@@ -152,7 +187,30 @@ bool WLPListener::computeKey(CacheChange_t* change)
     return true;
 }
 
+bool WLPListener::get_wlp_kind(
+        const octet* serialized_kind,
+        LivelinessQosPolicyKind& liveliness_kind)
+{
+    /*
+     * From RTPS 2.5 9.6.3.1, the ParticipantMessageData kinds for WLP are:
+     *   - PARTICIPANT_MESSAGE_DATA_KIND_AUTOMATIC_LIVELINESS_UPDATE {0x00, 0x00, 0x00, 0x01}
+     *   - PARTICIPANT_MESSAGE_DATA_KIND_MANUAL_LIVELINESS_UPDATE {0x00, 0x00, 0x00, 0x02}
+     */
+    bool is_wlp = (
+        serialized_kind[0] == 0
+        && serialized_kind[1] == 0
+        && serialized_kind[2] == 0
+        && (serialized_kind[3] == 0x01 || serialized_kind[3] == 0x02));
+
+    if (is_wlp)
+    {
+        // Adjust and cast to LivelinessQosPolicyKind enum, where AUTOMATIC_LIVELINESS_QOS == 0
+        liveliness_kind = static_cast<LivelinessQosPolicyKind>(serialized_kind[3] - 0x01);
+    }
+
+    return is_wlp;
+}
 
 } /* namespace rtps */
 } /* namespace eprosima */
-}
+} // namespace eprosima
