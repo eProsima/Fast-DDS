@@ -57,6 +57,12 @@ class NetworkFactory
             return true;
         }
 
+        bool is_locator_remote_or_allowed(
+                const Locator_t&) const
+        {
+            return true;
+        }
+
         uint32_t get_min_send_buffer_size()
         {
             return 65536;

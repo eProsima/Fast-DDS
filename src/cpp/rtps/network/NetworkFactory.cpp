@@ -194,6 +194,12 @@ bool NetworkFactory::is_locator_allowed(
     return false;
 }
 
+bool NetworkFactory::is_locator_remote_or_allowed(
+        const Locator_t& locator) const
+{
+    return !is_local_locator(locator) || is_locator_allowed(locator);
+}
+
 void NetworkFactory::select_locators(
         LocatorSelector& selector) const
 {

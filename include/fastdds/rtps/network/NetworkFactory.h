@@ -123,6 +123,17 @@ public:
             const Locator_t& locator) const;
 
     /**
+     * Must report whether the given locator is remote, or allowed by at least one of the registered transports.
+     *
+     * @param [in]  locator Locator to check if remote or allowed.
+     *
+     * @return false if the input locator is not remote, nor supported/allowed by any of the registered transports,
+     *         true otherwise.
+     */
+    bool is_locator_remote_or_allowed(
+            const Locator_t& locator) const;
+
+    /**
      * Perform the locator selection algorithm.
      *
      * It basically consists of the following steps
