@@ -4138,6 +4138,7 @@ TEST_F(XMLParserTests, getXMLThreadSettings)
         {{"12", "-1", "12", "12", ""}, XMLP_ret::XML_OK},
         {{"12", "12", "12", "-1", ""}, XMLP_ret::XML_OK},
         {{"-2", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
+        {{"12", "12", "-2", "12", ""}, XMLP_ret::XML_ERROR},
         {{"12", "12", "12", "-2", ""}, XMLP_ret::XML_ERROR},
         {{"a", "12", "12", "12", ""}, XMLP_ret::XML_ERROR},
         {{"12", "a", "12", "12", ""}, XMLP_ret::XML_ERROR},
@@ -4172,7 +4173,7 @@ TEST_F(XMLParserTests, getXMLThreadSettings)
                 "</thread_settings>";
 
         // Parse the XML snippet
-        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str())) << xml;
 
         // Extract ThreadSetting
         titleElement = xml_doc.RootElement();
@@ -4236,7 +4237,7 @@ TEST_F(XMLParserTests, getXMLThreadSettingsWithPort)
                 "</thread_settings>";
 
         // Parse the XML snippet
-        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str())) << xml;
 
         // Extract ThreadSetting
         titleElement = xml_doc.RootElement();

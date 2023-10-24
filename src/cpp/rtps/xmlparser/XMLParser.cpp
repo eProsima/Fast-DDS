@@ -2213,16 +2213,18 @@ XMLP_ret XMLParser::fillDataNode(
                 return XMLP_ret::XML_ERROR;
             }
         }
-#if HAVE_SECURITY
         else if (strcmp(name, SECURITY_LOG_THREAD) == 0)
         {
+#if HAVE_SECURITY
             if (XMLP_ret::XML_OK != getXMLThreadSettings(*p_aux0, participant_node.get()->rtps.security_log_thread))
             {
                 return XMLP_ret::XML_ERROR;
             }
-        }
+#else
+            EPROSIMA_LOG_WARNING(XMLPARSER, "Ignoring '" << SECURITY_LOG_THREAD << "' since security is disabled");
 #endif // if HAVE_SECURITY
-        else if (strcmp(name, SECURITY_LOG_THREAD) != 0)
+        }
+        else
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'rtpsParticipantAttributesType'. Name: " << name);
             return XMLP_ret::XML_ERROR;

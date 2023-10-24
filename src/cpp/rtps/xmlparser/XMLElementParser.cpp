@@ -3758,15 +3758,30 @@ XMLP_ret XMLParser::getXMLUint(
 
     auto to_uint64 = [](const char* str, unsigned long int* value) -> bool
             {
-#ifdef _WIN32
-                if (sscanf_s(str, "%lu", value) == 1)
-#else
-                if (sscanf(str, "%lu", value) == 1)
-#endif // ifdef _WIN32
+                // Look for a '-' sign
+                bool ret = false;
+                const char minus = '-';
+                const char* minus_result = str;
+                if (nullptr == std::strchr(minus_result, minus))
                 {
-                    return true;
+                    // Minus not found
+                    ret = true;
                 }
-                return false;
+
+                if (ret)
+                {
+                    ret = false;
+#ifdef _WIN32
+                    if (sscanf_s(str, "%lu", value) == 1)
+#else
+                    if (sscanf(str, "%lu", value) == 1)
+#endif // ifdef _WIN32
+                    {
+                        // Number found
+                        ret = true;
+                    }
+                }
+                return ret;
             };
 
     std::string text = get_element_text(elem);
