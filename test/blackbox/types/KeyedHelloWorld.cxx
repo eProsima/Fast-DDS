@@ -27,18 +27,20 @@ char dummy;
 #endif  // _WIN32
 
 #include "KeyedHelloWorld.h"
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "KeyedHelloWorldCdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
 
 
 KeyedHelloWorld::KeyedHelloWorld()
 {
-
 }
 
 KeyedHelloWorld::~KeyedHelloWorld()
@@ -68,7 +70,6 @@ KeyedHelloWorld& KeyedHelloWorld::operator =(
     m_key = x.m_key;
     m_index = x.m_index;
     m_message = x.m_message;
-
     return *this;
 }
 
@@ -79,7 +80,6 @@ KeyedHelloWorld& KeyedHelloWorld::operator =(
     m_key = x.m_key;
     m_index = x.m_index;
     m_message = std::move(x.m_message);
-
     return *this;
 }
 
@@ -96,6 +96,19 @@ bool KeyedHelloWorld::operator !=(
 {
     return !(*this == x);
 }
+
+void KeyedHelloWorld::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void KeyedHelloWorld::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member key
@@ -193,6 +206,3 @@ eprosima::fastcdr::fixed_string<128>& KeyedHelloWorld::message()
     return m_message;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "KeyedHelloWorldCdrAux.ipp"

@@ -34,6 +34,8 @@ namespace fastcdr {
 class Cdr;
 class CdrSizeCalculator;
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const LoanableHelloWorld& data);
@@ -43,3 +45,4 @@ eProsima_user_DllExport void serialize_key(
 } // namespace eprosima
 
 #endif // _FAST_DDS_GENERATED_LOANABLEHELLOWORLDCDRAUX_HPP_
+

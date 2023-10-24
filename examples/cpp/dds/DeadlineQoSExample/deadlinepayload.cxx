@@ -27,18 +27,20 @@ char dummy;
 #endif  // _WIN32
 
 #include "deadlinepayload.h"
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "deadlinepayloadCdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
 
 
 HelloMsg::HelloMsg()
 {
-
 }
 
 HelloMsg::~HelloMsg()
@@ -65,7 +67,6 @@ HelloMsg& HelloMsg::operator =(
 
     m_deadlinekey = x.m_deadlinekey;
     m_payload = x.m_payload;
-
     return *this;
 }
 
@@ -75,7 +76,6 @@ HelloMsg& HelloMsg::operator =(
 
     m_deadlinekey = x.m_deadlinekey;
     m_payload = std::move(x.m_payload);
-
     return *this;
 }
 
@@ -91,6 +91,19 @@ bool HelloMsg::operator !=(
 {
     return !(*this == x);
 }
+
+void HelloMsg::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void HelloMsg::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member deadlinekey
@@ -159,6 +172,3 @@ eprosima::fastcdr::fixed_string<256>& HelloMsg::payload()
     return m_payload;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "deadlinepayloadCdrAux.ipp"

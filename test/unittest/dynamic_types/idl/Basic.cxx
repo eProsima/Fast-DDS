@@ -29,18 +29,20 @@ char dummy;
 #include "Basic.h"
 #include "BasicTypeObject.h"
 
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "BasicCdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
 
 
 EnumStruct::EnumStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -66,7 +68,6 @@ EnumStruct& EnumStruct::operator =(
 {
 
     m_my_enum = x.m_my_enum;
-
     return *this;
 }
 
@@ -75,7 +76,6 @@ EnumStruct& EnumStruct::operator =(
 {
 
     m_my_enum = x.m_my_enum;
-
     return *this;
 }
 
@@ -90,6 +90,19 @@ bool EnumStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void EnumStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void EnumStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_enum
@@ -120,9 +133,10 @@ MyEnum& EnumStruct::my_enum()
 }
 
 
+
+
 AliasStruct::AliasStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -148,7 +162,6 @@ AliasStruct& AliasStruct::operator =(
 {
 
     m_my_alias = x.m_my_alias;
-
     return *this;
 }
 
@@ -157,7 +170,6 @@ AliasStruct& AliasStruct::operator =(
 {
 
     m_my_alias = x.m_my_alias;
-
     return *this;
 }
 
@@ -172,6 +184,19 @@ bool AliasStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void AliasStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void AliasStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_alias
@@ -202,9 +227,10 @@ MyAliasEnum& AliasStruct::my_alias()
 }
 
 
+
+
 AliasAliasStruct::AliasAliasStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -230,7 +256,6 @@ AliasAliasStruct& AliasAliasStruct::operator =(
 {
 
     m_my_alias_alias = x.m_my_alias_alias;
-
     return *this;
 }
 
@@ -239,7 +264,6 @@ AliasAliasStruct& AliasAliasStruct::operator =(
 {
 
     m_my_alias_alias = x.m_my_alias_alias;
-
     return *this;
 }
 
@@ -254,6 +278,19 @@ bool AliasAliasStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void AliasAliasStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void AliasAliasStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_alias_alias
@@ -284,9 +321,10 @@ MyAliasAliasEnum& AliasAliasStruct::my_alias_alias()
 }
 
 
+
+
 BoolStruct::BoolStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -312,7 +350,6 @@ BoolStruct& BoolStruct::operator =(
 {
 
     m_my_bool = x.m_my_bool;
-
     return *this;
 }
 
@@ -321,7 +358,6 @@ BoolStruct& BoolStruct::operator =(
 {
 
     m_my_bool = x.m_my_bool;
-
     return *this;
 }
 
@@ -336,6 +372,19 @@ bool BoolStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void BoolStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void BoolStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_bool
@@ -366,9 +415,10 @@ bool& BoolStruct::my_bool()
 }
 
 
+
+
 OctetStruct::OctetStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -394,7 +444,6 @@ OctetStruct& OctetStruct::operator =(
 {
 
     m_my_octet = x.m_my_octet;
-
     return *this;
 }
 
@@ -403,7 +452,6 @@ OctetStruct& OctetStruct::operator =(
 {
 
     m_my_octet = x.m_my_octet;
-
     return *this;
 }
 
@@ -418,6 +466,19 @@ bool OctetStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void OctetStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void OctetStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_octet
@@ -448,9 +509,10 @@ uint8_t& OctetStruct::my_octet()
 }
 
 
+
+
 ShortStruct::ShortStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -476,7 +538,6 @@ ShortStruct& ShortStruct::operator =(
 {
 
     m_my_int16 = x.m_my_int16;
-
     return *this;
 }
 
@@ -485,7 +546,6 @@ ShortStruct& ShortStruct::operator =(
 {
 
     m_my_int16 = x.m_my_int16;
-
     return *this;
 }
 
@@ -500,6 +560,19 @@ bool ShortStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void ShortStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void ShortStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_int16
@@ -530,9 +603,10 @@ int16_t& ShortStruct::my_int16()
 }
 
 
+
+
 LongStruct::LongStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -558,7 +632,6 @@ LongStruct& LongStruct::operator =(
 {
 
     m_my_int32 = x.m_my_int32;
-
     return *this;
 }
 
@@ -567,7 +640,6 @@ LongStruct& LongStruct::operator =(
 {
 
     m_my_int32 = x.m_my_int32;
-
     return *this;
 }
 
@@ -582,6 +654,19 @@ bool LongStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void LongStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void LongStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_int32
@@ -612,9 +697,10 @@ int32_t& LongStruct::my_int32()
 }
 
 
+
+
 LongLongStruct::LongLongStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -640,7 +726,6 @@ LongLongStruct& LongLongStruct::operator =(
 {
 
     m_my_int64 = x.m_my_int64;
-
     return *this;
 }
 
@@ -649,7 +734,6 @@ LongLongStruct& LongLongStruct::operator =(
 {
 
     m_my_int64 = x.m_my_int64;
-
     return *this;
 }
 
@@ -664,6 +748,19 @@ bool LongLongStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void LongLongStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void LongLongStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_int64
@@ -694,9 +791,10 @@ int64_t& LongLongStruct::my_int64()
 }
 
 
+
+
 UShortStruct::UShortStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -722,7 +820,6 @@ UShortStruct& UShortStruct::operator =(
 {
 
     m_my_uint16 = x.m_my_uint16;
-
     return *this;
 }
 
@@ -731,7 +828,6 @@ UShortStruct& UShortStruct::operator =(
 {
 
     m_my_uint16 = x.m_my_uint16;
-
     return *this;
 }
 
@@ -746,6 +842,19 @@ bool UShortStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void UShortStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void UShortStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_uint16
@@ -776,9 +885,10 @@ uint16_t& UShortStruct::my_uint16()
 }
 
 
+
+
 ULongStruct::ULongStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -804,7 +914,6 @@ ULongStruct& ULongStruct::operator =(
 {
 
     m_my_uint32 = x.m_my_uint32;
-
     return *this;
 }
 
@@ -813,7 +922,6 @@ ULongStruct& ULongStruct::operator =(
 {
 
     m_my_uint32 = x.m_my_uint32;
-
     return *this;
 }
 
@@ -828,6 +936,19 @@ bool ULongStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void ULongStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void ULongStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_uint32
@@ -858,9 +979,10 @@ uint32_t& ULongStruct::my_uint32()
 }
 
 
+
+
 ULongLongStruct::ULongLongStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -886,7 +1008,6 @@ ULongLongStruct& ULongLongStruct::operator =(
 {
 
     m_my_uint64 = x.m_my_uint64;
-
     return *this;
 }
 
@@ -895,7 +1016,6 @@ ULongLongStruct& ULongLongStruct::operator =(
 {
 
     m_my_uint64 = x.m_my_uint64;
-
     return *this;
 }
 
@@ -910,6 +1030,19 @@ bool ULongLongStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void ULongLongStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void ULongLongStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_uint64
@@ -940,9 +1073,10 @@ uint64_t& ULongLongStruct::my_uint64()
 }
 
 
+
+
 FloatStruct::FloatStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -968,7 +1102,6 @@ FloatStruct& FloatStruct::operator =(
 {
 
     m_my_float32 = x.m_my_float32;
-
     return *this;
 }
 
@@ -977,7 +1110,6 @@ FloatStruct& FloatStruct::operator =(
 {
 
     m_my_float32 = x.m_my_float32;
-
     return *this;
 }
 
@@ -992,6 +1124,19 @@ bool FloatStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void FloatStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void FloatStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_float32
@@ -1022,9 +1167,10 @@ float& FloatStruct::my_float32()
 }
 
 
+
+
 DoubleStruct::DoubleStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1050,7 +1196,6 @@ DoubleStruct& DoubleStruct::operator =(
 {
 
     m_my_float64 = x.m_my_float64;
-
     return *this;
 }
 
@@ -1059,7 +1204,6 @@ DoubleStruct& DoubleStruct::operator =(
 {
 
     m_my_float64 = x.m_my_float64;
-
     return *this;
 }
 
@@ -1074,6 +1218,19 @@ bool DoubleStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void DoubleStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void DoubleStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_float64
@@ -1104,9 +1261,10 @@ double& DoubleStruct::my_float64()
 }
 
 
+
+
 LongDoubleStruct::LongDoubleStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1132,7 +1290,6 @@ LongDoubleStruct& LongDoubleStruct::operator =(
 {
 
     m_my_float128 = x.m_my_float128;
-
     return *this;
 }
 
@@ -1141,7 +1298,6 @@ LongDoubleStruct& LongDoubleStruct::operator =(
 {
 
     m_my_float128 = x.m_my_float128;
-
     return *this;
 }
 
@@ -1156,6 +1312,19 @@ bool LongDoubleStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void LongDoubleStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void LongDoubleStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_float128
@@ -1186,9 +1355,10 @@ long double& LongDoubleStruct::my_float128()
 }
 
 
+
+
 CharStruct::CharStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1214,7 +1384,6 @@ CharStruct& CharStruct::operator =(
 {
 
     m_my_char = x.m_my_char;
-
     return *this;
 }
 
@@ -1223,7 +1392,6 @@ CharStruct& CharStruct::operator =(
 {
 
     m_my_char = x.m_my_char;
-
     return *this;
 }
 
@@ -1238,6 +1406,19 @@ bool CharStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void CharStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void CharStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_char
@@ -1268,9 +1449,10 @@ char& CharStruct::my_char()
 }
 
 
+
+
 WCharStruct::WCharStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1296,7 +1478,6 @@ WCharStruct& WCharStruct::operator =(
 {
 
     m_my_wchar = x.m_my_wchar;
-
     return *this;
 }
 
@@ -1305,7 +1486,6 @@ WCharStruct& WCharStruct::operator =(
 {
 
     m_my_wchar = x.m_my_wchar;
-
     return *this;
 }
 
@@ -1320,6 +1500,19 @@ bool WCharStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void WCharStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void WCharStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_wchar
@@ -1350,9 +1543,10 @@ wchar_t& WCharStruct::my_wchar()
 }
 
 
+
+
 StringStruct::StringStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1378,7 +1572,6 @@ StringStruct& StringStruct::operator =(
 {
 
     m_my_string = x.m_my_string;
-
     return *this;
 }
 
@@ -1387,7 +1580,6 @@ StringStruct& StringStruct::operator =(
 {
 
     m_my_string = std::move(x.m_my_string);
-
     return *this;
 }
 
@@ -1402,6 +1594,19 @@ bool StringStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void StringStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void StringStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_string
@@ -1442,9 +1647,10 @@ std::string& StringStruct::my_string()
 }
 
 
+
+
 WStringStruct::WStringStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1470,7 +1676,6 @@ WStringStruct& WStringStruct::operator =(
 {
 
     m_my_wstring = x.m_my_wstring;
-
     return *this;
 }
 
@@ -1479,7 +1684,6 @@ WStringStruct& WStringStruct::operator =(
 {
 
     m_my_wstring = std::move(x.m_my_wstring);
-
     return *this;
 }
 
@@ -1494,6 +1698,19 @@ bool WStringStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void WStringStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void WStringStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_wstring
@@ -1534,9 +1751,10 @@ std::wstring& WStringStruct::my_wstring()
 }
 
 
+
+
 LargeStringStruct::LargeStringStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1562,7 +1780,6 @@ LargeStringStruct& LargeStringStruct::operator =(
 {
 
     m_my_large_string = x.m_my_large_string;
-
     return *this;
 }
 
@@ -1571,7 +1788,6 @@ LargeStringStruct& LargeStringStruct::operator =(
 {
 
     m_my_large_string = std::move(x.m_my_large_string);
-
     return *this;
 }
 
@@ -1586,6 +1802,19 @@ bool LargeStringStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void LargeStringStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void LargeStringStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_large_string
@@ -1626,9 +1855,10 @@ eprosima::fastcdr::fixed_string<41925>& LargeStringStruct::my_large_string()
 }
 
 
+
+
 LargeWStringStruct::LargeWStringStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1654,7 +1884,6 @@ LargeWStringStruct& LargeWStringStruct::operator =(
 {
 
     m_my_large_wstring = x.m_my_large_wstring;
-
     return *this;
 }
 
@@ -1663,7 +1892,6 @@ LargeWStringStruct& LargeWStringStruct::operator =(
 {
 
     m_my_large_wstring = std::move(x.m_my_large_wstring);
-
     return *this;
 }
 
@@ -1678,6 +1906,19 @@ bool LargeWStringStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void LargeWStringStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void LargeWStringStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_large_wstring
@@ -1718,9 +1959,10 @@ std::wstring& LargeWStringStruct::my_large_wstring()
 }
 
 
+
+
 ArraytStruct::ArraytStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1746,7 +1988,6 @@ ArraytStruct& ArraytStruct::operator =(
 {
 
     m_my_array = x.m_my_array;
-
     return *this;
 }
 
@@ -1755,7 +1996,6 @@ ArraytStruct& ArraytStruct::operator =(
 {
 
     m_my_array = std::move(x.m_my_array);
-
     return *this;
 }
 
@@ -1770,6 +2010,19 @@ bool ArraytStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void ArraytStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void ArraytStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_array
@@ -1811,9 +2064,10 @@ std::array<std::array<std::array<int32_t, 2>, 2>, 2>& ArraytStruct::my_array()
 
 
 
+
+
 ArrayArrayStruct::ArrayArrayStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1839,7 +2093,6 @@ ArrayArrayStruct& ArrayArrayStruct::operator =(
 {
 
     m_my_array_array = x.m_my_array_array;
-
     return *this;
 }
 
@@ -1848,7 +2101,6 @@ ArrayArrayStruct& ArrayArrayStruct::operator =(
 {
 
     m_my_array_array = std::move(x.m_my_array_array);
-
     return *this;
 }
 
@@ -1863,6 +2115,19 @@ bool ArrayArrayStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void ArrayArrayStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void ArrayArrayStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_array_array
@@ -1903,9 +2168,12 @@ std::array<std::array<MyArray, 2>, 2>& ArrayArrayStruct::my_array_array()
 }
 
 
+
+
+
+
 SequenceStruct::SequenceStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1931,7 +2199,6 @@ SequenceStruct& SequenceStruct::operator =(
 {
 
     m_my_sequence = x.m_my_sequence;
-
     return *this;
 }
 
@@ -1940,7 +2207,6 @@ SequenceStruct& SequenceStruct::operator =(
 {
 
     m_my_sequence = std::move(x.m_my_sequence);
-
     return *this;
 }
 
@@ -1955,6 +2221,19 @@ bool SequenceStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void SequenceStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void SequenceStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_sequence
@@ -1995,9 +2274,14 @@ std::vector<int32_t>& SequenceStruct::my_sequence()
 }
 
 
+
+
+
+
+
+
 SequenceSequenceStruct::SequenceSequenceStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -2023,7 +2307,6 @@ SequenceSequenceStruct& SequenceSequenceStruct::operator =(
 {
 
     m_my_sequence_sequence = x.m_my_sequence_sequence;
-
     return *this;
 }
 
@@ -2032,7 +2315,6 @@ SequenceSequenceStruct& SequenceSequenceStruct::operator =(
 {
 
     m_my_sequence_sequence = std::move(x.m_my_sequence_sequence);
-
     return *this;
 }
 
@@ -2047,6 +2329,19 @@ bool SequenceSequenceStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void SequenceSequenceStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void SequenceSequenceStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_sequence_sequence
@@ -2087,9 +2382,12 @@ std::vector<std::vector<int32_t>>& SequenceSequenceStruct::my_sequence_sequence(
 }
 
 
+
+
+
+
 MapStruct::MapStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -2115,7 +2413,6 @@ MapStruct& MapStruct::operator =(
 {
 
     m_my_map = x.m_my_map;
-
     return *this;
 }
 
@@ -2124,7 +2421,6 @@ MapStruct& MapStruct::operator =(
 {
 
     m_my_map = std::move(x.m_my_map);
-
     return *this;
 }
 
@@ -2139,6 +2435,19 @@ bool MapStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void MapStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void MapStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_map
@@ -2179,9 +2488,14 @@ std::map<int32_t, int32_t>& MapStruct::my_map()
 }
 
 
+
+
+
+
+
+
 MapMapStruct::MapMapStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -2207,7 +2521,6 @@ MapMapStruct& MapMapStruct::operator =(
 {
 
     m_my_map_map = x.m_my_map_map;
-
     return *this;
 }
 
@@ -2216,7 +2529,6 @@ MapMapStruct& MapMapStruct::operator =(
 {
 
     m_my_map_map = std::move(x.m_my_map_map);
-
     return *this;
 }
 
@@ -2231,6 +2543,19 @@ bool MapMapStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void MapMapStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void MapMapStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_map_map
@@ -2381,26 +2706,39 @@ std::bitset<30> MyBitset::bitset() const
 {
     std::string str_value;
 
-
     str_value = m_bitset.to_string() + str_value;
 
     return std::bitset<30>(str_value);
 }
 
-void MyBitset::bitset(const std::bitset<30>& bitset)
+void MyBitset::bitset(
+        const std::bitset<30>& bitset)
 {
     std::string str_value {bitset.to_string()};
     size_t base_diff {0};
     size_t last_post {std::string::npos};
 
-
     base_diff += 30;
     m_bitset = std::bitset<30>(str_value.substr(str_value.length() - base_diff, last_post));
 }
 
+void MyBitset::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void MyBitset::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
+
+
+
 BitsetStruct::BitsetStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -2426,7 +2764,6 @@ BitsetStruct& BitsetStruct::operator =(
 {
 
     m_a = x.m_a;
-
     return *this;
 }
 
@@ -2435,7 +2772,6 @@ BitsetStruct& BitsetStruct::operator =(
 {
 
     m_a = std::move(x.m_a);
-
     return *this;
 }
 
@@ -2450,6 +2786,19 @@ bool BitsetStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void BitsetStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void BitsetStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member a
@@ -2490,9 +2839,10 @@ MyBitset& BitsetStruct::a()
 }
 
 
+
+
 StructStruct::StructStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -2521,7 +2871,6 @@ StructStruct& StructStruct::operator =(
 
     m_a = x.m_a;
     m_b = x.m_b;
-
     return *this;
 }
 
@@ -2531,7 +2880,6 @@ StructStruct& StructStruct::operator =(
 
     m_a = x.m_a;
     m_b = x.m_b;
-
     return *this;
 }
 
@@ -2547,6 +2895,19 @@ bool StructStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void StructStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void StructStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member a
@@ -2606,9 +2967,10 @@ int64_t& StructStruct::b()
 }
 
 
+
+
 StructStructStruct::StructStructStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -2637,7 +2999,6 @@ StructStructStruct& StructStructStruct::operator =(
 
     m_child_struct = x.m_child_struct;
     m_child_int64 = x.m_child_int64;
-
     return *this;
 }
 
@@ -2647,7 +3008,6 @@ StructStructStruct& StructStructStruct::operator =(
 
     m_child_struct = std::move(x.m_child_struct);
     m_child_int64 = x.m_child_int64;
-
     return *this;
 }
 
@@ -2663,6 +3023,19 @@ bool StructStructStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void StructStructStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void StructStructStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member child_struct
@@ -2730,6 +3103,8 @@ int64_t& StructStructStruct::child_int64()
 {
     return m_child_int64;
 }
+
+
 
 
 SimpleUnion::SimpleUnion()
@@ -2890,6 +3265,8 @@ void SimpleUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -3010,6 +3387,22 @@ int64_t& SimpleUnion::second()
 
     return m_second;
 }
+
+
+void SimpleUnion::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void SimpleUnion::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
+
+
 
 
 UnionUnion::UnionUnion()
@@ -3172,6 +3565,8 @@ void UnionUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -3300,6 +3695,22 @@ SimpleUnion& UnionUnion::second()
 
     return m_second;
 }
+
+
+void UnionUnion::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void UnionUnion::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
+
+
 
 
 WCharUnion::WCharUnion()
@@ -3460,6 +3871,8 @@ void WCharUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -3582,9 +3995,24 @@ int64_t& WCharUnion::second()
 }
 
 
+void WCharUnion::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void WCharUnion::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
+
+
+
+
 SimpleUnionStruct::SimpleUnionStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -3610,7 +4038,6 @@ SimpleUnionStruct& SimpleUnionStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -3619,7 +4046,6 @@ SimpleUnionStruct& SimpleUnionStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -3634,6 +4060,19 @@ bool SimpleUnionStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void SimpleUnionStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void SimpleUnionStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_union
@@ -3674,9 +4113,10 @@ SimpleUnion& SimpleUnionStruct::my_union()
 }
 
 
+
+
 UnionUnionUnionStruct::UnionUnionUnionStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -3702,7 +4142,6 @@ UnionUnionUnionStruct& UnionUnionUnionStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -3711,7 +4150,6 @@ UnionUnionUnionStruct& UnionUnionUnionStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -3726,6 +4164,19 @@ bool UnionUnionUnionStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void UnionUnionUnionStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void UnionUnionUnionStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_union
@@ -3766,9 +4217,10 @@ UnionUnion& UnionUnionUnionStruct::my_union()
 }
 
 
+
+
 WCharUnionStruct::WCharUnionStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -3794,7 +4246,6 @@ WCharUnionStruct& WCharUnionStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -3803,7 +4254,6 @@ WCharUnionStruct& WCharUnionStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -3818,6 +4268,19 @@ bool WCharUnionStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void WCharUnionStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void WCharUnionStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_union
@@ -3857,6 +4320,3 @@ WCharUnion& WCharUnionStruct::my_union()
     return m_my_union;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "BasicCdrAux.ipp"

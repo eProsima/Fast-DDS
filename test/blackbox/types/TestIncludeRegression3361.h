@@ -29,8 +29,14 @@
 #include <string>
 #include <vector>
 
+#include <fastcdr/config.h>
+#if FASTCDR_VERSION_MAJOR == 1
+#include <fastdds/rtps/common/CdrSerialization.hpp>
+#else
 #include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/external.hpp>
 #include <fastcdr/xcdr/optional.hpp>
+#endif // FASTCDR_VERSION_MAJOR == 1
 
 
 
@@ -68,7 +74,9 @@ class CdrSizeCalculator;
 
 
 namespace TestModule {
-    typedef std::string MACHINEID;
+
+typedef std::string MACHINEID;
+
 
 } // namespace TestModule
 

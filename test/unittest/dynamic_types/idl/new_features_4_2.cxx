@@ -29,18 +29,20 @@ char dummy;
 #include "new_features_4_2.h"
 #include "new_features_4_2TypeObject.h"
 
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "new_features_4_2CdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
 
 
 NewAliases::NewAliases()
 {
-
     // Just to register all known types
     registernew_features_4_2Types();
 }
@@ -90,7 +92,6 @@ NewAliases& NewAliases::operator =(
     m_int64_ = x.m_int64_;
     m_uint64_ = x.m_uint64_;
     m_local_string = x.m_local_string;
-
     return *this;
 }
 
@@ -107,7 +108,6 @@ NewAliases& NewAliases::operator =(
     m_int64_ = x.m_int64_;
     m_uint64_ = x.m_uint64_;
     m_local_string = std::move(x.m_local_string);
-
     return *this;
 }
 
@@ -130,6 +130,19 @@ bool NewAliases::operator !=(
 {
     return !(*this == x);
 }
+
+void NewAliases::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void NewAliases::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member int8_
@@ -402,6 +415,8 @@ std::string& NewAliases::local_string()
 }
 
 
+
+
 WCharUnion::WCharUnion()
 {
     m__d = 'a';
@@ -560,6 +575,8 @@ void WCharUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -680,6 +697,22 @@ int32_t& WCharUnion::case_one()
 
     return m_case_one;
 }
+
+
+void WCharUnion::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void WCharUnion::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
+
+
 
 
 OctetUnion::OctetUnion()
@@ -840,6 +873,8 @@ void OctetUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -960,6 +995,22 @@ int32_t& OctetUnion::case_seven()
 
     return m_case_seven;
 }
+
+
+void OctetUnion::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void OctetUnion::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
+
+
 
 
 Int8Union::Int8Union()
@@ -1120,6 +1171,8 @@ void Int8Union::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -1242,6 +1295,22 @@ int32_t& Int8Union::case_six()
 }
 
 
+void Int8Union::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void Int8Union::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
+
+
+namespace bitmodule {
+
 bitmodule::ParentBitset::ParentBitset(){
     // Just to register all known types
     registernew_features_4_2Types();
@@ -1324,25 +1393,37 @@ std::bitset<17> bitmodule::ParentBitset::bitset() const
 {
     std::string str_value;
 
-
     str_value = m_bitset.to_string() + str_value;
 
     return std::bitset<17>(str_value);
 }
 
-void bitmodule::ParentBitset::bitset(const std::bitset<17>& bitset)
+void bitmodule::ParentBitset::bitset(
+        const std::bitset<17>& bitset)
 {
     std::string str_value {bitset.to_string()};
     size_t base_diff {0};
     size_t last_post {std::string::npos};
 
-
     base_diff += 17;
     m_bitset = std::bitset<17>(str_value.substr(str_value.length() - base_diff, last_post));
 }
 
+void bitmodule::ParentBitset::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void bitmodule::ParentBitset::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
+
 bitmodule::MyBitset::MyBitset()
-    : bitmodule::ParentBitset() {
+    : bitmodule::ParentBitset(){
     // Just to register all known types
     registernew_features_4_2Types();
 }
@@ -1353,20 +1434,20 @@ bitmodule::MyBitset::~MyBitset()
 
 bitmodule::MyBitset::MyBitset(
         const MyBitset& x)
-    : bitmodule::ParentBitset(x) {
+    : bitmodule::ParentBitset(x){
     m_bitset = x.m_bitset;
 }
 
 bitmodule::MyBitset::MyBitset(
         MyBitset&& x) noexcept 
-    : bitmodule::ParentBitset(std::move(x)) {
+    : bitmodule::ParentBitset(std::move(x)){
     m_bitset = x.m_bitset;
 }
 
 bitmodule::MyBitset& bitmodule::MyBitset::operator =(
         const MyBitset& x)
 {
-        bitmodule::ParentBitset::operator =(x); 
+        bitmodule::ParentBitset::operator =(x);
 
     m_bitset = x.m_bitset;
 
@@ -1376,7 +1457,7 @@ bitmodule::MyBitset& bitmodule::MyBitset::operator =(
 bitmodule::MyBitset& bitmodule::MyBitset::operator =(
         MyBitset&& x) noexcept
 {
-        bitmodule::ParentBitset::operator =(std::move(x)); 
+        bitmodule::ParentBitset::operator =(std::move(x));
 
     m_bitset = x.m_bitset;
 
@@ -1386,7 +1467,7 @@ bitmodule::MyBitset& bitmodule::MyBitset::operator =(
 bool bitmodule::MyBitset::operator ==(
         const MyBitset& x) const
 {
-        if (bitmodule::ParentBitset::operator !=(x)) return false; 
+        if (bitmodule::ParentBitset::operator !=(x)) return false;
 
     return m_bitset == x.m_bitset;
 }
@@ -1552,36 +1633,49 @@ std::bitset<50> bitmodule::MyBitset::bitset() const
 {
     std::string str_value;
 
-            str_value = static_cast<const bitmodule::ParentBitset*>(this)->bitset().to_string() + str_value;
-
+    str_value = static_cast<const bitmodule::ParentBitset*>(this)->bitset().to_string() + str_value;
 
     str_value = m_bitset.to_string() + str_value;
 
     return std::bitset<50>(str_value);
 }
 
-void bitmodule::MyBitset::bitset(const std::bitset<50>& bitset)
+void bitmodule::MyBitset::bitset(
+        const std::bitset<50>& bitset)
 {
     std::string str_value {bitset.to_string()};
     size_t base_diff {0};
     size_t last_post {std::string::npos};
 
-            {
-                base_diff += 17;
-                std::bitset<17> internal_bitset(str_value.substr(str_value.length() - base_diff, last_post));
-                static_cast<bitmodule::ParentBitset*>(this)->bitset(internal_bitset);
-                last_post = base_diff;
-            }
-
+    {
+        base_diff += 17;
+        std::bitset<17> internal_bitset(str_value.substr(str_value.length() - base_diff, last_post));
+        static_cast<bitmodule::ParentBitset*>(this)->bitset(internal_bitset);
+        last_post = base_diff;
+    }
 
     base_diff += 33;
     m_bitset = std::bitset<33>(str_value.substr(str_value.length() - base_diff, last_post));
 }
 
+void bitmodule::MyBitset::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void bitmodule::MyBitset::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
+
+
+
 
 bitmodule::BitsetBitmask::BitsetBitmask()
 {
-
     // Just to register all known types
     registernew_features_4_2Types();
 }
@@ -1610,7 +1704,6 @@ bitmodule::BitsetBitmask& bitmodule::BitsetBitmask::operator =(
 
     m_mybitset = x.m_mybitset;
     m_mybitmask = x.m_mybitmask;
-
     return *this;
 }
 
@@ -1620,7 +1713,6 @@ bitmodule::BitsetBitmask& bitmodule::BitsetBitmask::operator =(
 
     m_mybitset = std::move(x.m_mybitset);
     m_mybitmask = std::move(x.m_mybitmask);
-
     return *this;
 }
 
@@ -1636,6 +1728,19 @@ bool bitmodule::BitsetBitmask::operator !=(
 {
     return !(*this == x);
 }
+
+void bitmodule::BitsetBitmask::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void bitmodule::BitsetBitmask::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member mybitset
@@ -1715,11 +1820,12 @@ bitmodule::MyBitMask& bitmodule::BitsetBitmask::mybitmask()
 }
 
 
+
+
 bitmodule::BM2::BM2()
-    : bitmodule::BitsetBitmask() 
+    : bitmodule::BitsetBitmask()
 
 {
-
     // Just to register all known types
     registernew_features_4_2Types();
 }
@@ -1730,7 +1836,7 @@ bitmodule::BM2::~BM2()
 
 bitmodule::BM2::BM2(
         const BM2& x)
-    : bitmodule::BitsetBitmask(x) 
+    : bitmodule::BitsetBitmask(x)
 
 {
     m_two = x.m_two;
@@ -1753,7 +1859,6 @@ bitmodule::BM2& bitmodule::BM2::operator =(
 
     m_two = x.m_two;
     m_mylong = x.m_mylong;
-
     return *this;
 }
 
@@ -1764,7 +1869,6 @@ bitmodule::BM2& bitmodule::BM2::operator =(
 
     m_two = std::move(x.m_two);
     m_mylong = x.m_mylong;
-
     return *this;
 }
 
@@ -1775,7 +1879,6 @@ bool bitmodule::BM2::operator ==(
         {
             return false;
         }
-
     return (m_two == x.m_two &&
            m_mylong == x.m_mylong);
 }
@@ -1785,6 +1888,19 @@ bool bitmodule::BM2::operator !=(
 {
     return !(*this == x);
 }
+
+void bitmodule::BM2::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void bitmodule::BM2::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member two
@@ -1855,11 +1971,14 @@ int32_t& bitmodule::BM2::mylong()
 
 
 
+
+} // namespace bitmodule
+
+
 StructTest::StructTest()
-    : NewAliases() 
+    : NewAliases()
 
 {
-
     // Just to register all known types
     registernew_features_4_2Types();
 }
@@ -1870,7 +1989,7 @@ StructTest::~StructTest()
 
 StructTest::StructTest(
         const StructTest& x)
-    : NewAliases(x) 
+    : NewAliases(x)
 
 {
     m_octetUnion = x.m_octetUnion;
@@ -1896,7 +2015,6 @@ StructTest& StructTest::operator =(
     m_octetUnion = x.m_octetUnion;
     m_int8Union = x.m_int8Union;
     m_myStructBits = x.m_myStructBits;
-
     return *this;
 }
 
@@ -1908,7 +2026,6 @@ StructTest& StructTest::operator =(
     m_octetUnion = std::move(x.m_octetUnion);
     m_int8Union = std::move(x.m_int8Union);
     m_myStructBits = std::move(x.m_myStructBits);
-
     return *this;
 }
 
@@ -1919,7 +2036,6 @@ bool StructTest::operator ==(
         {
             return false;
         }
-
     return (m_octetUnion == x.m_octetUnion &&
            m_int8Union == x.m_int8Union &&
            m_myStructBits == x.m_myStructBits);
@@ -1930,6 +2046,19 @@ bool StructTest::operator !=(
 {
     return !(*this == x);
 }
+
+void StructTest::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void StructTest::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member octetUnion
@@ -2047,6 +2176,3 @@ bitmodule::BM2& StructTest::myStructBits()
     return m_myStructBits;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "new_features_4_2CdrAux.ipp"

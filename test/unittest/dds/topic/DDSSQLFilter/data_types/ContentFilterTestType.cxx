@@ -29,18 +29,20 @@ char dummy;
 #include "ContentFilterTestType.h"
 #include "ContentFilterTestTypeTypeObject.h"
 
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "ContentFilterTestTypeCdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
 
 
 StructType::StructType()
 {
-
     // Just to register all known types
     registerContentFilterTestTypeTypes();
 }
@@ -108,7 +110,6 @@ StructType& StructType::operator =(
     m_string_field = x.m_string_field;
     m_enum_field = x.m_enum_field;
     m_enum2_field = x.m_enum2_field;
-
     return *this;
 }
 
@@ -131,7 +132,6 @@ StructType& StructType::operator =(
     m_string_field = std::move(x.m_string_field);
     m_enum_field = x.m_enum_field;
     m_enum2_field = x.m_enum2_field;
-
     return *this;
 }
 
@@ -160,6 +160,19 @@ bool StructType::operator !=(
 {
     return !(*this == x);
 }
+
+void StructType::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void StructType::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member char_field
@@ -608,9 +621,12 @@ Material& StructType::enum2_field()
 
 
 
+
+
+
+
 ContentFilterTestType::ContentFilterTestType()
 {
-
     // Just to register all known types
     registerContentFilterTestTypeTypes();
 }
@@ -825,7 +841,6 @@ ContentFilterTestType& ContentFilterTestType::operator =(
     m_unbounded_sequence_enum_field = x.m_unbounded_sequence_enum_field;
     m_unbounded_sequence_enum2_field = x.m_unbounded_sequence_enum2_field;
     m_unbounded_sequence_struct_field = x.m_unbounded_sequence_struct_field;
-
     return *this;
 }
 
@@ -897,7 +912,6 @@ ContentFilterTestType& ContentFilterTestType::operator =(
     m_unbounded_sequence_enum_field = std::move(x.m_unbounded_sequence_enum_field);
     m_unbounded_sequence_enum2_field = std::move(x.m_unbounded_sequence_enum2_field);
     m_unbounded_sequence_struct_field = std::move(x.m_unbounded_sequence_struct_field);
-
     return *this;
 }
 
@@ -975,6 +989,19 @@ bool ContentFilterTestType::operator !=(
 {
     return !(*this == x);
 }
+
+void ContentFilterTestType::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void ContentFilterTestType::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member char_field
@@ -1465,7 +1492,7 @@ StructType& ContentFilterTestType::struct_field()
  * @param _array_char_field New value to be copied in member array_char_field
  */
 void ContentFilterTestType::array_char_field(
-        const std::array<char, 3>& _array_char_field)
+        const std::array<char, max_array_size>& _array_char_field)
 {
     m_array_char_field = _array_char_field;
 }
@@ -1475,7 +1502,7 @@ void ContentFilterTestType::array_char_field(
  * @param _array_char_field New value to be moved in member array_char_field
  */
 void ContentFilterTestType::array_char_field(
-        std::array<char, 3>&& _array_char_field)
+        std::array<char, max_array_size>&& _array_char_field)
 {
     m_array_char_field = std::move(_array_char_field);
 }
@@ -1484,7 +1511,7 @@ void ContentFilterTestType::array_char_field(
  * @brief This function returns a constant reference to member array_char_field
  * @return Constant reference to member array_char_field
  */
-const std::array<char, 3>& ContentFilterTestType::array_char_field() const
+const std::array<char, max_array_size>& ContentFilterTestType::array_char_field() const
 {
     return m_array_char_field;
 }
@@ -1493,7 +1520,7 @@ const std::array<char, 3>& ContentFilterTestType::array_char_field() const
  * @brief This function returns a reference to member array_char_field
  * @return Reference to member array_char_field
  */
-std::array<char, 3>& ContentFilterTestType::array_char_field()
+std::array<char, max_array_size>& ContentFilterTestType::array_char_field()
 {
     return m_array_char_field;
 }
@@ -1504,7 +1531,7 @@ std::array<char, 3>& ContentFilterTestType::array_char_field()
  * @param _array_uint8_field New value to be copied in member array_uint8_field
  */
 void ContentFilterTestType::array_uint8_field(
-        const std::array<uint8_t, 3>& _array_uint8_field)
+        const std::array<uint8_t, max_array_size>& _array_uint8_field)
 {
     m_array_uint8_field = _array_uint8_field;
 }
@@ -1514,7 +1541,7 @@ void ContentFilterTestType::array_uint8_field(
  * @param _array_uint8_field New value to be moved in member array_uint8_field
  */
 void ContentFilterTestType::array_uint8_field(
-        std::array<uint8_t, 3>&& _array_uint8_field)
+        std::array<uint8_t, max_array_size>&& _array_uint8_field)
 {
     m_array_uint8_field = std::move(_array_uint8_field);
 }
@@ -1523,7 +1550,7 @@ void ContentFilterTestType::array_uint8_field(
  * @brief This function returns a constant reference to member array_uint8_field
  * @return Constant reference to member array_uint8_field
  */
-const std::array<uint8_t, 3>& ContentFilterTestType::array_uint8_field() const
+const std::array<uint8_t, max_array_size>& ContentFilterTestType::array_uint8_field() const
 {
     return m_array_uint8_field;
 }
@@ -1532,7 +1559,7 @@ const std::array<uint8_t, 3>& ContentFilterTestType::array_uint8_field() const
  * @brief This function returns a reference to member array_uint8_field
  * @return Reference to member array_uint8_field
  */
-std::array<uint8_t, 3>& ContentFilterTestType::array_uint8_field()
+std::array<uint8_t, max_array_size>& ContentFilterTestType::array_uint8_field()
 {
     return m_array_uint8_field;
 }
@@ -1543,7 +1570,7 @@ std::array<uint8_t, 3>& ContentFilterTestType::array_uint8_field()
  * @param _array_int16_field New value to be copied in member array_int16_field
  */
 void ContentFilterTestType::array_int16_field(
-        const std::array<int16_t, 3>& _array_int16_field)
+        const std::array<int16_t, max_array_size>& _array_int16_field)
 {
     m_array_int16_field = _array_int16_field;
 }
@@ -1553,7 +1580,7 @@ void ContentFilterTestType::array_int16_field(
  * @param _array_int16_field New value to be moved in member array_int16_field
  */
 void ContentFilterTestType::array_int16_field(
-        std::array<int16_t, 3>&& _array_int16_field)
+        std::array<int16_t, max_array_size>&& _array_int16_field)
 {
     m_array_int16_field = std::move(_array_int16_field);
 }
@@ -1562,7 +1589,7 @@ void ContentFilterTestType::array_int16_field(
  * @brief This function returns a constant reference to member array_int16_field
  * @return Constant reference to member array_int16_field
  */
-const std::array<int16_t, 3>& ContentFilterTestType::array_int16_field() const
+const std::array<int16_t, max_array_size>& ContentFilterTestType::array_int16_field() const
 {
     return m_array_int16_field;
 }
@@ -1571,7 +1598,7 @@ const std::array<int16_t, 3>& ContentFilterTestType::array_int16_field() const
  * @brief This function returns a reference to member array_int16_field
  * @return Reference to member array_int16_field
  */
-std::array<int16_t, 3>& ContentFilterTestType::array_int16_field()
+std::array<int16_t, max_array_size>& ContentFilterTestType::array_int16_field()
 {
     return m_array_int16_field;
 }
@@ -1582,7 +1609,7 @@ std::array<int16_t, 3>& ContentFilterTestType::array_int16_field()
  * @param _array_uint16_field New value to be copied in member array_uint16_field
  */
 void ContentFilterTestType::array_uint16_field(
-        const std::array<uint16_t, 3>& _array_uint16_field)
+        const std::array<uint16_t, max_array_size>& _array_uint16_field)
 {
     m_array_uint16_field = _array_uint16_field;
 }
@@ -1592,7 +1619,7 @@ void ContentFilterTestType::array_uint16_field(
  * @param _array_uint16_field New value to be moved in member array_uint16_field
  */
 void ContentFilterTestType::array_uint16_field(
-        std::array<uint16_t, 3>&& _array_uint16_field)
+        std::array<uint16_t, max_array_size>&& _array_uint16_field)
 {
     m_array_uint16_field = std::move(_array_uint16_field);
 }
@@ -1601,7 +1628,7 @@ void ContentFilterTestType::array_uint16_field(
  * @brief This function returns a constant reference to member array_uint16_field
  * @return Constant reference to member array_uint16_field
  */
-const std::array<uint16_t, 3>& ContentFilterTestType::array_uint16_field() const
+const std::array<uint16_t, max_array_size>& ContentFilterTestType::array_uint16_field() const
 {
     return m_array_uint16_field;
 }
@@ -1610,7 +1637,7 @@ const std::array<uint16_t, 3>& ContentFilterTestType::array_uint16_field() const
  * @brief This function returns a reference to member array_uint16_field
  * @return Reference to member array_uint16_field
  */
-std::array<uint16_t, 3>& ContentFilterTestType::array_uint16_field()
+std::array<uint16_t, max_array_size>& ContentFilterTestType::array_uint16_field()
 {
     return m_array_uint16_field;
 }
@@ -1621,7 +1648,7 @@ std::array<uint16_t, 3>& ContentFilterTestType::array_uint16_field()
  * @param _array_int32_field New value to be copied in member array_int32_field
  */
 void ContentFilterTestType::array_int32_field(
-        const std::array<int32_t, 3>& _array_int32_field)
+        const std::array<int32_t, max_array_size>& _array_int32_field)
 {
     m_array_int32_field = _array_int32_field;
 }
@@ -1631,7 +1658,7 @@ void ContentFilterTestType::array_int32_field(
  * @param _array_int32_field New value to be moved in member array_int32_field
  */
 void ContentFilterTestType::array_int32_field(
-        std::array<int32_t, 3>&& _array_int32_field)
+        std::array<int32_t, max_array_size>&& _array_int32_field)
 {
     m_array_int32_field = std::move(_array_int32_field);
 }
@@ -1640,7 +1667,7 @@ void ContentFilterTestType::array_int32_field(
  * @brief This function returns a constant reference to member array_int32_field
  * @return Constant reference to member array_int32_field
  */
-const std::array<int32_t, 3>& ContentFilterTestType::array_int32_field() const
+const std::array<int32_t, max_array_size>& ContentFilterTestType::array_int32_field() const
 {
     return m_array_int32_field;
 }
@@ -1649,7 +1676,7 @@ const std::array<int32_t, 3>& ContentFilterTestType::array_int32_field() const
  * @brief This function returns a reference to member array_int32_field
  * @return Reference to member array_int32_field
  */
-std::array<int32_t, 3>& ContentFilterTestType::array_int32_field()
+std::array<int32_t, max_array_size>& ContentFilterTestType::array_int32_field()
 {
     return m_array_int32_field;
 }
@@ -1660,7 +1687,7 @@ std::array<int32_t, 3>& ContentFilterTestType::array_int32_field()
  * @param _array_uint32_field New value to be copied in member array_uint32_field
  */
 void ContentFilterTestType::array_uint32_field(
-        const std::array<uint32_t, 3>& _array_uint32_field)
+        const std::array<uint32_t, max_array_size>& _array_uint32_field)
 {
     m_array_uint32_field = _array_uint32_field;
 }
@@ -1670,7 +1697,7 @@ void ContentFilterTestType::array_uint32_field(
  * @param _array_uint32_field New value to be moved in member array_uint32_field
  */
 void ContentFilterTestType::array_uint32_field(
-        std::array<uint32_t, 3>&& _array_uint32_field)
+        std::array<uint32_t, max_array_size>&& _array_uint32_field)
 {
     m_array_uint32_field = std::move(_array_uint32_field);
 }
@@ -1679,7 +1706,7 @@ void ContentFilterTestType::array_uint32_field(
  * @brief This function returns a constant reference to member array_uint32_field
  * @return Constant reference to member array_uint32_field
  */
-const std::array<uint32_t, 3>& ContentFilterTestType::array_uint32_field() const
+const std::array<uint32_t, max_array_size>& ContentFilterTestType::array_uint32_field() const
 {
     return m_array_uint32_field;
 }
@@ -1688,7 +1715,7 @@ const std::array<uint32_t, 3>& ContentFilterTestType::array_uint32_field() const
  * @brief This function returns a reference to member array_uint32_field
  * @return Reference to member array_uint32_field
  */
-std::array<uint32_t, 3>& ContentFilterTestType::array_uint32_field()
+std::array<uint32_t, max_array_size>& ContentFilterTestType::array_uint32_field()
 {
     return m_array_uint32_field;
 }
@@ -1699,7 +1726,7 @@ std::array<uint32_t, 3>& ContentFilterTestType::array_uint32_field()
  * @param _array_int64_field New value to be copied in member array_int64_field
  */
 void ContentFilterTestType::array_int64_field(
-        const std::array<int64_t, 3>& _array_int64_field)
+        const std::array<int64_t, max_array_size>& _array_int64_field)
 {
     m_array_int64_field = _array_int64_field;
 }
@@ -1709,7 +1736,7 @@ void ContentFilterTestType::array_int64_field(
  * @param _array_int64_field New value to be moved in member array_int64_field
  */
 void ContentFilterTestType::array_int64_field(
-        std::array<int64_t, 3>&& _array_int64_field)
+        std::array<int64_t, max_array_size>&& _array_int64_field)
 {
     m_array_int64_field = std::move(_array_int64_field);
 }
@@ -1718,7 +1745,7 @@ void ContentFilterTestType::array_int64_field(
  * @brief This function returns a constant reference to member array_int64_field
  * @return Constant reference to member array_int64_field
  */
-const std::array<int64_t, 3>& ContentFilterTestType::array_int64_field() const
+const std::array<int64_t, max_array_size>& ContentFilterTestType::array_int64_field() const
 {
     return m_array_int64_field;
 }
@@ -1727,7 +1754,7 @@ const std::array<int64_t, 3>& ContentFilterTestType::array_int64_field() const
  * @brief This function returns a reference to member array_int64_field
  * @return Reference to member array_int64_field
  */
-std::array<int64_t, 3>& ContentFilterTestType::array_int64_field()
+std::array<int64_t, max_array_size>& ContentFilterTestType::array_int64_field()
 {
     return m_array_int64_field;
 }
@@ -1738,7 +1765,7 @@ std::array<int64_t, 3>& ContentFilterTestType::array_int64_field()
  * @param _array_uint64_field New value to be copied in member array_uint64_field
  */
 void ContentFilterTestType::array_uint64_field(
-        const std::array<uint64_t, 3>& _array_uint64_field)
+        const std::array<uint64_t, max_array_size>& _array_uint64_field)
 {
     m_array_uint64_field = _array_uint64_field;
 }
@@ -1748,7 +1775,7 @@ void ContentFilterTestType::array_uint64_field(
  * @param _array_uint64_field New value to be moved in member array_uint64_field
  */
 void ContentFilterTestType::array_uint64_field(
-        std::array<uint64_t, 3>&& _array_uint64_field)
+        std::array<uint64_t, max_array_size>&& _array_uint64_field)
 {
     m_array_uint64_field = std::move(_array_uint64_field);
 }
@@ -1757,7 +1784,7 @@ void ContentFilterTestType::array_uint64_field(
  * @brief This function returns a constant reference to member array_uint64_field
  * @return Constant reference to member array_uint64_field
  */
-const std::array<uint64_t, 3>& ContentFilterTestType::array_uint64_field() const
+const std::array<uint64_t, max_array_size>& ContentFilterTestType::array_uint64_field() const
 {
     return m_array_uint64_field;
 }
@@ -1766,7 +1793,7 @@ const std::array<uint64_t, 3>& ContentFilterTestType::array_uint64_field() const
  * @brief This function returns a reference to member array_uint64_field
  * @return Reference to member array_uint64_field
  */
-std::array<uint64_t, 3>& ContentFilterTestType::array_uint64_field()
+std::array<uint64_t, max_array_size>& ContentFilterTestType::array_uint64_field()
 {
     return m_array_uint64_field;
 }
@@ -1777,7 +1804,7 @@ std::array<uint64_t, 3>& ContentFilterTestType::array_uint64_field()
  * @param _array_float_field New value to be copied in member array_float_field
  */
 void ContentFilterTestType::array_float_field(
-        const std::array<float, 3>& _array_float_field)
+        const std::array<float, max_array_size>& _array_float_field)
 {
     m_array_float_field = _array_float_field;
 }
@@ -1787,7 +1814,7 @@ void ContentFilterTestType::array_float_field(
  * @param _array_float_field New value to be moved in member array_float_field
  */
 void ContentFilterTestType::array_float_field(
-        std::array<float, 3>&& _array_float_field)
+        std::array<float, max_array_size>&& _array_float_field)
 {
     m_array_float_field = std::move(_array_float_field);
 }
@@ -1796,7 +1823,7 @@ void ContentFilterTestType::array_float_field(
  * @brief This function returns a constant reference to member array_float_field
  * @return Constant reference to member array_float_field
  */
-const std::array<float, 3>& ContentFilterTestType::array_float_field() const
+const std::array<float, max_array_size>& ContentFilterTestType::array_float_field() const
 {
     return m_array_float_field;
 }
@@ -1805,7 +1832,7 @@ const std::array<float, 3>& ContentFilterTestType::array_float_field() const
  * @brief This function returns a reference to member array_float_field
  * @return Reference to member array_float_field
  */
-std::array<float, 3>& ContentFilterTestType::array_float_field()
+std::array<float, max_array_size>& ContentFilterTestType::array_float_field()
 {
     return m_array_float_field;
 }
@@ -1816,7 +1843,7 @@ std::array<float, 3>& ContentFilterTestType::array_float_field()
  * @param _array_double_field New value to be copied in member array_double_field
  */
 void ContentFilterTestType::array_double_field(
-        const std::array<double, 3>& _array_double_field)
+        const std::array<double, max_array_size>& _array_double_field)
 {
     m_array_double_field = _array_double_field;
 }
@@ -1826,7 +1853,7 @@ void ContentFilterTestType::array_double_field(
  * @param _array_double_field New value to be moved in member array_double_field
  */
 void ContentFilterTestType::array_double_field(
-        std::array<double, 3>&& _array_double_field)
+        std::array<double, max_array_size>&& _array_double_field)
 {
     m_array_double_field = std::move(_array_double_field);
 }
@@ -1835,7 +1862,7 @@ void ContentFilterTestType::array_double_field(
  * @brief This function returns a constant reference to member array_double_field
  * @return Constant reference to member array_double_field
  */
-const std::array<double, 3>& ContentFilterTestType::array_double_field() const
+const std::array<double, max_array_size>& ContentFilterTestType::array_double_field() const
 {
     return m_array_double_field;
 }
@@ -1844,7 +1871,7 @@ const std::array<double, 3>& ContentFilterTestType::array_double_field() const
  * @brief This function returns a reference to member array_double_field
  * @return Reference to member array_double_field
  */
-std::array<double, 3>& ContentFilterTestType::array_double_field()
+std::array<double, max_array_size>& ContentFilterTestType::array_double_field()
 {
     return m_array_double_field;
 }
@@ -1855,7 +1882,7 @@ std::array<double, 3>& ContentFilterTestType::array_double_field()
  * @param _array_long_double_field New value to be copied in member array_long_double_field
  */
 void ContentFilterTestType::array_long_double_field(
-        const std::array<long double, 3>& _array_long_double_field)
+        const std::array<long double, max_array_size>& _array_long_double_field)
 {
     m_array_long_double_field = _array_long_double_field;
 }
@@ -1865,7 +1892,7 @@ void ContentFilterTestType::array_long_double_field(
  * @param _array_long_double_field New value to be moved in member array_long_double_field
  */
 void ContentFilterTestType::array_long_double_field(
-        std::array<long double, 3>&& _array_long_double_field)
+        std::array<long double, max_array_size>&& _array_long_double_field)
 {
     m_array_long_double_field = std::move(_array_long_double_field);
 }
@@ -1874,7 +1901,7 @@ void ContentFilterTestType::array_long_double_field(
  * @brief This function returns a constant reference to member array_long_double_field
  * @return Constant reference to member array_long_double_field
  */
-const std::array<long double, 3>& ContentFilterTestType::array_long_double_field() const
+const std::array<long double, max_array_size>& ContentFilterTestType::array_long_double_field() const
 {
     return m_array_long_double_field;
 }
@@ -1883,7 +1910,7 @@ const std::array<long double, 3>& ContentFilterTestType::array_long_double_field
  * @brief This function returns a reference to member array_long_double_field
  * @return Reference to member array_long_double_field
  */
-std::array<long double, 3>& ContentFilterTestType::array_long_double_field()
+std::array<long double, max_array_size>& ContentFilterTestType::array_long_double_field()
 {
     return m_array_long_double_field;
 }
@@ -1894,7 +1921,7 @@ std::array<long double, 3>& ContentFilterTestType::array_long_double_field()
  * @param _array_bool_field New value to be copied in member array_bool_field
  */
 void ContentFilterTestType::array_bool_field(
-        const std::array<bool, 3>& _array_bool_field)
+        const std::array<bool, max_array_size>& _array_bool_field)
 {
     m_array_bool_field = _array_bool_field;
 }
@@ -1904,7 +1931,7 @@ void ContentFilterTestType::array_bool_field(
  * @param _array_bool_field New value to be moved in member array_bool_field
  */
 void ContentFilterTestType::array_bool_field(
-        std::array<bool, 3>&& _array_bool_field)
+        std::array<bool, max_array_size>&& _array_bool_field)
 {
     m_array_bool_field = std::move(_array_bool_field);
 }
@@ -1913,7 +1940,7 @@ void ContentFilterTestType::array_bool_field(
  * @brief This function returns a constant reference to member array_bool_field
  * @return Constant reference to member array_bool_field
  */
-const std::array<bool, 3>& ContentFilterTestType::array_bool_field() const
+const std::array<bool, max_array_size>& ContentFilterTestType::array_bool_field() const
 {
     return m_array_bool_field;
 }
@@ -1922,7 +1949,7 @@ const std::array<bool, 3>& ContentFilterTestType::array_bool_field() const
  * @brief This function returns a reference to member array_bool_field
  * @return Reference to member array_bool_field
  */
-std::array<bool, 3>& ContentFilterTestType::array_bool_field()
+std::array<bool, max_array_size>& ContentFilterTestType::array_bool_field()
 {
     return m_array_bool_field;
 }
@@ -1933,7 +1960,7 @@ std::array<bool, 3>& ContentFilterTestType::array_bool_field()
  * @param _array_string_field New value to be copied in member array_string_field
  */
 void ContentFilterTestType::array_string_field(
-        const std::array<std::string, 3>& _array_string_field)
+        const std::array<std::string, max_array_size>& _array_string_field)
 {
     m_array_string_field = _array_string_field;
 }
@@ -1943,7 +1970,7 @@ void ContentFilterTestType::array_string_field(
  * @param _array_string_field New value to be moved in member array_string_field
  */
 void ContentFilterTestType::array_string_field(
-        std::array<std::string, 3>&& _array_string_field)
+        std::array<std::string, max_array_size>&& _array_string_field)
 {
     m_array_string_field = std::move(_array_string_field);
 }
@@ -1952,7 +1979,7 @@ void ContentFilterTestType::array_string_field(
  * @brief This function returns a constant reference to member array_string_field
  * @return Constant reference to member array_string_field
  */
-const std::array<std::string, 3>& ContentFilterTestType::array_string_field() const
+const std::array<std::string, max_array_size>& ContentFilterTestType::array_string_field() const
 {
     return m_array_string_field;
 }
@@ -1961,7 +1988,7 @@ const std::array<std::string, 3>& ContentFilterTestType::array_string_field() co
  * @brief This function returns a reference to member array_string_field
  * @return Reference to member array_string_field
  */
-std::array<std::string, 3>& ContentFilterTestType::array_string_field()
+std::array<std::string, max_array_size>& ContentFilterTestType::array_string_field()
 {
     return m_array_string_field;
 }
@@ -1972,7 +1999,7 @@ std::array<std::string, 3>& ContentFilterTestType::array_string_field()
  * @param _array_enum_field New value to be copied in member array_enum_field
  */
 void ContentFilterTestType::array_enum_field(
-        const std::array<Color, 3>& _array_enum_field)
+        const std::array<Color, max_array_size>& _array_enum_field)
 {
     m_array_enum_field = _array_enum_field;
 }
@@ -1982,7 +2009,7 @@ void ContentFilterTestType::array_enum_field(
  * @param _array_enum_field New value to be moved in member array_enum_field
  */
 void ContentFilterTestType::array_enum_field(
-        std::array<Color, 3>&& _array_enum_field)
+        std::array<Color, max_array_size>&& _array_enum_field)
 {
     m_array_enum_field = std::move(_array_enum_field);
 }
@@ -1991,7 +2018,7 @@ void ContentFilterTestType::array_enum_field(
  * @brief This function returns a constant reference to member array_enum_field
  * @return Constant reference to member array_enum_field
  */
-const std::array<Color, 3>& ContentFilterTestType::array_enum_field() const
+const std::array<Color, max_array_size>& ContentFilterTestType::array_enum_field() const
 {
     return m_array_enum_field;
 }
@@ -2000,7 +2027,7 @@ const std::array<Color, 3>& ContentFilterTestType::array_enum_field() const
  * @brief This function returns a reference to member array_enum_field
  * @return Reference to member array_enum_field
  */
-std::array<Color, 3>& ContentFilterTestType::array_enum_field()
+std::array<Color, max_array_size>& ContentFilterTestType::array_enum_field()
 {
     return m_array_enum_field;
 }
@@ -2011,7 +2038,7 @@ std::array<Color, 3>& ContentFilterTestType::array_enum_field()
  * @param _array_enum2_field New value to be copied in member array_enum2_field
  */
 void ContentFilterTestType::array_enum2_field(
-        const std::array<Material, 3>& _array_enum2_field)
+        const std::array<Material, max_array_size>& _array_enum2_field)
 {
     m_array_enum2_field = _array_enum2_field;
 }
@@ -2021,7 +2048,7 @@ void ContentFilterTestType::array_enum2_field(
  * @param _array_enum2_field New value to be moved in member array_enum2_field
  */
 void ContentFilterTestType::array_enum2_field(
-        std::array<Material, 3>&& _array_enum2_field)
+        std::array<Material, max_array_size>&& _array_enum2_field)
 {
     m_array_enum2_field = std::move(_array_enum2_field);
 }
@@ -2030,7 +2057,7 @@ void ContentFilterTestType::array_enum2_field(
  * @brief This function returns a constant reference to member array_enum2_field
  * @return Constant reference to member array_enum2_field
  */
-const std::array<Material, 3>& ContentFilterTestType::array_enum2_field() const
+const std::array<Material, max_array_size>& ContentFilterTestType::array_enum2_field() const
 {
     return m_array_enum2_field;
 }
@@ -2039,7 +2066,7 @@ const std::array<Material, 3>& ContentFilterTestType::array_enum2_field() const
  * @brief This function returns a reference to member array_enum2_field
  * @return Reference to member array_enum2_field
  */
-std::array<Material, 3>& ContentFilterTestType::array_enum2_field()
+std::array<Material, max_array_size>& ContentFilterTestType::array_enum2_field()
 {
     return m_array_enum2_field;
 }
@@ -2050,7 +2077,7 @@ std::array<Material, 3>& ContentFilterTestType::array_enum2_field()
  * @param _array_struct_field New value to be copied in member array_struct_field
  */
 void ContentFilterTestType::array_struct_field(
-        const std::array<StructType, 3>& _array_struct_field)
+        const std::array<StructType, max_array_size>& _array_struct_field)
 {
     m_array_struct_field = _array_struct_field;
 }
@@ -2060,7 +2087,7 @@ void ContentFilterTestType::array_struct_field(
  * @param _array_struct_field New value to be moved in member array_struct_field
  */
 void ContentFilterTestType::array_struct_field(
-        std::array<StructType, 3>&& _array_struct_field)
+        std::array<StructType, max_array_size>&& _array_struct_field)
 {
     m_array_struct_field = std::move(_array_struct_field);
 }
@@ -2069,7 +2096,7 @@ void ContentFilterTestType::array_struct_field(
  * @brief This function returns a constant reference to member array_struct_field
  * @return Constant reference to member array_struct_field
  */
-const std::array<StructType, 3>& ContentFilterTestType::array_struct_field() const
+const std::array<StructType, max_array_size>& ContentFilterTestType::array_struct_field() const
 {
     return m_array_struct_field;
 }
@@ -2078,7 +2105,7 @@ const std::array<StructType, 3>& ContentFilterTestType::array_struct_field() con
  * @brief This function returns a reference to member array_struct_field
  * @return Reference to member array_struct_field
  */
-std::array<StructType, 3>& ContentFilterTestType::array_struct_field()
+std::array<StructType, max_array_size>& ContentFilterTestType::array_struct_field()
 {
     return m_array_struct_field;
 }
@@ -3331,6 +3358,3 @@ std::vector<StructType>& ContentFilterTestType::unbounded_sequence_struct_field(
     return m_unbounded_sequence_struct_field;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "ContentFilterTestTypeCdrAux.ipp"

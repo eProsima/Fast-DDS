@@ -27,18 +27,20 @@ char dummy;
 #endif  // _WIN32
 
 #include "Calculator.h"
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "CalculatorCdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
 
 
 RequestType::RequestType()
 {
-
 }
 
 RequestType::~RequestType()
@@ -68,7 +70,6 @@ RequestType& RequestType::operator =(
     m_operation = x.m_operation;
     m_x = x.m_x;
     m_y = x.m_y;
-
     return *this;
 }
 
@@ -79,7 +80,6 @@ RequestType& RequestType::operator =(
     m_operation = x.m_operation;
     m_x = x.m_x;
     m_y = x.m_y;
-
     return *this;
 }
 
@@ -96,6 +96,19 @@ bool RequestType::operator !=(
 {
     return !(*this == x);
 }
+
+void RequestType::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void RequestType::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member operation
@@ -184,9 +197,10 @@ int32_t& RequestType::y()
 }
 
 
+
+
 ReplyType::ReplyType()
 {
-
 }
 
 ReplyType::~ReplyType()
@@ -210,7 +224,6 @@ ReplyType& ReplyType::operator =(
 {
 
     m_z = x.m_z;
-
     return *this;
 }
 
@@ -219,7 +232,6 @@ ReplyType& ReplyType::operator =(
 {
 
     m_z = x.m_z;
-
     return *this;
 }
 
@@ -234,6 +246,19 @@ bool ReplyType::operator !=(
 {
     return !(*this == x);
 }
+
+void ReplyType::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void ReplyType::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member z
@@ -263,6 +288,3 @@ int64_t& ReplyType::z()
     return m_z;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "CalculatorCdrAux.ipp"

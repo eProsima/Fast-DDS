@@ -21,10 +21,7 @@
 
 #include <utility>
 
-#include <fastcdr/Cdr.h>
-#include <fastcdr/CdrSizeCalculator.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastrtps/types/AnnotationParameterValue.h>
 
 using namespace eprosima::fastcdr::exception;
@@ -1385,15 +1382,16 @@ bool AppliedAnnotationParameter::operator ==(
            m_value == other.m_value;
 }
 
-size_t AppliedAnnotationParameter::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
+void AppliedAnnotationParameter::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-    size_t current_align = current_alignment;
+    eprosima::fastcdr::serialize(scdr, *this);
+}
 
-
-
-
-    return current_align;
+void AppliedAnnotationParameter::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool AppliedAnnotationParameter::isKeyDefined()
@@ -1456,12 +1454,16 @@ bool AppliedAnnotation::operator ==(
     return false;
 }
 
-size_t AppliedAnnotation::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
+void AppliedAnnotation::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-    size_t current_align = current_alignment;
+    eprosima::fastcdr::serialize(scdr, *this);
+}
 
-    return current_align;
+void AppliedAnnotation::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool AppliedAnnotation::isKeyDefined()
@@ -1526,12 +1528,16 @@ bool AppliedVerbatimAnnotation::operator ==(
            m_text == other.m_text;
 }
 
-size_t AppliedVerbatimAnnotation::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
+void AppliedVerbatimAnnotation::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-    size_t current_align = current_alignment;
+    eprosima::fastcdr::serialize(scdr, *this);
+}
 
-    return current_align;
+void AppliedVerbatimAnnotation::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool AppliedVerbatimAnnotation::isKeyDefined()
@@ -1601,12 +1607,16 @@ bool AppliedBuiltinMemberAnnotations::operator ==(
            m_hash_id == other.m_hash_id;
 }
 
-size_t AppliedBuiltinMemberAnnotations::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
+void AppliedBuiltinMemberAnnotations::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-    size_t current_align = current_alignment;
+    eprosima::fastcdr::serialize(scdr, *this);
+}
 
-    return current_align;
+void AppliedBuiltinMemberAnnotations::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool AppliedBuiltinMemberAnnotations::isKeyDefined()

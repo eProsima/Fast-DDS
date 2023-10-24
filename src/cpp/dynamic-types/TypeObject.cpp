@@ -12,11 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastcdr/Cdr.h>
-#include <fastcdr/CdrSizeCalculator.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/TypeObjectFactory.h>

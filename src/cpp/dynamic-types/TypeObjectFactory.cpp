@@ -14,9 +14,8 @@
 
 #include <sstream>
 
-#include <fastcdr/CdrSizeCalculator.hpp>
-
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>

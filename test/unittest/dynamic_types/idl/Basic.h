@@ -29,8 +29,14 @@
 #include <string>
 #include <vector>
 
+#include <fastcdr/config.h>
+#if FASTCDR_VERSION_MAJOR == 1
+#include <fastdds/rtps/common/CdrSerialization.hpp>
+#else
 #include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/external.hpp>
 #include <fastcdr/xcdr/optional.hpp>
+#endif // FASTCDR_VERSION_MAJOR == 1
 
 
 
@@ -80,6 +86,8 @@ enum MyEnum : uint32_t
 typedef MyEnum MyAliasEnum;
 
 typedef MyAliasEnum MyAliasAliasEnum;
+
+
 
 /*!
  * @brief This class represents the structure EnumStruct defined by the user in the IDL file.
@@ -160,11 +168,30 @@ public:
      */
     eProsima_user_DllExport MyEnum& my_enum();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     MyEnum m_my_enum{::A};
 
 };
+
+
 /*!
  * @brief This class represents the structure AliasStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -244,11 +271,30 @@ public:
      */
     eProsima_user_DllExport MyAliasEnum& my_alias();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     MyAliasEnum m_my_alias{::A};
 
 };
+
+
 /*!
  * @brief This class represents the structure AliasAliasStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -328,11 +374,30 @@ public:
      */
     eProsima_user_DllExport MyAliasAliasEnum& my_alias_alias();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     MyAliasAliasEnum m_my_alias_alias{::A};
 
 };
+
+
 /*!
  * @brief This class represents the structure BoolStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -412,11 +477,30 @@ public:
      */
     eProsima_user_DllExport bool& my_bool();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     bool m_my_bool{false};
 
 };
+
+
 /*!
  * @brief This class represents the structure OctetStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -496,11 +580,30 @@ public:
      */
     eProsima_user_DllExport uint8_t& my_octet();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     uint8_t m_my_octet{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure ShortStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -580,11 +683,30 @@ public:
      */
     eProsima_user_DllExport int16_t& my_int16();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     int16_t m_my_int16{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure LongStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -664,11 +786,30 @@ public:
      */
     eProsima_user_DllExport int32_t& my_int32();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     int32_t m_my_int32{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure LongLongStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -748,11 +889,30 @@ public:
      */
     eProsima_user_DllExport int64_t& my_int64();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     int64_t m_my_int64{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure UShortStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -832,11 +992,30 @@ public:
      */
     eProsima_user_DllExport uint16_t& my_uint16();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     uint16_t m_my_uint16{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure ULongStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -916,11 +1095,30 @@ public:
      */
     eProsima_user_DllExport uint32_t& my_uint32();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     uint32_t m_my_uint32{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure ULongLongStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1000,11 +1198,30 @@ public:
      */
     eProsima_user_DllExport uint64_t& my_uint64();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     uint64_t m_my_uint64{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure FloatStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1084,11 +1301,30 @@ public:
      */
     eProsima_user_DllExport float& my_float32();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     float m_my_float32{0.0};
 
 };
+
+
 /*!
  * @brief This class represents the structure DoubleStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1168,11 +1404,30 @@ public:
      */
     eProsima_user_DllExport double& my_float64();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     double m_my_float64{0.0};
 
 };
+
+
 /*!
  * @brief This class represents the structure LongDoubleStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1252,11 +1507,30 @@ public:
      */
     eProsima_user_DllExport long double& my_float128();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     long double m_my_float128{0.0};
 
 };
+
+
 /*!
  * @brief This class represents the structure CharStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1336,11 +1610,30 @@ public:
      */
     eProsima_user_DllExport char& my_char();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     char m_my_char{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure WCharStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1420,11 +1713,30 @@ public:
      */
     eProsima_user_DllExport wchar_t& my_wchar();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     wchar_t m_my_wchar{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure StringStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1511,11 +1823,30 @@ public:
      */
     eProsima_user_DllExport std::string& my_string();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     std::string m_my_string;
 
 };
+
+
 /*!
  * @brief This class represents the structure WStringStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1602,11 +1933,30 @@ public:
      */
     eProsima_user_DllExport std::wstring& my_wstring();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     std::wstring m_my_wstring;
 
 };
+
+
 /*!
  * @brief This class represents the structure LargeStringStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1693,11 +2043,30 @@ public:
      */
     eProsima_user_DllExport eprosima::fastcdr::fixed_string<41925>& my_large_string();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     eprosima::fastcdr::fixed_string<41925> m_my_large_string;
 
 };
+
+
 /*!
  * @brief This class represents the structure LargeWStringStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1784,11 +2153,30 @@ public:
      */
     eProsima_user_DllExport std::wstring& my_large_wstring();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     std::wstring m_my_large_wstring;
 
 };
+
+
 /*!
  * @brief This class represents the structure ArraytStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1875,12 +2263,31 @@ public:
      */
     eProsima_user_DllExport std::array<std::array<std::array<int32_t, 2>, 2>, 2>& my_array();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     std::array<std::array<std::array<int32_t, 2>, 2>, 2> m_my_array{ {{ {{0}} }} };
 
 };
 typedef std::array<std::array<int32_t, 2>, 2> MyArray;
+
+
 
 /*!
  * @brief This class represents the structure ArrayArrayStruct defined by the user in the IDL file.
@@ -1968,11 +2375,32 @@ public:
      */
     eProsima_user_DllExport std::array<std::array<MyArray, 2>, 2>& my_array_array();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     std::array<std::array<MyArray, 2>, 2> m_my_array_array{ {{ {{ {{0}} }} }} };
 
 };
+
+
+
+
 /*!
  * @brief This class represents the structure SequenceStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2059,11 +2487,34 @@ public:
      */
     eProsima_user_DllExport std::vector<int32_t>& my_sequence();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     std::vector<int32_t> m_my_sequence;
 
 };
+
+
+
+
+
+
 /*!
  * @brief This class represents the structure SequenceSequenceStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2150,11 +2601,32 @@ public:
      */
     eProsima_user_DllExport std::vector<std::vector<int32_t>>& my_sequence_sequence();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     std::vector<std::vector<int32_t>> m_my_sequence_sequence;
 
 };
+
+
+
+
 /*!
  * @brief This class represents the structure MapStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2241,11 +2713,34 @@ public:
      */
     eProsima_user_DllExport std::map<int32_t, int32_t>& my_map();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     std::map<int32_t, int32_t> m_my_map;
 
 };
+
+
+
+
+
+
 /*!
  * @brief This class represents the structure MapMapStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2331,6 +2826,23 @@ public:
      * @return Reference to member my_map_map
      */
     eProsima_user_DllExport std::map<int32_t, std::map<int32_t, int32_t>>& my_map_map();
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
 
 private:
 
@@ -2431,10 +2943,30 @@ public:
     eProsima_user_DllExport void bitset(
             const std::bitset<30>&);
 
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
+
+
 private:
 
     std::bitset<30> m_bitset;
 };
+
+
 /*!
  * @brief This class represents the structure BitsetStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2521,11 +3053,30 @@ public:
      */
     eProsima_user_DllExport MyBitset& a();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     MyBitset m_a;
 
 };
+
+
 /*!
  * @brief This class represents the structure StructStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2625,12 +3176,31 @@ public:
      */
     eProsima_user_DllExport int64_t& b();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     int32_t m_a{0};
     int64_t m_b{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure StructStructStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2737,12 +3307,31 @@ public:
      */
     eProsima_user_DllExport int64_t& child_int64();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     StructStruct m_child_struct;
     int64_t m_child_int64{0};
 
 };
+
+
 /*!
  * @brief This class represents the union SimpleUnion defined by the user in the IDL file.
  * @ingroup Basic
@@ -2866,6 +3455,22 @@ public:
      */
     eProsima_user_DllExport int64_t& second();
 
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     int32_t m__d;
@@ -2873,6 +3478,8 @@ private:
     int32_t m_first{0};
     int64_t m_second{0};
 };
+
+
 /*!
  * @brief This class represents the union UnionUnion defined by the user in the IDL file.
  * @ingroup Basic
@@ -3003,6 +3610,22 @@ public:
      */
     eProsima_user_DllExport SimpleUnion& second();
 
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     int32_t m__d;
@@ -3010,6 +3633,8 @@ private:
     int32_t m_first{0};
     SimpleUnion m_second;
 };
+
+
 /*!
  * @brief This class represents the union WCharUnion defined by the user in the IDL file.
  * @ingroup Basic
@@ -3133,6 +3758,22 @@ public:
      */
     eProsima_user_DllExport int64_t& second();
 
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     wchar_t m__d;
@@ -3140,6 +3781,8 @@ private:
     int32_t m_first{0};
     int64_t m_second{0};
 };
+
+
 /*!
  * @brief This class represents the structure SimpleUnionStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -3226,11 +3869,30 @@ public:
      */
     eProsima_user_DllExport SimpleUnion& my_union();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     SimpleUnion m_my_union;
 
 };
+
+
 /*!
  * @brief This class represents the structure UnionUnionUnionStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -3317,11 +3979,30 @@ public:
      */
     eProsima_user_DllExport UnionUnion& my_union();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     UnionUnion m_my_union;
 
 };
+
+
 /*!
  * @brief This class represents the structure WCharUnionStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -3407,6 +4088,23 @@ public:
      * @return Reference to member my_union
      */
     eProsima_user_DllExport WCharUnion& my_union();
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
 
 private:
 

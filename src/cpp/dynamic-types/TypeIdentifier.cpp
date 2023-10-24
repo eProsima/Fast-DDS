@@ -21,11 +21,8 @@
 
 #include <utility>
 
-#include <fastcdr/Cdr.h>
-#include <fastcdr/CdrSizeCalculator.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 

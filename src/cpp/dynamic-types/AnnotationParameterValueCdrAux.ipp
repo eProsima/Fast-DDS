@@ -47,6 +47,87 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::AnnotationParameterValue& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TK_BOOLEAN:
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+            break;
+        case eprosima::fastrtps::types::TK_BYTE:
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+            break;
+        case eprosima::fastrtps::types::TK_INT16:
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+            break;
+        case eprosima::fastrtps::types::TK_UINT16:
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+            break;
+        case eprosima::fastrtps::types::TK_INT32:
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            break;
+        case eprosima::fastrtps::types::TK_UINT32:
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            break;
+        case eprosima::fastrtps::types::TK_INT64:
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+            break;
+        case eprosima::fastrtps::types::TK_UINT64:
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+            break;
+        case eprosima::fastrtps::types::TK_FLOAT32:
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            break;
+        case eprosima::fastrtps::types::TK_FLOAT64:
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+            break;
+        case eprosima::fastrtps::types::TK_FLOAT128:
+            current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+
+            break;
+        case eprosima::fastrtps::types::TK_CHAR8:
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+            break;
+        case eprosima::fastrtps::types::TK_CHAR16:
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            break;
+        case eprosima::fastrtps::types::TK_ENUM:
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            break;
+        case eprosima::fastrtps::types::TK_STRING8:
+            current_alignment += 4 +
+                    eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.string8_value().size() + 1;
+            break;
+        case eprosima::fastrtps::types::TK_STRING16:
+            current_alignment += 4 +
+                    eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.string16_value().size() + 1;
+            break;
+        default:
+            calculate_serialized_size(calculator, data.extended_value(), current_alignment);
+            break;
+    }
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -143,6 +224,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -277,6 +360,17 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::AppliedAnnotationParameter& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    calculate_serialized_size(calculator, data.value(), current_alignment);
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -289,6 +383,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -315,6 +411,21 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::AppliedAnnotation& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    size_t initial_alignment = current_alignment;
+
+    calculate_serialized_size(calculator, data.annotation_typeid(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for (size_t a = 0; a < data.param_seq().size(); ++a)
+    {
+        calculate_serialized_size(calculator, data.param_seq().at(a), current_alignment);
+    }
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -327,6 +438,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -353,6 +466,19 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::AppliedVerbatimAnnotation& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.placement().size() + 1;
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.language().size() + 1;
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.text().size() + 1;
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -367,6 +493,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -395,6 +523,19 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::AppliedBuiltinMemberAnnotations& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.unit().size() + 1;
+    calculate_serialized_size(calculator, data.min(), current_alignment);
+    calculate_serialized_size(calculator, data.max(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.hash_id().size() + 1;
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -411,6 +552,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>

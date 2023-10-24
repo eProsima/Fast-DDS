@@ -29,8 +29,14 @@
 #include <string>
 #include <vector>
 
+#include <fastcdr/config.h>
+#if FASTCDR_VERSION_MAJOR == 1
+#include <fastdds/rtps/common/CdrSerialization.hpp>
+#else
 #include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/external.hpp>
 #include <fastcdr/xcdr/optional.hpp>
+#endif // FASTCDR_VERSION_MAJOR == 1
 
 
 
@@ -64,6 +70,8 @@ class Cdr;
 class CdrSizeCalculator;
 } // namespace fastcdr
 } // namespace eprosima
+
+
 
 
 
@@ -313,6 +321,23 @@ public:
      */
     eProsima_user_DllExport std::string& local_string();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     int8_t m_int8_{0};
@@ -326,6 +351,8 @@ private:
     std::string m_local_string;
 
 };
+
+
 /*!
  * @brief This class represents the union WCharUnion defined by the user in the IDL file.
  * @ingroup new_features_4_2
@@ -449,6 +476,22 @@ public:
      */
     eProsima_user_DllExport int32_t& case_one();
 
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     wchar_t m__d;
@@ -456,6 +499,8 @@ private:
     int32_t m_case_zero{0};
     int32_t m_case_one{0};
 };
+
+
 /*!
  * @brief This class represents the union OctetUnion defined by the user in the IDL file.
  * @ingroup new_features_4_2
@@ -579,6 +624,22 @@ public:
      */
     eProsima_user_DllExport int32_t& case_seven();
 
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     uint8_t m__d;
@@ -586,6 +647,8 @@ private:
     int32_t m_case_five{0};
     int32_t m_case_seven{0};
 };
+
+
 /*!
  * @brief This class represents the union Int8Union defined by the user in the IDL file.
  * @ingroup new_features_4_2
@@ -709,6 +772,22 @@ public:
      */
     eProsima_user_DllExport int32_t& case_six();
 
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     int8_t m__d;
@@ -717,495 +796,571 @@ private:
     int32_t m_case_six{0};
 };
 namespace bitmodule {
+
+/*!
+ * @brief This class represents the structure ParentBitset defined by the user in the IDL file.
+ * @ingroup new_features_4_2
+ */
+class ParentBitset
+{
+public:
+
     /*!
-     * @brief This class represents the structure ParentBitset defined by the user in the IDL file.
-     * @ingroup new_features_4_2
+     * @brief Default constructor.
      */
-    class ParentBitset
-    {
-    public:
+    eProsima_user_DllExport ParentBitset();
 
-        /*!
-         * @brief Default constructor.
-         */
-        eProsima_user_DllExport ParentBitset();
-
-        /*!
-         * @brief Default destructor.
-         */
-        eProsima_user_DllExport ~ParentBitset();
-
-        /*!
-         * @brief Copy constructor.
-         * @param x Reference to the object bitmodule::ParentBitset that will be copied.
-         */
-        eProsima_user_DllExport ParentBitset(
-                const ParentBitset& x);
-
-        /*!
-         * @brief Move constructor.
-         * @param x Reference to the object bitmodule::ParentBitset that will be copied.
-         */
-        eProsima_user_DllExport ParentBitset(
-                ParentBitset&& x) noexcept;
-
-        /*!
-         * @brief Copy assignment.
-         * @param x Reference to the object bitmodule::ParentBitset that will be copied.
-         */
-        eProsima_user_DllExport ParentBitset& operator =(
-                const ParentBitset& x);
-
-        /*!
-         * @brief Move assignment.
-         * @param x Reference to the object bitmodule::ParentBitset that will be copied.
-         */
-        eProsima_user_DllExport ParentBitset& operator =(
-                ParentBitset&& x) noexcept;
-
-        /*!
-         * @brief Comparison operator.
-         * @param x bitmodule::ParentBitset object to compare.
-         */
-        eProsima_user_DllExport bool operator ==(
-                const ParentBitset& x) const;
-
-        /*!
-         * @brief Comparison operator.
-         * @param x bitmodule::ParentBitset object to compare.
-         */
-        eProsima_user_DllExport bool operator !=(
-                const ParentBitset& x) const;
-
-        /*!
-         * @brief This function sets a value in member parent_bitfield
-         * @param _parent_bitfield New value for member parent_bitfield
-         */
-        eProsima_user_DllExport void parent_bitfield(
-                uint32_t _parent_bitfield);
-
-        /*!
-         * @brief This function returns the value of member parent_bitfield
-         * @return Value of member parent_bitfield
-         */
-        eProsima_user_DllExport uint32_t parent_bitfield() const;
-
-
-        eProsima_user_DllExport std::bitset<17> bitset() const;
-
-        eProsima_user_DllExport void bitset(const std::bitset<17>&);
-
-
-
-    private:
-
-        std::bitset<17> m_bitset;
-    };
     /*!
-     * @brief This class represents the structure MyBitset defined by the user in the IDL file.
-     * @ingroup new_features_4_2
+     * @brief Default destructor.
      */
-    class MyBitset : public bitmodule::ParentBitset 
-    {
-    public:
+    eProsima_user_DllExport ~ParentBitset();
 
-        /*!
-         * @brief Default constructor.
-         */
-        eProsima_user_DllExport MyBitset();
-
-        /*!
-         * @brief Default destructor.
-         */
-        eProsima_user_DllExport ~MyBitset();
-
-        /*!
-         * @brief Copy constructor.
-         * @param x Reference to the object bitmodule::MyBitset that will be copied.
-         */
-        eProsima_user_DllExport MyBitset(
-                const MyBitset& x);
-
-        /*!
-         * @brief Move constructor.
-         * @param x Reference to the object bitmodule::MyBitset that will be copied.
-         */
-        eProsima_user_DllExport MyBitset(
-                MyBitset&& x) noexcept;
-
-        /*!
-         * @brief Copy assignment.
-         * @param x Reference to the object bitmodule::MyBitset that will be copied.
-         */
-        eProsima_user_DllExport MyBitset& operator =(
-                const MyBitset& x);
-
-        /*!
-         * @brief Move assignment.
-         * @param x Reference to the object bitmodule::MyBitset that will be copied.
-         */
-        eProsima_user_DllExport MyBitset& operator =(
-                MyBitset&& x) noexcept;
-
-        /*!
-         * @brief Comparison operator.
-         * @param x bitmodule::MyBitset object to compare.
-         */
-        eProsima_user_DllExport bool operator ==(
-                const MyBitset& x) const;
-
-        /*!
-         * @brief Comparison operator.
-         * @param x bitmodule::MyBitset object to compare.
-         */
-        eProsima_user_DllExport bool operator !=(
-                const MyBitset& x) const;
-
-        /*!
-         * @brief This function sets a value in member a
-         * @param _a New value for member a
-         */
-        eProsima_user_DllExport void a(
-                char _a);
-
-        /*!
-         * @brief This function returns the value of member a
-         * @return Value of member a
-         */
-        eProsima_user_DllExport char a() const;
-
-
-        /*!
-         * @brief This function sets a value in member b
-         * @param _b New value for member b
-         */
-        eProsima_user_DllExport void b(
-                bool _b);
-
-        /*!
-         * @brief This function returns the value of member b
-         * @return Value of member b
-         */
-        eProsima_user_DllExport bool b() const;
-
-
-
-        /*!
-         * @brief This function sets a value in member c
-         * @param _c New value for member c
-         */
-        eProsima_user_DllExport void c(
-                uint16_t _c);
-
-        /*!
-         * @brief This function returns the value of member c
-         * @return Value of member c
-         */
-        eProsima_user_DllExport uint16_t c() const;
-
-
-        /*!
-         * @brief This function sets a value in member d
-         * @param _d New value for member d
-         */
-        eProsima_user_DllExport void d(
-                int16_t _d);
-
-        /*!
-         * @brief This function returns the value of member d
-         * @return Value of member d
-         */
-        eProsima_user_DllExport int16_t d() const;
-
-
-        /*!
-         * @brief This function sets a value in member e
-         * @param _e New value for member e
-         */
-        eProsima_user_DllExport void e(
-                int16_t _e);
-
-        /*!
-         * @brief This function returns the value of member e
-         * @return Value of member e
-         */
-        eProsima_user_DllExport int16_t e() const;
-
-
-        /*!
-         * @brief This function sets a value in member f
-         * @param _f New value for member f
-         */
-        eProsima_user_DllExport void f(
-                int16_t _f);
-
-        /*!
-         * @brief This function returns the value of member f
-         * @return Value of member f
-         */
-        eProsima_user_DllExport int16_t f() const;
-
-
-        eProsima_user_DllExport std::bitset<50> bitset() const;
-
-        eProsima_user_DllExport void bitset(const std::bitset<50>&);
-
-
-
-    private:
-
-        std::bitset<33> m_bitset;
-    };
     /*!
-     * @brief This enumeration represents the MyBitMask bitflags defined by the user in the IDL file.
-     * @ingroup new_features_4_2
+     * @brief Copy constructor.
+     * @param x Reference to the object bitmodule::ParentBitset that will be copied.
      */
-    enum MyBitMaskBits : uint8_t
-    {
-        flag0 = 0x01ull << 0,
-        flag1 = 0x01ull << 1,
-        flag4 = 0x01ull << 4,
-        flag6 = 0x01ull << 6,
-        flag7 = 0x01ull << 7
-    };
-    typedef uint8_t MyBitMask;
+    eProsima_user_DllExport ParentBitset(
+            const ParentBitset& x);
+
     /*!
-     * @brief This class represents the structure BitsetBitmask defined by the user in the IDL file.
-     * @ingroup new_features_4_2
+     * @brief Move constructor.
+     * @param x Reference to the object bitmodule::ParentBitset that will be copied.
      */
-    class BitsetBitmask
-    {
-    public:
+    eProsima_user_DllExport ParentBitset(
+            ParentBitset&& x) noexcept;
 
-        /*!
-         * @brief Default constructor.
-         */
-        eProsima_user_DllExport BitsetBitmask();
-
-        /*!
-         * @brief Default destructor.
-         */
-        eProsima_user_DllExport ~BitsetBitmask();
-
-        /*!
-         * @brief Copy constructor.
-         * @param x Reference to the object bitmodule::BitsetBitmask that will be copied.
-         */
-        eProsima_user_DllExport BitsetBitmask(
-                const BitsetBitmask& x);
-
-        /*!
-         * @brief Move constructor.
-         * @param x Reference to the object bitmodule::BitsetBitmask that will be copied.
-         */
-        eProsima_user_DllExport BitsetBitmask(
-                BitsetBitmask&& x) noexcept;
-
-        /*!
-         * @brief Copy assignment.
-         * @param x Reference to the object bitmodule::BitsetBitmask that will be copied.
-         */
-        eProsima_user_DllExport BitsetBitmask& operator =(
-                const BitsetBitmask& x);
-
-        /*!
-         * @brief Move assignment.
-         * @param x Reference to the object bitmodule::BitsetBitmask that will be copied.
-         */
-        eProsima_user_DllExport BitsetBitmask& operator =(
-                BitsetBitmask&& x) noexcept;
-
-        /*!
-         * @brief Comparison operator.
-         * @param x bitmodule::BitsetBitmask object to compare.
-         */
-        eProsima_user_DllExport bool operator ==(
-                const BitsetBitmask& x) const;
-
-        /*!
-         * @brief Comparison operator.
-         * @param x bitmodule::BitsetBitmask object to compare.
-         */
-        eProsima_user_DllExport bool operator !=(
-                const BitsetBitmask& x) const;
-
-        /*!
-         * @brief This function copies the value in member mybitset
-         * @param _mybitset New value to be copied in member mybitset
-         */
-        eProsima_user_DllExport void mybitset(
-                const bitmodule::MyBitset& _mybitset);
-
-        /*!
-         * @brief This function moves the value in member mybitset
-         * @param _mybitset New value to be moved in member mybitset
-         */
-        eProsima_user_DllExport void mybitset(
-                bitmodule::MyBitset&& _mybitset);
-
-        /*!
-         * @brief This function returns a constant reference to member mybitset
-         * @return Constant reference to member mybitset
-         */
-        eProsima_user_DllExport const bitmodule::MyBitset& mybitset() const;
-
-        /*!
-         * @brief This function returns a reference to member mybitset
-         * @return Reference to member mybitset
-         */
-        eProsima_user_DllExport bitmodule::MyBitset& mybitset();
-
-
-        /*!
-         * @brief This function copies the value in member mybitmask
-         * @param _mybitmask New value to be copied in member mybitmask
-         */
-        eProsima_user_DllExport void mybitmask(
-                const bitmodule::MyBitMask& _mybitmask);
-
-        /*!
-         * @brief This function moves the value in member mybitmask
-         * @param _mybitmask New value to be moved in member mybitmask
-         */
-        eProsima_user_DllExport void mybitmask(
-                bitmodule::MyBitMask&& _mybitmask);
-
-        /*!
-         * @brief This function returns a constant reference to member mybitmask
-         * @return Constant reference to member mybitmask
-         */
-        eProsima_user_DllExport const bitmodule::MyBitMask& mybitmask() const;
-
-        /*!
-         * @brief This function returns a reference to member mybitmask
-         * @return Reference to member mybitmask
-         */
-        eProsima_user_DllExport bitmodule::MyBitMask& mybitmask();
-
-    private:
-
-        bitmodule::MyBitset m_mybitset;
-        bitmodule::MyBitMask m_mybitmask{0};
-
-    };
     /*!
-     * @brief This class represents the structure BM2 defined by the user in the IDL file.
-     * @ingroup new_features_4_2
+     * @brief Copy assignment.
+     * @param x Reference to the object bitmodule::ParentBitset that will be copied.
      */
-    class BM2 : public bitmodule::BitsetBitmask 
-    {
-    public:
+    eProsima_user_DllExport ParentBitset& operator =(
+            const ParentBitset& x);
 
-        /*!
-         * @brief Default constructor.
-         */
-        eProsima_user_DllExport BM2();
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object bitmodule::ParentBitset that will be copied.
+     */
+    eProsima_user_DllExport ParentBitset& operator =(
+            ParentBitset&& x) noexcept;
 
-        /*!
-         * @brief Default destructor.
-         */
-        eProsima_user_DllExport ~BM2();
+    /*!
+     * @brief Comparison operator.
+     * @param x bitmodule::ParentBitset object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const ParentBitset& x) const;
 
-        /*!
-         * @brief Copy constructor.
-         * @param x Reference to the object bitmodule::BM2 that will be copied.
-         */
-        eProsima_user_DllExport BM2(
-                const BM2& x);
+    /*!
+     * @brief Comparison operator.
+     * @param x bitmodule::ParentBitset object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const ParentBitset& x) const;
 
-        /*!
-         * @brief Move constructor.
-         * @param x Reference to the object bitmodule::BM2 that will be copied.
-         */
-        eProsima_user_DllExport BM2(
-                BM2&& x) noexcept;
+    /*!
+     * @brief This function sets a value in member parent_bitfield
+     * @param _parent_bitfield New value for member parent_bitfield
+     */
+    eProsima_user_DllExport void parent_bitfield(
+            uint32_t _parent_bitfield);
 
-        /*!
-         * @brief Copy assignment.
-         * @param x Reference to the object bitmodule::BM2 that will be copied.
-         */
-        eProsima_user_DllExport BM2& operator =(
-                const BM2& x);
-
-        /*!
-         * @brief Move assignment.
-         * @param x Reference to the object bitmodule::BM2 that will be copied.
-         */
-        eProsima_user_DllExport BM2& operator =(
-                BM2&& x) noexcept;
-
-        /*!
-         * @brief Comparison operator.
-         * @param x bitmodule::BM2 object to compare.
-         */
-        eProsima_user_DllExport bool operator ==(
-                const BM2& x) const;
-
-        /*!
-         * @brief Comparison operator.
-         * @param x bitmodule::BM2 object to compare.
-         */
-        eProsima_user_DllExport bool operator !=(
-                const BM2& x) const;
-
-        /*!
-         * @brief This function copies the value in member two
-         * @param _two New value to be copied in member two
-         */
-        eProsima_user_DllExport void two(
-                const bitmodule::MyBitMask& _two);
-
-        /*!
-         * @brief This function moves the value in member two
-         * @param _two New value to be moved in member two
-         */
-        eProsima_user_DllExport void two(
-                bitmodule::MyBitMask&& _two);
-
-        /*!
-         * @brief This function returns a constant reference to member two
-         * @return Constant reference to member two
-         */
-        eProsima_user_DllExport const bitmodule::MyBitMask& two() const;
-
-        /*!
-         * @brief This function returns a reference to member two
-         * @return Reference to member two
-         */
-        eProsima_user_DllExport bitmodule::MyBitMask& two();
+    /*!
+     * @brief This function returns the value of member parent_bitfield
+     * @return Value of member parent_bitfield
+     */
+    eProsima_user_DllExport uint32_t parent_bitfield() const;
 
 
-        /*!
-         * @brief This function sets a value in member mylong
-         * @param _mylong New value for member mylong
-         */
-        eProsima_user_DllExport void mylong(
-                int32_t _mylong);
+    eProsima_user_DllExport std::bitset<17> bitset() const;
 
-        /*!
-         * @brief This function returns the value of member mylong
-         * @return Value of member mylong
-         */
-        eProsima_user_DllExport int32_t mylong() const;
+    eProsima_user_DllExport void bitset(
+            const std::bitset<17>&);
 
-        /*!
-         * @brief This function returns a reference to member mylong
-         * @return Reference to member mylong
-         */
-        eProsima_user_DllExport int32_t& mylong();
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
-    private:
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
-        bitmodule::MyBitMask m_two{0};
-        int32_t m_mylong{0};
 
-    };
+
+
+
+private:
+
+    std::bitset<17> m_bitset;
+};
+/*!
+ * @brief This class represents the structure MyBitset defined by the user in the IDL file.
+ * @ingroup new_features_4_2
+ */
+class MyBitset : public bitmodule::ParentBitset
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport MyBitset();
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~MyBitset();
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object bitmodule::MyBitset that will be copied.
+     */
+    eProsima_user_DllExport MyBitset(
+            const MyBitset& x);
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object bitmodule::MyBitset that will be copied.
+     */
+    eProsima_user_DllExport MyBitset(
+            MyBitset&& x) noexcept;
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object bitmodule::MyBitset that will be copied.
+     */
+    eProsima_user_DllExport MyBitset& operator =(
+            const MyBitset& x);
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object bitmodule::MyBitset that will be copied.
+     */
+    eProsima_user_DllExport MyBitset& operator =(
+            MyBitset&& x) noexcept;
+
+    /*!
+     * @brief Comparison operator.
+     * @param x bitmodule::MyBitset object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const MyBitset& x) const;
+
+    /*!
+     * @brief Comparison operator.
+     * @param x bitmodule::MyBitset object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const MyBitset& x) const;
+
+    /*!
+     * @brief This function sets a value in member a
+     * @param _a New value for member a
+     */
+    eProsima_user_DllExport void a(
+            char _a);
+
+    /*!
+     * @brief This function returns the value of member a
+     * @return Value of member a
+     */
+    eProsima_user_DllExport char a() const;
+
+
+    /*!
+     * @brief This function sets a value in member b
+     * @param _b New value for member b
+     */
+    eProsima_user_DllExport void b(
+            bool _b);
+
+    /*!
+     * @brief This function returns the value of member b
+     * @return Value of member b
+     */
+    eProsima_user_DllExport bool b() const;
+
+
+
+    /*!
+     * @brief This function sets a value in member c
+     * @param _c New value for member c
+     */
+    eProsima_user_DllExport void c(
+            uint16_t _c);
+
+    /*!
+     * @brief This function returns the value of member c
+     * @return Value of member c
+     */
+    eProsima_user_DllExport uint16_t c() const;
+
+
+    /*!
+     * @brief This function sets a value in member d
+     * @param _d New value for member d
+     */
+    eProsima_user_DllExport void d(
+            int16_t _d);
+
+    /*!
+     * @brief This function returns the value of member d
+     * @return Value of member d
+     */
+    eProsima_user_DllExport int16_t d() const;
+
+
+    /*!
+     * @brief This function sets a value in member e
+     * @param _e New value for member e
+     */
+    eProsima_user_DllExport void e(
+            int16_t _e);
+
+    /*!
+     * @brief This function returns the value of member e
+     * @return Value of member e
+     */
+    eProsima_user_DllExport int16_t e() const;
+
+
+    /*!
+     * @brief This function sets a value in member f
+     * @param _f New value for member f
+     */
+    eProsima_user_DllExport void f(
+            int16_t _f);
+
+    /*!
+     * @brief This function returns the value of member f
+     * @return Value of member f
+     */
+    eProsima_user_DllExport int16_t f() const;
+
+
+    eProsima_user_DllExport std::bitset<50> bitset() const;
+
+    eProsima_user_DllExport void bitset(
+            const std::bitset<50>&);
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
+
+
+private:
+
+    std::bitset<33> m_bitset;
+};
+/*!
+ * @brief This enumeration represents the MyBitMask bitflags defined by the user in the IDL file.
+ * @ingroup new_features_4_2
+ */
+enum MyBitMaskBits : uint8_t
+{
+    flag0 = 0x01ull << 0,
+    flag1 = 0x01ull << 1,
+    flag4 = 0x01ull << 4,
+    flag6 = 0x01ull << 6,
+    flag7 = 0x01ull << 7
+};
+typedef uint8_t MyBitMask;
+
+
+/*!
+ * @brief This class represents the structure BitsetBitmask defined by the user in the IDL file.
+ * @ingroup new_features_4_2
+ */
+class BitsetBitmask
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport BitsetBitmask();
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~BitsetBitmask();
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object bitmodule::BitsetBitmask that will be copied.
+     */
+    eProsima_user_DllExport BitsetBitmask(
+            const BitsetBitmask& x);
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object bitmodule::BitsetBitmask that will be copied.
+     */
+    eProsima_user_DllExport BitsetBitmask(
+            BitsetBitmask&& x) noexcept;
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object bitmodule::BitsetBitmask that will be copied.
+     */
+    eProsima_user_DllExport BitsetBitmask& operator =(
+            const BitsetBitmask& x);
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object bitmodule::BitsetBitmask that will be copied.
+     */
+    eProsima_user_DllExport BitsetBitmask& operator =(
+            BitsetBitmask&& x) noexcept;
+
+    /*!
+     * @brief Comparison operator.
+     * @param x bitmodule::BitsetBitmask object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const BitsetBitmask& x) const;
+
+    /*!
+     * @brief Comparison operator.
+     * @param x bitmodule::BitsetBitmask object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const BitsetBitmask& x) const;
+
+    /*!
+     * @brief This function copies the value in member mybitset
+     * @param _mybitset New value to be copied in member mybitset
+     */
+    eProsima_user_DllExport void mybitset(
+            const bitmodule::MyBitset& _mybitset);
+
+    /*!
+     * @brief This function moves the value in member mybitset
+     * @param _mybitset New value to be moved in member mybitset
+     */
+    eProsima_user_DllExport void mybitset(
+            bitmodule::MyBitset&& _mybitset);
+
+    /*!
+     * @brief This function returns a constant reference to member mybitset
+     * @return Constant reference to member mybitset
+     */
+    eProsima_user_DllExport const bitmodule::MyBitset& mybitset() const;
+
+    /*!
+     * @brief This function returns a reference to member mybitset
+     * @return Reference to member mybitset
+     */
+    eProsima_user_DllExport bitmodule::MyBitset& mybitset();
+
+
+    /*!
+     * @brief This function copies the value in member mybitmask
+     * @param _mybitmask New value to be copied in member mybitmask
+     */
+    eProsima_user_DllExport void mybitmask(
+            const bitmodule::MyBitMask& _mybitmask);
+
+    /*!
+     * @brief This function moves the value in member mybitmask
+     * @param _mybitmask New value to be moved in member mybitmask
+     */
+    eProsima_user_DllExport void mybitmask(
+            bitmodule::MyBitMask&& _mybitmask);
+
+    /*!
+     * @brief This function returns a constant reference to member mybitmask
+     * @return Constant reference to member mybitmask
+     */
+    eProsima_user_DllExport const bitmodule::MyBitMask& mybitmask() const;
+
+    /*!
+     * @brief This function returns a reference to member mybitmask
+     * @return Reference to member mybitmask
+     */
+    eProsima_user_DllExport bitmodule::MyBitMask& mybitmask();
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
+private:
+
+    bitmodule::MyBitset m_mybitset;
+    bitmodule::MyBitMask m_mybitmask{0};
+
+};
+
+
+/*!
+ * @brief This class represents the structure BM2 defined by the user in the IDL file.
+ * @ingroup new_features_4_2
+ */
+class BM2 : public bitmodule::BitsetBitmask
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport BM2();
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~BM2();
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object bitmodule::BM2 that will be copied.
+     */
+    eProsima_user_DllExport BM2(
+            const BM2& x);
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object bitmodule::BM2 that will be copied.
+     */
+    eProsima_user_DllExport BM2(
+            BM2&& x) noexcept;
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object bitmodule::BM2 that will be copied.
+     */
+    eProsima_user_DllExport BM2& operator =(
+            const BM2& x);
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object bitmodule::BM2 that will be copied.
+     */
+    eProsima_user_DllExport BM2& operator =(
+            BM2&& x) noexcept;
+
+    /*!
+     * @brief Comparison operator.
+     * @param x bitmodule::BM2 object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const BM2& x) const;
+
+    /*!
+     * @brief Comparison operator.
+     * @param x bitmodule::BM2 object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const BM2& x) const;
+
+    /*!
+     * @brief This function copies the value in member two
+     * @param _two New value to be copied in member two
+     */
+    eProsima_user_DllExport void two(
+            const bitmodule::MyBitMask& _two);
+
+    /*!
+     * @brief This function moves the value in member two
+     * @param _two New value to be moved in member two
+     */
+    eProsima_user_DllExport void two(
+            bitmodule::MyBitMask&& _two);
+
+    /*!
+     * @brief This function returns a constant reference to member two
+     * @return Constant reference to member two
+     */
+    eProsima_user_DllExport const bitmodule::MyBitMask& two() const;
+
+    /*!
+     * @brief This function returns a reference to member two
+     * @return Reference to member two
+     */
+    eProsima_user_DllExport bitmodule::MyBitMask& two();
+
+
+    /*!
+     * @brief This function sets a value in member mylong
+     * @param _mylong New value for member mylong
+     */
+    eProsima_user_DllExport void mylong(
+            int32_t _mylong);
+
+    /*!
+     * @brief This function returns the value of member mylong
+     * @return Value of member mylong
+     */
+    eProsima_user_DllExport int32_t mylong() const;
+
+    /*!
+     * @brief This function returns a reference to member mylong
+     * @return Reference to member mylong
+     */
+    eProsima_user_DllExport int32_t& mylong();
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
+private:
+
+    bitmodule::MyBitMask m_two{0};
+    int32_t m_mylong{0};
+
+};
+
 } // namespace bitmodule
+
+
 /*!
  * @brief This class represents the structure StructTest defined by the user in the IDL file.
  * @ingroup new_features_4_2
  */
-class StructTest : public NewAliases 
+class StructTest : public NewAliases
 {
 public:
 
@@ -1340,6 +1495,23 @@ public:
      * @return Reference to member myStructBits
      */
     eProsima_user_DllExport bitmodule::BM2& myStructBits();
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
 
 private:
 

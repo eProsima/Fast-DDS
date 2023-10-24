@@ -29,18 +29,20 @@ char dummy;
 #include "TestRegression3361.h"
 #include "TestRegression3361TypeObject.h"
 
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "TestRegression3361CdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
 
 
 TestRegression3361::TestRegression3361()
 {
-
     // Just to register all known types
     registerTestRegression3361Types();
 }
@@ -66,7 +68,6 @@ TestRegression3361& TestRegression3361::operator =(
 {
 
     m_uuid = x.m_uuid;
-
     return *this;
 }
 
@@ -75,7 +76,6 @@ TestRegression3361& TestRegression3361::operator =(
 {
 
     m_uuid = std::move(x.m_uuid);
-
     return *this;
 }
 
@@ -90,6 +90,19 @@ bool TestRegression3361::operator !=(
 {
     return !(*this == x);
 }
+
+void TestRegression3361::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void TestRegression3361::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member uuid
@@ -129,6 +142,3 @@ TestModule::MACHINEID& TestRegression3361::uuid()
     return m_uuid;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "TestRegression3361CdrAux.ipp"

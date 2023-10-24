@@ -27,18 +27,28 @@ char dummy;
 #endif  // _WIN32
 
 #include "types.h"
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "typesCdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
+namespace eprosima {
+
+namespace fastdds {
+
+namespace statistics {
+
+namespace detail {
+
 
 
 eprosima::fastdds::statistics::detail::EntityId_s::EntityId_s()
 {
-
 }
 
 eprosima::fastdds::statistics::detail::EntityId_s::~EntityId_s()
@@ -62,7 +72,6 @@ eprosima::fastdds::statistics::detail::EntityId_s& eprosima::fastdds::statistics
 {
 
     m_value = x.m_value;
-
     return *this;
 }
 
@@ -71,7 +80,6 @@ eprosima::fastdds::statistics::detail::EntityId_s& eprosima::fastdds::statistics
 {
 
     m_value = std::move(x.m_value);
-
     return *this;
 }
 
@@ -86,6 +94,19 @@ bool eprosima::fastdds::statistics::detail::EntityId_s::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::detail::EntityId_s::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::detail::EntityId_s::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member value
@@ -126,9 +147,10 @@ std::array<uint8_t, 4>& eprosima::fastdds::statistics::detail::EntityId_s::value
 }
 
 
+
+
 eprosima::fastdds::statistics::detail::GuidPrefix_s::GuidPrefix_s()
 {
-
 }
 
 eprosima::fastdds::statistics::detail::GuidPrefix_s::~GuidPrefix_s()
@@ -152,7 +174,6 @@ eprosima::fastdds::statistics::detail::GuidPrefix_s& eprosima::fastdds::statisti
 {
 
     m_value = x.m_value;
-
     return *this;
 }
 
@@ -161,7 +182,6 @@ eprosima::fastdds::statistics::detail::GuidPrefix_s& eprosima::fastdds::statisti
 {
 
     m_value = std::move(x.m_value);
-
     return *this;
 }
 
@@ -176,6 +196,19 @@ bool eprosima::fastdds::statistics::detail::GuidPrefix_s::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::detail::GuidPrefix_s::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::detail::GuidPrefix_s::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member value
@@ -216,9 +249,10 @@ std::array<uint8_t, 12>& eprosima::fastdds::statistics::detail::GuidPrefix_s::va
 }
 
 
+
+
 eprosima::fastdds::statistics::detail::GUID_s::GUID_s()
 {
-
 }
 
 eprosima::fastdds::statistics::detail::GUID_s::~GUID_s()
@@ -245,7 +279,6 @@ eprosima::fastdds::statistics::detail::GUID_s& eprosima::fastdds::statistics::de
 
     m_guidPrefix = x.m_guidPrefix;
     m_entityId = x.m_entityId;
-
     return *this;
 }
 
@@ -255,7 +288,6 @@ eprosima::fastdds::statistics::detail::GUID_s& eprosima::fastdds::statistics::de
 
     m_guidPrefix = std::move(x.m_guidPrefix);
     m_entityId = std::move(x.m_entityId);
-
     return *this;
 }
 
@@ -271,6 +303,19 @@ bool eprosima::fastdds::statistics::detail::GUID_s::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::detail::GUID_s::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::detail::GUID_s::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member guidPrefix
@@ -350,9 +395,10 @@ eprosima::fastdds::statistics::detail::EntityId_s& eprosima::fastdds::statistics
 }
 
 
+
+
 eprosima::fastdds::statistics::detail::SequenceNumber_s::SequenceNumber_s()
 {
-
 }
 
 eprosima::fastdds::statistics::detail::SequenceNumber_s::~SequenceNumber_s()
@@ -379,7 +425,6 @@ eprosima::fastdds::statistics::detail::SequenceNumber_s& eprosima::fastdds::stat
 
     m_high = x.m_high;
     m_low = x.m_low;
-
     return *this;
 }
 
@@ -389,7 +434,6 @@ eprosima::fastdds::statistics::detail::SequenceNumber_s& eprosima::fastdds::stat
 
     m_high = x.m_high;
     m_low = x.m_low;
-
     return *this;
 }
 
@@ -405,6 +449,19 @@ bool eprosima::fastdds::statistics::detail::SequenceNumber_s::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::detail::SequenceNumber_s::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::detail::SequenceNumber_s::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member high
@@ -464,9 +521,10 @@ uint32_t& eprosima::fastdds::statistics::detail::SequenceNumber_s::low()
 }
 
 
+
+
 eprosima::fastdds::statistics::detail::SampleIdentity_s::SampleIdentity_s()
 {
-
 }
 
 eprosima::fastdds::statistics::detail::SampleIdentity_s::~SampleIdentity_s()
@@ -493,7 +551,6 @@ eprosima::fastdds::statistics::detail::SampleIdentity_s& eprosima::fastdds::stat
 
     m_writer_guid = x.m_writer_guid;
     m_sequence_number = x.m_sequence_number;
-
     return *this;
 }
 
@@ -503,7 +560,6 @@ eprosima::fastdds::statistics::detail::SampleIdentity_s& eprosima::fastdds::stat
 
     m_writer_guid = std::move(x.m_writer_guid);
     m_sequence_number = std::move(x.m_sequence_number);
-
     return *this;
 }
 
@@ -519,6 +575,19 @@ bool eprosima::fastdds::statistics::detail::SampleIdentity_s::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::detail::SampleIdentity_s::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::detail::SampleIdentity_s::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member writer_guid
@@ -598,9 +667,10 @@ eprosima::fastdds::statistics::detail::SequenceNumber_s& eprosima::fastdds::stat
 }
 
 
+
+
 eprosima::fastdds::statistics::detail::Locator_s::Locator_s()
 {
-
 }
 
 eprosima::fastdds::statistics::detail::Locator_s::~Locator_s()
@@ -630,7 +700,6 @@ eprosima::fastdds::statistics::detail::Locator_s& eprosima::fastdds::statistics:
     m_kind = x.m_kind;
     m_port = x.m_port;
     m_address = x.m_address;
-
     return *this;
 }
 
@@ -641,7 +710,6 @@ eprosima::fastdds::statistics::detail::Locator_s& eprosima::fastdds::statistics:
     m_kind = x.m_kind;
     m_port = x.m_port;
     m_address = std::move(x.m_address);
-
     return *this;
 }
 
@@ -658,6 +726,19 @@ bool eprosima::fastdds::statistics::detail::Locator_s::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::detail::Locator_s::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::detail::Locator_s::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member kind
@@ -757,9 +838,12 @@ std::array<uint8_t, 16>& eprosima::fastdds::statistics::detail::Locator_s::addre
 
 
 
+
+} // namespace detail
+
+
 eprosima::fastdds::statistics::DiscoveryTime::DiscoveryTime()
 {
-
 }
 
 eprosima::fastdds::statistics::DiscoveryTime::~DiscoveryTime()
@@ -798,7 +882,6 @@ eprosima::fastdds::statistics::DiscoveryTime& eprosima::fastdds::statistics::Dis
     m_host = x.m_host;
     m_user = x.m_user;
     m_process = x.m_process;
-
     return *this;
 }
 
@@ -812,7 +895,6 @@ eprosima::fastdds::statistics::DiscoveryTime& eprosima::fastdds::statistics::Dis
     m_host = std::move(x.m_host);
     m_user = std::move(x.m_user);
     m_process = std::move(x.m_process);
-
     return *this;
 }
 
@@ -832,6 +914,19 @@ bool eprosima::fastdds::statistics::DiscoveryTime::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::DiscoveryTime::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::DiscoveryTime::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member local_participant_guid
@@ -1057,9 +1152,10 @@ std::string& eprosima::fastdds::statistics::DiscoveryTime::process()
 }
 
 
+
+
 eprosima::fastdds::statistics::EntityCount::EntityCount()
 {
-
 }
 
 eprosima::fastdds::statistics::EntityCount::~EntityCount()
@@ -1086,7 +1182,6 @@ eprosima::fastdds::statistics::EntityCount& eprosima::fastdds::statistics::Entit
 
     m_guid = x.m_guid;
     m_count = x.m_count;
-
     return *this;
 }
 
@@ -1096,7 +1191,6 @@ eprosima::fastdds::statistics::EntityCount& eprosima::fastdds::statistics::Entit
 
     m_guid = std::move(x.m_guid);
     m_count = x.m_count;
-
     return *this;
 }
 
@@ -1112,6 +1206,19 @@ bool eprosima::fastdds::statistics::EntityCount::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::EntityCount::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::EntityCount::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member guid
@@ -1181,9 +1288,10 @@ uint64_t& eprosima::fastdds::statistics::EntityCount::count()
 }
 
 
+
+
 eprosima::fastdds::statistics::SampleIdentityCount::SampleIdentityCount()
 {
-
 }
 
 eprosima::fastdds::statistics::SampleIdentityCount::~SampleIdentityCount()
@@ -1210,7 +1318,6 @@ eprosima::fastdds::statistics::SampleIdentityCount& eprosima::fastdds::statistic
 
     m_sample_id = x.m_sample_id;
     m_count = x.m_count;
-
     return *this;
 }
 
@@ -1220,7 +1327,6 @@ eprosima::fastdds::statistics::SampleIdentityCount& eprosima::fastdds::statistic
 
     m_sample_id = std::move(x.m_sample_id);
     m_count = x.m_count;
-
     return *this;
 }
 
@@ -1236,6 +1342,19 @@ bool eprosima::fastdds::statistics::SampleIdentityCount::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::SampleIdentityCount::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::SampleIdentityCount::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member sample_id
@@ -1305,9 +1424,10 @@ uint64_t& eprosima::fastdds::statistics::SampleIdentityCount::count()
 }
 
 
+
+
 eprosima::fastdds::statistics::Entity2LocatorTraffic::Entity2LocatorTraffic()
 {
-
 }
 
 eprosima::fastdds::statistics::Entity2LocatorTraffic::~Entity2LocatorTraffic()
@@ -1343,7 +1463,6 @@ eprosima::fastdds::statistics::Entity2LocatorTraffic& eprosima::fastdds::statist
     m_packet_count = x.m_packet_count;
     m_byte_count = x.m_byte_count;
     m_byte_magnitude_order = x.m_byte_magnitude_order;
-
     return *this;
 }
 
@@ -1356,7 +1475,6 @@ eprosima::fastdds::statistics::Entity2LocatorTraffic& eprosima::fastdds::statist
     m_packet_count = x.m_packet_count;
     m_byte_count = x.m_byte_count;
     m_byte_magnitude_order = x.m_byte_magnitude_order;
-
     return *this;
 }
 
@@ -1375,6 +1493,19 @@ bool eprosima::fastdds::statistics::Entity2LocatorTraffic::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::Entity2LocatorTraffic::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::Entity2LocatorTraffic::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member src_guid
@@ -1541,9 +1672,10 @@ int16_t& eprosima::fastdds::statistics::Entity2LocatorTraffic::byte_magnitude_or
 }
 
 
+
+
 eprosima::fastdds::statistics::WriterReaderData::WriterReaderData()
 {
-
 }
 
 eprosima::fastdds::statistics::WriterReaderData::~WriterReaderData()
@@ -1573,7 +1705,6 @@ eprosima::fastdds::statistics::WriterReaderData& eprosima::fastdds::statistics::
     m_writer_guid = x.m_writer_guid;
     m_reader_guid = x.m_reader_guid;
     m_data = x.m_data;
-
     return *this;
 }
 
@@ -1584,7 +1715,6 @@ eprosima::fastdds::statistics::WriterReaderData& eprosima::fastdds::statistics::
     m_writer_guid = std::move(x.m_writer_guid);
     m_reader_guid = std::move(x.m_reader_guid);
     m_data = x.m_data;
-
     return *this;
 }
 
@@ -1601,6 +1731,19 @@ bool eprosima::fastdds::statistics::WriterReaderData::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::WriterReaderData::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::WriterReaderData::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member writer_guid
@@ -1709,9 +1852,10 @@ float& eprosima::fastdds::statistics::WriterReaderData::data()
 }
 
 
+
+
 eprosima::fastdds::statistics::Locator2LocatorData::Locator2LocatorData()
 {
-
 }
 
 eprosima::fastdds::statistics::Locator2LocatorData::~Locator2LocatorData()
@@ -1741,7 +1885,6 @@ eprosima::fastdds::statistics::Locator2LocatorData& eprosima::fastdds::statistic
     m_src_locator = x.m_src_locator;
     m_dst_locator = x.m_dst_locator;
     m_data = x.m_data;
-
     return *this;
 }
 
@@ -1752,7 +1895,6 @@ eprosima::fastdds::statistics::Locator2LocatorData& eprosima::fastdds::statistic
     m_src_locator = std::move(x.m_src_locator);
     m_dst_locator = std::move(x.m_dst_locator);
     m_data = x.m_data;
-
     return *this;
 }
 
@@ -1769,6 +1911,19 @@ bool eprosima::fastdds::statistics::Locator2LocatorData::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::Locator2LocatorData::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::Locator2LocatorData::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member src_locator
@@ -1877,9 +2032,10 @@ float& eprosima::fastdds::statistics::Locator2LocatorData::data()
 }
 
 
+
+
 eprosima::fastdds::statistics::EntityData::EntityData()
 {
-
 }
 
 eprosima::fastdds::statistics::EntityData::~EntityData()
@@ -1906,7 +2062,6 @@ eprosima::fastdds::statistics::EntityData& eprosima::fastdds::statistics::Entity
 
     m_guid = x.m_guid;
     m_data = x.m_data;
-
     return *this;
 }
 
@@ -1916,7 +2071,6 @@ eprosima::fastdds::statistics::EntityData& eprosima::fastdds::statistics::Entity
 
     m_guid = std::move(x.m_guid);
     m_data = x.m_data;
-
     return *this;
 }
 
@@ -1932,6 +2086,19 @@ bool eprosima::fastdds::statistics::EntityData::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::EntityData::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::EntityData::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member guid
@@ -2001,9 +2168,10 @@ float& eprosima::fastdds::statistics::EntityData::data()
 }
 
 
+
+
 eprosima::fastdds::statistics::PhysicalData::PhysicalData()
 {
-
 }
 
 eprosima::fastdds::statistics::PhysicalData::~PhysicalData()
@@ -2036,7 +2204,6 @@ eprosima::fastdds::statistics::PhysicalData& eprosima::fastdds::statistics::Phys
     m_host = x.m_host;
     m_user = x.m_user;
     m_process = x.m_process;
-
     return *this;
 }
 
@@ -2048,7 +2215,6 @@ eprosima::fastdds::statistics::PhysicalData& eprosima::fastdds::statistics::Phys
     m_host = std::move(x.m_host);
     m_user = std::move(x.m_user);
     m_process = std::move(x.m_process);
-
     return *this;
 }
 
@@ -2066,6 +2232,19 @@ bool eprosima::fastdds::statistics::PhysicalData::operator !=(
 {
     return !(*this == x);
 }
+
+void eprosima::fastdds::statistics::PhysicalData::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::PhysicalData::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member participant_guid
@@ -2221,6 +2400,8 @@ std::string& eprosima::fastdds::statistics::PhysicalData::process()
 {
     return m_process;
 }
+
+
 
 
 
@@ -2683,6 +2864,8 @@ void eprosima::fastdds::statistics::Data::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -3193,8 +3376,26 @@ eprosima::fastdds::statistics::PhysicalData& eprosima::fastdds::statistics::Data
 }
 
 
+void eprosima::fastdds::statistics::Data::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void eprosima::fastdds::statistics::Data::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
 
 
 
-// Include auxiliary functions like for serializing/deserializing.
-#include "typesCdrAux.ipp"
+
+
+} // namespace statistics
+
+
+} // namespace fastdds
+
+
+} // namespace eprosima

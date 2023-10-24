@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastcdr/Cdr.h>
-
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -108,7 +107,12 @@ bool DynamicPubSubType::deserialize(
         void* data)
 {
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr deser(fastbuffer);
+    eprosima::fastcdr::Cdr deser(fastbuffer
+#if FASTCDR_VERSION_MAJOR == 1
+            , eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
+            , eprosima::fastcdr::Cdr::CdrType::DDS_CDR
+#endif // FASTCDR_VERSION_MAJOR == 1
+            );
 
     try
     {
@@ -150,7 +154,11 @@ bool DynamicPubSubType::getKey(
     if (force_md5 || keyBufferSize > 16)
     {
         m_md5.init();
+#if FASTCDR_VERSION_MAJOR == 1
+        m_md5.update(m_keyBuffer, (unsigned int)ser.getSerializedDataLength());
+#else
         m_md5.update(m_keyBuffer, (unsigned int)ser.get_serialized_data_length());
+#endif // FASTCDR_VERSION_MAJOR == 1
         m_md5.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
@@ -198,6 +206,7 @@ bool DynamicPubSubType::serialize(
             fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::
                     XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+#if FASTCDR_VERSION_MAJOR > 1
     if (data_representation == fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION)
     {
         if (MUTABLE == extensibility_)
@@ -224,6 +233,7 @@ bool DynamicPubSubType::serialize(
             ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
         }
     }
+#endif // FASTCDR_VERSION_MAJOR > 1
 
     try
     {
@@ -236,7 +246,11 @@ bool DynamicPubSubType::serialize(
         return false;
     }
 
+#if FASTCDR_VERSION_MAJOR == 1
+    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+#else
     payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
+#endif // FASTCDR_VERSION_MAJOR == 1
     return true;
 }
 

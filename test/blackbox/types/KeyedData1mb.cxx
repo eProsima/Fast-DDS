@@ -27,18 +27,22 @@ char dummy;
 #endif  // _WIN32
 
 #include "KeyedData1mb.h"
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "KeyedData1mbCdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
+
+
 
 
 KeyedData1mb::KeyedData1mb()
 {
-
 }
 
 KeyedData1mb::~KeyedData1mb()
@@ -65,7 +69,6 @@ KeyedData1mb& KeyedData1mb::operator =(
 
     m_key = x.m_key;
     m_data = x.m_data;
-
     return *this;
 }
 
@@ -75,7 +78,6 @@ KeyedData1mb& KeyedData1mb::operator =(
 
     m_key = x.m_key;
     m_data = std::move(x.m_data);
-
     return *this;
 }
 
@@ -91,6 +93,19 @@ bool KeyedData1mb::operator !=(
 {
     return !(*this == x);
 }
+
+void KeyedData1mb::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void KeyedData1mb::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member key
@@ -159,6 +174,3 @@ std::vector<uint8_t>& KeyedData1mb::data()
     return m_data;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "KeyedData1mbCdrAux.ipp"

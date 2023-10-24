@@ -29,12 +29,14 @@ char dummy;
 #include "TestIncludeRegression3361.h"
 #include "TestIncludeRegression3361TypeObject.h"
 
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
 
+using namespace eprosima::fastcdr::exception;
 
+
+namespace TestModule {
+
+
+} // namespace TestModule

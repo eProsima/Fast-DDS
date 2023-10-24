@@ -17,11 +17,9 @@
  *
  */
 
-#include <fastcdr/Cdr.h>
-#include <fastcdr/CdrSizeCalculator.hpp>
-
 #include <fastdds/dds/builtin/common/ReplyHeader.hpp>
 #include <fastdds/dds/builtin/common/RequestHeader.hpp>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include "RPCHeadersImplCdrAux.ipp"
 

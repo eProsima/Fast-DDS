@@ -27,18 +27,20 @@ char dummy;
 #endif  // _WIN32
 
 #include "Lifespan.h"
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "LifespanCdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
 
 
 Lifespan::Lifespan()
 {
-
 }
 
 Lifespan::~Lifespan()
@@ -65,7 +67,6 @@ Lifespan& Lifespan::operator =(
 
     m_index = x.m_index;
     m_message = x.m_message;
-
     return *this;
 }
 
@@ -75,7 +76,6 @@ Lifespan& Lifespan::operator =(
 
     m_index = x.m_index;
     m_message = std::move(x.m_message);
-
     return *this;
 }
 
@@ -91,6 +91,19 @@ bool Lifespan::operator !=(
 {
     return !(*this == x);
 }
+
+void Lifespan::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void Lifespan::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member index
@@ -159,6 +172,3 @@ std::string& Lifespan::message()
     return m_message;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "LifespanCdrAux.ipp"

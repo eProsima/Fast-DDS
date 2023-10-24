@@ -29,8 +29,14 @@
 #include <string>
 #include <vector>
 
+#include <fastcdr/config.h>
+#if FASTCDR_VERSION_MAJOR == 1
+#include <fastdds/rtps/common/CdrSerialization.hpp>
+#else
 #include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/external.hpp>
 #include <fastcdr/xcdr/optional.hpp>
+#endif // FASTCDR_VERSION_MAJOR == 1
 
 
 
@@ -78,6 +84,8 @@ enum MyEnumWide : uint32_t
     C,
     D
 };
+
+
 /*!
  * @brief This class represents the structure MyEnumWideStruct defined by the user in the IDL file.
  * @ingroup WideEnum
@@ -157,11 +165,30 @@ public:
      */
     eProsima_user_DllExport MyEnumWide& my_enum_wide();
 
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     MyEnumWide m_my_enum_wide{::A};
 
 };
+
+
 /*!
  * @brief This class represents the union SimpleWideUnion defined by the user in the IDL file.
  * @ingroup WideEnum
@@ -307,6 +334,22 @@ public:
      */
     eProsima_user_DllExport uint8_t& third();
 
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
+
 private:
 
     int32_t m__d;
@@ -315,6 +358,8 @@ private:
     int64_t m_second{0};
     uint8_t m_third{0};
 };
+
+
 /*!
  * @brief This class represents the structure SimpleWideUnionStruct defined by the user in the IDL file.
  * @ingroup WideEnum
@@ -400,6 +445,23 @@ public:
      * @return Reference to member my_union
      */
     eProsima_user_DllExport SimpleWideUnion& my_union();
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
 
 private:
 

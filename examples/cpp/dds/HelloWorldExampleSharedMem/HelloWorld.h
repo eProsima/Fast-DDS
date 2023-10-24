@@ -29,8 +29,14 @@
 #include <string>
 #include <vector>
 
+#include <fastcdr/config.h>
+#if FASTCDR_VERSION_MAJOR == 1
+#include <fastdds/rtps/common/CdrSerialization.hpp>
+#else
 #include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/external.hpp>
 #include <fastcdr/xcdr/optional.hpp>
+#endif // FASTCDR_VERSION_MAJOR == 1
 
 
 
@@ -64,6 +70,8 @@ class Cdr;
 class CdrSizeCalculator;
 } // namespace fastcdr
 } // namespace eprosima
+
+
 
 
 
@@ -179,32 +187,49 @@ public:
      * @param _data New value to be copied in member data
      */
     eProsima_user_DllExport void data(
-            const std::array<char, 1048576>& _data);
+            const std::array<char, 1024*1024>& _data);
 
     /*!
      * @brief This function moves the value in member data
      * @param _data New value to be moved in member data
      */
     eProsima_user_DllExport void data(
-            std::array<char, 1048576>&& _data);
+            std::array<char, 1024*1024>&& _data);
 
     /*!
      * @brief This function returns a constant reference to member data
      * @return Constant reference to member data
      */
-    eProsima_user_DllExport const std::array<char, 1048576>& data() const;
+    eProsima_user_DllExport const std::array<char, 1024*1024>& data() const;
 
     /*!
      * @brief This function returns a reference to member data
      * @return Reference to member data
      */
-    eProsima_user_DllExport std::array<char, 1048576>& data();
+    eProsima_user_DllExport std::array<char, 1024*1024>& data();
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+
 
 private:
 
     uint32_t m_index{0};
     std::string m_message;
-    std::array<char, 1048576> m_data;
+    std::array<char, 1024*1024> m_data{0};
 
 };
 

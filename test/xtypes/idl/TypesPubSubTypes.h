@@ -38,6 +38,8 @@
 #endif  // GEN_API_VER
 
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type MyEnumStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -125,6 +127,8 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type MyBadEnumStruct defined by the user in the IDL file.
@@ -215,6 +219,8 @@ public:
 };
 typedef MyEnum MyAliasEnum;
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type MyAliasEnumStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -302,6 +308,8 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type BasicStruct defined by the user in the IDL file.
@@ -391,6 +399,8 @@ public:
 
 };
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type BasicNamesStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -478,6 +488,8 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type BasicBadStruct defined by the user in the IDL file.
@@ -567,6 +579,8 @@ public:
 
 };
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type BasicWideStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -654,6 +668,8 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type BadBasicWideStruct defined by the user in the IDL file.
@@ -743,6 +759,8 @@ public:
 
 };
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type StringStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -830,6 +848,8 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type LargeStringStruct defined by the user in the IDL file.
@@ -919,6 +939,8 @@ public:
 
 };
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type WStringStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -1006,6 +1028,8 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type LargeWStringStruct defined by the user in the IDL file.
@@ -1095,6 +1119,8 @@ public:
 
 };
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type ArrayStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -1182,6 +1208,8 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type ArrayStructEqual defined by the user in the IDL file.
@@ -1271,6 +1299,8 @@ public:
 
 };
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type ArrayBadStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -1358,6 +1388,8 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type ArrayDimensionsStruct defined by the user in the IDL file.
@@ -1447,6 +1479,8 @@ public:
 
 };
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type ArraySizeStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -1534,6 +1568,10 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceStruct defined by the user in the IDL file.
@@ -1623,6 +1661,10 @@ public:
 
 };
 
+
+
+
+
 /*!
  * @brief This class represents the TopicDataType of the type SequenceStructEqual defined by the user in the IDL file.
  * @ingroup Types
@@ -1710,6 +1752,10 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceBadStruct defined by the user in the IDL file.
@@ -1799,6 +1845,10 @@ public:
 
 };
 
+
+
+
+
 /*!
  * @brief This class represents the TopicDataType of the type SequenceBoundsStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -1886,6 +1936,12 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
+
+
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceSequenceStruct defined by the user in the IDL file.
@@ -1975,6 +2031,12 @@ public:
 
 };
 
+
+
+
+
+
+
 /*!
  * @brief This class represents the TopicDataType of the type SequenceSequenceBoundsStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2062,6 +2124,10 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type MapStruct defined by the user in the IDL file.
@@ -2151,6 +2217,10 @@ public:
 
 };
 
+
+
+
+
 /*!
  * @brief This class represents the TopicDataType of the type MapStructEqual defined by the user in the IDL file.
  * @ingroup Types
@@ -2238,6 +2308,10 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type MapBadKeyStruct defined by the user in the IDL file.
@@ -2327,6 +2401,10 @@ public:
 
 };
 
+
+
+
+
 /*!
  * @brief This class represents the TopicDataType of the type MapBadElemStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2414,6 +2492,10 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type MapBoundsStruct defined by the user in the IDL file.
@@ -2503,6 +2585,12 @@ public:
 
 };
 
+
+
+
+
+
+
 /*!
  * @brief This class represents the TopicDataType of the type MapMapStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2590,6 +2678,12 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
+
+
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type MapMapBoundsStruct defined by the user in the IDL file.
@@ -2684,6 +2778,23 @@ public:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*!
  * @brief This class represents the TopicDataType of the type SimpleUnionStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2771,6 +2882,8 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type SimpleUnionStructEqual defined by the user in the IDL file.
@@ -2860,6 +2973,8 @@ public:
 
 };
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type SimpleUnionNamesStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2947,6 +3062,8 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type SimpleTypeUnionStruct defined by the user in the IDL file.
@@ -3036,6 +3153,8 @@ public:
 
 };
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type SimpleBadUnionStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -3123,6 +3242,8 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type SimplBadDiscUnionStruct defined by the user in the IDL file.

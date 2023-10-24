@@ -25,8 +25,6 @@
 #include <mutex>
 #include <vector>
 
-#include <fastcdr/CdrSizeCalculator.hpp>
-
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>

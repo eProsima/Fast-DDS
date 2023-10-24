@@ -29,18 +29,20 @@ char dummy;
 #include "HelloWorld.h"
 #include "HelloWorldTypeObject.h"
 
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "HelloWorldCdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
 
 
 HelloWorld::HelloWorld()
 {
-
     // Just to register all known types
     registerHelloWorldTypes();
 }
@@ -69,7 +71,6 @@ HelloWorld& HelloWorld::operator =(
 
     m_index = x.m_index;
     m_message = x.m_message;
-
     return *this;
 }
 
@@ -79,7 +80,6 @@ HelloWorld& HelloWorld::operator =(
 
     m_index = x.m_index;
     m_message = std::move(x.m_message);
-
     return *this;
 }
 
@@ -95,6 +95,19 @@ bool HelloWorld::operator !=(
 {
     return !(*this == x);
 }
+
+void HelloWorld::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void HelloWorld::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member index
@@ -163,6 +176,3 @@ std::string& HelloWorld::message()
     return m_message;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "HelloWorldCdrAux.ipp"

@@ -29,18 +29,20 @@ char dummy;
 #include "WideEnum.h"
 #include "WideEnumTypeObject.h"
 
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "WideEnumCdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
 
 
 MyEnumWideStruct::MyEnumWideStruct()
 {
-
     // Just to register all known types
     registerWideEnumTypes();
 }
@@ -66,7 +68,6 @@ MyEnumWideStruct& MyEnumWideStruct::operator =(
 {
 
     m_my_enum_wide = x.m_my_enum_wide;
-
     return *this;
 }
 
@@ -75,7 +76,6 @@ MyEnumWideStruct& MyEnumWideStruct::operator =(
 {
 
     m_my_enum_wide = x.m_my_enum_wide;
-
     return *this;
 }
 
@@ -90,6 +90,19 @@ bool MyEnumWideStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void MyEnumWideStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void MyEnumWideStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member my_enum_wide
@@ -118,6 +131,8 @@ MyEnumWide& MyEnumWideStruct::my_enum_wide()
 {
     return m_my_enum_wide;
 }
+
+
 
 
 SimpleWideUnion::SimpleWideUnion()
@@ -315,6 +330,8 @@ void SimpleWideUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -488,9 +505,24 @@ uint8_t& SimpleWideUnion::third()
 }
 
 
+void SimpleWideUnion::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void SimpleWideUnion::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
+
+
+
+
 SimpleWideUnionStruct::SimpleWideUnionStruct()
 {
-
     // Just to register all known types
     registerWideEnumTypes();
 }
@@ -516,7 +548,6 @@ SimpleWideUnionStruct& SimpleWideUnionStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -525,7 +556,6 @@ SimpleWideUnionStruct& SimpleWideUnionStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -540,6 +570,19 @@ bool SimpleWideUnionStruct::operator !=(
 {
     return !(*this == x);
 }
+
+void SimpleWideUnionStruct::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void SimpleWideUnionStruct::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function copies the value in member my_union
@@ -579,6 +622,3 @@ SimpleWideUnion& SimpleWideUnionStruct::my_union()
     return m_my_union;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "WideEnumCdrAux.ipp"

@@ -27,18 +27,20 @@ char dummy;
 #endif  // _WIN32
 
 #include "LoanableHelloWorld.h"
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "LoanableHelloWorldCdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
 
 
 LoanableHelloWorld::LoanableHelloWorld()
 {
-
 }
 
 LoanableHelloWorld::~LoanableHelloWorld()
@@ -65,7 +67,6 @@ LoanableHelloWorld& LoanableHelloWorld::operator =(
 
     m_index = x.m_index;
     m_message = x.m_message;
-
     return *this;
 }
 
@@ -75,7 +76,6 @@ LoanableHelloWorld& LoanableHelloWorld::operator =(
 
     m_index = x.m_index;
     m_message = std::move(x.m_message);
-
     return *this;
 }
 
@@ -91,6 +91,19 @@ bool LoanableHelloWorld::operator !=(
 {
     return !(*this == x);
 }
+
+void LoanableHelloWorld::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void LoanableHelloWorld::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member index
@@ -159,6 +172,3 @@ std::array<char, 256>& LoanableHelloWorld::message()
     return m_message;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "LoanableHelloWorldCdrAux.ipp"

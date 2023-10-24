@@ -64,10 +64,18 @@ eProsima_user_DllExport const TypeObject* GetMaterialObject(bool complete = fals
 eProsima_user_DllExport const TypeObject* GetMinimalMaterialObject();
 eProsima_user_DllExport const TypeObject* GetCompleteMaterialObject();
 
+
+
 eProsima_user_DllExport const TypeIdentifier* GetStructTypeIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetStructTypeObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalStructTypeObject();
 eProsima_user_DllExport const TypeObject* GetCompleteStructTypeObject();
+
+
+
+
+
+
 
 
 

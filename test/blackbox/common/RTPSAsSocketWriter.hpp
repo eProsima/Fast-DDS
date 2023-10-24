@@ -149,7 +149,11 @@ public:
 
             cdr << magicword_;
             cdr << *it;
+#if FASTCDR_VERSION_MAJOR == 1
+            ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
+#else
             ch->serializedPayload.length = static_cast<uint32_t>(cdr.get_serialized_data_length());
+#endif // FASTCDR_VERSION_MAJOR == 1
 
             history_->add_change(ch);
             it = msgs.erase(it);

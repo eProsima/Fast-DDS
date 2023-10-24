@@ -38,6 +38,8 @@
 #endif  // GEN_API_VER
 
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type MyEnumWideStruct defined by the user in the IDL file.
  * @ingroup WideEnum
@@ -125,6 +127,11 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
+
+
+
 
 
 /*!

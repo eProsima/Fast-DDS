@@ -25,7 +25,10 @@
 #include "ContentFilterTestTypeCdrAux.hpp"
 
 #include <fastcdr/Cdr.h>
+#if FASTCDR_VERSION_MAJOR > 1
 #include <fastcdr/CdrSizeCalculator.hpp>
+#endif // FASTCDR_VERSION_MAJOR > 1
+
 
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -34,6 +37,8 @@ using namespace eprosima::fastcdr::exception;
 namespace eprosima {
 namespace fastcdr {
 
+
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -41,6 +46,63 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         size_t& current_alignment)
 {
     static_cast<void>(data);
+
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    static_cast<void>(current_alignment);
+
+    size_t initial_alignment {current_alignment};
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+            current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // 128 bits, but aligned as 64
+
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.string_field().size() + 1;
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+    return current_alignment - initial_alignment;
+
+#else
 
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
@@ -99,6 +161,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -106,12 +170,76 @@ eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const StructType& data)
 {
+#if FASTCDR_VERSION_MAJOR > 1
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+#endif // FASTCDR_VERSION_MAJOR > 1
 
+#if FASTCDR_VERSION_MAJOR == 1
+            scdr << data.char_field()
+            ;
+
+
+            scdr << data.uint8_field()
+            ;
+
+
+            scdr << data.int16_field()
+            ;
+
+
+            scdr << data.uint16_field()
+            ;
+
+
+            scdr << data.int32_field()
+            ;
+
+
+            scdr << data.uint32_field()
+            ;
+
+
+            scdr << data.int64_field()
+            ;
+
+
+            scdr << data.uint64_field()
+            ;
+
+
+            scdr << data.float_field()
+            ;
+
+
+            scdr << data.double_field()
+            ;
+
+
+            scdr << data.long_double_field()
+            ;
+
+
+            scdr << data.bool_field()
+            ;
+
+
+            scdr << data.string_field()
+            ;
+
+
+            scdr << (uint32_t)data.enum_field()
+            ;
+
+
+            scdr << (uint32_t)data.enum2_field()
+            ;
+
+
+#else
     scdr
         << eprosima::fastcdr::MemberId(0) << data.char_field()
         << eprosima::fastcdr::MemberId(1) << data.uint8_field()
@@ -129,8 +257,11 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(13) << data.enum_field()
         << eprosima::fastcdr::MemberId(14) << data.enum2_field()
 ;
+#endif // FASTCDR_VERSION_MAJOR == 1
 
+#if FASTCDR_VERSION_MAJOR > 1
     scdr.end_serialize_type(current_state);
+#endif // FASTCDR_VERSION_MAJOR > 1
 }
 
 template<>
@@ -138,6 +269,32 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         StructType& data)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+                cdr >> data.char_field();
+                cdr >> data.uint8_field();
+                cdr >> data.int16_field();
+                cdr >> data.uint16_field();
+                cdr >> data.int32_field();
+                cdr >> data.uint32_field();
+                cdr >> data.int64_field();
+                cdr >> data.uint64_field();
+                cdr >> data.float_field();
+                cdr >> data.double_field();
+                cdr >> data.long_double_field();
+                cdr >> data.bool_field();
+                cdr >> data.string_field();
+                {
+                    uint32_t enum_value = 0;
+                    cdr >> enum_value;
+                    data.enum_field() = (Color)enum_value;
+                }
+                {
+                    uint32_t enum_value = 0;
+                    cdr >> enum_value;
+                    data.enum2_field() = (Material)enum_value;
+                }
+;
+#else
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
@@ -212,6 +369,7 @@ eProsima_user_DllExport void deserialize(
                 }
                 return ret_value;
             });
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 void serialize_key(
@@ -225,6 +383,12 @@ void serialize_key(
 
 
 
+
+
+
+
+
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -232,6 +396,476 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         size_t& current_alignment)
 {
     static_cast<void>(data);
+
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    static_cast<void>(current_alignment);
+
+    size_t initial_alignment {current_alignment};
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+            current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // 128 bits, but aligned as 64
+
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.string_field().size() + 1;
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            calculate_serialized_size(calculator, data.struct_field(), current_alignment);
+
+
+            current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+
+
+            current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+
+
+            current_alignment += ((max_array_size) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+
+
+            current_alignment += ((max_array_size) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+
+
+            current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+
+            current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+
+            current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+
+
+            current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+
+
+            current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+
+            current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+
+
+            current_alignment += ((max_array_size) * 16) + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+
+
+
+
+            current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+
+
+
+            for(size_t a = 0; a < data.array_string_field().size(); ++a)
+            {
+                    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.array_string_field().at(a).size() + 1;
+
+            }
+
+
+
+            current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+
+            current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+
+
+            for(size_t a = 0; a < data.array_struct_field().size(); ++a)
+            {
+                    calculate_serialized_size(calculator, data.array_struct_field().at(a), current_alignment);
+
+            }
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_char_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_char_field().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_uint8_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_uint8_field().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_int16_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_int16_field().size() * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_uint16_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_uint16_field().size() * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_int32_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_int32_field().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_uint32_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_uint32_field().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_int64_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_int64_field().size() * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_uint64_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_uint64_field().size() * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_float_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_float_field().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_double_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_double_field().size() * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_long_double_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_long_double_field().size() * 16) + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_bool_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_bool_field().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            for(size_t a = 0; a < data.bounded_sequence_string_field().size(); ++a)
+            {
+                current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
+                    data.bounded_sequence_string_field().at(a).size() + 1;
+            }
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_enum_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_enum_field().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.bounded_sequence_enum2_field().size() > 0)
+            {
+                current_alignment += (data.bounded_sequence_enum2_field().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            for(size_t a = 0; a < data.bounded_sequence_struct_field().size(); ++a)
+            {
+                calculate_serialized_size(calculator, data.bounded_sequence_struct_field().at(a), current_alignment);
+            }
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_char_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_char_field().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_uint8_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_uint8_field().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_int16_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_int16_field().size() * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_uint16_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_uint16_field().size() * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_int32_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_int32_field().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_uint32_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_uint32_field().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_int64_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_int64_field().size() * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_uint64_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_uint64_field().size() * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_float_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_float_field().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_double_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_double_field().size() * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_long_double_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_long_double_field().size() * 16) + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_bool_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_bool_field().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            for(size_t a = 0; a < data.unbounded_sequence_string_field().size(); ++a)
+            {
+                current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
+                    data.unbounded_sequence_string_field().at(a).size() + 1;
+            }
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_enum_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_enum_field().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            if (data.unbounded_sequence_enum2_field().size() > 0)
+            {
+                current_alignment += (data.unbounded_sequence_enum2_field().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            for(size_t a = 0; a < data.unbounded_sequence_struct_field().size(); ++a)
+            {
+                calculate_serialized_size(calculator, data.unbounded_sequence_struct_field().at(a), current_alignment);
+            }
+
+
+
+
+    return current_alignment - initial_alignment;
+
+#else
 
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
@@ -437,6 +1071,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -444,12 +1080,248 @@ eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const ContentFilterTestType& data)
 {
+#if FASTCDR_VERSION_MAJOR > 1
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+#endif // FASTCDR_VERSION_MAJOR > 1
 
+#if FASTCDR_VERSION_MAJOR == 1
+            scdr << data.char_field()
+            ;
+
+
+            scdr << data.uint8_field()
+            ;
+
+
+            scdr << data.int16_field()
+            ;
+
+
+            scdr << data.uint16_field()
+            ;
+
+
+            scdr << data.int32_field()
+            ;
+
+
+            scdr << data.uint32_field()
+            ;
+
+
+            scdr << data.int64_field()
+            ;
+
+
+            scdr << data.uint64_field()
+            ;
+
+
+            scdr << data.float_field()
+            ;
+
+
+            scdr << data.double_field()
+            ;
+
+
+            scdr << data.long_double_field()
+            ;
+
+
+            scdr << data.bool_field()
+            ;
+
+
+            scdr << data.string_field()
+            ;
+
+
+            scdr << (uint32_t)data.enum_field()
+            ;
+
+
+            scdr << (uint32_t)data.enum2_field()
+            ;
+
+
+            scdr << data.struct_field()
+            ;
+
+
+            scdr << data.array_char_field();
+
+            scdr << data.array_uint8_field();
+
+            scdr << data.array_int16_field();
+
+            scdr << data.array_uint16_field();
+
+            scdr << data.array_int32_field();
+
+            scdr << data.array_uint32_field();
+
+            scdr << data.array_int64_field();
+
+            scdr << data.array_uint64_field();
+
+            scdr << data.array_float_field();
+
+            scdr << data.array_double_field();
+
+            scdr << data.array_long_double_field();
+
+            scdr << data.array_bool_field();
+
+                    for (size_t index_1 = 0; index_1 < max_array_size; ++index_1)
+                    {
+
+                scdr << data.array_string_field()
+                            [index_1]
+
+                    .c_str();
+                    }
+
+
+            scdr << (std::array<uint32_t, (max_array_size)>&)data.array_enum_field();
+
+            scdr << (std::array<uint32_t, (max_array_size)>&)data.array_enum2_field();
+
+            scdr << data.array_struct_field();
+
+            scdr << data.bounded_sequence_char_field()
+            ;
+
+
+            scdr << data.bounded_sequence_uint8_field()
+            ;
+
+
+            scdr << data.bounded_sequence_int16_field()
+            ;
+
+
+            scdr << data.bounded_sequence_uint16_field()
+            ;
+
+
+            scdr << data.bounded_sequence_int32_field()
+            ;
+
+
+            scdr << data.bounded_sequence_uint32_field()
+            ;
+
+
+            scdr << data.bounded_sequence_int64_field()
+            ;
+
+
+            scdr << data.bounded_sequence_uint64_field()
+            ;
+
+
+            scdr << data.bounded_sequence_float_field()
+            ;
+
+
+            scdr << data.bounded_sequence_double_field()
+            ;
+
+
+            scdr << data.bounded_sequence_long_double_field()
+            ;
+
+
+            scdr << data.bounded_sequence_bool_field()
+            ;
+
+
+            scdr << data.bounded_sequence_string_field()
+            ;
+
+
+            scdr << (std::vector<uint32_t>&)data.bounded_sequence_enum_field()
+            ;
+
+
+            scdr << (std::vector<uint32_t>&)data.bounded_sequence_enum2_field()
+            ;
+
+
+            scdr << data.bounded_sequence_struct_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_char_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_uint8_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_int16_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_uint16_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_int32_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_uint32_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_int64_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_uint64_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_float_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_double_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_long_double_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_bool_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_string_field()
+            ;
+
+
+            scdr << (std::vector<uint32_t>&)data.unbounded_sequence_enum_field()
+            ;
+
+
+            scdr << (std::vector<uint32_t>&)data.unbounded_sequence_enum2_field()
+            ;
+
+
+            scdr << data.unbounded_sequence_struct_field()
+            ;
+
+
+#else
     scdr
         << eprosima::fastcdr::MemberId(0) << data.char_field()
         << eprosima::fastcdr::MemberId(1) << data.uint8_field()
@@ -516,8 +1388,11 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(62) << data.unbounded_sequence_enum2_field()
         << eprosima::fastcdr::MemberId(63) << data.unbounded_sequence_struct_field()
 ;
+#endif // FASTCDR_VERSION_MAJOR == 1
 
+#if FASTCDR_VERSION_MAJOR > 1
     scdr.end_serialize_type(current_state);
+#endif // FASTCDR_VERSION_MAJOR > 1
 }
 
 template<>
@@ -525,6 +1400,133 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         ContentFilterTestType& data)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+                cdr >> data.char_field();
+                cdr >> data.uint8_field();
+                cdr >> data.int16_field();
+                cdr >> data.uint16_field();
+                cdr >> data.int32_field();
+                cdr >> data.uint32_field();
+                cdr >> data.int64_field();
+                cdr >> data.uint64_field();
+                cdr >> data.float_field();
+                cdr >> data.double_field();
+                cdr >> data.long_double_field();
+                cdr >> data.bool_field();
+                cdr >> data.string_field();
+                {
+                    uint32_t enum_value = 0;
+                    cdr >> enum_value;
+                    data.enum_field() = (Color)enum_value;
+                }
+                {
+                    uint32_t enum_value = 0;
+                    cdr >> enum_value;
+                    data.enum2_field() = (Material)enum_value;
+                }
+                cdr >> data.struct_field();
+                cdr >> data.array_char_field();
+                cdr >> data.array_uint8_field();
+                cdr >> data.array_int16_field();
+                cdr >> data.array_uint16_field();
+                cdr >> data.array_int32_field();
+                cdr >> data.array_uint32_field();
+                cdr >> data.array_int64_field();
+                cdr >> data.array_uint64_field();
+                cdr >> data.array_float_field();
+                cdr >> data.array_double_field();
+                cdr >> data.array_long_double_field();
+                cdr >> data.array_bool_field();
+                            for (size_t index_1 = 0; index_1 < max_array_size; ++index_1)
+                            {
+
+                    std::string aux;
+                    cdr >> aux;
+                    data.array_string_field()
+                                    [index_1]
+
+                        = aux.c_str();
+                            }
+
+                {
+                    for (size_t index = 0; index < data.array_enum_field().size(); ++index)
+                    {
+                        uint32_t enum_value = 0;
+                        cdr >> enum_value;
+                        data.array_enum_field()[index] = (Color)enum_value;
+                    }
+                }
+                {
+                    for (size_t index = 0; index < data.array_enum2_field().size(); ++index)
+                    {
+                        uint32_t enum_value = 0;
+                        cdr >> enum_value;
+                        data.array_enum2_field()[index] = (Material)enum_value;
+                    }
+                }
+                cdr >> data.array_struct_field();
+                    cdr >> data.bounded_sequence_char_field();
+                    cdr >> data.bounded_sequence_uint8_field();
+                    cdr >> data.bounded_sequence_int16_field();
+                    cdr >> data.bounded_sequence_uint16_field();
+                    cdr >> data.bounded_sequence_int32_field();
+                    cdr >> data.bounded_sequence_uint32_field();
+                    cdr >> data.bounded_sequence_int64_field();
+                    cdr >> data.bounded_sequence_uint64_field();
+                    cdr >> data.bounded_sequence_float_field();
+                    cdr >> data.bounded_sequence_double_field();
+                    cdr >> data.bounded_sequence_long_double_field();
+                    cdr >> data.bounded_sequence_bool_field();
+                    cdr >> data.bounded_sequence_string_field();
+                {
+                    for (size_t index = 0; index < data.bounded_sequence_enum_field().size(); ++index)
+                    {
+                        uint32_t enum_value = 0;
+                        cdr >> enum_value;
+                        data.bounded_sequence_enum_field()[index] = (Color)enum_value;
+                    }
+                }
+                {
+                    for (size_t index = 0; index < data.bounded_sequence_enum2_field().size(); ++index)
+                    {
+                        uint32_t enum_value = 0;
+                        cdr >> enum_value;
+                        data.bounded_sequence_enum2_field()[index] = (Material)enum_value;
+                    }
+                }
+                    cdr >> data.bounded_sequence_struct_field();
+                    cdr >> data.unbounded_sequence_char_field();
+                    cdr >> data.unbounded_sequence_uint8_field();
+                    cdr >> data.unbounded_sequence_int16_field();
+                    cdr >> data.unbounded_sequence_uint16_field();
+                    cdr >> data.unbounded_sequence_int32_field();
+                    cdr >> data.unbounded_sequence_uint32_field();
+                    cdr >> data.unbounded_sequence_int64_field();
+                    cdr >> data.unbounded_sequence_uint64_field();
+                    cdr >> data.unbounded_sequence_float_field();
+                    cdr >> data.unbounded_sequence_double_field();
+                    cdr >> data.unbounded_sequence_long_double_field();
+                    cdr >> data.unbounded_sequence_bool_field();
+                    cdr >> data.unbounded_sequence_string_field();
+                {
+                    for (size_t index = 0; index < data.unbounded_sequence_enum_field().size(); ++index)
+                    {
+                        uint32_t enum_value = 0;
+                        cdr >> enum_value;
+                        data.unbounded_sequence_enum_field()[index] = (Color)enum_value;
+                    }
+                }
+                {
+                    for (size_t index = 0; index < data.unbounded_sequence_enum2_field().size(); ++index)
+                    {
+                        uint32_t enum_value = 0;
+                        cdr >> enum_value;
+                        data.unbounded_sequence_enum2_field()[index] = (Material)enum_value;
+                    }
+                }
+                    cdr >> data.unbounded_sequence_struct_field();
+;
+#else
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
@@ -795,6 +1797,7 @@ eProsima_user_DllExport void deserialize(
                 }
                 return ret_value;
             });
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 void serialize_key(
@@ -811,3 +1814,4 @@ void serialize_key(
 } // namespace eprosima
 
 #endif // _FAST_DDS_GENERATED_CONTENTFILTERTESTTYPECDRAUX_IPP_
+

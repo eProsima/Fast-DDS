@@ -16,8 +16,7 @@
  * @file TypesBase.cpp
  */
 
-#include <fastcdr/Cdr.h>
-#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
@@ -38,7 +37,12 @@ void serialize(
         eprosima::fastcdr::Cdr& cdr,
         const eprosima::fastrtps::types::MemberFlag& data)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+    uint16_t bits = static_cast<uint16_t>(data.bitset().to_ulong());
+    cdr << bits;
+#else
     cdr << data.bitset();
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -46,9 +50,15 @@ void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastrtps::types::MemberFlag& data)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+    uint16_t bits;
+    cdr >> bits;
+    data.bitset(std::bitset<16>(bits));
+#else
     std::bitset<16> bitset;
     cdr >> bitset;
     data.bitset(bitset);
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -67,7 +77,12 @@ void serialize(
         eprosima::fastcdr::Cdr& cdr,
         const eprosima::fastrtps::types::TypeFlag& data)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+    uint16_t bits = static_cast<uint16_t>(data.bitset().to_ulong());
+    cdr << bits;
+#else
     cdr << data.bitset();
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -75,9 +90,15 @@ void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastrtps::types::TypeFlag& data)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+    uint16_t bits;
+    cdr >> bits;
+    data.bitset(std::bitset<16>(bits));
+#else
     std::bitset<16> bitset;
     cdr >> bitset;
     data.bitset(bitset);
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 } // namespace fastcdr

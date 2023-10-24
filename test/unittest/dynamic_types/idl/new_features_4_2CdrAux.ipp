@@ -25,7 +25,10 @@
 #include "new_features_4_2CdrAux.hpp"
 
 #include <fastcdr/Cdr.h>
+#if FASTCDR_VERSION_MAJOR > 1
 #include <fastcdr/CdrSizeCalculator.hpp>
+#endif // FASTCDR_VERSION_MAJOR > 1
+
 
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -34,6 +37,8 @@ using namespace eprosima::fastcdr::exception;
 namespace eprosima {
 namespace fastcdr {
 
+
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -41,6 +46,43 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         size_t& current_alignment)
 {
     static_cast<void>(data);
+
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    static_cast<void>(current_alignment);
+
+    size_t initial_alignment {current_alignment};
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+
+
+    return current_alignment - initial_alignment;
+
+#else
 
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
@@ -79,6 +121,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -86,12 +130,49 @@ eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const NewAliases& data)
 {
+#if FASTCDR_VERSION_MAJOR > 1
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+#endif // FASTCDR_VERSION_MAJOR > 1
 
+#if FASTCDR_VERSION_MAJOR == 1
+            scdr << data.int8_()
+            ;
+
+
+            scdr << data.uint8_()
+            ;
+
+
+            scdr << data.int16_()
+            ;
+
+
+            scdr << data.uint16_()
+            ;
+
+
+            scdr << data.int32_()
+            ;
+
+
+            scdr << data.uint32_()
+            ;
+
+
+            scdr << data.int64_()
+            ;
+
+
+            scdr << data.uint64_()
+            ;
+
+
+
+#else
     scdr
         << eprosima::fastcdr::MemberId(0) << data.int8_()
         << eprosima::fastcdr::MemberId(1) << data.uint8_()
@@ -102,8 +183,11 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(6) << data.int64_()
         << eprosima::fastcdr::MemberId(7) << data.uint64_()
 ;
+#endif // FASTCDR_VERSION_MAJOR == 1
 
+#if FASTCDR_VERSION_MAJOR > 1
     scdr.end_serialize_type(current_state);
+#endif // FASTCDR_VERSION_MAJOR > 1
 }
 
 template<>
@@ -111,6 +195,17 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         NewAliases& data)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+                cdr >> data.int8_();
+                cdr >> data.uint8_();
+                cdr >> data.int16_();
+                cdr >> data.uint16_();
+                cdr >> data.int32_();
+                cdr >> data.uint32_();
+                cdr >> data.int64_();
+                cdr >> data.uint64_();
+;
+#else
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
@@ -160,6 +255,7 @@ eProsima_user_DllExport void deserialize(
                 }
                 return ret_value;
             });
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 void serialize_key(
@@ -171,6 +267,8 @@ void serialize_key(
 }
 
 
+
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -178,6 +276,38 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         size_t& current_alignment)
 {
     static_cast<void>(data);
+
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    static_cast<void>(current_alignment);
+
+    size_t initial_alignment {current_alignment};
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+    switch(data._d())
+    {
+        case 'a':
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        break;
+
+
+        case 'b':
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        break;
+
+        default:
+        break;
+    }
+
+    return current_alignment - initial_alignment;
+
+#else
 
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
@@ -201,11 +331,15 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                                 data.case_one(), current_alignment);
                     break;
 
+        default:
+            break;
     }
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 
@@ -214,12 +348,33 @@ eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const WCharUnion& data)
 {
+#if FASTCDR_VERSION_MAJOR > 1
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+#endif // FASTCDR_VERSION_MAJOR > 1
 
+#if FASTCDR_VERSION_MAJOR == 1
+    scdr << data._d();
+
+    switch (data._d())
+    {
+                case 'a':
+                    scdr << data.case_zero()
+                        ;
+                    break;
+
+                case 'b':
+                    scdr << data.case_one()
+                        ;
+                    break;
+
+        default:
+            break;
+    }
+#else
     scdr << eprosima::fastcdr::MemberId(0) << data._d();
 
     switch (data._d())
@@ -232,9 +387,14 @@ eProsima_user_DllExport void serialize(
                     scdr << eprosima::fastcdr::MemberId(1) << data.case_one();
                     break;
 
+        default:
+            break;
     }
+#endif // FASTCDR_VERSION_MAJOR == 1
 
+#if FASTCDR_VERSION_MAJOR > 1
     scdr.end_serialize_type(current_state);
+#endif // FASTCDR_VERSION_MAJOR > 1
 }
 
 template<>
@@ -242,6 +402,22 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         WCharUnion& data)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    cdr >> data._d();
+
+    switch (data._d())
+    {
+                        case 'a':
+                            cdr >> data.case_zero();
+                        break;
+
+                        case 'b':
+                            cdr >> data.case_one();
+                        break;
+
+    }
+#else
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
@@ -264,13 +440,18 @@ eProsima_user_DllExport void deserialize(
                                                             dcdr >> data.case_one();
                                                             break;
 
+                            default:
+                                break;
                         }
                         ret_value = false;
                         break;
                 }
                 return ret_value;
             });
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
+
+
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -279,6 +460,38 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         size_t& current_alignment)
 {
     static_cast<void>(data);
+
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    static_cast<void>(current_alignment);
+
+    size_t initial_alignment {current_alignment};
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+
+    switch(data._d())
+    {
+        case 5:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        break;
+
+
+        case 7:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        break;
+
+        default:
+        break;
+    }
+
+    return current_alignment - initial_alignment;
+
+#else
 
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
@@ -302,11 +515,15 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                                 data.case_seven(), current_alignment);
                     break;
 
+        default:
+            break;
     }
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 
@@ -315,12 +532,33 @@ eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const OctetUnion& data)
 {
+#if FASTCDR_VERSION_MAJOR > 1
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+#endif // FASTCDR_VERSION_MAJOR > 1
 
+#if FASTCDR_VERSION_MAJOR == 1
+    scdr << data._d();
+
+    switch (data._d())
+    {
+                case 5:
+                    scdr << data.case_five()
+                        ;
+                    break;
+
+                case 7:
+                    scdr << data.case_seven()
+                        ;
+                    break;
+
+        default:
+            break;
+    }
+#else
     scdr << eprosima::fastcdr::MemberId(0) << data._d();
 
     switch (data._d())
@@ -333,9 +571,14 @@ eProsima_user_DllExport void serialize(
                     scdr << eprosima::fastcdr::MemberId(1) << data.case_seven();
                     break;
 
+        default:
+            break;
     }
+#endif // FASTCDR_VERSION_MAJOR == 1
 
+#if FASTCDR_VERSION_MAJOR > 1
     scdr.end_serialize_type(current_state);
+#endif // FASTCDR_VERSION_MAJOR > 1
 }
 
 template<>
@@ -343,6 +586,22 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         OctetUnion& data)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    cdr >> data._d();
+
+    switch (data._d())
+    {
+                        case 5:
+                            cdr >> data.case_five();
+                        break;
+
+                        case 7:
+                            cdr >> data.case_seven();
+                        break;
+
+    }
+#else
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
@@ -365,13 +624,18 @@ eProsima_user_DllExport void deserialize(
                                                             dcdr >> data.case_seven();
                                                             break;
 
+                            default:
+                                break;
                         }
                         ret_value = false;
                         break;
                 }
                 return ret_value;
             });
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
+
+
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -380,6 +644,38 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         size_t& current_alignment)
 {
     static_cast<void>(data);
+
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    static_cast<void>(current_alignment);
+
+    size_t initial_alignment {current_alignment};
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+
+    switch(data._d())
+    {
+        case 3:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        break;
+
+
+        case 6:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        break;
+
+        default:
+        break;
+    }
+
+    return current_alignment - initial_alignment;
+
+#else
 
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
@@ -403,11 +699,15 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                                 data.case_six(), current_alignment);
                     break;
 
+        default:
+            break;
     }
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 
@@ -416,12 +716,33 @@ eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const Int8Union& data)
 {
+#if FASTCDR_VERSION_MAJOR > 1
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+#endif // FASTCDR_VERSION_MAJOR > 1
 
+#if FASTCDR_VERSION_MAJOR == 1
+    scdr << data._d();
+
+    switch (data._d())
+    {
+                case 3:
+                    scdr << data.case_three()
+                        ;
+                    break;
+
+                case 6:
+                    scdr << data.case_six()
+                        ;
+                    break;
+
+        default:
+            break;
+    }
+#else
     scdr << eprosima::fastcdr::MemberId(0) << data._d();
 
     switch (data._d())
@@ -434,9 +755,14 @@ eProsima_user_DllExport void serialize(
                     scdr << eprosima::fastcdr::MemberId(1) << data.case_six();
                     break;
 
+        default:
+            break;
     }
+#endif // FASTCDR_VERSION_MAJOR == 1
 
+#if FASTCDR_VERSION_MAJOR > 1
     scdr.end_serialize_type(current_state);
+#endif // FASTCDR_VERSION_MAJOR > 1
 }
 
 template<>
@@ -444,6 +770,22 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         Int8Union& data)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    cdr >> data._d();
+
+    switch (data._d())
+    {
+                        case 3:
+                            cdr >> data.case_three();
+                        break;
+
+                        case 6:
+                            cdr >> data.case_six();
+                        break;
+
+    }
+#else
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
@@ -466,12 +808,15 @@ eProsima_user_DllExport void deserialize(
                                                             dcdr >> data.case_six();
                                                             break;
 
+                            default:
+                                break;
                         }
                         ret_value = false;
                         break;
                 }
                 return ret_value;
             });
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -480,7 +825,17 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         const bitmodule::ParentBitset& data,
         size_t& current_alignment)
 {
+    using namespace bitmodule;
+
+    static_cast<void>(data);
+
+#if FASTCDR_VERSION_MAJOR == 1
+    static_cast<void>(calculator);
+    static_cast<void>(current_alignment);
+    return 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+#else
     return calculator.calculate_serialized_size(data.bitset(), current_alignment);
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -488,7 +843,17 @@ eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const bitmodule::ParentBitset& data)
 {
-    scdr << data.bitset();
+    using namespace bitmodule;
+
+    scdr <<
+#if FASTCDR_VERSION_MAJOR == 1
+    (uint32_t)
+#endif // FASTCDR_VERSION_MAJOR == 1
+    data.bitset()
+#if FASTCDR_VERSION_MAJOR == 1
+    .to_ulong()
+#endif // FASTCDR_VERSION_MAJOR == 1
+    ;
 }
 
 template<>
@@ -496,9 +861,17 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         bitmodule::ParentBitset& data)
 {
+    using namespace bitmodule;
+
+#if FASTCDR_VERSION_MAJOR == 1
+    uint32_t bitset;
+    dcdr >> bitset;
+    data.bitset(bitset);
+#else
     std::bitset<17> bitset;
     dcdr >> bitset;
     data.bitset(bitset);
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -507,7 +880,17 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         const bitmodule::MyBitset& data,
         size_t& current_alignment)
 {
+    using namespace bitmodule;
+
+    static_cast<void>(data);
+
+#if FASTCDR_VERSION_MAJOR == 1
+    static_cast<void>(calculator);
+    static_cast<void>(current_alignment);
+    return 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+#else
     return calculator.calculate_serialized_size(data.bitset(), current_alignment);
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -515,7 +898,17 @@ eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const bitmodule::MyBitset& data)
 {
-    scdr << data.bitset();
+    using namespace bitmodule;
+
+    scdr <<
+#if FASTCDR_VERSION_MAJOR == 1
+    (uint32_t)
+#endif // FASTCDR_VERSION_MAJOR == 1
+    data.bitset()
+#if FASTCDR_VERSION_MAJOR == 1
+    .to_ulong()
+#endif // FASTCDR_VERSION_MAJOR == 1
+    ;
 }
 
 template<>
@@ -523,10 +916,20 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         bitmodule::MyBitset& data)
 {
+    using namespace bitmodule;
+
+#if FASTCDR_VERSION_MAJOR == 1
+    uint32_t bitset;
+    dcdr >> bitset;
+    data.bitset(bitset);
+#else
     std::bitset<50> bitset;
     dcdr >> bitset;
     data.bitset(bitset);
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
+
+
 
 
 template<>
@@ -535,7 +938,27 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         const bitmodule::BitsetBitmask& data,
         size_t& current_alignment)
 {
+    using namespace bitmodule;
+
     static_cast<void>(data);
+
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    static_cast<void>(current_alignment);
+
+    size_t initial_alignment {current_alignment};
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+
+    return current_alignment - initial_alignment;
+
+#else
 
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
@@ -555,6 +978,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -562,18 +987,35 @@ eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const bitmodule::BitsetBitmask& data)
 {
+    using namespace bitmodule;
+
+#if FASTCDR_VERSION_MAJOR > 1
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+#endif // FASTCDR_VERSION_MAJOR > 1
 
+#if FASTCDR_VERSION_MAJOR == 1
+            scdr << data.mybitset()
+            ;
+
+
+            scdr << (uint8_t)data.mybitmask()
+            ;
+
+
+#else
     scdr
         << eprosima::fastcdr::MemberId(0) << data.mybitset()
         << eprosima::fastcdr::MemberId(1) << data.mybitmask()
 ;
+#endif // FASTCDR_VERSION_MAJOR == 1
 
+#if FASTCDR_VERSION_MAJOR > 1
     scdr.end_serialize_type(current_state);
+#endif // FASTCDR_VERSION_MAJOR > 1
 }
 
 template<>
@@ -581,6 +1023,13 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         bitmodule::BitsetBitmask& data)
 {
+    using namespace bitmodule;
+
+#if FASTCDR_VERSION_MAJOR == 1
+                cdr >> data.mybitset();
+                cdr >> data.mybitmask();
+;
+#else
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
@@ -603,15 +1052,20 @@ eProsima_user_DllExport void deserialize(
                 }
                 return ret_value;
             });
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const bitmodule::BitsetBitmask& data)
 {
+    using namespace bitmodule;
+
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
+
+
 
 
 template<>
@@ -620,7 +1074,33 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         const bitmodule::BM2& data,
         size_t& current_alignment)
 {
+    using namespace bitmodule;
+
     static_cast<void>(data);
+
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    static_cast<void>(current_alignment);
+
+    size_t initial_alignment {current_alignment};
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+    return current_alignment - initial_alignment;
+
+#else
 
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
@@ -646,6 +1126,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -653,20 +1135,45 @@ eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const bitmodule::BM2& data)
 {
+    using namespace bitmodule;
+
+#if FASTCDR_VERSION_MAJOR > 1
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+#endif // FASTCDR_VERSION_MAJOR > 1
 
+#if FASTCDR_VERSION_MAJOR == 1
+            scdr << data.mybitset()
+            ;
+
+
+            scdr << (uint8_t)data.mybitmask()
+            ;
+
+
+            scdr << (uint8_t)data.two()
+            ;
+
+
+            scdr << data.mylong()
+            ;
+
+
+#else
     scdr
         << eprosima::fastcdr::MemberId(0) << data.mybitset()
         << eprosima::fastcdr::MemberId(1) << data.mybitmask()
         << eprosima::fastcdr::MemberId(2) << data.two()
         << eprosima::fastcdr::MemberId(3) << data.mylong()
 ;
+#endif // FASTCDR_VERSION_MAJOR == 1
 
+#if FASTCDR_VERSION_MAJOR > 1
     scdr.end_serialize_type(current_state);
+#endif // FASTCDR_VERSION_MAJOR > 1
 }
 
 template<>
@@ -674,6 +1181,15 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         bitmodule::BM2& data)
 {
+    using namespace bitmodule;
+
+#if FASTCDR_VERSION_MAJOR == 1
+                cdr >> data.mybitset();
+                cdr >> data.mybitmask();
+                cdr >> data.two();
+                cdr >> data.mylong();
+;
+#else
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
@@ -704,15 +1220,20 @@ eProsima_user_DllExport void deserialize(
                 }
                 return ret_value;
             });
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const bitmodule::BM2& data)
 {
+    using namespace bitmodule;
+
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
+
+
 
 
 
@@ -723,6 +1244,52 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         size_t& current_alignment)
 {
     static_cast<void>(data);
+
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    static_cast<void>(current_alignment);
+
+    size_t initial_alignment {current_alignment};
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+
+
+            calculate_serialized_size(calculator, data.octetUnion(), current_alignment);
+
+
+            calculate_serialized_size(calculator, data.int8Union(), current_alignment);
+
+
+            calculate_serialized_size(calculator, data.myStructBits(), current_alignment);
+
+
+
+    return current_alignment - initial_alignment;
+
+#else
 
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
@@ -770,6 +1337,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -777,12 +1346,61 @@ eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const StructTest& data)
 {
+#if FASTCDR_VERSION_MAJOR > 1
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+#endif // FASTCDR_VERSION_MAJOR > 1
 
+#if FASTCDR_VERSION_MAJOR == 1
+            scdr << data.int8_()
+            ;
+
+
+            scdr << data.uint8_()
+            ;
+
+
+            scdr << data.int16_()
+            ;
+
+
+            scdr << data.uint16_()
+            ;
+
+
+            scdr << data.int32_()
+            ;
+
+
+            scdr << data.uint32_()
+            ;
+
+
+            scdr << data.int64_()
+            ;
+
+
+            scdr << data.uint64_()
+            ;
+
+
+
+            scdr << data.octetUnion()
+            ;
+
+
+            scdr << data.int8Union()
+            ;
+
+
+            scdr << data.myStructBits()
+            ;
+
+
+#else
     scdr
         << eprosima::fastcdr::MemberId(0) << data.int8_()
         << eprosima::fastcdr::MemberId(1) << data.uint8_()
@@ -796,8 +1414,11 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(10) << data.int8Union()
         << eprosima::fastcdr::MemberId(11) << data.myStructBits()
 ;
+#endif // FASTCDR_VERSION_MAJOR == 1
 
+#if FASTCDR_VERSION_MAJOR > 1
     scdr.end_serialize_type(current_state);
+#endif // FASTCDR_VERSION_MAJOR > 1
 }
 
 template<>
@@ -805,6 +1426,20 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         StructTest& data)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+                cdr >> data.int8_();
+                cdr >> data.uint8_();
+                cdr >> data.int16_();
+                cdr >> data.uint16_();
+                cdr >> data.int32_();
+                cdr >> data.uint32_();
+                cdr >> data.int64_();
+                cdr >> data.uint64_();
+                cdr >> data.octetUnion();
+                cdr >> data.int8Union();
+                cdr >> data.myStructBits();
+;
+#else
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
@@ -866,6 +1501,7 @@ eProsima_user_DllExport void deserialize(
                 }
                 return ret_value;
             });
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 void serialize_key(
@@ -882,3 +1518,4 @@ void serialize_key(
 } // namespace eprosima
 
 #endif // _FAST_DDS_GENERATED_NEW_FEATURES_4_2CDRAUX_IPP_
+

@@ -55,6 +55,8 @@ using namespace eprosima::fastrtps::types;
 
 eProsima_user_DllExport void registerTestRegression3361Types();
 
+
+
 eProsima_user_DllExport const TypeIdentifier* GetTestRegression3361Identifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetTestRegression3361Object(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalTestRegression3361Object();

@@ -27,18 +27,20 @@ char dummy;
 #endif  // _WIN32
 
 #include "FilteringExample.h"
-#include <fastcdr/Cdr.h>
-
-
-#include <fastcdr/exceptions/BadParamException.h>
-using namespace eprosima::fastcdr::exception;
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <utility>
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "FilteringExampleCdrAux.ipp"
+
+using namespace eprosima::fastcdr::exception;
+
+
 
 
 FilteringExample::FilteringExample()
 {
-
 }
 
 FilteringExample::~FilteringExample()
@@ -62,7 +64,6 @@ FilteringExample& FilteringExample::operator =(
 {
 
     m_sampleNumber = x.m_sampleNumber;
-
     return *this;
 }
 
@@ -71,7 +72,6 @@ FilteringExample& FilteringExample::operator =(
 {
 
     m_sampleNumber = x.m_sampleNumber;
-
     return *this;
 }
 
@@ -86,6 +86,19 @@ bool FilteringExample::operator !=(
 {
     return !(*this == x);
 }
+
+void FilteringExample::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void FilteringExample::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 
 /*!
  * @brief This function sets a value in member sampleNumber
@@ -115,6 +128,3 @@ int32_t& FilteringExample::sampleNumber()
     return m_sampleNumber;
 }
 
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "FilteringExampleCdrAux.ipp"
