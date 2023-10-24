@@ -20,6 +20,11 @@
 #ifndef _FASTDDS_DDS_XTYPES_COMMON_HPP_
 #define _FASTDDS_DDS_XTYPES_COMMON_HPP_
 
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+namespace xtypes1_3 {
+
 /**
  * @brief Extensibility kinds (@extensibility annotation)
  */
@@ -45,9 +50,9 @@ enum TryConstructKind
  */
 enum EquivalenceKindValue
 {
-    EK_MINIMAL,
-    EK_COMPLETE,
-    EK_BOTH
+    MINIMAL,
+    COMPLETE,
+    BOTH
 };
 
 /**
@@ -62,5 +67,99 @@ enum PlacementKindValue
     AFTER_DECLARATION,
     END_FILE
 };
+
+/**
+ * @brief Builtin Annotation Kind
+ */
+enum BuiltinAnnotationKind
+{
+    NONE,
+    ID,
+    AUTOID,
+    OPTIONAL,
+    POSITION,
+    VALUE,
+    EXTENSIBILITY,
+    FINAL_ANNOTATION,
+    APPENDABLE_ANNOTATION,
+    MUTABLE_ANNOTATION,
+    KEY,
+    MUST_UNDERSTAND,
+    DEFAULT_LITERAL,
+    DEFAULT,
+    RANGE,
+    MAX_ANNOTATION,
+    MIN_ANNOTATION,
+    UNIT,
+    BIT_BOUND,
+    EXTERNAL,
+    NESTED,
+    VERBATIM,
+    SERVICE,
+    ONEWAY,
+    AMI,
+    HASHID,
+    DEFAULT_NESTED,
+    IGNORE_LITERAL_NAMES,
+    TRY_CONSTRUCT,
+    NON_SERIALIZED,
+    DATA_REPRESENTATION,
+    TOPIC
+};
+
+// Primitive type names
+constexpr const char* boolean_type_name = "_boolean";
+constexpr const char* byte_type_name = "_byte";
+constexpr const char* int16_type_name = "_int16";
+constexpr const char* int32_type_name = "_int32";
+constexpr const char* int64_type_name = "_int64";
+constexpr const char* uint16_type_name = "_uint16";
+constexpr const char* uint32_type_name = "_uint32";
+constexpr const char* uint64_type_name = "_uint64";
+constexpr const char* float32_type_name = "_float32";
+constexpr const char* float64_type_name = "_float64";
+constexpr const char* float128_type_name = "_float128";
+constexpr const char* int8_type_name = "_int8";
+constexpr const char* uint8_type_name = "_uint8";
+constexpr const char* char8_type_name = "_char8";
+constexpr const char* char16_type_name = "_char16";
+
+// Builtin annotation names
+constexpr const char* id_annotation_name = "_id";
+constexpr const char* autoid_annotation_name = "_autoid";
+constexpr const char* optional_annotation_name = "_optional";
+constexpr const char* position_annotation_name = "_position";
+constexpr const char* value_annotation_name = "_value"; // Pending implementation
+constexpr const char* extensibility_annotation_name = "_extensibility";
+constexpr const char* final_annotation_name = "_final";
+constexpr const char* appendable_annotation_name = "_appendable";
+constexpr const char* mutable_annotation_name = "_mutable";
+constexpr const char* key_annotation_name = "_key";
+constexpr const char* must_understand_annotation_name = "_must_understand";
+constexpr const char* default_literal_annotation_name = "_default_literal";
+constexpr const char* default_annotation_name = "_default"; // Pending implementation
+constexpr const char* range_annotation_name = "_range"; // Pending implementation
+constexpr const char* min_annotation_name = "_min"; // Pending implementation
+constexpr const char* max_annotation_name = "_max"; // Pending implementation
+constexpr const char* unit_annotation_name = "_unit";
+constexpr const char* bit_bound_annotation_name = "_bit_bound";
+constexpr const char* external_annotation_name = "_external";
+constexpr const char* nested_annotation_name = "_nested";
+constexpr const char* verbatim_annotation_name = "_verbatim";
+constexpr const char* service_annotation_name = "_service";
+constexpr const char* oneway_annotation_name = "_oneway";
+constexpr const char* ami_annotation_name = "_ami";
+constexpr const char* hashid_annotation_name = "_hashid";
+constexpr const char* default_nested_annotation_name = "_default_nested";
+constexpr const char* ignore_literal_names_annotation_name = "_ignore_literal_names";
+constexpr const char* try_construct_annotation_name = "_try_construct";
+constexpr const char* non_serialized_annotation_name = "_non_serialized";
+constexpr const char* data_representation_annotation_name = "_data_representation";
+constexpr const char* topic_annotation_name = "_topic";
+
+} // xtypes1_3
+} // dds
+} // fastdds
+} // eprosima
 
 #endif // _FASTDDS_DDS_XTYPES_COMMON_HPP_
