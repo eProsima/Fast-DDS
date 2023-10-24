@@ -557,26 +557,28 @@ bool MonitorService::spin_queue()
     std::bitset<STATUSES_SIZE> changed_statuses;
     bool local_instance_disposed = false;
 
-    std::lock_guard<std::mutex> lock(mtx_);
-
-    //! Get EntityId from the queue
-    entity_id = changed_entities_.front();
-    changed_entities_.erase(changed_entities_.begin());
-
-    //! Retrieve the entity from the map
-    auto it_local_entities = local_entities_.find(entity_id);
-
-    if (it_local_entities != local_entities_.end())
     {
-        //! Item going to be processed, set the processing bool to false
-        changed_statuses = it_local_entities->second.first;
-        it_local_entities->second.second = false;
-        it_local_entities->second.first.reset();
-    }
-    else
-    {
-        //! Item was removed, send dispose
-        local_instance_disposed = true;
+        std::lock_guard<std::mutex> lock(mtx_);
+
+        //! Get EntityId from the queue
+        entity_id = changed_entities_.front();
+        changed_entities_.erase(changed_entities_.begin());
+
+        //! Retrieve the entity from the map
+        auto it_local_entities = local_entities_.find(entity_id);
+
+        if (it_local_entities != local_entities_.end())
+        {
+            //! Item going to be processed, set the processing bool to false
+            changed_statuses = it_local_entities->second.first;
+            it_local_entities->second.second = false;
+            it_local_entities->second.first.reset();
+        }
+        else
+        {
+            //! Item was removed, send dispose
+            local_instance_disposed = true;
+        }
     }
 
     write_status(entity_id, changed_statuses, local_instance_disposed);
