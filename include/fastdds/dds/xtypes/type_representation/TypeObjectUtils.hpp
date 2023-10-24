@@ -701,6 +701,8 @@ public:
      * @brief Add AppliedAnnotationParameter to the sequence.
      *
      * @param[in out] param_seq AppliedAnnotationParameter sequence to be modified.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the parameter being added has
+     *            already been included in the sequence (only in Debug build mode).
      * @param[in] param AppliedAnnotationParameter to be added.
      */
     RTPS_DllAPI static void add_applied_annotation_parameter(
@@ -712,13 +714,29 @@ public:
      *
      * @param[in] annotation_typeid Annotation TypeIdentifier.
      * @param[in] param_seq Annotation parameters.
-     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given annotation_typeid
-     *            TypeIdentifier is not a direct HASH (only in Debug build mode).
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given annotation_typeid TypeIdentifier does not correspond to an annotation TypeObject (only in
+     *                 Debug build mode).
+     *              2. Given AppliedAnnotationParameterSeq is inconsistent (only in Debug build mode).
+     *              3. Given annotation TypeIdentifier corresponds to a builtin annotation and the given parameters are
+     *                 inconsistent (only in Debug build mode).
      * @return const AppliedAnnotation instance.
      */
     RTPS_DllAPI static const AppliedAnnotation build_applied_annotation(
             const TypeIdentifier& annotation_typeid,
             const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq);
+
+    /**
+     * @brief Add AppliedAnnotation to the sequence.
+     *
+     * @param[in out] ann_custom_seq AppliedAnnotation sequence to be modified.
+     * @param[in] ann_custom AppliedAnnotation to be added.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given AppliedAnnotation is
+     *            not consistent.
+     */
+    RTPS_DllAPI static void add_applied_annotation(
+            AppliedAnnotationSeq& ann_custom_seq,
+            const AppliedAnnotation& ann_custom);
 
     /**
      * @brief Build AppliedVerbatimAnnotation instance.
@@ -766,18 +784,6 @@ public:
             const TypeIdentifier& member_type_id);
 
     /**
-     * @brief Add AppliedAnnotation to the sequence.
-     *
-     * @param[in out] ann_custom_seq AppliedAnnotation sequence to be modified.
-     * @param[in] ann_custom AppliedAnnotation to be added.
-     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given AppliedAnnotation is
-     *            not consistent.
-     */
-    RTPS_DllAPI static void add_applied_annotation_parameter(
-            AppliedAnnotationSeq& ann_custom_seq,
-            const AppliedAnnotation& ann_custom);
-
-    /**
      * @brief Build CompleteMemberDetail instance.
      *
      * @param[in] name Member name.
@@ -818,6 +824,8 @@ public:
      * @brief Build AppliedBuiltinTypeAnnotations instance.
      *
      * @param[in] verbatim AppliedVerbatimAnnotation to be set.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given verbatim annotation
+     *            is inconsistent (only in Debug build mode).
      * @return const AppliedBuiltinTypeAnnotations instance.
      */
     RTPS_DllAPI static const AppliedBuiltinTypeAnnotations build_applied_builtin_type_annotations(
@@ -1900,6 +1908,25 @@ protected:
     static bool is_indirect_hash_type_identifier(
             const TypeIdentifier& type_identifier);
 
+    /**
+     * @brief Check if a given TypeIdentifier corresponds to a builtin annotation being applied.
+     *
+     * @param[in] type_identifier TypeIdentifier to be checked.
+     * @param[out] builtin_annotation_kind Builtin annotation being applied.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the provided TypeIdentifier
+     *            corresponds to a builtin annotation that should be declared in another structure:
+     *              - @unit
+     *              - @min
+     *              - @max
+     *              - @range
+     *              - @hashid
+     *              - \@verbatim
+     * @return true if the given TypeIdentifier corresponds to a builtin annotation. false otherwise.
+     */
+    static bool is_applied_builtin_annotation(
+            const TypeIdentifier& type_identifier,
+            BuiltinAnnotationKind& builtin_annotation_kind);
+
     /*************** Consistency methods (Debug) ***************************/
 
     /**
@@ -2158,6 +2185,26 @@ protected:
             const TypeIdentifier& type_identifier);
 
     /**
+     * @brief Check AppliedAnnotationParameterSeq consistency.
+     *
+     * @param[in] applied_annotation_parameter_seq Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            AppliedAnnotationParameterSeq is not consistent.
+     */
+    static void applied_annotation_parameter_seq_consistency(
+            const AppliedAnnotationParameterSeq& applied_annotation_parameter_seq);
+
+    /**
+     * @brief Check AppliedAnnotation TypeIdentifier consistency.
+     *
+     * @param[in] annotation_type_id Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            AppliedAnnotation TypeIdentifier is not consistent.
+     */
+    static void applied_annotation_type_identifier_consistency(
+            const TypeIdentifier& annotation_type_id);
+
+    /**
      * @brief Check AppliedAnnotation consistency.
      *
      * @param[in] applied_annotation Instance to be checked.
@@ -2168,6 +2215,124 @@ protected:
             const AppliedAnnotation& applied_annotation);
 
     /**
+     * @brief Check Applied Builtin Annotation consistency.
+     *
+     * @param[in] builtin_annotation_kind Kind of builtin annotation.
+     * @param[in] param_seq Sequence of applied annotation parameters.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given builtin annotation is
+     *            not consistent.
+     */
+    static void applied_builtin_annotation_consistency(
+            BuiltinAnnotationKind builtin_annotation_kind,
+            const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq);
+
+    /**
+     * @brief Check @id annotation consistency.
+     *
+     * @param[in] param_seq AppliedAnnotationParameter sequence.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given builtin annotation is
+     *            not consistent.
+     */
+    static void id_builtin_annotation_consistency(
+            const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq);
+
+    /**
+     * @brief Check @autoid annotation consistency.
+     *
+     * @param[in] param_seq AppliedAnnotationParameter sequence.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given builtin annotation is
+     *            not consistent.
+     */
+    static void autoid_builtin_annotation_consistency(
+            const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq);
+
+    /**
+     * @brief Check builtin annotation consistency with boolean parameter: @optional, @key, @must_understand, @external,
+     *        @nested, @oneway, @ami, @default_nested, @ignore_literal_names, and @non_serialized.
+     *
+     * @param[in] param_seq AppliedAnnotationParameter sequence.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given builtin annotation is
+     *            not consistent.
+     */
+    static void boolean_builtin_annotation_consistency(
+            const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq);
+
+    /**
+     * @brief Check builtin annotation consistency with unsigned short parameter: @position and @bit_bound.
+     *
+     * @param[in] param_seq AppliedAnnotationParameter sequence.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given builtin annotation is
+     *            not consistent.
+     */
+    static void unsigned_short_builtin_annotation_consistency(
+            const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq);
+
+    /**
+     * TODO
+     * @default, and @value builtin annotations cannot be applied currently so its consistency is not checked
+     */
+
+    /**
+     * @brief Check @extensibility annotation consistency.
+     *
+     * @param[in] param_seq AppliedAnnotationParameter sequence.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given builtin annotation is
+     *            not consistent.
+     */
+    static void extensibility_builtin_annotation_consistency(
+            const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq);
+
+    /**
+     * @brief Check empty builtin annotation consistency: @final, @appendable, @mutable, @default_literal
+     *
+     * @param[in] param_seq AppliedAnnotationParameter sequence.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given builtin annotation is
+     *            not consistent.
+     */
+    static void empty_builtin_annotation_consistency(
+            const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq);
+
+    /**
+     * @brief Check @service annotation consistency.
+     *
+     * @param[in] param_seq AppliedAnnotationParameter sequence.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given builtin annotation is
+     *            not consistent.
+     */
+    static void service_builtin_annotation_consistency(
+            const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq);
+
+    /**
+     * @brief Check @try_construct annotation consistency.
+     *
+     * @param[in] param_seq AppliedAnnotationParameter sequence.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given builtin annotation is
+     *            not consistent.
+     */
+    static void try_construct_builtin_annotation_consistency(
+            const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq);
+
+    /**
+     * @brief Check @data_representation annotation consistency.
+     *
+     * @param[in] param_seq AppliedAnnotationParameter sequence.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given builtin annotation is
+     *            not consistent.
+     */
+    static void data_representation_builtin_annotation_consistency(
+            const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq);
+
+    /**
+     * @brief Check @topic annotation consistency.
+     *
+     * @param[in] param_seq AppliedAnnotationParameter sequence.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given builtin annotation is
+     *            not consistent.
+     */
+    static void topic_builtin_annotation_consistency(
+            const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq);
+
+    /**
      * @brief Check AppliedAnnotationSeq consistency.
      *
      * @param[in] applied_annotation_seq Instance to be checked.
@@ -2176,6 +2341,16 @@ protected:
      */
     static void applied_annotation_seq_consistency(
             const AppliedAnnotationSeq& applied_annotation_seq);
+
+    /**
+     * @brief Check AppliedVerbatimAnnotation consistency.
+     *
+     * @param[in] applied_verbatim_annotation Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * AppliedVerbatimAnnotation is not consistent.
+     */
+    static void applied_verbatim_annotation_consistency(
+            const AppliedVerbatimAnnotation& applied_verbatim_annotation);
 
     /**
      * @brief Check CommonStructMember consistency.
@@ -2198,14 +2373,81 @@ protected:
             const CompleteMemberDetail& complete_member_detail);
 
     /**
-     * @brief Check CompleteTypeDetail consistency.
+     * @brief Check cross-consistency between CommonStructMember and CompleteMemberDetail.
      *
-     * @param[in] complete_type_detail Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CompleteTypeDetail is
-     *            not consistent.
+     * @param[in] common_struct_member CommonStructMember to be checked.
+     * @param[in] complete_member_detail CompleteMemberDetail to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given data is inconsistent.
      */
-    static void complete_type_detail_consistency(
-            const CompleteTypeDetail& complete_type_detail);
+    static void common_struct_member_and_complete_member_detail_consistency(
+            const CommonStructMember& common_struct_member,
+            const CompleteMemberDetail& complete_member_detail);
+
+    /**
+     * @brief Check consistency between annotation parameter value and the corresponding member flag.
+     *
+     * @param try_construct_value Value of the try construct annotation.
+     * @param flags Member flags.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given data is inconsistent.
+     */
+    static void try_construct_flag_consistency(
+            int32_t try_construct_value,
+            MemberFlag flags);
+
+    /**
+     * @brief Check consistency between annotation parameter value and the corresponding flag
+     *
+     * @param flags Member flags.
+     * @param optional Flag to indicate if the optional annotation is set.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given data is inconsistent.
+     */
+    static void optional_flag_consistency(
+            MemberFlag flags,
+            bool optional);
+
+    /**
+     * @brief Check consistency between annotation parameter value and the corresponding flag
+     *
+     * @param flags Member flags.
+     * @param must_understand Flag to indicate if the must_understand annotation is set.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given data is inconsistent.
+     */
+    static void must_understand_flag_consistency(
+            MemberFlag flags,
+            bool must_understand);
+
+    /**
+     * @brief Check consistency between annotation parameter value and the corresponding flag
+     *
+     * @param flags Member flags.
+     * @param key Flag to indicate if the key annotation is set.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given data is inconsistent.
+     */
+    static void key_flag_consistency(
+            MemberFlag flags,
+            bool key);
+
+    /**
+     * @brief Check consistency between annotation parameter value and the corresponding flag
+     *
+     * @param external Member flags.
+     * @param key Flag to indicate if the external annotation is set.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given data is inconsistent.
+     */
+    static void external_flag_consistency(
+            MemberFlag flags,
+            bool external);
+
+    /**
+     * @brief Check consistency between a string value and the MemberId (algorithm XTypes v1.3 Clause 7.3.1.2.1.1)
+     *
+     * @param member_id MemberId to be checked.
+     * @param string_value String provided with either @hashid annotation or the member name.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given data is inconsistent.
+     */
+    static void string_member_id_consistency(
+            MemberId member_id,
+            const std::string& string_value);
 
     /**
      * @brief Check CompleteStructMember consistency.
@@ -2226,6 +2468,16 @@ protected:
      */
     static void complete_struct_member_seq_consistency(
             const CompleteStructMemberSeq& complete_struct_member_seq);
+
+    /**
+     * @brief Check CompleteTypeDetail consistency.
+     *
+     * @param[in] complete_type_detail Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CompleteTypeDetail is
+     *            not consistent.
+     */
+    static void complete_type_detail_consistency(
+            const CompleteTypeDetail& complete_type_detail);
 
     /**
      * @brief Check CompleteStructHeader consistency.
