@@ -76,9 +76,6 @@ private:
 
     //! A pointer to the typelookup manager
     TypeLookupManager* tlm_;
-
-    //! A pointer to the TypeObject factory.
-    fastrtps::types::TypeObjectFactory* factory_;
 };
 
 } /* namespace builtin */

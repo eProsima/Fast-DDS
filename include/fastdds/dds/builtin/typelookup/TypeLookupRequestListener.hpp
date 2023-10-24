@@ -22,6 +22,41 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
+
+namespace std {
+template<>
+struct hash<TypeIdentifier>
+{
+    std::size_t operator()(
+        const TypeIdentifier& k) const
+    {
+        // The collection only has direct hash TypeIdentifiers so the EquivalenceHash can be used.
+        return (static_cast<size_t>(k.equivalence_hash()[0]) << 16) |
+                (static_cast<size_t>(k.equivalence_hash()[1]) << 8) |
+                (static_cast<size_t>(k.equivalence_hash()[2]));
+    }
+};
+
+template<>
+struct hash<TypeIdentifierSeq>
+{
+    std::size_t operator()(
+        const TypeIdentifierSeq& seq) const
+    {
+        std::size_t hash = 0;
+        std::hash<TypeIdentifier> id_hasher;
+
+        // Implement a custom hash function for TypeIdentifierSeq
+        for (const TypeIdentifier& identifier : seq) {
+            // Combine the hash values of individual elements using the custom hash function
+            hash ^= id_hasher(identifier);
+        }
+        return hash;
+    }
+};
+
+} // std
+
 namespace eprosima {
 namespace fastrtps {
 
@@ -74,12 +109,16 @@ public:
 
 private:
 
+    TypeIdentifierWithSizeSeq get_registered_type_dependencies(
+        const TypeIdentifierSeq& identifiers,
+        const OctetSeq& in_continuation_point,
+        OctetSeq& out_continuation_point);
+
     //! A pointer to the typelookup manager
     TypeLookupManager* tlm_;
 
-    //! A pointer to the TypeObject factory.
-    fastrtps::types::TypeObjectFactory* factory_;
-
+    std::mutex dependencies_requests_cache_mutex;
+    std::unordered_map<TypeIdentifierSeq, std::unordered_set<TypeIdentfierWithSize>, TypeIdentifierSeqHash> dependencies_requests_cache;
 };
 
 } /* namespace builtin */

@@ -46,7 +46,6 @@ namespace builtin {
 TypeLookupReplyListener::TypeLookupReplyListener(
         TypeLookupManager* manager)
     : tlm_(manager)
-    , factory_(TypeObjectFactory::get_instance())
 {
 }
 
