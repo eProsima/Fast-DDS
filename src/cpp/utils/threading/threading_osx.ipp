@@ -86,8 +86,10 @@ static void configure_current_thread_scheduler(
         // 
         result = pthread_setschedparam(self_tid, sched_class, &param);
         if(0 == result && change_priority)
-        {            
-            result = setpriority(PRIO_PROCESS, gettid(), sched_priority);
+        {
+            uint64_t tid;
+            pthread_threadid_np(NULL, &tid);
+            result = setpriority(PRIO_PROCESS, tid, sched_priority);
         }                
     }
     else if((sched_class == SCHED_FIFO) ||
