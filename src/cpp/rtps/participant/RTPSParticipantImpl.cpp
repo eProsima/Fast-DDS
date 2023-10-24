@@ -349,10 +349,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_att.defaultMulticastLocatorList.clear();
     }
 
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true, false);
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false);
-    createReceiverResources(m_att.defaultUnicastLocatorList, true, false);
-    createReceiverResources(m_att.defaultMulticastLocatorList, true, false);
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true, false, true);
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false, true);
+    createReceiverResources(m_att.defaultUnicastLocatorList, true, false, true);
+    createReceiverResources(m_att.defaultMulticastLocatorList, true, false, true);
 
     // Check metatraffic multicast port
     if (0 < m_att.builtin.metatrafficMulticastLocatorList.size() &&
@@ -1516,7 +1516,11 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
             }
 
             // Try creating receiver resources
+<<<<<<< HEAD
             if (createReceiverResources(pend->getAttributes().unicastLocatorList, false, true))
+=======
+            if (createReceiverResources(attributes.unicastLocatorList, false, true, false))
+>>>>>>> 63c415072 (Rework log upon receiver resource creation failure (#3954))
             {
                 break;
             }
@@ -1544,8 +1548,13 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
             pend->getAttributes().unicastLocatorList = m_att.defaultUnicastLocatorList;
             pend->getAttributes().multicastLocatorList = m_att.defaultMulticastLocatorList;
         }
+<<<<<<< HEAD
         createReceiverResources(pend->getAttributes().unicastLocatorList, false, true);
         createReceiverResources(pend->getAttributes().multicastLocatorList, false, true);
+=======
+        createReceiverResources(attributes.unicastLocatorList, false, true, true);
+        createReceiverResources(attributes.multicastLocatorList, false, true, true);
+>>>>>>> 63c415072 (Rework log upon receiver resource creation failure (#3954))
     }
 
     // Associate the Endpoint with ReceiverControlBlock
@@ -1615,7 +1624,8 @@ bool RTPSParticipantImpl::createSendResources(
 bool RTPSParticipantImpl::createReceiverResources(
         LocatorList_t& Locator_list,
         bool ApplyMutation,
-        bool RegisterReceiver)
+        bool RegisterReceiver,
+        bool log_when_creation_fails)
 {
     std::vector<std::shared_ptr<ReceiverResource>> newItemsBuffer;
     bool ret_val = Locator_list.empty();
@@ -1643,6 +1653,14 @@ bool RTPSParticipantImpl::createReceiverResources(
             }
         }
 
+<<<<<<< HEAD
+=======
+        if (!ret && log_when_creation_fails)
+        {
+            EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Could not create the specified receiver resource");
+        }
+
+>>>>>>> 63c415072 (Rework log upon receiver resource creation failure (#3954))
         ret_val |= !newItemsBuffer.empty();
 
         for (auto it_buffer = newItemsBuffer.begin(); it_buffer != newItemsBuffer.end(); ++it_buffer)
