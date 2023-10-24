@@ -94,16 +94,16 @@ public:
         if (sender_resource->kind() == transport.kind())
         {
             returned_resource = dynamic_cast<UDPSenderResource*>(sender_resource);
-        }
 
-        //! May be chained
-        if (!returned_resource)
-        {
-            auto chaining_sender = dynamic_cast<ChainingSenderResource*>(sender_resource);
-
-            if (chaining_sender)
+            //! May be chained
+            if (!returned_resource)
             {
-                returned_resource = dynamic_cast<UDPSenderResource*>(chaining_sender->lower_sender_cast());
+                auto chaining_sender = dynamic_cast<ChainingSenderResource*>(sender_resource);
+
+                if (chaining_sender)
+                {
+                    returned_resource = dynamic_cast<UDPSenderResource*>(chaining_sender->lower_sender_cast());
+                }
             }
         }
 

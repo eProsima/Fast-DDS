@@ -718,11 +718,8 @@ Locator_t IPLocator::WanToLanLocator(
 {
     Locator_t out(locator);
 
-    for (size_t i = 8; i < 12; i++)
-    {
-        out.address[i + 4] = out.address[i];
-        out.address[i] = 0;
-    }
+    std::memcpy(out.address + 12, out.address + 8, 4 * sizeof(octet));
+    std::memset(out.address + 8, 0, 4 * sizeof(octet));
 
     return out;
 }
