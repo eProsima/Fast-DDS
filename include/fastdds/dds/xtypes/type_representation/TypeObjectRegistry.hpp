@@ -239,6 +239,15 @@ protected:
     ReturnCode_t is_type_identifier_known(
             const TypeIdentifier& type_identifier);
 
+    /**
+     * @brief Get the builtin annotation complete TypeIdentifier.
+     *
+     * @param builtin_annotation_name Builtin annotation name.
+     * @return Builtin annotation complete TypeIdentifier.
+     */
+    const TypeIdentifier get_builtin_annotation_complete_type_identifier(
+            const std::string& builtin_annotation_name);
+
     // Collection of local TypeIdentifiers hashed by type_name.
     // TypeIdentifierPair contains both the minimal and complete TypeObject TypeIdentifiers.
     // In case of indirect hash TypeIdentifiers, type_identifier_2 would be uninitialized (TK_NONE).

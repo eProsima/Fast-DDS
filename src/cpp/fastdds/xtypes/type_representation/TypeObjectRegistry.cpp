@@ -107,6 +107,13 @@ ReturnCode_t TypeObjectRegistry::is_type_identifier_known(
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
+const TypeIdentifier TypeObjectRegistry::get_builtin_annotation_complete_type_identifier(
+        const std::string& builtin_annotation_name)
+{
+    static_cast<void>(builtin_annotation_name);
+    return TypeIdentifier();
+}
+
 } // xtypes
 } // dds
 } // fastdds
