@@ -89,6 +89,7 @@ public:
     bool init(
             int subscribers,
             int samples,
+            int interval,
             bool reliable,
             uint32_t pid,
             bool hostname,
@@ -208,6 +209,7 @@ private:
     int forced_domain_ = -1;
     int subscribers_ = 0;
     unsigned int samples_ = 0;
+    unsigned int interval_ = 0;
     bool hostname_ = false;
     uint32_t pid_ = 0;
 

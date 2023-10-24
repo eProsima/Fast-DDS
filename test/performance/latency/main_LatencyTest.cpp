@@ -50,6 +50,7 @@ enum  optionIndex
     HELP,
     RELIABILITY,
     SAMPLES,
+    INTERVAL,
     SEED,
     SUBSCRIBERS,
     ECHO_OPT,
@@ -84,6 +85,8 @@ const option::Descriptor usage[] = {
       "  -r <arg>,    --reliability=<arg>   Set reliability (\"reliable\"/\"besteffort\")."},
     { SAMPLES,         0, "s", "samples",         Arg::Numeric,
       "  -s <num>,    --samples=<num>       Number of samples." },
+    { INTERVAL,         0, "I", "interval",         Arg::Numeric,
+      "  -i <num>,    --interval=<num>      Milliseconds to wait between publications." },
     { SEED,            0, "",  "seed",            Arg::Numeric,
       "               --seed=<num>          Seed to calculate domain and topic." },
     { HOSTNAME,        0, "",  "hostname",        Arg::None,
@@ -212,6 +215,7 @@ int main(
     TestAgent test_agent = TestAgent::PUBLISHER;
     int subscribers = 1;
     int samples = 10000;
+    int interval = 0;
 #if HAVE_SECURITY
     bool use_security = false;
     std::string certs_path;
@@ -304,6 +308,9 @@ int main(
                 break;
             case SAMPLES:
                 samples = strtol(opt.arg, nullptr, 10);
+                break;
+            case INTERVAL:
+                interval = strtol(opt.arg, nullptr, 10);
                 break;
             case SUBSCRIBERS:
                 subscribers = strtol(opt.arg, nullptr, 10);
@@ -499,7 +506,7 @@ int main(
         std::cout << "Performing test with " << subscribers << " subscribers and " << samples << " samples"
                   << std::endl;
         LatencyTestPublisher latency_publisher;
-        if (latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
+        if (latency_publisher.init(subscribers, samples, interval, reliable, seed, hostname, export_csv, export_prefix,
                 raw_data_file, pub_part_property_policy, pub_property_policy, xml_config_file,
                 dynamic_types, data_sharing, data_loans, shared_memory, forced_domain, data_sizes))
         {
@@ -533,7 +540,7 @@ int main(
 
         // Initialize publisher
         LatencyTestPublisher latency_publisher;
-        bool pub_init = latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv,
+        bool pub_init = latency_publisher.init(subscribers, samples, interval, reliable, seed, hostname, export_csv,
                         export_prefix, raw_data_file, pub_part_property_policy, pub_property_policy,
                         xml_config_file, dynamic_types, data_sharing, data_loans, shared_memory, forced_domain,
                         data_sizes);

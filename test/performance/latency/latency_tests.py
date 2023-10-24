@@ -41,6 +41,13 @@ if __name__ == '__main__':
         default='10000'
     )
     parser.add_argument(
+        '-I',
+        '--interval',
+        help='The number of milliseconds to wait between publications',
+        required=False,
+        default='0'
+    )
+    parser.add_argument(
         '-s',
         '--security',
         action='store_true',
@@ -99,6 +106,17 @@ if __name__ == '__main__':
         print(
             '"number_of_samples" must be a positive integer, NOT {}'.format(
                 args.number_of_samples
+            )
+        )
+        exit(1)  # Exit with error
+
+    # Check that interval is positive
+    if str.isdigit(args.interval) and int(args.interval) >= 0:
+        interval = str(args.interval)
+    else:
+        print(
+            '"interval" must be a positive integer, NOT {}'.format(
+                args.interval
             )
         )
         exit(1)  # Exit with error
@@ -199,6 +217,8 @@ if __name__ == '__main__':
             'publisher',
             '--samples',
             samples,
+            '--interval',
+            interval,
             '--export_raw_data',
         ]
         # Base of test command for subscriber agent
@@ -262,6 +282,8 @@ if __name__ == '__main__':
             'both',
             '--samples',
             samples,
+            '--interval',
+            interval,
             '--export_raw_data',
         ]
 

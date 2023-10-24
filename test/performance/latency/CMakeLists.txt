@@ -90,6 +90,21 @@ set(
     interprocess_reliable_shm
 )
 
+#[[set(
+    100_MS_INTERVAL_SAMPLES
+    latency_interprocess_reliable_udp_profile
+)
+
+set(
+    250_MS_INTERVAL_SAMPLES
+    latency_interprocess_reliable_udp_profile
+)
+
+set(
+    500_MS_INTERVAL_SAMPLES
+    latency_interprocess_reliable_udp_profile
+)]]
+
 ###########################################################################
 # Configure XML files                                                     #
 ###########################################################################
@@ -277,6 +292,69 @@ if(PYTHONINTERP_FOUND)
             )
 
         endif()
+
+        # Check if a test with waiting publication interval of 100ms is required
+        #[[if(latency_test_name IN_LIST 100_MS_INTERVAL_SAMPLES)
+
+            # append to the list of cases
+            list(APPEND test_cases_setup performance.latency.${latency_test_name}.interval_100)
+
+            add_test(
+                NAME performance.latency.${latency_test_name}.interval_100
+                COMMAND ${PYTHON_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
+                ${LATENCY_TEST_BIN}
+                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                ${interproces_flag}
+                --interval=100
+                ${reliability_flag}
+                --number_of_samples=250
+            )
+
+        endif()
+
+        # Check if a test with waiting publication interval of 100ms is required
+        if(latency_test_name IN_LIST 250_MS_INTERVAL_SAMPLES)
+
+            # append to the list of cases
+            list(APPEND test_cases_setup performance.latency.${latency_test_name}.interval_250)
+
+            add_test(
+                NAME performance.latency.${latency_test_name}.interval_250
+                COMMAND ${PYTHON_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
+                ${LATENCY_TEST_BIN}
+                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                ${interproces_flag}
+                --interval=250
+                ${reliability_flag}
+                --number_of_samples=250
+            )
+
+        endif()
+
+        # Check if a test with waiting publication interval of 100ms is required
+        if(latency_test_name IN_LIST 500_MS_INTERVAL_SAMPLES)
+
+            # append to the list of cases
+            list(APPEND test_cases_setup performance.latency.${latency_test_name}.interval_500)
+
+            add_test(
+                NAME performance.latency.${latency_test_name}.interval_500
+                COMMAND ${PYTHON_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
+                ${LATENCY_TEST_BIN}
+                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                ${interproces_flag}
+                --interval=500
+                ${reliability_flag}
+                --number_of_samples=250
+            )
+
+        endif()]]
 
 
         # populate the properties for each test

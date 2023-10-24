@@ -88,6 +88,7 @@ LatencyTestPublisher::~LatencyTestPublisher()
 bool LatencyTestPublisher::init(
         int subscribers,
         int samples,
+        int interval,
         bool reliable,
         uint32_t pid,
         bool hostname,
@@ -107,6 +108,7 @@ bool LatencyTestPublisher::init(
     // Initialize state
     xml_config_file_ = xml_config_file;
     samples_ = samples;
+    interval_ = interval;
     subscribers_ = subscribers;
     export_csv_ = export_csv;
     export_prefix_ = export_prefix;
@@ -865,6 +867,11 @@ bool LatencyTestPublisher::test(
                     return data_msg_count_ >= subscribers_;
                 });
         data_msg_count_ = 0;
+
+        if (interval_)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(interval_));
+        }
     }
 
     command.m_command = STOP;
