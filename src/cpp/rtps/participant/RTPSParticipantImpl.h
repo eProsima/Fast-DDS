@@ -687,7 +687,7 @@ private:
 #ifdef FASTDDS_STATISTICS
     std::unique_ptr<fastdds::statistics::rtps::MonitorService> monitor_server_;
     std::unique_ptr<fastdds::statistics::rtps::SimpleQueryable> simple_queryable_;
-    const fastdds::statistics::rtps::IConnectionsObserver* conns_observer_;
+    std::atomic<const fastdds::statistics::rtps::IConnectionsObserver*> conns_observer_;
 #endif // ifdef FASTDDS_STATISTICS
 
     /*
@@ -1232,7 +1232,7 @@ public:
 
     const fastdds::statistics::rtps::IConnectionsObserver* get_connections_observer()
     {
-        return conns_observer_;
+        return conns_observer_.load();
     }
 
 #else
