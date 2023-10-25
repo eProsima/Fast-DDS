@@ -139,8 +139,8 @@ protected:
     int n_local_entities;
     std::vector<fastrtps::rtps::GUID_t> mock_guids;
     fastrtps::rtps::ResourceEvent mock_event_resource_;
-    MonitorService monitor_srv_;
     testing::NiceMock<fastrtps::rtps::RTPSWriter> writer;
+    MonitorService monitor_srv_;
 };
 
 TEST_F(MonitorServiceTests, enabling_monitor_service_routine)

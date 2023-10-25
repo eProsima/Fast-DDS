@@ -565,9 +565,12 @@ public:
         //! reset received function
         take_ = read_ = false;
 
+        stopReception();
+        destroy();
+
         if (nullptr != sample_validator_)
         {
-            std::unique_lock<std::mutex> lock(validator_mtx_);
+            std::lock_guard<std::mutex> lock(validator_mtx_);
             delete sample_validator_;
             sample_validator_ = nullptr;
         }
@@ -658,7 +661,7 @@ protected:
             last_seq[seq_info] = info.sample_identity.sequence_number();
 
             {
-                std::unique_lock<std::mutex> guard(validator_mtx_);
+                std::lock_guard<std::mutex> guard(validator_mtx_);
                 if (nullptr != sample_validator_)
                 {
                     validator_selector(statistics_part_, sample_validator_,
