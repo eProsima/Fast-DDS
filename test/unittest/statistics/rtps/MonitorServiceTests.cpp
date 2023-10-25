@@ -132,6 +132,14 @@ public:
 
 protected:
 
+    void block_until_idle()
+    {
+        while (monitor_srv_.is_processing())
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+    }
+
     testing::NiceMock<MockConnectionsQueryable> mock_conns_q_;
     testing::NiceMock<MockStatusQueryable> mock_status_q_;
     testing::NiceMock<MockProxyQueryable> mock_proxy_q_;
@@ -139,8 +147,8 @@ protected:
     int n_local_entities;
     std::vector<fastrtps::rtps::GUID_t> mock_guids;
     fastrtps::rtps::ResourceEvent mock_event_resource_;
-    MonitorService monitor_srv_;
     testing::NiceMock<fastrtps::rtps::RTPSWriter> writer;
+    MonitorService monitor_srv_;
 };
 
 TEST_F(MonitorServiceTests, enabling_monitor_service_routine)
@@ -263,7 +271,7 @@ TEST_F(MonitorServiceTests, entity_removal_correctly_performs)
     }
 
     //! Verify expectations
-    std::this_thread::sleep_for(std::chrono::seconds(3));
+    block_until_idle();
     ASSERT_TRUE(::testing::Mock::VerifyAndClearExpectations(&mock_status_q_));
     ASSERT_TRUE(::testing::Mock::VerifyAndClearExpectations(&mock_proxy_q_));
     ASSERT_TRUE(::testing::Mock::VerifyAndClearExpectations(&mock_conns_q_));

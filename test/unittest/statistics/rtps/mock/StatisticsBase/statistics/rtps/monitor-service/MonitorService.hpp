@@ -110,6 +110,17 @@ public:
     }
 
     /**
+     * @brief Checks whether the Monitor Service is spinning callbacks
+     * or not.
+     *
+     * @return True if the service is currently processing.
+     */
+    inline bool is_processing()
+    {
+        return timer_active_.load();
+    }
+
+    /**
      * @brief Getter for the Monitor Service Listener.
      *
      * @return Pointer to the MonitorServiceListener instance.
