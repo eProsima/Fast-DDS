@@ -192,7 +192,7 @@ public:
 
     const rtps::IStatusObserver* get_status_observer()
     {
-        return status_observer_;
+        return status_observer_.load();
     }
 
 protected:
@@ -296,7 +296,7 @@ protected:
     efd::Publisher* builtin_publisher_ = nullptr;
     PublisherImpl* builtin_publisher_impl_ = nullptr;
     std::shared_ptr<DomainParticipantStatisticsListener> statistics_listener_;
-    const rtps::IStatusObserver* status_observer_ = nullptr;
+    std::atomic<const rtps::IStatusObserver*> status_observer_{nullptr};
 
     friend class efd::DomainParticipantFactory;
 };

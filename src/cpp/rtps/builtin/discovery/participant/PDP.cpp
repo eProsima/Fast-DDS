@@ -1105,7 +1105,7 @@ bool PDP::get_serialized_proxy(
 void PDP::set_proxy_observer(
         const fastdds::statistics::rtps::IProxyObserver* proxy_observer)
 {
-    proxy_observer_ = proxy_observer;
+    proxy_observer_.store(proxy_observer);
 }
 
 #endif // FASTDDS_STATISTICS

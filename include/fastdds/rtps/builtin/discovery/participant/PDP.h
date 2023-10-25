@@ -454,7 +454,7 @@ public:
 
     const fastdds::statistics::rtps::IProxyObserver* get_proxy_observer()
     {
-        return proxy_observer_;
+        return proxy_observer_.load();
     }
 
 #else
@@ -576,7 +576,7 @@ protected:
 
 #ifdef FASTDDS_STATISTICS
 
-    const fastdds::statistics::rtps::IProxyObserver* proxy_observer_;
+    std::atomic<const fastdds::statistics::rtps::IProxyObserver*> proxy_observer_;
 
 #endif // FASTDDS_STATISTICS
 

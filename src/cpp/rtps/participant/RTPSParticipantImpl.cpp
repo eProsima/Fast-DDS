@@ -2749,7 +2749,7 @@ const fastdds::statistics::rtps::IStatusObserver* RTPSParticipantImpl::create_mo
     if (nullptr != monitor_server_)
     {
         auto monitor_listener = monitor_server_->get_listener();
-        conns_observer_ = monitor_listener;
+        conns_observer_.store(monitor_listener);
         pdp()->set_proxy_observer(monitor_listener);
 
         return monitor_listener;

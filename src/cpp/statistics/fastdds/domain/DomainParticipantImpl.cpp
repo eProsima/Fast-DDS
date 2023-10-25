@@ -304,7 +304,7 @@ ReturnCode_t DomainParticipantImpl::enable_monitor_service()
 
     if (!rtps_participant_->is_monitor_service_created())
     {
-        status_observer_ = rtps_participant_->create_monitor_service(*this);
+        status_observer_.store(rtps_participant_->create_monitor_service(*this));
     }
 
     if (!rtps_participant_->enable_monitor_service() ||
