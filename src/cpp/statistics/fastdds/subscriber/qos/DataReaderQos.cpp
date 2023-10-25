@@ -38,6 +38,19 @@ DataReaderQos::DataReaderQos()
     endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 }
 
+MonitorServiceDataReaderQos::MonitorServiceDataReaderQos()
+{
+    /* Specific implementation for MonitorServiceDataReaderQos */
+    reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
+    history().depth = 1;
+
+    resource_limits().max_instances = 1500;
+    resource_limits().max_samples = 1600;
+    resource_limits().max_samples_per_instance = 1;
+}
+
 } // dds
 } // statistics
 } // fastdds
