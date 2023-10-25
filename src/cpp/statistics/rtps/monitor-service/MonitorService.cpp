@@ -119,12 +119,13 @@ bool MonitorService::enable_monitor_service()
             //! At least the participant and monitor service endpoints should exist
             assert(!local_guids.empty());
 
-            //! As we are later ignoring the monitor service endpoint, we are
-            //! in fact reserving space for n+1
-            changed_entities_.reserve(local_guids.size());
-
             {
                 std::lock_guard<std::mutex> lock(mtx_);
+
+                //! As we are later ignoring the monitor service endpoint, we are
+                //! in fact reserving space for n+1
+                changed_entities_.reserve(local_guids.size());
+
                 for (auto& guid : local_guids)
                 {
                     //! Ignore own writer
@@ -143,6 +144,7 @@ bool MonitorService::enable_monitor_service()
         }
         else
         {
+            std::lock_guard<std::mutex> lock(mtx_);
             if (!changed_entities_.empty())
             {
                 event_->restart_timer();
@@ -583,13 +585,17 @@ bool MonitorService::spin_queue()
 
     write_status(entity_id, changed_statuses, local_instance_disposed);
 
-    if (!changed_entities_.empty())
     {
-        re_schedule = true;
-    }
-    else
-    {
-        timer_active_.store(false);
+        std::lock_guard<std::mutex> lock(mtx_);
+
+        if (!changed_entities_.empty())
+        {
+            re_schedule = true;
+        }
+        else
+        {
+            timer_active_.store(false);
+        }
     }
 
     return re_schedule;
