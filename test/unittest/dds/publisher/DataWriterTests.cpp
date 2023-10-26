@@ -429,6 +429,59 @@ TEST(DataWriterTests, ChangeDataWriterQos)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
+TEST(DataWriterTests, ChangeImmutableDataWriterQos)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
+    pub_qos.entity_factory().autoenable_created_entities = false;
+    Publisher* publisher = participant->create_publisher(pub_qos);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(datawriter, nullptr);
+
+    ASSERT_FALSE(datawriter->is_enabled());
+
+    DataWriterQos qos;
+    datawriter->get_qos(qos);
+    ASSERT_EQ(qos, DATAWRITER_QOS_DEFAULT);
+
+    qos.reliable_writer_qos().disable_positive_acks.enabled = true;
+
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    DataWriterQos wqos;
+    datawriter->get_qos(wqos);
+
+    ASSERT_EQ(qos, wqos);
+    ASSERT_TRUE(wqos.reliable_writer_qos().disable_positive_acks.enabled);
+
+    ASSERT_TRUE(datawriter->enable() == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(datawriter->is_enabled());
+
+    qos.reliable_writer_qos().disable_positive_acks.enabled = false;
+    ASSERT_FALSE(qos == wqos);
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+    DataWriterQos wqos2;
+    datawriter->get_qos(wqos2);
+    ASSERT_EQ(wqos, wqos2);
+    ASSERT_TRUE(wqos2.reliable_writer_qos().disable_positive_acks.enabled);
+
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
 TEST(DataWriterTests, ForcedDataSharing)
 {
     DomainParticipant* participant =

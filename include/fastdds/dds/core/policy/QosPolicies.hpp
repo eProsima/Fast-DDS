@@ -2261,6 +2261,7 @@ public:
             const DisablePositiveACKsQosPolicy& b) const
     {
         return enabled == b.enabled &&
+               duration == b.duration &&
                Parameter_t::operator ==(b) &&
                QosPolicy::operator ==(b);
     }

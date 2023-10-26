@@ -1470,6 +1470,17 @@ public:
         return (ReturnCode_t::RETCODE_OK == datawriter_->set_qos(datawriter_qos_));
     }
 
+    bool set_qos(
+            const eprosima::fastdds::dds::DataWriterQos& att)
+    {
+        return (ReturnCode_t::RETCODE_OK == datawriter_->set_qos(att));
+    }
+
+    eprosima::fastdds::dds::DataWriterQos get_qos()
+    {
+        return (datawriter_->get_qos());
+    }
+
     bool remove_all_changes(
             size_t* number_of_changes_removed)
     {
