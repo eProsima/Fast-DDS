@@ -38,14 +38,10 @@ target_link_libraries(SubscriberTests fastrtps fastcdr foonathan_memory
 add_gtest(SubscriberTests SOURCES ${SUBSCRIBERTESTS_SOURCE})
 
 add_executable(DataReaderTests ${DATAREADERTESTS_SOURCE})
-<<<<<<< HEAD
-target_compile_definitions(DataReaderTests PRIVATE FASTRTPS_NO_LIB
-=======
 target_compile_definitions(DataReaderTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     ASIO_DISABLE_VISIBILITY
->>>>>>> e00b8e323 (Use FASTRTPS_NO_LIB on unittest root folder (#3856))
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -57,48 +53,3 @@ target_link_libraries(DataReaderTests fastrtps fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(DataReaderTests SOURCES ${DATAREADERTESTS_SOURCE})
-<<<<<<< HEAD
-=======
-
-add_executable(DataReaderInstanceTests ${DATAREADERINSTANCETESTS_SOURCE})
-target_compile_definitions(DataReaderInstanceTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
-target_include_directories(DataReaderInstanceTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src/cpp
-    )
-target_link_libraries(DataReaderInstanceTests foonathan_memory
-    GTest::gmock
-    ${CMAKE_DL_LIBS})
-add_gtest(DataReaderInstanceTests SOURCES ${DATAREADERINSTANCETESTS_SOURCE})
-
-add_executable(DataReaderHistoryTests ${DATAREADERHISTORYTESTS_SOURCE})
-target_compile_definitions(DataReaderHistoryTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflic with std::min & std::max in visual studio
-    # acknowledge atomic layout issue on old versions of visual studio STL
-    $<$<AND:$<BOOL:${MSVC}>,$<VERSION_LESS:${CMAKE_CXX_COMPILER_VERSION},19.29.30140.0>>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
-    )
-target_include_directories(DataReaderHistoryTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
-    ${PROJECT_SOURCE_DIR}/test/mock/dds/Topic
-    ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeSupport
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src/cpp
-    ${THIRDPARTY_BOOST_INCLUDE_DIR}
-    )
-target_link_libraries(DataReaderHistoryTests fastcdr foonathan_memory
-    GTest::gmock
-    ${CMAKE_DL_LIBS})
-add_gtest(DataReaderHistoryTests SOURCES ${DATAREADERHISTORYTESTS_SOURCE})
-if(ANDROID)
-    set_property(TARGET SubscriberTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET DataReaderTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET DataReaderHistoryTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET DataReaderInstanceTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
->>>>>>> e00b8e323 (Use FASTRTPS_NO_LIB on unittest root folder (#3856))

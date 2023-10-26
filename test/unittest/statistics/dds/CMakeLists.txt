@@ -38,11 +38,7 @@ set(STATISTICS_QOS_TESTS_SOURCE
     StatisticsQosTests.cpp)
 
 add_executable(StatisticsQosTests ${STATISTICS_QOS_TESTS_SOURCE})
-<<<<<<< HEAD
-target_compile_definitions(StatisticsQosTests PRIVATE FASTRTPS_NO_LIB
-=======
 target_compile_definitions(StatisticsQosTests PRIVATE BOOST_ASIO_STANDALONE ASIO_STANDALONE
->>>>>>> e00b8e323 (Use FASTRTPS_NO_LIB on unittest root folder (#3856))
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
     )
