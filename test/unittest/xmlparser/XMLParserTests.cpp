@@ -2988,7 +2988,6 @@ TEST_F(XMLParserTests, parseXMLReceptionThreads)
         PortBasedTransportDescriptor::ReceptionThreadsConfigMap threads_config;
     };
 
-    ThreadSettings default_thread_settings;
     ThreadSettings modified_thread_settings;
     modified_thread_settings.scheduling_policy = 12;
     modified_thread_settings.priority = 12;
