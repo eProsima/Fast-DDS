@@ -613,8 +613,10 @@ bool TCPTransportInterface::OpenOutputChannel(
         {
             TCPSenderResource* tcp_sender_resource = TCPSenderResource::cast(*this, sender_resource.get());
 
-            //TODO Review with wan ip.
-            if (tcp_sender_resource && physical_locator == tcp_sender_resource->channel()->locator())
+            if (tcp_sender_resource && (physical_locator == tcp_sender_resource->channel()->locator() ||
+                    (IPLocator::hasWan(locator) &&
+                    IPLocator::WanToLanLocator(physical_locator) ==
+                    tcp_sender_resource->channel()->locator())))
             {
                 // Look for an existing channel that matches this physical locator
                 auto existing_channel = channel_resources_.find(physical_locator);
