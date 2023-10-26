@@ -161,6 +161,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         UDPv4TransportDescriptor descriptor;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
+        descriptor.default_reception_threads(m_att.builtin_transports_reception_threads);
         if (is_intraprocess_only())
         {
             // Avoid multicast leaving the host for intraprocess-only participants
@@ -179,6 +180,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             shm_transport.segment_size(segment_size_udp_equivalent);
             // Use same default max_message_size on both UDP and SHM
             shm_transport.max_message_size(descriptor.max_message_size());
+            shm_transport.default_reception_threads(m_att.builtin_transports_reception_threads);
             has_shm_transport_ |= m_network_Factory.RegisterTransport(&shm_transport);
         }
 #endif // ifdef SHM_TRANSPORT_BUILTIN

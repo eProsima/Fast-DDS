@@ -25,7 +25,6 @@
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/fastrtps_dll.h>
 
@@ -208,8 +207,7 @@ public:
                (properties_ == b.properties()) &&
                (endpoint_ == b.endpoint()) &&
                (reader_resource_limits_ == b.reader_resource_limits()) &&
-               (data_sharing_ == b.data_sharing()) &&
-               (data_sharing_listener_thread_ == b.data_sharing_listener_thread());
+               (data_sharing_ == b.data_sharing());
     }
 
     RTPS_DllAPI ReaderQos get_readerqos(
@@ -856,37 +854,6 @@ public:
         data_sharing_ = data_sharing;
     }
 
-    /**
-     * Getter for data sharing listener ThreadSettings
-     *
-     * @return rtps::ThreadSettings reference
-     */
-    RTPS_DllAPI rtps::ThreadSettings& data_sharing_listener_thread()
-    {
-        return data_sharing_listener_thread_;
-    }
-
-    /**
-     * Getter for data sharing listener ThreadSettings
-     *
-     * @return rtps::ThreadSettings reference
-     */
-    RTPS_DllAPI const rtps::ThreadSettings& data_sharing_listener_thread() const
-    {
-        return data_sharing_listener_thread_;
-    }
-
-    /**
-     * Setter for data sharing listener ThreadSettings
-     *
-     * @param data_sharing_listener_thread new value for the rtps::ThreadSettings
-     */
-    RTPS_DllAPI void data_sharing_listener_thread(
-            const rtps::ThreadSettings& data_sharing_listener_thread)
-    {
-        data_sharing_listener_thread_ = data_sharing_listener_thread;
-    }
-
 private:
 
     //!Durability Qos, implemented in the library.
@@ -951,9 +918,6 @@ private:
 
     //!DataSharing configuration (Extension)
     DataSharingQosPolicy data_sharing_;
-
-    //! Thread settings for the data-sharing listener thread
-    rtps::ThreadSettings data_sharing_listener_thread_;
 };
 
 RTPS_DllAPI extern const DataReaderQos DATAREADER_QOS_DEFAULT;

@@ -14,8 +14,11 @@
 //
 
 #include <cassert>
+#include <cstdint>
+#include <cstdio>
 #include <cstring>
 #include <regex>
+#include <set>
 #include <string>
 #include <unordered_map>
 
@@ -2109,10 +2112,25 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
     /*
         <xs:complexType name="dataSharingQosPolicyType">
             <xs:all>
-                <xs:element name="kind" type="datasharingQosKindType" minOccurs="1"/>
-                <xs:element name="shared_dir" type="stringType" minOccurs="0"/>
-                <xs:element name="domain_ids" type="domainIdVectorType" minOccurs="0"/>
-                <xs:element name="max_domains" type="uint32Type" minOccurs="0"/>
+                <xs:element name="kind" minOccurs="1" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="AUTOMATIC"/>
+                            <xs:enumeration value="ON"/>
+                            <xs:enumeration value="OFF"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="shared_dir" type="string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="domain_ids" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="domainId" type="domainIDType" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="max_domains" type="uint32" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="data_sharing_listener_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
      */
@@ -2213,6 +2231,14 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
             {
                 // Not even one
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << DOMAIN_IDS << "' without content");
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, DATA_SHARING_LISTENER_THREAD) == 0)
+        {
+            // data_sharing_listener_thread
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*p_aux0, data_sharing.data_sharing_listener_thread()))
+            {
                 return XMLP_ret::XML_ERROR;
             }
         }
@@ -3718,6 +3744,56 @@ XMLP_ret XMLParser::getXMLUint(
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLParser::getXMLUint(
+        tinyxml2::XMLElement* elem,
+        uint64_t* ui64,
+        uint8_t /*ident*/)
+{
+    unsigned long int ui = 0u;
+    if (nullptr == elem || nullptr == ui64)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    auto to_uint64 = [](const char* str, unsigned long int* value) -> bool
+            {
+                // Look for a '-' sign
+                bool ret = false;
+                const char minus = '-';
+                const char* minus_result = str;
+                if (nullptr == std::strchr(minus_result, minus))
+                {
+                    // Minus not found
+                    ret = true;
+                }
+
+                if (ret)
+                {
+                    ret = false;
+#ifdef _WIN32
+                    if (sscanf_s(str, "%lu", value) == 1)
+#else
+                    if (sscanf(str, "%lu", value) == 1)
+#endif // ifdef _WIN32
+                    {
+                        // Number found
+                        ret = true;
+                    }
+                }
+                return ret;
+            };
+
+    std::string text = get_element_text(elem);
+    if (text.empty() || !to_uint64(text.c_str(), &ui))
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    *ui64 = static_cast<uint64_t>(ui);
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::getXMLBool(
         tinyxml2::XMLElement* elem,
         bool* b,
@@ -4031,6 +4107,65 @@ XMLP_ret XMLParser::getXMLguidPrefix(
     std::istringstream is(text);
     return (is >> prefix ? XMLP_ret::XML_OK : XMLP_ret::XML_ERROR);
 
+}
+
+XMLP_ret XMLParser::getXMLDomainParticipantFactoryQos(
+        tinyxml2::XMLElement& elem,
+        fastdds::dds::DomainParticipantFactoryQos& qos)
+{
+    /*
+        <xs:complexType name="domainParticipantFactoryQosPoliciesType">
+            <xs:all>
+                <xs:element name="entity_factory" type="entityFactoryQosPolicyType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="shm_watchdog_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="file_watch_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+     */
+
+    std::set<std::string> tags_present;
+
+    for (tinyxml2::XMLElement* element = elem.FirstChildElement(); element != nullptr;
+            element = element->NextSiblingElement())
+    {
+        const char* name = element->Name();
+        if (tags_present.count(name) != 0)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Duplicated element found in 'domainParticipantFactoryQosPoliciesType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present.emplace(name);
+
+        if (strcmp(name, ENTITY_FACTORY) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLEntityFactoryQos(*element, qos.entity_factory()))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, SHM_WATCHDOG_THREAD) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*element, qos.shm_watchdog_thread()))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, FILE_WATCH_THREADS) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*element, qos.file_watch_threads()))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Invalid element found into 'domainParticipantFactoryQosPoliciesType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
 }
 
 XMLP_ret XMLParser::getXMLPublisherAttributes(
@@ -4369,6 +4504,197 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
         }
     }
 
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLThreadSettings(
+        tinyxml2::XMLElement& elem,
+        fastdds::rtps::ThreadSettings& thread_setting)
+{
+    /*
+        <xs:complexType name="threadSettingsType">
+            <xs:all>
+                <xs:element name="scheduling_policy" type="int32" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="priority" type="int32" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="affinity" type="uint32" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="stack_size" type="int32" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+     */
+    uint32_t port = 0;
+    return getXMLThreadSettingsWithPort(elem, thread_setting,
+                   port) != XMLP_ret::XML_ERROR ? XMLP_ret::XML_OK : XMLP_ret::XML_ERROR;
+}
+
+XMLP_ret XMLParser::getXMLThreadSettingsWithPort(
+        tinyxml2::XMLElement& elem,
+        fastdds::rtps::ThreadSettings& thread_setting,
+        uint32_t& port)
+{
+    /*
+        <xs:complexType name="threadSettingsWithPortType">
+            <xs:complexContent>
+                <xs:extension base="threadSettingsType">
+                    <xs:attribute name="port" type="uint32" use="optional"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+     */
+
+    /*
+     * The are 4 allowed elements, all their min occurrences are 0, and their max are 1.
+     * In case port is not present, return NOK instead of ERROR
+     */
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    bool port_found = false;
+    for (const tinyxml2::XMLAttribute* attrib = elem.FirstAttribute(); attrib != nullptr; attrib = attrib->Next())
+    {
+        if (strcmp(attrib->Name(), PORT) == 0)
+        {
+            try
+            {
+                std::string temp = attrib->Value();
+                temp.erase(std::remove_if(temp.begin(), temp.end(), [](unsigned char c)
+                        {
+                            return std::isspace(c);
+                        }), temp.end());
+                if (attrib->Value()[0] == '-')
+                {
+                    throw std::invalid_argument("Negative value detected");
+                }
+                port = static_cast<uint32_t>(std::stoul(attrib->Value()));
+                port_found = true;
+            }
+            catch (std::invalid_argument& except)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Found wrong value " << attrib->Value() << " for port attribute. " <<
+                        except.what());
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Found wrong attribute " << attrib->Name() << " in 'thread_settings");
+            ret = XMLP_ret::XML_ERROR;
+            break;
+        }
+    }
+
+    // Set ret to NOK is port attribute was not present
+    if (ret == XMLP_ret::XML_OK && !port_found)
+    {
+        ret = XMLP_ret::XML_NOK;
+    }
+
+    const uint8_t ident = 1;
+    std::set<std::string> tags_present;
+
+    for (tinyxml2::XMLElement* current_elem = elem.FirstChildElement();
+            current_elem != nullptr && ret != XMLP_ret::XML_ERROR;
+            current_elem = current_elem->NextSiblingElement())
+    {
+        const char* name = current_elem->Name();
+        if (tags_present.count(name) != 0)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'thread_settings'. Tag: " << name);
+            ret = XMLP_ret::XML_ERROR;
+            break;
+        }
+        tags_present.emplace(name);
+
+        if (strcmp(current_elem->Name(), SCHEDULING_POLICY) == 0)
+        {
+            // scheduling_policy - int32Type
+            if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.scheduling_policy, ident) ||
+                    thread_setting.scheduling_policy < -1)
+            {
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+        }
+        else if (strcmp(current_elem->Name(), PRIORITY) == 0)
+        {
+            // priority - int32Type
+            if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.priority, ident))
+            {
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+        }
+        else if (strcmp(current_elem->Name(), AFFINITY) == 0)
+        {
+            // affinity - uint64Type
+            if (XMLP_ret::XML_OK != getXMLUint(current_elem, &thread_setting.affinity, ident))
+            {
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+        }
+        else if (strcmp(current_elem->Name(), STACK_SIZE) == 0)
+        {
+            // stack_size - int32Type
+            if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.stack_size, ident) ||
+                    thread_setting.stack_size < -1)
+            {
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Found incorrect tag '" << current_elem->Name() << "'");
+            ret = XMLP_ret::XML_ERROR;
+            break;
+        }
+    }
+    return ret;
+}
+
+XMLP_ret XMLParser::getXMLEntityFactoryQos(
+        tinyxml2::XMLElement& elem,
+        fastdds::dds::EntityFactoryQosPolicy& entity_factory)
+{
+    /*
+        <xs:complexType name="entityFactoryQosPolicyType">
+            <xs:all>
+                <xs:element name="autoenable_created_entities" type="boolean" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+     */
+
+    /*
+     * The only allowed element is autoenable_created_entities, its min occurrences is 0, and its max is 1.
+     */
+    const uint8_t ident = 1;
+    std::set<std::string> tags_present;
+
+    for (tinyxml2::XMLElement* current_elem = elem.FirstChildElement(); current_elem != nullptr;
+            current_elem = current_elem->NextSiblingElement())
+    {
+        const char* name = current_elem->Name();
+        if (tags_present.count(name) != 0)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'entityFactoryQosPolicyType'. Tag: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present.emplace(name);
+
+        if (strcmp(current_elem->Name(), AUTOENABLE_CREATED_ENTITIES) == 0)
+        {
+            // autoenable_created_entities - boolean
+            if (XMLP_ret::XML_OK != getXMLBool(current_elem, &entity_factory.autoenable_created_entities, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Found incorrect tag '" << current_elem->Name() << "'");
+            return XMLP_ret::XML_ERROR;
+        }
+    }
     return XMLP_ret::XML_OK;
 }
 
