@@ -105,16 +105,17 @@ UDPv6Transport::UDPv6Transport(
 
     if (!descriptor.interfaceWhiteList.empty())
     {
+        const auto white_begin = descriptor.interfaceWhiteList.begin();
+        const auto white_end = descriptor.interfaceWhiteList.end();
         std::vector<IPFinder::info_IP> local_interfaces;
         get_ipv6s(local_interfaces, true);
+
+
         for (IPFinder::info_IP& infoIP : local_interfaces)
         {
-            for (auto& whitelist_interface : descriptor.interfaceWhiteList)
+            if (std::find(white_begin, white_end, infoIP.name) != white_end ||  std::find(white_begin, white_end, infoIP.dev) != white_end)
             {
-                if (compare_ips(infoIP.name, whitelist_interface))
-                {
-                    interface_whitelist_.emplace_back(ip::address_v6::from_string(infoIP.name));
-                }
+                interface_whitelist_.emplace_back(ip::address_v6::from_string(infoIP.name));
             }
         }
 
