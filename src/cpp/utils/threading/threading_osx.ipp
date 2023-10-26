@@ -16,6 +16,7 @@
 #include <cstring>
 #include <limits>
 
+#include <mach/mach.h>
 #include <pthread.h>
 
 #include <fastdds/dds/log/Log.hpp>
@@ -76,23 +77,19 @@ static void configure_current_thread_scheduler(
     // Set Scheduler Class and Priority       
     //
     
-    if((sched_class == SCHED_OTHER) ||
-       (sched_class == SCHED_BATCH) ||
-       (sched_class == SCHED_IDLE)) 
+    if(sched_class == SCHED_OTHER) 
     {               
-        //
-        // BATCH and IDLE do not have explicit priority values.
-        // - Requires priorty value to be zero (0).
         
-        result = pthread_setschedparam(self_tid, sched_class, &param);
-
         //
         // Sched OTHER has a nice value, that we pull from the priority parameter.
+        // - Requires priorty value to be zero (0).
         // 
-        
-        if(sched_class == SCHED_OTHER && change_priority)
-        {            
-            result = setpriority(PRIO_PROCESS, gettid(), sched_priority);
+        result = pthread_setschedparam(self_tid, sched_class, &param);
+        if(0 == result && change_priority)
+        {
+            uint64_t tid;
+            pthread_threadid_np(NULL, &tid);
+            result = setpriority(PRIO_PROCESS, tid, sched_priority);
         }                
     }
     else if((sched_class == SCHED_FIFO) ||

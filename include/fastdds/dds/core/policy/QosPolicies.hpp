@@ -2951,6 +2951,7 @@ public:
                 max_domains_ :
                 b.domain_ids().size());
         domain_ids_ = b.domain_ids();
+        data_sharing_listener_thread_ = b.data_sharing_listener_thread();
 
         return *this;
     }
@@ -2961,6 +2962,7 @@ public:
         return kind_ == b.kind_ &&
                shm_directory_ == b.shm_directory_ &&
                domain_ids_ == b.domain_ids_ &&
+               data_sharing_listener_thread_ == b.data_sharing_listener_thread_ &&
                Parameter_t::operator ==(b) &&
                QosPolicy::operator ==(b);
     }
@@ -3137,6 +3139,37 @@ public:
         }
     }
 
+    /**
+     * Getter for DataSharing listener thread ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    rtps::ThreadSettings& data_sharing_listener_thread()
+    {
+        return data_sharing_listener_thread_;
+    }
+
+    /**
+     * Getter for DataSharing listener thread ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    const rtps::ThreadSettings& data_sharing_listener_thread() const
+    {
+        return data_sharing_listener_thread_;
+    }
+
+    /**
+     * Setter for the DataSharing listener thread ThreadSettings
+     *
+     * @param value New ThreadSettings to be set
+     */
+    void data_sharing_listener_thread(
+            const rtps::ThreadSettings& value)
+    {
+        data_sharing_listener_thread_ = value;
+    }
+
 private:
 
     void setup(
@@ -3165,6 +3198,9 @@ private:
 
     //! Only endpoints with matching domain IDs are DataSharing compatible
     std::vector<uint64_t> domain_ids_;
+
+    //! Thread settings for the DataSharing listener thread
+    rtps::ThreadSettings data_sharing_listener_thread_;
 };
 
 

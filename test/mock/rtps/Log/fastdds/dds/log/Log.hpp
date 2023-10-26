@@ -18,7 +18,10 @@
 
 #include <functional>
 #include <memory>
+
 #include <gmock/gmock.h>
+
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
 /**
  * eProsima log mock.
@@ -82,6 +85,13 @@ public:
         ClearConsumersFunc();
     }
 
+    static std::function<void()> SetThreadConfigFunc;
+    static void SetThreadConfig(
+            rtps::ThreadSettings&)
+    {
+        SetThreadConfigFunc();
+    }
+
 };
 
 using ::testing::_;
@@ -100,6 +110,8 @@ public:
     MOCK_METHOD1(RegisterConsumer, void(std::unique_ptr<LogConsumer>&));
 
     MOCK_METHOD0(ClearConsumers, void());
+
+    MOCK_METHOD(void, SetThreadConfig, ());
 };
 
 } // namespace dds

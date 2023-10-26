@@ -147,6 +147,36 @@
                 <userData>
                     <value>${XML_PROFILES_ENV_VAR_66}</value>
                 </userData>
+                <builtin_controllers_sender_thread>
+                    <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                    <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                    <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                    <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+                </builtin_controllers_sender_thread>
+                <timed_events_thread>
+                    <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                    <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                    <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                    <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+                </timed_events_thread>
+                <discovery_server_thread>
+                    <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                    <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                    <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                    <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+                </discovery_server_thread>
+                <builtin_transports_reception_threads>
+                    <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                    <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                    <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                    <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+                </builtin_transports_reception_threads>
+                <security_log_thread>
+                    <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                    <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                    <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                    <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+                </security_log_thread>
             </rtps>
         </participant>
 
@@ -388,4 +418,23 @@
     <library_settings>
         <intraprocess_delivery>${XML_PROFILES_ENV_VAR_156}</intraprocess_delivery>
     </library_settings>
+    <domainparticipant_factory profile_name="factory">
+        <qos>
+            <entity_factory>
+                <autoenable_created_entities>${XML_PROFILES_ENV_VAR_157}</autoenable_created_entities>
+            </entity_factory>
+            <shm_watchdog_thread>
+                <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+            </shm_watchdog_thread>
+            <file_watch_threads>
+                <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+            </file_watch_threads>
+        </qos>
+    </domainparticipant_factory>
 </dds>
