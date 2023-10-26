@@ -159,7 +159,7 @@ ReturnCode_t DataReaderImpl::enable()
     att.matched_writers_allocation = qos_.reader_resource_limits().matched_publisher_allocation;
     att.expectsInlineQos = qos_.expects_inline_qos();
     att.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_ACKs.enabled;
-    att.data_sharing_listener_thread = qos_.data_sharing_listener_thread();
+    att.data_sharing_listener_thread = qos_.data_sharing().data_sharing_listener_thread();
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
@@ -1565,7 +1565,7 @@ bool DataReaderImpl::can_qos_be_updated(
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "Positive ACKs QoS cannot be changed after the creation of a DataReader.");
     }
-    if (!(to.data_sharing_listener_thread() == from.data_sharing_listener_thread()))
+    if (!(to.data_sharing().data_sharing_listener_thread() == from.data_sharing().data_sharing_listener_thread()))
     {
         updatable = false;
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,

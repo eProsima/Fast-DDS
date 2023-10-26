@@ -42,6 +42,7 @@ extern const char* LIBRARY_SETTINGS;
 extern const char* TRANSPORT_DESCRIPTORS;
 extern const char* PROFILE_NAME;
 extern const char* DEFAULT_PROF;
+extern const char* DOMAINPARTICIPANT_FACTORY;
 extern const char* PARTICIPANT;
 extern const char* PUBLISHER;
 extern const char* SUBSCRIBER;
@@ -80,8 +81,17 @@ extern const char* HEALTHY_CHECK_TIMEOUT_MS;
 extern const char* DISCARD;
 extern const char* FAIL;
 extern const char* RTPS_DUMP_FILE;
+extern const char* DEFAULT_RECEPTION_THREADS;
+extern const char* RECEPTION_THREADS;
+extern const char* RECEPTION_THREAD;
+extern const char* DUMP_THREAD;
 extern const char* ON;
 extern const char* AUTO;
+extern const char* THREAD_SETTINGS;
+extern const char* SCHEDULING_POLICY;
+extern const char* PRIORITY;
+extern const char* AFFINITY;
+extern const char* STACK_SIZE;
 
 // IntraprocessDeliveryType
 extern const char* OFF;
@@ -97,6 +107,12 @@ extern const char* DATA_READER;
 
 /// LibrarySettings attributes
 extern const char* INTRAPROCESS_DELIVERY;
+
+/// DomainParticipantFactory Qos
+extern const char* ENTITY_FACTORY;
+extern const char* AUTOENABLE_CREATED_ENTITIES;
+extern const char* SHM_WATCHDOG_THREAD;
+extern const char* FILE_WATCH_THREADS;
 
 /// RTPS Participant attributes
 extern const char* ALLOCATION;
@@ -132,6 +148,11 @@ extern const char* DYNAMIC_LC;
 extern const char* MAX_PROPERTIES;
 extern const char* MAX_USER_DATA;
 extern const char* MAX_PARTITIONS;
+extern const char* TIMED_EVENTS_THREAD;
+extern const char* DISCOVERY_SERVER_THREAD;
+extern const char* SECURITY_LOG_THREAD;
+extern const char* BUILTIN_TRANSPORTS_RECEPTION_THREADS;
+extern const char* BUILTIN_CONTROLLERS_SENDER_THREAD;
 
 /// Publisher-subscriber attributes
 extern const char* TOPIC;
@@ -149,6 +170,7 @@ extern const char* USER_DEF_ID;
 extern const char* ENTITY_ID;
 extern const char* MATCHED_SUBSCRIBERS_ALLOCATION;
 extern const char* MATCHED_PUBLISHERS_ALLOCATION;
+extern const char* DATA_SHARING_LISTENER_THREAD;
 
 ///
 extern const char* IGN_NON_MATCHING_LOCS;

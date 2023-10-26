@@ -15,6 +15,10 @@
 #ifndef _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
 #define _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
 
+#include <cstdint>
+#include <string>
+
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 
 namespace eprosima {
@@ -106,12 +110,26 @@ typedef struct SharedMemTransportDescriptor : public PortBasedTransportDescripto
         rtps_dump_file_ = rtps_dump_file;
     }
 
+    //! Return the thread settings for the transport dump thread
+    RTPS_DllAPI ThreadSettings dump_thread() const
+    {
+        return dump_thread_;
+    }
+
+    //! Set the thread settings for the transport dump thread
+    RTPS_DllAPI void dump_thread(
+            const ThreadSettings& dump_thread)
+    {
+        dump_thread_ = dump_thread;
+    }
+
 private:
 
     uint32_t segment_size_;
     uint32_t port_queue_capacity_;
     uint32_t healthy_check_timeout_ms_;
     std::string rtps_dump_file_;
+    ThreadSettings dump_thread_;
 
 }SharedMemTransportDescriptor;
 

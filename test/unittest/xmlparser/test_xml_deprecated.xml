@@ -151,6 +151,36 @@
                 <userData>
                     <value>56.30.0.CE</value>
                 </userData>
+                <builtin_controllers_sender_thread>
+                    <scheduling_policy>12</scheduling_policy>
+                    <priority>12</priority>
+                    <affinity>12</affinity>
+                    <stack_size>12</stack_size>
+                </builtin_controllers_sender_thread>
+                <timed_events_thread>
+                    <scheduling_policy>12</scheduling_policy>
+                    <priority>12</priority>
+                    <affinity>12</affinity>
+                    <stack_size>12</stack_size>
+                </timed_events_thread>
+                <discovery_server_thread>
+                    <scheduling_policy>12</scheduling_policy>
+                    <priority>12</priority>
+                    <affinity>12</affinity>
+                    <stack_size>12</stack_size>
+                </discovery_server_thread>
+                <builtin_transports_reception_threads>
+                    <scheduling_policy>12</scheduling_policy>
+                    <priority>12</priority>
+                    <affinity>12</affinity>
+                    <stack_size>12</stack_size>
+                </builtin_transports_reception_threads>
+                <security_log_thread>
+                    <scheduling_policy>12</scheduling_policy>
+                    <priority>12</priority>
+                    <affinity>12</affinity>
+                    <stack_size>12</stack_size>
+                </security_log_thread>
             </rtps>
         </participant>
 

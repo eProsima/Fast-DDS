@@ -95,7 +95,7 @@ static void configure_current_thread_scheduler(
         // Sched OTHER has a nice value, that we pull from the priority parameter.
         // 
         
-        if(sched_class == SCHED_OTHER && change_priority)
+        if(0 == result && sched_class == SCHED_OTHER && change_priority)
         {            
             result = setpriority(PRIO_PROCESS, gettid(), sched_priority);
         }                

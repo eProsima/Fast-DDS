@@ -15,23 +15,26 @@
 #ifndef XML_PROFILE_MANAGER_H_
 #define XML_PROFILE_MANAGER_H_
 
+#include <cstdio>
+#include <map>
+#include <string>
+
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicPubSubType.h>
-
-#include <stdio.h>
-#include <string>
-#include <map>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
+using participant_factory_map_t = std::map<std::string, up_participantfactory_t>;
+using part_factory_map_iterator_t = participant_factory_map_t::iterator;
 using participant_map_t = std::map<std::string, up_participant_t>;
 using part_map_iterator_t = participant_map_t::iterator;
 using publisher_map_t = std::map<std::string, up_publisher_t>;
@@ -138,6 +141,25 @@ public:
     /**
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
+     * @param qos Structure to be filled.
+     * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
+    RTPS_DllAPI static XMLP_ret fillDomainParticipantFactoryQos(
+            const std::string& profile_name,
+            fastdds::dds::DomainParticipantFactoryQos& qos,
+            bool log_error = true);
+
+    /**
+     * Fills input domain participant factory qos with the default values.
+     * @param qos Structure to be filled.
+     */
+    RTPS_DllAPI static void getDefaultDomainParticipantFactoryQos(
+            fastdds::dds::DomainParticipantFactoryQos& qos);
+
+    /**
+     * Search for the profile specified and fill the structure.
+     * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
      * @param log_error Flag to log an error if the profile_name is not found.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
@@ -227,6 +249,7 @@ public:
      */
     RTPS_DllAPI static void DeleteInstance()
     {
+        participant_factory_profiles_.clear();
         participant_profiles_.clear();
         publisher_profiles_.clear();
         subscriber_profiles_.clear();
@@ -268,6 +291,10 @@ private:
             up_base_node_t properties,
             const std::string& filename);
 
+    RTPS_DllAPI static XMLP_ret extractDomainParticipantFactoryProfile(
+            up_base_node_t& profile,
+            const std::string& filename);
+
     RTPS_DllAPI static XMLP_ret extractParticipantProfile(
             up_base_node_t& profile,
             const std::string& filename);
@@ -295,6 +322,8 @@ private:
     static BaseNode* root;
 
     static LibrarySettingsAttributes library_settings_;
+
+    static participant_factory_map_t participant_factory_profiles_;
 
     static participant_map_t participant_profiles_;
 

@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
     <profiles>
+        <domainparticipant_factory profile_name="factory">
+            <qos>
+                <entity_factory>
+                    <autoenable_created_entities>true</autoenable_created_entities>
+                </entity_factory>
+                <shm_watchdog_thread>
+                    <scheduling_policy>-1</scheduling_policy>
+                    <priority>0</priority>
+                    <affinity>0</affinity>
+                    <stack_size>-1</stack_size>
+                </shm_watchdog_thread>
+                <file_watch_threads>
+                    <scheduling_policy>-1</scheduling_policy>
+                    <priority>0</priority>
+                    <affinity>0</affinity>
+                    <stack_size>-1</stack_size>
+                </file_watch_threads>
+            </qos>
+        </domainparticipant_factory>
 
         <participant profile_name="test_participant_profile" is_default_profile="true">
             <domainId>123</domainId>
@@ -122,6 +141,36 @@
                 <participantID>9898</participantID>
                 <useBuiltinTransports>true</useBuiltinTransports>
                 <name>test_name</name>
+                <builtin_controllers_sender_thread>
+                    <scheduling_policy>12</scheduling_policy>
+                    <priority>12</priority>
+                    <affinity>12</affinity>
+                    <stack_size>12</stack_size>
+                </builtin_controllers_sender_thread>
+                <timed_events_thread>
+                    <scheduling_policy>12</scheduling_policy>
+                    <priority>12</priority>
+                    <affinity>12</affinity>
+                    <stack_size>12</stack_size>
+                </timed_events_thread>
+                <discovery_server_thread>
+                    <scheduling_policy>12</scheduling_policy>
+                    <priority>12</priority>
+                    <affinity>12</affinity>
+                    <stack_size>12</stack_size>
+                </discovery_server_thread>
+                <builtin_transports_reception_threads>
+                    <scheduling_policy>12</scheduling_policy>
+                    <priority>12</priority>
+                    <affinity>12</affinity>
+                    <stack_size>12</stack_size>
+                </builtin_transports_reception_threads>
+                <security_log_thread>
+                    <scheduling_policy>12</scheduling_policy>
+                    <priority>12</priority>
+                    <affinity>12</affinity>
+                    <stack_size>12</stack_size>
+                </security_log_thread>
             </rtps>
         </participant>
 
