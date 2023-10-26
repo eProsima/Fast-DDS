@@ -18,6 +18,11 @@
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
 #include <fastdds/rtps/network/SenderResource.h>
 
+<<<<<<< HEAD
+=======
+#include <rtps/transport/ChainingSenderResource.hpp>
+#include <rtps/transport/TCPChannelResource.h>
+>>>>>>> e94deb85d (Hotfix TCP sender resources creation (#3932))
 #include <rtps/transport/TCPTransportInterface.h>
 #include <rtps/transport/TCPChannelResource.h>
 
@@ -75,6 +80,17 @@ public:
         if (sender_resource->kind() == transport.kind())
         {
             returned_resource = dynamic_cast<TCPSenderResource*>(sender_resource);
+
+            //! May be chained
+            if (!returned_resource)
+            {
+                auto chaining_sender = dynamic_cast<ChainingSenderResource*>(sender_resource);
+
+                if (chaining_sender)
+                {
+                    returned_resource = dynamic_cast<TCPSenderResource*>(chaining_sender->lower_sender_cast());
+                }
+            }
         }
 
         return returned_resource;

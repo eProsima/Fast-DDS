@@ -15,7 +15,13 @@
 #ifndef _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
 #define _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
 
+<<<<<<< HEAD
 #include <fastrtps/rtps/network/SenderResource.h>
+=======
+#include <fastdds/rtps/transport/SenderResource.h>
+
+#include <rtps/transport/ChainingSenderResource.hpp>
+>>>>>>> e94deb85d (Hotfix TCP sender resources creation (#3932))
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
 
 namespace eprosima {
@@ -66,6 +72,17 @@ public:
         if (sender_resource->kind() == transport.kind())
         {
             returned_resource = dynamic_cast<SharedMemSenderResource*>(sender_resource);
+
+            //! May be chained
+            if (!returned_resource)
+            {
+                auto chaining_sender = dynamic_cast<ChainingSenderResource*>(sender_resource);
+
+                if (chaining_sender)
+                {
+                    returned_resource = dynamic_cast<SharedMemSenderResource*>(chaining_sender->lower_sender_cast());
+                }
+            }
         }
 
         return returned_resource;
