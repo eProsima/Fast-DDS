@@ -31,7 +31,7 @@ if(WIN32)
 endif()
 
 add_executable(ReaderProxyTests ${WRITERPROXYTESTS_SOURCE})
-target_compile_definitions(ReaderProxyTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(ReaderProxyTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -75,7 +75,7 @@ set(LIVELINESSMANAGERTESTS_SOURCE LivelinessManagerTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
 add_executable(LivelinessManagerTests ${LIVELINESSMANAGERTESTS_SOURCE})
-target_compile_definitions(LivelinessManagerTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(LivelinessManagerTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
