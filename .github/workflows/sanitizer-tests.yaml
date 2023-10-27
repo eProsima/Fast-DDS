@@ -7,6 +7,10 @@ on:
         description: 'Branch or tag of Discovery Server repository (https://github.com/eProsima/Discovery-Server)'
         required: true
         default: 'master'
+      fastdds_branch:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        required: true
+        default: 'master'
   pull_request:
   push:
     branches:
@@ -23,30 +27,53 @@ jobs:
 
     runs-on: ubuntu-22.04
 
+    env:
+        FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
+
     steps:
-      - name: Sync eProsima/Fast-DDS repository
-        uses: actions/checkout@v3
+      - uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          path: src/Fast-DDS
+          packages: wget
+
+      - uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool
+
+      - uses: eProsima/eProsima-CI/ubuntu/get_file_from_repo@v0
+        with:
+          source_repository: eProsima/Fast-DDS
+          source_repository_branch: ${{ env.FASTDDS_BRANCH }}
+          file_name: fastrtps.repos
+          file_result: fastrtps.repos
+
+      - name: Fetch Fast DDS & dependencies
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
+        with:
+          vcs_repos_file: fastrtps.repos
+          destination_workspace: src
+
+      - name: Checkout Fast DDS branch
+        run: |
+          cd ./src/fastrtps
+          git checkout ${{ env.FASTDDS_BRANCH }}
 
       - name: Install apt packages
-        uses: ./src/Fast-DDS/.github/actions/install-apt-packages
+        uses: ./src/fastrtps/.github/actions/install-apt-packages
 
       - name: Install Python packages
-        uses: ./src/Fast-DDS/.github/actions/install-python-packages
+        uses: ./src/fastrtps/.github/actions/install-python-packages
 
-      - name: Fetch Fast DDS dependencies
-        uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
+      - name: Install GTest
+        uses: eProsima/eProsima-CI/ubuntu/install_gtest@v0
         with:
-          target_directory: src
-          googletest: true
+          version: v1.12.1
 
       - name: Build workspace
         run: |
-          cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
+          cat src/fastrtps/.github/workflows/config/asan_colcon.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --metas src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
+            --metas src/fastrtps/.github/workflows/config/asan_colcon.meta
 
       - name: Run tests Fast DDS
         run: |
@@ -70,8 +97,8 @@ jobs:
       - name: Report ASAN errors
         if: always()
         run: |
-          bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "==ERROR:" log/latest_test/fastrtps/stdout_stderr.log _tmp_specific_error_file.log
-          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/fastrtps/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer asan
+          bash src/fastrtps/.github/workflows/utils/specific_errors_filter.sh "==ERROR:" log/latest_test/fastrtps/stdout_stderr.log _tmp_specific_error_file.log
+          python3 src/fastrtps/.github/workflows/utils/log_parser.py --log-file log/latest_test/fastrtps/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer asan
 
 
   asan-discovery-server-test:
@@ -81,34 +108,61 @@ jobs:
 
     runs-on: ubuntu-22.04
 
+    env:
+      FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
+      DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || 'master' }}
+
     steps:
-      - name: Sync eProsima/Fast-DDS repository
-        uses: actions/checkout@v3
+      - uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          path: src/Fast-DDS
+          packages: wget
+
+      - uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool
+
+      - uses: eProsima/eProsima-CI/ubuntu/get_file_from_repo@v0
+        with:
+          source_repository: eProsima/Fast-DDS
+          source_repository_branch: ${{ env.FASTDDS_BRANCH }}
+          file_name: fastrtps.repos
+          file_result: fastrtps.repos
+
+      - name: Fetch Fast DDS & dependencies
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
+        with:
+          vcs_repos_file: fastrtps.repos
+          destination_workspace: src
+
+      - name: Checkout Fast DDS branch
+        run: |
+          cd ./src/fastrtps
+          git checkout ${{ env.FASTDDS_BRANCH }}
+
+      - name: Sync eProsima/Discovery-Server repository
+        uses: actions/checkout@v4
+        with:
+          path: src/discovery_server
+          repository: eProsima/Discovery-Server
+          ref: ${{ env.DEFAULT_DISCOVERY_SERVER_BRANCH }}
 
       - name: Install apt packages
-        uses: ./src/Fast-DDS/.github/actions/install-apt-packages
+        uses: ./src/fastrtps/.github/actions/install-apt-packages
 
       - name: Install Python packages
-        uses: ./src/Fast-DDS/.github/actions/install-python-packages
+        uses: ./src/fastrtps/.github/actions/install-python-packages
 
-      - name: Fetch Fast DDS dependencies
-        uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
-        env:
-          DEFAULT_DISCOVERY_SERVER_BRANCH: 'master'
+      - name: Install GTest
+        uses: eProsima/eProsima-CI/ubuntu/install_gtest@v0
         with:
-          target_directory: src
-          googletest: true
-          discovery_server: true
-          discovery_server_branch: ${{ github.event.inputs.discovery_server_branch || env.DEFAULT_DISCOVERY_SERVER_BRANCH }}
+          version: v1.12.1
 
       - name: Build workspace
         run: |
-          cat src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
+          cat src/fastrtps/.github/workflows/config/asan_colcon.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --metas src/Fast-DDS/.github/workflows/asan/asan_colcon.meta
+            --metas src/fastrtps/.github/workflows/config/asan_colcon.meta
 
       - name: Run tests Fast DDS
         run: |
@@ -132,5 +186,5 @@ jobs:
       - name: Report ASAN errors
         if: always()
         run: |
-          bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "==ERROR:" log/latest_test/discovery-server/stdout_stderr.log _tmp_specific_error_file.log
-          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/discovery-server/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=asan
+          bash src/fastrtps/.github/workflows/utils/specific_errors_filter.sh "==ERROR:" log/latest_test/discovery-server/stdout_stderr.log _tmp_specific_error_file.log
+          python3 src/fastrtps/.github/workflows/utils/log_parser.py --log-file log/latest_test/discovery-server/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=asan
