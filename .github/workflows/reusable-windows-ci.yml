@@ -19,6 +19,10 @@ on:
         description: 'Extra arguments for ctest cli'
         required: false
         type: string
+      fastdds_branch:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        required: true
+        type: string
 
 defaults:
   run:
@@ -45,7 +49,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: lukka/get-cmake@latest
         with:
-          cmakeVersion: '3.16.3'
+          cmakeVersion: '3.22.6'
 
       - name: Patch SDK for source indexing
         run: |
@@ -135,6 +139,30 @@ jobs:
              # WER service is manual by default
              Start-Service WerSvc
 
+      - name: Install OpenSSL
+        uses: eProsima/eprosima-CI/windows/install_openssl@v0
+
+      - name: Update OpenSSL environment variables
+        run: |
+          # Update the environment
+          if (Test-Path -Path $Env:ProgramW6432\OpenSSL)
+          {
+            "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+          }
+          elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win)
+          {
+            "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+          }
+          elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win64)
+          {
+            "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win64" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+          }
+          else
+          {
+            Write-Error -Message "Cannot find OpenSSL installation."
+            exit 1
+          }
+
       - name: Install colcon and other python packages
         run: |
           pip3 install -U colcon-common-extensions vcstool colcon-mixin xmlschema
@@ -199,14 +227,6 @@ jobs:
 
           # clean up
           'build', 'googletest', 'gtest.log' | del -Recurse -Force
-
-      - name: Install OpenSSL
-        uses: eProsima/eprosima-CI/windows/install_openssl@v0
-
-      - name: Update OpenSSL environment variables
-        run: |
-          # Update the environment
-          "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
       - name: Update known hosts file for DNS resolver testing
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
@@ -348,13 +368,21 @@ jobs:
           # Nightly job
           if ("${{ inputs.label }}".Contains("nightly"))
           {
-              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly.repos"
+              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_${{ inputs.fastdds_branch }}.repos"
+              if (!(Test-Path -Path $depends_repos_path))
+              {
+                $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_master.repos"
+              }
               $meta_path = ".\src\fastrtps\.github\workflows\config\nightly.meta"
           }
           # Either PR or manual
           else
           {
-              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci.repos"
+              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_${{ inputs.fastdds_branch }}.repos"
+              if (!(Test-Path -Path $depends_repos_path))
+              {
+                $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_master.repos"
+              }
               $meta_path = ".\src\fastrtps\.github\workflows\config\default_ci.meta"
           }
           Write-Output "Selected repos files: $depends_repos_path"

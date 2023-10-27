@@ -11,11 +11,11 @@ jobs:
       fail-fast: false
       matrix:
         dest_branch:
-          - '2.11.x'
+          - '2.12.x'
     steps:
     - name: Mirror action step
       id: mirror
-      uses: google/mirror-branch-action@v1.0
+      uses: eProsima/eProsima-CI/external/mirror-branch-action@v0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         source: 'master'

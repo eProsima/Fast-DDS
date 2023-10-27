@@ -19,14 +19,17 @@ on:
         description: 'Extra arguments for ctest cli'
         required: false
         type: string
+      fastdds_branch:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        type: string
+        required: true
 
   push:
     branches:
       - 'master'
+      - '2.11.x'
       - '2.10.x'
-      - '2.9.x'
       - '2.6.x'
-      - '2.1.x'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -50,3 +53,4 @@ jobs:
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: ${{ inputs.cmake-args }}
       ctest-args: ${{ inputs.ctest-args }}
+      fastdds_branch: ${{ inputs.fastdds_branch || github.base_ref || github.ref || 'master' }}

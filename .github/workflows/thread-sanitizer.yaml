@@ -2,6 +2,10 @@ name: Thread Sanitizer analysis
 on:
   workflow_dispatch:
     inputs:
+      fastdds_branch:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        required: true
+        default: 'master'
       optional_cmake_args:
         description: 'Optional CMake Compilation Flags'
         required: false
@@ -27,139 +31,106 @@ on:
       - '**.txt'
       - '!**/CMakeLists.txt'
 
-env:
-  TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000
-  # ubuntu host doesn't have an environment SHELL value (docker and vm images does)???
-  SHELL: /bin/bash
-  # GCC 11.3 (Ubuntu Jammy default) produces several false positives regarding timed synchronization protocols
-  # These issues were fixed in GCC 12 so we upgrade to that version.
-  CC: gcc-12
-  CXX: g++-12
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
-defaults:
-  run:
-    shell: pwsh
-    working-directory: /home/runner/work
 jobs:
+
   ubuntu-sanitizer-run:
     name: Sanitizer Evaluation
+
     if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
               contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
+
     runs-on: ubuntu-22.04
+
+    env:
+        FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
+        TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000
+        # GCC 11.3 (Ubuntu Jammy default) produces several false positives regarding timed synchronization protocols
+        # These issues were fixed in GCC 12 so we upgrade to that version.
+        CC: gcc-12
+        CXX: g++-12
+
     steps:
-      - name: Download the sanitizers cmake module and apply some fixes
-        run: |
-          git config --global user.email "dummy@mail.com"
-          git config --global user.name "dummy"
-          cd (New-Item -ItemType Directory -Path ./ws)
-          git clone https://github.com/arsenm/sanitizers-cmake
-          cd sanitizers-cmake
-          git remote add efork https://github.com/MiguelBarro/sanitizers-cmake.git
-          git fetch efork
-          git merge --no-edit efork/bugfix/cmake_updates
+      - uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: wget
 
-      - name: Download googletest and make it sanitizer aware
-        run: |
-          cd ws
-          git clone --branch release-1.11.0 https://github.com/google/googletest.git
-          cd googletest
-          git remote add efork https://github.com/MiguelBarro/googletest.git
-          git fetch efork
-          git merge --no-edit efork/bugfix/add_sanitizer_support
+      - uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool
 
-      - name: Build & install googletest
-        run: |
-          cd ws
-          cmake -DCMAKE_MODULE_PATH="$(pwd)/sanitizers-cmake/cmake" -DCMAKE_INSTALL_PREFIX="./install" `
-                -DBUILD_GMOCK=ON -DSANITIZE_THREAD=ON -DCMAKE_BUILD_TYPE=Debug `
-                -DCMAKE_VERBOSE_MAKEFILE=ON -B ./build/googletest ./googletest
-          cmake --build ./build/googletest --target install --verbose
+      - uses: eProsima/eProsima-CI/ubuntu/get_file_from_repo@v0
+        with:
+          source_repository: eProsima/Fast-DDS
+          source_repository_branch: ${{ env.FASTDDS_BRANCH }}
+          file_name: fastrtps.repos
+          file_result: fastrtps.repos
 
-      - name: Download Fast-CDR and make it sanitizer aware
-        run: |
-          cd ws
-          git clone https://github.com/eProsima/Fast-CDR.git
-          cd Fast-CDR
-          git remote add efork https://github.com/MiguelBarro/Fast-CDR.git
-          git fetch efork
-          git merge --no-edit efork/bugfix/add_sanitizer_support
+      - name: Fetch Fast DDS & dependencies
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
+        with:
+          vcs_repos_file: fastrtps.repos
+          destination_workspace: src
 
-      - name: Build & install Fast-CDR
+      - name: Checkout Fast DDS branch
         run: |
-          cd ws
-          cmake -DCMAKE_INSTALL_PREFIX="./install" -DCMAKE_PREFIX_PATH="./install" `
-                -DCMAKE_MODULE_PATH="$(pwd)/sanitizers-cmake/cmake" -DCMAKE_VERBOSE_MAKEFILE=ON `
-                -DSANITIZE_THREAD=ON -DCMAKE_BUILD_TYPE=Debug -B ./build/fastcdr ./Fast-CDR
-          cmake --build ./build/fastcdr --target install --verbose
+          cd ./src/fastrtps
+          git checkout ${{ env.FASTDDS_BRANCH }}
 
-      - name: Download foonathan/memory and make it sanitizer aware
-        run: |
-          cd ws
-          git clone https://github.com/foonathan/memory.git
-          cd memory
-          git remote add efork https://github.com/MiguelBarro/memory.git
-          git fetch efork
-          git merge --no-edit efork/bugfix/add_sanitizer_support
+      - name: Install apt packages
+        uses: ./src/fastrtps/.github/actions/install-apt-packages
 
-      - name: Build & install foonathan/memory
-        run: |
-          cd ws
-          cmake -DCMAKE_MODULE_PATH="$(pwd)/sanitizers-cmake/cmake" -DCMAKE_VERBOSE_MAKEFILE=ON -DSANITIZE_THREAD=ON `
-                -DCMAKE_INSTALL_PREFIX="./install" -DFOONATHAN_MEMORY_BUILD_TOOLS=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON `
-                -DFOONATHAN_MEMORY_BUILD_TESTS=ON -DFOONATHAN_MEMORY_BUILD_EXAMPLES=ON -DFOONATHAN_MEMORY_BUILD_TOOLS=ON  `
-                -DCMAKE_BUILD_TYPE=Debug -B ./build/memory ./memory
-          cmake --build ./build/memory --target install --verbose
+      - name: Install Python packages
+        uses: ./src/fastrtps/.github/actions/install-python-packages
 
-      - name: Download Fast-DDS and make it sanitizer aware
-        run: |
-          cd ws
-          git clone https://github.com/eProsima/Fast-DDS.git
-          cd Fast-DDS
-          git fetch origin ${{ github.ref }}:merge-branch
-          git checkout merge-branch
-          echo "Modified files against destination branch"
-          git diff --name-only HEAD~1
-          git remote add efork https://github.com/MiguelBarro/Fast-DDS.git
-          git fetch efork
-          git merge --no-edit efork/bugfix/add_sanitizer_support
+      - name: Install GTest
+        uses: eProsima/eProsima-CI/ubuntu/install_gtest@v0
+        with:
+          version: release-1.11.0
 
-      - name: Build & install Fast-DDS
+      - name: Build workspace
         run: |
-          cd ws
-          cmake -DCMAKE_PREFIX_PATH="$(pwd)/install" -DCMAKE_INSTALL_PREFIX='./install' `
-                -DCMAKE_MODULE_PATH="$(pwd)/sanitizers-cmake/cmake" -DCMAKE_VERBOSE_MAKEFILE=ON -DSANITIZE_THREAD=ON `
-                -DGTEST_INDIVIDUAL=ON -DFASTDDS_STATISTICS=ON -DTHIRDPARTY=ON `
-                -DCOMPILE_EXAMPLES=OFF -DEPROSIMA_BUILD_TESTS=ON -DSECURITY=ON `
-                -DRTPS_API_TESTS=ON -DFASTRTPS_API_TESTS=ON -DFASTDDS_PIM_API_TESTS=ON `
-                -DCMAKE_BUILD_TYPE=Debug ${{ inputs.optional_cmake_args }} -B ./build/fastdds ./Fast-DDS
-          # Create a symlink to the reports folder
-          $report_dir = gci -Path ./build/fastdds -Attributes D |
-            ? Name -like "$(Get-Date -Format 'MMMM-dd-yyyy')*"
-          $report_dir = Join-Path $report_dir tsan | gi
-          echo "report folder is: $report_dir"
-          New-Item -ItemType SymbolicLink -Target $report_dir -Path ./build/fastdds/reports
-          cmake --build ./build/fastdds --target install -j 2 --verbose
+          cat src/fastrtps/.github/workflows/config/tsan_colcon.meta
+          colcon build \
+            --event-handlers=console_direct+ \
+            --metas src/fastrtps/.github/workflows/config/tsan_colcon.meta \
+            --cmake-args -DCMAKE_BUILD_TYPE=Debug ${{ inputs.optional_cmake_args }}
 
-      - name: Run Fast-DDS test & generate sanitizer reports
+      - name: Run tests Fast DDS
         run: |
-          cd ws/build/fastdds
-          # Exclude DDSSQLFilterValueTests tests to prevent hitting GH Actions resource limits
-          ctest --timeout 30 -j 2 -V -E DDSSQLFilterValueTests ${{ inputs.optional_ctest_args }}
-          # ctest fails if sanitizer reports are present
-          $LASTEXITCODE=0
+          source install/setup.bash && \
+          colcon test \
+            --packages-select fastrtps \
+            --event-handlers=console_direct+ \
+            --return-code-on-test-failure \
+            --ctest-args \
+              --timeout 30 \
+              -V -E DDSSQLFilterValueTests  ${{ inputs.optional_ctest_args }}
+        continue-on-error: true
+
+      - name: Upload Logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: tsan-logs
+          path: log/
+        if: always()
 
       - name: Process sanitizer reports
         id: report_summary
+        shell: pwsh
         continue-on-error: true
         run: |
           # Create a dir for the exports
-          $exports = New-Item -ItemType Directory -Path ./ws/exports
+          $exports = New-Item -ItemType Directory -Path ./exports
           # Move to the reports dir
-          pushd ./ws/build/fastdds/reports
+          pushd ./log/latest_test/fastrtps
           # Install the report parser module
           Find-Module -Repository PSGallery -Name SanReportParser | Install-Module -Scope CurrentUser -Force
           # Parse the report files
-          $rp = Show-Tsan (gci)
+          $rp = Show-Tsan -Path ./stdout_stderr.log
           # filter duplicates
           $rp = $rp | group md5hash | % { $_.group[0] }
           # Export raw data
@@ -205,10 +176,11 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: sanitation-report
-          path: /home/runner/work/ws/exports/*
+          path: exports/*
 
       - name: Check on failures
         if: ${{ steps.report_summary.outcome == 'failure' }}
+        shell: pwsh
         run: |
           Write-Host ${{ steps.report_summary.outcome }}
           exit 1
