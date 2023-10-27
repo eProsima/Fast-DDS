@@ -6,7 +6,7 @@ on:
       discovery_server_branch:
         description: 'Branch or tag of Discovery Server repository (https://github.com/eProsima/Discovery-Server)'
         required: true
-        default: 'master'
+        default: 'v1.2.1'
       fastdds_branch:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
@@ -110,7 +110,7 @@ jobs:
 
     env:
       FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
-      DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || 'master' }}
+      DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || 'v1.2.1' }}
 
     steps:
       - uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
