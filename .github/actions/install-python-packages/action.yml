@@ -10,5 +10,9 @@ runs:
           colcon-mixin \
           vcstool \
           setuptools \
-          gcovr
+          gcovr \
+          tomark \
+          xmltodict \
+          jsondiff \
+          pandas
       shell: bash
