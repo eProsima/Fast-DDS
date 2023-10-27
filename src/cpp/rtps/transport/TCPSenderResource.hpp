@@ -18,13 +18,9 @@
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
 #include <fastdds/rtps/network/SenderResource.h>
 
-<<<<<<< HEAD
-=======
 #include <rtps/transport/ChainingSenderResource.hpp>
 #include <rtps/transport/TCPChannelResource.h>
->>>>>>> e94deb85d (Hotfix TCP sender resources creation (#3932))
 #include <rtps/transport/TCPTransportInterface.h>
-#include <rtps/transport/TCPChannelResource.h>
 
 namespace eprosima {
 namespace fastdds {

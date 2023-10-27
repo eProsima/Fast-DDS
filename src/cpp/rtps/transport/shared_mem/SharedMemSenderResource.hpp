@@ -15,13 +15,9 @@
 #ifndef _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
 #define _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
 
-<<<<<<< HEAD
-#include <fastrtps/rtps/network/SenderResource.h>
-=======
-#include <fastdds/rtps/transport/SenderResource.h>
+#include <fastdds/rtps/network/SenderResource.h>
 
 #include <rtps/transport/ChainingSenderResource.hpp>
->>>>>>> e94deb85d (Hotfix TCP sender resources creation (#3932))
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
 
 namespace eprosima {
