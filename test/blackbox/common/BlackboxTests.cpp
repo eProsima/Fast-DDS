@@ -91,7 +91,7 @@ int main(
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
 
-    if (!GTEST_FLAG_GET(list_tests))
+    if (!::testing::GTEST_FLAG(list_tests))
     {
 #if HAVE_SECURITY
         blackbox_security_init();

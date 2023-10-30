@@ -682,7 +682,7 @@ int main(
 {
     testing::InitGoogleTest(&argc, argv);
 
-    if (!GTEST_FLAG_GET(list_tests))
+    if (!::testing::GTEST_FLAG(list_tests))
     {
         certs_path = std::getenv("CERTS_PATH");
 
