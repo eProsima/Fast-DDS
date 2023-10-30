@@ -15,7 +15,7 @@
 #ifndef UTILS__THREADING_HPP_
 #define UTILS__THREADING_HPP_
 
-#include <thread>
+#include "./thread_impl.hpp"
 
 namespace eprosima {
 
@@ -86,13 +86,13 @@ void apply_thread_settings_to_current_thread(
  *                       See @ref set_name_to_current_thread for details.
  */
 template<typename Functor, typename ... Args>
-std::thread create_thread(
+eprosima::thread create_thread(
         Functor func,
         const fastdds::rtps::ThreadSettings& settings,
         const char* name,
         Args... args)
 {
-    return std::thread([=]()
+    return eprosima::thread(settings.stack_size, [=]()
                    {
                        apply_thread_settings_to_current_thread(settings);
                        set_name_to_current_thread(name, args ...);
