@@ -12,36 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UTILS__THREADING_IMPL_HPP_
-#define UTILS__THREADING_IMPL_HPP_
+#ifndef UTILS__THREAD_IMPL_HPP_
+#define UTILS__THREAD_IMPL_HPP_
 
-#include <thread>
-
-namespace eprosima {
-
-class thread : public std::thread
-{
-public:
-
-    thread() = default;
-
-    template<class _Fn>
-    thread(
-            int32_t /*stack_size*/,
-            _Fn&& _Fx)
-        : std::thread(std::forward<_Fn>(_Fx))
-    {
-    }
-
-    // *INDENT-OFF*
-    thread(thread&& _Other) noexcept = default;
-    thread& operator =(thread&& _Other) noexcept = default;
-
-    thread(const thread&) = delete;
-    thread& operator =(const thread&) = delete;
-    // *INDENT-ON*
-};
-
-} // eprosima
+// threading.hpp implementations
+#ifdef _WIN32
+#include "thread_impl/thread_impl_win32.ipp"
+#elif defined(__APPLE__)
+#include "thread_impl/thread_impl_osx.ipp"
+#elif defined(_POSIX_SOURCE) || defined(__QNXNTO__) || defined(__ANDROID__)
+#include "thread_impl/thread_impl_pthread.ipp"
+#else
+#include "thread_impl/thread_impl_basic.ipp"
+#endif // Platform selection
 
 #endif  // UTILS__THREADING_IMPL_HPP_
