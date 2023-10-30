@@ -18,6 +18,13 @@
 #ifndef _RTPS_SECURITY_SECURITYMANAGER_H_
 #define _RTPS_SECURITY_SECURITYMANAGER_H_
 
+#include <atomic>
+#include <list>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <thread>
+
 #include <rtps/security/ISecurityPluginFactory.h>
 
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
@@ -32,12 +39,6 @@
 #include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
 #include <fastrtps/utils/ProxyPool.hpp>
 #include <fastrtps/utils/shared_mutex.hpp>
-
-#include <map>
-#include <mutex>
-#include <atomic>
-#include <memory>
-#include <list>
 
 namespace eprosima {
 namespace fastrtps {

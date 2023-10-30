@@ -77,7 +77,7 @@ void apply_thread_settings_to_current_thread(
  * @brief Create and start a thread with custom settings and name.
  *
  * This wrapper will create a thread on which the incoming functor will be called after
- * applying giving it a custom name and applying the thread settings.
+ * giving it a custom name and applying the thread settings.
  *
  * @param[in]  func      Functor with the logic to be run on the created thread.
  * @param[in]  settings  Thread settings to apply to the created thread.

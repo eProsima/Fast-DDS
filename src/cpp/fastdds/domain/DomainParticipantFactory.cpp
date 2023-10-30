@@ -17,6 +17,8 @@
  *
  */
 
+#include <thread>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>

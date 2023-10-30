@@ -17,6 +17,7 @@
 
 #include <atomic>
 #include <list>
+#include <thread>
 #include <unordered_map>
 
 #include <foonathan/memory/container.hpp>

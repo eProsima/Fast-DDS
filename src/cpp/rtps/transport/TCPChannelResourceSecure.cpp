@@ -14,8 +14,9 @@
 
 #include <rtps/transport/TCPChannelResourceSecure.h>
 
-#include <future>
 #include <chrono>
+#include <future>
+#include <thread>
 
 #include <fastrtps/utils/IPLocator.h>
 #include <rtps/transport/TCPTransportInterface.h>

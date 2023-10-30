@@ -20,8 +20,8 @@
 
 #include <cassert>
 #include <chrono>
-#include <thread>
 #include <mutex>
+#include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
