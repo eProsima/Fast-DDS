@@ -17,8 +17,11 @@
 
 #include <memory>
 #include <map>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
+
+#include <utils/threading.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -38,7 +41,7 @@ public:
     virtual void clear();
 
     inline void thread(
-            std::thread&& pThread)
+            eprosima::thread&& pThread)
     {
         if (thread_.joinable())
         {
@@ -69,7 +72,7 @@ protected:
     fastrtps::rtps::CDRMessage_t message_buffer_;
 
     std::atomic<bool> alive_;
-    std::thread thread_;
+    eprosima::thread thread_;
 };
 
 } // namespace rtps

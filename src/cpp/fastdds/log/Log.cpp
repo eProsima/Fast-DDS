@@ -17,6 +17,7 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
+#include <thread>
 
 #include <fastrtps/utils/DBQueue.h>
 
@@ -342,7 +343,7 @@ private:
 
     fastrtps::DBQueue<Log::Entry> logs_;
     std::vector<std::unique_ptr<LogConsumer>> consumers_;
-    std::thread logging_thread_;
+    eprosima::thread logging_thread_;
 
     // Condition variable segment.
     std::condition_variable cv_;

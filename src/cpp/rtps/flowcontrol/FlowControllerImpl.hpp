@@ -5,7 +5,6 @@
 #include <cassert>
 #include <chrono>
 #include <map>
-#include <thread>
 #include <unordered_map>
 
 #include "FlowController.hpp"
@@ -242,7 +241,7 @@ struct FlowControllerAsyncPublishMode
     {
     }
 
-    std::thread thread;
+    eprosima::thread thread;
 
     std::atomic_bool running {false};
 

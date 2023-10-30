@@ -15,6 +15,8 @@
 #ifndef _FASTDDS_SHAREDMEM_LOG_H_
 #define _FASTDDS_SHAREDMEM_LOG_H_
 
+#include <thread>
+
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastrtps/utils/DBQueue.h>
@@ -333,7 +335,7 @@ private:
     {
         eprosima::fastrtps::DBQueue<typename TPacketConsumer::Pkt> logs;
         std::vector<std::unique_ptr<SHMPacketFileConsumer>> consumers;
-        std::thread logging_thread;
+        eprosima::thread logging_thread;
 
         // Condition variable segment.
         std::condition_variable cv;

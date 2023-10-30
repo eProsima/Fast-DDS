@@ -14,6 +14,8 @@
 
 #include <rtps/transport/ChannelResource.h>
 
+#include <thread>
+
 #include <asio.hpp>
 
 namespace eprosima {

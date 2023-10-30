@@ -19,7 +19,6 @@
 #include <condition_variable>
 #include <memory>
 #include <mutex>
-#include <thread>
 #include <unordered_set>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
@@ -100,7 +99,7 @@ public:
 private:
 
     std::unordered_set<Task*> tasks_;
-    std::thread thread_run_;
+    eprosima::thread thread_run_;
 
     std::mutex running_tasks_mutex_;
     std::condition_variable wake_run_cv_;
