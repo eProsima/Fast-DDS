@@ -170,7 +170,7 @@ target_link_libraries(XMLProfileParserTests GTest::gmock
 if(QNX)
     target_link_libraries(XMLProfileParserTests socket)
 endif()
-add_gtest(XMLProfileParserTests SOURCES XMLProfileParserTests.cpp)
+gtest_discover_tests(XMLProfileParserTests)
 ###################################  XMLProfileParserTests  ####################################################
 
 
@@ -271,7 +271,7 @@ target_link_libraries(XMLParserTests GTest::gtest
 if(QNX)
     target_link_libraries(XMLParserTests socket)
 endif()
-add_gtest(XMLParserTests SOURCES XMLParserTests.cpp XMLElementParserTests.cpp)
+gtest_discover_tests(XMLParserTests)
 ######################################  XMLParserTests  ########################################################
 
 #######################################  XMLTreeTests  #########################################################
@@ -303,7 +303,7 @@ target_link_libraries(XMLTreeTests GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     )
-add_gtest(XMLTreeTests SOURCES XMLTreeTests.cpp)
+gtest_discover_tests(XMLTreeTests)
 #######################################  XMLTreeTests  #########################################################
 
 
@@ -402,7 +402,7 @@ target_link_libraries(XMLEndpointParserTests GTest::gtest
 if(QNX)
     target_link_libraries(XMLEndpointParserTests socket)
 endif()
-add_gtest(XMLEndpointParserTests SOURCES XMLEndpointParserTests.cpp)
+gtest_discover_tests(XMLEndpointParserTests)
 
 if(ANDROID)
     set_property(TARGET XMLEndpointParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")

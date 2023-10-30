@@ -285,8 +285,7 @@ endif()
 if(MSVC OR MSVC_IDE)
     target_link_libraries(UDPv4Tests ${PRIVACY} iphlpapi Shlwapi )
 endif()
-add_gtest(UDPv4Tests SOURCES ${UDPV4TESTS_SOURCE})
-set(TRANSPORT_XFAIL_LIST XFAIL_UDP4)
+gtest_discover_tests(UDPv4Tests)
 
 add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
 target_compile_definitions(test_UDPv4Tests PRIVATE
@@ -314,9 +313,10 @@ if(QNX)
 endif()
 if(MSVC OR MSVC_IDE)
     target_link_libraries(test_UDPv4Tests ${PRIVACY} iphlpapi Shlwapi)
+else()
+    target_link_libraries(test_UDPv4Tests ${PRIVACY})
 endif()
-add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
-set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TEST_UDP4)
+gtest_discover_tests(test_UDPv4Tests)
 
 ##########################
 # IPv6 tests
@@ -351,8 +351,7 @@ if(NOT DISABLE_UDPV6_TESTS)
     if(MSVC OR MSVC_IDE)
         target_link_libraries(UDPv6Tests ${PRIVACY} iphlpapi Shlwapi )
     endif()
-    add_gtest(UDPv6Tests SOURCES ${UDPV6TESTS_SOURCE})
-    set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_UDP6)
+    gtest_discover_tests(UDPv6Tests)
 
     ##########################
     # TCPv6 tests
@@ -387,8 +386,7 @@ if(NOT DISABLE_UDPV6_TESTS)
     else()
         target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr)
     endif()
-    add_gtest(TCPv6Tests SOURCES ${TCPV6TESTS_SOURCE})
-    set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TCP6)
+    gtest_discover_tests(TCPv6Tests)
 endif()
 
 ##########################
@@ -424,8 +422,7 @@ if(MSVC OR MSVC_IDE)
 else()
     target_link_libraries(TCPv4Tests ${PRIVACY} fastcdr)
 endif()
-add_gtest(TCPv4Tests SOURCES ${TCPV4TESTS_SOURCE})
-set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TCP4)
+gtest_discover_tests(TCPv4Tests)
 
 ##########################
 # SHM tests
@@ -467,13 +464,13 @@ if(IS_THIRDPARTY_BOOST_OK)
     else()
         target_link_libraries(SharedMemTests ${PRIVACY} )
     endif()
-    add_gtest(SharedMemTests SOURCES ${SHAREDMEMTESTS_SOURCE})
-    set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_SHM)
+    gtest_discover_tests(SharedMemTests)
 endif()
 
-foreach(TRANSPORT_XFAIL_TEST ${TRANSPORT_XFAIL_LIST})
-    add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${TRANSPORT_XFAIL_TEST}.list)
-endforeach()
+# Add 'xfail' label to flaky tests
+set_property(DIRECTORY APPEND PROPERTY
+    TEST_INCLUDE_FILES ${CMAKE_CURRENT_LIST_DIR}/xfail_tests.cmake
+    )
 
 if(ANDROID)
     set_property(TARGET UDPv4Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")

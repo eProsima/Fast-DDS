@@ -329,7 +329,7 @@ target_link_libraries(PublisherTests fastrtps fastcdr foonathan_memory
 if(QNX)
     target_link_libraries(PublisherTests socket)
 endif()
-add_gtest(PublisherTests SOURCES ${PUBLISHERTESTS_SOURCE})
+gtest_discover_tests(PublisherTests)
 
 add_executable(DataWriterTests ${DATAWRITERTESTS_SOURCE})
 target_compile_definitions(DataWriterTests PRIVATE
@@ -375,9 +375,8 @@ if(MSVC OR MSVC_IDE)
         iphlpapi Shlwapi
         )
 endif()
-add_gtest(DataWriterTests
-    SOURCES ${DATAWRITERTESTS_SOURCE}
-    ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+gtest_discover_tests(DataWriterTests
+    PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
 
 if(ANDROID)
     set_property(TARGET PublisherTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")

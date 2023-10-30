@@ -50,7 +50,7 @@ if(EPROSIMA_TEST_DNS_NOT_SET_UP)
     set(dns_filter "ParticipantTests.SimpleParticipantRemoteServerListConfigurationDNS")
 endif()
 
-add_gtest(ParticipantTests SOURCES ${PARTICIPANTTESTS_SOURCE} IGNORE ${dns_filter})
+gtest_discover_tests(ParticipantTests TEST_FILTER ${dns_filter})
 
 unset(dns_filter)
 

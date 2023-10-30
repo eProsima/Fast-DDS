@@ -91,12 +91,15 @@ int main(
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
 
+    if (!GTEST_FLAG_GET(list_tests))
+    {
 #if HAVE_SECURITY
-    blackbox_security_init();
+        blackbox_security_init();
 #endif // if HAVE_SECURITY
 #if TLS_FOUND
-    tls_init();
+        tls_init();
 #endif // if TLS_FOUND
+    }
 
     return RUN_ALL_TESTS();
 }

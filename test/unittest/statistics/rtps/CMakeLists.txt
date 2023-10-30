@@ -39,7 +39,7 @@ target_include_directories(RTPSStatisticsTests PRIVATE
     )
 
 target_link_libraries(RTPSStatisticsTests fastrtps fastcdr GTest::gtest GTest::gmock)
-add_gtest(RTPSStatisticsTests SOURCES ${STATISTICS_RTPS_TESTS_SOURCE})
+gtest_discover_tests(RTPSStatisticsTests)
 if(QNX)
     target_link_libraries(RTPSStatisticsTests socket)
 endif()

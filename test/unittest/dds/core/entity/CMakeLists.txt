@@ -51,7 +51,7 @@ target_include_directories(EntityTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
 )
 target_link_libraries(EntityTests GTest::gtest fastcdr)
-add_gtest(EntityTests SOURCES ${ENTITY_TESTS_SOURCE})
+gtest_discover_tests(EntityTests)
 
 if(ANDROID)
     set_property(TARGET EntityTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")

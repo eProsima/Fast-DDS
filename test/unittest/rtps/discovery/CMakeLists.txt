@@ -96,7 +96,7 @@ else()
     target_link_libraries(EdpTests ${PRIVACY} fastcdr)
 endif()
 
-add_gtest(EdpTests SOURCES ${EDPTESTS_SOURCE})
+gtest_discover_tests(EdpTests)
 
 if(ANDROID)
     set_property(TARGET EdpTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
