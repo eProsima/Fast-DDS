@@ -1080,8 +1080,8 @@ public:
      * @param[in] default_value Annotation default value.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
      *              1. Given CommonAnnotationParameter is inconsistent (only in Debug build mode).
-     *              2. CommonAnnotationParameter TypeIdentifier is inconsistent with AnnotationParameterValue type (only
-     *                 in Debug build mode).
+     *              2. CommonAnnotationParameter TypeIdentifier is inconsistent with AnnotationParameterValue type.
+     *              3. Given parameter name is empty.
      * @return const CompleteAnnotationParameter instance.
      */
     RTPS_DllAPI static const CompleteAnnotationParameter build_complete_annotation_parameter(
@@ -1094,8 +1094,11 @@ public:
      *
      * @param[in out] sequence Sequence to be modified.
      * @param[in] param Complete annotation parameter to be added.
-     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given
-     *            CompleteAnnotationParameter is not consistent (only in Debug build mode).
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given CompleteAnnotationParameter is not consistent (only in Debug build mode).
+     *              2. There is already another member in the sequence with the same member id or the same member name
+     *                 (only in Debug build mode).
+
      */
     RTPS_DllAPI static void add_complete_annotation_parameter(
             CompleteAnnotationParameterSeq& sequence,
@@ -1109,6 +1112,7 @@ public:
      * @brief Build CompleteAnnotationHeader instance.
      *
      * @param[in] annotation_name Qualified annotation type name.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError if the annotation_name is empty.
      * @return const CompleteAnnotationHeader instance.
      */
     RTPS_DllAPI static const CompleteAnnotationHeader build_complete_annotation_header(
@@ -1126,7 +1130,8 @@ public:
      * @param[in] member_seq CompleteAnnotationParameter sequence.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
      *              1. Any annotation flag is set.
-     *              2. Any CompleteAnnotationParameter in the sequence is inconsistent (only in Debug build mode).
+     *              2. Given header is inconsistent (only in Debug build mode).
+     *              3. Any CompleteAnnotationParameter in the sequence is inconsistent (only in Debug build mode).
      * @return const CompleteAnnotationType instance.
      */
     RTPS_DllAPI static const CompleteAnnotationType build_complete_annotation_type(
@@ -2597,7 +2602,7 @@ protected:
      *                  - @autoid
      */
     static void builtin_applied_annotations_type_flags_consistency(
-            const AppliedAnnotationSeq& annotations,
+            const eprosima::fastcdr::optional<AppliedAnnotationSeq>& annotations,
             TypeFlag flags);
 
     /**
@@ -2731,7 +2736,7 @@ protected:
      */
     static void common_discriminator_member_builtin_annotations_consistency(
             UnionDiscriminatorFlag flags,
-            const AppliedAnnotationSeq& annotations);
+            const eprosima::fastcdr::optional<AppliedAnnotationSeq>& annotations);
 
     /**
      * @brief Check CompleteDiscriminatorMember consistency.
@@ -2804,6 +2809,16 @@ protected:
      */
     static void complete_annotation_parameter_seq_consistency(
             const CompleteAnnotationParameterSeq& complete_annotation_parameter_seq);
+
+    /**
+     * @brief Check CompleteAnnotationHeader consistency.
+     *
+     * @param[in] complete_annotation_header Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteAnnotationHeader is not consistent.
+     */
+    static void complete_annotation_header_consistency(
+            const CompleteAnnotationHeader& complete_annotation_header);
 
     /**
      * @brief Check CompleteAnnotationType consistency.
