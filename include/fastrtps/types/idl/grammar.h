@@ -71,27 +71,27 @@ struct kw_bitset : seq<opt<ws>, TAO_PEGTL_KEYWORD("bitset"), end_kw, opt<ws>> {}
 struct kw_bitfield : seq<opt<ws>, TAO_PEGTL_KEYWORD("bitfield"), end_kw, opt<ws>> {};
 struct kw_bitmask : seq<opt<ws>, TAO_PEGTL_KEYWORD("bitmask"), end_kw, opt<ws>> {};
 struct kw_annotation : seq<opt<ws>, TAO_PEGTL_KEYWORD("@annotation"), end_kw, opt<ws>> {};
-struct kw_short : seq<opt<ws>, TAO_PEGTL_KEYWORD("short"), end_kw, opt<ws>> {};
-struct kw_int16 : seq<opt<ws>, TAO_PEGTL_KEYWORD("int16"), end_kw, opt<ws>> {};
-struct kw_long : seq<opt<ws>, TAO_PEGTL_KEYWORD("long"), end_kw, opt<ws>> {};
-struct kw_long_long : seq<opt<ws>, TAO_PEGTL_KEYWORD("long"), ws, TAO_PEGTL_KEYWORD("long"), end_kw, opt<ws>> {};
-struct kw_int32 : seq<opt<ws>, TAO_PEGTL_KEYWORD("int32"), end_kw, opt<ws>> {};
-struct kw_int64 : seq<opt<ws>, TAO_PEGTL_KEYWORD("int64"), end_kw, opt<ws>> {};
-struct kw_unsigned_long : seq<opt<ws>, TAO_PEGTL_KEYWORD("unsigned"), ws, TAO_PEGTL_KEYWORD("long"), end_kw, opt<ws>> {};
-struct kw_unsigned_long_long : seq<opt<ws>, TAO_PEGTL_KEYWORD("unsigned"), ws, TAO_PEGTL_KEYWORD("long"), ws, TAO_PEGTL_KEYWORD("long"), end_kw, opt<ws>> {};
-struct kw_unsigned_short : seq<opt<ws>, TAO_PEGTL_KEYWORD("unsigned"), ws, TAO_PEGTL_KEYWORD("short"), end_kw, opt<ws>> {};
-struct kw_uint16 : seq<opt<ws>, TAO_PEGTL_KEYWORD("uint16"), end_kw, opt<ws>> {};
-struct kw_uint32 : seq<opt<ws>, TAO_PEGTL_KEYWORD("uint32"), end_kw, opt<ws>> {};
-struct kw_uint64 : seq<opt<ws>, TAO_PEGTL_KEYWORD("uint64"), end_kw, opt<ws>> {};
-struct kw_int8 : seq<opt<ws>, TAO_PEGTL_KEYWORD("int8"), end_kw, opt<ws>> {};
-struct kw_uint8 : seq<opt<ws>, TAO_PEGTL_KEYWORD("uint8"), end_kw, opt<ws>> {};
-struct kw_char : seq<opt<ws>, TAO_PEGTL_KEYWORD("char"), end_kw, opt<ws>> {};
-struct kw_wchar : seq<opt<ws>, TAO_PEGTL_KEYWORD("wchar"), end_kw, opt<ws>> {};
-struct kw_boolean : seq<opt<ws>, TAO_PEGTL_KEYWORD("boolean"), end_kw, opt<ws>> {};
-struct kw_octet : seq<opt<ws>, TAO_PEGTL_KEYWORD("octet"), end_kw, opt<ws>> {};
-struct kw_float : seq<opt<ws>, TAO_PEGTL_KEYWORD("float"), end_kw, opt<ws>> {};
-struct kw_double : seq<opt<ws>, TAO_PEGTL_KEYWORD("double"), end_kw, opt<ws>> {};
-struct kw_long_double : seq<opt<ws>, TAO_PEGTL_KEYWORD("long"), ws, TAO_PEGTL_KEYWORD("double"), end_kw, opt<ws>> {};
+struct kw_unsigned_short : seq<TAO_PEGTL_KEYWORD("unsigned"), ws, TAO_PEGTL_KEYWORD("short"), end_kw> {};
+struct kw_short : seq<TAO_PEGTL_KEYWORD("short"), end_kw> {};
+struct kw_int16 : seq<TAO_PEGTL_KEYWORD("int16"), end_kw> {};
+struct kw_unsigned_long_long : seq<TAO_PEGTL_KEYWORD("unsigned"), ws, TAO_PEGTL_KEYWORD("long"), ws, TAO_PEGTL_KEYWORD("long"), end_kw> {};
+struct kw_unsigned_long : seq<TAO_PEGTL_KEYWORD("unsigned"), ws, TAO_PEGTL_KEYWORD("long"), end_kw> {};
+struct kw_long_long : seq<TAO_PEGTL_KEYWORD("long"), ws, TAO_PEGTL_KEYWORD("long"), end_kw> {};
+struct kw_long_double : seq<TAO_PEGTL_KEYWORD("long"), ws, TAO_PEGTL_KEYWORD("double"), end_kw> {};
+struct kw_long : seq<TAO_PEGTL_KEYWORD("long"), end_kw> {};
+struct kw_int32 : seq<TAO_PEGTL_KEYWORD("int32"), end_kw> {};
+struct kw_int64 : seq<TAO_PEGTL_KEYWORD("int64"), end_kw> {};
+struct kw_uint16 : seq<TAO_PEGTL_KEYWORD("uint16"), end_kw> {};
+struct kw_uint32 : seq<TAO_PEGTL_KEYWORD("uint32"), end_kw> {};
+struct kw_uint64 : seq<TAO_PEGTL_KEYWORD("uint64"), end_kw> {};
+struct kw_int8 : seq<TAO_PEGTL_KEYWORD("int8"), end_kw> {};
+struct kw_uint8 : seq<TAO_PEGTL_KEYWORD("uint8"), end_kw> {};
+struct kw_char : seq<TAO_PEGTL_KEYWORD("char"), end_kw> {};
+struct kw_wchar : seq<TAO_PEGTL_KEYWORD("wchar"), end_kw> {};
+struct kw_boolean : seq<TAO_PEGTL_KEYWORD("boolean"), end_kw> {};
+struct kw_octet : seq<TAO_PEGTL_KEYWORD("octet"), end_kw> {};
+struct kw_float : seq<TAO_PEGTL_KEYWORD("float"), end_kw> {};
+struct kw_double : seq<TAO_PEGTL_KEYWORD("double"), end_kw> {};
 
 /* literal grammar */
 
@@ -242,27 +242,27 @@ struct or_exec : seq<or_op, const_expr> {};
 struct const_expr : seq<xor_expr, opt<or_exec>> {};
 
 // types
-struct float_type : kw_float {};
-struct double_type : kw_double {};
-struct long_double_type : kw_long_double {};
-struct signed_tiny_int : kw_int8 {};
-struct unsigned_tiny_int : kw_uint8 {};
-struct signed_short_int : sor<kw_short, kw_int16> {};
-struct unsigned_short_int : sor<kw_unsigned_short, kw_uint16> {};
-struct signed_long_int : sor<kw_long, kw_int32> {};
-struct unsigned_long_int : sor<kw_unsigned_long, kw_uint32> {};
-struct signed_longlong_int : sor<kw_long_long, kw_int64> {};
-struct unsigned_longlong_int : sor<kw_unsigned_long_long, kw_uint64> {};
-struct signed_int : sor<signed_tiny_int, signed_short_int, signed_long_int, signed_longlong_int> {};
-struct unsigned_int : sor<unsigned_tiny_int, unsigned_short_int, unsigned_long_int, unsigned_longlong_int> {};
-struct integer_type : sor<signed_int, unsigned_int> {};
-struct char_type : kw_char {};
-struct wide_char_type : kw_wchar {};
-struct boolean_type : kw_boolean {};
-struct octet_type : kw_octet {};
+struct float_type : seq<opt<ws>, kw_float, opt<ws>> {};
+struct long_double_type : seq<opt<ws>, kw_long_double, opt<ws>> {};
+struct double_type : seq<opt<ws>, kw_double, opt<ws>> {};
+struct signed_tiny_int : seq<opt<ws>, kw_int8, opt<ws>> {};
+struct unsigned_tiny_int : seq<opt<ws>, kw_uint8, opt<ws>> {};
+struct signed_short_int : seq<opt<ws>, sor<kw_short, kw_int16>, opt<ws>> {};
+struct unsigned_short_int : seq<opt<ws>, sor<kw_unsigned_short, kw_uint16>, opt<ws>> {};
+struct unsigned_longlong_int : seq<opt<ws>, sor<kw_unsigned_long_long, kw_uint64>, opt<ws>> {};
+struct unsigned_long_int : seq<opt<ws>, sor<kw_unsigned_long, kw_uint32>, opt<ws>> {};
+struct signed_longlong_int : seq<opt<ws>, sor<kw_long_long, kw_int64>, opt<ws>> {};
+struct signed_long_int : seq<opt<ws>, sor<kw_long, kw_int32>, opt<ws>> {};
+struct unsigned_int : sor<unsigned_tiny_int, unsigned_short_int, unsigned_longlong_int, unsigned_long_int> {};
+struct signed_int : sor<signed_tiny_int, signed_short_int, signed_longlong_int, signed_long_int> {};
+struct integer_type : sor<unsigned_int, signed_int> {};
+struct char_type : seq<opt<ws>, kw_char, opt<ws>> {};
+struct wide_char_type : seq<opt<ws>, kw_wchar, opt<ws>> {};
+struct boolean_type : seq<opt<ws>, kw_boolean, opt<ws>> {};
+struct octet_type : seq<opt<ws>, kw_octet, opt<ws>> {};
 struct any_type : kw_any {};
 struct base_type_spec : sor<
-                            float_type, double_type, long_double_type, integer_type,
+                            float_type, long_double_type, double_type, integer_type,
                             char_type, wide_char_type, boolean_type, octet_type, any_type
                            > {};
 struct fixed_pt_const_type : kw_fixed {};
@@ -285,7 +285,7 @@ struct simple_type_spec : sor<base_type_spec, scoped_name> {};
 struct type_spec : seq<opt<ws>, sor<template_type_spec, simple_type_spec>, opt<ws>> {};
 
 struct const_type : sor<
-                        float_type, double_type, long_double_type, fixed_pt_const_type, integer_type,
+                        float_type, long_double_type, double_type, fixed_pt_const_type, integer_type,
                         char_type, wide_char_type, boolean_type, string_type, wide_string_type, scoped_name
                        > {};
 struct simple_declarator : identifier {};

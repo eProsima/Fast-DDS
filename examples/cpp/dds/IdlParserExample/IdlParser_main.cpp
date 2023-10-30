@@ -74,7 +74,7 @@ int main(
     idl::Context context03 = idl::parse_file("idl/test02.idl");
 
     std::string test04 =
-        R"(
+            R"(
         enum e_test { a, b, c };
     )";
     idl::Context context04 = idl::parse(test04);
@@ -85,8 +85,13 @@ int main(
         {
             long my_long;
             short my_short;
-            //long long my_long_long;
+            long long my_llong;
             int32 my_int;
+            unsigned short my_ushort;
+            unsigned long my_ulong;
+            long double my_ldouble;
+            float my_float;
+            double my_double;
         };
     )";
     idl::Context context05 = idl::parse(test05);
