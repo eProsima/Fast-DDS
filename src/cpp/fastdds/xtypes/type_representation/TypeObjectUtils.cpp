@@ -2276,13 +2276,12 @@ void TypeObjectUtils::applied_annotation_parameter_seq_consistency(
 void TypeObjectUtils::applied_annotation_type_identifier_consistency(
         const TypeIdentifier& annotation_type_id)
 {
-    TypeObject type_object;
+    TypeObjectPair type_objects;
     ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-        annotation_type_id, type_object);
+        annotation_type_id, type_objects);
     if (ReturnCode_t::RETCODE_OK == ret_code)
     {
-        if ((type_object._d() == EK_COMPLETE && type_object.complete()._d() != TK_ANNOTATION) ||
-            (type_object._d() == EK_MINIMAL && type_object.minimal()._d() != TK_ANNOTATION))
+        if (type_objects.complete_type_object._d() != TK_ANNOTATION)
         {
             throw InvalidArgumentError("AppliedAnnotation TypeIdentifier does not correspond with an Annotation type");
         }
@@ -2952,12 +2951,10 @@ void TypeObjectUtils::complete_type_detail_consistency(
 void TypeObjectUtils::structure_base_type_consistency(
         const TypeIdentifier& base_type)
 {
-    TypeObject type_object;
+    TypeObjectPair type_objects;
     ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(base_type,
-        type_object);
-    if (ret_code != ReturnCode_t::RETCODE_OK ||
-        (type_object._d() == EK_COMPLETE && type_object.complete()._d() != TK_STRUCTURE) ||
-        (type_object._d() == EK_MINIMAL && type_object.minimal()._d() != TK_STRUCTURE))
+        type_objects);
+    if (ret_code != ReturnCode_t::RETCODE_OK || type_objects.complete_type_object._d() != TK_STRUCTURE)
     {
         throw InvalidArgumentError("Inconsistent base TypeIdentifier: must be related to a structure TypeObject");
     }
@@ -3291,34 +3288,18 @@ void TypeObjectUtils::common_discriminator_member_type_identifier_consistency(
     {
         throw InvalidArgumentError("Inconsistent CommonDiscriminatorMember TypeIdentifier");
     }
-    TypeObject type_object;
-    if (type_id._d() == EK_COMPLETE)
+    TypeObjectPair type_objects;
+    if (is_direct_hash_type_identifier(type_id))
     {
         if (ReturnCode_t::RETCODE_OK ==
-            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
+            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_objects))
         {
-            if (type_object.complete()._d() == TK_ALIAS)
+            if (type_objects.complete_type_object._d() == TK_ALIAS)
             {
                 common_discriminator_member_type_identifier_consistency(
-                    type_object.complete().alias_type().body().common().related_type());
+                    type_objects.complete_type_object.alias_type().body().common().related_type());
             }
-            else if (type_object.complete()._d() != TK_ENUM)
-            {
-                throw InvalidArgumentError("Inconsistent CommonDiscriminatorMember TypeIdentifier");
-            }
-        }
-    }
-    else if (type_id._d() == EK_MINIMAL)
-    {
-        if (ReturnCode_t::RETCODE_OK ==
-            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
-        {
-            if (type_object.minimal()._d() == TK_ALIAS)
-            {
-                common_discriminator_member_type_identifier_consistency(
-                    type_object.minimal().alias_type().body().common().related_type());
-            }
-            else if (type_object.minimal()._d() != TK_ENUM)
+            else if (type_objects.complete_type_object._d() != TK_ENUM)
             {
                 throw InvalidArgumentError("Inconsistent CommonDiscriminatorMember TypeIdentifier");
             }
@@ -3423,7 +3404,7 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         const TypeIdentifier& type_id,
         const AnnotationParameterValue& value)
 {
-    TypeObject type_object;
+    TypeObjectPair type_objects;
     // Primitive types
     if (((type_id._d() > 0 && type_id._d() <= 0x0D) || (type_id._d() == TK_CHAR8 || type_id._d() == TK_CHAR16)) &&
         (type_id._d() != value._d()))
@@ -3441,34 +3422,17 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
     }
     // Enum
-    else if (type_id._d() == EK_MINIMAL && value._d() == TK_ENUM)
+    else if (is_direct_hash_type_identifier(type_id) && value._d() == TK_ENUM)
     {
         if (ReturnCode_t::RETCODE_OK ==
-            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
+            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_objects))
         {
-            if (type_object.minimal()._d() == TK_ALIAS)
+            if (type_objects.complete_type_object._d() == TK_ALIAS)
             {
                 common_annotation_parameter_type_identifier_default_value_consistency(
-                    type_object.minimal().alias_type().body().common().related_type(), value);
+                    type_objects.complete_type_object.alias_type().body().common().related_type(), value);
             }
-            else if (type_object.minimal()._d() != TK_ENUM)
-            {
-                throw InvalidArgumentError(
-                    "Given annotation parameter value is inconsistent with given TypeIdentifier");
-            }
-        }
-    }
-    else if (type_id._d() == EK_COMPLETE && value._d() == TK_ENUM)
-    {
-        if (ReturnCode_t::RETCODE_OK ==
-            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
-        {
-            if (type_object.complete()._d() == TK_ALIAS)
-            {
-                common_annotation_parameter_type_identifier_default_value_consistency(
-                    type_object.complete().alias_type().body().common().related_type(), value);
-            }
-            else if (type_object.complete()._d() != TK_ENUM)
+            else if (type_objects.complete_type_object._d() != TK_ENUM)
             {
                 throw InvalidArgumentError(
                     "Given annotation parameter value is inconsistent with given TypeIdentifier");
