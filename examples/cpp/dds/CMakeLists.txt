@@ -14,6 +14,7 @@
 
 add_subdirectory(AdvancedConfigurationExample)
 add_subdirectory(BasicConfigurationExample)
+add_subdirectory(BigDataTransportExample)
 add_subdirectory(Configurability)
 add_subdirectory(ContentFilteredTopicExample)
 add_subdirectory(CustomListenerExample)

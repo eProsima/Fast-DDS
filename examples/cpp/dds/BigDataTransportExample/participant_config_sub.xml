@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+
+    <transport_descriptors>
+        <transport_descriptor>
+            <transport_id>tcp_transport_1</transport_id>
+            <type>TCPv4</type>
+            <listening_ports>
+                <port>5101</port> <!-- Default Unicast Locator-->
+                <port>5201</port> <!-- Metatraffic Unicast Locator-->
+            </listening_ports>
+            <wan_addr>127.0.0.1</wan_addr>
+        </transport_descriptor>
+        <transport_descriptor>
+                <transport_id>udp_transport_1</transport_id>
+                <type>UDPv4</type>
+                <sendBufferSize>0</sendBufferSize>
+                <receiveBufferSize>0</receiveBufferSize>
+                <maxMessageSize>65500</maxMessageSize> <!-- Default: 65500-->
+        </transport_descriptor>
+    </transport_descriptors>
+
+    <participant profile_name="bigdata_sub_profile">
+        <domainId>42</domainId>
+        <rtps>
+            <name>BigDataParticipant_sub</name>
+
+            <defaultUnicastLocatorList>
+                <locator>
+                    <tcpv4>
+                        <!-- Both physical and logical (port), useful in TCP transports -->
+                        <physical_port>5101</physical_port>
+                        <port>5101</port>
+                        <!-- <wan_address>127.0.0.1</wan_address> -->
+                        <!-- <address>127.0.0.1</address> -->
+                    </tcpv4>
+                </locator>
+            </defaultUnicastLocatorList>
+
+            <!--
+            <sendSocketBufferSize>8192</sendSocketBufferSize>
+
+            <listenSocketBufferSize>8192</listenSocketBufferSize>
+            -->
+
+            <builtin>
+
+                <avoid_builtin_multicast>true</avoid_builtin_multicast>
+
+                <use_WriterLivelinessProtocol>true</use_WriterLivelinessProtocol>
+
+                <metatrafficUnicastLocatorList>
+                    <locator>
+                        <tcpv4>
+                            <!-- Both physical and logical (port), useful in TCP transports -->
+                            <physical_port>5201</physical_port>
+                            <port>5201</port>
+                            <!-- <wan_address>127.0.0.1</wan_address> -->
+                            <!-- <address>192.168.1.55</address> -->
+                        </tcpv4>
+                    </locator>
+                </metatrafficUnicastLocatorList>
+
+                <metatrafficMulticastLocatorList>
+                    <locator>
+                        <udpv4>
+                            <address>127.0.0.1</address>
+                        </udpv4>
+                    </locator>
+                </metatrafficMulticastLocatorList>
+
+                <!-- <initialPeersList>
+                    <locator>
+                        <tcpv4>
+                            <physical_port>5100</physical_port>
+                            <port>5100</port>
+                            <address>127.0.0.1</address>
+                        </tcpv4>
+                    </locator>
+                </initialPeersList> -->
+
+                <readerHistoryMemoryPolicy>PREALLOCATED</readerHistoryMemoryPolicy>
+
+                <writerHistoryMemoryPolicy>PREALLOCATED</writerHistoryMemoryPolicy>
+
+                <readerPayloadSize>512</readerPayloadSize>
+
+                <writerPayloadSize>512</writerPayloadSize>
+
+                <mutation_tries>100</mutation_tries>
+
+                <!-- <typelookup_config>
+                    <use_client>true</use_client>
+                    <use_server>true</use_server>
+                </typelookup_config> -->
+            </builtin>
+
+            <participantID>42</participantID>
+
+            <userTransports>
+                <transport_id>tcp_transport_1</transport_id>
+                <transport_id>udp_transport_1</transport_id>
+            </userTransports>
+
+            <useBuiltinTransports>false</useBuiltinTransports>
+
+        </rtps>
+    </participant>
+</profiles>
+
+
+
+
+
+
+
+
+
+
