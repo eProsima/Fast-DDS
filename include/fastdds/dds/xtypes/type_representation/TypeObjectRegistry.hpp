@@ -178,18 +178,18 @@ protected:
             const TypeObject& type_object);
 
     /**
-     * @brief Get the TypeObject related to the given TypeIdentifier.
+     * @brief Get both the minimal and complete TypeObject related to the given TypeIdentifier.
      *
      * @pre TypeIdentifier must be a direct hash TypeIdentifier.
      *
      * @param[in] type_identifier TypeIdentifier being queried.
-     * @param[out] type_object TYpeObject related with the given TypeIdentifier.
+     * @param[out] type_objects TypeObjects related with the given TypeIdentifier.
      * @return ReturnCode_t RETCODE_OK if the TypeObject is found within the registry.
      *                      RETCODE_NO_DATA if the given TypeIdentifier is not found in the registry.
      */
     ReturnCode_t get_type_object(
             const TypeIdentifier& type_identifier,
-            TypeObject& type_object);
+            TypeObjectPair& type_objects);
 
     /**
      * @brief Get the TypeInformation related to a specific type_name.
@@ -248,6 +248,15 @@ protected:
      */
     const TypeIdentifier get_builtin_annotation_complete_type_identifier(
             const std::string& builtin_annotation_name);
+
+    /**
+     * @brief Calculate the TypeIdentifier given a TypeObject.
+     *
+     * @param type_object TypeObject which is to be hashed.
+     * @return const TypeIdentifier related with the given TypeObject.
+     */
+    const TypeIdentifier get_type_identifier(
+            const TypeObject& type_object);
 
     // Collection of local TypeIdentifiers hashed by type_name.
     // TypeIdentifierPair contains both the minimal and complete TypeObject TypeIdentifiers.

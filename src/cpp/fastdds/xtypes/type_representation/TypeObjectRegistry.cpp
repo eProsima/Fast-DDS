@@ -66,10 +66,10 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
 
 ReturnCode_t TypeObjectRegistry::get_type_object(
         const TypeIdentifier& type_identifier,
-        TypeObject& type_object)
+        TypeObjectPair& type_objects)
 {
     static_cast<void>(type_identifier);
-    static_cast<void>(type_object);
+    static_cast<void>(type_objects);
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
@@ -111,6 +111,13 @@ const TypeIdentifier TypeObjectRegistry::get_builtin_annotation_complete_type_id
         const std::string& builtin_annotation_name)
 {
     static_cast<void>(builtin_annotation_name);
+    return TypeIdentifier();
+}
+
+const TypeIdentifier TypeObjectRegistry::get_type_identifier(
+        const TypeObject& type_object)
+{
+    static_cast<void>(type_object);
     return TypeIdentifier();
 }
 
