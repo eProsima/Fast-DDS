@@ -891,10 +891,7 @@ const CompleteStructType TypeObjectUtils::build_complete_struct_type(
         member_id_consistency(member_seq);
     }
 #endif // !defined(NDEBUG)
-    if (header.detail().ann_custom().has_value())
-    {
-        builtin_applied_annotations_type_flags_consistency(header.detail().ann_custom().value(), struct_flags);
-    }
+    builtin_applied_annotations_type_flags_consistency(header.detail().ann_custom(), struct_flags);
     CompleteStructType complete_struct_type;
     complete_struct_type.struct_flags(struct_flags);
     complete_struct_type.header(header);
@@ -1024,10 +1021,7 @@ const CompleteDiscriminatorMember TypeObjectUtils::build_complete_discriminator_
         applied_annotation_seq_consistency(ann_custom.value());
     }
 #endif // !defined(NDEBUG)
-    if (ann_custom.has_value())
-    {
-        common_discriminator_member_builtin_annotations_consistency(common.member_flags(), ann_custom.value());
-    }
+    common_discriminator_member_builtin_annotations_consistency(common.member_flags(), ann_custom);
     CompleteDiscriminatorMember complete_discriminator_member;
     complete_discriminator_member.common(common);
     complete_discriminator_member.ann_builtin(ann_builtin);
@@ -1062,10 +1056,7 @@ const CompleteUnionType TypeObjectUtils::build_complete_union_type(
         member_id_consistency(member_seq);
     }
 #endif // !defined(NDEBUG)
-    if (header.detail().ann_custom().has_value())
-    {
-        builtin_applied_annotations_type_flags_consistency(header.detail().ann_custom().value(), union_flags);
-    }
+    builtin_applied_annotations_type_flags_consistency(header.detail().ann_custom(), union_flags);
     CompleteUnionType complete_union_type;
     complete_union_type.union_flags(union_flags);
     complete_union_type.header(header);
@@ -1095,8 +1086,12 @@ const CompleteAnnotationParameter TypeObjectUtils::build_complete_annotation_par
 {
 #if !defined(NDEBUG)
     common_annotation_parameter_consistency(common);
-    common_annotation_parameter_type_identifier_default_value_consistency(common.member_type_id(), default_value);
 #endif // !defined(NDEBUG)
+    common_annotation_parameter_type_identifier_default_value_consistency(common.member_type_id(), default_value);
+    if (name.size() == 0)
+    {
+        throw InvalidArgumentError("Annotation parameter name cannot be empty");
+    }
     CompleteAnnotationParameter complete_annotation_parameter;
     complete_annotation_parameter.common(common);
     complete_annotation_parameter.name(name);
@@ -1110,7 +1105,13 @@ void TypeObjectUtils::add_complete_annotation_parameter(
 {
 #if !defined(NDEBUG)
     complete_annotation_parameter_consistency(param);
-    // TODO(jlbueno): check uniqueness
+    for (CompleteAnnotationParameter ann_param : sequence)
+    {
+        if (ann_param.name() == param.name())
+        {
+            throw InvalidArgumentError("Sequence has another parameter with same name");
+        }
+    }
 #endif
     sequence.push_back(param);
 }
@@ -1118,6 +1119,10 @@ void TypeObjectUtils::add_complete_annotation_parameter(
 const CompleteAnnotationHeader TypeObjectUtils::build_complete_annotation_header(
         const QualifiedTypeName& annotation_name)
 {
+    if (annotation_name.size() == 0)
+    {
+        throw InvalidArgumentError("QualifiedTypeName cannot be empty");
+    }
     CompleteAnnotationHeader complete_annotation_header;
     complete_annotation_header.annotation_name(annotation_name);
     return complete_annotation_header;
@@ -1130,6 +1135,7 @@ const CompleteAnnotationType TypeObjectUtils::build_complete_annotation_type(
 {
     empty_flags_consistency(annotation_flag);
 #if !defined(NDEBUG)
+    complete_annotation_header_consistency(header);
     complete_annotation_parameter_seq_consistency(member_seq);
 #endif // !defined(NDEBUG)
     CompleteAnnotationType complete_annotation_type;
@@ -2972,66 +2978,69 @@ void TypeObjectUtils::complete_struct_header_consistency(
 }
 
 void TypeObjectUtils::builtin_applied_annotations_type_flags_consistency(
-        const AppliedAnnotationSeq& annotations,
+        const eprosima::fastcdr::optional<AppliedAnnotationSeq>& annotations,
         TypeFlag flags)
 {
     bool extensibility_annotation_checked = false;
     bool nested_annotation_checked = false;
     bool autoid_annotation_checked = false;
-    for (AppliedAnnotation annotation : annotations)
+    if (annotations.has_value())
     {
-        BuiltinAnnotationKind builtin_annotation_kind;
-        if (is_applied_builtin_annotation(annotation.annotation_typeid(), builtin_annotation_kind))
+        for (AppliedAnnotation annotation : annotations.value())
         {
-            switch (builtin_annotation_kind)
+            BuiltinAnnotationKind builtin_annotation_kind;
+            if (is_applied_builtin_annotation(annotation.annotation_typeid(), builtin_annotation_kind))
             {
-                case BuiltinAnnotationKind::EXTENSIBILITY:
-                case BuiltinAnnotationKind::APPENDABLE_ANNOTATION:
-                case BuiltinAnnotationKind::FINAL_ANNOTATION:
-                case BuiltinAnnotationKind::MUTABLE_ANNOTATION:
-                    if (!extensibility_annotation_checked)
-                    {
-                        extensibility_annotation_checked = true;
-                        uint32_t extensibility =
-                            builtin_annotation_kind == BuiltinAnnotationKind::APPENDABLE_ANNOTATION ?
-                            static_cast<uint32_t>(extensibility::ExtensibilityKind::APPENDABLE) :
-                            builtin_annotation_kind == BuiltinAnnotationKind::FINAL_ANNOTATION ?
-                            static_cast<uint32_t>(extensibility::ExtensibilityKind::FINAL) :
-                            builtin_annotation_kind == BuiltinAnnotationKind::MUTABLE_ANNOTATION ?
-                            static_cast<uint32_t>(extensibility::ExtensibilityKind::MUTABLE) :
-                            static_cast<uint32_t>(annotation.param_seq().value()[0].value().enumerated_value());
-                        extensibility_flag_consistency(flags, extensibility);
-                    }
-                    else
-                    {
-                        throw InvalidArgumentError("More than one extensibility builtin annotation applied");
-                    }
-                    break;
-                case BuiltinAnnotationKind::NESTED:
-                    nested_annotation_checked = true;
-                    if (annotation.param_seq().has_value())
-                    {
-                        nested_flag_consistency(flags, annotation.param_seq().value()[0].value().boolean_value());
-                    }
-                    else
-                    {
-                        nested_flag_consistency(flags, true);
-                    }
-                    break;
-                case BuiltinAnnotationKind::AUTOID:
-                    autoid_annotation_checked = true;
-                    if (!annotation.param_seq().has_value() ||
-                        annotation.param_seq().value()[0].value().enumerated_value() == autoid::AutoidKind::HASH)
-                    {
-                        autoid_hash_flag_consistency(flags, true);
-                    }
-                    else
-                    {
-                        autoid_hash_flag_consistency(flags, false);
-                    }
-                    break;
-                default:
-                    throw InvalidArgumentError("Given builtin annotation does not apply to structure declarations");
+                switch (builtin_annotation_kind)
+                {
+                    case BuiltinAnnotationKind::EXTENSIBILITY:
+                    case BuiltinAnnotationKind::APPENDABLE_ANNOTATION:
+                    case BuiltinAnnotationKind::FINAL_ANNOTATION:
+                    case BuiltinAnnotationKind::MUTABLE_ANNOTATION:
+                        if (!extensibility_annotation_checked)
+                        {
+                            extensibility_annotation_checked = true;
+                            uint32_t extensibility =
+                                builtin_annotation_kind == BuiltinAnnotationKind::APPENDABLE_ANNOTATION ?
+                                static_cast<uint32_t>(extensibility::ExtensibilityKind::APPENDABLE) :
+                                builtin_annotation_kind == BuiltinAnnotationKind::FINAL_ANNOTATION ?
+                                static_cast<uint32_t>(extensibility::ExtensibilityKind::FINAL) :
+                                builtin_annotation_kind == BuiltinAnnotationKind::MUTABLE_ANNOTATION ?
+                                static_cast<uint32_t>(extensibility::ExtensibilityKind::MUTABLE) :
+                                static_cast<uint32_t>(annotation.param_seq().value()[0].value().enumerated_value());
+                            extensibility_flag_consistency(flags, extensibility);
+                        }
+                        else
+                        {
+                            throw InvalidArgumentError("More than one extensibility builtin annotation applied");
+                        }
+                        break;
+                    case BuiltinAnnotationKind::NESTED:
+                        nested_annotation_checked = true;
+                        if (annotation.param_seq().has_value())
+                        {
+                            nested_flag_consistency(flags, annotation.param_seq().value()[0].value().boolean_value());
+                        }
+                        else
+                        {
+                            nested_flag_consistency(flags, true);
+                        }
+                        break;
+                    case BuiltinAnnotationKind::AUTOID:
+                        autoid_annotation_checked = true;
+                        if (!annotation.param_seq().has_value() ||
+                            annotation.param_seq().value()[0].value().enumerated_value() == autoid::AutoidKind::HASH)
+                        {
+                            autoid_hash_flag_consistency(flags, true);
+                        }
+                        else
+                        {
+                            autoid_hash_flag_consistency(flags, false);
+                        }
+                        break;
+                    default:
+                        throw InvalidArgumentError("Given builtin annotation does not apply to structure declarations");
+                }
             }
         }
     }
@@ -3112,11 +3121,8 @@ void TypeObjectUtils::complete_struct_type_consistency(
     type_flag_consistency(complete_struct_type.struct_flags());
     complete_struct_header_consistency(complete_struct_type.header());
     complete_struct_member_seq_consistency(complete_struct_type.member_seq());
-    if (complete_struct_type.header().detail().ann_custom().has_value())
-    {
-        builtin_applied_annotations_type_flags_consistency(complete_struct_type.header().detail().ann_custom().value(),
-            complete_struct_type.struct_flags());
-    }
+    builtin_applied_annotations_type_flags_consistency(complete_struct_type.header().detail().ann_custom(),
+        complete_struct_type.struct_flags());
     if (complete_struct_type.struct_flags() & TypeFlagBits::IS_AUTOID_HASH)
     {
         member_id_consistency(complete_struct_type.member_seq());
@@ -3329,37 +3335,40 @@ void TypeObjectUtils::common_discriminator_member_consistency(
 
 void TypeObjectUtils::common_discriminator_member_builtin_annotations_consistency(
         UnionDiscriminatorFlag flags,
-        const AppliedAnnotationSeq& annotations)
+        const eprosima::fastcdr::optional<AppliedAnnotationSeq>& annotations)
 {
     bool try_construct_annotation_checked = false;
     bool key_annotation_checked = false;
-    for (AppliedAnnotation annotation : annotations)
+    if (annotations.has_value())
     {
-        BuiltinAnnotationKind builtin_annotation_kind;
-        if (is_applied_builtin_annotation(annotation.annotation_typeid(), builtin_annotation_kind))
+        for (AppliedAnnotation annotation : annotations.value())
         {
-            switch (builtin_annotation_kind)
+            BuiltinAnnotationKind builtin_annotation_kind;
+            if (is_applied_builtin_annotation(annotation.annotation_typeid(), builtin_annotation_kind))
             {
-                case BuiltinAnnotationKind::TRY_CONSTRUCT:
-                    try_construct_annotation_checked = true;
-                    try_construct_flag_consistency(annotation.param_seq().value()[0].value().enumerated_value(),
-                        flags);
-                    break;
-                case BuiltinAnnotationKind::KEY:
-                    key_annotation_checked = true;
-                    if (annotation.param_seq().has_value())
-                    {
-                        key_flag_consistency(flags,
-                            annotation.param_seq().value()[0].value().boolean_value());
-                    }
-                    else
-                    {
-                        key_flag_consistency(flags, true);
-                    }
-                    break;
-                default:
-                    throw InvalidArgumentError(
-                        "Given builtin annotation does not apply to union discriminator members");
+                switch (builtin_annotation_kind)
+                {
+                    case BuiltinAnnotationKind::TRY_CONSTRUCT:
+                        try_construct_annotation_checked = true;
+                        try_construct_flag_consistency(annotation.param_seq().value()[0].value().enumerated_value(),
+                            flags);
+                        break;
+                    case BuiltinAnnotationKind::KEY:
+                        key_annotation_checked = true;
+                        if (annotation.param_seq().has_value())
+                        {
+                            key_flag_consistency(flags,
+                                annotation.param_seq().value()[0].value().boolean_value());
+                        }
+                        else
+                        {
+                            key_flag_consistency(flags, true);
+                        }
+                        break;
+                    default:
+                        throw InvalidArgumentError(
+                            "Given builtin annotation does not apply to union discriminator members");
+                }
             }
         }
     }
@@ -3402,11 +3411,8 @@ void TypeObjectUtils::complete_union_type_consistency(
     complete_union_header_consistency(complete_union_type.header());
     complete_discriminator_member_consistency(complete_union_type.discriminator());
     complete_union_member_seq_consistency(complete_union_type.member_seq());
-    if (complete_union_type.header().detail().ann_custom().has_value())
-    {
-        builtin_applied_annotations_type_flags_consistency(complete_union_type.header().detail().ann_custom().value(),
-            complete_union_type.union_flags());
-    }
+    builtin_applied_annotations_type_flags_consistency(complete_union_type.header().detail().ann_custom(),
+        complete_union_type.union_flags());
     if (complete_union_type.union_flags() & TypeFlagBits::IS_AUTOID_HASH)
     {
         member_id_consistency(complete_union_type.member_seq());
@@ -3488,15 +3494,33 @@ void TypeObjectUtils::complete_annotation_parameter_consistency(
     common_annotation_parameter_consistency(complete_annotation_parameter.common());
     common_annotation_parameter_type_identifier_default_value_consistency(
         complete_annotation_parameter.common().member_type_id(), complete_annotation_parameter.default_value());
+    if (complete_annotation_parameter.name().size() == 0)
+    {
+        throw InvalidArgumentError("Annotation parameter name cannot be empty");
+    }
 }
 
 void TypeObjectUtils::complete_annotation_parameter_seq_consistency(
         const CompleteAnnotationParameterSeq& complete_annotation_parameter_seq)
 {
+    std::set<MemberName> member_names;
     for (size_t i = 0; i < complete_annotation_parameter_seq.size(); i++)
     {
+        member_names.insert(complete_annotation_parameter_seq[i].name());
+        if (member_names.size() != (i + 1))
+        {
+            throw InvalidArgumentError("Repeated parameter name in the sequence");
+        }
         complete_annotation_parameter_consistency(complete_annotation_parameter_seq[i]);
-        // TODO(jlbueno): check uniqueness of applied annotation parameter
+    }
+}
+
+void TypeObjectUtils::complete_annotation_header_consistency(
+        const CompleteAnnotationHeader& complete_annotation_header)
+{
+    if (complete_annotation_header.annotation_name().size() == 0)
+    {
+        throw InvalidArgumentError("QualifiedTypeName cannot be empty");
     }
 }
 
@@ -3504,6 +3528,7 @@ void TypeObjectUtils::complete_annotation_type_consistency(
         const CompleteAnnotationType& complete_annotation_type)
 {
     empty_flags_consistency(complete_annotation_type.annotation_flag());
+    complete_annotation_header_consistency(complete_annotation_type.header());
     complete_annotation_parameter_seq_consistency(complete_annotation_type.member_seq());
 }
 
