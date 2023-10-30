@@ -1394,6 +1394,13 @@ bool DataReaderImpl::can_qos_be_updated(
         logWarning(RTPS_QOS_CHECK,
                 "Unique network flows request cannot be changed after the creation of a DataReader.");
     }
+    if (to.reliable_reader_qos().disable_positive_ACKs.enabled !=
+            from.reliable_reader_qos().disable_positive_ACKs.enabled)
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK,
+                "Positive ACKs QoS cannot be changed after the creation of a DataReader.");
+    }
     return updatable;
 }
 

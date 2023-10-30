@@ -308,6 +308,13 @@ public:
     void updateTimes(
             const WriterTimes& times);
 
+    /**
+     * Update the period of the disable positive ACKs policy.
+     * @param att WriterAttributes parameter.
+     */
+    void updatePositiveAcks(
+            const WriterAttributes& att);
+
     SequenceNumber_t next_sequence_number() const;
 
     /**

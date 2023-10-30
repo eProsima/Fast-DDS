@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
@@ -92,6 +93,7 @@ public:
         if (writer_attr_.endpoint.durabilityKind == eprosima::fastrtps::rtps::VOLATILE)
         {
             history_->remove_change_g(change);
+            std::cout << "Change removed" << std::endl;
         }
     }
 
@@ -227,6 +229,13 @@ public:
             rattr.m_qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
         }
 
+        // Check disable_positive_acks_ attribute
+        if (writer_attr_.disable_positive_acks)
+        {
+            rattr.m_qos.m_disablePositiveACKs.enabled = writer_attr_.disable_positive_acks;
+            rattr.m_qos.m_disablePositiveACKs.duration = writer_attr_.keep_duration;
+        }
+
         rattr.guid().guidPrefix.value[0] = guid.guidPrefix.value[0];
         rattr.guid().guidPrefix.value[1] = guid.guidPrefix.value[1];
         rattr.guid().guidPrefix.value[2] = guid.guidPrefix.value[2];
@@ -277,6 +286,34 @@ public:
     {
         writer_attr_.times.heartbeatPeriod.nanosec = nanosec;
         return *this;
+    }
+
+    RTPSAsSocketWriter& disable_positive_acks_seconds(
+            bool disable,
+            int32_t sec)
+    {
+        writer_attr_.disable_positive_acks = disable;
+        writer_attr_.keep_duration = eprosima::fastrtps::Duration_t(sec, 0);
+        return *this;
+    }
+
+    /*** Access RTPSWriter functions ***/
+    void updateAttributes(
+            const eprosima::fastrtps::rtps::WriterAttributes& att)
+    {
+        writer_->updateAttributes(att);
+        return;
+    }
+
+    bool get_disable_positive_acks()
+    {
+        bool ret_val = false;
+        auto stateful_writer = dynamic_cast<eprosima::fastrtps::rtps::StatefulWriter*>(writer_);
+        if (stateful_writer)
+        {
+            ret_val = stateful_writer->get_disable_positive_acks();
+        }
+        return ret_val;
     }
 
 private:

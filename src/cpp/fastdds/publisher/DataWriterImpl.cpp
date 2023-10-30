@@ -998,10 +998,22 @@ ReturnCode_t DataWriterImpl::set_qos(
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
+
     set_qos(qos_, qos_to_set, !enabled);
 
     if (enabled)
     {
+        if (qos_.reliability().kind == eprosima::fastrtps::RELIABLE_RELIABILITY_QOS &&
+                qos_.reliable_writer_qos() == qos_to_set.reliable_writer_qos())
+        {
+            // Update times and positive_acks attributes on RTPS Layer
+            WriterAttributes w_att;
+            w_att.times = qos_.reliable_writer_qos().times;
+            w_att.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks.enabled;
+            w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
+            writer_->updateAttributes(w_att);
+        }
+
         //Notify the participant that a Writer has changed its QOS
         fastrtps::TopicAttributes topic_att = get_topic_attributes(qos_, *topic_, type_);
         WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
@@ -1504,114 +1516,137 @@ LivelinessLostStatus& DataWriterImpl::update_liveliness_lost_status(
 void DataWriterImpl::set_qos(
         DataWriterQos& to,
         const DataWriterQos& from,
-        bool is_default)
+        bool update_immutable)
 {
-    if (is_default && !(to.durability() == from.durability()))
+    // Check immutable policies
+    if (update_immutable)
     {
-        to.durability() = from.durability();
-        to.durability().hasChanged = true;
+        if (!(to.durability() == from.durability()))
+        {
+            to.durability() = from.durability();
+            to.durability().hasChanged = true;
+        }
+
+        if (!(to.durability_service() == from.durability_service()))
+        {
+            to.durability_service() = from.durability_service();
+            to.durability_service().hasChanged = true;
+        }
+
+        if (!(to.liveliness() == from.liveliness()))
+        {
+            to.liveliness() = from.liveliness();
+            to.liveliness().hasChanged = true;
+        }
+
+        if (!(to.reliability().kind == from.reliability().kind))
+        {
+            to.reliability().kind = from.reliability().kind;
+            to.reliability().hasChanged = true;
+        }
+
+        if (!(to.destination_order() == from.destination_order()))
+        {
+            to.destination_order() = from.destination_order();
+            to.destination_order().hasChanged = true;
+        }
+
+        if (!(to.history() == from.history()))
+        {
+            to.history() = from.history();
+            to.history().hasChanged = true;
+        }
+
+        if (!(to.resource_limits() == from.resource_limits()))
+        {
+            to.resource_limits() = from.resource_limits();
+            to.resource_limits().hasChanged = true;
+        }
+
+        if (!(to.ownership() == from.ownership()))
+        {
+            to.ownership() = from.ownership();
+            to.ownership().hasChanged = true;
+        }
+
+        to.publish_mode() = from.publish_mode();
+
+        if (!(to.representation() == from.representation()))
+        {
+            to.representation() = from.representation();
+            to.representation().hasChanged = true;
+        }
+
+        to.properties() = from.properties();
+
+        if (!(to.reliable_writer_qos() == from.reliable_writer_qos()))
+        {
+            RTPSReliableWriterQos& rel_to = to.reliable_writer_qos();
+            rel_to.disable_heartbeat_piggyback = from.reliable_writer_qos().disable_heartbeat_piggyback;
+            rel_to.disable_positive_acks.enabled = from.reliable_writer_qos().disable_positive_acks.enabled;
+        }
+
+        to.endpoint() = from.endpoint();
+
+        to.writer_resource_limits() = from.writer_resource_limits();
+
+        to.data_sharing() = from.data_sharing();
+
+        to.throughput_controller() = from.throughput_controller();
     }
-    if (is_default && !(to.durability_service() == from.durability_service()))
-    {
-        to.durability_service() = from.durability_service();
-        to.durability_service().hasChanged = true;
-    }
+
     if (!(to.deadline() == from.deadline()))
     {
         to.deadline() = from.deadline();
         to.deadline().hasChanged = true;
     }
+
     if (!(to.latency_budget() == from.latency_budget()))
     {
         to.latency_budget() = from.latency_budget();
         to.latency_budget().hasChanged = true;
     }
-    if (is_default && !(to.liveliness() == from.liveliness()))
+
+    if (!(to.reliability().max_blocking_time == from.reliability().max_blocking_time))
     {
-        to.liveliness() = from.liveliness();
-        to.liveliness().hasChanged = true;
-    }
-    if (is_default && !(to.reliability() == from.reliability()))
-    {
-        to.reliability() = from.reliability();
+        to.reliability().max_blocking_time = from.reliability().max_blocking_time;
         to.reliability().hasChanged = true;
     }
-    if (is_default && !(to.destination_order() == from.destination_order()))
-    {
-        to.destination_order() = from.destination_order();
-        to.destination_order().hasChanged = true;
-    }
-    if (is_default && !(to.history() == from.history()))
-    {
-        to.history() = from.history();
-        to.history().hasChanged = true;
-    }
-    if (is_default && !(to.resource_limits() == from.resource_limits()))
-    {
-        to.resource_limits() = from.resource_limits();
-        to.resource_limits().hasChanged = true;
-    }
+
     if (!(to.transport_priority() == from.transport_priority()))
     {
         to.transport_priority() = from.transport_priority();
         to.transport_priority().hasChanged = true;
     }
+
     if (!(to.lifespan() == from.lifespan()))
     {
         to.lifespan() = from.lifespan();
         to.lifespan().hasChanged = true;
     }
+
     if (!(to.user_data() == from.user_data()))
     {
         to.user_data() = from.user_data();
         to.user_data().hasChanged = true;
     }
-    if (is_default && !(to.ownership() == from.ownership()))
-    {
-        to.ownership() = from.ownership();
-        to.ownership().hasChanged = true;
-    }
+
     if (!(to.ownership_strength() == from.ownership_strength()))
     {
         to.ownership_strength() = from.ownership_strength();
         to.ownership_strength().hasChanged = true;
     }
+
     if (!(to.writer_data_lifecycle() == from.writer_data_lifecycle()))
     {
         to.writer_data_lifecycle() = from.writer_data_lifecycle();
     }
-    if (is_default && !(to.publish_mode() == from.publish_mode()))
+
+    if (!(to.reliable_writer_qos() == from.reliable_writer_qos()))
     {
-        to.publish_mode() = from.publish_mode();
-    }
-    if (!(to.representation() == from.representation()))
-    {
-        to.representation() = from.representation();
-        to.representation().hasChanged = true;
-    }
-    if (is_default && !(to.properties() == from.properties()))
-    {
-        to.properties() = from.properties();
-    }
-    if (is_default && !(to.reliable_writer_qos() == from.reliable_writer_qos()))
-    {
-        to.reliable_writer_qos() = from.reliable_writer_qos();
-    }
-    if (is_default && !(to.endpoint() == from.endpoint()))
-    {
-        to.endpoint() = from.endpoint();
-    }
-    if (is_default && !(to.writer_resource_limits() == from.writer_resource_limits()))
-    {
-        to.writer_resource_limits() = from.writer_resource_limits();
-    }
-    if (is_default && !(to.throughput_controller() == from.throughput_controller()))
-    {
-        to.throughput_controller() = from.throughput_controller();
-    }
-    if (is_default && !(to.data_sharing() == from.data_sharing()))
-    {
-        to.data_sharing() = from.data_sharing();
+        RTPSReliableWriterQos& rel_to = to.reliable_writer_qos();
+        rel_to.times = from.reliable_writer_qos().times;
+        rel_to.disable_positive_acks.duration = from.reliable_writer_qos().disable_positive_acks.duration;
     }
 }
 
@@ -1730,6 +1765,13 @@ bool DataWriterImpl::can_qos_be_updated(
     {
         updatable = false;
         logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
+    }
+    if (to.reliable_writer_qos().disable_positive_acks.enabled !=
+            from.reliable_writer_qos().disable_positive_acks.enabled)
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK,
+                "Only the period of Positive ACKs can be changed after the creation of a DataWriter.");
     }
     return updatable;
 }
