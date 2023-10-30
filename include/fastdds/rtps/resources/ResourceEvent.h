@@ -24,7 +24,7 @@
 
 #include <atomic>
 #include <functional>
-#include <thread>
+#include <memory>
 #include <vector>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
@@ -32,6 +32,9 @@
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 
 namespace eprosima {
+
+class thread;
+
 namespace fastrtps {
 namespace rtps {
 
@@ -45,7 +48,7 @@ class ResourceEvent
 {
 public:
 
-    ResourceEvent() = default;
+    ResourceEvent();
 
     ~ResourceEvent();
 
@@ -140,7 +143,7 @@ private:
     std::chrono::steady_clock::time_point current_time_;
 
     //! Execution thread.
-    std::thread thread_;
+    std::unique_ptr<eprosima::thread> thread_;
 
     /*!
      * @brief Registers a new TimedEventImpl object in the internal queue to be processed.
