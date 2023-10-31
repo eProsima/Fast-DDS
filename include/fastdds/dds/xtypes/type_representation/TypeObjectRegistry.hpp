@@ -110,7 +110,7 @@ public:
     /**
      * @brief Register an indirect hash TypeIdentifier.
      *
-     * @pre TypeIdentifier must be an indirect hash TypeIdentifier.
+     * @pre TypeIdentifier must not be a direct hash TypeIdentifier.
      *
      * @param[in] type_name Name of the type being registered.
      * @param[in] type_identifier TypeIdentier related to the given type name.
