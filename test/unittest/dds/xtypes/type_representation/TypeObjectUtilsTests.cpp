@@ -1577,6 +1577,28 @@ TEST(TypeObjectUtilsTests, build_common_bitflag_inconsistent_data)
     EXPECT_NO_THROW(CommonBitflag bitflag = TypeObjectUtils::build_common_bitflag(32, empty_flags));
 }
 
+// Build CompleteBitflag with non-applying builtin annotations.
+TEST(TypeObjectUtilsTests, build_complete_bitflag_invalid_builtin_annotations)
+{
+    AppliedBuiltinMemberAnnotations unit_builtin_ann = TypeObjectUtils::build_applied_builtin_member_annotations(
+        eprosima::fastcdr::optional<std::string>("unit"), eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<std::string>());
+    // TODO(jlbueno) @min & @max annotations cannot be applied: TypeObject depends on 'any' block implementation.
+    AppliedBuiltinMemberAnnotations hash_id_builtin_ann = TypeObjectUtils::build_applied_builtin_member_annotations(
+        eprosima::fastcdr::optional<std::string>(), eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<std::string>("member_hash"));
+    CompleteMemberDetail unit_member = TypeObjectUtils::build_complete_member_detail("member_name", unit_builtin_ann,
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail hash_id_member = TypeObjectUtils::build_complete_member_detail("member_name",
+        hash_id_builtin_ann, eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    EXPECT_THROW(CompleteBitflag bitflag = TypeObjectUtils::build_complete_bitflag(CommonBitflag(), unit_member),
+        InvalidArgumentError);
+    EXPECT_THROW(CompleteBitflag bitflag = TypeObjectUtils::build_complete_bitflag(CommonBitflag(), hash_id_member),
+        InvalidArgumentError);
+}
+
 // Build CompleteBitmaskType with non-empty flags
 TEST(TypeObjectUtilsTests, build_complete_bitmask_type_non_empty_flags)
 {
