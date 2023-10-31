@@ -96,7 +96,11 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
         const std::string& type_name,
         const TypeIdentifier& type_identifier)
 {
+<<<<<<< HEAD
     // Preconditions
+=======
+    // Precondition
+>>>>>>> 25fdc1e18 (Refs #19837: test fixes)
     if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier) || type_name.empty())
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;

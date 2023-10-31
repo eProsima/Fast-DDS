@@ -68,11 +68,19 @@ TEST(TypeObjectRegistryTests, register_type_identifier)
     StringSTypeDefn small_string;
     small_string.bound(10);
     type_id.string_sdefn(small_string);
+<<<<<<< HEAD
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("",
             type_id));
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("string_type_id",
+=======
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("",
+            type_id));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("string_type_id",
+>>>>>>> 25fdc1e18 (Refs #19837: test fixes)
             type_id));
     type_id.string_sdefn().bound(5);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
