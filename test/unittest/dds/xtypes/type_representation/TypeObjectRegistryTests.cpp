@@ -20,44 +20,13 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/xtypes/common.hpp>
-#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
-#include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-namespace xtypes {
+namespace xtypes1_3 {
 
-// Test TypeObjectRegistry::register_type_object
-TEST(TypeObjectRegistryTests, register_type_object)
-{
-    TypeIdentifier type_id;
-    type_id._d(TK_BYTE);
-    CompleteAliasType complete_alias_type;
-    complete_alias_type.header().detail().type_name("alias_name");
-    CompleteTypeObject type_object;
-    type_object.alias_type(complete_alias_type);
-#if !defined(NDEBUG)
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET,
-            DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("alias",
-            type_object));
-#endif // if !defined(NDEBUG)
-    complete_alias_type.body().common().related_type(type_id);
-    type_object.alias_type(complete_alias_type);
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET,
-            DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("", type_object));
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
-            DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("alias",
-            type_object));
-    complete_alias_type.header().detail().type_name("other_name");
-    type_object.alias_type(complete_alias_type);
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
-            DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("alias",
-            type_object));
-}
-
-// Test TypeObjectRegistry::register_type_identifier
 TEST(TypeObjectRegistryTests, register_type_identifier)
 {
     TypeIdentifier type_id;
@@ -68,19 +37,11 @@ TEST(TypeObjectRegistryTests, register_type_identifier)
     StringSTypeDefn small_string;
     small_string.bound(10);
     type_id.string_sdefn(small_string);
-<<<<<<< HEAD
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("",
             type_id));
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("string_type_id",
-=======
-    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
-        DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("",
-            type_id));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
-        DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("string_type_id",
->>>>>>> 25fdc1e18 (Refs #19837: test fixes)
             type_id));
     type_id.string_sdefn().bound(5);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
