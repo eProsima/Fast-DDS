@@ -752,6 +752,13 @@ bool EDP::valid_matching(
         incompatible_qos.set(fastdds::dds::LIVELINESS_QOS_POLICY_ID);
     }
 
+    // DataRepresentationQosPolicy
+    if (!checkDataRepresentationQos(wdata, rdata))
+    {
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "Incompatible Data Representation QoS");
+        incompatible_qos.set(fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID);
+    }
+
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
 #endif // if HAVE_SECURITY
@@ -827,7 +834,7 @@ bool EDP::valid_matching(
  * Table 7.57 XTypes document 1.2
  * Writer   Reader  Compatible
  * XCDR     XCDR    true
- * XCDR     XCDR2   true
+ * XCDR     XCDR2   false
  * XCDR2    XCDR    false
  * XCDR2    XCDR2   true
  * @param wdata
@@ -843,29 +850,26 @@ bool EDP::checkDataRepresentationQos(
 
     if (wdata->m_qos.representation.m_value.empty())
     {
-        compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR2_DATA_REPRESENTATION) != rr.end();
         compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR_DATA_REPRESENTATION) != rr.end() || rr.empty();
     }
     else
     {
-        for (DataRepresentationId writerRepresentation : wdata->m_qos.representation.m_value)
+        DataRepresentationId writerRepresentation {wdata->m_qos.representation.m_value.at(0)};
+
+        if (writerRepresentation == fastdds::dds::XCDR2_DATA_REPRESENTATION)
         {
-            if (writerRepresentation == fastdds::dds::XCDR2_DATA_REPRESENTATION)
-            {
-                compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR2_DATA_REPRESENTATION) != rr.end();
-            }
-            else if (writerRepresentation == fastdds::dds::XCDR_DATA_REPRESENTATION)
-            {
-                compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR2_DATA_REPRESENTATION) != rr.end();
-                compatible |=
-                        std::find(rr.begin(), rr.end(),
-                                fastdds::dds::XCDR_DATA_REPRESENTATION) != rr.end() || rr.empty();
-            }
-            else // XML_DATA_REPRESENTATION
-            {
-                EPROSIMA_LOG_INFO(EDP, "DataRepresentationQosPolicy XML_DATA_REPRESENTATION isn't supported.");
-            }
+            compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR2_DATA_REPRESENTATION) != rr.end();
         }
+        else if (writerRepresentation == fastdds::dds::XCDR_DATA_REPRESENTATION)
+        {
+            compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR_DATA_REPRESENTATION) != rr.end()
+                    || rr.empty();
+        }
+        else // XML_DATA_REPRESENTATION
+        {
+            EPROSIMA_LOG_INFO(EDP, "DataRepresentationQosPolicy XML_DATA_REPRESENTATION isn't supported.");
+        }
+
     }
 
     return compatible;
@@ -979,6 +983,12 @@ bool EDP::valid_matching(
     {
         EPROSIMA_LOG_WARNING(RTPS_EDP, "Incompatible liveliness kinds: offered kind is < than requested kind");
         incompatible_qos.set(fastdds::dds::LIVELINESS_QOS_POLICY_ID);
+    }
+    // DataRepresentationQosPolicy
+    if (!checkDataRepresentationQos(wdata, rdata))
+    {
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "Incompatible Data Representation QoS");
+        incompatible_qos.set(fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID);
     }
 
 #if HAVE_SECURITY

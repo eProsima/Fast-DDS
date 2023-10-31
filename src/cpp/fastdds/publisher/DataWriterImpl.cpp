@@ -958,7 +958,10 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
         }
 
-        if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload))
+        if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload,
+                qos_.representation().m_value.empty()
+                || XCDR_DATA_REPRESENTATION == qos_.representation().m_value.at(0)
+                    ? XCDR_DATA_REPRESENTATION : XCDR2_DATA_REPRESENTATION))
         {
             EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
             return_payload_to_pool(payload);

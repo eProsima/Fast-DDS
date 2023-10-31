@@ -1486,6 +1486,13 @@ public:
         return *this;
     }
 
+    PubSubReader& data_representation(
+            const std::vector<eprosima::fastdds::dds::DataRepresentationId_t>& values)
+    {
+        datareader_qos_.type_consistency().representation.m_value = values;
+        return *this;
+    }
+
     bool update_partition(
             const std::string& partition)
     {
@@ -1719,6 +1726,11 @@ public:
         eprosima::fastdds::dds::SubscriptionMatchedStatus status;
         datareader_->get_subscription_matched_status(status);
         return status;
+    }
+
+    eprosima::fastdds::dds::TypeSupport get_type_support()
+    {
+        return type_;
     }
 
 private:

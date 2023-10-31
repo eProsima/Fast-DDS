@@ -594,12 +594,14 @@ bool ReaderProxyData::writeToCDRMessage(
     }
 #endif // if HAVE_SECURITY
 
-    /* TODO - Enable when implement XCDR, XCDR2 and/or XML
-       if (m_qos.representation.send_always() || m_qos.representation.hasChanged)
-       {
-        if (!m_qos.representation.addToCDRMessage(msg)) return false;
-       }
-     */
+    if (m_qos.representation.send_always() || m_qos.representation.hasChanged)
+    {
+        if (!fastdds::dds::QosPoliciesSerializer<DataRepresentationQosPolicy>::add_to_cdr_message(m_qos.representation,
+                msg))
+        {
+            return false;
+        }
+    }
 
     if (m_qos.type_consistency.send_always() || m_qos.type_consistency.hasChanged)
     {
