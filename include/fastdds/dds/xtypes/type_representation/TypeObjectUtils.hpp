@@ -1220,13 +1220,14 @@ public:
      *
      * @param[in] ann_builtin Applied builtin member annotations: unit, max, min, range, hashid
      * @param[in] ann_custom Applied custom annotations
-     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if AppliedAnnotationSeq is
-     *            inconsistent (only Debug build mode).
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. AppliedAnnotationSeq is inconsistent (only Debug build mode).
+     *              2. @hashid builtin annotation is applied.
      * @return const CompleteElementDetail instance.
      */
     RTPS_DllAPI static const CompleteElementDetail build_complete_element_detail(
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>& ann_builtin,
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom);
+            const eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>& ann_builtin,
+            const eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom);
 
     /**
      * @brief Build CommonCollectionElement instance.
@@ -2523,6 +2524,16 @@ protected:
      */
     static void common_alias_body_consistency(
             const CommonAliasBody& common_alias_body);
+
+    /**
+     * @brief Check that @hashid builtin annotation has not been set.
+     *
+     * @param[in] ann_builtin Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            AppliedBuiltinMemberAnnotations is not consistent.
+     */
+    static void hashid_builtin_annotation_not_applied_consistency(
+            const eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>& ann_builtin);
 
     /**
      * @brief Check CompleteAliasBody consistency.
