@@ -480,7 +480,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(
                     p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
             {
                 address = p_aux1->Name();
-                if (strcmp(address, ADDRESS) == 0)
+                if (strcmp(address, ADDRESS) == 0 || strcmp(address, INTERFACE_NAME) == 0)
                 {
                     const char* text = p_aux1->GetText();
                     if (nullptr != text)

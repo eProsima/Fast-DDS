@@ -190,7 +190,7 @@ extern const char* SECONDS;
 extern const char* NANOSECONDS;
 extern const char* SHARED;
 extern const char* EXCLUSIVE;
-
+extern const char* INTERFACE_NAME;
 /// QOS
 extern const char* DURABILITY;
 extern const char* DURABILITY_SRV;
