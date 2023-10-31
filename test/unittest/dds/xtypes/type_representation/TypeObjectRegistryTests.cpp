@@ -21,12 +21,39 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace xtypes1_3 {
 
+// Test TypeObjectRegistry::register_type_object
+TEST(TypeObjectRegistryTests, register_type_object)
+{
+    TypeIdentifier type_id;
+    type_id._d(TK_BYTE);
+    CompleteAliasType complete_alias_type;
+    complete_alias_type.header().detail().type_name("alias_name");
+    CompleteTypeObject type_object;
+    type_object.alias_type(complete_alias_type);
+#if !defined(NDEBUG)
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("alias", type_object));
+#endif
+    complete_alias_type.body().common().related_type(type_id);
+    type_object.alias_type(complete_alias_type);
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("", type_object));
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("alias", type_object));
+    complete_alias_type.header().detail().type_name("other_name");
+    type_object.alias_type(complete_alias_type);
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+        DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("alias", type_object));
+}
+
+// Test TypeObjectRegistry::register_type_identifier
 TEST(TypeObjectRegistryTests, register_type_identifier)
 {
     TypeIdentifier type_id;
