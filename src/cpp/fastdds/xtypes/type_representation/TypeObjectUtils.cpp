@@ -2498,26 +2498,33 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
     }
     // Enum
-    else if (is_direct_hash_type_identifier(type_id) && value._d() == TK_ENUM)
+    else if (is_direct_hash_type_identifier(type_id))
     {
-        if (ReturnCode_t::RETCODE_OK ==
-            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_objects))
+        if (value._d() == TK_ENUM)
         {
-            if (type_objects.complete_type_object._d() == TK_ALIAS)
+            if (ReturnCode_t::RETCODE_OK ==
+                DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_objects))
             {
-                common_annotation_parameter_type_identifier_default_value_consistency(
-                    type_objects.complete_type_object.alias_type().body().common().related_type(), value);
+                if (type_objects.complete_type_object._d() == TK_ALIAS)
+                {
+                    common_annotation_parameter_type_identifier_default_value_consistency(
+                        type_objects.complete_type_object.alias_type().body().common().related_type(), value);
+                }
+                else if (type_objects.complete_type_object._d() != TK_ENUM)
+                {
+                    throw InvalidArgumentError(
+                        "Given annotation parameter value is inconsistent with given TypeIdentifier");
+                }
             }
-            else if (type_objects.complete_type_object._d() != TK_ENUM)
+            else
             {
-                throw InvalidArgumentError(
-                    "Given annotation parameter value is inconsistent with given TypeIdentifier");
+                throw InvalidArgumentError("Given TypeIdentifier is not found in TypeObjectRegistry");
             }
         }
-    }
-    else
-    {
-        throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+        else
+        {
+            throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+        }
     }
 }
 
@@ -2915,7 +2922,7 @@ void TypeObjectUtils::complete_bitfield_seq_consistency(
             i < complete_bitfield_seq[i].common().bitcount(); i++)
         {
             positions.insert(complete_bitfield_seq[i].common().position() + i);
-            if (positions.size() != (bitset_length + i))
+            if (positions.size() != (bitset_length + i + 1))
             {
                 throw InvalidArgumentError("Bitfields with repeated/overlapping positions");
             }
