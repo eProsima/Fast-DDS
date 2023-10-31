@@ -1157,10 +1157,7 @@ const CompleteAliasBody TypeObjectUtils::build_complete_alias_body(
         applied_annotation_seq_consistency(ann_custom.value());
     }
 #endif // !defined(NDEBUG)
-    if (ann_builtin.has_value() && ann_builtin.value().hash_id().has_value())
-    {
-        throw InvalidArgumentError("@hashid builtin annotation cannot be applied to alias declaration");
-    }
+    hashid_builtin_annotation_not_applied_consistency(ann_builtin);
     CompleteAliasBody complete_alias_body;
     complete_alias_body.common(common);
     complete_alias_body.ann_builtin(ann_builtin);
@@ -1197,8 +1194,8 @@ const CompleteAliasType TypeObjectUtils::build_complete_alias_type(
 }
 
 const CompleteElementDetail TypeObjectUtils::build_complete_element_detail(
-        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>& ann_builtin,
-        eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom)
+        const eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>& ann_builtin,
+        const eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom)
 {
 #if !defined(NDEBUG)
     if (ann_custom.has_value())
@@ -1206,6 +1203,7 @@ const CompleteElementDetail TypeObjectUtils::build_complete_element_detail(
         applied_annotation_seq_consistency(ann_custom.value());
     }
 #endif // !defined(NDEBUG)
+    hashid_builtin_annotation_not_applied_consistency(ann_builtin);
     CompleteElementDetail complete_element_detail;
     complete_element_detail.ann_builtin(ann_builtin);
     complete_element_detail.ann_custom(ann_custom);
@@ -1365,6 +1363,10 @@ const CompleteEnumeratedLiteral TypeObjectUtils::build_complete_enumerated_liter
     common_enumerated_literal_consistency(common);
     complete_member_detail_consistency(detail);
 #endif // !defined(NDEBUG)
+    if (detail.ann_builtin().has_value())
+    {
+        throw InvalidArgumentError("Only @default_literal and @value builtin annotations apply to enum literals");
+    }
     CompleteEnumeratedLiteral complete_enumerated_literal;
     complete_enumerated_literal.common(common);
     complete_enumerated_literal.detail(detail);
@@ -2544,6 +2546,15 @@ void TypeObjectUtils::common_alias_body_consistency(
     type_identifier_consistency(common_alias_body.related_type());
 }
 
+void TypeObjectUtils::hashid_builtin_annotation_not_applied_consistency(
+        const eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>& ann_builtin)
+{
+    if (ann_builtin.has_value() && ann_builtin.value().hash_id().has_value())
+    {
+        throw InvalidArgumentError("@hashid builtin annotation cannot be applied to alias declaration");
+    }
+}
+
 void TypeObjectUtils::complete_alias_body_consistency(
         const CompleteAliasBody& complete_alias_body)
 {
@@ -2552,11 +2563,7 @@ void TypeObjectUtils::complete_alias_body_consistency(
     {
         applied_annotation_seq_consistency(complete_alias_body.ann_custom().value());
     }
-    if (complete_alias_body.ann_builtin().has_value() &&
-        complete_alias_body.ann_builtin().value().hash_id().has_value())
-    {
-        throw InvalidArgumentError("@hashid builtin annotation cannot be applied to alias declaration");
-    }
+    hashid_builtin_annotation_not_applied_consistency(complete_alias_body.ann_builtin());
 }
 
 void TypeObjectUtils::complete_alias_header_consistency(
@@ -2580,6 +2587,7 @@ void TypeObjectUtils::complete_element_detail_consistency(
     {
         applied_annotation_seq_consistency(complete_element_detail.ann_custom().value());
     }
+    hashid_builtin_annotation_not_applied_consistency(complete_element_detail.ann_builtin());
 }
 
 void TypeObjectUtils::common_collection_element_consistency(
@@ -2662,6 +2670,10 @@ void TypeObjectUtils::complete_enumerated_literal_consistency(
 {
     common_enumerated_literal_consistency(complete_enumerated_literal.common());
     complete_member_detail_consistency(complete_enumerated_literal.detail());
+    if (complete_enumerated_literal.detail().ann_builtin().has_value())
+    {
+        throw InvalidArgumentError("Only @default_literal and @value builtin annotations apply to enum literals");
+    }
 }
 
 void TypeObjectUtils::complete_enumerated_literal_seq_consistency(

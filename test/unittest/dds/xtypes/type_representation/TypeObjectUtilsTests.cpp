@@ -1340,12 +1340,19 @@ TEST(TypeObjectUtilsTests, build_complete_alias_body_inconsistent_hashid)
     TypeIdentifier type_id;
     type_id._d(TK_INT16);
     CommonAliasBody common_body = TypeObjectUtils::build_common_alias_body(0, type_id);
-    AppliedBuiltinMemberAnnotations builtin_ann = TypeObjectUtils::build_applied_builtin_member_annotations(
+    AppliedBuiltinMemberAnnotations unit_builtin_ann = TypeObjectUtils::build_applied_builtin_member_annotations(
+        eprosima::fastcdr::optional<std::string>("unit"), eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<std::string>());
+    // TODO(jlbueno) @min & @max annotations cannot be applied: TypeObject depends on 'any' block implementation.
+    AppliedBuiltinMemberAnnotations hash_id_builtin_ann = TypeObjectUtils::build_applied_builtin_member_annotations(
         eprosima::fastcdr::optional<std::string>(), eprosima::fastcdr::optional<AnnotationParameterValue>(),
         eprosima::fastcdr::optional<AnnotationParameterValue>(),
         eprosima::fastcdr::optional<std::string>("member_hash"));
-    EXPECT_THROW(CompleteAliasBody body = TypeObjectUtils::build_complete_alias_body(common_body, builtin_ann,
+    EXPECT_THROW(CompleteAliasBody body = TypeObjectUtils::build_complete_alias_body(common_body, hash_id_builtin_ann,
         eprosima::fastcdr::optional<AppliedAnnotationSeq>()), InvalidArgumentError);
+    EXPECT_NO_THROW(CompleteAliasBody body = TypeObjectUtils::build_complete_alias_body(common_body, unit_builtin_ann,
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>()));
 }
 
 // Build CompleteAliasType with non-empty flags
@@ -1377,6 +1384,24 @@ TEST(TypeObjectUtilsTests, build_common_collection_header_invalid_bound)
         InvalidArgumentError);
     bound = 10;
     EXPECT_NO_THROW(CommonCollectionHeader header = TypeObjectUtils::build_common_collection_header(bound));
+}
+
+// Build CompleteElementDetail with @hasid builtin annotation
+TEST(TypeObjectUtilsTests, build_complete_element_detail_inconsistent_hashid)
+{
+    AppliedBuiltinMemberAnnotations unit_builtin_ann = TypeObjectUtils::build_applied_builtin_member_annotations(
+        eprosima::fastcdr::optional<std::string>("unit"), eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<std::string>());
+    // TODO(jlbueno) @min & @max annotations cannot be applied: TypeObject depends on 'any' block implementation.
+    AppliedBuiltinMemberAnnotations hash_id_builtin_ann = TypeObjectUtils::build_applied_builtin_member_annotations(
+        eprosima::fastcdr::optional<std::string>(), eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<std::string>("member_hash"));
+    EXPECT_THROW(CompleteElementDetail element_detail = TypeObjectUtils::build_complete_element_detail(
+        hash_id_builtin_ann, eprosima::fastcdr::optional<AppliedAnnotationSeq>()), InvalidArgumentError);
+    EXPECT_NO_THROW(CompleteElementDetail element_detail = TypeObjectUtils::build_complete_element_detail(
+        unit_builtin_ann, eprosima::fastcdr::optional<AppliedAnnotationSeq>()));
 }
 
 // Build CompleteSequenceType with non-empty flags.
@@ -1477,6 +1502,28 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     CompleteCollectionElement key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
         key, element));
+}
+
+// Build CompleteEnumeratedLiteral with non-applying builtin annotations.
+TEST(TypeObjectUtilsTests, build_complete_enumerated_literal_invalid_builtin_annotations)
+{
+    AppliedBuiltinMemberAnnotations unit_builtin_ann = TypeObjectUtils::build_applied_builtin_member_annotations(
+        eprosima::fastcdr::optional<std::string>("unit"), eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<std::string>());
+    // TODO(jlbueno) @min & @max annotations cannot be applied: TypeObject depends on 'any' block implementation.
+    AppliedBuiltinMemberAnnotations hash_id_builtin_ann = TypeObjectUtils::build_applied_builtin_member_annotations(
+        eprosima::fastcdr::optional<std::string>(), eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<std::string>("member_hash"));
+    CompleteMemberDetail unit_member = TypeObjectUtils::build_complete_member_detail("member_name", unit_builtin_ann,
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail hash_id_member = TypeObjectUtils::build_complete_member_detail("member_name",
+        hash_id_builtin_ann, eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    EXPECT_THROW(CompleteEnumeratedLiteral enum_literal = TypeObjectUtils::build_complete_enumerated_literal(
+        CommonEnumeratedLiteral(), unit_member), InvalidArgumentError);
+    EXPECT_THROW(CompleteEnumeratedLiteral enum_literal = TypeObjectUtils::build_complete_enumerated_literal(
+        CommonEnumeratedLiteral(), hash_id_member), InvalidArgumentError);
 }
 
 // Build CommonEnumeratedHeader with inconsistent bit bound
