@@ -127,6 +127,10 @@ public:
         return _Thr._Id;
     }
 
+    inline bool is_calling_thread() const noexcept {
+        return _Thrd_id() == _Thr._Id;
+    }
+
     _NODISCARD static unsigned int hardware_concurrency() noexcept {
         return std::thread::hardware_concurrency();
     }
