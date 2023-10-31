@@ -122,13 +122,11 @@ namespace appendable {
 
 
 } // namespace appendable
-/* TODO(jlbueno)
 namespace mutable {
 
 
 
 } // namespace mutable
-*/
 namespace key {
 
 
