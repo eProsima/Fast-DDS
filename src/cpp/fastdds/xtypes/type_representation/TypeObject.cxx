@@ -44,6 +44,17 @@ namespace dds {
 
 namespace xtypes1_3 {
 
+
+
+
+
+
+
+
+
+
+
+
 eprosima::fastdds::dds::xtypes1_3::TypeObjectHashId::TypeObjectHashId()
 {
     m__d = EK_COMPLETE;
@@ -279,6 +290,8 @@ eprosima::fastdds::dds::xtypes1_3::EquivalenceHash& eprosima::fastdds::dds::xtyp
 
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::StringSTypeDefn::StringSTypeDefn()
 {
 }
@@ -356,6 +369,8 @@ eprosima::fastdds::dds::xtypes1_3::SBound& eprosima::fastdds::dds::xtypes1_3::St
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::StringLTypeDefn::StringLTypeDefn()
 {
 }
@@ -431,6 +446,8 @@ eprosima::fastdds::dds::xtypes1_3::LBound& eprosima::fastdds::dds::xtypes1_3::St
 {
     return m_bound;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::PlainCollectionHeader::PlainCollectionHeader()
@@ -552,6 +569,8 @@ eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag& eprosima::fastdds::dds
 {
     return m_element_flags;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::PlainSequenceSElemDefn::PlainSequenceSElemDefn()
@@ -719,6 +738,8 @@ eprosima::fastcdr::external<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& 
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::PlainSequenceLElemDefn::PlainSequenceLElemDefn()
 {
 }
@@ -882,6 +903,8 @@ eprosima::fastcdr::external<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& 
 {
     return m_element_identifier;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::PlainArraySElemDefn::PlainArraySElemDefn()
@@ -1059,6 +1082,8 @@ eprosima::fastcdr::external<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& 
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::PlainArrayLElemDefn::PlainArrayLElemDefn()
 {
 }
@@ -1232,6 +1257,8 @@ eprosima::fastcdr::external<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& 
 {
     return m_element_identifier;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::PlainMapSTypeDefn::PlainMapSTypeDefn()
@@ -1487,6 +1514,8 @@ eprosima::fastcdr::external<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& 
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::PlainMapLTypeDefn::PlainMapLTypeDefn()
 {
 }
@@ -1740,6 +1769,8 @@ eprosima::fastcdr::external<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& 
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::StronglyConnectedComponentId::StronglyConnectedComponentId()
 {
 }
@@ -1945,6 +1976,8 @@ bool eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn::operator !=(
 {
     return !(*this == x);
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::TypeIdentifier::TypeIdentifier()
@@ -3183,6 +3216,8 @@ eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn& eprosima::fastdds::dds::xty
 
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue()
 {
 }
@@ -3233,6 +3268,8 @@ bool eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue::operat
 {
     return !(*this == x);
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue::AnnotationParameterValue()
@@ -5079,6 +5116,8 @@ eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue& eprosima::f
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter::AppliedAnnotationParameter()
 {
 }
@@ -5211,6 +5250,10 @@ eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& eprosima::fastdds::
 
 
 
+
+
+
+
 eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation::AppliedAnnotation()
 {
 }
@@ -5340,6 +5383,10 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation
 {
     return m_param_seq;
 }
+
+
+
+
 
 
 
@@ -5516,6 +5563,8 @@ std::string& eprosima::fastdds::dds::xtypes1_3::AppliedVerbatimAnnotation::text(
 {
     return m_text;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations()
@@ -5737,6 +5786,8 @@ eprosima::fastcdr::optional<std::string>& eprosima::fastdds::dds::xtypes1_3::App
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::CommonStructMember::CommonStructMember()
 {
 }
@@ -5900,6 +5951,8 @@ eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtype
 {
     return m_member_type_id;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail::CompleteMemberDetail()
@@ -6077,6 +6130,8 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail::MinimalMemberDetail()
 {
 }
@@ -6162,6 +6217,8 @@ eprosima::fastdds::dds::xtypes1_3::NameHash& eprosima::fastdds::dds::xtypes1_3::
 {
     return m_name_hash;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteStructMember::CompleteStructMember()
@@ -6296,6 +6353,10 @@ eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds:
 
 
 
+
+
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalStructMember::MinimalStructMember()
 {
 }
@@ -6425,6 +6486,10 @@ eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::
 {
     return m_detail;
 }
+
+
+
+
 
 
 
@@ -6565,6 +6630,8 @@ bool eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail::operator !=(
 {
     return !(*this == x);
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail::CompleteTypeDetail()
@@ -6742,6 +6809,8 @@ eprosima::fastdds::dds::xtypes1_3::QualifiedTypeName& eprosima::fastdds::dds::xt
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::CompleteStructHeader::CompleteStructHeader()
 {
 }
@@ -6873,6 +6942,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::x
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalStructHeader::MinimalStructHeader()
 {
 }
@@ -7002,6 +7073,8 @@ eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail& eprosima::fastdds::dds::xt
 {
     return m_detail;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteStructType::CompleteStructType()
@@ -7179,6 +7252,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteStructMemberSeq& eprosima::fastdds::d
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalStructType::MinimalStructType()
 {
 }
@@ -7352,6 +7427,10 @@ eprosima::fastdds::dds::xtypes1_3::MinimalStructMemberSeq& eprosima::fastdds::dd
 {
     return m_member_seq;
 }
+
+
+
+
 
 
 
@@ -7564,6 +7643,8 @@ eprosima::fastdds::dds::xtypes1_3::UnionCaseLabelSeq& eprosima::fastdds::dds::xt
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember::CompleteUnionMember()
 {
 }
@@ -7693,6 +7774,10 @@ eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds:
 {
     return m_detail;
 }
+
+
+
+
 
 
 
@@ -7828,6 +7913,10 @@ eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::
 
 
 
+
+
+
+
 eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember::CommonDiscriminatorMember()
 {
 }
@@ -7957,6 +8046,8 @@ eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtype
 {
     return m_type_id;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteDiscriminatorMember::CompleteDiscriminatorMember()
@@ -8134,6 +8225,8 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalDiscriminatorMember::MinimalDiscriminatorMember()
 {
 }
@@ -8219,6 +8312,8 @@ eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember& eprosima::fastdds:
 {
     return m_common;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteUnionHeader::CompleteUnionHeader()
@@ -8308,6 +8403,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::x
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalUnionHeader::MinimalUnionHeader()
 {
 }
@@ -8393,6 +8490,8 @@ eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail& eprosima::fastdds::dds::xt
 {
     return m_detail;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteUnionType::CompleteUnionType()
@@ -8614,6 +8713,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteUnionMemberSeq& eprosima::fastdds::dd
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalUnionType::MinimalUnionType()
 {
 }
@@ -8833,6 +8934,8 @@ eprosima::fastdds::dds::xtypes1_3::MinimalUnionMemberSeq& eprosima::fastdds::dds
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::CommonAnnotationParameter::CommonAnnotationParameter()
 {
 }
@@ -8962,6 +9065,8 @@ eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtype
 {
     return m_member_type_id;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter::CompleteAnnotationParameter()
@@ -9137,6 +9242,10 @@ eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& eprosima::fastdds::
 {
     return m_default_value;
 }
+
+
+
+
 
 
 
@@ -9316,6 +9425,10 @@ eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue& eprosima::fastdds::
 
 
 
+
+
+
+
 eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationHeader::CompleteAnnotationHeader()
 {
 }
@@ -9453,6 +9566,8 @@ bool eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationHeader::operator !=(
 {
     return !(*this == x);
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationType::CompleteAnnotationType()
@@ -9630,6 +9745,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameterSeq& eprosima::fas
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationType::MinimalAnnotationType()
 {
 }
@@ -9805,6 +9922,8 @@ eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameterSeq& eprosima::fast
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::CommonAliasBody::CommonAliasBody()
 {
 }
@@ -9934,6 +10053,8 @@ eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtype
 {
     return m_related_type;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody::CompleteAliasBody()
@@ -10111,6 +10232,8 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody::MinimalAliasBody()
 {
 }
@@ -10196,6 +10319,8 @@ eprosima::fastdds::dds::xtypes1_3::CommonAliasBody& eprosima::fastdds::dds::xtyp
 {
     return m_common;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteAliasHeader::CompleteAliasHeader()
@@ -10335,6 +10460,8 @@ bool eprosima::fastdds::dds::xtypes1_3::MinimalAliasHeader::operator !=(
 {
     return !(*this == x);
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteAliasType::CompleteAliasType()
@@ -10512,6 +10639,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody& eprosima::fastdds::dds::xt
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalAliasType::MinimalAliasType()
 {
 }
@@ -10687,6 +10816,8 @@ eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody& eprosima::fastdds::dds::xty
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail::CompleteElementDetail()
 {
 }
@@ -10816,6 +10947,8 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation
 {
     return m_ann_custom;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement::CommonCollectionElement()
@@ -10949,6 +11082,8 @@ eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtype
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement::CompleteCollectionElement()
 {
 }
@@ -11080,6 +11215,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail& eprosima::fastdds::dds
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement::MinimalCollectionElement()
 {
 }
@@ -11167,6 +11304,8 @@ eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement& eprosima::fastdds::d
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader::CommonCollectionHeader()
 {
 }
@@ -11242,6 +11381,8 @@ eprosima::fastdds::dds::xtypes1_3::LBound& eprosima::fastdds::dds::xtypes1_3::Co
 {
     return m_bound;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteCollectionHeader::CompleteCollectionHeader()
@@ -11375,6 +11516,8 @@ eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetai
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalCollectionHeader::MinimalCollectionHeader()
 {
 }
@@ -11460,6 +11603,8 @@ eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader& eprosima::fastdds::dd
 {
     return m_common;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteSequenceType::CompleteSequenceType()
@@ -11637,6 +11782,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds:
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalSequenceType::MinimalSequenceType()
 {
 }
@@ -11812,6 +11959,8 @@ eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader::CommonArrayHeader()
 {
 }
@@ -11897,6 +12046,8 @@ eprosima::fastdds::dds::xtypes1_3::LBoundSeq& eprosima::fastdds::dds::xtypes1_3:
 {
     return m_bound_seq;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteArrayHeader::CompleteArrayHeader()
@@ -12030,6 +12181,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::x
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalArrayHeader::MinimalArrayHeader()
 {
 }
@@ -12115,6 +12268,8 @@ eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader& eprosima::fastdds::dds::xt
 {
     return m_common;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteArrayType::CompleteArrayType()
@@ -12292,6 +12447,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds:
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalArrayType::MinimalArrayType()
 {
 }
@@ -12465,6 +12622,8 @@ eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::
 {
     return m_element;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteMapType::CompleteMapType()
@@ -12684,6 +12843,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement& eprosima::fastdds:
 {
     return m_element;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::MinimalMapType::MinimalMapType()
@@ -12906,6 +13067,8 @@ eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement& eprosima::fastdds::
 
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedLiteral::CommonEnumeratedLiteral()
 {
 }
@@ -13025,6 +13188,8 @@ eprosima::fastdds::dds::xtypes1_3::EnumeratedLiteralFlag& eprosima::fastdds::dds
 {
     return m_flags;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral::CompleteEnumeratedLiteral()
@@ -13156,6 +13321,10 @@ eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds:
 {
     return m_detail;
 }
+
+
+
+
 
 
 
@@ -13291,6 +13460,10 @@ eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::
 
 
 
+
+
+
+
 eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader::CommonEnumeratedHeader()
 {
 }
@@ -13366,6 +13539,8 @@ eprosima::fastdds::dds::xtypes1_3::BitBound& eprosima::fastdds::dds::xtypes1_3::
 {
     return m_bit_bound;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader::CompleteEnumeratedHeader()
@@ -13499,6 +13674,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail& eprosima::fastdds::dds::x
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader::MinimalEnumeratedHeader()
 {
 }
@@ -13584,6 +13761,8 @@ eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader& eprosima::fastdds::dd
 {
     return m_common;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedType::CompleteEnumeratedType()
@@ -13761,6 +13940,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteralSeq& eprosima::fastd
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedType::MinimalEnumeratedType()
 {
 }
@@ -13936,6 +14117,8 @@ eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteralSeq& eprosima::fastdd
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::CommonBitflag::CommonBitflag()
 {
 }
@@ -14055,6 +14238,8 @@ eprosima::fastdds::dds::xtypes1_3::BitflagFlag& eprosima::fastdds::dds::xtypes1_
 {
     return m_flags;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteBitflag::CompleteBitflag()
@@ -14186,6 +14371,10 @@ eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds:
 {
     return m_detail;
 }
+
+
+
+
 
 
 
@@ -14321,6 +14510,10 @@ eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail& eprosima::fastdds::dds::
 
 
 
+
+
+
+
 eprosima::fastdds::dds::xtypes1_3::CommonBitmaskHeader::CommonBitmaskHeader()
 {
 }
@@ -14396,6 +14589,8 @@ eprosima::fastdds::dds::xtypes1_3::BitBound& eprosima::fastdds::dds::xtypes1_3::
 {
     return m_bit_bound;
 }
+
+
 
 
 
@@ -14575,6 +14770,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteBitflagSeq& eprosima::fastdds::dds::x
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType::MinimalBitmaskType()
 {
 }
@@ -14748,6 +14945,8 @@ eprosima::fastdds::dds::xtypes1_3::MinimalBitflagSeq& eprosima::fastdds::dds::xt
 {
     return m_flag_seq;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CommonBitfield::CommonBitfield()
@@ -14939,6 +15138,8 @@ eprosima::fastdds::dds::xtypes1_3::TypeKind& eprosima::fastdds::dds::xtypes1_3::
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::CompleteBitfield::CompleteBitfield()
 {
 }
@@ -15071,6 +15272,10 @@ eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail& eprosima::fastdds::dds:
 
 
 
+
+
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalBitfield::MinimalBitfield()
 {
 }
@@ -15200,6 +15405,10 @@ eprosima::fastdds::dds::xtypes1_3::NameHash& eprosima::fastdds::dds::xtypes1_3::
 {
     return m_name_hash;
 }
+
+
+
+
 
 
 
@@ -15340,6 +15549,8 @@ bool eprosima::fastdds::dds::xtypes1_3::MinimalBitsetHeader::operator !=(
 {
     return !(*this == x);
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteBitsetType::CompleteBitsetType()
@@ -15515,6 +15726,8 @@ eprosima::fastdds::dds::xtypes1_3::CompleteBitfieldSeq& eprosima::fastdds::dds::
 {
     return m_field_seq;
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::MinimalBitsetType::MinimalBitsetType()
@@ -15742,6 +15955,8 @@ bool eprosima::fastdds::dds::xtypes1_3::CompleteExtendedType::operator !=(
 {
     return !(*this == x);
 }
+
+
 
 
 eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject::CompleteTypeObject()
@@ -16992,6 +17207,8 @@ bool eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType::operator !=(
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject::MinimalTypeObject()
 {
     m__d = 0;
@@ -18188,6 +18405,8 @@ eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType& eprosima::fastdds::dds::
 }
 
 
+
+
 eprosima::fastdds::dds::xtypes1_3::TypeObject::TypeObject()
 {
     m__d = EK_COMPLETE;
@@ -18492,6 +18711,10 @@ eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject& eprosima::fastdds::dds::xt
 
 
 
+
+
+
+
 eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair::TypeIdentifierTypeObjectPair()
 {
 }
@@ -18621,6 +18844,10 @@ eprosima::fastdds::dds::xtypes1_3::TypeObject& eprosima::fastdds::dds::xtypes1_3
 {
     return m_type_object;
 }
+
+
+
+
 
 
 
@@ -18756,6 +18983,10 @@ eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& eprosima::fastdds::dds::xtype
 
 
 
+
+
+
+
 eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::TypeIdentfierWithSize()
 {
 }
@@ -18875,6 +19106,12 @@ uint32_t& eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize::typeobject_s
 {
     return m_typeobject_serialized_size;
 }
+
+
+
+
+
+
 
 
 
@@ -19044,6 +19281,10 @@ std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>& eprosima:
 
 
 
+
+
+
+
 eprosima::fastdds::dds::xtypes1_3::TypeInformation::TypeInformation()
 {
 }
@@ -19173,6 +19414,8 @@ eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies& eprosima::fas
 {
     return m_complete;
 }
+
+
 
 
 

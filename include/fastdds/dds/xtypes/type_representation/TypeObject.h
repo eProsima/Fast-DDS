@@ -138,14 +138,20 @@ typedef std::array<uint8_t, 4> NameHash;
 
 typedef uint32_t LBound;
 
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::LBound> LBoundSeq;
 
 const eprosima::fastdds::dds::xtypes1_3::LBound INVALID_LBOUND = 0;
 typedef uint8_t SBound;
 
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::SBound> SBoundSeq;
 
 const eprosima::fastdds::dds::xtypes1_3::SBound INVALID_SBOUND = 0;
+
+
 /*!
  * @brief This class represents the union TypeObjectHashId defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -326,6 +332,8 @@ typedef eprosima::fastdds::dds::xtypes1_3::TypeFlag BitsetTypeFlag;
 const uint16_t TypeFlagMinimalMask = 0x0007;
 class TypeIdentifier;
 
+
+
 /*!
  * @brief This class represents the structure StringSTypeDefn defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -410,6 +418,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::SBound m_bound{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure StringLTypeDefn defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -494,6 +504,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::LBound m_bound{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure PlainCollectionHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -606,6 +618,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CollectionElementFlag m_element_flags{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure PlainSequenceSElemDefn defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -746,6 +760,8 @@ private:
     eprosima::fastcdr::external<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier> m_element_identifier;
 
 };
+
+
 /*!
  * @brief This class represents the structure PlainSequenceLElemDefn defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -886,6 +902,8 @@ private:
     eprosima::fastcdr::external<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier> m_element_identifier;
 
 };
+
+
 /*!
  * @brief This class represents the structure PlainArraySElemDefn defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -1033,6 +1051,8 @@ private:
     eprosima::fastcdr::external<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier> m_element_identifier;
 
 };
+
+
 /*!
  * @brief This class represents the structure PlainArrayLElemDefn defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -1180,6 +1200,8 @@ private:
     eprosima::fastcdr::external<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier> m_element_identifier;
 
 };
+
+
 /*!
  * @brief This class represents the structure PlainMapSTypeDefn defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -1376,6 +1398,8 @@ private:
     eprosima::fastcdr::external<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier> m_key_identifier;
 
 };
+
+
 /*!
  * @brief This class represents the structure PlainMapLTypeDefn defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -1572,6 +1596,8 @@ private:
     eprosima::fastcdr::external<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier> m_key_identifier;
 
 };
+
+
 /*!
  * @brief This class represents the structure StronglyConnectedComponentId defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -1769,6 +1795,8 @@ private:
 
 
 };
+
+
 /*!
  * @brief This class represents the union TypeIdentifier defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -2183,6 +2211,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::EquivalenceHash m_equivalence_hash{0};
     eprosima::fastdds::dds::xtypes1_3::ExtendedTypeDefn m_extended_defn;
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier> TypeIdentifierSeq;
 
 typedef uint32_t MemberId;
@@ -2253,6 +2283,8 @@ private:
 
 
 };
+
+
 /*!
  * @brief This class represents the union AnnotationParameterValue defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -2795,6 +2827,8 @@ private:
     std::wstring m_string16_value;
     eprosima::fastdds::dds::xtypes1_3::ExtendedAnnotationParameterValue m_extended_value;
 };
+
+
 /*!
  * @brief This class represents the structure AppliedAnnotationParameter defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -2914,7 +2948,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue m_value;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameter> AppliedAnnotationParameterSeq;
+
+
 
 /*!
  * @brief This class represents the structure AppliedAnnotation defined by the user in the IDL file.
@@ -3035,7 +3073,11 @@ private:
     eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationParameterSeq> m_param_seq;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotation> AppliedAnnotationSeq;
+
+
 
 /*!
  * @brief This class represents the structure AppliedVerbatimAnnotation defined by the user in the IDL file.
@@ -3184,6 +3226,8 @@ private:
     std::string m_text;
 
 };
+
+
 /*!
  * @brief This class represents the structure AppliedBuiltinMemberAnnotations defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -3359,6 +3403,8 @@ private:
     eprosima::fastcdr::optional<std::string> m_hash_id;
 
 };
+
+
 /*!
  * @brief This class represents the structure CommonStructMember defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -3499,6 +3545,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::TypeIdentifier m_member_type_id;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteMemberDetail defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -3646,6 +3694,8 @@ private:
     eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq> m_ann_custom;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalMemberDetail defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -3737,6 +3787,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::NameHash m_name_hash{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteStructMember defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -3856,7 +3908,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail m_detail;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::CompleteStructMember> CompleteStructMemberSeq;
+
+
 
 /*!
  * @brief This class represents the structure MinimalStructMember defined by the user in the IDL file.
@@ -3977,7 +4033,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail m_detail;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::MinimalStructMember> MinimalStructMemberSeq;
+
+
 
 /*!
  * @brief This class represents the structure AppliedBuiltinTypeAnnotations defined by the user in the IDL file.
@@ -4134,6 +4194,8 @@ private:
 
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteTypeDetail defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -4281,6 +4343,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::QualifiedTypeName m_type_name;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteStructHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -4400,6 +4464,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail m_detail;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalStructHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -4519,6 +4585,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail m_detail;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteStructType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -4666,6 +4734,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteStructMemberSeq m_member_seq;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalStructType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -4813,7 +4883,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalStructMemberSeq m_member_seq;
 
 };
+
+
 typedef std::vector<int32_t> UnionCaseLabelSeq;
+
+
 
 /*!
  * @brief This class represents the structure CommonUnionMember defined by the user in the IDL file.
@@ -4983,6 +5057,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::UnionCaseLabelSeq m_label_seq;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteUnionMember defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -5102,7 +5178,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail m_detail;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::CompleteUnionMember> CompleteUnionMemberSeq;
+
+
 
 /*!
  * @brief This class represents the structure MinimalUnionMember defined by the user in the IDL file.
@@ -5223,7 +5303,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail m_detail;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::MinimalUnionMember> MinimalUnionMemberSeq;
+
+
 
 /*!
  * @brief This class represents the structure CommonDiscriminatorMember defined by the user in the IDL file.
@@ -5344,6 +5428,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::TypeIdentifier m_type_id;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteDiscriminatorMember defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -5491,6 +5577,8 @@ private:
     eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq> m_ann_custom;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalDiscriminatorMember defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -5582,6 +5670,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CommonDiscriminatorMember m_common;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteUnionHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -5673,6 +5763,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail m_detail;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalUnionHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -5764,6 +5856,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalTypeDetail m_detail;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteUnionType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -5939,6 +6033,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteUnionMemberSeq m_member_seq;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalUnionType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -6114,6 +6210,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalUnionMemberSeq m_member_seq;
 
 };
+
+
 /*!
  * @brief This class represents the structure CommonAnnotationParameter defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -6233,6 +6331,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::TypeIdentifier m_member_type_id;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteAnnotationParameter defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -6380,7 +6480,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue m_default_value;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameter> CompleteAnnotationParameterSeq;
+
+
 
 /*!
  * @brief This class represents the structure MinimalAnnotationParameter defined by the user in the IDL file.
@@ -6529,7 +6633,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::AnnotationParameterValue m_default_value;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameter> MinimalAnnotationParameterSeq;
+
+
 
 /*!
  * @brief This class represents the structure CompleteAnnotationHeader defined by the user in the IDL file.
@@ -6686,6 +6794,8 @@ private:
 
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteAnnotationType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -6833,6 +6943,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteAnnotationParameterSeq m_member_seq;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalAnnotationType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -6980,6 +7092,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalAnnotationParameterSeq m_member_seq;
 
 };
+
+
 /*!
  * @brief This class represents the structure CommonAliasBody defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -7099,6 +7213,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::TypeIdentifier m_related_type;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteAliasBody defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -7246,6 +7362,8 @@ private:
     eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq> m_ann_custom;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalAliasBody defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -7337,6 +7455,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CommonAliasBody m_common;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteAliasHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -7492,6 +7612,8 @@ private:
 
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteAliasType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -7639,6 +7761,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteAliasBody m_body;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalAliasType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -7786,6 +7910,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalAliasBody m_body;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteElementDetail defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -7905,6 +8031,8 @@ private:
     eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::AppliedAnnotationSeq> m_ann_custom;
 
 };
+
+
 /*!
  * @brief This class represents the structure CommonCollectionElement defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -8024,6 +8152,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::TypeIdentifier m_type;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteCollectionElement defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -8143,6 +8273,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteElementDetail m_detail;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalCollectionElement defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -8234,6 +8366,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CommonCollectionElement m_common;
 
 };
+
+
 /*!
  * @brief This class represents the structure CommonCollectionHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -8318,6 +8452,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::LBound m_bound{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteCollectionHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -8437,6 +8573,8 @@ private:
     eprosima::fastcdr::optional<eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail> m_detail;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalCollectionHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -8528,6 +8666,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CommonCollectionHeader m_common;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteSequenceType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -8675,6 +8815,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement m_element;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalSequenceType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -8822,6 +8964,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement m_element;
 
 };
+
+
 /*!
  * @brief This class represents the structure CommonArrayHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -8913,6 +9057,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::LBoundSeq m_bound_seq;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteArrayHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -9032,6 +9178,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail m_detail;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalArrayHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -9123,6 +9271,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CommonArrayHeader m_common;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteArrayType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -9270,6 +9420,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement m_element;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalArrayType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -9417,6 +9569,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalCollectionElement m_element;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteMapType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -9592,6 +9746,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteCollectionElement m_element;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalMapType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -9769,6 +9925,8 @@ private:
 };
 typedef uint16_t BitBound;
 
+
+
 /*!
  * @brief This class represents the structure CommonEnumeratedLiteral defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -9881,6 +10039,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::EnumeratedLiteralFlag m_flags{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteEnumeratedLiteral defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -10000,7 +10160,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail m_detail;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteral> CompleteEnumeratedLiteralSeq;
+
+
 
 /*!
  * @brief This class represents the structure MinimalEnumeratedLiteral defined by the user in the IDL file.
@@ -10121,7 +10285,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail m_detail;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteral> MinimalEnumeratedLiteralSeq;
+
+
 
 /*!
  * @brief This class represents the structure CommonEnumeratedHeader defined by the user in the IDL file.
@@ -10207,6 +10375,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::BitBound m_bit_bound{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteEnumeratedHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -10326,6 +10496,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteTypeDetail m_detail;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalEnumeratedHeader defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -10417,6 +10589,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CommonEnumeratedHeader m_common;
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteEnumeratedType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -10564,6 +10738,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedLiteralSeq m_literal_seq;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalEnumeratedType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -10711,6 +10887,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedLiteralSeq m_literal_seq;
 
 };
+
+
 /*!
  * @brief This class represents the structure CommonBitflag defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -10823,6 +11001,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::BitflagFlag m_flags{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteBitflag defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -10942,7 +11122,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail m_detail;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::CompleteBitflag> CompleteBitflagSeq;
+
+
 
 /*!
  * @brief This class represents the structure MinimalBitflag defined by the user in the IDL file.
@@ -11063,7 +11247,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalMemberDetail m_detail;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::MinimalBitflag> MinimalBitflagSeq;
+
+
 
 /*!
  * @brief This class represents the structure CommonBitmaskHeader defined by the user in the IDL file.
@@ -11152,6 +11340,8 @@ private:
 typedef eprosima::fastdds::dds::xtypes1_3::CompleteEnumeratedHeader CompleteBitmaskHeader;
 
 typedef eprosima::fastdds::dds::xtypes1_3::MinimalEnumeratedHeader MinimalBitmaskHeader;
+
+
 
 /*!
  * @brief This class represents the structure CompleteBitmaskType defined by the user in the IDL file.
@@ -11300,6 +11490,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteBitflagSeq m_flag_seq;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalBitmaskType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -11447,6 +11639,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalBitflagSeq m_flag_seq;
 
 };
+
+
 /*!
  * @brief This class represents the structure CommonBitfield defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -11601,6 +11795,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::TypeKind m_holder_type{0};
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteBitfield defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -11720,7 +11916,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteMemberDetail m_detail;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::CompleteBitfield> CompleteBitfieldSeq;
+
+
 
 /*!
  * @brief This class represents the structure MinimalBitfield defined by the user in the IDL file.
@@ -11841,7 +12041,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::NameHash m_name_hash{0};
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::MinimalBitfield> MinimalBitfieldSeq;
+
+
 
 /*!
  * @brief This class represents the structure CompleteBitsetHeader defined by the user in the IDL file.
@@ -11998,6 +12202,8 @@ private:
 
 
 };
+
+
 /*!
  * @brief This class represents the structure CompleteBitsetType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -12145,6 +12351,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteBitfieldSeq m_field_seq;
 
 };
+
+
 /*!
  * @brief This class represents the structure MinimalBitsetType defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -12356,6 +12564,8 @@ private:
 
 
 };
+
+
 /*!
  * @brief This class represents the union CompleteTypeObject defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -12834,6 +13044,8 @@ private:
 
 
 };
+
+
 /*!
  * @brief This class represents the union MinimalTypeObject defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -13248,6 +13460,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::MinimalBitmaskType m_bitmask_type;
     eprosima::fastdds::dds::xtypes1_3::MinimalExtendedType m_extended_type;
 };
+
+
 /*!
  * @brief This class represents the union TypeObject defined by the user in the IDL file.
  * @ingroup TypeObject
@@ -13392,9 +13606,13 @@ private:
     eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject m_complete;
     eprosima::fastdds::dds::xtypes1_3::MinimalTypeObject m_minimal;
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::TypeObject> TypeObjectSeq;
 
 typedef eprosima::fastdds::dds::xtypes1_3::TypeObjectSeq StronglyConnectedComponent;
+
+
 
 /*!
  * @brief This class represents the structure TypeIdentifierTypeObjectPair defined by the user in the IDL file.
@@ -13515,7 +13733,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::TypeObject m_type_object;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair> TypeIdentifierTypeObjectPairSeq;
+
+
 
 /*!
  * @brief This class represents the structure TypeIdentifierPair defined by the user in the IDL file.
@@ -13636,7 +13858,11 @@ private:
     eprosima::fastdds::dds::xtypes1_3::TypeIdentifier m_type_identifier2;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair> TypeIdentifierPairSeq;
+
+
 
 /*!
  * @brief This class represents the structure TypeIdentfierWithSize defined by the user in the IDL file.
@@ -13750,7 +13976,13 @@ private:
     uint32_t m_typeobject_serialized_size{0};
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize> TypeIdentfierWithSizeSeq;
+
+
+
+
 
 /*!
  * @brief This class represents the structure TypeIdentifierWithDependencies defined by the user in the IDL file.
@@ -13892,7 +14124,11 @@ private:
     std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize> m_dependent_typeids;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies> TypeIdentifierWithDependenciesSeq;
+
+
 
 /*!
  * @brief This class represents the structure TypeInformation defined by the user in the IDL file.
@@ -14013,6 +14249,8 @@ private:
     eprosima::fastdds::dds::xtypes1_3::TypeIdentifierWithDependencies m_complete;
 
 };
+
+
 typedef std::vector<eprosima::fastdds::dds::xtypes1_3::TypeInformation> TypeInformationSeq;
 
 
