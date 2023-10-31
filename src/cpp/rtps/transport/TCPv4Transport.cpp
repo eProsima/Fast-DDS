@@ -85,7 +85,9 @@ TCPv4Transport::TCPv4Transport(
         get_ipv4s(local_interfaces, true);
         for (const IPFinder::info_IP& infoIP : local_interfaces)
         {
-            if (std::find(white_begin, white_end, infoIP.name) != white_end ||  std::find(white_begin, white_end, infoIP.dev) != white_end)
+            if (std::find(white_begin, white_end,
+                    infoIP.name) != white_end ||
+                    std::find(white_begin, white_end, infoIP.dev) != white_end)
             {
                 interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
             }
