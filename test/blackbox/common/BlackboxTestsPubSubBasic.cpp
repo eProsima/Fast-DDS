@@ -824,6 +824,25 @@ TEST_P(PubSubBasic, ReliableVolatileTwoWritersConsecutives)
     }
 }
 
+TEST_P(PubSubBasic, ReliableVolatileTwoWritersConsecutivesSameGuid)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    reader.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS).init();
+    EXPECT_TRUE(reader.isInitialized());
+
+    auto reader_prefix = reader.participant_guid().guidPrefix;
+    auto writer_prefix = reader_prefix;
+    writer_prefix.value[11] = 0xFF;
+
+    for (int i = 0; i < 2; ++i)
+    {
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+        writer.history_depth(10).durability_kind(VOLATILE_DURABILITY_QOS).guid_prefix(writer_prefix);
+        two_consecutive_writers(reader, writer, true);
+    }
+}
+
 TEST_P(PubSubBasic, ReliableTransientLocalTwoWritersConsecutives)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);

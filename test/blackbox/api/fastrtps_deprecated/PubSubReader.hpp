@@ -1145,6 +1145,13 @@ public:
         return *this;
     }
 
+    PubSubReader& guid_prefix(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& prefix)
+    {
+        participant_attr_.rtps.prefix = prefix;
+        return *this;
+    }
+
     PubSubReader& participant_id(
             int32_t participantId)
     {
@@ -1290,8 +1297,6 @@ public:
     {
         return matched_;
     }
-
-private:
 
     const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
     {
