@@ -39,8 +39,6 @@ constexpr const char* begin_declaration = "begin-declaration";
 constexpr const char* end_declaration = "end-declaration";
 constexpr const char* after_declaration = "after-declaration";
 constexpr const char* end_declaration_file = "end-declaration-file";
-constexpr const char* value_member_name = "value";
-constexpr const char* platform_member_name = "platform";
 constexpr const EnumeratedLiteralFlag enum_literal_flag_mask = MemberFlagBits::TRY_CONSTRUCT1 |
         MemberFlagBits::TRY_CONSTRUCT2 | MemberFlagBits::IS_EXTERNAL | MemberFlagBits::IS_OPTIONAL |
         MemberFlagBits::IS_MUST_UNDERSTAND | MemberFlagBits::IS_KEY;
