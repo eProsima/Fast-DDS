@@ -52,7 +52,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupManager.hpp>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 
 #include <fastdds/dds/log/Log.hpp>

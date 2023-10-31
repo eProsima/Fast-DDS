@@ -67,45 +67,36 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Received new cache change");
 
     TypeLookup_Reply reply;
-    if (tlm_->recv_reply(*change, reply))
+    if (tlm_->reply_reception(*change, reply))
     {
-        if (reply.header.requestId.writer_guid() != tlm_->get_builtin_request_writer_guid())
+        if (reply.header().requestId().writer_guid() != tlm_.builtin_request_writer_->getGuid())
         {
             // This message isn't for us.
             return;
         }
 
-        switch (reply.return_value._d())
+        switch (reply.return_value()._d())
         {
-            case TypeLookup_getTypes_Hash:
+            case TypeLookup_getTypes_HashId:
             {
-                const TypeLookup_getTypes_Out types = reply.return_value.getType().result();
-                for (auto pair : types.types)
+                for (auto pair : reply.return_value().getType().result().types())
                 {
-                    if (pair.type_object()._d() == EK_COMPLETE) // Just in case
-                    {
-                        // If build_dynamic_type failed, just sent the nullptr already contained on it.
-                        tlm_->participant_->getListener()->on_type_discovery(
-                            tlm_->participant_->getUserRTPSParticipant(),
-                            reply.header.requestId,
-                            "", // No topic_name available
-                            &pair.type_identifier(),
-                            &pair.type_object(),
-                            DynamicType_ptr(nullptr));
-                    }
+                    tlm_->participant_->getListener()->on_type_discovery(
+                        tlm_->participant_->getUserRTPSParticipant(),
+                        reply.header().requestId(),
+                        "",
+                        &pair.type_identifier(),
+                        &pair.type_object(),
+                        DynamicType_ptr(nullptr));
                 }
-                // TODO Call a callback once the job is done
                 break;
             }
-            case TypeLookup_getDependencies_Hash:
+            case TypeLookup_getDependencies_HashId:
             {
-                //const TypeLookup_getTypeDependencies_Out dependencies =
-                //    reply.return_value.getTypeDependencies().result();
-
                 tlm_->get_RTPS_participant()->getListener()->on_type_dependencies_reply(
                     tlm_->builtin_protocols_->mp_participantImpl->getUserRTPSParticipant(),
-                    reply.header.requestId,
-                    reply.return_value.getTypeDependencies().result().dependent_typeids);
+                    reply.header().requestId(),
+                    reply.return_value().getTypeDependencies().result().dependent_typeids);
                 break;
             }
             default:

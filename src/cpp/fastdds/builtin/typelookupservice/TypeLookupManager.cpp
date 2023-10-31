@@ -17,13 +17,12 @@
  *
  */
 
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
-
+#include <fastdds/builtin/typelookupservice/TypeLookupManager.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
@@ -34,14 +33,8 @@
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-// TODO Uncomment if security is implemented.
-//#include <fastdds/rtps/common/Guid.h>
-//#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-
 #include <fastdds/dds/log/Log.hpp>
-
 #include <rtps/participant/RTPSParticipantImpl.h>
-
 #include <algorithm>
 
 namespace eprosima {
@@ -53,12 +46,10 @@ namespace fastdds {
 namespace dds {
 namespace builtin {
 
-const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
-
 TypeLookupManager::TypeLookupManager(
-        BuiltinProtocols* prot)
+        BuiltinProtocols* bprot)
     : participant_(nullptr)
-    , builtin_protocols_(prot)
+    , builtin_protocols_(bprot)
     , builtin_request_writer_(nullptr)
     , builtin_request_reader_(nullptr)
     , builtin_reply_writer_(nullptr)
@@ -70,40 +61,16 @@ TypeLookupManager::TypeLookupManager(
     , request_listener_(nullptr)
     , reply_listener_(nullptr)
     , temp_reader_proxy_data_(
-        prot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        prot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
+        bprot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+        bprot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
     , temp_writer_proxy_data_(
-        prot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        prot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
-    /* TODO Uncomment if security is implemented
-     #if HAVE_SECURITY
-        , builtin_request_writer_secure_(nullptr)
-        , builtin_reply_writer_secure_(nullptr)
-        , builtin_request_reader_secure_(nullptr)
-        , builtin_reply_reader_secure_(nullptr)
-        , builtin_request_writer_secure_history_(nullptr)
-        , builtin_reply_writer_secure_history_(nullptr)
-        , builtin_request_reader_secure_history_(nullptr)
-        , builtin_reply_reader_secure_history_(nullptr)
-     #endif
-     */
+        bprot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+        bprot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
 {
 }
 
 TypeLookupManager::~TypeLookupManager()
 {
-    /* TODO Uncomment if security is implemented
-     #if HAVE_SECURITY
-        participant_->deleteUserEndpoint(builtin_request_writer_secure_);
-        participant_->deleteUserEndpoint(builtin_reply_writer_secure_);
-        participant_->deleteUserEndpoint(builtin_request_reader_secure_);
-        participant_->deleteUserEndpoint(builtin_reply_reader_secure_);
-        delete builtin_request_writer_secure_history_;
-        delete builtin_reply_writer_secure_history_;
-        delete builtin_request_reader_secure_history_;
-        delete builtin_reply_reader_secure_history_;
-     #endif
-     */
     if (nullptr != builtin_reply_reader_)
     {
         participant_->deleteUserEndpoint(builtin_reply_reader_->getGuid());
@@ -130,47 +97,52 @@ TypeLookupManager::~TypeLookupManager()
 }
 
 bool TypeLookupManager::init_typelookup_service(
-        RTPSParticipantImpl* participant)
+        RTPSParticipantImpl* pi)
 {
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Initializing TypeLookup Service");
-    participant_ = participant;
+    participant_ = pi;
+
+    std::stringstream ss;
+    ss << participant_->getGuid();
+    std::string str = ss.str();
+    std::transform(str.begin(), str.end(), str.begin(),
+            [](unsigned char c)
+            {
+                return static_cast<unsigned char>(std::tolower(c));
+            });
+    str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
+    instance_name_ = "dds.builtin.TOS." + str;
+
     bool retVal = create_endpoints();
-    /*
-     #if HAVE_SECURITY
-        if (retVal)
-        {
-            retVal = create_secure_endpoints();
-        }
-     #endif
-     */
+
     return retVal;
 }
 
 bool TypeLookupManager::assign_remote_endpoints(
-        const ParticipantProxyData& pdata)
+        const ParticipantProxyData& ppd)
 {
     const NetworkFactory& network = participant_->network_factory();
-    uint32_t endp = pdata.m_availableBuiltinEndpoints;
+    uint32_t endp = ppd.m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
 
-    std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+    std::lock_guard<std::mutex> data_guard(temp_proxy_data_lock_);
 
-    temp_writer_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_writer_proxy_data_.persistence_guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_writer_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
+    temp_writer_proxy_data_.guid().guidPrefix = ppd.m_guid.guidPrefix;
+    temp_writer_proxy_data_.persistence_guid().guidPrefix = ppd.m_guid.guidPrefix;
+    temp_writer_proxy_data_.set_remote_locators(ppd.metatraffic_locators, network, true);
     temp_writer_proxy_data_.topicKind(NO_KEY);
     temp_writer_proxy_data_.m_qos.m_durability.kind = fastrtps::VOLATILE_DURABILITY_QOS;
     temp_writer_proxy_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
 
     temp_reader_proxy_data_.clear();
     temp_reader_proxy_data_.m_expectsInlineQos = false;
-    temp_reader_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_reader_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
+    temp_reader_proxy_data_.guid().guidPrefix = ppd.m_guid.guidPrefix;
+    temp_reader_proxy_data_.set_remote_locators(ppd.metatraffic_locators, network, true);
     temp_reader_proxy_data_.topicKind(NO_KEY);
     temp_reader_proxy_data_.m_qos.m_durability.kind = fastrtps::VOLATILE_DURABILITY_QOS;
     temp_reader_proxy_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
 
-    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata.m_guid);
+    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << ppd.m_guid);
 
     auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
 
@@ -217,13 +189,13 @@ bool TypeLookupManager::assign_remote_endpoints(
 }
 
 void TypeLookupManager::remove_remote_endpoints(
-        fastrtps::rtps::ParticipantProxyData* pdata)
+        fastrtps::rtps::ParticipantProxyData* ppd)
 {
     GUID_t tmp_guid;
-    tmp_guid.guidPrefix = pdata->m_guid.guidPrefix;
+    tmp_guid.guidPrefix() = ppd->m_guid.guidPrefix;
 
-    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata->m_guid);
-    uint32_t endp = pdata->m_availableBuiltinEndpoints;
+    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << ppd->m_guid);
+    uint32_t endp = ppd->m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
     partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
@@ -232,7 +204,7 @@ void TypeLookupManager::remove_remote_endpoints(
     if ((auxendp != 0 || partdet != 0) && builtin_request_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote writer from the local Builtin Request Reader");
-        tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
+        tmp_guid.entityId() = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
         builtin_request_reader_->matched_writer_remove(tmp_guid);
     }
 
@@ -242,7 +214,7 @@ void TypeLookupManager::remove_remote_endpoints(
     if ((auxendp != 0 || partdet != 0) && builtin_reply_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote writer from the local Builtin Reply Reader");
-        tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
+        tmp_guid.entityId() = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
         builtin_reply_reader_->matched_writer_remove(tmp_guid);
     }
 
@@ -252,7 +224,7 @@ void TypeLookupManager::remove_remote_endpoints(
     if ((auxendp != 0 || partdet != 0) && builtin_request_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote reader from the local Builtin Request Writer");
-        tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
+        tmp_guid.entityId() = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
         builtin_request_writer_->matched_reader_remove(tmp_guid);
     }
 
@@ -262,68 +234,53 @@ void TypeLookupManager::remove_remote_endpoints(
     if ((auxendp != 0 || partdet != 0) && builtin_reply_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote reader from the local Builtin Reply Writer");
-        tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_reader;
+        tmp_guid.entityId() = fastrtps::rtps::c_EntityId_TypeLookup_reply_reader;
         builtin_reply_writer_->matched_reader_remove(tmp_guid);
     }
 }
 
-StatefulWriter* TypeLookupManager::get_builtin_request_writer()
+eprosima::fastrps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies(
+        const xtypes1_3::TypeIdentifierSeq& id_seq) const
 {
-    return builtin_request_writer_;
+    eprosima::fastrps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
+    if (builtin_protocols_->m_att.typelookup_config.use_client)
+    {
+        TypeLookup_getTypeDependencies_In in;
+        in.type_ids() = id_seq;
+        TypeLookup_RequestPubSubType type;
+        TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
+        request->data().getTypeDependencies(in);
+
+        if (send_request(*request))
+        {
+            id = request->header().requestId();
+        }
+        type.deleteData(request);
+    }
+    return id;
 }
 
-StatefulWriter* TypeLookupManager::get_builtin_reply_writer()
+eprosima::fastrps::rtps::SampleIdentity TypeLookupManager::get_types(
+        const xtypes1_3::TypeIdentifierSeq& id_seq) const
 {
-    return builtin_reply_writer_;
+    eprosima::fastrps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
+    if (builtin_protocols_->m_att.typelookup_config.use_client)
+    {
+        TypeLookup_getTypes_In in;
+        in.type_ids() = id_seq;
+        TypeLookup_RequestPubSubType type;
+        TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
+        request->data().getTypes(in);
+
+        if (send_request(*request))
+        {
+            id = request->header().requestId();
+        }
+        type.deleteData(request);
+    }
+    return id;
 }
 
-WriterHistory* TypeLookupManager::get_builtin_request_writer_history()
-{
-    return builtin_request_writer_history_;
-}
-
-WriterHistory* TypeLookupManager::get_builtin_reply_writer_history()
-{
-    return builtin_reply_writer_history_;
-}
-
-StatefulReader* TypeLookupManager::get_builtin_request_reader()
-{
-    return builtin_request_reader_;
-}
-
-StatefulReader* TypeLookupManager::get_builtin_reply_reader()
-{
-    return builtin_reply_reader_;
-}
-
-ReaderHistory* TypeLookupManager::get_builtin_request_reader_history()
-{
-    return builtin_request_reader_history_;
-}
-
-ReaderHistory* TypeLookupManager::get_builtin_reply_reader_history()
-{
-    return builtin_reply_reader_history_;
-}
-
-/* TODO Implement if security is needed.
- #if HAVE_SECURITY
-   bool TypeLookupManager::pairing_remote_reader_with_local_writer_after_security(
-        const GUID_t& local_writer,
-        const ReaderProxyData& remote_reader_data)
-   {
-
-   }
-
-   bool TypeLookupManager::pairing_remote_writer_with_local_reader_after_security(
-        const GUID_t& local_reader,
-        const WriterProxyData& remote_writer_data)
-   {
-
-   }
- #endif
- */
 bool TypeLookupManager::create_endpoints()
 {
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
@@ -470,76 +427,12 @@ bool TypeLookupManager::create_endpoints()
     return true;
 }
 
-/* TODO Implement if security is needed.
- #if HAVE_SECURITY
-   bool TypeLookupManager::create_secure_endpoints()
-   {
-   }
- #endif
- */
-
-SampleIdentity TypeLookupManager::get_type_dependencies(
-        const fastrtps::types::TypeIdentifierSeq& id_seq) const
-{
-    SampleIdentity id = INVALID_SAMPLE_IDENTITY;
-    if (builtin_protocols_->m_att.typelookup_config.use_client)
-    {
-        TypeLookup_getTypeDependencies_In in;
-        in.type_ids = id_seq;
-        TypeLookup_RequestTypeSupport type;
-        TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.create_data());
-        request->data.getTypeDependencies(in);
-
-        if (send_request(*request))
-        {
-            id = request->header.requestId;
-        }
-        type.delete_data(request);
-    }
-    return id;
-}
-
-SampleIdentity TypeLookupManager::get_types(
-        const fastrtps::types::TypeIdentifierSeq& id_seq) const
-{
-    SampleIdentity id = INVALID_SAMPLE_IDENTITY;
-    if (builtin_protocols_->m_att.typelookup_config.use_client)
-    {
-        TypeLookup_getTypes_In in;
-        in.type_ids = id_seq;
-        TypeLookup_RequestTypeSupport type;
-        TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.create_data());
-        request->data.getTypes(in);
-
-        if (send_request(*request))
-        {
-            id = request->header.requestId;
-        }
-        type.delete_data(request);
-    }
-    return id;
-}
-
-std::string TypeLookupManager::get_instanceName() const
-{
-    std::stringstream ss;
-    ss << participant_->getGuid();
-    std::string str = ss.str();
-    std::transform(str.begin(), str.end(), str.begin(),
-            [](unsigned char c)
-            {
-                return static_cast<unsigned char>(std::tolower(c));
-            });
-    str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
-    return "dds.builtin.TOS." + str;
-}
-
 bool TypeLookupManager::send_request(
         TypeLookup_Request& req) const
 {
-    req.header.instanceName = get_instanceName();
-    req.header.requestId.writer_guid(builtin_request_writer_->getGuid());
-    req.header.requestId.sequence_number(request_seq_number_);
+    req.header().instanceName() = get_instanceName();
+    req.header().requestId().writer_guid(builtin_request_writer_->getGuid());
+    req.header().requestId().sequence_number(request_seq_number_);
     ++request_seq_number_;
 
     CacheChange_t* change = builtin_request_writer_->new_change(
@@ -583,8 +476,6 @@ bool TypeLookupManager::send_request(
 bool TypeLookupManager::send_reply(
         TypeLookup_Reply& rep) const
 {
-    rep.header.instanceName = get_instanceName();
-
     CacheChange_t* change = builtin_reply_writer_->new_change(
         [&rep]()
         {
@@ -622,7 +513,7 @@ bool TypeLookupManager::send_reply(
     return false;
 }
 
-bool TypeLookupManager::recv_request(
+bool TypeLookupManager::request_reception(
         fastrtps::rtps::CacheChange_t& change,
         TypeLookup_Request& req) const
 {
@@ -654,7 +545,7 @@ bool TypeLookupManager::recv_request(
     return result;
 }
 
-bool TypeLookupManager::recv_reply(
+bool TypeLookupManager::reply_reception(
         fastrtps::rtps::CacheChange_t& change,
         TypeLookup_Reply& rep) const
 {
@@ -686,13 +577,177 @@ bool TypeLookupManager::recv_reply(
     return result;
 }
 
-const fastrtps::rtps::GUID_t& TypeLookupManager::get_builtin_request_writer_guid() const
+ReturnCode_t TypeLookupManager::get_registered_type_object(
+    const TypeLookup_getTypes_In& in,
+    TypeLookup_getTypes_Out& out)
 {
-    if (nullptr != builtin_request_writer_)
+    // Check if there is any EK_COMPLETE TypeIdentifiers in the request.
+    bool request_has_complete_ids = false;
+    for (const TypeIdentifier& type_id : in.type_ids())
     {
-        return builtin_request_writer_->getGuid();
+        if (type_id._d() == EK_COMPLETE)
+        {
+            request_has_complete_ids = true;
+            break;
+        }
     }
-    return c_Guid_Unknown;
+
+    for (const TypeIdentifier& type_id : in.type_ids())
+    {
+        // Ask the TypeObjectRegistry for the TypeObject of the current TypeIdentifier.
+        TypeObjectPair objs;
+        ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, objs);
+        if(ret_code != RETCODE_OK)
+        {
+            //RETCODE_NO_DATA if the given TypeIdentifier is not found in the registry.
+            continue;
+        }
+        // Create TypeIdentifierTypeObjectPair with the TypeObject registered for this TypeIdentifier.
+        TypeIdentifierTypeObjectPair pair;
+        pair.type_identifier(type_id);
+        pair.type_object(objs.complete_type_object());
+        out.types().push_back(std::move(pair));
+
+        // If the request does not have any EK_COMPLETE TypeIdentifiers, fill the complete_to_minimal field.
+        if(!request_has_complete_ids && GET_TYPES_REPLY_WITH_MINIMAL)
+        {
+        TypeObject complete_obj;
+        ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, objs);
+
+
+            TypeIdentifierPair pair;
+            pair.type_identifier1(type_id);
+            /air.type_identifier2(type_id);
+            out.complete_to_minimal().push_back(std::move(pair));
+        }
+    }
+    return RETCODE_OK;
+}
+
+ReturnCode_t TypeLookupManager::get_registered_type_dependencies(
+    const TypeLookup_getTypeDependencies_In& in,
+    TypeLookup_getTypeDependencies_Out& out)
+{
+    const size_t max_size = 255;
+    TypeIdentfierWithSizeSeq result;    
+    size_t continuation_point = fastrtps::types::to_size_t(in.continuation_point());
+    size_t start_index = max_size * continuation_point;
+
+    {
+        std::lock_guard<std::mutex> lock(dependencies_requests_cache_mutex);
+        // Check if the identifier is already in the cache
+        auto [dependencies_requests_cache_it, new_inserted] = dependencies_requests_cache_.emplace(in.type_ids(), std::unordered_set<TypeIdentfierWithSize>{});
+
+        if (new_inserted)
+        {
+            // If not in cache, query the registry and handle errors
+            std::unordered_set<TypeIdentfierWithSize> full_type_dependencies;
+            ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_dependencies(in.type_ids(), full_type_dependencies);
+            if(ret_code == RETCODE_OK)
+            {
+                // Moving the retrieved data into the cache entry.
+                dependencies_requests_cache_it->second = std::move(full_type_dependencies);
+            }else{
+                //RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
+                //RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.
+                return ret_code;
+            }
+        }
+
+        // At this point, dependencies_requests_cache_ it is guaranteed to be valid
+        const auto& dependencies = dependencies_requests_cache_it->second;
+        auto dependencies_it = dependencies.begin();
+        
+        // Advance the iterator to the starting point, respecting the set boundaries
+        for (size_t i = 0; i < start_index && dependencies_it != dependencies.end(); ++i)
+        {
+            ++dependencies_it;
+        }
+
+        bool reached_end = false;
+        // Collect up to max_size dependencies
+        for (size_t count = 0; dependencies_it != dependencies.end() && count < max_size; ++count)
+        {
+            out.dependent_typeids().push_back(*dependencies_it);
+
+            // Advance the iterator and check if we've reached the end.
+            ++dependencies_it;
+            if(dependencies_it == dependencies.end())
+            {
+                reached_end = true;
+            }
+        }
+
+        // If dependencies end reached, remove entry from the map.
+        if (reached_end)
+        {
+            dependencies_requests_cache_.erase(in.type_ids());
+        }
+        // If max_size reached, increment out_continuation_point.
+        else if (out.dependent_typeids().size() >= max_size) 
+        {
+            ++out.continuation_point();
+        }
+    }
+
+    return RETCODE_OK;
+}
+
+
+
+std::string TypeLookupManager::get_instanceName() const
+{
+    return instance_name_;
+}
+
+RTPSParticipantImpl* TypeLookupManager::get_RTPS_participant()
+{
+    return participant_;
+}
+
+BuiltinProtocols* TypeLookupManager::get_builtin_protocols()
+{
+    return builtin_protocols_;
+}
+
+StatefulWriter* TypeLookupManager::get_builtin_request_writer()
+{
+    return builtin_request_writer_;
+}
+
+StatefulWriter* TypeLookupManager::get_builtin_reply_writer()
+{
+    return builtin_reply_writer_;
+}
+
+WriterHistory* TypeLookupManager::get_builtin_request_writer_history()
+{
+    return builtin_request_writer_history_;
+}
+
+WriterHistory* TypeLookupManager::get_builtin_reply_writer_history()
+{
+    return builtin_reply_writer_history_;
+}
+
+StatefulReader* TypeLookupManager::get_builtin_request_reader()
+{
+    return builtin_request_reader_;
+}
+
+StatefulReader* TypeLookupManager::get_builtin_reply_reader()
+{
+    return builtin_reply_reader_;
+}
+
+ReaderHistory* TypeLookupManager::get_builtin_request_reader_history()
+{
+    return builtin_request_reader_history_;
+}
+
+ReaderHistory* TypeLookupManager::get_builtin_reply_reader_history()
+{
+    return builtin_reply_reader_history_;
 }
 
 } // namespace builtin

@@ -24,11 +24,6 @@
 
 namespace eprosima {
 namespace fastrtps {
-
-namespace types {
-class TypeObjectFactory;
-} // namespace types
-
 namespace rtps {
 
 class RTPSReader;
@@ -53,10 +48,10 @@ public:
 
     /**
      * @brief Constructor
-     * @param pwlp Pointer to the writer liveliness protocol
+     * @param manager Pointer to the TypeLookupManager
      */
     TypeLookupReplyListener(
-            TypeLookupManager* pwlp);
+            TypeLookupManager* manager);
 
     /**
      * @brief Destructor
