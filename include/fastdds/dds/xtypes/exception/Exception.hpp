@@ -35,7 +35,7 @@ namespace xtypes1_3 {
  */
 class Exception
 {
-protected: 
+protected:
 
     Exception() = default;
 
@@ -46,7 +46,7 @@ public:
     /**
      * @brief Retrieve information about the exception that was thrown.
      *
-     * @return Exception information. 
+     * @return Exception information.
      */
     RTPS_DllAPI virtual const char* what() const throw() = 0;
 

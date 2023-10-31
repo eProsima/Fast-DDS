@@ -42,8 +42,8 @@ constexpr const char* end_declaration_file = "end-declaration-file";
 constexpr const char* value_member_name = "value";
 constexpr const char* platform_member_name = "platform";
 constexpr const EnumeratedLiteralFlag enum_literal_flag_mask = MemberFlagBits::TRY_CONSTRUCT1 |
-    MemberFlagBits::TRY_CONSTRUCT2 | MemberFlagBits::IS_EXTERNAL | MemberFlagBits::IS_OPTIONAL |
-    MemberFlagBits::IS_MUST_UNDERSTAND | MemberFlagBits::IS_KEY;
+        MemberFlagBits::TRY_CONSTRUCT2 | MemberFlagBits::IS_EXTERNAL | MemberFlagBits::IS_OPTIONAL |
+        MemberFlagBits::IS_MUST_UNDERSTAND | MemberFlagBits::IS_KEY;
 
 const TypeObjectHashId TypeObjectUtils::build_type_object_hash_id(
         uint8_t discriminator,
@@ -56,7 +56,7 @@ const TypeObjectHashId TypeObjectUtils::build_type_object_hash_id(
     {
         type_object_hash_id._d(discriminator);
     }
-    catch(const eprosima::fastcdr::exception::BadParamException& e)
+    catch (const eprosima::fastcdr::exception::BadParamException& e)
     {
         throw InvalidArgumentError(e.what());
     }
@@ -95,7 +95,7 @@ StructMemberFlag TypeObjectUtils::build_struct_member_flag(
     }
     if (key)
     {
-        // XTypes v1.3 Clause 7.2.2.4.4.4.8 Key members shall always have their "must understand" attribute set to true. 
+        // XTypes v1.3 Clause 7.2.2.4.4.4.8 Key members shall always have their "must understand" attribute set to true.
         struct_member_flag |= MemberFlagBits::IS_KEY;
         struct_member_flag |= MemberFlagBits::IS_MUST_UNDERSTAND;
     }
@@ -364,7 +364,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_string_type_identifier(
     TypeIdentifier type_identifier;
     type_identifier.string_sdefn(string);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-        type_identifier);
+                   type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_string_type_identifier(
@@ -377,7 +377,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_string_type_identifier(
     TypeIdentifier type_identifier;
     type_identifier.string_ldefn(string);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-        type_identifier);
+                   type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_s_sequence_type_identifier(
@@ -390,7 +390,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_sequence_type_identifier(
     TypeIdentifier type_identifier;
     type_identifier.seq_sdefn(plain_seq);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-        type_identifier);
+                   type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_sequence_type_identifier(
@@ -403,7 +403,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_sequence_type_identifier(
     TypeIdentifier type_identifier;
     type_identifier.seq_ldefn(plain_seq);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-        type_identifier);
+                   type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_s_array_type_identifier(
@@ -416,7 +416,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_array_type_identifier(
     TypeIdentifier type_identifier;
     type_identifier.array_sdefn(plain_array);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-        type_identifier);
+                   type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_array_type_identifier(
@@ -429,7 +429,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_array_type_identifier(
     TypeIdentifier type_identifier;
     type_identifier.array_ldefn(plain_array);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-        type_identifier);
+                   type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_s_map_type_identifier(
@@ -442,7 +442,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_map_type_identifier(
     TypeIdentifier type_identifier;
     type_identifier.map_sdefn(plain_map);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-        type_identifier);
+                   type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_map_type_identifier(
@@ -455,19 +455,19 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_map_type_identifier(
     TypeIdentifier type_identifier;
     type_identifier.map_ldefn(plain_map);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-        type_identifier);
+                   type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_scc_type_identifier(
         const StronglyConnectedComponentId& scc,
         const std::string& type_name)
 {
-/*
-    TypeIdentifier type_identifier;
-    type_identifier.sc_component_id(scc);
-    return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
-        type_identifier);
-*/
+    /*
+        TypeIdentifier type_identifier;
+        type_identifier.sc_component_id(scc);
+        return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
+            type_identifier);
+     */
     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "StronglyConnectedComponents not yet supported.");
     static_cast<void>(scc);
     static_cast<void>(type_name);
@@ -617,7 +617,7 @@ const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value
 }
 
 const AnnotationParameterValue TypeObjectUtils::build_annotation_parameter_value(
-       const std::wstring& string16_value)
+        const std::wstring& string16_value)
 {
     AnnotationParameterValue annotation_parameter_value;
     annotation_parameter_value.string16_value(string16_value);
@@ -787,7 +787,7 @@ const CompleteStructMember TypeObjectUtils::build_complete_struct_member(
 #if !defined(NDEBUG)
     common_struct_member_consistency(common);
     complete_member_detail_consistency(detail);
-#endif
+#endif // if !defined(NDEBUG)
     common_struct_member_and_complete_member_detail_consistency(common, detail);
     CompleteStructMember complete_struct_member;
     complete_struct_member.common(common);
@@ -804,7 +804,7 @@ void TypeObjectUtils::add_complete_struct_member(
     for (CompleteStructMember struct_member : member_seq)
     {
         if (struct_member.common().member_id() == member.common().member_id() ||
-            struct_member.detail().name() == member.detail().name())
+                struct_member.detail().name() == member.detail().name())
         {
             throw InvalidArgumentError("Sequence has another member with same ID/name");
         }
@@ -960,12 +960,12 @@ void TypeObjectUtils::add_complete_union_member(
     for (CompleteUnionMember union_member : complete_union_member_seq)
     {
         if (union_member.common().member_id() == member.common().member_id() ||
-            union_member.detail().name() == member.detail().name())
+                union_member.detail().name() == member.detail().name())
         {
             throw InvalidArgumentError("Sequence has another member with same ID/name");
         }
         if (member.common().member_flags() & MemberFlagBits::IS_DEFAULT &&
-            union_member.common().member_flags() & MemberFlagBits::IS_DEFAULT)
+                union_member.common().member_flags() & MemberFlagBits::IS_DEFAULT)
         {
             throw InvalidArgumentError("Union member sequence already has a default member");
         }
@@ -989,7 +989,7 @@ const CommonDiscriminatorMember TypeObjectUtils::build_common_discriminator_memb
 {
 #if !defined(NDEBUG)
     member_flag_consistency(member_flags);
-#endif
+#endif // if !defined(NDEBUG)
     common_discriminator_member_type_identifier_consistency(type_id);
     CommonDiscriminatorMember common_discriminator_member;
     common_discriminator_member.member_flags(member_flags);
@@ -1057,7 +1057,7 @@ const CommonAnnotationParameter TypeObjectUtils::build_common_annotation_paramet
 {
 #if !defined(NDEBUG)
     type_identifier_consistency(member_type_id);
-#endif
+#endif // if !defined(NDEBUG)
     empty_flags_consistency(member_flags);
     CommonAnnotationParameter common_annotation_parameter;
     common_annotation_parameter.member_flags(member_flags);
@@ -1098,7 +1098,7 @@ void TypeObjectUtils::add_complete_annotation_parameter(
             throw InvalidArgumentError("Sequence has another parameter with same name");
         }
     }
-#endif
+#endif // if !defined(NDEBUG)
     sequence.push_back(param);
 }
 
@@ -1382,7 +1382,7 @@ void TypeObjectUtils::add_complete_enumerated_literal(
     for (CompleteEnumeratedLiteral literal : sequence)
     {
         if (literal.detail().name() == enum_literal.detail().name() ||
-            literal.common().value() == enum_literal.common().value())
+                literal.common().value() == enum_literal.common().value())
         {
             throw InvalidArgumentError("Sequence has another literal with the same value/member name");
         }
@@ -1480,7 +1480,7 @@ void TypeObjectUtils::add_complete_bitflag(
     for (CompleteBitflag bitflag_elem : sequence)
     {
         if (bitflag_elem.common().position() == bitflag.common().position() ||
-            bitflag_elem.detail().name() == bitflag.detail().name())
+                bitflag_elem.detail().name() == bitflag.detail().name())
         {
             throw InvalidArgumentError("Sequence has another bitflag with the same position/name");
         }
@@ -1556,7 +1556,7 @@ void TypeObjectUtils::add_complete_bitfield(
         size_t bitfield_init = bitfield.common().position();
         size_t bitfield_end = bitfield_init + bitfield.common().bitcount();
         if (bitfield_elem.detail().name() == bitfield.detail().name() ||
-            (bitfield_init <= bitfield_elem_end && bitfield_end >= bitfield_elem_init))
+                (bitfield_init <= bitfield_elem_end && bitfield_end >= bitfield_elem_init))
         {
             throw InvalidArgumentError("Sequence has another bitfield with the same positions/name");
         }
@@ -1609,7 +1609,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_alias_type_object(
     CompleteTypeObject type_object;
     type_object.alias_type(alias_type);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-        type_object);
+                   type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_annotation_type_object(
@@ -1622,7 +1622,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_annotation_type_object(
     CompleteTypeObject type_object;
     type_object.annotation_type(annotation_type);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-        type_object);
+                   type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_struct_type_object(
@@ -1635,7 +1635,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_struct_type_object(
     CompleteTypeObject type_object;
     type_object.struct_type(struct_type);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-        type_object);
+                   type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_union_type_object(
@@ -1648,7 +1648,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_union_type_object(
     CompleteTypeObject type_object;
     type_object.union_type(union_type);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-        type_object);
+                   type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_bitset_type_object(
@@ -1661,7 +1661,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_bitset_type_object(
     CompleteTypeObject type_object;
     type_object.bitset_type(bitset_type);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-        type_object);
+                   type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_sequence_type_object(
@@ -1674,7 +1674,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_sequence_type_object(
     CompleteTypeObject type_object;
     type_object.sequence_type(sequence_type);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-        type_object);
+                   type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_array_type_object(
@@ -1687,7 +1687,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_array_type_object(
     CompleteTypeObject type_object;
     type_object.array_type(array_type);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-        type_object);
+                   type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_map_type_object(
@@ -1700,7 +1700,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_map_type_object(
     CompleteTypeObject type_object;
     type_object.map_type(map_type);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-        type_object);
+                   type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_enumerated_type_object(
@@ -1713,7 +1713,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_enumerated_type_object(
     CompleteTypeObject type_object;
     type_object.enumerated_type(enumerated_type);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-        type_object);
+                   type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_bitmask_type_object(
@@ -1726,7 +1726,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_bitmask_type_object(
     CompleteTypeObject type_object;
     type_object.bitmask_type(bitmask_type);
     return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-        type_object);
+                   type_object);
 }
 
 const NameHash TypeObjectUtils::name_hash(
@@ -1754,7 +1754,7 @@ void TypeObjectUtils::set_try_construct_behavior(
         case TryConstructKind::TRIM:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT1 | MemberFlagBits::TRY_CONSTRUCT2;
             break;
-        
+
         case TryConstructKind::DISCARD:
         default:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT1;
@@ -1811,8 +1811,8 @@ bool TypeObjectUtils::is_direct_hash_type_identifier(
 {
     bool direct_hash = false;
     if (type_identifier._d() == EK_MINIMAL ||
-        type_identifier._d() == EK_COMPLETE ||
-        type_identifier._d() == TI_STRONGLY_CONNECTED_COMPONENT)
+            type_identifier._d() == EK_COMPLETE ||
+            type_identifier._d() == TI_STRONGLY_CONNECTED_COMPONENT)
     {
         direct_hash = true;
     }
@@ -1902,8 +1902,8 @@ void TypeObjectUtils::type_flag_consistency(
         TypeFlag type_flag)
 {
     if ((type_flag & TypeFlagBits::IS_APPENDABLE && type_flag & TypeFlagBits::IS_FINAL) ||
-        (type_flag & TypeFlagBits::IS_APPENDABLE && type_flag & TypeFlagBits::IS_MUTABLE) ||
-        (type_flag & TypeFlagBits::IS_FINAL && type_flag & TypeFlagBits::IS_MUTABLE))
+            (type_flag & TypeFlagBits::IS_APPENDABLE && type_flag & TypeFlagBits::IS_MUTABLE) ||
+            (type_flag & TypeFlagBits::IS_FINAL && type_flag & TypeFlagBits::IS_MUTABLE))
     {
         throw InvalidArgumentError("Exactly one extensibility flag must be set");
     }
@@ -1933,7 +1933,7 @@ void TypeObjectUtils::plain_collection_type_identifier_header_consistency(
         const TypeIdentifier& element_identifier)
 {
     if ((header.equiv_kind() != EK_BOTH && header.equiv_kind() != element_identifier._d()) ||
-        (header.equiv_kind() == EK_BOTH && !is_fully_descriptive_type_identifier(element_identifier)))
+            (header.equiv_kind() == EK_BOTH && !is_fully_descriptive_type_identifier(element_identifier)))
     {
         throw InvalidArgumentError("Inconsistency between given header and element_identifier parameters");
     }
@@ -1943,13 +1943,13 @@ void TypeObjectUtils::map_key_type_identifier_consistency(
         const TypeIdentifier& key_identifier)
 {
     if (key_identifier._d() != TK_INT8 && key_identifier._d() != TK_UINT8 && key_identifier._d() != TK_INT16 &&
-        key_identifier._d() != TK_UINT16 && key_identifier._d() != TK_INT32 && key_identifier._d() != TK_UINT32 &&
-        key_identifier._d() != TK_INT64 && key_identifier._d() != TK_UINT64 &&
-        key_identifier._d() != TI_STRING8_SMALL && key_identifier._d() != TI_STRING8_LARGE &&
-        key_identifier._d() != TI_STRING16_SMALL && key_identifier._d() != TI_STRING16_LARGE)
+            key_identifier._d() != TK_UINT16 && key_identifier._d() != TK_INT32 && key_identifier._d() != TK_UINT32 &&
+            key_identifier._d() != TK_INT64 && key_identifier._d() != TK_UINT64 &&
+            key_identifier._d() != TI_STRING8_SMALL && key_identifier._d() != TI_STRING8_LARGE &&
+            key_identifier._d() != TI_STRING16_SMALL && key_identifier._d() != TI_STRING16_LARGE)
     {
         throw InvalidArgumentError(
-            "Inconsistent key identifier: only signed/unsigned integer types and w/string keys are supported");
+                  "Inconsistent key identifier: only signed/unsigned integer types and w/string keys are supported");
     }
 #if !defined(NDEBUG)
     type_identifier_consistency(key_identifier);
@@ -2075,7 +2075,7 @@ void TypeObjectUtils::type_identifier_consistency(
 
         case EK_COMPLETE:
         case EK_MINIMAL:
-            // TODO(jlbueno)
+        // TODO(jlbueno)
 
         // Primitive TypeIdentifiers/ExtendedTypeDefn: no inconsistency rule apply.
         default:
@@ -2129,7 +2129,7 @@ void TypeObjectUtils::applied_annotation_consistency(
         applied_annotation_parameter_seq_consistency(applied_annotation.param_seq().value());
     }
     if (DomainParticipantFactory::get_instance()->type_object_registry().is_builtin_annotation(
-        applied_annotation.annotation_typeid()))
+                applied_annotation.annotation_typeid()))
     {
         throw InvalidArgumentError("Builtin annotation cannot be defined as custom annotation");
     }
@@ -2155,11 +2155,11 @@ void TypeObjectUtils::applied_verbatim_annotation_consistency(
 {
     // Placement
     if (applied_verbatim_annotation.placement().compare(begin_declaration_file) != 0 &&
-        applied_verbatim_annotation.placement().compare(before_declaration) != 0 &&
-        applied_verbatim_annotation.placement().compare(begin_declaration) != 0 &&
-        applied_verbatim_annotation.placement().compare(end_declaration) != 0 &&
-        applied_verbatim_annotation.placement().compare(after_declaration) != 0 &&
-        applied_verbatim_annotation.placement().compare(end_declaration_file) != 0)
+            applied_verbatim_annotation.placement().compare(before_declaration) != 0 &&
+            applied_verbatim_annotation.placement().compare(begin_declaration) != 0 &&
+            applied_verbatim_annotation.placement().compare(end_declaration) != 0 &&
+            applied_verbatim_annotation.placement().compare(after_declaration) != 0 &&
+            applied_verbatim_annotation.placement().compare(end_declaration_file) != 0)
     {
         throw InvalidArgumentError("Verbatim annotation placement unknown");
     }
@@ -2198,7 +2198,7 @@ void TypeObjectUtils::common_struct_member_and_complete_member_detail_consistenc
 {
     // Check @hashid consistency with MemberId
     if (complete_member_detail.ann_builtin().has_value() &&
-        complete_member_detail.ann_builtin().value().hash_id().has_value())
+            complete_member_detail.ann_builtin().value().hash_id().has_value())
     {
         std::string string_value;
         // If the annotation [@hashid] is used without any parameter or with the empty string as a parameter, then the
@@ -2232,7 +2232,7 @@ void TypeObjectUtils::complete_struct_member_consistency(
     common_struct_member_consistency(complete_struct_member.common());
     complete_member_detail_consistency(complete_struct_member.detail());
     common_struct_member_and_complete_member_detail_consistency(complete_struct_member.common(),
-        complete_struct_member.detail());
+            complete_struct_member.detail());
 }
 
 void TypeObjectUtils::complete_struct_member_seq_consistency(
@@ -2283,7 +2283,7 @@ void TypeObjectUtils::structure_base_type_consistency(
 {
     TypeObjectPair type_objects;
     ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(base_type,
-        type_objects);
+                    type_objects);
     if (ret_code != ReturnCode_t::RETCODE_OK || type_objects.complete_type_object._d() != TK_STRUCTURE)
     {
         throw InvalidArgumentError("Inconsistent base TypeIdentifier: must be related to a structure TypeObject");
@@ -2333,7 +2333,7 @@ void TypeObjectUtils::common_union_member_consistency(
     type_identifier_consistency(common_union_member.type_id());
     union_case_label_seq_consistency(common_union_member.label_seq());
     if (!(common_union_member.member_flags() & MemberFlagBits::IS_DEFAULT) &&
-        common_union_member.label_seq().size() == 0)
+            common_union_member.label_seq().size() == 0)
     {
         throw InvalidArgumentError("Non default members require at least one associated case");
     }
@@ -2345,7 +2345,7 @@ void TypeObjectUtils::common_union_member_complete_member_detail_consistency(
 {
     // Check @hashid consistency with MemberId
     if (complete_member_detail.ann_builtin().has_value() &&
-        complete_member_detail.ann_builtin().value().hash_id().has_value())
+            complete_member_detail.ann_builtin().value().hash_id().has_value())
     {
         std::string string_value;
         // If the annotation [@hashid] is used without any parameter or with the empty string as a parameter, then the
@@ -2368,7 +2368,7 @@ void TypeObjectUtils::complete_union_member_consistency(
     common_union_member_consistency(complete_union_member.common());
     complete_member_detail_consistency(complete_union_member.detail());
     common_union_member_complete_member_detail_consistency(complete_union_member.common(),
-        complete_union_member.detail());
+            complete_union_member.detail());
 }
 
 void TypeObjectUtils::complete_union_member_seq_consistency(
@@ -2416,9 +2416,10 @@ void TypeObjectUtils::common_discriminator_member_type_identifier_consistency(
         const TypeIdentifier& type_id)
 {
     if (type_id._d() != TK_BOOLEAN && type_id._d() != TK_BYTE && type_id._d() != TK_CHAR8 && type_id._d() != TK_CHAR16
-        && type_id._d() != TK_INT8 && type_id._d() != TK_UINT8 && type_id._d() != TK_INT16 && type_id._d() != TK_UINT16
-        && type_id._d() != TK_INT32 && type_id._d() != TK_UINT32 && type_id._d() != TK_INT64
-        && type_id._d() != TK_UINT64 && type_id._d() != EK_COMPLETE && type_id._d() != EK_MINIMAL)
+            && type_id._d() != TK_INT8 && type_id._d() != TK_UINT8 && type_id._d() != TK_INT16 &&
+            type_id._d() != TK_UINT16
+            && type_id._d() != TK_INT32 && type_id._d() != TK_UINT32 && type_id._d() != TK_INT64
+            && type_id._d() != TK_UINT64 && type_id._d() != EK_COMPLETE && type_id._d() != EK_MINIMAL)
     {
         throw InvalidArgumentError("Inconsistent CommonDiscriminatorMember TypeIdentifier");
     }
@@ -2426,7 +2427,7 @@ void TypeObjectUtils::common_discriminator_member_type_identifier_consistency(
     if (is_direct_hash_type_identifier(type_id))
     {
         if (ReturnCode_t::RETCODE_OK ==
-            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_objects))
+                DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_objects))
         {
             if (type_objects.complete_type_object._d() == TK_ALIAS)
             {
@@ -2484,7 +2485,7 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
     TypeObjectPair type_objects;
     // Primitive types
     if (((type_id._d() > 0 && type_id._d() <= 0x0D) || (type_id._d() == TK_CHAR8 || type_id._d() == TK_CHAR16)) &&
-        (type_id._d() != value._d()))
+            (type_id._d() != value._d()))
     {
         throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
     }
@@ -2504,7 +2505,8 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         if (value._d() == TK_ENUM)
         {
             if (ReturnCode_t::RETCODE_OK ==
-                DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_objects))
+                    DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id,
+                    type_objects))
             {
                 if (type_objects.complete_type_object._d() == TK_ALIAS)
                 {
@@ -2514,7 +2516,7 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
                 else if (type_objects.complete_type_object._d() != TK_ENUM)
                 {
                     throw InvalidArgumentError(
-                        "Given annotation parameter value is inconsistent with given TypeIdentifier");
+                              "Given annotation parameter value is inconsistent with given TypeIdentifier");
                 }
             }
             else
@@ -2856,8 +2858,9 @@ void TypeObjectUtils::bitfield_holder_type_consistency(
         uint8_t bitcount)
 {
     if (holder_type != TK_BOOLEAN && holder_type != TK_BYTE && holder_type != TK_INT16 && holder_type != TK_INT32 &&
-        holder_type != TK_INT64 && holder_type != TK_UINT16 && holder_type != TK_UINT32 && holder_type != TK_UINT64 &&
-        holder_type != TK_INT8 && holder_type != TK_UINT8)
+            holder_type != TK_INT64 && holder_type != TK_UINT16 && holder_type != TK_UINT32 &&
+            holder_type != TK_UINT64 &&
+            holder_type != TK_INT8 && holder_type != TK_UINT8)
     {
         throw InvalidArgumentError("Inconsistent bitfield holder type");
     }
@@ -2866,12 +2869,12 @@ void TypeObjectUtils::bitfield_holder_type_consistency(
         throw InvalidArgumentError("Inconsistent bitfield holder type");
     }
     else if ((bitcount < 17 && bitcount > 8) && (holder_type == TK_BOOLEAN || holder_type == TK_BYTE ||
-        holder_type == TK_INT8 || holder_type == TK_UINT8))
+            holder_type == TK_INT8 || holder_type == TK_UINT8))
     {
         throw InvalidArgumentError("Inconsistent bitfield holder type");
     }
     else if ((bitcount < 33 && bitcount > 16) && (holder_type != TK_INT64 && holder_type != TK_UINT64 &&
-        holder_type != TK_INT32 && holder_type != TK_UINT32))
+            holder_type != TK_INT32 && holder_type != TK_UINT32))
     {
         throw InvalidArgumentError("Inconsistent bitfield holder type");
     }
@@ -2920,7 +2923,7 @@ void TypeObjectUtils::complete_bitfield_seq_consistency(
             throw InvalidArgumentError("Repeated bitfield name");
         }
         for (uint16_t j = complete_bitfield_seq[i].common().position();
-            j < complete_bitfield_seq[i].common().bitcount(); j++)
+                j < complete_bitfield_seq[i].common().bitcount(); j++)
         {
             positions.insert(complete_bitfield_seq[i].common().position() + j);
             if (positions.size() != (bitset_length + j + 1))
