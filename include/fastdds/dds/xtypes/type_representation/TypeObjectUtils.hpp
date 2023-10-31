@@ -2870,6 +2870,16 @@ protected:
     static void complete_bitset_type_consistency(
             const CompleteBitsetType& complete_bitset_type);
 
+    /**
+     * @brief Check CompleteTypeObject consistency.
+     *
+     * @param[in] complete_type_object Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     *            CompleteTypeObject is not consistent.
+     */
+    static void complete_type_object_consistency(
+            const CompleteTypeObject& complete_type_object);
+
 };
 
 } // xtypes1_3
