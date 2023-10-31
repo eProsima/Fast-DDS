@@ -3184,7 +3184,11 @@ void TypeObjectUtils::complete_type_object_consistency(
     }
 }
 
+<<<<<<< HEAD
 } // xtypes
+=======
+} // xtypes1_3
+>>>>>>> a4b8fe2ae (Refs #19837: add TypeObjectUtils::complete_type_object_consistency)
 } // dds
 } // fastdds
 } // eprosima
