@@ -1613,8 +1613,9 @@ public:
      *
      * @param[in out] sequence Sequence to be modified.
      * @param[in] bitfield CompleteBitfield to be added.
-     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given bitfield is
-     *            inconsistent (only in Debug build mode).
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given bitfield is inconsistent (only in Debug build mode).
+     *              2. There is another bitfield with the same name and/or the same position.
      */
     RTPS_DllAPI static void add_complete_bitfield(
             CompleteBitfieldSeq& sequence,
