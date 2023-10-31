@@ -1548,7 +1548,18 @@ void TypeObjectUtils::add_complete_bitfield(
 {
 #if !defined(NDEBUG)
     complete_bitfield_consistency(bitfield);
-    // TODO(jlbueno): check uniqueness and no overlapping.
+    for (CompleteBitfield bitfield_elem : sequence)
+    {
+        size_t bitfield_elem_init = bitfield_elem.common().position();
+        size_t bitfield_elem_end = bitfield_elem_init + bitfield_elem.common().bitcount();
+        size_t bitfield_init = bitfield.common().position();
+        size_t bitfield_end = bitfield_init + bitfield.common().bitcount();
+        if (bitfield_elem.detail().name() == bitfield.detail().name() ||
+            (bitfield_init <= bitfield_elem_end && bitfield_end >= bitfield_elem_init))
+        {
+            throw InvalidArgumentError("Sequence has another bitfield with the same positions/name");
+        }
+    }
 #endif // !defined(NDEBUG)
     sequence.push_back(bitfield);
 }
@@ -2886,10 +2897,31 @@ void TypeObjectUtils::complete_bitfield_consistency(
 void TypeObjectUtils::complete_bitfield_seq_consistency(
         const CompleteBitfieldSeq& complete_bitfield_seq)
 {
+    std::set<MemberName> bitfield_names;
+    std::set<uint16_t> positions;
+    size_t bitset_length = 0;
     for (size_t i = 0; i < complete_bitfield_seq.size(); i++)
     {
+        if (complete_bitfield_seq.size() == 0)
+        {
+            throw InvalidArgumentError("Bitset requires at least one bitfield definition");
+        }
+        bitfield_names.insert(complete_bitfield_seq[i].detail().name());
+        if (bitfield_names.size() != (i + 1))
+        {
+            throw InvalidArgumentError("Repeated bitfield name");
+        }
+        for (uint16_t i = complete_bitfield_seq[i].common().position();
+            i < complete_bitfield_seq[i].common().bitcount(); i++)
+        {
+            positions.insert(complete_bitfield_seq[i].common().position() + i);
+            if (positions.size() != (bitset_length + i))
+            {
+                throw InvalidArgumentError("Bitfields with repeated/overlapping positions");
+            }
+        }
+        bitset_length = positions.size();
         complete_bitfield_consistency(complete_bitfield_seq[i]);
-        // TODO(jlbueno): check uniqueness and no overlapping.
     }
 }
 
