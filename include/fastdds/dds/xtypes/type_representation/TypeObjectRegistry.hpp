@@ -241,13 +241,13 @@ protected:
             const TypeIdentifier& type_identifier);
 
     /**
-     * @brief Get the builtin annotation complete TypeIdentifier.
+     * @brief Check if a given TypeIdentifier corresponds to a builtin annotation.
      *
-     * @param builtin_annotation_name Builtin annotation name.
-     * @return Builtin annotation complete TypeIdentifier.
+     * @param type_identifier TypeIdentifier to check.
+     * @return true if the TypeIdentifier is from a builtin annotation. false otherwise.
      */
-    const TypeIdentifier get_builtin_annotation_complete_type_identifier(
-            const std::string& builtin_annotation_name);
+    bool is_builtin_annotation(
+            const TypeIdentifier& type_identifier);
 
     /**
      * @brief Calculate the TypeIdentifier given a TypeObject.

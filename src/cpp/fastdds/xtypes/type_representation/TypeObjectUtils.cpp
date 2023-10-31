@@ -28,8 +28,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/md5.h>
 
-#include <fastdds/xtypes/type_representation/BuiltinAnnotations.h>
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -662,10 +660,9 @@ const AppliedAnnotation TypeObjectUtils::build_applied_annotation(
     {
         applied_annotation_parameter_seq_consistency(param_seq.value());
     }
-    BuiltinAnnotationKind builtin_ann_kind;
-    if (is_applied_builtin_annotation(annotation_typeid, builtin_ann_kind))
+    if (DomainParticipantFactory::get_instance()->type_object_registry().is_builtin_annotation(annotation_typeid))
     {
-        applied_builtin_annotation_consistency(builtin_ann_kind, param_seq);
+        throw InvalidArgumentError("Found builtin annotation in custom annotation sequence");
     }
 #endif // !defined(NDEBUG)
     AppliedAnnotation applied_annotation;
@@ -886,12 +883,7 @@ const CompleteStructType TypeObjectUtils::build_complete_struct_type(
     type_flag_consistency(struct_flags);
     complete_struct_header_consistency(header);
     complete_struct_member_seq_consistency(member_seq);
-    if (struct_flags & TypeFlagBits::IS_AUTOID_HASH)
-    {
-        member_id_consistency(member_seq);
-    }
 #endif // !defined(NDEBUG)
-    builtin_applied_annotations_type_flags_consistency(header.detail().ann_custom(), struct_flags);
     CompleteStructType complete_struct_type;
     complete_struct_type.struct_flags(struct_flags);
     complete_struct_type.header(header);
@@ -1021,7 +1013,6 @@ const CompleteDiscriminatorMember TypeObjectUtils::build_complete_discriminator_
         applied_annotation_seq_consistency(ann_custom.value());
     }
 #endif // !defined(NDEBUG)
-    common_discriminator_member_builtin_annotations_consistency(common.member_flags(), ann_custom);
     CompleteDiscriminatorMember complete_discriminator_member;
     complete_discriminator_member.common(common);
     complete_discriminator_member.ann_builtin(ann_builtin);
@@ -1051,12 +1042,7 @@ const CompleteUnionType TypeObjectUtils::build_complete_union_type(
     complete_union_header_consistency(header);
     complete_discriminator_member_consistency(discriminator);
     complete_union_member_seq_consistency(member_seq);
-    if (union_flags & TypeFlagBits::IS_AUTOID_HASH)
-    {
-        member_id_consistency(member_seq);
-    }
 #endif // !defined(NDEBUG)
-    builtin_applied_annotations_type_flags_consistency(header.detail().ann_custom(), union_flags);
     CompleteUnionType complete_union_type;
     complete_union_type.union_flags(union_flags);
     complete_union_type.header(header);
@@ -1815,208 +1801,6 @@ bool TypeObjectUtils::is_indirect_hash_type_identifier(
     return indirect_hash;
 }
 
-bool TypeObjectUtils::is_applied_builtin_annotation(
-        const TypeIdentifier& type_identifier,
-        BuiltinAnnotationKind& builtin_annotation_kind)
-{
-    builtin_annotation_kind = BuiltinAnnotationKind::NONE;
-    if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(id_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::ID;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(autoid_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::AUTOID;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(optional_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::OPTIONAL;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(position_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::POSITION;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(value_annotation_name))
-    {
-        // builtin_annotation_kind = BuiltinAnnotationKind::VALUE;
-        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Value builtin annotation not yet supported.");
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(extensibility_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::EXTENSIBILITY;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(final_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::FINAL_ANNOTATION;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(appendable_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::APPENDABLE_ANNOTATION;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(mutable_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::MUTABLE_ANNOTATION;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(key_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::KEY;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(must_understand_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::MUST_UNDERSTAND;
-    }
-    else if(type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(default_literal_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::DEFAULT_LITERAL;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(default_annotation_name))
-    {
-        // builtin_annotation_kind = BuiltinAnnotationKind::DEFAULT;
-        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Default builtin annotation not yet supported.");
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(range_annotation_name))
-    {
-        throw InvalidArgumentError("@range annotation should be declared in AppliedBuiltinMemberAnnotations structure");
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(min_annotation_name))
-    {
-        throw InvalidArgumentError("@min annotation should be declared in AppliedBuiltinMemberAnnotations structure");
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(max_annotation_name))
-    {
-        throw InvalidArgumentError("@max annotation should be declared in AppliedBuiltinMemberAnnotations structure");
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(unit_annotation_name))
-    {
-        throw InvalidArgumentError("@unit annotation should be declared in AppliedBuiltinMemberAnnotations structure");
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(bit_bound_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::BIT_BOUND;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(external_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::EXTERNAL;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(nested_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::NESTED;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(verbatim_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::VERBATIM;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(service_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::SERVICE;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(oneway_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::ONEWAY;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(ami_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::AMI;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(hashid_annotation_name))
-    {
-        throw InvalidArgumentError(
-            "@hashid annotation should be declared in AppliedBuiltinMemberAnnotations structure");
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(default_nested_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::DEFAULT_NESTED;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(ignore_literal_names_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::IGNORE_LITERAL_NAMES;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(try_construct_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::TRY_CONSTRUCT;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(non_serialized_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::NON_SERIALIZED;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(data_representation_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::DATA_REPRESENTATION;
-    }
-    else if (type_identifier ==
-        DomainParticipantFactory::get_instance()->type_object_registry().
-        get_builtin_annotation_complete_type_identifier(topic_annotation_name))
-    {
-        builtin_annotation_kind = BuiltinAnnotationKind::TOPIC;
-    }
-
-    if (builtin_annotation_kind != BuiltinAnnotationKind::NONE)
-    {
-        return true;
-    }
-    return false;
-}
-
 void TypeObjectUtils::l_bound_consistency(
         LBound bound)
 {
@@ -2304,311 +2088,10 @@ void TypeObjectUtils::applied_annotation_consistency(
     {
         applied_annotation_parameter_seq_consistency(applied_annotation.param_seq().value());
     }
-    BuiltinAnnotationKind builtin_ann_kind;
-    if (is_applied_builtin_annotation(applied_annotation.annotation_typeid(), builtin_ann_kind))
+    if (DomainParticipantFactory::get_instance()->type_object_registry().is_builtin_annotation(
+        applied_annotation.annotation_typeid()))
     {
-        applied_builtin_annotation_consistency(builtin_ann_kind, applied_annotation.param_seq());
-    }
-}
-
-void TypeObjectUtils::applied_builtin_annotation_consistency(
-        BuiltinAnnotationKind builtin_annotation_kind,
-        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
-{
-    switch (builtin_annotation_kind)
-    {
-        case BuiltinAnnotationKind::ID:
-            id_builtin_annotation_consistency(param_seq);
-            break;
-        case BuiltinAnnotationKind::AUTOID:
-            autoid_builtin_annotation_consistency(param_seq);
-            break;
-        case BuiltinAnnotationKind::OPTIONAL:
-        case BuiltinAnnotationKind::KEY:
-        case BuiltinAnnotationKind::MUST_UNDERSTAND:
-        case BuiltinAnnotationKind::EXTERNAL:
-        case BuiltinAnnotationKind::NESTED:
-        case BuiltinAnnotationKind::ONEWAY:
-        case BuiltinAnnotationKind::AMI:
-        case BuiltinAnnotationKind::DEFAULT_NESTED:
-        case BuiltinAnnotationKind::IGNORE_LITERAL_NAMES:
-        case BuiltinAnnotationKind::NON_SERIALIZED:
-            boolean_builtin_annotation_consistency(param_seq);
-            break;
-        case BuiltinAnnotationKind::POSITION:
-        case BuiltinAnnotationKind::BIT_BOUND:
-            unsigned_short_builtin_annotation_consistency(param_seq);
-            break;
-        case BuiltinAnnotationKind::VALUE:
-        case BuiltinAnnotationKind::DEFAULT:
-            // TODO: support for any block
-            break;
-        case BuiltinAnnotationKind::EXTENSIBILITY:
-            extensibility_builtin_annotation_consistency(param_seq);
-            break;
-        case BuiltinAnnotationKind::FINAL_ANNOTATION:
-        case BuiltinAnnotationKind::APPENDABLE_ANNOTATION:
-        case BuiltinAnnotationKind::MUTABLE_ANNOTATION:
-        case BuiltinAnnotationKind::DEFAULT_LITERAL:
-            empty_builtin_annotation_consistency(param_seq);
-            break;
-        case BuiltinAnnotationKind::VERBATIM:
-            verbatim_builtin_annotation_consistency(param_seq);
-            break;
-        case BuiltinAnnotationKind::SERVICE:
-            service_builtin_annotation_consistency(param_seq);
-            break;
-        case BuiltinAnnotationKind::TRY_CONSTRUCT:
-            try_construct_builtin_annotation_consistency(param_seq);
-            break;
-        case BuiltinAnnotationKind::DATA_REPRESENTATION:
-            data_representation_builtin_annotation_consistency(param_seq);
-            break;
-        case BuiltinAnnotationKind::TOPIC:
-            topic_builtin_annotation_consistency(param_seq);
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeObjectUtils::id_builtin_annotation_consistency(
-        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
-{
-    if (!param_seq.has_value())
-    {
-        throw InvalidArgumentError("@id builtin annotation requires providing a value");
-    }
-    else
-    {
-        if (param_seq.value().size() != 1)
-        {
-            throw InvalidArgumentError("@id builtin annotation requires exclusively one parameter");
-        }
-        if (param_seq.value()[0].paramname_hash() != name_hash(value_member_name) ||
-            param_seq.value()[0].value()._d() != TK_UINT32)
-        {
-            throw InvalidArgumentError("@id builtin annotation provided parameter is inconsistent");
-        }
-    }
-}
-
-void TypeObjectUtils::autoid_builtin_annotation_consistency(
-        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
-{
-    if (param_seq.has_value())
-    {
-        if (param_seq.value().size() != 1)
-        {
-            throw InvalidArgumentError("@autoid builtin annotation requieres exclusively one parameter");
-        }
-        if (param_seq.value()[0].paramname_hash() != name_hash(value_member_name) ||
-            param_seq.value()[0].value()._d() != TK_ENUM ||
-            (param_seq.value()[0].value().enumerated_value() != autoid::AutoidKind::SEQUENTIAL &&
-            param_seq.value()[0].value().enumerated_value() != autoid::AutoidKind::HASH))
-        {
-            throw InvalidArgumentError("@autoid builtin annotation provided parameter is inconsistent");
-        }
-    }
-}
-
-void TypeObjectUtils::boolean_builtin_annotation_consistency(
-        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
-{
-    if (param_seq.has_value())
-    {
-        if (param_seq.value().size() != 1)
-        {
-            throw InvalidArgumentError("Builtin annotation requieres exclusively one parameter");
-        }
-        if (param_seq.value()[0].paramname_hash() != name_hash(value_member_name) ||
-            param_seq.value()[0].value()._d() != TK_BOOLEAN)
-        {
-            throw InvalidArgumentError("Builtin annotation provided parameter is inconsistent");
-        }
-    }
-}
-
-void TypeObjectUtils::unsigned_short_builtin_annotation_consistency(
-        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
-{
-    if (!param_seq.has_value())
-    {
-        throw InvalidArgumentError("Builtin annotation requires providing a value");
-    }
-    else
-    {
-        if (param_seq.value().size() != 1)
-        {
-            throw InvalidArgumentError("Builtin annotation requires exclusively one parameter");
-        }
-        if (param_seq.value()[0].paramname_hash() != name_hash(value_member_name) ||
-            param_seq.value()[0].value()._d() != TK_UINT16)
-        {
-            throw InvalidArgumentError("Builtin annotation provided parameter is inconsistent");
-        }
-    }
-}
-
-void TypeObjectUtils::extensibility_builtin_annotation_consistency(
-        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
-{
-    if (param_seq.has_value())
-    {
-        if (param_seq.value().size() != 1)
-        {
-            throw InvalidArgumentError("@extensibility builtin annotation requieres exclusively one parameter");
-        }
-        if (param_seq.value()[0].paramname_hash() != name_hash(value_member_name) ||
-            param_seq.value()[0].value()._d() != TK_ENUM ||
-            (param_seq.value()[0].value().enumerated_value() != extensibility::ExtensibilityKind::FINAL &&
-            param_seq.value()[0].value().enumerated_value() != extensibility::ExtensibilityKind::APPENDABLE &&
-            param_seq.value()[0].value().enumerated_value() != extensibility::ExtensibilityKind::MUTABLE))
-        {
-            throw InvalidArgumentError("@extensibility builtin annotation provided parameter is inconsistent");
-        }
-    }
-}
-
-void TypeObjectUtils::empty_builtin_annotation_consistency(
-        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
-{
-    if (param_seq.has_value() && param_seq.value().size() != 0)
-    {
-        throw InvalidArgumentError("Builtin annotation does not expect any parameter");
-    }
-}
-
-void TypeObjectUtils::verbatim_builtin_annotation_consistency(
-        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
-{
-    if (!param_seq.has_value())
-    {
-        throw InvalidArgumentError("@verbatim builtin annotation requires at least defining parameter text");
-    }
-    else
-    {
-        if (param_seq.value().size() > 3)
-        {
-            throw InvalidArgumentError("@verbatim builtin annotation requires at most 3 parameters");
-        }
-        bool text_param_found = false;
-        for (AppliedAnnotationParameter param : param_seq.value())
-        {
-            if (param.paramname_hash() == name_hash("text"))
-            {
-                if (param.value()._d() == TK_STRING8 && param.value().string8_value().size() != 0)
-                {
-                    text_param_found = true;
-                }
-                else
-                {
-                    throw InvalidArgumentError("@verbatim builtin annotation provided parameter is inconsistent");
-                }
-            }
-            else if (param.paramname_hash() == name_hash("language"))
-            {
-                if (param.value()._d() != TK_STRING8)
-                {
-                    throw InvalidArgumentError("@verbatim builtin annotation provided parameter is inconsistent");
-                }
-            }
-            else if (param.paramname_hash() == name_hash("placement"))
-            {
-                if (param.value()._d() != TK_ENUM ||
-                    static_cast<uint32_t>(param.value().enumerated_value()) > verbatim::PlacementKind::END_FILE)
-                {
-                    throw InvalidArgumentError("@verbatim builtin annotation provided parameter is inconsistent");
-                }
-            }
-            else
-            {
-                throw InvalidArgumentError("@verbatim builtin annotation provided parameter is unknown");
-            }
-            if (!text_param_found)
-            {
-                throw InvalidArgumentError("@verbatim builtin annotation requires defining parameter text");
-            }
-        }
-    }
-}
-
-void TypeObjectUtils::service_builtin_annotation_consistency(
-        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
-{
-    if (param_seq.has_value())
-    {
-        if (param_seq.value().size() != 1)
-        {
-            throw InvalidArgumentError("@service builtin annotation requieres exclusively one parameter");
-        }
-        if (param_seq.value()[0].paramname_hash() != name_hash(platform_member_name) ||
-            param_seq.value()[0].value()._d() != TK_STRING8 || param_seq.value()[0].value().string8_value().size() == 0)
-        {
-            throw InvalidArgumentError("@service builtin annotation provided parameter is inconsistent");
-        }
-    }
-}
-
-void TypeObjectUtils::try_construct_builtin_annotation_consistency(
-        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
-{
-    if (param_seq.has_value())
-    {
-        if (param_seq.value().size() != 1)
-        {
-            throw InvalidArgumentError("@try_construct builtin annotation requieres exclusively one parameter");
-        }
-        if (param_seq.value()[0].paramname_hash() != name_hash(value_member_name) ||
-            param_seq.value()[0].value()._d() != TK_ENUM ||
-            (param_seq.value()[0].value().enumerated_value() != TryConstructFailAction::DISCARD &&
-            param_seq.value()[0].value().enumerated_value() != TryConstructFailAction::USE_DEFAULT &&
-            param_seq.value()[0].value().enumerated_value() != TryConstructFailAction::TRIM))
-        {
-            throw InvalidArgumentError("@try_construct builtin annotation provided parameter is inconsistent");
-        }
-    }
-}
-
-void TypeObjectUtils::data_representation_builtin_annotation_consistency(
-        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
-{
-    if (!param_seq.has_value())
-    {
-        throw InvalidArgumentError("@data_representation builtin annotation requires providing a value");
-    }
-    else
-    {
-        if (param_seq.value().size() != 1)
-        {
-            throw InvalidArgumentError("@data_representation builtin annotation requires exclusively one parameter");
-        }
-        if (param_seq.value()[0].paramname_hash() != name_hash("allowed_kinds") ||
-            param_seq.value()[0].value()._d() != TK_UINT32)
-        {
-            throw InvalidArgumentError("@data_representation builtin annotation provided parameter is inconsistent");
-        }
-    }
-}
-
-void TypeObjectUtils::topic_builtin_annotation_consistency(
-        const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
-{
-    if (param_seq.has_value())
-    {
-        if (param_seq.value().size() > 2)
-        {
-            throw InvalidArgumentError("@topic builtin annotation requires at most 2 parameters");
-        }
-        for (AppliedAnnotationParameter param : param_seq.value())
-        {
-            if (param.paramname_hash() != name_hash("name") ||
-                param.paramname_hash() != name_hash(platform_member_name) ||
-                param.value()._d() != TK_STRING8)
-            {
-                throw InvalidArgumentError("@topic builtin annotation provided parameter is inconsistent");
-            }
-        }
+        throw InvalidArgumentError("Builtin annotation cannot be defined as custom annotation");
     }
 }
 
@@ -2673,110 +2156,6 @@ void TypeObjectUtils::common_struct_member_and_complete_member_detail_consistenc
         const CommonStructMember& common_struct_member,
         const CompleteMemberDetail& complete_member_detail)
 {
-    bool try_construct_annotation_checked = false;
-    bool optional_annotation_checked = false;
-    bool must_understand_annotation_checked = false;
-    bool key_annotation_checked = false;
-    bool external_annotation_checked = false;
-    // Check annotations set in CompleteMemberDetail.
-    if (complete_member_detail.ann_custom().has_value())
-    {
-        for (AppliedAnnotation annotation : complete_member_detail.ann_custom().value())
-        {
-            BuiltinAnnotationKind builtin_annotation_kind;
-            if (is_applied_builtin_annotation(annotation.annotation_typeid(), builtin_annotation_kind))
-            {
-                switch (builtin_annotation_kind)
-                {
-                    case BuiltinAnnotationKind::TRY_CONSTRUCT:
-                        try_construct_annotation_checked = true;
-                        try_construct_flag_consistency(annotation.param_seq().value()[0].value().enumerated_value(),
-                            common_struct_member.member_flags());
-                        break;
-                    case BuiltinAnnotationKind::OPTIONAL:
-                        optional_annotation_checked = true;
-                        if (annotation.param_seq().has_value())
-                        {
-                            optional_flag_consistency(common_struct_member.member_flags(),
-                                annotation.param_seq().value()[0].value().boolean_value());
-                        }
-                        else
-                        {
-                            optional_flag_consistency(common_struct_member.member_flags(), true);
-                        }
-                        break;
-                    case BuiltinAnnotationKind::MUST_UNDERSTAND:
-                        must_understand_annotation_checked = true;
-                        if (annotation.param_seq().has_value())
-                        {
-                            must_understand_flag_consistency(common_struct_member.member_flags(),
-                                annotation.param_seq().value()[0].value().boolean_value());
-                        }
-                        else
-                        {
-                            must_understand_flag_consistency(common_struct_member.member_flags(), true);
-                        }
-                        break;
-                    case BuiltinAnnotationKind::KEY:
-                        key_annotation_checked = true;
-                        if (annotation.param_seq().has_value())
-                        {
-                            key_flag_consistency(common_struct_member.member_flags(),
-                                annotation.param_seq().value()[0].value().boolean_value());
-                        }
-                        else
-                        {
-                            key_flag_consistency(common_struct_member.member_flags(), true);
-                        }
-                        break;
-                    case BuiltinAnnotationKind::EXTERNAL:
-                        external_annotation_checked = true;
-                        if (annotation.param_seq().has_value())
-                        {
-                            external_flag_consistency(common_struct_member.member_flags(),
-                                annotation.param_seq().value()[0].value().boolean_value());
-                        }
-                        else
-                        {
-                            external_flag_consistency(common_struct_member.member_flags(), true);
-                        }
-                        break;
-                    case BuiltinAnnotationKind::ID:
-                        if (annotation.param_seq().value()[0].value().uint32_value() !=
-                            common_struct_member.member_id())
-                        {
-                            throw InvalidArgumentError("Inconsistent @id annotation and Member Id");
-                        }
-                        break;
-                    case BuiltinAnnotationKind::NON_SERIALIZED:
-                    case BuiltinAnnotationKind::VERBATIM:
-                        break;
-                    default:
-                        throw InvalidArgumentError("Given builtin annotation does not apply to structure members");
-                }
-            }
-        }
-    }
-    if (!try_construct_annotation_checked)
-    {
-        try_construct_flag_consistency(TryConstructFailAction::DISCARD, common_struct_member.member_flags());
-    }
-    if (!optional_annotation_checked)
-    {
-        optional_flag_consistency(common_struct_member.member_flags(), false);
-    }
-    if (!must_understand_annotation_checked)
-    {
-        must_understand_flag_consistency(common_struct_member.member_flags(), false);
-    }
-    if (!key_annotation_checked)
-    {
-        key_flag_consistency(common_struct_member.member_flags(), false);
-    }
-    if (!external_annotation_checked)
-    {
-        external_flag_consistency(common_struct_member.member_flags(), false);
-    }
     // Check @hashid consistency with MemberId
     if (complete_member_detail.ann_builtin().has_value() &&
         complete_member_detail.ann_builtin().value().hash_id().has_value())
@@ -2793,95 +2172,6 @@ void TypeObjectUtils::common_struct_member_and_complete_member_detail_consistenc
             string_value = complete_member_detail.ann_builtin().value().hash_id().value();
         }
         string_member_id_consistency(common_struct_member.member_id(), string_value);
-        
-    }
-}
-
-void TypeObjectUtils::try_construct_flag_consistency(
-        int32_t try_construct_value,
-        MemberFlag flags)
-{
-    switch (try_construct_value)
-    {
-        case TryConstructFailAction::DISCARD:
-            if ((flags & (MemberFlagBits::TRY_CONSTRUCT1 | MemberFlagBits::TRY_CONSTRUCT2)) !=
-                MemberFlagBits::TRY_CONSTRUCT1)
-            {
-                throw InvalidArgumentError("Inconsistent member flags and @try_construct annotation");
-            }
-            break;
-        case TryConstructFailAction::TRIM:
-            if ((flags & (MemberFlagBits::TRY_CONSTRUCT1 | MemberFlagBits::TRY_CONSTRUCT2)) !=
-                (MemberFlagBits::TRY_CONSTRUCT1 | MemberFlagBits::TRY_CONSTRUCT2))
-            {
-                throw InvalidArgumentError("Inconsistent member flags and @try_construct annotation");
-            }
-            break;
-        case TryConstructFailAction::USE_DEFAULT:
-            if ((flags & (MemberFlagBits::TRY_CONSTRUCT1 | MemberFlagBits::TRY_CONSTRUCT2)) !=
-                MemberFlagBits::TRY_CONSTRUCT2)
-            {
-                throw InvalidArgumentError("Inconsistent member flags and @try_construct annotation");
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeObjectUtils::optional_flag_consistency(
-        MemberFlag flags,
-        bool optional)
-{
-    if (optional && ((flags & MemberFlagBits::IS_OPTIONAL) != MemberFlagBits::IS_OPTIONAL))
-    {
-        throw InvalidArgumentError("Inconsistent member flag and @optional annotation");
-    }
-    else if (!optional && ((flags & MemberFlagBits::IS_OPTIONAL) == MemberFlagBits::IS_OPTIONAL))
-    {
-        throw InvalidArgumentError("Inconsistent member flag and @optional annotation");
-    }
-}
-
-void TypeObjectUtils::must_understand_flag_consistency(
-        MemberFlag flags,
-        bool must_understand)
-{
-    if (must_understand && ((flags & MemberFlagBits::IS_MUST_UNDERSTAND) != MemberFlagBits::IS_MUST_UNDERSTAND))
-    {
-        throw InvalidArgumentError("Inconsistent member flag and @must_understand annotation");
-    }
-    else if (!must_understand && ((flags & MemberFlagBits::IS_MUST_UNDERSTAND) == MemberFlagBits::IS_MUST_UNDERSTAND))
-    {
-        throw InvalidArgumentError("Inconsistent member flag and @must_understand annotation");
-    }
-}
-
-void TypeObjectUtils::key_flag_consistency(
-        MemberFlag flags,
-        bool key)
-{
-    if (key && ((flags & MemberFlagBits::IS_KEY) != MemberFlagBits::IS_KEY))
-    {
-        throw InvalidArgumentError("Inconsistent member flag and @key annotation");
-    }
-    else if (!key && ((flags & MemberFlagBits::IS_KEY) == MemberFlagBits::IS_KEY))
-    {
-        throw InvalidArgumentError("Inconsistent member flag and @key annotation");
-    }
-}
-
-void TypeObjectUtils::external_flag_consistency(
-        MemberFlag flags,
-        bool external)
-{
-    if (external && ((flags & MemberFlagBits::IS_EXTERNAL) != MemberFlagBits::IS_EXTERNAL))
-    {
-        throw InvalidArgumentError("Inconsistent member flag and @external annotation");
-    }
-    else if (!external && ((flags & MemberFlagBits::IS_EXTERNAL) == MemberFlagBits::IS_EXTERNAL))
-    {
-        throw InvalidArgumentError("Inconsistent member flag and @external annotation");
     }
 }
 
@@ -2974,156 +2264,12 @@ void TypeObjectUtils::complete_struct_header_consistency(
     complete_type_detail_consistency(complete_struct_header.detail());
 }
 
-void TypeObjectUtils::builtin_applied_annotations_type_flags_consistency(
-        const eprosima::fastcdr::optional<AppliedAnnotationSeq>& annotations,
-        TypeFlag flags)
-{
-    bool extensibility_annotation_checked = false;
-    bool nested_annotation_checked = false;
-    bool autoid_annotation_checked = false;
-    if (annotations.has_value())
-    {
-        for (AppliedAnnotation annotation : annotations.value())
-        {
-            BuiltinAnnotationKind builtin_annotation_kind;
-            if (is_applied_builtin_annotation(annotation.annotation_typeid(), builtin_annotation_kind))
-            {
-                switch (builtin_annotation_kind)
-                {
-                    case BuiltinAnnotationKind::EXTENSIBILITY:
-                    case BuiltinAnnotationKind::APPENDABLE_ANNOTATION:
-                    case BuiltinAnnotationKind::FINAL_ANNOTATION:
-                    case BuiltinAnnotationKind::MUTABLE_ANNOTATION:
-                        if (!extensibility_annotation_checked)
-                        {
-                            extensibility_annotation_checked = true;
-                            uint32_t extensibility =
-                                builtin_annotation_kind == BuiltinAnnotationKind::APPENDABLE_ANNOTATION ?
-                                static_cast<uint32_t>(extensibility::ExtensibilityKind::APPENDABLE) :
-                                builtin_annotation_kind == BuiltinAnnotationKind::FINAL_ANNOTATION ?
-                                static_cast<uint32_t>(extensibility::ExtensibilityKind::FINAL) :
-                                builtin_annotation_kind == BuiltinAnnotationKind::MUTABLE_ANNOTATION ?
-                                static_cast<uint32_t>(extensibility::ExtensibilityKind::MUTABLE) :
-                                static_cast<uint32_t>(annotation.param_seq().value()[0].value().enumerated_value());
-                            extensibility_flag_consistency(flags, extensibility);
-                        }
-                        else
-                        {
-                            throw InvalidArgumentError("More than one extensibility builtin annotation applied");
-                        }
-                        break;
-                    case BuiltinAnnotationKind::NESTED:
-                        nested_annotation_checked = true;
-                        if (annotation.param_seq().has_value())
-                        {
-                            nested_flag_consistency(flags, annotation.param_seq().value()[0].value().boolean_value());
-                        }
-                        else
-                        {
-                            nested_flag_consistency(flags, true);
-                        }
-                        break;
-                    case BuiltinAnnotationKind::AUTOID:
-                        autoid_annotation_checked = true;
-                        if (!annotation.param_seq().has_value() ||
-                            annotation.param_seq().value()[0].value().enumerated_value() == autoid::AutoidKind::HASH)
-                        {
-                            autoid_hash_flag_consistency(flags, true);
-                        }
-                        else
-                        {
-                            autoid_hash_flag_consistency(flags, false);
-                        }
-                        break;
-                    default:
-                        throw InvalidArgumentError("Given builtin annotation does not apply to structure declarations");
-                }
-            }
-        }
-    }
-    if (!extensibility_annotation_checked)
-    {
-        extensibility_flag_consistency(flags, extensibility::ExtensibilityKind::APPENDABLE);
-    }
-    if (!nested_annotation_checked)
-    {
-        nested_flag_consistency(flags, false);
-    }
-    if (!autoid_annotation_checked)
-    {
-        autoid_hash_flag_consistency(flags, false);
-    }
-}
-
-void TypeObjectUtils::extensibility_flag_consistency(
-        TypeFlag flags,
-        uint32_t extensibility)
-{
-    switch (extensibility)
-    {
-        case extensibility::ExtensibilityKind::APPENDABLE:
-            if ((flags & TypeFlagBits::IS_APPENDABLE) != TypeFlagBits::IS_APPENDABLE)
-            {
-                throw InvalidArgumentError("Inconsistent type flags and @extensibility annotation");
-            }
-            break;
-        case extensibility::ExtensibilityKind::MUTABLE:
-            if ((flags & TypeFlagBits::IS_MUTABLE) != TypeFlagBits::IS_MUTABLE)
-            {
-                throw InvalidArgumentError("Inconsistent type flags and @extensibility annotation");
-            }
-            break;
-        case extensibility::ExtensibilityKind::FINAL:
-            if ((flags & TypeFlagBits::IS_FINAL) != TypeFlagBits::IS_FINAL)
-            {
-                throw InvalidArgumentError("Inconsistent type flags and @extensibility annotation");
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeObjectUtils::nested_flag_consistency(
-        TypeFlag flags,
-        bool nested)
-{
-    if (nested && ((flags & TypeFlagBits::IS_NESTED) != TypeFlagBits::IS_NESTED))
-    {
-        throw InvalidArgumentError("Inconsistent type flag and @nested annotation");
-    }
-    else if (!nested && ((flags & TypeFlagBits::IS_NESTED) == TypeFlagBits::IS_NESTED))
-    {
-        throw InvalidArgumentError("Inconsistent type flag and @nested annotation");
-    }
-}
-
-void TypeObjectUtils::autoid_hash_flag_consistency(
-        TypeFlag flags,
-        bool autoid_hash)
-{
-    if (autoid_hash && ((flags & TypeFlagBits::IS_AUTOID_HASH) != TypeFlagBits::IS_AUTOID_HASH))
-    {
-        throw InvalidArgumentError("Inconsistent type flag and @autoid annotation");
-    }
-    else if (!autoid_hash && ((flags & TypeFlagBits::IS_AUTOID_HASH) == TypeFlagBits::IS_AUTOID_HASH))
-    {
-        throw InvalidArgumentError("Inconsistent type flag and @autoid annotation");
-    }
-}
-
 void TypeObjectUtils::complete_struct_type_consistency(
         const CompleteStructType& complete_struct_type)
 {
     type_flag_consistency(complete_struct_type.struct_flags());
     complete_struct_header_consistency(complete_struct_type.header());
     complete_struct_member_seq_consistency(complete_struct_type.member_seq());
-    builtin_applied_annotations_type_flags_consistency(complete_struct_type.header().detail().ann_custom(),
-        complete_struct_type.struct_flags());
-    if (complete_struct_type.struct_flags() & TypeFlagBits::IS_AUTOID_HASH)
-    {
-        member_id_consistency(complete_struct_type.member_seq());
-    }
 }
 
 void TypeObjectUtils::union_case_label_seq_consistency(
@@ -3157,57 +2303,6 @@ void TypeObjectUtils::common_union_member_complete_member_detail_consistency(
         const CommonUnionMember& common_union_member,
         const CompleteMemberDetail& complete_member_detail)
 {
-    bool try_construct_annotation_checked = false;
-    bool external_annotation_checked = false;
-    if (complete_member_detail.ann_custom().has_value())
-    {
-        for (AppliedAnnotation annotation : complete_member_detail.ann_custom().value())
-        {
-            BuiltinAnnotationKind builtin_annotation_kind;
-            if(is_applied_builtin_annotation(annotation.annotation_typeid(), builtin_annotation_kind))
-            {
-                switch (builtin_annotation_kind)
-                {
-                    case BuiltinAnnotationKind::TRY_CONSTRUCT:
-                        try_construct_annotation_checked = true;
-                        try_construct_flag_consistency(annotation.param_seq().value()[0].value().enumerated_value(),
-                            common_union_member.member_flags());
-                        break;
-                    case BuiltinAnnotationKind::EXTERNAL:
-                        external_annotation_checked = true;
-                        if (annotation.param_seq().has_value())
-                        {
-                            external_flag_consistency(common_union_member.member_flags(),
-                                annotation.param_seq().value()[0].value().boolean_value());
-                        }
-                        else
-                        {
-                            external_flag_consistency(common_union_member.member_flags(), true);
-                        }
-                        break;
-                    case BuiltinAnnotationKind::ID:
-                        if (annotation.param_seq().value()[0].value().uint32_value() !=
-                            common_union_member.member_id())
-                        {
-                            throw InvalidArgumentError("Inconsistent @id annotation and Member Id");
-                        }
-                        break;
-                    case BuiltinAnnotationKind::VERBATIM:
-                        break;
-                    default:
-                        throw InvalidArgumentError("Given builtin annotation does not apply to union members");
-                }
-            }
-        }
-    }
-    if (!try_construct_annotation_checked)
-    {
-        try_construct_flag_consistency(TryConstructFailAction::DISCARD, common_union_member.member_flags());
-    }
-    if (!external_annotation_checked)
-    {
-        external_flag_consistency(common_union_member.member_flags(), false);
-    }
     // Check @hashid consistency with MemberId
     if (complete_member_detail.ann_builtin().has_value() &&
         complete_member_detail.ann_builtin().value().hash_id().has_value())
@@ -3224,7 +2319,6 @@ void TypeObjectUtils::common_union_member_complete_member_detail_consistency(
             string_value = complete_member_detail.ann_builtin().value().hash_id().value();
         }
         string_member_id_consistency(common_union_member.member_id(), string_value);
-        
     }
 }
 
@@ -3314,55 +2408,6 @@ void TypeObjectUtils::common_discriminator_member_consistency(
     common_discriminator_member_type_identifier_consistency(common_discriminator_member.type_id());
 }
 
-void TypeObjectUtils::common_discriminator_member_builtin_annotations_consistency(
-        UnionDiscriminatorFlag flags,
-        const eprosima::fastcdr::optional<AppliedAnnotationSeq>& annotations)
-{
-    bool try_construct_annotation_checked = false;
-    bool key_annotation_checked = false;
-    if (annotations.has_value())
-    {
-        for (AppliedAnnotation annotation : annotations.value())
-        {
-            BuiltinAnnotationKind builtin_annotation_kind;
-            if (is_applied_builtin_annotation(annotation.annotation_typeid(), builtin_annotation_kind))
-            {
-                switch (builtin_annotation_kind)
-                {
-                    case BuiltinAnnotationKind::TRY_CONSTRUCT:
-                        try_construct_annotation_checked = true;
-                        try_construct_flag_consistency(annotation.param_seq().value()[0].value().enumerated_value(),
-                            flags);
-                        break;
-                    case BuiltinAnnotationKind::KEY:
-                        key_annotation_checked = true;
-                        if (annotation.param_seq().has_value())
-                        {
-                            key_flag_consistency(flags,
-                                annotation.param_seq().value()[0].value().boolean_value());
-                        }
-                        else
-                        {
-                            key_flag_consistency(flags, true);
-                        }
-                        break;
-                    default:
-                        throw InvalidArgumentError(
-                            "Given builtin annotation does not apply to union discriminator members");
-                }
-            }
-        }
-    }
-    if (!try_construct_annotation_checked)
-    {
-        try_construct_flag_consistency(TryConstructFailAction::DISCARD, flags);
-    }
-    if (!key_annotation_checked)
-    {
-        key_flag_consistency(flags, false);
-    }
-}
-
 void TypeObjectUtils::complete_union_header_consistency(
         const CompleteUnionHeader& complete_union_header)
 {
@@ -3380,8 +2425,6 @@ void TypeObjectUtils::complete_discriminator_member_consistency(
     if (complete_discriminator_member.ann_custom().has_value())
     {
         applied_annotation_seq_consistency(complete_discriminator_member.ann_custom().value());
-        common_discriminator_member_builtin_annotations_consistency(
-            complete_discriminator_member.common().member_flags(), complete_discriminator_member.ann_custom().value());
     }
 }
 
@@ -3392,12 +2435,6 @@ void TypeObjectUtils::complete_union_type_consistency(
     complete_union_header_consistency(complete_union_type.header());
     complete_discriminator_member_consistency(complete_union_type.discriminator());
     complete_union_member_seq_consistency(complete_union_type.member_seq());
-    builtin_applied_annotations_type_flags_consistency(complete_union_type.header().detail().ann_custom(),
-        complete_union_type.union_flags());
-    if (complete_union_type.union_flags() & TypeFlagBits::IS_AUTOID_HASH)
-    {
-        member_id_consistency(complete_union_type.member_seq());
-    }
 }
 
 void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_consistency(
