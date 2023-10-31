@@ -36,6 +36,8 @@ namespace fastdds {
 namespace dds {
 namespace xtypes {
 
+class TypeObjectRegistry;
+
 using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
 class TypeObjectUtils
@@ -1858,6 +1860,8 @@ public:
             const std::string& name);
 
 private:
+
+    friend class TypeObjectRegistry;
 
     // Class with only static methods
     TypeObjectUtils() = delete;
