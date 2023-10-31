@@ -14,6 +14,11 @@
 
 #include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
+#include <string>
+
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -32,9 +37,22 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
         const std::string& type_name,
         const TypeIdentifier& type_identifier)
 {
-    static_cast<void>(type_name);
-    static_cast<void>(type_identifier);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    // Precondition
+    if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier))
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+    TypeIdentifierPair type_identifiers;
+    type_identifiers.type_identifier1(type_identifier);
+    auto result = local_type_identifiers_.insert({type_name, type_identifiers});
+    if (!result.second)
+    {
+        if (local_type_identifiers_[type_name] != type_identifiers)
+        {
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+    }
+    return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_objects(
