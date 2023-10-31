@@ -1096,7 +1096,6 @@ public:
      *              1. Given CompleteAnnotationParameter is not consistent (only in Debug build mode).
      *              2. There is already another member in the sequence with the same member id or the same member name
      *                 (only in Debug build mode).
-
      */
     RTPS_DllAPI static void add_complete_annotation_parameter(
             CompleteAnnotationParameterSeq& sequence,
@@ -1425,8 +1424,10 @@ public:
      *
      * @param[in] sequence Sequence to be modified.
      * @param[in out] enum_literal CompleteEnumeratedLiteral to be added.
-     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given
-     *            CommonEnumeratedLiteral is not consistent (only in Debug build mode).
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given CommonEnumeratedLiteral is not consistent (only in Debug build mode).
+     *              2. There is already another literal in the sequence with the same value or the same member name
+     *                 (only in Debug build mode).
      */
     RTPS_DllAPI static void add_complete_enumerated_literal(
             CompleteEnumeratedLiteralSeq& sequence,
