@@ -2,43 +2,22 @@
 
 
 #include "../../../../../include/fastdds/dds/xtypes/type_representation/TypeObject.idl"
+//#include <fastdds/rtps/common/SampleIdentity.h>
+//#include <fastrtps/types/TypesBase.h>
 
 module eprosima {
+
+module fastrtps {
+module rtps {
+    struct SampleIdentity;
+};//rtps
+module types {
+    struct ReturnCode_t;
+};//rtps
+};//fastrtps
+
 module fastdds {
-
 module dds {
-    // The following DDS related types are 
-    // borrowed from the RTPS v1.2 specification
-    typedef octet GuidPrefix_t[12];
-
-    @nested
-    struct EntityId_t
-    {
-        octet entityKey[3];
-        octet entityKind;
-    };
-
-    @nested
-    struct GUID_t
-    {
-        GuidPrefix_t guidPrefix;
-        EntityId_t entityId;
-    };
-
-    @nested
-    struct SequenceNumber_t
-    {
-        long high;
-        unsigned long low;
-    };
-
-    @nested
-    struct SampleIdentity
-    {
-        GUID_t writer_guid;
-        SequenceNumber_t sequence_number;
-    };
-
 module rpc {
 
     typedef octet UnknownOperation;
@@ -60,20 +39,19 @@ module rpc {
     @nested
     struct RequestHeader 
     {
-        dds::SampleIdentity requestId;
+        fastrtps::rtps::SampleIdentity requestId;
         InstanceName instanceName;
     };
 
     @nested
     struct ReplyHeader 
     {
-        dds::SampleIdentity relatedRequestId;
+        fastrtps::rtps::SampleIdentity relatedRequestId;
         dds::rpc::RemoteExceptionCode_t remoteEx;
     };
 
 }; // module rpc
 }; // module dds
-
 
 module dds {
 module builtin {
@@ -97,7 +75,7 @@ module builtin {
     };
 
     union TypeLookup_getTypes_Result switch(long) {
-        case DDS_RETCODE_OK:
+        case fastrtps::rtps::ReturnCode_t::RETCODE_OK:
             TypeLookup_getTypes_Out result;
     };
 
@@ -115,7 +93,7 @@ module builtin {
     };
 
     union TypeLookup_getTypeDependencies_Result switch(long){
-        case DDS_RETCODE_OK:
+        case fastrtps::rtps::ReturnCode_t::RETCODE_OK:
             TypeLookup_getTypeDependencies_Out result;
     };
 

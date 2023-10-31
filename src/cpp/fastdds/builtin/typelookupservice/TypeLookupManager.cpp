@@ -42,9 +42,25 @@ namespace eprosima {
 using namespace fastrtps::rtps;
 using eprosima::fastdds::dds::Log;
 
+using namespace eprosima::fastrtps::types;
+
+
+
 namespace fastdds {
 namespace dds {
 namespace builtin {
+
+
+using eprosima::fastdds::dds::xtypes1_3::TypeIdentifier;
+using eprosima::fastdds::dds::xtypes1_3::TypeObject;
+using eprosima::fastdds::dds::xtypes1_3::TypeObjectPair;
+using eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair;
+using eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair;
+using eprosima::fastdds::dds::xtypes1_3::TypeObjectRegistry;
+using eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize;
+using eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq;
+using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+
 
 TypeLookupManager::TypeLookupManager(
         BuiltinProtocols* bprot)
@@ -192,7 +208,7 @@ void TypeLookupManager::remove_remote_endpoints(
         fastrtps::rtps::ParticipantProxyData* ppd)
 {
     GUID_t tmp_guid;
-    tmp_guid.guidPrefix() = ppd->m_guid.guidPrefix;
+    tmp_guid.guidPrefix = ppd->m_guid.guidPrefix;
 
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << ppd->m_guid);
     uint32_t endp = ppd->m_availableBuiltinEndpoints;
@@ -204,7 +220,7 @@ void TypeLookupManager::remove_remote_endpoints(
     if ((auxendp != 0 || partdet != 0) && builtin_request_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote writer from the local Builtin Request Reader");
-        tmp_guid.entityId() = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
+        tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
         builtin_request_reader_->matched_writer_remove(tmp_guid);
     }
 
@@ -214,7 +230,7 @@ void TypeLookupManager::remove_remote_endpoints(
     if ((auxendp != 0 || partdet != 0) && builtin_reply_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote writer from the local Builtin Reply Reader");
-        tmp_guid.entityId() = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
+        tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
         builtin_reply_reader_->matched_writer_remove(tmp_guid);
     }
 
@@ -224,7 +240,7 @@ void TypeLookupManager::remove_remote_endpoints(
     if ((auxendp != 0 || partdet != 0) && builtin_request_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote reader from the local Builtin Request Writer");
-        tmp_guid.entityId() = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
+        tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
         builtin_request_writer_->matched_reader_remove(tmp_guid);
     }
 
@@ -234,15 +250,15 @@ void TypeLookupManager::remove_remote_endpoints(
     if ((auxendp != 0 || partdet != 0) && builtin_reply_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote reader from the local Builtin Reply Writer");
-        tmp_guid.entityId() = fastrtps::rtps::c_EntityId_TypeLookup_reply_reader;
+        tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_reader;
         builtin_reply_writer_->matched_reader_remove(tmp_guid);
     }
 }
 
-eprosima::fastrps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies(
+eprosima::fastrtps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies(
         const xtypes1_3::TypeIdentifierSeq& id_seq) const
 {
-    eprosima::fastrps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
+    eprosima::fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
         TypeLookup_getTypeDependencies_In in;
@@ -260,10 +276,10 @@ eprosima::fastrps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies
     return id;
 }
 
-eprosima::fastrps::rtps::SampleIdentity TypeLookupManager::get_types(
+eprosima::fastrtps::rtps::SampleIdentity TypeLookupManager::get_types(
         const xtypes1_3::TypeIdentifierSeq& id_seq) const
 {
-    eprosima::fastrps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
+    eprosima::fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
         TypeLookup_getTypes_In in;
@@ -597,32 +613,43 @@ ReturnCode_t TypeLookupManager::get_registered_type_object(
         // Ask the TypeObjectRegistry for the TypeObject of the current TypeIdentifier.
         TypeObjectPair objs;
         ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, objs);
-        if(ret_code != RETCODE_OK)
+        if(ret_code != ReturnCode_t::RETCODE_OK)
         {
             //RETCODE_NO_DATA if the given TypeIdentifier is not found in the registry.
             continue;
         }
         // Create TypeIdentifierTypeObjectPair with the TypeObject registered for this TypeIdentifier.
-        TypeIdentifierTypeObjectPair pair;
-        pair.type_identifier(type_id);
-        pair.type_object(objs.complete_type_object());
-        out.types().push_back(std::move(pair));
+        TypeIdentifierTypeObjectPair id_obj_pair;
+        id_obj_pair.type_identifier(type_id);
 
-        // If the request does not have any EK_COMPLETE TypeIdentifiers, fill the complete_to_minimal field.
-        if(!request_has_complete_ids && GET_TYPES_REPLY_WITH_MINIMAL)
+        // If the request has any EK_COMPLETE TypeIdentifiers, use complete TypeObjects.
+        if(request_has_complete_ids)
         {
-        TypeObject complete_obj;
-        ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, objs);
-
-
+            id_obj_pair.type_object(objs.complete_type_object());
+        }
+        // If there were none and the GET_TYPES_REPLY_WITH_MINIMAL property is active, use minimal TypeObjects.
+        else if(GET_TYPES_REPLY_WITH_MINIMAL)
+        {
+            id_obj_pair.type_object(objs.minimal_type_object());
+        }
+        // If there were none and the GET_TYPES_REPLY_WITH_MINIMAL property is not active, use complete TypeObjects and use complete_to_minimal.
+        else
+        {
+            id_obj_pair.type_object(objs.complete_type_object());
+            
+            uint32_t type_object_serialized_size;
+            TypeIdentifier complete_type_id = DomainParticipantFactory::get_instance()->type_object_registry().
+                get_type_identifier(objs.complete_type_object(), type_object_serialized_size);
             TypeIdentifierPair pair;
-            pair.type_identifier1(type_id);
-            /air.type_identifier2(type_id);
+            pair.type_identifier1(complete_type_id);
+            pair.type_identifier2(type_id);
             out.complete_to_minimal().push_back(std::move(pair));
         }
+        out.types().push_back(std::move(id_obj_pair));
     }
-    return RETCODE_OK;
+    return ReturnCode_t::RETCODE_OK;
 }
+
 
 ReturnCode_t TypeLookupManager::get_registered_type_dependencies(
     const TypeLookup_getTypeDependencies_In& in,
@@ -643,7 +670,7 @@ ReturnCode_t TypeLookupManager::get_registered_type_dependencies(
             // If not in cache, query the registry and handle errors
             std::unordered_set<TypeIdentfierWithSize> full_type_dependencies;
             ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_dependencies(in.type_ids(), full_type_dependencies);
-            if(ret_code == RETCODE_OK)
+            if(ret_code == ReturnCode_t::RETCODE_OK)
             {
                 // Moving the retrieved data into the cache entry.
                 dependencies_requests_cache_it->second = std::move(full_type_dependencies);
@@ -690,7 +717,7 @@ ReturnCode_t TypeLookupManager::get_registered_type_dependencies(
         }
     }
 
-    return RETCODE_OK;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 

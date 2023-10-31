@@ -40,6 +40,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/topic/TopicProxyFactory.hpp>
@@ -484,10 +485,10 @@ public:
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
     fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq& in) const;
 
     fastrtps::rtps::SampleIdentity get_types(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq& in) const;
 
     /**
      * Helps the user to solve all dependencies calling internally to the typelookup service and

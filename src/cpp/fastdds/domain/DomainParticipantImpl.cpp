@@ -1629,7 +1629,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
 void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_reply(
         RTPSParticipant*,
         const fastrtps::rtps::SampleIdentity& request_sample_id,
-        const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
+        const xtypes1_3::TypeIdentifierWithSizeSeq& dependencies)
 {
     Sentry sentinel(this);
     if (sentinel)
@@ -1686,7 +1686,7 @@ ResourceEvent& DomainParticipantImpl::get_resource_event() const
 }
 
 fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_type_dependencies(
-        const fastrtps::types::TypeIdentifierSeq& in) const
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq& in) const
 {
     const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
     return nullptr != rtps_participant ?
@@ -1695,7 +1695,7 @@ fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_type_dependencies(
 }
 
 fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_types(
-        const fastrtps::types::TypeIdentifierSeq& in) const
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq& in) const
 {
     const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
     return nullptr != rtps_participant ?
@@ -1753,8 +1753,8 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
     }
     else if (get_rtps_participant()->typelookup_manager() != nullptr)
     {
-        TypeIdentifierSeq dependencies;
-        TypeIdentifierSeq retrieve_objects;
+        xtypes1_3::TypeIdentifierSeq dependencies;
+        xtypes1_3::TypeIdentifierSeq retrieve_objects;
 
         fill_pending_dependencies(type_information.complete().dependent_typeids(), dependencies, retrieve_objects);
 
@@ -1904,7 +1904,7 @@ void DomainParticipantImpl::fill_pending_dependencies(
 
 bool DomainParticipantImpl::check_get_dependencies_request(
         const fastrtps::rtps::SampleIdentity& requestId,
-        const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
+        const xtypes1_3::TypeIdentifierWithSizeSeq& dependencies)
 {
     using namespace fastrtps::types;
 

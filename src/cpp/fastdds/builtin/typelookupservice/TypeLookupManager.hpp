@@ -28,24 +28,16 @@
 #include <fastdds/builtin/typelookupservice/TypeLookupReplyListener.hpp>
 #include <fastdds/builtin/typelookupservice/TypeLookupTypes.h>
 #include <fastdds/builtin/typelookupservice/TypeLookupTypesPubSubTypes.h>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 
 
-using GuidPrefix_t = eprosima::fastrtps::rtps::GuidPrefix_t;
-using EntityId_t = eprosima::fastrtps::rtps::EntityId_t;
-using GUID_t = eprosima::fastrtps::rtps::GUID_t;
-using SequenceNumber_t = eprosima::fastrtps::rtps::SequenceNumber_t;
-using SampleIdentity = eprosima::fastrtps::rtps::SampleIdentity;
-
-
 // Changes get_types reply policy according to 7.6.3.3.4.2 of the XTypes 1.3 document.
 // If true, mng will reply to get_types with EK_MINIMAL types, when possible.
 const bool GET_TYPES_REPLY_WITH_MINIMAL = false;
-
-
 
 namespace std {
 
@@ -55,17 +47,9 @@ struct hash<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq>
     std::size_t operator()(
             const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq& seq) const
     {
-        std::size_t hash = 0;
         std::hash<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier> id_hasher;
-        //Implement a custom hash function for TypeIdentifierSeq
-        for (const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& identifier : seq)
-        {
-            // Combine the hash values of individual elements using the custom hash function
-            hash ^= id_hasher(identifier);
-        }
-        return hash;
-        
-        //return id_hasher(seq[0]) ^= id_hasher(seq[seq.size()-1]);
+        //Return a custom hash for TypeIdentifierSeq
+        return id_hasher(seq[0]) ^ id_hasher(seq[seq.size()-1]);
     }
 };
 

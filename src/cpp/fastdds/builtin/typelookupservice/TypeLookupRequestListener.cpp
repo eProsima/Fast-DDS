@@ -17,12 +17,9 @@
  *
  */
 
-#include <fastdds/dds/builtin/typelookup/TypeLookupRequestListener.hpp>
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
-//#include <fastdds/dds/builtin/typelookup/common/TypeLookupTypes.hpp>
-#include <fastdds/dds/builtin/typelookup/common/TypeLookupTypes.h>
-
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupRequestListener.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupManager.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupTypes.h>
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
@@ -32,6 +29,11 @@
 
 using eprosima::fastrtps::rtps::RTPSReader;
 using eprosima::fastrtps::rtps::CacheChange_t;
+using eprosima::fastdds::dds::Log;
+
+using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
+
+using namespace eprosima::fastrtps::types;
 using eprosima::fastdds::dds::xtypes1_3::TypeIdentifier;
 using eprosima::fastdds::dds::xtypes1_3::TypeObject;
 using eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair;
@@ -39,9 +41,7 @@ using eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair;
 using eprosima::fastdds::dds::xtypes1_3::TypeObjectRegistry;
 using eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize;
 using eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq;
-using eprosima::fastdds::dds::Log;
 
-using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
 
 namespace eprosima {
 namespace fastdds {

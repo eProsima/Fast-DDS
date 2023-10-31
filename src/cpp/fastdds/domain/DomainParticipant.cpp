@@ -484,13 +484,13 @@ fastrtps::rtps::ResourceEvent& DomainParticipant::get_resource_event() const
 }
 
 fastrtps::rtps::SampleIdentity DomainParticipant::get_type_dependencies(
-        const fastrtps::types::TypeIdentifierSeq& in) const
+        const xtypes1_3::TypeIdentifierSeq& in) const
 {
     return impl_->get_type_dependencies(in);
 }
 
 fastrtps::rtps::SampleIdentity DomainParticipant::get_types(
-        const fastrtps::types::TypeIdentifierSeq& in) const
+        const xtypes1_3::TypeIdentifierSeq& in) const
 {
     return impl_->get_types(in);
 }

@@ -35,6 +35,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
@@ -837,7 +838,7 @@ public:
      * @return SampleIdentity
      */
     RTPS_DllAPI fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
+            const xtypes1_3::TypeIdentifierSeq& in) const;
 
     /**
      * A DomainParticipant may invoke the operation getTypes to retrieve the TypeObjects associated with a
@@ -847,7 +848,7 @@ public:
      * @return SampleIdentity
      */
     RTPS_DllAPI fastrtps::rtps::SampleIdentity get_types(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
+            const xtypes1_3::TypeIdentifierSeq& in) const;
 
     /**
      * Helps the user to solve all dependencies calling internally to the type lookup service and

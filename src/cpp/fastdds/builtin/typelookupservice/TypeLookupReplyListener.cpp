@@ -17,12 +17,12 @@
  *
  */
 
-#include <fastdds/dds/builtin/typelookup/TypeLookupReplyListener.hpp>
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupReplyListener.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupManager.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupTypes.h>
+
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
-
-#include <fastrtps/types/TypeObjectFactory.h>
 
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
@@ -37,6 +37,13 @@ using eprosima::fastdds::dds::Log;
 using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
 
 using namespace eprosima::fastrtps::types;
+using eprosima::fastdds::dds::xtypes1_3::TypeIdentifier;
+using eprosima::fastdds::dds::xtypes1_3::TypeObject;
+using eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair;
+using eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair;
+using eprosima::fastdds::dds::xtypes1_3::TypeObjectRegistry;
+using eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize;
+using eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq;
 
 namespace eprosima {
 namespace fastdds {
