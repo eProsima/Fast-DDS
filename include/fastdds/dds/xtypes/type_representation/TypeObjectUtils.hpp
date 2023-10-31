@@ -1520,6 +1520,7 @@ public:
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
      *              1. Given CommonBitflag is inconsistent (only in Debug build mode).
      *              2. Given CompleteMemberDetail is inconsistent (only in Debug build mode).
+     *              3. Non-applicable builtin annotations applied.
      * @return const CompleteBitflag instance.
      */
     RTPS_DllAPI static const CompleteBitflag build_complete_bitflag(

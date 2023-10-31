@@ -1460,6 +1460,10 @@ const CompleteBitflag TypeObjectUtils::build_complete_bitflag(
     common_bitflag_consistency(common);
     complete_member_detail_consistency(detail);
 #endif // !defined(NDEBUG)
+    if (detail.ann_builtin().has_value())
+    {
+        throw InvalidArgumentError("Only @position builtin annotation apply defining bitmask bitflags");
+    }
     CompleteBitflag complete_bitflag;
     complete_bitflag.common(common);
     complete_bitflag.detail(detail);
@@ -2782,7 +2786,10 @@ void TypeObjectUtils::complete_bitflag_consistency(
 {
     common_bitflag_consistency(complete_bitflag.common());
     complete_member_detail_consistency(complete_bitflag.detail());
-    // TODO(jlbueno): check consistency between @bit_bound annotation and CommonBitflag
+    if (complete_bitflag.detail().ann_builtin().has_value())
+    {
+        throw InvalidArgumentError("Only @position builtin annotation apply defining bitmask bitflags");
+    }
 }
 
 void TypeObjectUtils::complete_bitflag_seq_consistency(
