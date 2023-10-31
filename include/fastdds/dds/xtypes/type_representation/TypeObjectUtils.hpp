@@ -61,7 +61,7 @@ public:
      *
      * @param[in] try_construct_kind try_construct annotation value.
      * @param[in] external external annotation value.
-     * @return CollectionElementFlag instance. 
+     * @return CollectionElementFlag instance.
      */
     RTPS_DllAPI static CollectionElementFlag build_collection_element_flag(
             TryConstructKind try_construct_kind,
@@ -90,7 +90,7 @@ public:
      * @param[in] try_construct_kind try_construct annotation value.
      * @param[in] default_member is default member.
      * @param[in] external external annotation value.
-     * @return UnionMemberFlag instance. 
+     * @return UnionMemberFlag instance.
      */
     RTPS_DllAPI static UnionMemberFlag build_union_member_flag(
             TryConstructKind try_construct_kind,
@@ -118,7 +118,7 @@ public:
             bool default_literal);
 
     /**
-     * AnnotationParameterFlag: Unused. No flags apply. 
+     * AnnotationParameterFlag: Unused. No flags apply.
      * AliasMemberFlag:         Unused. No flags apply.
      * BitflagFlag:             Unused. No flags apply.
      * BitsetMemberFlag:        Unused. No flags apply.
@@ -143,7 +143,7 @@ public:
      * @param[in] extensibility_kind extensibility annotation value.
      * @param[in] nested nested annotation value.
      * @param[in] autoid_hash autoid annotation has HASH value.
-     * @return UnionTypeFlag instance. 
+     * @return UnionTypeFlag instance.
      */
     RTPS_DllAPI static UnionTypeFlag build_union_type_flag(
             ExtensibilityKind extensibility_kind,
@@ -529,7 +529,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] boolean_value Boolean value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             bool boolean_value);
@@ -538,7 +538,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] byte_value Byte value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value_byte(
             uint8_t byte_value);
@@ -547,7 +547,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] int8_value Int8 value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             int8_t int8_value);
@@ -556,7 +556,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] uint8_value Unsigned int8 value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             uint8_t uint8_value);
@@ -565,7 +565,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] int16_value Short value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             int16_t int16_value);
@@ -574,7 +574,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] uint16_value Unsigned short value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             uint16_t uint16_value);
@@ -583,7 +583,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] int32_value Long value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             int32_t int32_value);
@@ -592,7 +592,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] uint32_value Unsigned long value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             uint32_t uint32_value);
@@ -601,7 +601,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] int64_value Long long value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             int64_t int64_value);
@@ -610,7 +610,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] uint64_value Unsigned long long value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             uint64_t uint64_value);
@@ -619,7 +619,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] float32_value Float value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             float float32_value);
@@ -628,7 +628,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] float64_value Double value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             double float64_value);
@@ -637,7 +637,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] float128_value Long double value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             long double float128_value);
@@ -646,7 +646,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] char_value Char value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             char char_value);
@@ -655,7 +655,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] wchar_value Wide char value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             wchar_t wchar_value);
@@ -664,7 +664,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] enumerated_value Enumerated value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value_enum(
             int32_t enumerated_value);
@@ -673,7 +673,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] string8_value String value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             const eprosima::fastcdr::fixed_string<128>& string8_value);
@@ -682,7 +682,7 @@ public:
      * @brief Build AnnotationParameterValue instance.
      *
      * @param[in] string16_value Wide string value to set in the union.
-     * @return const AnnotationParameterValue instance. 
+     * @return const AnnotationParameterValue instance.
      */
     RTPS_DllAPI static const AnnotationParameterValue build_annotation_parameter_value(
             const std::wstring& string16_value);
@@ -898,7 +898,7 @@ public:
      *              2. Given CompleteStructHeader is not consistent (only in Debug build mode).
      *              3. Given CompleteStructMemberSeq is not consistent (only in Debug build mode).
      *              4. Given flags are not consistent with the builtin annotations.
-     * @return const CompleteStructType instance. 
+     * @return const CompleteStructType instance.
      */
     RTPS_DllAPI static const CompleteStructType build_complete_struct_type(
             StructTypeFlag struct_flags,
@@ -986,7 +986,7 @@ public:
      *                 Boolean, Byte, Char8, Char16, Int8, Uint8, Int16, Uint16, Int32, Uint32, Int64, Uint64, any
      *                 enumerated type, any alias type that resolves, directly or indirectly, to one of the
      *                 aforementioned types.
-     * @return const CommonDiscriminatorMember instance. 
+     * @return const CommonDiscriminatorMember instance.
      */
     RTPS_DllAPI static const CommonDiscriminatorMember build_common_discriminator_member(
             UnionDiscriminatorFlag member_flags,
@@ -1032,10 +1032,10 @@ public:
     /**
      * @brief Build CompleteUnionType instance.
      *
-     * @param[in] union_flags 
-     * @param[in] header 
-     * @param[in] discriminator 
-     * @param[in] member_seq 
+     * @param[in] union_flags
+     * @param[in] header
+     * @param[in] discriminator
+     * @param[in] member_seq
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
      *              1. Given UnionTypeFlags are not consistent (only in Debug build mode).
      *              2. Given CompleteUnionHeader is not consistent (only in Debug build mode).
@@ -1873,7 +1873,7 @@ protected:
 
     /**
      * @brief Set the TypeFlag object.
-     * 
+     *
      * @param[in out] type_flag Bitmask to be set.
      * @param[in] extensibility_kind ExtensibilityKind
      * @param[in] nested nested annotation value.
@@ -1887,7 +1887,7 @@ protected:
 
     /**
      * @brief Set the extensibility kind in a given TypeFlag.
-     * 
+     *
      * @param[in out] type_flag Bitmask to be set.
      * @param[in] extensibility_kind ExtensibilityKind.
      */
@@ -2007,7 +2007,7 @@ protected:
     /**
      * @brief Check MemberFlag consistency: At least one of the bits corresponding to the try construct annotation must
      *        be set.
-     * 
+     *
      * @param[in] member_flags MemberFlag to be checked.
      * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given MemberFlag is not
      *            consistent.
