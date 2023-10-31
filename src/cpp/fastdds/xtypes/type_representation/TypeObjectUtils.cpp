@@ -1379,7 +1379,14 @@ void TypeObjectUtils::add_complete_enumerated_literal(
 {
 #if !defined(NDEBUG)
     complete_enumerated_literal_consistency(enum_literal);
-    // TODO(jlbueno): check uniqueness
+    for (CompleteEnumeratedLiteral literal : sequence)
+    {
+        if (literal.detail().name() == enum_literal.detail().name() ||
+            literal.common().value() == enum_literal.common().value())
+        {
+            throw InvalidArgumentError("Sequence has another literal with the same value/member name");
+        }
+    }
 #endif // !defined(NDEBUG)
     sequence.push_back(enum_literal);
 }
@@ -2679,10 +2686,30 @@ void TypeObjectUtils::complete_enumerated_literal_consistency(
 void TypeObjectUtils::complete_enumerated_literal_seq_consistency(
         const CompleteEnumeratedLiteralSeq& complete_enumerated_literal_seq)
 {
+    std::set<int32_t> values;
+    std::set<MemberName> member_names;
+    bool default_member = false;
     for (size_t i = 0; i < complete_enumerated_literal_seq.size(); i++)
     {
+        if (complete_enumerated_literal_seq.size() == 0)
+        {
+            throw InvalidArgumentError("Enumerations require at least one enum literal");
+        }
+        values.insert(complete_enumerated_literal_seq[i].common().value());
+        member_names.insert(complete_enumerated_literal_seq[i].detail().name());
+        if (values.size() != (i + 1) || member_names.size() != (i + 1))
+        {
+            throw InvalidArgumentError("Repeated literal value/name in the sequence");
+        }
+        if (complete_enumerated_literal_seq[i].common().flags() & MemberFlagBits::IS_DEFAULT)
+        {
+            if (default_member)
+            {
+                throw InvalidArgumentError("Enumeration should have at most one default literal");
+            }
+            default_member = true;
+        }
         complete_enumerated_literal_consistency(complete_enumerated_literal_seq[i]);
-        // TODO(jlbueno): check uniqueness of default literal and literal value. At least one literal.
     }
 }
 
