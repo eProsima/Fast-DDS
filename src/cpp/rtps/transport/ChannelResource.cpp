@@ -61,7 +61,7 @@ void ChannelResource::clear()
     alive_.store(false);
     if (thread_.joinable())
     {
-        if (thread_.get_id() != std::this_thread::get_id())
+        if (!thread_.is_calling_thread())
         {
             // wait for it to finish
             thread_.join();

@@ -244,7 +244,7 @@ struct LogResources
         if (logging_thread_.joinable())
         {
             cv_.notify_all();
-            if (logging_thread_.get_id() != std::this_thread::get_id())
+            if (!logging_thread_.is_calling_thread())
             {
                 logging_thread_.join();
             }

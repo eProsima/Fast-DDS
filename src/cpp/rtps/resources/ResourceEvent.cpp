@@ -81,7 +81,7 @@ void ResourceEvent::unregister_timer(
 {
     std::unique_lock<TimedMutex> lock(mutex_);
 
-    bool is_service_thread = std::this_thread::get_id() == thread_->get_id();
+    bool is_service_thread = thread_->is_calling_thread();
 
     //! Let the service thread to manipulate resources
     if (!is_service_thread)
