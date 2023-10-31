@@ -13,6 +13,7 @@
 # limitations under the License.
 
 set(TYPEOBJECTUTILSTESTS_SOURCE TypeObjectUtilsTests.cpp)
+set(TYPEOBJECTREGISTRYTESTS_SOURCE TypeObjectRegistryTests.cpp)
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
@@ -31,3 +32,17 @@ target_link_libraries(TypeObjectUtilsTests fastrtps
     GTest::gtest
     ${CMAKE_DL_LIBS})
 add_gtest(TypeObjectUtilsTests SOURCES ${TYPEOBJECTUTILSTESTS_SOURCE})
+
+add_executable(TypeObjectRegistryTests ${TYPEOBJECTREGISTRYTESTS_SOURCE})
+target_compile_definitions(TypeObjectRegistryTests PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(TypeObjectRegistryTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    )
+target_link_libraries(TypeObjectRegistryTests fastrtps
+    GTest::gtest
+    ${CMAKE_DL_LIBS})
+add_gtest(TypeObjectRegistryTests SOURCES ${TYPEOBJECTREGISTRYTESTS_SOURCE})
