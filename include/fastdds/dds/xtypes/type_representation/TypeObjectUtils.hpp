@@ -1601,6 +1601,7 @@ public:
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
      *              1. Given CommonBitfield is inconsistent (only Debug build mode).
      *              2. Give CompleteMemberDetail is inconsistent (only Debug build mode).
+     *              3. Non-applicable builtin annotations are applied.
      * @return const CompleteBitfield instance.
      */
     RTPS_DllAPI static const CompleteBitfield build_complete_bitfield(
