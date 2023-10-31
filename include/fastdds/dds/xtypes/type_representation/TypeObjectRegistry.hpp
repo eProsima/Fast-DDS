@@ -74,6 +74,10 @@ struct TypeRegistryEntry
     TypeObject type_object_;
     // TypeObject serialized size
     uint32_t type_object_serialized_size_;
+
+    bool operator !=(
+        const TypeRegistryEntry& entry);
+
 };
 
 struct TypeObjectPair
@@ -99,13 +103,15 @@ public:
      *        with the corresponding TypeIdentifiers and TypeObject serialized sizes.
      *
      * @pre type_name must not be empty.
+     * @pre complete_type_object must be consistent (only checked in Debug build mode).
      *
      * @param[in] type_name Name of the type being registered.
-     * @param[in] complete_type_object_info CompleteTypeObject related to the given type name.
+     * @param[in] complete_type_object CompleteTypeObject related to the given type name.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with the
      *                      given type_name.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given type_name is empty.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given type_name is empty or if the type_object
+     *                      is inconsistent.
      */
     RTPS_DllAPI ReturnCode_t register_type_object(
             const std::string& type_name,
@@ -115,6 +121,7 @@ public:
      * @brief Register an indirect hash TypeIdentifier.
      *
      * @pre TypeIdentifier must not be a direct hash TypeIdentifier.
+     * @pre TypeIdentifier must be consistent (only checked in Debug build mode).
      * @pre type_name must not be empty.
      *
      * @param[in] type_name Name of the type being registered.
@@ -122,8 +129,8 @@ public:
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier or if
-     *                      the given type_name is empty.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is inconsistent or a direct hash
+     *                      TypeIdentifier or if the given type_name is empty.
      */
     RTPS_DllAPI ReturnCode_t register_type_identifier(
             const std::string& type_name,
@@ -250,7 +257,7 @@ protected:
     /**
      * @brief Check if a given TypeIdentifier corresponds to a builtin annotation.
      *
-     * @param type_identifier TypeIdentifier to check.
+     * @param[in] type_identifier TypeIdentifier to check.
      * @return true if the TypeIdentifier is from a builtin annotation. false otherwise.
      */
     bool is_builtin_annotation(
@@ -259,11 +266,24 @@ protected:
     /**
      * @brief Calculate the TypeIdentifier given a TypeObject.
      *
-     * @param type_object TypeObject which is to be hashed.
+     * @param[in] type_object TypeObject which is to be hashed.
+     * @param[out] type_object_serialized_size
      * @return const TypeIdentifier related with the given TypeObject.
      */
     const TypeIdentifier get_type_identifier(
-            const TypeObject& type_object);
+            const TypeObject& type_object,
+            uint32_t& type_object_serialized_size);
+
+    /**
+     * @brief Build Minimal TypeObject given a Complete TypeObject.
+     *
+     * @param[in] complete_type_object Complete TypeObject.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError if the given CompleteTypeObject is
+     *            inconsistent (only in Debug build mode).
+     * @return const Minimal TypeObject instance.
+     */
+    const TypeObject build_minimal_from_complete_type_object(
+            const CompleteTypeObject& complete_type_object);
 
     // Collection of local TypeIdentifiers hashed by type_name.
     // TypeIdentifierPair contains both the minimal and complete TypeObject TypeIdentifiers.
