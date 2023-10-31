@@ -2073,11 +2073,9 @@ void TypeObjectUtils::type_identifier_consistency(
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "StronglyConnectedComponents not yet supported.");
             break;
 
+        // Primitive TypeIdentifiers/ExtendedTypeDefn/EquivalenceHash: no inconsistency rule apply.
         case EK_COMPLETE:
         case EK_MINIMAL:
-        // TODO(jlbueno)
-
-        // Primitive TypeIdentifiers/ExtendedTypeDefn: no inconsistency rule apply.
         default:
             break;
     }
