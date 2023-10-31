@@ -37,6 +37,13 @@ bool TypeRegistryEntry::operator !=(
            this->type_object_serialized_size_ != entry.type_object_serialized_size_;
 }
 
+bool TypeRegistryEntry::operator !=(
+        const TypeRegistryEntry& entry)
+{
+    return this->type_object_ != entry.type_object_ ||
+        this->type_object_serialized_size_ != entry.type_object_serialized_size_;
+}
+
 ReturnCode_t TypeObjectRegistry::register_type_object(
         const std::string& type_name,
         const CompleteTypeObject& complete_type_object)
@@ -97,10 +104,14 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
         const TypeIdentifier& type_identifier)
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     // Preconditions
 =======
     // Precondition
 >>>>>>> 25fdc1e18 (Refs #19837: test fixes)
+=======
+    // Preconditions
+>>>>>>> f1e08fe90 (Refs #19837: TypeObjectRegistry::register_type_object implementation)
     if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier) || type_name.empty())
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
@@ -110,10 +121,17 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
     {
         TypeObjectUtils::type_identifier_consistency(type_identifier);
     }
+<<<<<<< HEAD
     catch (eprosima::fastdds::dds::xtypes::InvalidArgumentError& exception)
     {
         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Inconsistent TypeIdentifier: " << exception.what());
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
+=======
+    catch (eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError& exception)
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Inconsistent TypeIdentifier: " << exception.what());
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+>>>>>>> f1e08fe90 (Refs #19837: TypeObjectRegistry::register_type_object implementation)
     }
 #endif // !defined(NDEBUG)
     TypeIdentifierPair type_identifiers;
@@ -464,6 +482,7 @@ const TypeIdentifier TypeObjectRegistry::get_type_identifier(
         const TypeObject& type_object,
         uint32_t& type_object_serialized_size)
 {
+<<<<<<< HEAD
     TypeIdentifier type_id;
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     size_t current_alignment {0};
@@ -760,6 +779,18 @@ void TypeObjectRegistry::register_primitive_type_identifiers()
     local_type_identifiers_.insert({char8_type_name, type_ids});
     type_ids.type_identifier1()._d(TK_CHAR16);
     local_type_identifiers_.insert({char16_type_name, type_ids});
+=======
+    static_cast<void>(type_object);
+    static_cast<void>(type_object_serialized_size);
+    return TypeIdentifier();
+>>>>>>> f1e08fe90 (Refs #19837: TypeObjectRegistry::register_type_object implementation)
+}
+
+const TypeObject TypeObjectRegistry::build_minimal_from_complete_type_object(
+        const CompleteTypeObject& complete_type_object)
+{
+    static_cast<void>(complete_type_object);
+    return TypeObject();
 }
 
 } // xtypes
