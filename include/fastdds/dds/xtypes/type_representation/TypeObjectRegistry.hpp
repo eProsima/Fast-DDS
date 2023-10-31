@@ -33,24 +33,26 @@ namespace std {
 template<>
 struct hash<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>
 {
-    std::size_t operator()(
+    std::size_t operator ()(
             const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& k) const
     {
         // The collection only has direct hash TypeIdentifiers so the EquivalenceHash can be used.
         return (static_cast<size_t>(k.equivalence_hash()[0]) << 16) |
-                (static_cast<size_t>(k.equivalence_hash()[1]) << 8) |
-                (static_cast<size_t>(k.equivalence_hash()[2]));
+               (static_cast<size_t>(k.equivalence_hash()[1]) << 8) |
+               (static_cast<size_t>(k.equivalence_hash()[2]));
     }
+
 };
 
 template<>
 struct hash<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>
 {
-    std::size_t operator()(
+    std::size_t operator ()(
             const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize& k) const
     {
         return static_cast<size_t>(k.typeobject_serialized_size());
     }
+
 };
 
 } // std
@@ -143,7 +145,7 @@ public:
      *                              returned.
      *                              For indirect hash TypeIdentifiers, only the corresponding TypeIdentifier is returned
      * @return ReturnCode_t RETCODE_OK if the TypeIdentifiers are found in the registry.
-     *                      RETCODE_NO_DATA if the type_name has not been registered. 
+     *                      RETCODE_NO_DATA if the type_name has not been registered.
      */
     RTPS_DllAPI ReturnCode_t get_type_identifiers(
             const std::string& type_name,
