@@ -1413,6 +1413,7 @@ const CompleteEnumeratedHeader TypeObjectUtils::build_complete_enumerated_header
         const CompleteTypeDetail& detail,
         bool bitmask)
 {
+    static_cast<void>(bitmask);
 #if !defined(NDEBUG)
     common_enumerated_header_consistency(common, bitmask);
     complete_type_detail_consistency(detail);
@@ -2086,7 +2087,7 @@ void TypeObjectUtils::applied_annotation_parameter_seq_consistency(
         const AppliedAnnotationParameterSeq& applied_annotation_parameter_seq)
 {
     std::set<NameHash> param_hashes;
-    for (size_t i; i < applied_annotation_parameter_seq.size(); i++)
+    for (size_t i = 0; i < applied_annotation_parameter_seq.size(); i++)
     {
         param_hashes.insert(applied_annotation_parameter_seq[i].paramname_hash());
         if (param_hashes.size() != (i + 1))
@@ -2918,11 +2919,11 @@ void TypeObjectUtils::complete_bitfield_seq_consistency(
         {
             throw InvalidArgumentError("Repeated bitfield name");
         }
-        for (uint16_t i = complete_bitfield_seq[i].common().position();
-            i < complete_bitfield_seq[i].common().bitcount(); i++)
+        for (uint16_t j = complete_bitfield_seq[i].common().position();
+            j < complete_bitfield_seq[i].common().bitcount(); j++)
         {
-            positions.insert(complete_bitfield_seq[i].common().position() + i);
-            if (positions.size() != (bitset_length + i + 1))
+            positions.insert(complete_bitfield_seq[i].common().position() + j);
+            if (positions.size() != (bitset_length + j + 1))
             {
                 throw InvalidArgumentError("Bitfields with repeated/overlapping positions");
             }
