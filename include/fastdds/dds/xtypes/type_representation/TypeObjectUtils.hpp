@@ -1166,6 +1166,7 @@ public:
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
      *              1. Given CommonAliasBody is inconsistent (only Debug build mode).
      *              2. AppliedAnnotationSeq is inconsistent (only Debug build mode).
+     *              3. @hashid builtin annotation is set.
      * @return const CompleteAliasBody instance.
      */
     RTPS_DllAPI static const CompleteAliasBody build_complete_alias_body(

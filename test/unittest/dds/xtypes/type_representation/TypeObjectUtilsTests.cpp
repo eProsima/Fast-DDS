@@ -1334,6 +1334,20 @@ TEST(TypeObjectUtilsTests, build_common_alias_body_non_empty_flags)
         type_id));
 }
 
+// Build CompleteAliasBody with @hashid annotation applied
+TEST(TypeObjectUtilsTests, build_complete_alias_body_inconsistent_hashid)
+{
+    TypeIdentifier type_id;
+    type_id._d(TK_INT16);
+    CommonAliasBody common_body = TypeObjectUtils::build_common_alias_body(0, type_id);
+    AppliedBuiltinMemberAnnotations builtin_ann = TypeObjectUtils::build_applied_builtin_member_annotations(
+        eprosima::fastcdr::optional<std::string>(), eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<std::string>("member_hash"));
+    EXPECT_THROW(CompleteAliasBody body = TypeObjectUtils::build_complete_alias_body(common_body, builtin_ann,
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>()), InvalidArgumentError);
+}
+
 // Build CompleteAliasType with non-empty flags
 TEST(TypeObjectUtilsTests, build_complete_alias_type_non_empty_flags)
 {

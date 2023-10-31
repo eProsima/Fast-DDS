@@ -1157,6 +1157,10 @@ const CompleteAliasBody TypeObjectUtils::build_complete_alias_body(
         applied_annotation_seq_consistency(ann_custom.value());
     }
 #endif // !defined(NDEBUG)
+    if (ann_builtin.has_value() && ann_builtin.value().hash_id().has_value())
+    {
+        throw InvalidArgumentError("@hashid builtin annotation cannot be applied to alias declaration");
+    }
     CompleteAliasBody complete_alias_body;
     complete_alias_body.common(common);
     complete_alias_body.ann_builtin(ann_builtin);
@@ -2547,6 +2551,11 @@ void TypeObjectUtils::complete_alias_body_consistency(
     if (complete_alias_body.ann_custom().has_value())
     {
         applied_annotation_seq_consistency(complete_alias_body.ann_custom().value());
+    }
+    if (complete_alias_body.ann_builtin().has_value() &&
+        complete_alias_body.ann_builtin().value().hash_id().has_value())
+    {
+        throw InvalidArgumentError("@hashid builtin annotation cannot be applied to alias declaration");
     }
 }
 
