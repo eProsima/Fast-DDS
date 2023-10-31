@@ -619,6 +619,11 @@ XMLP_ret XMLParser::parseXMLBitmaskDynamicType(
         bit_bound = static_cast<uint16_t>(std::atoi(anno_bit_bound));
     }
 
+    if (bit_bound < 1 || bit_bound > 64)
+    {
+        return XMLP_ret::XML_ERROR;
+    }
+
     const char* name = p_root->Attribute(NAME);
     if (nullptr == name)
     {
