@@ -43,17 +43,27 @@ private:
     }
 
     template <class _Fn, class... _Args>
-    void _Start(_Fn&& _Fx, _Args&&... _Ax) {
+    void _Start(int32_t stack_size, _Fn&& _Fx, _Args&&... _Ax) {
         using _Tuple                 = _STD tuple<_STD decay_t<_Fn>, _STD decay_t<_Args>...>;
         auto _Decay_copied           = _STD make_unique<_Tuple>(_STD forward<_Fn>(_Fx), _STD forward<_Args>(_Ax)...);
         constexpr auto _Invoker_proc = _Get_invoke<_Tuple>(_STD make_index_sequence<1 + sizeof...(_Args)>{});
+        unsigned stack = 0;
+        if (stack_size > 0)
+        {
+            if (sizeof(unsigned) <= sizeof(int32_t) &&
+                stack_size > static_cast<int32_t>(std::numeric_limits<unsigned>::max() / 2) )
+            {
+                _Throw_Cpp_error(_STD _INVALID_ARGUMENT);
+            }
+            stack = static_cast<unsigned>(stack_size);
+        }
 
 #pragma warning(push)
 #pragma warning(disable : 5039) // pointer or reference to potentially throwing function passed to
                                 // extern C function under -EHc. Undefined behavior may occur
                                 // if this function throws an exception. (/Wall)
         _Thr._Hnd =
-            reinterpret_cast<void*>(_CSTD _beginthreadex(nullptr, 0, _Invoker_proc, _Decay_copied.get(), 0, &_Thr._Id));
+            reinterpret_cast<void*>(_CSTD _beginthreadex(nullptr, stack, _Invoker_proc, _Decay_copied.get(), 0, &_Thr._Id));
 #pragma warning(pop)
 
         if (_Thr._Hnd) { // ownership transferred to the thread
@@ -66,8 +76,8 @@ private:
 
 public:
     template <class _Fn, class... _Args>
-    _NODISCARD_CTOR explicit thread(int32_t /*stack_size*/, _Fn&& _Fx, _Args&&... _Ax) {
-        _Start(_STD forward<_Fn>(_Fx), _STD forward<_Args>(_Ax)...);
+    _NODISCARD_CTOR explicit thread(int32_t stack_size, _Fn&& _Fx, _Args&&... _Ax) {
+        _Start(stack_size, _STD forward<_Fn>(_Fx), _STD forward<_Args>(_Ax)...);
     }
 
     ~thread() noexcept {
