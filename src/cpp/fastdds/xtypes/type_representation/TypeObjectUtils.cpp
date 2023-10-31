@@ -3126,6 +3126,46 @@ void TypeObjectUtils::complete_bitset_type_consistency(
     complete_bitfield_seq_consistency(complete_bitset_type.field_seq());
 }
 
+void TypeObjectUtils::complete_type_object_consistency(
+        const CompleteTypeObject& complete_type_object)
+{
+    switch (complete_type_object._d())
+    {
+        case TK_ALIAS:
+            complete_alias_type_consistency(complete_type_object.alias_type());
+            break;
+        case TK_ANNOTATION:
+            complete_annotation_type_consistency(complete_type_object.annotation_type());
+            break;
+        case TK_STRUCTURE:
+            complete_struct_type_consistency(complete_type_object.struct_type());
+            break;
+        case TK_UNION:
+            complete_union_type_consistency(complete_type_object.union_type());
+            break;
+        case TK_BITSET:
+            complete_bitset_type_consistency(complete_type_object.bitset_type());
+            break;
+        case TK_SEQUENCE:
+            complete_sequence_type_consistency(complete_type_object.sequence_type());
+            break;
+        case TK_ARRAY:
+            complete_array_type_consistency(complete_type_object.array_type());
+            break;
+        case TK_MAP:
+            complete_map_type_consistency(complete_type_object.map_type());
+            break;
+        case TK_ENUM:
+            complete_enumerated_type_consistency(complete_type_object.enumerated_type());
+            break;
+        case TK_BITMASK:
+            complete_bitmask_type_consistency(complete_type_object.bitmask_type());
+            break;
+        default:
+            throw InvalidArgumentError("Inconsistent TypeObject");
+    }
+}
+
 } // xtypes
 } // dds
 } // fastdds
