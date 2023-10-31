@@ -296,6 +296,133 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistUnicast)
     reader.block_for_all();
 }
 
+//*** Setting the interface whitelist by the interface names, 
+// check if the connection is established anyways.
+// All available interfaces case. 
+TEST_P(NetworkConfig, PubSubInterfaceWhitelistName)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::vector<IPFinder::info_IP> interfaces;
+    use_udpv4 ? GetIP4s(interfaces) : GetIP6s(interfaces);
+
+    {
+        for (const auto& interface : interfaces)
+        {
+            descriptor_->interfaceWhiteList.push_back(interface.dev);
+        }
+
+        reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
+                disable_builtin_transport().
+                add_user_transport_to_pparams(descriptor_).init();
+
+        ASSERT_TRUE(reader.isInitialized());
+
+        writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
+                disable_builtin_transport().
+                add_user_transport_to_pparams(descriptor_).init();
+
+        ASSERT_TRUE(writer.isInitialized());
+
+        // Because its volatile the durability
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
+
+        auto data = default_helloworld_data_generator();
+
+        reader.startReception(data);
+
+        writer.send(data);
+        ASSERT_TRUE(data.empty());
+        reader.block_for_all();
+    }
+}
+
+// ***
+void asymmetric_whitelist_name_test(
+        const std::vector<IPFinder::info_IP>& pub_interfaces,
+        const std::vector<IPFinder::info_IP>& sub_interfaces)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::shared_ptr<UDPTransportDescriptor> pub_upv4_descriptor = std::make_shared<UDPv4TransportDescriptor>();
+    // include the interfaces in the transport descriptor
+    for (const auto& interface : pub_interfaces)
+    {
+        pub_upv4_descriptor->interfaceWhiteList.push_back(interface.dev);
+    }
+
+    // Set the transport descriptor WITH interfaces in the writer
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
+            disable_builtin_transport().
+            add_user_transport_to_pparams(pub_upv4_descriptor).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    std::shared_ptr<UDPTransportDescriptor> sub_upv4_descriptor = std::make_shared<UDPv4TransportDescriptor>();
+    // include the interfaces in the transport descriptor
+    for (const auto& interface : sub_interfaces)
+    {
+        sub_upv4_descriptor->interfaceWhiteList.push_back(interface.dev);
+    }
+
+    // Set the transport descriptor WITH interfaces in the reader
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
+            disable_builtin_transport().
+            add_user_transport_to_pparams(sub_upv4_descriptor).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery(std::chrono::seconds(5));
+    reader.wait_discovery(std::chrono::seconds(5));
+
+    // Check that endpoints have discovered each other
+    ASSERT_EQ(reader.get_matched(), 1u);
+    ASSERT_EQ(writer.get_matched(), 1u);
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator();
+    reader.startReception(data);
+    writer.send(data);
+
+    // Check that the sample data has been sent and received successfully
+    ASSERT_TRUE(data.empty());
+    reader.block_for_all();
+}
+
+//*** Setting the interface whitelist by the interface names in one of the endpoints, 
+// but not in the other, check if the connection is established anyways.
+// All available interfaces case. UDPv4
+TEST_P(NetworkConfig, PubSubAsymmetricInterfaceWhitelistAllInterfacesName)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::vector<IPFinder::info_IP> no_interfaces;
+    std::vector<IPFinder::info_IP> all_interfaces_name;
+    GetIP4s(all_interfaces_name,false);
+    
+    {
+        // Whitelist only in publisher
+        asymmetric_whitelist_name_test(all_interfaces_name, no_interfaces);
+    }
+
+    {
+        // Whitelist only in subscriber
+        asymmetric_whitelist_name_test(no_interfaces, all_interfaces_name );
+    }
+}
+
+
 void asymmetric_whitelist_test(
         const std::vector<IPFinder::info_IP>& pub_interfaces,
         const std::vector<IPFinder::info_IP>& sub_interfaces)
