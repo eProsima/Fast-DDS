@@ -1532,8 +1532,10 @@ public:
      *
      * @param[in out] sequence Sequence to be modified.
      * @param[in] bitflag CompleteBitflag to be added.
-     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given bitflag is
-     *            inconsistent (only in Debug build mode).
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
+     *              1. Given bitflag is inconsistent (only in Debug build mode).
+     *              2. There is already another bitflag in the sequence with the same position or the same name
+     *                 (only in Debug build mode).
      */
     RTPS_DllAPI static void add_complete_bitflag(
             CompleteBitflagSeq& sequence,
