@@ -1650,6 +1650,29 @@ TEST(TypeObjectUtilsTests, build_common_bitfield_inconsistent_data)
         InvalidArgumentError);
 }
 
+// Build CompleteBitfield with non-applying builtin annotations.
+TEST(TypeObjectUtilsTests, build_complete_bitfield_invalid_builtin_annotations)
+{
+    AppliedBuiltinMemberAnnotations unit_builtin_ann = TypeObjectUtils::build_applied_builtin_member_annotations(
+        eprosima::fastcdr::optional<std::string>("unit"), eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<std::string>());
+    // TODO(jlbueno) @min & @max annotations cannot be applied: TypeObject depends on 'any' block implementation.
+    AppliedBuiltinMemberAnnotations hash_id_builtin_ann = TypeObjectUtils::build_applied_builtin_member_annotations(
+        eprosima::fastcdr::optional<std::string>(), eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<AnnotationParameterValue>(),
+        eprosima::fastcdr::optional<std::string>("member_hash"));
+    CompleteMemberDetail unit_member = TypeObjectUtils::build_complete_member_detail("member_name", unit_builtin_ann,
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail hash_id_member = TypeObjectUtils::build_complete_member_detail("member_name",
+        hash_id_builtin_ann, eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CommonBitfield common_bitfield = TypeObjectUtils::build_common_bitfield(0, 0, 1, TK_BOOLEAN);
+    EXPECT_THROW(CompleteBitfield bitfield = TypeObjectUtils::build_complete_bitfield(common_bitfield, unit_member),
+        InvalidArgumentError);
+    EXPECT_THROW(CompleteBitfield bitfield = TypeObjectUtils::build_complete_bitfield(common_bitfield, hash_id_member),
+        InvalidArgumentError);
+}
+
 // Build CompleteBitsetType with non-empty flags
 TEST(TypeObjectUtilsTests, build_complete_bitset_type_non_empty_flags)
 {
