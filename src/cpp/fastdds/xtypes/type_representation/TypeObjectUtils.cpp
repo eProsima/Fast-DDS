@@ -1532,6 +1532,10 @@ const CompleteBitfield TypeObjectUtils::build_complete_bitfield(
     common_bitfield_consistency(common);
     complete_member_detail_consistency(detail);
 #endif // !defined(NDEBUG)
+    if (detail.ann_builtin().has_value())
+    {
+        throw InvalidArgumentError("No builtin annotation applies to bitfield declaration");
+    }
     CompleteBitfield complete_bitfield;
     complete_bitfield.common(common);
     complete_bitfield.detail(detail);
@@ -2738,7 +2742,7 @@ void TypeObjectUtils::bitmask_bit_bound_consistency(
 {
     if (bit_bound == 0 || bit_bound > 64)
     {
-        throw InvalidArgumentError("Bitmask bit_bound must be greater than zero and no greater than 64");
+        throw InvalidArgumentError("Bit_bound must be greater than zero and no greater than 64");
     }
 }
 
@@ -2873,6 +2877,10 @@ void TypeObjectUtils::complete_bitfield_consistency(
 {
     common_bitfield_consistency(complete_bitfield.common());
     complete_member_detail_consistency(complete_bitfield.detail());
+    if (complete_bitfield.detail().ann_builtin().has_value())
+    {
+        throw InvalidArgumentError("No builtin annotation applies to bitfield declaration");
+    }
 }
 
 void TypeObjectUtils::complete_bitfield_seq_consistency(
