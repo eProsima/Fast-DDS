@@ -61,6 +61,7 @@ TEST_F(XMLParserTests, regressions)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/14456_profile_bin.xml", root));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/15344_profile_bin.xml", root));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/18395_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/19354_profile_bin.xml", root));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/simple_participant_profiles_nok.xml", root));
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParser::loadXML("regressions/simple_participant_profiles_ok.xml", root));
 }
