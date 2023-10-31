@@ -2860,7 +2860,7 @@ void TypeObjectUtils::bitfield_holder_type_consistency(
     {
         throw InvalidArgumentError("Inconsistent bitfield holder type");
     }
-    if (bitcount < 9 && holder_type == TK_BOOLEAN)
+    if ((bitcount < 9 && bitcount > 1) && holder_type == TK_BOOLEAN)
     {
         throw InvalidArgumentError("Inconsistent bitfield holder type");
     }

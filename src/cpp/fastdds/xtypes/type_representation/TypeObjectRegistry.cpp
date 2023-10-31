@@ -38,7 +38,7 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
         const TypeIdentifier& type_identifier)
 {
     // Precondition
-    if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier))
+    if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier) || type_name.empty())
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }

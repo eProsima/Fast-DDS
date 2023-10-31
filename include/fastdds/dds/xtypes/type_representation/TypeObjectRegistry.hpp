@@ -98,11 +98,14 @@ public:
      *        The MinimalTypeObject is generated from the CompleteTypeObject, and both are registered into the registry
      *        with the corresponding TypeIdentifiers and TypeObject serialized sizes.
      *
+     * @pre type_name must not be empty.
+     *
      * @param[in] type_name Name of the type being registered.
      * @param[in] complete_type_object_info CompleteTypeObject related to the given type name.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with the
      *                      given type_name.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given type_name is empty.
      */
     RTPS_DllAPI ReturnCode_t register_type_object(
             const std::string& type_name,
@@ -112,13 +115,15 @@ public:
      * @brief Register an indirect hash TypeIdentifier.
      *
      * @pre TypeIdentifier must not be a direct hash TypeIdentifier.
+     * @pre type_name must not be empty.
      *
      * @param[in] type_name Name of the type being registered.
      * @param[in] type_identifier TypeIdentier related to the given type name.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is direct hash TypeIdentifier or if
+     *                      the given type_name is empty.
      */
     RTPS_DllAPI ReturnCode_t register_type_identifier(
             const std::string& type_name,
