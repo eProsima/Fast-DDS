@@ -68,45 +68,6 @@ enum PlacementKindValue
     END_FILE
 };
 
-/**
- * @brief Builtin Annotation Kind
- */
-enum BuiltinAnnotationKind
-{
-    NONE,
-    ID,
-    AUTOID,
-    OPTIONAL,
-    POSITION,
-    VALUE,
-    EXTENSIBILITY,
-    FINAL_ANNOTATION,
-    APPENDABLE_ANNOTATION,
-    MUTABLE_ANNOTATION,
-    KEY,
-    MUST_UNDERSTAND,
-    DEFAULT_LITERAL,
-    DEFAULT,
-    RANGE,
-    MAX_ANNOTATION,
-    MIN_ANNOTATION,
-    UNIT,
-    BIT_BOUND,
-    EXTERNAL,
-    NESTED,
-    VERBATIM,
-    SERVICE,
-    ONEWAY,
-    AMI,
-    HASHID,
-    DEFAULT_NESTED,
-    IGNORE_LITERAL_NAMES,
-    TRY_CONSTRUCT,
-    NON_SERIALIZED,
-    DATA_REPRESENTATION,
-    TOPIC
-};
-
 // Primitive type names
 constexpr const char* boolean_type_name = "_boolean";
 constexpr const char* byte_type_name = "_byte";
