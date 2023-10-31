@@ -89,7 +89,9 @@ TCPv6Transport::TCPv6Transport(
         get_ipv6s(local_interfaces, true);
         for (const IPFinder::info_IP& infoIP : local_interfaces)
         {
-            if (std::find(white_begin, white_end, infoIP.name) != white_end ||  std::find(white_begin, white_end, infoIP.dev) != white_end)
+            if (std::find(white_begin, white_end,
+                    infoIP.name) != white_end ||
+                    std::find(white_begin, white_end, infoIP.dev) != white_end)
             {
                 interface_whitelist_.emplace_back(ip::address_v6::from_string(infoIP.name));
             }
