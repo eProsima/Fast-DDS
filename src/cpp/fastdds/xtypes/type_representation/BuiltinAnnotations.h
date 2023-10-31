@@ -122,11 +122,13 @@ namespace appendable {
 
 
 } // namespace appendable
+/* TODO(jlbueno): Fix in Fast DDS-Gen
 namespace mutable {
 
 
 
 } // namespace mutable
+*/
 namespace key {
 
 
