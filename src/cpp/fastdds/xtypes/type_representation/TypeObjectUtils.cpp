@@ -1476,7 +1476,14 @@ void TypeObjectUtils::add_complete_bitflag(
 {
 #if !defined(NDEBUG)
     complete_bitflag_consistency(bitflag);
-    // TODO(jlbueno): check uniqueness
+    for (CompleteBitflag bitflag_elem : sequence)
+    {
+        if (bitflag_elem.common().position() == bitflag.common().position() ||
+            bitflag_elem.detail().name() == bitflag.detail().name())
+        {
+            throw InvalidArgumentError("Sequence has another bitflag with the same position/name");
+        }
+    }
 #endif // !defined(NDEBUG)
     sequence.push_back(bitflag);
 }
@@ -2795,10 +2802,21 @@ void TypeObjectUtils::complete_bitflag_consistency(
 void TypeObjectUtils::complete_bitflag_seq_consistency(
         const CompleteBitflagSeq& complete_bitflag_seq)
 {
+    std::set<uint16_t> positions;
+    std::set<MemberName> bitflag_names;
     for (size_t i = 0; i < complete_bitflag_seq.size(); i++)
     {
+        if (complete_bitflag_seq.size() == 0)
+        {
+            throw InvalidArgumentError("At least one bitflag must be defined within the bitmask");
+        }
+        positions.insert(complete_bitflag_seq[i].common().position());
+        bitflag_names.insert(complete_bitflag_seq[i].detail().name());
+        if (positions.size() != (i + 1) || bitflag_names.size() != (i + 1))
+        {
+            throw InvalidArgumentError("Repeated bitflag position/name");
+        }
         complete_bitflag_consistency(complete_bitflag_seq[i]);
-        // TODO(jlbueno): check uniqueness
     }
 }
 
