@@ -1184,7 +1184,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
 
 
 /*
- * This test checks the return of the parseXMLTransportData method  and the storage of the values in the XMLProfileManager
+ * This test checks the return of the parseXMLTransportData whitelist argument passed byt name  and the storage of the values in the XMLProfileManager
  * xml is parsed
  * 1. Check the correct parsing of a UDP transport descriptor for birth v4 and v6
  * 2. Check the correct parsing of a TCP transport descriptor for birth v4 and v6

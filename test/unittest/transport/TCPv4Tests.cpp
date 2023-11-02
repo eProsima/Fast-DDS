@@ -459,13 +459,13 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
     }
 }
 
-// Send and receive between allowed interfaces (the first available except the local) added by name 
+// Send and receive between allowed interfaces (the first available except the local) added by name
 TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports_by_name)
-{ 
+{
     std::vector<IPFinder::info_IP> interfaces;
-    
+
     if (IPFinder::getIPs(&interfaces, false))
-    {   
+    {
         eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
         std::regex filter("RTCP(?!_SEQ)");
         eprosima::fastdds::dds::Log::SetCategoryFilter(filter);
@@ -478,7 +478,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports_by_name)
 
         TCPv4TransportDescriptor sendDescriptor;
         sendDescriptor.interfaceWhiteList.emplace_back(interfaces[0].dev);
-     
+
         TCPv4Transport sendTransportUnderTest(sendDescriptor);
         sendTransportUnderTest.init();
 
@@ -493,7 +493,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports_by_name)
 
         Locator_t outputLocator;
         outputLocator.kind = LOCATOR_KIND_TCPv4;
-        outputLocator.set_address(interfaces[0].locator); 
+        outputLocator.set_address(interfaces[0].locator);
         outputLocator.port = g_default_port;
         IPLocator::setLogicalPort(outputLocator, 7410);
 
@@ -544,7 +544,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports_by_name)
             senderThread->join();
             ASSERT_TRUE(bOk);
         }
-        
+
     }
 }
 
