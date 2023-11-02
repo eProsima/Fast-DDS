@@ -402,8 +402,8 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistNameNoConnection)
 
 void interface_whitelist_test(
         const std::vector<IPFinder::info_IP>& pub_interfaces,
-        const std::vector<IPFinder::info_IP>& sub_interfaces, 
-        bool interface_name = false) 
+        const std::vector<IPFinder::info_IP>& sub_interfaces,
+        bool interface_name = false)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -412,10 +412,14 @@ void interface_whitelist_test(
     // include the interfaces in the transport descriptor
     for (const auto& interface : pub_interfaces)
     {
-        if(!interface_name)
+        if (!interface_name)
+        {
             pub_upv4_descriptor->interfaceWhiteList.push_back(interface.name);
+        }
         else
+        {
             pub_upv4_descriptor->interfaceWhiteList.push_back(interface.dev);
+        }
     }
 
     // Set the transport descriptor WITH interfaces in the writer
@@ -429,10 +433,14 @@ void interface_whitelist_test(
     // include the interfaces in the transport descriptor
     for (const auto& interface : sub_interfaces)
     {
-        if(!interface_name)
+        if (!interface_name)
+        {
             sub_upv4_descriptor->interfaceWhiteList.push_back(interface.name);
+        }
         else
+        {
             sub_upv4_descriptor->interfaceWhiteList.push_back(interface.dev);
+        }
     }
 
     // Set the transport descriptor WITH interfaces in the reader
@@ -464,7 +472,6 @@ void interface_whitelist_test(
     ASSERT_TRUE(data.empty());
     reader.block_for_all();
 }
-
 
 // Setting the interface whitelist by the interface names in one of the endpoints,
 // but not in the other, check if the connection is established anyways.
