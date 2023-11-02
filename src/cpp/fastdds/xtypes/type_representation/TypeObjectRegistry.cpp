@@ -320,8 +320,21 @@ const MinimalAnnotationType TypeObjectRegistry::build_minimal_from_complete_anno
 const MinimalStructType TypeObjectRegistry::build_minimal_from_complete_struct_type(
         const CompleteStructType& complete_struct_type)
 {
-    static_cast<void>(complete_struct_type);
-    return MinimalStructType();
+    MinimalStructType minimal_struct_type;
+    minimal_struct_type.struct_flags(complete_struct_type.struct_flags());
+    minimal_struct_type.header().base_type(complete_struct_type.header().base_type());
+    // header().detail: empty. Available for future extension.
+    MinimalStructMemberSeq minimal_struct_member_sequence;
+    for (const CompleteStructMember& complete_struct_member : complete_struct_type.member_seq())
+    {
+        MinimalStructMember minimal_struct_member;
+        minimal_struct_member.common(complete_struct_member.common());
+        minimal_struct_member.detail().name_hash(TypeObjectUtils::name_hash(
+            complete_struct_member.detail().name().c_str()));
+        minimal_struct_member_sequence.push_back(minimal_struct_member);
+    }
+    minimal_struct_type.member_seq(minimal_struct_member_sequence);
+    return minimal_struct_type;
 }
 
 const MinimalUnionType TypeObjectRegistry::build_minimal_from_complete_union_type(
