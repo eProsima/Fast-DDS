@@ -261,9 +261,15 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     uint32_t type_object_serialized_size = 0;
     TypeObject minimal_type_object;
     if (type_identifier._d() != type_object._d() ||
+<<<<<<< HEAD
             type_identifier != get_type_identifier(type_object, type_object_serialized_size))
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
+=======
+        type_identifier != get_type_identifier(type_object, type_object_serialized_size))
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+>>>>>>> 8ee946999 (Refs #19837: TypeObjectRegistry::register_type_object implementation)
     }
     if (EK_COMPLETE == type_object._d())
     {
@@ -276,7 +282,11 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     entry.type_object_ = type_object;
     entry.type_object_serialized_size_ = type_object_serialized_size;
     type_registry_entries_.insert({type_identifier, entry});
+<<<<<<< HEAD
     return eprosima::fastdds::dds::RETCODE_OK;
+=======
+    return ReturnCode_t::RETCODE_OK;
+>>>>>>> 8ee946999 (Refs #19837: TypeObjectRegistry::register_type_object implementation)
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_object(
