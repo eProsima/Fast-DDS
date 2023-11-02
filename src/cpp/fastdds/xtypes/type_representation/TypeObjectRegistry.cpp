@@ -410,8 +410,20 @@ const MinimalMapType TypeObjectRegistry::build_minimal_from_complete_map_type(
 const MinimalEnumeratedType TypeObjectRegistry::build_minimal_from_complete_enumerated_type(
         const CompleteEnumeratedType& complete_enumerated_type)
 {
-    static_cast<void>(complete_enumerated_type);
-    return MinimalEnumeratedType();
+    MinimalEnumeratedType minimal_enumerated_type;
+    // enum_flags: unused. No flags apply.
+    minimal_enumerated_type.header().common(complete_enumerated_type.header().common());
+    MinimalEnumeratedLiteralSeq minimal_enumerated_literal_sequence;
+    for (const CompleteEnumeratedLiteral& complete_enumerated_literal : complete_enumerated_type.literal_seq())
+    {
+        MinimalEnumeratedLiteral minimal_enumerated_literal;
+        minimal_enumerated_literal.common(complete_enumerated_literal.common());
+        minimal_enumerated_literal.detail().name_hash(TypeObjectUtils::name_hash(
+            complete_enumerated_literal.detail().name().c_str()));
+        minimal_enumerated_literal_sequence.push_back(minimal_enumerated_literal);
+    }
+    minimal_enumerated_type.literal_seq(minimal_enumerated_literal_sequence);
+    return minimal_enumerated_type;
 }
 
 const MinimalBitmaskType TypeObjectRegistry::build_minimal_from_complete_bitmask_type(
