@@ -1001,7 +1001,7 @@ void TypeObjectUtils::add_complete_union_member(
     {
         case_labels.insert(label);
     }
-    for (CompleteUnionMember union_member : complete_union_member_seq)
+    for (const CompleteUnionMember& union_member : complete_union_member_seq)
     {
         if (union_member.detail().name() == member.detail().name())
         {
@@ -1557,7 +1557,7 @@ void TypeObjectUtils::add_complete_bitflag(
 {
 #if !defined(NDEBUG)
     complete_bitflag_consistency(bitflag);
-    for (CompleteBitflag bitflag_elem : sequence)
+    for (const CompleteBitflag& bitflag_elem : sequence)
     {
         if (bitflag_elem.detail().name() == bitflag.detail().name())
         {
@@ -1641,7 +1641,7 @@ void TypeObjectUtils::add_complete_bitfield(
 {
 #if !defined(NDEBUG)
     complete_bitfield_consistency(bitfield);
-    for (CompleteBitfield bitfield_elem : sequence)
+    for (const CompleteBitfield& bitfield_elem : sequence)
     {
         size_t bitfield_elem_init = bitfield_elem.common().position();
         size_t bitfield_elem_end = bitfield_elem_init + bitfield_elem.common().bitcount() - 1;
