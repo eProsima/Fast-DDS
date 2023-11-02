@@ -360,8 +360,20 @@ const MinimalUnionType TypeObjectRegistry::build_minimal_from_complete_union_typ
 const MinimalBitsetType TypeObjectRegistry::build_minimal_from_complete_bitset_type(
         const CompleteBitsetType& complete_bitset_type)
 {
-    static_cast<void>(complete_bitset_type);
-    return MinimalBitsetType();
+    MinimalBitsetType minimal_bitset_type;
+    // bitset_flags: unused. No flags apply.
+    // header: empty. Available for future extension.
+    MinimalBitfieldSeq minimal_bitfield_sequence;
+    for (const CompleteBitfield& complete_bitfield : complete_bitset_type.field_seq())
+    {
+        MinimalBitfield minimal_bitfield;
+        minimal_bitfield.common(complete_bitfield.common());
+        minimal_bitfield.name_hash(TypeObjectUtils::name_hash(
+            complete_bitfield.detail().name().c_str()));
+        minimal_bitfield_sequence.push_back(minimal_bitfield);
+    }
+    minimal_bitset_type.field_seq(minimal_bitfield_sequence);
+    return minimal_bitset_type;
 }
 
 const MinimalSequenceType TypeObjectRegistry::build_minimal_from_complete_sequence_type(
