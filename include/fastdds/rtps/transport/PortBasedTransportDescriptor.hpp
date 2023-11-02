@@ -65,7 +65,7 @@ public:
      *
      * This function first looks for the port-specific ThreadSettings in the user-configured
      * reception threads map, i.e. the collection of ThreadSettings returned by @ref reception_threads().
-     * If the ThreadSettings are found within said map, then @ref get_thread_config_for_port(uint32_t) returns them;
+     * If the ThreadSettings are found within said map, then @ref get_thread_config_for_port() returns them;
      * else it returns the default reception thread settings, i.e. the ThreadSettings returned by
      * @ref default_reception_threads().
      *
