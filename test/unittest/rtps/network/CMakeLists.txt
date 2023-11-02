@@ -163,8 +163,3 @@ endif()
 
 gtest_discover_tests(NetworkFactoryTests)
 gtest_discover_tests(ExternalLocatorsProcessorTests)
-
-if(ANDROID)
-    set_property(TARGET NetworkFactoryTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET ExternalLocatorsProcessorTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

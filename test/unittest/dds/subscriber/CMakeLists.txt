@@ -122,9 +122,3 @@ target_link_libraries(DataReaderHistoryTests fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(DataReaderHistoryTests)
-if(ANDROID)
-    set_property(TARGET SubscriberTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET DataReaderTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET DataReaderHistoryTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET DataReaderInstanceTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

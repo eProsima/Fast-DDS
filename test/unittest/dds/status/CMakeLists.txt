@@ -206,7 +206,3 @@ if(MSVC OR MSVC_IDE)
 endif()
 
 gtest_discover_tests(ListenerTests)
-
-if(ANDROID)
-    set_property(TARGET ListenerTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

@@ -44,7 +44,3 @@ target_link_libraries(SHMSegmentTests
     ${CMAKE_DL_LIBS}
     ${THIRDPARTY_BOOST_LINK_LIBS})
 gtest_discover_tests(SHMSegmentTests)
-
-if(ANDROID)
-    set_property(TARGET SHMSegmentTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

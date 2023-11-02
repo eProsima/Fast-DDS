@@ -44,7 +44,3 @@ target_include_directories(BuiltinLogging PRIVATE
     )
 target_link_libraries(BuiltinLogging fastcdr GTest::gtest ${OPENSSL_LIBRARIES})
 gtest_discover_tests(BuiltinLogging)
-
-if(ANDROID)
-    set_property(TARGET BuiltinLogging PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

@@ -97,7 +97,3 @@ else()
 endif()
 
 gtest_discover_tests(EdpTests)
-
-if(ANDROID)
-    set_property(TARGET EdpTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

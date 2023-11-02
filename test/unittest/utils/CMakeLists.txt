@@ -157,13 +157,3 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/environment_test_file.json
     ${CMAKE_CURRENT_BINARY_DIR}/environment_test_file.json COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/empty_environment_test_file.json
     ${CMAKE_CURRENT_BINARY_DIR}/empty_environment_test_file.json COPYONLY)
-
-if(ANDROID)
-    set_property(TARGET StringMatchingTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET FixedSizeQueueTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET BitmapRangeTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET ResourceLimitedVectorTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET LocatorTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET FixedSizeStringTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET SystemInfoTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

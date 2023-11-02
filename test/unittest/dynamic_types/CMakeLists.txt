@@ -191,9 +191,3 @@ endif()
 gtest_discover_tests(DynamicTypes_4_2_Tests)
 
 configure_file("types_profile.xml" "types_profile.xml" COPYONLY)
-
-if(ANDROID)
-    set_property(TARGET DynamicComplexTypesTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET DynamicTypes_4_2_Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET DynamicTypesTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

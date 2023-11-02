@@ -111,10 +111,6 @@ endif()
 gtest_discover_tests(AccessControlTests
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
 
-if(ANDROID)
-    set_property(TARGET AccessControlTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
-
 ####################################################################################################
 ####################################################################################################
 # DistinguishedNameTests

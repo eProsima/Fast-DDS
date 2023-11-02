@@ -93,7 +93,3 @@ target_link_libraries(SecurityAuthentication fastcdr
     ${OPENSSL_LIBRARIES}
     )
 gtest_discover_tests(SecurityAuthentication)
-
-if(ANDROID)
-    set_property(TARGET SecurityAuthentication PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

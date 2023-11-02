@@ -84,8 +84,3 @@ target_link_libraries(LogFileTests GTest::gtest ${MOCKS}
     fastcdr
     )
 gtest_discover_tests(LogFileTests)
-
-if(ANDROID)
-    set_property(TARGET LogTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET LogFileTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

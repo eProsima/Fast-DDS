@@ -56,11 +56,6 @@ target_link_libraries(WriterProxyTests foonathan_memory
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(WriterProxyTests)
 
-if(ANDROID)
-    set_property(TARGET WriterProxyTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
-
-
 ###########################################################################
 # WriterProxyStopTest
 ###########################################################################
@@ -106,10 +101,6 @@ target_link_libraries(WriterProxyStopTest foonathan_memory
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(WriterProxyStopTest)
 
-if(ANDROID)
-    set_property(TARGET WriterProxyStopTest PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
-
 ###########################################################################
 # WriterProxyAcknackTests
 ###########################################################################
@@ -153,7 +144,3 @@ target_link_libraries(WriterProxyAcknackTests foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(WriterProxyAcknackTests)
-
-if(ANDROID)
-    set_property(TARGET WriterProxyAcknackTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

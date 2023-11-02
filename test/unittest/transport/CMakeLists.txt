@@ -472,15 +472,6 @@ set_property(DIRECTORY APPEND PROPERTY
     TEST_INCLUDE_FILES ${CMAKE_CURRENT_LIST_DIR}/xfail_tests.cmake
     )
 
-if(ANDROID)
-    set_property(TARGET UDPv4Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET UDPv6Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET TCPv4Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET TCPv6Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET SharedMemTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET test_UDPv4Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
-
 #####################################
 # PortBasedTransportDescriptor tests
 #####################################
@@ -508,6 +499,4 @@ target_link_libraries(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
     GTest::gtest
     ${MOCKS})
 
-add_gtest(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
-    SOURCES
-    ${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_SOURCES})
+gtest_discover_tests(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET})

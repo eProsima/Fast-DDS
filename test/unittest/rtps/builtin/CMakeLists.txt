@@ -99,7 +99,3 @@ else()
 endif()
 
 gtest_discover_tests(BuiltinDataSerializationTests)
-
-if(ANDROID)
-    set_property(TARGET BuiltinDataSerializationTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

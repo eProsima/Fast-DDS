@@ -34,7 +34,3 @@ target_include_directories(LoanableSequenceTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LoanableSequenceTests GTest::gtest)
 gtest_discover_tests(LoanableSequenceTests)
-
-if(ANDROID)
-    set_property(TARGET LoanableSequenceTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

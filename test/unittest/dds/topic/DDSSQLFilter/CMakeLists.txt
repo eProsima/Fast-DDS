@@ -51,7 +51,3 @@ target_link_libraries(DDSSQLFilterTests fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(DDSSQLFilterTests PROPERTIES TIMEOUT 500)
-
-if(ANDROID)
-    set_property(TARGET DDSSQLFilterTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
