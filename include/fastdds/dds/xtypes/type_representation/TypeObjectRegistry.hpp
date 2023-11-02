@@ -166,7 +166,7 @@ public:
     // Only DomainParticipantFactory is allowed to instantiate the TypeObjectRegistry class.
     // It cannot be protected as the standard library needs to access the constructor to allocate the resources.
     // Rule of zero: resource managing types.
-    TypeObjectRegistry() = default;
+    TypeObjectRegistry();
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 protected:
@@ -371,6 +371,11 @@ protected:
      */
     const MinimalBitmaskType build_minimal_from_complete_bitmask_type(
             const CompleteBitmaskType& complete_bitmask_type);
+
+    /**
+     * @brief Register TypeIdentifiers corresponding to the primitive types.
+     */
+    void register_primitive_type_identifiers();
 
     // Collection of local TypeIdentifiers hashed by type_name.
     // TypeIdentifierPair contains both the minimal and complete TypeObject TypeIdentifiers.

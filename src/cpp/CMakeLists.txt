@@ -166,6 +166,7 @@ set(${PROJECT_NAME}_source_files
     dynamic-types/DynamicDataHelper.cpp
 
     fastdds/xtypes/exception/Exception.cpp
+    fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
     fastdds/xtypes/type_representation/TypeObjectUtils.cpp
     fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
 
