@@ -1959,7 +1959,7 @@ TEST(TypeObjectUtilsTests, register_enumerated_type_object)
     CompleteEnumeratedHeader other_header = TypeObjectUtils::build_complete_enumerated_header(common_header, detail);
     CompleteEnumeratedType other_enumeration = TypeObjectUtils::build_complete_enumerated_type(0, other_header,
                     literal_seq);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_enumerated_type_object(other_enumeration,
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_enumerated_type_object(other_enumeration,
             "enum"));
     std::string type_name;
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_enumerated_type_object(
@@ -1990,7 +1990,7 @@ TEST(TypeObjectUtilsTests, register_bitmask_type_object)
     CompleteBitflag other_bitflag = TypeObjectUtils::build_complete_bitflag(common, other_member_detail);
     TypeObjectUtils::add_complete_bitflag(bitflag_seq, other_bitflag);
     CompleteBitmaskType other_bitmask = TypeObjectUtils::build_complete_bitmask_type(0, header, bitflag_seq);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
             "bitmask"));
     std::string type_name;
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_bitmask_type_object(
