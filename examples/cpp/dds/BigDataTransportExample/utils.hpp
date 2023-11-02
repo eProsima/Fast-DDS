@@ -28,6 +28,7 @@
 
 namespace dds_types_bigdata
 {
+
 // Modified from:
 // https://stackoverflow.com/questions/440133/how-do-i-create-a-random-alpha-numeric-string-in-c
 std::string random_string(size_t length)
@@ -87,6 +88,7 @@ bool random_bool()
   return dist(gen) == 1;
 }
 
+
 // MSG GEN =========================================================================================
 Header random_header(size_t len = 16)
 {
@@ -98,6 +100,7 @@ Header random_header(size_t len = 16)
   return header_msg;
 }
 
+/**
 Quaternion random_quaternion()
 {
   Quaternion q_msg;
@@ -201,6 +204,7 @@ WrenchStamped random_wrenchstamped()
 
   return wrench_msg;
 }
+**/
 
 Image random_image(size_t len = 0)  // 1920 * 1080 * 3
 {
@@ -259,6 +263,7 @@ PointCloud2 random_pointcloud(size_t len = 0)  // 4 * 4 * 4 * 1280 * 960
   return pc_msg;
 }
 
+/**
 LaserScan random_laserscan(size_t len = 1024)
 {
   LaserScan scan_msg;
@@ -294,6 +299,7 @@ BasicTypes random_basictypes()
 
   return data;
 }
+**/
 
 BigData random_bigdata(bool include_image_and_pointcloud = true)
 {

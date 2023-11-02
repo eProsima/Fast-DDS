@@ -10,13 +10,16 @@
                 <port>5201</port> <!-- Metatraffic Unicast Locator-->
             </listening_ports>
             <wan_addr>127.0.0.1</wan_addr>
+            <sendBufferSize>200000</sendBufferSize>
+            <receiveBufferSize>200000</receiveBufferSize>
+            <maxMessageSize>200000</maxMessageSize> <!-- Default: 65500 -->
         </transport_descriptor>
         <transport_descriptor>
                 <transport_id>udp_transport_1</transport_id>
                 <type>UDPv4</type>
-                <sendBufferSize>0</sendBufferSize>
-                <receiveBufferSize>0</receiveBufferSize>
-                <maxMessageSize>65500</maxMessageSize> <!-- Default: 65500-->
+                <sendBufferSize>200000</sendBufferSize>
+                <receiveBufferSize>200000</receiveBufferSize>
+                <maxMessageSize>65500</maxMessageSize> <!-- Default: 65500 -->
         </transport_descriptor>
     </transport_descriptors>
 

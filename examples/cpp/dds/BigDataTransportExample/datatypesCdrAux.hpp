@@ -24,23 +24,11 @@
 
 #include "datatypes.h"
 
-constexpr uint32_t Wrench_max_cdr_typesize {64UL};
-constexpr uint32_t Wrench_max_key_cdr_typesize {0UL};
+constexpr uint32_t Header_max_cdr_typesize {273UL};
+constexpr uint32_t Header_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Vector3Stamped_max_cdr_typesize {312UL};
-constexpr uint32_t Vector3Stamped_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t Quaternion_max_cdr_typesize {40UL};
-constexpr uint32_t Quaternion_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t WrenchStamped_max_cdr_typesize {344UL};
-constexpr uint32_t WrenchStamped_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t Vector3_max_cdr_typesize {32UL};
-constexpr uint32_t Vector3_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t Point_max_cdr_typesize {32UL};
-constexpr uint32_t Point_max_key_cdr_typesize {0UL};
+constexpr uint32_t BigData_max_cdr_typesize {157666180UL};
+constexpr uint32_t BigData_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t Image_max_cdr_typesize {24883760UL};
 constexpr uint32_t Image_max_key_cdr_typesize {0UL};
@@ -51,44 +39,8 @@ constexpr uint32_t PointField_max_key_cdr_typesize {0UL};
 constexpr uint32_t Timestamp_max_cdr_typesize {20UL};
 constexpr uint32_t Timestamp_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t TwistWithCovariance_max_cdr_typesize {2128UL};
-constexpr uint32_t TwistWithCovariance_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t TwistWithCovarianceStamped_max_cdr_typesize {2408UL};
-constexpr uint32_t TwistWithCovarianceStamped_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t Twist_max_cdr_typesize {64UL};
-constexpr uint32_t Twist_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t BasicTypes_max_cdr_typesize {181UL};
-constexpr uint32_t BasicTypes_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t Float32_max_cdr_typesize {8UL};
-constexpr uint32_t Float32_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t Float64_max_cdr_typesize {16UL};
-constexpr uint32_t Float64_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t Header_max_cdr_typesize {273UL};
-constexpr uint32_t Header_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t Int64_max_cdr_typesize {16UL};
-constexpr uint32_t Int64_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t Int32_max_cdr_typesize {8UL};
-constexpr uint32_t Int32_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t Pose_max_cdr_typesize {72UL};
-constexpr uint32_t Pose_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t BigData_max_cdr_typesize {157666180UL};
-constexpr uint32_t BigData_max_key_cdr_typesize {0UL};
-
 constexpr uint32_t PointCloud2_max_cdr_typesize {132782393UL};
 constexpr uint32_t PointCloud2_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t LaserScan_max_cdr_typesize {8508UL};
-constexpr uint32_t LaserScan_max_key_cdr_typesize {0UL};
 
 
 namespace eprosima {
@@ -99,67 +51,11 @@ class CdrSizeCalculator;
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
-        const Int32& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const Int64& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const Float32& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const Float64& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
         const Timestamp& data);
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const Header& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const Point& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const Quaternion& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const Vector3& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const Vector3Stamped& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const Pose& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const Twist& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const TwistWithCovariance& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const TwistWithCovarianceStamped& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const Wrench& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const WrenchStamped& data);
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
@@ -180,14 +76,6 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const PointCloud2& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const LaserScan& data);
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const BasicTypes& data);
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,

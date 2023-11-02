@@ -399,13 +399,17 @@ bool TCPTransportInterface::init(
     if (configuration()->maxMessageSize > configuration()->sendBufferSize)
     {
         EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
-        return false;
+        std::cout << "TCP maxMessagesize: " << configuration()->maxMessageSize << std::endl;
+        std::cout << "TCP sendBuffersize: " << configuration()->sendBufferSize << std::endl;
+        // return false;
     }
 
     if (configuration()->maxMessageSize > configuration()->receiveBufferSize)
     {
         EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
-        return false;
+        std::cout << "TCP maxMessagesize: " << configuration()->maxMessageSize << std::endl;
+        std::cout << "TCP receiveBuffersize: " << configuration()->receiveBufferSize << std::endl;
+        // return false;
     }
 
     if (!rtcp_message_manager_)

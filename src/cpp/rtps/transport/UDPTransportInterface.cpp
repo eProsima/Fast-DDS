@@ -161,12 +161,16 @@ bool UDPTransportInterface::init(
     if (configuration()->maxMessageSize > configuration()->sendBufferSize)
     {
         EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
+        std::cout << "UDP maxMessageSize: "<< configuration()->maxMessageSize << std::endl;
+        std::cout << "UDP sendBufferSize: "<< configuration()->sendBufferSize << std::endl;
         return false;
     }
 
     if (configuration()->maxMessageSize > configuration()->receiveBufferSize)
     {
         EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
+        std::cout << "UDP maxMessagesize: "<< configuration()->maxMessageSize << std::endl;
+        std::cout << "UDP receiveBufferSize: "<< configuration()->receiveBufferSize << std::endl;
         return false;
     }
 

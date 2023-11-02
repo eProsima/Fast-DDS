@@ -1,34 +1,4 @@
-// Copyright 2022 Open Source Robotics Foundation, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-// std_msgs subset =================================================================================
-struct Int32 {
-  long data;
-};
-
-struct Int64 {
-  long long data;
-};
-
-struct Float32 {
-  float data;
-};
-
-struct Float64 {
-  double data;
-};
-
+//******** Std_msgs structures ********//
 struct Timestamp {
   unsigned long long sec;
   unsigned long nanosec;
@@ -40,62 +10,7 @@ struct Header {
   string<256> frame_id;
 };
 
-// geometry_msgs subset ============================================================================
-struct Point {
-  double x;
-  double y;
-  double z;
-};
-
-struct Quaternion {
-  double x;
-  double y;
-  double z;
-  double w;
-};
-
-struct Vector3 {
-  double x;
-  double y;
-  double z;
-};
-
-struct Vector3Stamped {
-  Header header_value;
-  Vector3 vector;
-};
-
-struct Pose {
-  Point position;
-  Quaternion orientation;
-};
-
-struct Twist {
-  Vector3 linear;
-  Vector3 angular;
-};
-
-struct TwistWithCovariance {
-  Twist twist_value;
-  sequence<double, 256> covariance;
-};
-
-struct TwistWithCovarianceStamped {
-  Header header_value;
-  TwistWithCovariance twist_tc;
-};
-
-struct Wrench {
-  Vector3 force;
-  Vector3 torque;
-};
-
-struct WrenchStamped {
-  Header header_value;
-  Wrench wrench_value;
-};
-
-// sensor_msgs subset ==============================================================================
+//******** Sensor_msgs structures ********//
 struct Image {
   Header header_value;
   unsigned long height;
@@ -134,31 +49,7 @@ struct PointCloud2 {
   boolean is_dense;
 };
 
-struct LaserScan {
-  Header header_value;
-  float angle_min;
-  float angle_max;
-  float angle_increment;
-  float time_increment;
-  float scan_time;
-  float range_min;
-  float range_max;
-  sequence<float, 1024> ranges;
-  sequence<float, 1024> intensities;
-};
-
-// Big chunks of data ==============================================================================
-struct BasicTypes {
-  boolean bool_value;
-  long int32_value;
-  unsigned long uint32_value;
-  long long int64_value;
-  unsigned long long uint64_value;
-  float float_value;
-  double double_value;
-  string<128> string_value;
-};
-
+//******** BigData structure ********//
 struct BigData {
   Timestamp timestamp_value;
   Image image_value;

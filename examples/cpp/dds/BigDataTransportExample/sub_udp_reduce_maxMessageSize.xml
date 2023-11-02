@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+
+    <transport_descriptors>
+        <transport_descriptor>
+                <transport_id>udp_transport_1</transport_id>
+                <type>UDPv4</type>
+                <sendBufferSize>10000</sendBufferSize>
+                <receiveBufferSize>10000</receiveBufferSize>
+                <maxMessageSize>10000</maxMessageSize> <!-- Default: 65500-->
+        </transport_descriptor>
+    </transport_descriptors>
+
+    <participant profile_name="bigdata_sub_profile">
+        <domainId>42</domainId>
+        <rtps>
+            <name>BigDataParticipant_sub</name>
+
+            <participantID>42</participantID>
+
+            <userTransports>
+                <transport_id>udp_transport_1</transport_id>
+            </userTransports>
+
+            <useBuiltinTransports>false</useBuiltinTransports>
+
+        </rtps>
+    </participant>
+</profiles>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -31,7 +31,7 @@ namespace fastdds {
 namespace rtps {
 
 //! Default maximum message size
-constexpr uint32_t s_maximumMessageSize = 65500;
+constexpr uint32_t s_maximumMessageSize = 31000000;
 //! Default maximum initial peers range
 constexpr uint32_t s_maximumInitialPeersRange = 4;
 //! Default minimum socket buffer
