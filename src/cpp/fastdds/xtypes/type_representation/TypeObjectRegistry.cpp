@@ -290,8 +290,11 @@ const TypeObject TypeObjectRegistry::build_minimal_from_complete_type_object(
 const MinimalAliasType TypeObjectRegistry::build_minimal_from_complete_alias_type(
         const CompleteAliasType& complete_alias_type)
 {
-    static_cast<void>(complete_alias_type);
-    return MinimalAliasType();
+    MinimalAliasType minimal_alias_type;
+    // alias_flags: unused. No flags apply.
+    // header: empty. Available for future extension.
+    minimal_alias_type.body().common(complete_alias_type.body().common());
+    return minimal_alias_type;
 }
 
 const MinimalAnnotationType TypeObjectRegistry::build_minimal_from_complete_annotation_type(
