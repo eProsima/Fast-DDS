@@ -16,8 +16,13 @@
 
 #include <string>
 
+#include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
+
 #include <fastdds/dds/xtypes/type_representation/TypeObject.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObjectCdrAux.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
+#include <fastrtps/utils/md5.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -200,9 +205,27 @@ const TypeIdentifier TypeObjectRegistry::get_type_identifier(
         const TypeObject& type_object,
         uint32_t& type_object_serialized_size)
 {
-    static_cast<void>(type_object);
-    static_cast<void>(type_object_serialized_size);
-    return TypeIdentifier();
+    TypeIdentifier type_id;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t current_alignment {0};
+    eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
+        calculator.calculate_serialized_size(type_object, current_alignment)));
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::CdrVersion::XCDRv2);
+    ser << type_object;
+    type_object_serialized_size = static_cast<uint32_t>(ser.get_serialized_data_length());
+    EquivalenceHash equivalence_hash;
+    MD5 type_object_hash;
+    type_object_hash.update(reinterpret_cast<char*>(payload.data), type_object_serialized_size);
+    type_object_hash.finalize();
+    for (size_t i = 0; i < equivalence_hash.size(); i++)
+    {
+        equivalence_hash[i] = type_object_hash.digest[i];
+    }
+    type_id.equivalence_hash(equivalence_hash);
+    type_id._d(type_object._d());
+    return type_id;
 }
 
 const TypeObject TypeObjectRegistry::build_minimal_from_complete_type_object(
