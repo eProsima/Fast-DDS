@@ -20,6 +20,7 @@
 #include <fastcdr/Cdr.h>
 #include <fastcdr/CdrSizeCalculator.hpp>
 
+#include <fastdds/dds/xtypes/common.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectCdrAux.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
@@ -169,6 +170,14 @@ ReturnCode_t TypeObjectRegistry::get_type_identifiers(
         return ReturnCode_t::RETCODE_NO_DATA;
     }
     return ReturnCode_t::RETCODE_OK;
+}
+
+TypeObjectRegistry::TypeObjectRegistry()
+{
+    register_primitive_type_identifiers();
+/* TODO(jlbueno)
+    register_builtin_annotations_type_objects();
+*/
 }
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
@@ -495,6 +504,41 @@ const MinimalBitmaskType TypeObjectRegistry::build_minimal_from_complete_bitmask
     }
     minimal_bitmask_type.flag_seq(minimal_bitflag_sequence);
     return minimal_bitmask_type;
+}
+
+void TypeObjectRegistry::register_primitive_type_identifiers()
+{
+    TypeIdentifierPair type_ids;
+    type_ids.type_identifier1()._d(TK_BOOLEAN);
+    local_type_identifiers_.insert({boolean_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_BYTE);
+    local_type_identifiers_.insert({byte_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_INT16);
+    local_type_identifiers_.insert({int16_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_INT32);
+    local_type_identifiers_.insert({int32_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_INT64);
+    local_type_identifiers_.insert({int64_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_UINT16);
+    local_type_identifiers_.insert({uint16_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_UINT32);
+    local_type_identifiers_.insert({uint32_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_UINT64);
+    local_type_identifiers_.insert({uint64_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_FLOAT32);
+    local_type_identifiers_.insert({float32_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_FLOAT64);
+    local_type_identifiers_.insert({float64_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_FLOAT128);
+    local_type_identifiers_.insert({float128_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_INT8);
+    local_type_identifiers_.insert({int8_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_UINT8);
+    local_type_identifiers_.insert({uint8_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_CHAR8);
+    local_type_identifiers_.insert({char8_type_name, type_ids});
+    type_ids.type_identifier1()._d(TK_CHAR16);
+    local_type_identifiers_.insert({char16_type_name, type_ids});
 }
 
 } // xtypes
