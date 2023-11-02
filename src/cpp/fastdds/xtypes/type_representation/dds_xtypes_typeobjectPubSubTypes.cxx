@@ -23,7 +23,7 @@
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.h>
-#include "dds_xtypes_typeobjectCdrAux.hpp"
+#include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp>
 
 using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
