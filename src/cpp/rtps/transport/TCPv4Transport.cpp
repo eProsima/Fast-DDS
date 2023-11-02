@@ -96,6 +96,7 @@ TCPv4Transport::TCPv4Transport(
         if (interface_whitelist_.empty())
         {
             EPROSIMA_LOG_ERROR(TRANSPORT, "All whitelist interfaces were filtered out");
+            interface_whitelist_.emplace_back(ip::address_v4::from_string("192.0.2.0"));
         }
     }
 

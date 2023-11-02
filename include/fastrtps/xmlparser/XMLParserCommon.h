@@ -61,6 +61,7 @@ extern const char* SEND_BUFFER_SIZE;
 extern const char* TTL;
 extern const char* NON_BLOCKING_SEND;
 extern const char* WHITE_LIST;
+extern const char* INTERFACE_NAME;
 extern const char* MAX_MESSAGE_SIZE;
 extern const char* MAX_INITIAL_PEERS_RANGE;
 extern const char* KEEP_ALIVE_FREQUENCY;
@@ -215,7 +216,7 @@ extern const char* SECONDS;
 extern const char* NANOSECONDS;
 extern const char* SHARED;
 extern const char* EXCLUSIVE;
-extern const char* INTERFACE_NAME;
+
 /// QOS
 extern const char* DURABILITY;
 extern const char* DURABILITY_SRV;
