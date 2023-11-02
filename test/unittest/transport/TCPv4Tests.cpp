@@ -466,29 +466,18 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports_by_name)
     
     if (IPFinder::getIPs(&interfaces, false))
     {   
-        //Locator_t locator;
-
         eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
         std::regex filter("RTCP(?!_SEQ)");
         eprosima::fastdds::dds::Log::SetCategoryFilter(filter);
         TCPv4TransportDescriptor recvDescriptor;
-        std::cout<<"WHITELIST RECEIVER:  ";
-   
         recvDescriptor.interfaceWhiteList.emplace_back(interfaces[0].dev);
 
-        //IPLocator::setIPv4( locator,  &interfaces[0].name);
-
-        std::cout<<interfaces[0].dev<<"     "<<std::endl;
-       
         recvDescriptor.add_listener_port(g_default_port);
         TCPv4Transport receiveTransportUnderTest(recvDescriptor);
         receiveTransportUnderTest.init();
 
         TCPv4TransportDescriptor sendDescriptor;
-        std::cout<<"WHITELIST SENDER:  ";
-       
         sendDescriptor.interfaceWhiteList.emplace_back(interfaces[0].dev);
-        std::cout<<interfaces[0].dev<<"     "<<std::endl;
      
         TCPv4Transport sendTransportUnderTest(sendDescriptor);
         sendTransportUnderTest.init();
