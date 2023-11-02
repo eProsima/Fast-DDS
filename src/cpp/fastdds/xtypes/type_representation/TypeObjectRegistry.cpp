@@ -300,8 +300,21 @@ const MinimalAliasType TypeObjectRegistry::build_minimal_from_complete_alias_typ
 const MinimalAnnotationType TypeObjectRegistry::build_minimal_from_complete_annotation_type(
         const CompleteAnnotationType& complete_annotation_type)
 {
-    static_cast<void>(complete_annotation_type);
-    return MinimalAnnotationType();
+    MinimalAnnotationType minimal_annotation_type;
+    // annotation_flag: unused. No flags apply.
+    // header: empty. Available for future extension.
+    MinimalAnnotationParameterSeq minimal_annotation_parameter_sequence;
+    for (const CompleteAnnotationParameter& complete_annotation_parameter : complete_annotation_type.member_seq())
+    {
+        MinimalAnnotationParameter minimal_annotation_parameter;
+        minimal_annotation_parameter.common(complete_annotation_parameter.common());
+        minimal_annotation_parameter.name_hash(TypeObjectUtils::name_hash(
+            complete_annotation_parameter.name().c_str()));
+        minimal_annotation_parameter.default_value(complete_annotation_parameter.default_value());
+        minimal_annotation_parameter_sequence.push_back(minimal_annotation_parameter);
+    }
+    minimal_annotation_type.member_seq(minimal_annotation_parameter_sequence);
+    return minimal_annotation_type;
 }
 
 const MinimalStructType TypeObjectRegistry::build_minimal_from_complete_struct_type(
