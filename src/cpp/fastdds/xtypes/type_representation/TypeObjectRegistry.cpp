@@ -14,6 +14,7 @@
 
 #include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
+#include <exception>
 #include <string>
 
 #include <fastcdr/Cdr.h>
@@ -126,7 +127,7 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
 
 ReturnCode_t TypeObjectRegistry::get_type_objects(
         const std::string& type_name,
-        const TypeObjectPair& type_objects)
+        TypeObjectPair& type_objects)
 {
     static_cast<void>(type_name);
     static_cast<void>(type_objects);
@@ -135,11 +136,17 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
 
 ReturnCode_t TypeObjectRegistry::get_type_identifiers(
         const std::string& type_name,
-        const TypeIdentifierPair& type_identifiers)
+        TypeIdentifierPair& type_identifiers)
 {
-    static_cast<void>(type_name);
-    static_cast<void>(type_identifiers);
-    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
+    try
+    {
+        type_identifiers = local_type_identifiers_.at(type_name);
+    }
+    catch (std::exception& e)
+    {
+        return eprosima::fastdds::dds::RETCODE_NO_DATA;
+    }
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
