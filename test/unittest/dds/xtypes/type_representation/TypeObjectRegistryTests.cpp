@@ -77,6 +77,129 @@ TEST(TypeObjectRegistryTests, register_type_identifier)
             type_id));
 }
 
+// Test TypeObjectRegistry::get_type_objects
+TEST(TypeObjectRegistryTests, get_type_objects)
+{
+    TypeObjectPair type_objects;
+    EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects("test_name", type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(boolean_type_name,
+        type_objects));
+
+    // Builtin annotations
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(id_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(autoid_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(optional_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(position_annotation_name,
+        type_objects));
+/* TODO: pending implementation
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(value_annotation_name,
+        type_objects));
+*/
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(extensibility_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(final_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(appendable_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(mutable_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
+            must_understand_annotation_name, type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
+            default_literal_annotation_name, type_objects));
+/* TODO: pending implementation
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(default_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(range_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(min_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(max_annotation_name,
+        type_objects));
+*/
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(unit_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(bit_bound_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(external_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(nested_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(verbatim_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(service_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(oneway_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(ami_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(hashid_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
+            default_nested_annotation_name, type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
+            ignore_literal_names_annotation_name, type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(try_construct_annotation_name,
+        type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
+            non_serialized_annotation_name, type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
+            data_representation_annotation_name, type_objects));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(topic_annotation_name,
+        type_objects));
+
+    // User TypeObject
+    EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects("alias", type_objects));
+    TypeIdentifier alias_type_id;
+    alias_type_id._d(TK_BYTE);
+    CompleteAliasType complete_alias_type;
+    complete_alias_type.header().detail().type_name("alias_name");
+    complete_alias_type.body().common().related_type(alias_type_id);
+    CompleteTypeObject type_object;
+    type_object.alias_type(complete_alias_type);
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("alias", type_object));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects("alias", type_objects));
+    EXPECT_EQ(type_objects.complete_type_object, type_object);
+}
+
 // Test TypeObjectRegistry::get_type_identifiers
 TEST(TypeObjectRegistryTests, get_type_identifiers)
 {
@@ -295,7 +418,7 @@ TEST(TypeObjectRegistryTests, get_type_identifiers)
     alias_type_id._d(TK_BYTE);
     CompleteAliasType complete_alias_type;
     complete_alias_type.header().detail().type_name("alias_name");
-    complete_alias_type.body().common().related_type(type_id);
+    complete_alias_type.body().common().related_type(alias_type_id);
     CompleteTypeObject type_object;
     type_object.alias_type(complete_alias_type);
     ASSERT_EQ(ReturnCode_t::RETCODE_OK,
