@@ -207,11 +207,21 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
 
 ReturnCode_t TypeObjectRegistry::get_type_object(
         const TypeIdentifier& type_identifier,
-        TypeObjectPair& type_objects)
+        TypeObject& type_object)
 {
-    static_cast<void>(type_identifier);
-    static_cast<void>(type_objects);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    if (!TypeObjectUtils::is_direct_hash_type_identifier(type_identifier))
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+    try
+    {
+        type_object = type_registry_entries_.at(type_identifier).type_object_;
+    }
+    catch (std::exception& e)
+    {
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+    return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_information(
