@@ -340,8 +340,21 @@ const MinimalStructType TypeObjectRegistry::build_minimal_from_complete_struct_t
 const MinimalUnionType TypeObjectRegistry::build_minimal_from_complete_union_type(
         const CompleteUnionType& complete_union_type)
 {
-    static_cast<void>(complete_union_type);
-    return MinimalUnionType();
+    MinimalUnionType minimal_union_type;
+    minimal_union_type.union_flags(complete_union_type.union_flags());
+    // header: empty. Available for future extension.
+    minimal_union_type.discriminator().common(complete_union_type.discriminator().common());
+    MinimalUnionMemberSeq minimal_union_member_sequence;
+    for (const CompleteUnionMember& complete_union_member : complete_union_type.member_seq())
+    {
+        MinimalUnionMember minimal_union_member;
+        minimal_union_member.common(complete_union_member.common());
+        minimal_union_member.detail().name_hash(TypeObjectUtils::name_hash(
+            complete_union_member.detail().name().c_str()));
+        minimal_union_member_sequence.push_back(minimal_union_member);
+    }
+    minimal_union_type.member_seq(minimal_union_member_sequence);
+    return minimal_union_type;
 }
 
 const MinimalBitsetType TypeObjectRegistry::build_minimal_from_complete_bitset_type(
