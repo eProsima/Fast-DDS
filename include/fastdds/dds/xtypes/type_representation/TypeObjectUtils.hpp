@@ -2921,7 +2921,7 @@ protected:
      * @brief Check CompleteTypeObject consistency.
      *
      * @param[in] complete_type_object Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteTypeObject is not consistent.
      */
     static void complete_type_object_consistency(
