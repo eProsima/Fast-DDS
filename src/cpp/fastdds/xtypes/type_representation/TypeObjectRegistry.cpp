@@ -295,7 +295,11 @@ ReturnCode_t TypeObjectRegistry::get_type_object(
 {
     if (!TypeObjectUtils::is_direct_hash_type_identifier(type_identifier))
     {
+<<<<<<< HEAD
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
+=======
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+>>>>>>> 548f0711c (Refs #19837: TypeObjectRegistry::get_type_object implementation)
     }
     try
     {
@@ -303,9 +307,15 @@ ReturnCode_t TypeObjectRegistry::get_type_object(
     }
     catch (std::exception& e)
     {
+<<<<<<< HEAD
         return eprosima::fastdds::dds::RETCODE_NO_DATA;
     }
     return eprosima::fastdds::dds::RETCODE_OK;
+=======
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+    return ReturnCode_t::RETCODE_OK;
+>>>>>>> 548f0711c (Refs #19837: TypeObjectRegistry::get_type_object implementation)
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_information(
