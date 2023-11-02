@@ -21,7 +21,12 @@
 #include <fastcdr/CdrSizeCalculator.hpp>
 
 #include <fastdds/dds/xtypes/common.hpp>
+<<<<<<< HEAD
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
+=======
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObjectCdrAux.hpp>
+>>>>>>> 2dffdec8f (Refs #19837: TypeObjectRegistry constructor implementation. Register primitive TypeIdentifiers)
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <fastrtps/utils/md5.h>
 
@@ -239,6 +244,14 @@ TypeObjectRegistry::TypeObjectRegistry()
     }
     return ReturnCode_t::RETCODE_OK;
 >>>>>>> f2566a7b5 (Refs #19837: TypeObject::get_type_identifiers implementation)
+}
+
+TypeObjectRegistry::TypeObjectRegistry()
+{
+    register_primitive_type_identifiers();
+/* TODO(jlbueno)
+    register_builtin_annotations_type_objects();
+*/
 }
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
@@ -811,6 +824,7 @@ void TypeObjectRegistry::register_primitive_type_identifiers()
     local_type_identifiers_.insert({char8_type_name, type_ids});
     type_ids.type_identifier1()._d(TK_CHAR16);
     local_type_identifiers_.insert({char16_type_name, type_ids});
+<<<<<<< HEAD
 =======
     static_cast<void>(type_object);
     static_cast<void>(type_object_serialized_size);
@@ -823,6 +837,8 @@ const TypeObject TypeObjectRegistry::build_minimal_from_complete_type_object(
 {
     static_cast<void>(complete_type_object);
     return TypeObject();
+=======
+>>>>>>> 2dffdec8f (Refs #19837: TypeObjectRegistry constructor implementation. Register primitive TypeIdentifiers)
 }
 
 } // xtypes

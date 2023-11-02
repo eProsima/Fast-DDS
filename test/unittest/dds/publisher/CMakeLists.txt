@@ -101,9 +101,20 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TypeSupport.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/utils/QosConverters.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/Exception.cpp
+<<<<<<< HEAD
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectUtils.cpp
+=======
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObject.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectUtils.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/subscriber/SubscriberHistory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/DataSharing/DataSharingListener.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/DataSharing/DataSharingNotification.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/DataSharing/DataSharingPayloadPool.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/RTPSDomain.cpp
+>>>>>>> 2dffdec8f (Refs #19837: TypeObjectRegistry constructor implementation. Register primitive TypeIdentifiers)
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/BuiltinProtocols.cpp
