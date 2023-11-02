@@ -292,9 +292,9 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistUnicast)
     reader.block_for_all();
 }
 
-// Setting the interface whitelist by the interface names, 
+// Setting the interface whitelist by the interface names,
 // check if the connection is established anyways.
-// All available interfaces case for both publisher and subscriber 
+// All available interfaces case for both publisher and subscriber
 TEST_P(NetworkConfig, PubSubInterfaceWhitelistName)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -303,7 +303,7 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistName)
     std::vector<IPFinder::info_IP> interfaces;
     use_udpv4 ? GetIP4s(interfaces) : GetIP6s(interfaces);
 
-    
+
     for (const auto& interface : interfaces)
     {
         descriptor_->interfaceWhiteList.push_back(interface.dev);
@@ -333,7 +333,7 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistName)
     writer.send(data);
     ASSERT_TRUE(data.empty());
     reader.block_for_all();
-    
+
 }
 
 // Allow to configure different whitelist for pub and sub using interface names
@@ -395,7 +395,7 @@ void asymmetric_whitelist_name_test(
     reader.block_for_all();
 }
 
-// Setting the interface whitelist by the interface names in one of the endpoints, 
+// Setting the interface whitelist by the interface names in one of the endpoints,
 // but not in the other, check if the connection is established anyways.
 // All available interfaces case.
 TEST_P(NetworkConfig, PubSubAsymmetricInterfaceWhitelistAllInterfacesName)
@@ -405,8 +405,8 @@ TEST_P(NetworkConfig, PubSubAsymmetricInterfaceWhitelistAllInterfacesName)
 
     std::vector<IPFinder::info_IP> no_interfaces;
     std::vector<IPFinder::info_IP> all_interfaces_name;
-    GetIP4s(all_interfaces_name,false);
-    
+    GetIP4s(all_interfaces_name, false);
+
     {
         // Whitelist only in publisher
         asymmetric_whitelist_name_test(all_interfaces_name, no_interfaces);
@@ -418,9 +418,9 @@ TEST_P(NetworkConfig, PubSubAsymmetricInterfaceWhitelistAllInterfacesName)
     }
 }
 
-// Setting the interface whitelist by the interface names in one of the endpoints, 
+// Setting the interface whitelist by the interface names in one of the endpoints,
 // but not in the other, check if the connection is NOT established anyways.
-// Different whitelist. 
+// Different whitelist.
 TEST_P(NetworkConfig, PubSubInterfaceWhitelistNameNoConnection)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -428,7 +428,7 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistNameNoConnection)
 
     std::shared_ptr<UDPTransportDescriptor> pub_upv4_descriptor = std::make_shared<UDPv4TransportDescriptor>();
     std::vector<IPFinder::info_IP> pub_interfaces;
-    GetIP4s(pub_interfaces,false);
+    GetIP4s(pub_interfaces, false);
     // include the interfaces in the transport descriptor
     for (const auto& interface : pub_interfaces)
     {
