@@ -45,7 +45,7 @@ TEST(TypeObjectRegistryTests, register_type_object)
     type_object.alias_type(complete_alias_type);
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
         DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("", type_object));
-    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
         DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("alias", type_object));
     complete_alias_type.header().detail().type_name("other_name");
     type_object.alias_type(complete_alias_type);
