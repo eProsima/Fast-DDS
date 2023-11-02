@@ -637,7 +637,7 @@ void TypeObjectUtils::add_applied_annotation_parameter(
         const AppliedAnnotationParameter& param)
 {
 #if !defined(NDEBUG)
-    for (AppliedAnnotationParameter parameter : param_seq)
+    for (const AppliedAnnotationParameter& parameter : param_seq)
     {
         if (parameter.paramname_hash() == param.paramname_hash())
         {
@@ -675,7 +675,7 @@ void TypeObjectUtils::add_applied_annotation(
 {
 #if !defined(NDEBUG)
     applied_annotation_consistency(ann_custom);
-    for (AppliedAnnotation annotation : ann_custom_seq)
+    for (const AppliedAnnotation& annotation : ann_custom_seq)
     {
         if (annotation.annotation_typeid() == ann_custom.annotation_typeid())
         {
@@ -799,7 +799,7 @@ void TypeObjectUtils::add_complete_struct_member(
 {
 #if !defined(NDEBUG)
     complete_struct_member_consistency(member);
-    for (CompleteStructMember struct_member : member_seq)
+    for (const CompleteStructMember& struct_member : member_seq)
     {
         if (struct_member.common().member_id() == member.common().member_id() ||
                 struct_member.detail().name() == member.detail().name())
@@ -955,7 +955,7 @@ void TypeObjectUtils::add_complete_union_member(
         case_labels.insert(label);
     }
     size_t case_labels_length = member.common().label_seq().size();
-    for (CompleteUnionMember union_member : complete_union_member_seq)
+    for (const CompleteUnionMember& union_member : complete_union_member_seq)
     {
         if (union_member.common().member_id() == member.common().member_id() ||
                 union_member.detail().name() == member.detail().name())
@@ -1089,7 +1089,7 @@ void TypeObjectUtils::add_complete_annotation_parameter(
 {
 #if !defined(NDEBUG)
     complete_annotation_parameter_consistency(param);
-    for (CompleteAnnotationParameter ann_param : sequence)
+    for (const CompleteAnnotationParameter& ann_param : sequence)
     {
         if (ann_param.name() == param.name())
         {
@@ -1377,7 +1377,7 @@ void TypeObjectUtils::add_complete_enumerated_literal(
 {
 #if !defined(NDEBUG)
     complete_enumerated_literal_consistency(enum_literal);
-    for (CompleteEnumeratedLiteral literal : sequence)
+    for (const CompleteEnumeratedLiteral& literal : sequence)
     {
         if (literal.detail().name() == enum_literal.detail().name() ||
                 literal.common().value() == enum_literal.common().value())
@@ -1475,7 +1475,7 @@ void TypeObjectUtils::add_complete_bitflag(
 {
 #if !defined(NDEBUG)
     complete_bitflag_consistency(bitflag);
-    for (CompleteBitflag bitflag_elem : sequence)
+    for (const CompleteBitflag& bitflag_elem : sequence)
     {
         if (bitflag_elem.common().position() == bitflag.common().position() ||
                 bitflag_elem.detail().name() == bitflag.detail().name())
@@ -1547,7 +1547,7 @@ void TypeObjectUtils::add_complete_bitfield(
 {
 #if !defined(NDEBUG)
     complete_bitfield_consistency(bitfield);
-    for (CompleteBitfield bitfield_elem : sequence)
+    for (const CompleteBitfield& bitfield_elem : sequence)
     {
         size_t bitfield_elem_init = bitfield_elem.common().position();
         size_t bitfield_elem_end = bitfield_elem_init + bitfield_elem.common().bitcount();
