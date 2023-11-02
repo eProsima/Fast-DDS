@@ -3071,12 +3071,8 @@ void TypeObjectUtils::bitfield_holder_type_consistency(
     {
         throw InvalidArgumentError("Inconsistent bitfield holder type");
     }
-<<<<<<< HEAD
     if ((holds_1_bit && bitcount > 1) || (holds_8_bits && bitcount > 8) || (holds_16_bits && bitcount > 16) ||
             (holds_32_bits && bitcount > 32))
-=======
-    if ((bitcount < 9 && bitcount > 1) && holder_type == TK_BOOLEAN)
->>>>>>> 25fdc1e18 (Refs #19837: test fixes)
     {
         throw InvalidArgumentError("Bitcount exceeds the size of the holder type");
     }
@@ -3184,11 +3180,7 @@ void TypeObjectUtils::complete_type_object_consistency(
     }
 }
 
-<<<<<<< HEAD
 } // xtypes
-=======
-} // xtypes1_3
->>>>>>> a4b8fe2ae (Refs #19837: add TypeObjectUtils::complete_type_object_consistency)
 } // dds
 } // fastdds
 } // eprosima
