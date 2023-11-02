@@ -429,8 +429,20 @@ const MinimalEnumeratedType TypeObjectRegistry::build_minimal_from_complete_enum
 const MinimalBitmaskType TypeObjectRegistry::build_minimal_from_complete_bitmask_type(
         const CompleteBitmaskType& complete_bitmask_type)
 {
-    static_cast<void>(complete_bitmask_type);
-    return MinimalBitmaskType();
+    MinimalBitmaskType minimal_bitmask_type;
+    // bitmask_flags: unused. No flags apply.
+    minimal_bitmask_type.header().common(complete_bitmask_type.header().common());
+    MinimalBitflagSeq minimal_bitflag_sequence;
+    for (const CompleteBitflag& complete_bitflag : complete_bitmask_type.flag_seq())
+    {
+        MinimalBitflag minimal_bitflag;
+        minimal_bitflag.common(complete_bitflag.common());
+        minimal_bitflag.detail().name_hash(TypeObjectUtils::name_hash(
+            complete_bitflag.detail().name().c_str()));
+        minimal_bitflag_sequence.push_back(minimal_bitflag);
+    }
+    minimal_bitmask_type.flag_seq(minimal_bitflag_sequence);
+    return minimal_bitmask_type;
 }
 
 } // xtypes
