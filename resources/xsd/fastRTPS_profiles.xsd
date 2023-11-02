@@ -891,6 +891,7 @@
                                 <xs:union memberTypes="ipv4Address ipv6Address"/>
                             </xs:simpleType>
                         </xs:element>
+                        <xs:element name="interface_name" type="string" minOccurs="0" maxOccurs="unbounded"/> 
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
