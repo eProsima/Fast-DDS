@@ -399,8 +399,12 @@ const MinimalArrayType TypeObjectRegistry::build_minimal_from_complete_array_typ
 const MinimalMapType TypeObjectRegistry::build_minimal_from_complete_map_type(
         const CompleteMapType& complete_map_type)
 {
-    static_cast<void>(complete_map_type);
-    return MinimalMapType();
+    MinimalMapType minimal_map_type;
+    // collection_flag: unused. No flags apply.
+    minimal_map_type.header().common(complete_map_type.header().common());
+    minimal_map_type.key().common(complete_map_type.key().common());
+    minimal_map_type.element().common(complete_map_type.element().common());
+    return minimal_map_type;
 }
 
 const MinimalEnumeratedType TypeObjectRegistry::build_minimal_from_complete_enumerated_type(
