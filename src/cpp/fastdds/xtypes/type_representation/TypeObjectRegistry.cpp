@@ -129,9 +129,31 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
         const std::string& type_name,
         TypeObjectPair& type_objects)
 {
-    static_cast<void>(type_name);
-    static_cast<void>(type_objects);
-    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
+    TypeIdentifierPair type_ids;
+    ReturnCode_t ret_code = get_type_identifiers(type_name, type_ids);
+    if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
+    {
+        if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
+            !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
+        {
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+        }
+        if (EK_MINIMAL == type_ids.type_identifier1()._d())
+        {
+            type_objects.minimal_type_object =
+                type_registry_entries_.at(type_ids.type_identifier1()).type_object_.minimal();
+            type_objects.complete_type_object =
+                type_registry_entries_.at(type_ids.type_identifier2()).type_object_.complete();
+        }
+        else
+        {
+            type_objects.complete_type_object =
+                type_registry_entries_.at(type_ids.type_identifier1()).type_object_.complete();
+            type_objects.minimal_type_object =
+                type_registry_entries_.at(type_ids.type_identifier2()).type_object_.minimal();
+        }
+    }
+    return ret_code;
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_identifiers(
