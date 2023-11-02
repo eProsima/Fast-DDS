@@ -389,8 +389,11 @@ const MinimalSequenceType TypeObjectRegistry::build_minimal_from_complete_sequen
 const MinimalArrayType TypeObjectRegistry::build_minimal_from_complete_array_type(
         const CompleteArrayType& complete_array_type)
 {
-    static_cast<void>(complete_array_type);
-    return MinimalArrayType();
+    MinimalArrayType minimal_array_type;
+    // collection_flag: unused. No flags apply.
+    minimal_array_type.header().common(complete_array_type.header().common());
+    minimal_array_type.element().common(complete_array_type.element().common());
+    return minimal_array_type;
 }
 
 const MinimalMapType TypeObjectRegistry::build_minimal_from_complete_map_type(
