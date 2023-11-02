@@ -379,8 +379,11 @@ const MinimalBitsetType TypeObjectRegistry::build_minimal_from_complete_bitset_t
 const MinimalSequenceType TypeObjectRegistry::build_minimal_from_complete_sequence_type(
         const CompleteSequenceType& complete_sequence_type)
 {
-    static_cast<void>(complete_sequence_type);
-    return MinimalSequenceType();
+    MinimalSequenceType minimal_sequence_type;
+    // collection_flag: unused. No flags apply.
+    minimal_sequence_type.header().common(complete_sequence_type.header().common());
+    minimal_sequence_type.element().common(complete_sequence_type.element().common());
+    return minimal_sequence_type;
 }
 
 const MinimalArrayType TypeObjectRegistry::build_minimal_from_complete_array_type(
