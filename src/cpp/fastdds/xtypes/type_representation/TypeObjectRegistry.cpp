@@ -186,16 +186,20 @@ ReturnCode_t TypeObjectRegistry::get_type_identifiers(
         const std::string& type_name,
         TypeIdentifierPair& type_identifiers)
 {
+<<<<<<< HEAD
     if (type_name.empty())
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
     }
+=======
+>>>>>>> f2566a7b5 (Refs #19837: TypeObject::get_type_identifiers implementation)
     try
     {
         type_identifiers = local_type_identifiers_.at(type_name);
     }
     catch (std::exception& e)
     {
+<<<<<<< HEAD
         return eprosima::fastdds::dds::RETCODE_NO_DATA;
     }
     return eprosima::fastdds::dds::RETCODE_OK;
@@ -207,6 +211,11 @@ TypeObjectRegistry::TypeObjectRegistry()
     /* TODO(jlbueno)
         register_builtin_annotations_type_objects();
      */
+=======
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+    return ReturnCode_t::RETCODE_OK;
+>>>>>>> f2566a7b5 (Refs #19837: TypeObject::get_type_identifiers implementation)
 }
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
