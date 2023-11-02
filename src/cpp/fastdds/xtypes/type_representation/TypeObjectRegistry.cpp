@@ -208,8 +208,153 @@ const TypeIdentifier TypeObjectRegistry::get_type_identifier(
 const TypeObject TypeObjectRegistry::build_minimal_from_complete_type_object(
         const CompleteTypeObject& complete_type_object)
 {
-    static_cast<void>(complete_type_object);
-    return TypeObject();
+    MinimalTypeObject minimal_type_object;
+    switch (complete_type_object._d())
+    {
+        case TK_ALIAS:
+        {
+            MinimalAliasType minimal_alias_type = build_minimal_from_complete_alias_type(
+                complete_type_object.alias_type());
+            minimal_type_object.alias_type(minimal_alias_type);
+            break;
+        }
+        case TK_ANNOTATION:
+        {
+            MinimalAnnotationType minimal_annotation_type = build_minimal_from_complete_annotation_type(
+                complete_type_object.annotation_type());
+            minimal_type_object.annotation_type(minimal_annotation_type);
+            break;
+        }
+        case TK_STRUCTURE:
+        {
+            MinimalStructType minimal_struct_type = build_minimal_from_complete_struct_type(
+                complete_type_object.struct_type());
+            minimal_type_object.struct_type(minimal_struct_type);
+            break;
+        }
+        case TK_UNION:
+        {
+            MinimalUnionType minimal_union_type = build_minimal_from_complete_union_type(
+                complete_type_object.union_type());
+            minimal_type_object.union_type(minimal_union_type);
+            break;
+        }
+        case TK_BITSET:
+        {
+            MinimalBitsetType minimal_bitset_type = build_minimal_from_complete_bitset_type(
+                complete_type_object.bitset_type());
+            minimal_type_object.bitset_type(minimal_bitset_type);
+            break;
+        }
+        case TK_SEQUENCE:
+        {
+            MinimalSequenceType minimal_sequence_type = build_minimal_from_complete_sequence_type(
+                complete_type_object.sequence_type());
+            minimal_type_object.sequence_type(minimal_sequence_type);
+            break;
+        }
+        case TK_ARRAY:
+        {
+            MinimalArrayType minimal_array_type = build_minimal_from_complete_array_type(
+                complete_type_object.array_type());
+            minimal_type_object.array_type(minimal_array_type);
+            break;
+        }
+        case TK_MAP:
+        {
+            MinimalMapType minimal_map_type = build_minimal_from_complete_map_type(
+                complete_type_object.map_type());
+            minimal_type_object.map_type(minimal_map_type);
+            break;
+        }
+        case TK_ENUM:
+        {
+            MinimalEnumeratedType minimal_enumerated_type = build_minimal_from_complete_enumerated_type(
+                complete_type_object.enumerated_type());
+            minimal_type_object.enumerated_type(minimal_enumerated_type);
+            break;
+        }
+        case TK_BITMASK:
+        {
+            MinimalBitmaskType minimal_bitmask_type = build_minimal_from_complete_bitmask_type(
+                complete_type_object.bitmask_type());
+            minimal_type_object.bitmask_type(minimal_bitmask_type);
+            break;
+        }
+    }
+    TypeObject type_object;
+    type_object.minimal(minimal_type_object);
+    return type_object;
+}
+
+const MinimalAliasType TypeObjectRegistry::build_minimal_from_complete_alias_type(
+        const CompleteAliasType& complete_alias_type)
+{
+    static_cast<void>(complete_alias_type);
+    return MinimalAliasType();
+}
+
+const MinimalAnnotationType TypeObjectRegistry::build_minimal_from_complete_annotation_type(
+        const CompleteAnnotationType& complete_annotation_type)
+{
+    static_cast<void>(complete_annotation_type);
+    return MinimalAnnotationType();
+}
+
+const MinimalStructType TypeObjectRegistry::build_minimal_from_complete_struct_type(
+        const CompleteStructType& complete_struct_type)
+{
+    static_cast<void>(complete_struct_type);
+    return MinimalStructType();
+}
+
+const MinimalUnionType TypeObjectRegistry::build_minimal_from_complete_union_type(
+        const CompleteUnionType& complete_union_type)
+{
+    static_cast<void>(complete_union_type);
+    return MinimalUnionType();
+}
+
+const MinimalBitsetType TypeObjectRegistry::build_minimal_from_complete_bitset_type(
+        const CompleteBitsetType& complete_bitset_type)
+{
+    static_cast<void>(complete_bitset_type);
+    return MinimalBitsetType();
+}
+
+const MinimalSequenceType TypeObjectRegistry::build_minimal_from_complete_sequence_type(
+        const CompleteSequenceType& complete_sequence_type)
+{
+    static_cast<void>(complete_sequence_type);
+    return MinimalSequenceType();
+}
+
+const MinimalArrayType TypeObjectRegistry::build_minimal_from_complete_array_type(
+        const CompleteArrayType& complete_array_type)
+{
+    static_cast<void>(complete_array_type);
+    return MinimalArrayType();
+}
+
+const MinimalMapType TypeObjectRegistry::build_minimal_from_complete_map_type(
+        const CompleteMapType& complete_map_type)
+{
+    static_cast<void>(complete_map_type);
+    return MinimalMapType();
+}
+
+const MinimalEnumeratedType TypeObjectRegistry::build_minimal_from_complete_enumerated_type(
+        const CompleteEnumeratedType& complete_enumerated_type)
+{
+    static_cast<void>(complete_enumerated_type);
+    return MinimalEnumeratedType();
+}
+
+const MinimalBitmaskType TypeObjectRegistry::build_minimal_from_complete_bitmask_type(
+        const CompleteBitmaskType& complete_bitmask_type)
+{
+    static_cast<void>(complete_bitmask_type);
+    return MinimalBitmaskType();
 }
 
 } // xtypes

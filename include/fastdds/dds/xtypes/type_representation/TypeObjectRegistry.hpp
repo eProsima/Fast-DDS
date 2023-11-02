@@ -275,15 +275,103 @@ protected:
             uint32_t& type_object_serialized_size);
 
     /**
-     * @brief Build Minimal TypeObject given a Complete TypeObject.
+     * @brief Build minimal TypeObject given a CompleteTypeObject.
      *
-     * @param[in] complete_type_object Complete TypeObject.
-     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError if the given CompleteTypeObject is
-     *            inconsistent (only in Debug build mode).
-     * @return const Minimal TypeObject instance.
+     * @param[in] complete_type_object CompleteTypeObject.
+     * @return const minimal TypeObject instance.
      */
     const TypeObject build_minimal_from_complete_type_object(
             const CompleteTypeObject& complete_type_object);
+
+    /**
+     * @brief Build MinimalAliasType given a CompleteAliasType.
+     *
+     * @param[in] complete_alias_type CompleteAliasType.
+     * @return const MinimalAliasType instance.
+     */
+    const MinimalAliasType build_minimal_from_complete_alias_type(
+            const CompleteAliasType& complete_alias_type);
+
+    /**
+     * @brief Build MinimalAnnotationType given a CompleteAnnotationType.
+     *
+     * @param[in] complete_annotation_type CompleteAnnotationType.
+     * @return const MinimalAnnotationType instance.
+     */
+    const MinimalAnnotationType build_minimal_from_complete_annotation_type(
+            const CompleteAnnotationType& complete_annotation_type);
+
+    /**
+     * @brief Build MinimalStructType given a CompleteStructType.
+     *
+     * @param[in] complete_struct_type CompleteStructType.
+     * @return const MinimalStructType instance.
+     */
+    const MinimalStructType build_minimal_from_complete_struct_type(
+            const CompleteStructType& complete_struct_type);
+
+    /**
+     * @brief Build MinimalUnionType given a CompleteUnionType.
+     *
+     * @param[in] complete_union_type CompleteUnionType.
+     * @return const MinimalUnionType instance.
+     */
+    const MinimalUnionType build_minimal_from_complete_union_type(
+            const CompleteUnionType& complete_union_type);
+
+    /**
+     * @brief Build MinimalBitsetType given a CompleteBitsetType.
+     *
+     * @param[in] complete_bitset_type CompleteBitsetType.
+     * @return const MinimalBitsetType instance.
+     */
+    const MinimalBitsetType build_minimal_from_complete_bitset_type(
+            const CompleteBitsetType& complete_bitset_type);
+
+    /**
+     * @brief Build MinimalSequenceType given a CompleteSequenceType.
+     *
+     * @param[in] complete_sequence_type CompleteSequenceType.
+     * @return const MinimalSequenceType instance.
+     */
+    const MinimalSequenceType build_minimal_from_complete_sequence_type(
+            const CompleteSequenceType& complete_sequence_type);
+
+    /**
+     * @brief Build MinimalArrayType given a CompleteArrayType.
+     *
+     * @param[in] complete_array_type CompleteArrayType.
+     * @return const MinimalArrayType instance.
+     */
+    const MinimalArrayType build_minimal_from_complete_array_type(
+            const CompleteArrayType& complete_array_type);
+
+    /**
+     * @brief Build MinimalMapType given a CompleteMapType.
+     *
+     * @param[in] complete_map_type CompleteMapType.
+     * @return const MinimalMapType instance.
+     */
+    const MinimalMapType build_minimal_from_complete_map_type(
+            const CompleteMapType& complete_map_type);
+
+    /**
+     * @brief Build MinimalEnumeratedType given a CompleteEnumeratedType.
+     *
+     * @param[in] complete_enumerated_type CompleteEnumeratedType.
+     * @return const MinimalEnumeratedType instance.
+     */
+    const MinimalEnumeratedType build_minimal_from_complete_enumerated_type(
+            const CompleteEnumeratedType& complete_enumerated_type);
+
+    /**
+     * @brief Build MinimalBitmaskType given a CompleteBitmaskType.
+     *
+     * @param[in] complete_bitmask_type CompleteBitmaskType.
+     * @return const MinimalBitmaskType instance.
+     */
+    const MinimalBitmaskType build_minimal_from_complete_bitmask_type(
+            const CompleteBitmaskType& complete_bitmask_type);
 
     // Collection of local TypeIdentifiers hashed by type_name.
     // TypeIdentifierPair contains both the minimal and complete TypeObject TypeIdentifiers.
