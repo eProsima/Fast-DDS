@@ -183,9 +183,25 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
         const TypeIdentifier& type_identifier,
         const TypeObject& type_object)
 {
-    static_cast<void>(type_identifier);
-    static_cast<void>(type_object);
-    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
+    uint32_t type_object_serialized_size = 0;
+    TypeObject minimal_type_object;
+    if (type_identifier._d() != type_object._d() ||
+        type_identifier != get_type_identifier(type_object, type_object_serialized_size))
+    {
+        return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
+    }
+    if (EK_COMPLETE == type_object._d())
+    {
+        TypeRegistryEntry entry;
+        entry.type_object_ = build_minimal_from_complete_type_object(type_object.complete());
+        TypeIdentifier minimal_type_id = get_type_identifier(entry.type_object_, entry.type_object_serialized_size_);
+        type_registry_entries_.insert({minimal_type_id, entry});
+    }
+    TypeRegistryEntry entry;
+    entry.type_object_ = type_object;
+    entry.type_object_serialized_size_ = type_object_serialized_size;
+    type_registry_entries_.insert({type_identifier, entry});
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_object(

@@ -72,7 +72,7 @@ struct TypeRegistryEntry
     // TypeObject
     TypeObject type_object_;
     // TypeObject serialized size
-    uint32_t type_object_serialized_size_;
+    uint32_t type_object_serialized_size_ {0};
 
     bool operator !=(
         const TypeRegistryEntry& entry);
@@ -173,7 +173,7 @@ protected:
 
     /**
      * @brief Register a remote TypeObject.
-     *        This auxiliary method can might register only the minimal TypeObject and TypeIdentifier or register both
+     *        This auxiliary method might register only the minimal TypeObject and TypeIdentifier or register both
      *        TypeObjects constructing the minimal from the complete TypeObject information.
      *
      * @pre TypeIdentifier discriminator must match TypeObject discriminator.
@@ -184,7 +184,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK if correctly registered.
      *                      RETCODE_PRECONDITION_NOT_MET if the discriminators differ.
      *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not consistent with the given
-     *                      TypeObject (only in Debug build mode).
+     *                      TypeObject.
      */
     ReturnCode_t register_type_object(
             const TypeIdentifier& type_identifier,
