@@ -151,6 +151,7 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
         const std::string& type_name,
         TypeObjectPair& type_objects)
 {
+<<<<<<< HEAD
     if (type_name.empty())
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
@@ -163,20 +164,42 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
                 !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
         {
             return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+=======
+    TypeIdentifierPair type_ids;
+    ReturnCode_t ret_code = get_type_identifiers(type_name, type_ids);
+    if (ReturnCode_t::RETCODE_OK == ret_code)
+    {
+        if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
+            !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
+        {
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+>>>>>>> 4eed34295 (Refs #19837: TypeObjectRegistry::get_type_objects implementation)
         }
         if (EK_MINIMAL == type_ids.type_identifier1()._d())
         {
             type_objects.minimal_type_object =
+<<<<<<< HEAD
                     type_registry_entries_.at(type_ids.type_identifier1()).type_object_.minimal();
             type_objects.complete_type_object =
                     type_registry_entries_.at(type_ids.type_identifier2()).type_object_.complete();
+=======
+                type_registry_entries_.at(type_ids.type_identifier1()).type_object_.minimal();
+            type_objects.complete_type_object =
+                type_registry_entries_.at(type_ids.type_identifier2()).type_object_.complete();
+>>>>>>> 4eed34295 (Refs #19837: TypeObjectRegistry::get_type_objects implementation)
         }
         else
         {
             type_objects.complete_type_object =
+<<<<<<< HEAD
                     type_registry_entries_.at(type_ids.type_identifier1()).type_object_.complete();
             type_objects.minimal_type_object =
                     type_registry_entries_.at(type_ids.type_identifier2()).type_object_.minimal();
+=======
+                type_registry_entries_.at(type_ids.type_identifier1()).type_object_.complete();
+            type_objects.minimal_type_object =
+                type_registry_entries_.at(type_ids.type_identifier2()).type_object_.minimal();
+>>>>>>> 4eed34295 (Refs #19837: TypeObjectRegistry::get_type_objects implementation)
         }
     }
     return ret_code;
