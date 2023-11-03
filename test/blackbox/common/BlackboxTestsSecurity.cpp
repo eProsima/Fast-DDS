@@ -3273,13 +3273,13 @@ TEST_F(SecurityPkcs, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
     }
 }
 
-static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(
+static void CommonPermissionsConfigure(
         PubSubReader<HelloWorldPubSubType>& reader,
         PubSubWriter<HelloWorldPubSubType>& writer,
-        const std::string& governance_file)
+        const std::string& governance_file,
+        const std::string& permissions_file)
 {
-    PropertyPolicy pub_property_policy, sub_property_policy;
-
+    PropertyPolicy sub_property_policy;
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
             "builtin.PKI-DH"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
@@ -3297,14 +3297,10 @@ static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation
     sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
             "file://" + std::string(certs_path) + "/" + governance_file));
     sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-            "file://" + std::string(certs_path) + "/permissions.smime"));
+            "file://" + std::string(certs_path) + "/" + permissions_file));
+    reader.property_policy(sub_property_policy);
 
-    reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
+    PropertyPolicy pub_property_policy;
     pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
             "builtin.PKI-DH"));
     pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
@@ -3322,11 +3318,21 @@ static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation
     pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
             "file://" + std::string(certs_path) + "/" + governance_file));
     pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-            "file://" + std::string(certs_path) + "/permissions.smime"));
+            "file://" + std::string(certs_path) + "/" + permissions_file));
+    writer.property_policy(pub_property_policy);
+}
 
-    writer.history_depth(10).
-            property_policy(pub_property_policy).init();
+static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        const std::string& governance_file)
+{
+    CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
+    reader.history_depth(10).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_depth(10).init();
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for authorization
@@ -4374,6 +4380,126 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST(Security, MaliciousHeartbeatIgnore)
+{
+    PubSubWriter<HelloWorldPubSubType> writer("HelloWorldTopic_MaliciousHeartbeatIgnore");
+    PubSubReader<HelloWorldPubSubType> reader("HelloWorldTopic_MaliciousHeartbeatIgnore");
+
+    struct MaliciousHeartbeat
+    {
+        std::array<char, 4> rtps_id{{'R', 'T', 'P', 'S'}};
+        std::array<uint8_t, 2> protocol_version{{2, 3}};
+        std::array<uint8_t, 2> vendor_id{{0x01, 0x0F}};
+        GuidPrefix_t sender_prefix;
+
+        uint8_t submessage_id = 0x07;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+        uint8_t flags = 0;
+#else
+        uint8_t flags = 0x01;
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+        uint16_t submessage_length = 4 + 4 + 8 + 8 + 4;
+        EntityId_t reader_id{};
+        EntityId_t writer_id{};
+        SequenceNumber_t first_sn{};
+        SequenceNumber_t last_sn{};
+        int32_t count = 0;
+    };
+
+    // Set custom transport on both participants
+    auto transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    std::atomic<bool> avoid_sec_submessages{false};
+    transport->sub_messages_filter_ = [&avoid_sec_submessages](CDRMessage_t& msg) -> bool
+            {
+                return avoid_sec_submessages.load() && (0x30 == (msg.buffer[msg.pos] & 0xF0));
+            };
+
+    struct FakeMsg
+    {
+        asio::io_service service;
+        asio::ip::udp::socket socket;
+
+        FakeMsg()
+            : service()
+            , socket(service)
+        {
+            socket.open(asio::ip::udp::v4());
+        }
+
+        void send(
+                const CDRMessage_t& msg,
+                const Locator_t& destination)
+        {
+            std::string addr = IPLocator::toIPv4string(destination);
+            unsigned short port = static_cast<unsigned short>(destination.port);
+            auto remote = asio::ip::udp::endpoint(asio::ip::address::from_string(addr), port);
+            asio::error_code ec;
+
+            socket.send_to(asio::buffer(msg.buffer, msg.length), remote, 0, ec);
+        }
+
+    };
+    FakeMsg fake_msg;
+
+    writer.disable_builtin_transport().add_user_transport_to_pparams(transport);
+    reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
+
+    // Set custom reader locator so we can send malicious data to a known location
+    Locator_t reader_locator;
+    ASSERT_TRUE(IPLocator::setIPv4(reader_locator, "127.0.0.1"));
+    reader_locator.port = 7000;
+    reader.add_to_unicast_locator_list("127.0.0.1", 7000);
+
+    // Set common QoS
+    reader.history_depth(10).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    writer.history_depth(10).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+
+    // Configure security
+    const std::string governance_file("governance_helloworld_all_enable.smime");
+    const std::string permissions_file("permissions_helloworld.smime");
+    CommonPermissionsConfigure(reader, writer, governance_file, permissions_file);
+
+    // Initialize and wait for discovery
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    // Disable secure submessages and send data
+    avoid_sec_submessages.store(true);
+    auto data = default_helloworld_data_generator();
+    reader.startReception(data);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    // Send malicious heartbeat
+    {
+        auto writer_guid = writer.datawriter_guid();
+
+        MaliciousHeartbeat hb{};
+        hb.sender_prefix = writer_guid.guidPrefix;
+        hb.writer_id = writer_guid.entityId;
+        hb.reader_id = EntityId_t::unknown();
+        hb.first_sn.low = 100;
+        hb.last_sn.low = 100;
+        hb.count = 100;
+
+        CDRMessage_t msg(0);
+        uint32_t msg_len = static_cast<uint32_t>(sizeof(hb));
+        msg.init(reinterpret_cast<octet*>(&hb), msg_len);
+        msg.length = msg_len;
+        msg.pos = msg_len;
+        fake_msg.send(msg, reader_locator);
+    }
+
+    // Enable secure submessages
+    avoid_sec_submessages.store(false);
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
 }
 
 void blackbox_security_init()

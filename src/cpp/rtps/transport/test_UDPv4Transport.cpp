@@ -57,6 +57,7 @@ test_UDPv4Transport::test_UDPv4Transport(
     , drop_ack_nack_messages_filter_(descriptor.drop_ack_nack_messages_filter_)
     , drop_gap_messages_percentage_(descriptor.dropGapMessagesPercentage)
     , drop_gap_messages_filter_(descriptor.drop_gap_messages_filter_)
+    , sub_messages_filter_(descriptor.sub_messages_filter_)
     , percentage_of_messages_to_drop_(descriptor.percentageOfMessagesToDrop)
     , messages_filter_(descriptor.messages_filter_)
     , sequence_number_data_messages_to_drop_(descriptor.sequenceNumberDataMessagesToDrop)
@@ -101,6 +102,10 @@ test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor()
             })
     , dropGapMessagesPercentage(0)
     , drop_gap_messages_filter_([](CDRMessage_t&)
+            {
+                return false;
+            })
+    , sub_messages_filter_([](CDRMessage_t&)
             {
                 return false;
             })
@@ -335,6 +340,10 @@ bool test_UDPv4Transport::packet_should_drop(
     SubmessageHeader_t cdrSubMessageHeader;
     while (cdrMessage.pos < cdrMessage.length)
     {
+        if (sub_messages_filter_(cdrMessage))
+        {
+            return true;
+        }
         ReadSubmessageHeader(cdrMessage, cdrSubMessageHeader);
         if (cdrMessage.pos + cdrSubMessageHeader.submessageLength > cdrMessage.length)
         {
