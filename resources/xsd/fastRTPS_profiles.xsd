@@ -892,7 +892,7 @@
                                     <xs:union memberTypes="ipv4Address ipv6Address"/>
                                 </xs:simpleType>
                             </xs:element>
-                            <xs:element name="interface_name" type="string" maxOccurs="unbounded"/> 
+                            <xs:element name="interface" type="string" maxOccurs="unbounded"/> 
                         </xs:choice>
                     </xs:sequence>
                 </xs:complexType>

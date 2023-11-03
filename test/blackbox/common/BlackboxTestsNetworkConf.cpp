@@ -308,9 +308,9 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistName)
     use_udpv4 ? GetIP4s(interfaces) : GetIP6s(interfaces);
 
 
-    for (const auto& interface : interfaces)
+    for (const auto& interface_ : interfaces)
     {
-        descriptor_->interfaceWhiteList.push_back(interface.dev);
+        descriptor_->interfaceWhiteList.push_back(interface_.dev);
     }
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
@@ -410,15 +410,15 @@ void interface_whitelist_test(
 
     std::shared_ptr<UDPTransportDescriptor> pub_upv4_descriptor = std::make_shared<UDPv4TransportDescriptor>();
     // include the interfaces in the transport descriptor
-    for (const auto& interface : pub_interfaces)
+    for (const auto& interface_ : pub_interfaces)
     {
         if (!interface_name)
         {
-            pub_upv4_descriptor->interfaceWhiteList.push_back(interface.name);
+            pub_upv4_descriptor->interfaceWhiteList.push_back(interface_.name);
         }
         else
         {
-            pub_upv4_descriptor->interfaceWhiteList.push_back(interface.dev);
+            pub_upv4_descriptor->interfaceWhiteList.push_back(interface_.dev);
         }
     }
 
@@ -431,15 +431,15 @@ void interface_whitelist_test(
 
     std::shared_ptr<UDPTransportDescriptor> sub_upv4_descriptor = std::make_shared<UDPv4TransportDescriptor>();
     // include the interfaces in the transport descriptor
-    for (const auto& interface : sub_interfaces)
+    for (const auto& interface_ : sub_interfaces)
     {
         if (!interface_name)
         {
-            sub_upv4_descriptor->interfaceWhiteList.push_back(interface.name);
+            sub_upv4_descriptor->interfaceWhiteList.push_back(interface_.name);
         }
         else
         {
-            sub_upv4_descriptor->interfaceWhiteList.push_back(interface.dev);
+            sub_upv4_descriptor->interfaceWhiteList.push_back(interface_.dev);
         }
     }
 
