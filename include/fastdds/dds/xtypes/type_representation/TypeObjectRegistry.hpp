@@ -139,11 +139,14 @@ public:
     /**
      * @brief Get the TypeObjects related to the given type name.
      *
+     * @pre type_name must not be empty.
+     *
      * @param[in] type_name Name of the type being queried.
      * @param[out] type_objects Both complete and minimal TypeObjects related with the given type_name.
      * @return ReturnCode_t RETCODE_OK if the TypeObjects are found in the registry.
      *                      RETCODE_NO_DATA if the given type_name has not been registered.
      *                      RETCODE_BAD_PARAMETER if the type_name correspond to a indirect hash TypeIdentifier.
+     *                      RETCODE_PRECONDITION_NOT_MET if the type_name is empty.
      */
     RTPS_DllAPI ReturnCode_t get_type_objects(
             const std::string& type_name,
@@ -152,12 +155,15 @@ public:
     /**
      * @brief Get the TypeIdentifiers related to the given type name.
      *
+     * @pre type_name must not be empty.
+     *
      * @param[in] type_name Name of the type being queried.
      * @param[out] type_identifiers For direct hash TypeIdentifiers, both minimal and complete TypeIdentifiers are
      *                              returned.
      *                              For indirect hash TypeIdentifiers, only the corresponding TypeIdentifier is returned
      * @return ReturnCode_t RETCODE_OK if the TypeIdentifiers are found in the registry.
      *                      RETCODE_NO_DATA if the type_name has not been registered.
+     *                      RETCODE_PRECONDITION_NOT_MET if the type_name is empty.
      */
     RTPS_DllAPI ReturnCode_t get_type_identifiers(
             const std::string& type_name,
