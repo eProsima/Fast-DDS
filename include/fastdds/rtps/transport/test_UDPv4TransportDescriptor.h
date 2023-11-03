@@ -63,6 +63,8 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     uint8_t dropGapMessagesPercentage;
     //! Filtering function for dropping gap messages
     filter drop_gap_messages_filter_;
+    // General filtering function for all kind of sub-messages (indiscriminate)
+    filter sub_messages_filter_;
 
     // General drop percentage (indiscriminate)
     uint8_t percentageOfMessagesToDrop;
