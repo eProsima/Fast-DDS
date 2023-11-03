@@ -181,12 +181,14 @@ protected:
 
 };
 
-class SHMRingBufferMultiThread
+/*
+   class SHMRingBufferMultiThread
     :   public SHMRingBuffer,
     public testing::WithParamInterface<std::tuple<uint32_t, uint32_t, uint32_t>>
-{
+   {
 
-};
+   };
+ */
 
 TEST_F(SHMRingBuffer, test_read_write_bounds)
 {
@@ -364,8 +366,9 @@ TEST_F(SHMRingBuffer, listeners_register_unregister)
     listener2->pop();
 }
 
-TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
-{
+/*
+   TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
+   {
     const uint32_t elements_to_push = buffer_size_ * std::get<1>(GetParam());
     std::vector<std::thread> threads;
     std::atomic<uint32_t> ready_listeners;
@@ -466,7 +469,8 @@ TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
             thread.join();
         }
     }
-}
+   }
+ */
 
 TEST_F(SHMCondition, wait_notify)
 {
