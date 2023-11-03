@@ -108,7 +108,10 @@ UDPv4Transport::UDPv4Transport(
         get_ipv4s(local_interfaces, true);
         for (const IPFinder::info_IP& infoIP : local_interfaces)
         {
-            if (std::find(white_begin, white_end, infoIP.name) != white_end)
+            if (std::find_if(white_begin, white_end, [infoIP](const std::string& white_list_element)
+                    {
+                        return white_list_element == infoIP.dev || white_list_element == infoIP.name;
+                    }) != white_end )
             {
                 interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
             }

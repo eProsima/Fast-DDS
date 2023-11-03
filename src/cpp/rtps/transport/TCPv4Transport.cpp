@@ -76,9 +76,29 @@ TCPv4Transport::TCPv4Transport(
     : TCPTransportInterface(LOCATOR_KIND_TCPv4)
     , configuration_(descriptor)
 {
-    for (const auto& interface : descriptor.interfaceWhiteList)
+    if (!descriptor.interfaceWhiteList.empty())
     {
-        interface_whitelist_.emplace_back(ip::address_v4::from_string(interface));
+        const auto white_begin = descriptor.interfaceWhiteList.begin();
+        const auto white_end = descriptor.interfaceWhiteList.end();
+
+        std::vector<IPFinder::info_IP> local_interfaces;
+        get_ipv4s(local_interfaces, true);
+        for (const IPFinder::info_IP& infoIP : local_interfaces)
+        {
+            if (std::find_if(white_begin, white_end, [infoIP](const std::string& white_list_element)
+                    {
+                        return white_list_element == infoIP.dev || white_list_element == infoIP.name;
+                    }) != white_end )
+            {
+                interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
+            }
+        }
+
+        if (interface_whitelist_.empty())
+        {
+            EPROSIMA_LOG_ERROR(TRANSPORT, "All whitelist interfaces were filtered out");
+            interface_whitelist_.emplace_back(ip::address_v4::from_string("192.0.2.0"));
+        }
     }
 
     for (uint16_t port : configuration_.listening_ports)
