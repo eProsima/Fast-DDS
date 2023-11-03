@@ -299,7 +299,38 @@ ReturnCode_t TypeObjectRegistry::is_type_identifier_known(
 bool TypeObjectRegistry::is_builtin_annotation(
         const TypeIdentifier& type_identifier)
 {
-    static_cast<void>(type_identifier);
+    if (!TypeObjectUtils::is_direct_hash_type_identifier(type_identifier))
+    {
+        return false;
+    }
+    for (const auto& it : local_type_identifiers_)
+    {
+        if (it.second.type_identifier1() == type_identifier || it.second.type_identifier2() == type_identifier)
+        {
+            return is_builtin_annotation_name(it.first);
+        }
+    }
+    return false;
+}
+
+bool TypeObjectRegistry::is_builtin_annotation_name(
+        const std::string& name)
+{
+    if (name == id_annotation_name || name == autoid_annotation_name || name == optional_annotation_name ||
+        name == position_annotation_name || name == value_annotation_name || name == extensibility_annotation_name ||
+        name == final_annotation_name || name == appendable_annotation_name || name == mutable_annotation_name ||
+        name == key_annotation_name || name == must_understand_annotation_name ||
+        name == default_literal_annotation_name || name == default_annotation_name || name == range_annotation_name ||
+        name == min_annotation_name || name == max_annotation_name || name == unit_annotation_name ||
+        name == bit_bound_annotation_name || name == external_annotation_name || name == nested_annotation_name ||
+        name == verbatim_annotation_name || name == service_annotation_name || name == oneway_annotation_name ||
+        name == ami_annotation_name || name == hashid_annotation_name || name == default_nested_annotation_name ||
+        name == ignore_literal_names_annotation_name || name == try_construct_annotation_name ||
+        name == non_serialized_annotation_name || name == data_representation_annotation_name ||
+        name == topic_annotation_name)
+    {
+        return true;
+    }
     return false;
 }
 
