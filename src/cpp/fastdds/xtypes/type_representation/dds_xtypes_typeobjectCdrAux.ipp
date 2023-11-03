@@ -1315,6 +1315,7 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -1626,6 +1627,7 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -2998,6 +3000,7 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -4928,6 +4931,7 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -5570,6 +5574,7 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -9098,6 +9103,7 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -9372,6 +9378,7 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -9668,6 +9675,7 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
