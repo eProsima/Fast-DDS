@@ -273,6 +273,15 @@ protected:
             const TypeIdentifier& type_identifier);
 
     /**
+     * @brief Check if a given name corresponds to a builtin annotation.
+     *
+     * @param[in] name to check.
+     * @return true if the name is from a builtin annotation. false otherwise.
+     */
+    bool is_builtin_annotation_name(
+            const std::string& name);
+
+    /**
      * @brief Calculate the TypeIdentifier given a TypeObject.
      *
      * @param[in] type_object TypeObject which is to be hashed.
