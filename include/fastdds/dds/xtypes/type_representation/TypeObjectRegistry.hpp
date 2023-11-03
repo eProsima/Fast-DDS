@@ -258,10 +258,9 @@ protected:
      * @brief Check if the given TypeIdentifier is known by the registry.
      *
      * @param[in] type_identifier TypeIdentifier to query.
-     * @return ReturnCode_t RETCODE_OK if TypeIdentifier is known.
-     *                      RETCODE_NO_DATA if TypeIdentifier is unknown.
+     * @return true if TypeIdentifier is known. false otherwise.
      */
-    ReturnCode_t is_type_identifier_known(
+    bool is_type_identifier_known(
             const TypeIdentifier& type_identifier);
 
     /**
