@@ -288,11 +288,29 @@ ReturnCode_t TypeObjectRegistry::get_type_dependencies(
     return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
-ReturnCode_t TypeObjectRegistry::is_type_identifier_known(
+bool TypeObjectRegistry::is_type_identifier_known(
         const TypeIdentifier& type_identifier)
 {
-    static_cast<void>(type_identifier);
-    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
+    if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier))
+    {
+        try
+        {
+            type_registry_entries_.at(type_identifier);
+            return true;
+        }
+        catch (std::exception& e)
+        {
+            return false;
+        }
+    }
+    for (const auto& it : local_type_identifiers_)
+    {
+        if (it.second.type_identifier1() == type_identifier || it.second.type_identifier2() == type_identifier)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool TypeObjectRegistry::is_builtin_annotation(
