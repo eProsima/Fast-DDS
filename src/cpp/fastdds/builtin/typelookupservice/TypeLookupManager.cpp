@@ -597,22 +597,11 @@ ReturnCode_t TypeLookupManager::get_registered_type_object(
     const TypeLookup_getTypes_In& in,
     TypeLookup_getTypes_Out& out)
 {
-    // Check if there is any EK_COMPLETE TypeIdentifiers in the request.
-    bool request_has_complete_ids = false;
-    for (const TypeIdentifier& type_id : in.type_ids())
-    {
-        if (type_id._d() == EK_COMPLETE)
-        {
-            request_has_complete_ids = true;
-            break;
-        }
-    }
-
     for (const TypeIdentifier& type_id : in.type_ids())
     {
         // Ask the TypeObjectRegistry for the TypeObject of the current TypeIdentifier.
-        TypeObjectPair objs;
-        ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, objs);
+        TypeObject obj;
+        ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, obj);
         if(ret_code != ReturnCode_t::RETCODE_OK)
         {
             //RETCODE_NO_DATA if the given TypeIdentifier is not found in the registry.
@@ -621,35 +610,12 @@ ReturnCode_t TypeLookupManager::get_registered_type_object(
         // Create TypeIdentifierTypeObjectPair with the TypeObject registered for this TypeIdentifier.
         TypeIdentifierTypeObjectPair id_obj_pair;
         id_obj_pair.type_identifier(type_id);
+        id_obj_pair.type_object(obj);
 
-        // If the request has any EK_COMPLETE TypeIdentifiers, use complete TypeObjects.
-        if(request_has_complete_ids)
-        {
-            id_obj_pair.type_object(objs.complete_type_object());
-        }
-        // If there were none and the GET_TYPES_REPLY_WITH_MINIMAL property is active, use minimal TypeObjects.
-        else if(GET_TYPES_REPLY_WITH_MINIMAL)
-        {
-            id_obj_pair.type_object(objs.minimal_type_object());
-        }
-        // If there were none and the GET_TYPES_REPLY_WITH_MINIMAL property is not active, use complete TypeObjects and use complete_to_minimal.
-        else
-        {
-            id_obj_pair.type_object(objs.complete_type_object());
-            
-            uint32_t type_object_serialized_size;
-            TypeIdentifier complete_type_id = DomainParticipantFactory::get_instance()->type_object_registry().
-                get_type_identifier(objs.complete_type_object(), type_object_serialized_size);
-            TypeIdentifierPair pair;
-            pair.type_identifier1(complete_type_id);
-            pair.type_identifier2(type_id);
-            out.complete_to_minimal().push_back(std::move(pair));
-        }
         out.types().push_back(std::move(id_obj_pair));
     }
     return ReturnCode_t::RETCODE_OK;
 }
-
 
 ReturnCode_t TypeLookupManager::get_registered_type_dependencies(
     const TypeLookup_getTypeDependencies_In& in,
