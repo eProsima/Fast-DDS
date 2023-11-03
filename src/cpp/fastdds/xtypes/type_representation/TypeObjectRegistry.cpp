@@ -157,6 +157,7 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
         TypeObjectPair& type_objects)
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     if (type_name.empty())
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
@@ -170,6 +171,12 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
         {
             return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 =======
+=======
+    if (type_name.empty())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+>>>>>>> 7a733ef4c (Refs #19837: add precondition to public API)
     TypeIdentifierPair type_ids;
     ReturnCode_t ret_code = get_type_identifiers(type_name, type_ids);
     if (ReturnCode_t::RETCODE_OK == ret_code)
@@ -215,12 +222,19 @@ ReturnCode_t TypeObjectRegistry::get_type_identifiers(
         TypeIdentifierPair& type_identifiers)
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     if (type_name.empty())
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
     }
 =======
 >>>>>>> f2566a7b5 (Refs #19837: TypeObject::get_type_identifiers implementation)
+=======
+    if (type_name.empty())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+>>>>>>> 7a733ef4c (Refs #19837: add precondition to public API)
     try
     {
         type_identifiers = local_type_identifiers_.at(type_name);

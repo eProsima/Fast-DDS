@@ -54,6 +54,8 @@ TEST(TypeObjectRegistryTests, register_type_identifier)
 TEST(TypeObjectRegistryTests, get_type_identifiers)
 {
     TypeIdentifierPair type_ids;
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("", type_ids));
     TypeIdentifier none_type_id;
     TypeIdentifier type_id;
     EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA,
