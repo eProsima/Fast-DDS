@@ -625,7 +625,7 @@ XMLP_ret XMLParser::parseXMLBitmaskDynamicType(
     }
 
     const char* name = p_root->Attribute(NAME);
-    if (nullptr == name)
+    if (nullptr == name || name[0] == '\0')
     {
         return XMLP_ret::XML_ERROR;
     }
