@@ -129,6 +129,10 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
         const std::string& type_name,
         TypeObjectPair& type_objects)
 {
+    if (type_name.empty())
+    {
+        return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
+    }
     TypeIdentifierPair type_ids;
     ReturnCode_t ret_code = get_type_identifiers(type_name, type_ids);
     if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
@@ -160,6 +164,10 @@ ReturnCode_t TypeObjectRegistry::get_type_identifiers(
         const std::string& type_name,
         TypeIdentifierPair& type_identifiers)
 {
+    if (type_name.empty())
+    {
+        return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
+    }
     try
     {
         type_identifiers = local_type_identifiers_.at(type_name);
