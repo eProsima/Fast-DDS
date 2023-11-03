@@ -430,6 +430,7 @@ ReturnCode_t TypeObjectRegistry::get_type_dependencies(
     return ret_code;
 }
 
+<<<<<<< HEAD
 ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
         const TypeObject& type_object,
         std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
@@ -517,6 +518,8 @@ void TypeObjectRegistry::add_dependency(
     type_dependencies.insert(type_id_size);
 }
 
+=======
+>>>>>>> d03efcd39 (Refs #19837: TypeObjectRegistry::is_type_identifier_known implementation)
 bool TypeObjectRegistry::is_type_identifier_known(
         const TypeIdentifier& type_identifier)
 {
