@@ -96,6 +96,7 @@ private:
     test_UDPv4TransportDescriptor::filter drop_ack_nack_messages_filter_;
     PercentageData drop_gap_messages_percentage_;
     test_UDPv4TransportDescriptor::filter drop_gap_messages_filter_;
+    test_UDPv4TransportDescriptor::filter sub_messages_filter_;
     PercentageData percentage_of_messages_to_drop_;
     test_UDPv4TransportDescriptor::filter messages_filter_;
     std::vector<fastrtps::rtps::SequenceNumber_t> sequence_number_data_messages_to_drop_;
