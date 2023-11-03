@@ -338,33 +338,58 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
 {
     TypeIdentifierPair type_ids;
     ReturnCode_t ret_code = get_type_identifiers(type_name, type_ids);
+<<<<<<< HEAD
     if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
     {
         if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
                 !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
         {
             return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+=======
+    if (ReturnCode_t::RETCODE_OK == ret_code)
+    {
+        if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
+        !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
+        {
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+>>>>>>> 31faf9cf3 (Refs #19837: TypeObjectRegistry::get_type_information implementation)
         }
         if (EK_COMPLETE == type_ids.type_identifier1()._d())
         {
             type_information.complete().typeid_with_size().type_id(type_ids.type_identifier1());
             type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+<<<<<<< HEAD
                         type_ids.type_identifier1()).type_object_serialized_size_);
             type_information.complete().dependent_typeid_count(-1);
             type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier2());
             type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
                         type_ids.type_identifier2()).type_object_serialized_size_);
+=======
+                type_ids.type_identifier1()).type_object_serialized_size_);
+            type_information.complete().dependent_typeid_count(-1);
+            type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier2());
+            type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                type_ids.type_identifier2()).type_object_serialized_size_);
+>>>>>>> 31faf9cf3 (Refs #19837: TypeObjectRegistry::get_type_information implementation)
             type_information.minimal().dependent_typeid_count(-1);
         }
         else
         {
             type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier1());
             type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+<<<<<<< HEAD
                         type_ids.type_identifier1()).type_object_serialized_size_);
             type_information.minimal().dependent_typeid_count(-1);
             type_information.complete().typeid_with_size().type_id(type_ids.type_identifier2());
             type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
                         type_ids.type_identifier2()).type_object_serialized_size_);
+=======
+                type_ids.type_identifier1()).type_object_serialized_size_);
+            type_information.minimal().dependent_typeid_count(-1);
+            type_information.complete().typeid_with_size().type_id(type_ids.type_identifier2());
+            type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                type_ids.type_identifier2()).type_object_serialized_size_);
+>>>>>>> 31faf9cf3 (Refs #19837: TypeObjectRegistry::get_type_information implementation)
             type_information.complete().dependent_typeid_count(-1);
         }
     }
