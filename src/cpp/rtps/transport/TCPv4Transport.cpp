@@ -88,7 +88,7 @@ TCPv4Transport::TCPv4Transport(
             if (std::find_if(white_begin, white_end, [infoIP](const std::string& white_list_element)
                     {
                         return white_list_element == infoIP.dev || white_list_element == infoIP.name;
-                    }) != white_end )  
+                    }) != white_end )
             {
                 interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
             }
