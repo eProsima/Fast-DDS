@@ -214,11 +214,14 @@ protected:
     /**
      * @brief Get the TypeInformation related to a specific type_name.
      *
+     * @pre type_name must not be empty.
+     *
      * @param[in] type_name Type which type information is queried.
      * @param[out] type_information Related TypeInformation for the given type name.
      * @return ReturnCode_t RETCODE_OK if the type_name is found within the registry.
      *                      RETCODE_NO_DATA if the given type_name is not found.
      *                      RETCODE_BAD_PARAMETER if the given type name corresponds to a indirect hash TypeIdentifier.
+     *                      RETCODE_PRECONDITION_NOT_MET if the type_name is empty.
      */
     ReturnCode_t get_type_information(
             const std::string& type_name,

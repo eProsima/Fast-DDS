@@ -235,9 +235,39 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
         const std::string& type_name,
         TypeInformation& type_information)
 {
-    static_cast<void>(type_name);
-    static_cast<void>(type_information);
-    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
+    TypeIdentifierPair type_ids;
+    ReturnCode_t ret_code = get_type_identifiers(type_name, type_ids);
+    if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
+    {
+        if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
+        !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
+        {
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+        }
+        if (EK_COMPLETE == type_ids.type_identifier1()._d())
+        {
+            type_information.complete().typeid_with_size().type_id(type_ids.type_identifier1());
+            type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                type_ids.type_identifier1()).type_object_serialized_size_);
+            type_information.complete().dependent_typeid_count(-1);
+            type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier2());
+            type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                type_ids.type_identifier2()).type_object_serialized_size_);
+            type_information.minimal().dependent_typeid_count(-1);
+        }
+        else
+        {
+            type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier1());
+            type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                type_ids.type_identifier1()).type_object_serialized_size_);
+            type_information.minimal().dependent_typeid_count(-1);
+            type_information.complete().typeid_with_size().type_id(type_ids.type_identifier2());
+            type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                type_ids.type_identifier2()).type_object_serialized_size_);
+            type_information.complete().dependent_typeid_count(-1);
+        }
+    }
+    return ret_code;
 }
 
 ReturnCode_t TypeObjectRegistry::are_types_compatible(
