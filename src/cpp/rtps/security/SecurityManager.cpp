@@ -3735,7 +3735,7 @@ int SecurityManager::decode_rtps_submessage(
     auto sentry = is_security_manager_initialized();
     if (!sentry)
     {
-        return false;
+        return -1;
     }
 
     if (message.buffer[message.pos] != SEC_PREFIX)
@@ -3745,7 +3745,7 @@ int SecurityManager::decode_rtps_submessage(
 
     if (crypto_plugin_ == nullptr)
     {
-        return 0;
+        return -1;
     }
 
     CDRMessage::initCDRMsg(&out_message);

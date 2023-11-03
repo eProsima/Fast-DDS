@@ -70,7 +70,8 @@ MessageReceiver::MessageReceiver(
             &MessageReceiver::process_data_message_with_security,
             this,
             std::placeholders::_1,
-            std::placeholders::_2);
+            std::placeholders::_2,
+            std::placeholders::_3);
 
         process_data_fragment_message_function_ = std::bind(
             &MessageReceiver::process_data_fragment_message_with_security,
@@ -79,7 +80,8 @@ MessageReceiver::MessageReceiver(
             std::placeholders::_2,
             std::placeholders::_3,
             std::placeholders::_4,
-            std::placeholders::_5);
+            std::placeholders::_5,
+            std::placeholders::_6);
     }
     else
     {
@@ -88,7 +90,8 @@ MessageReceiver::MessageReceiver(
         &MessageReceiver::process_data_message_without_security,
         this,
         std::placeholders::_1,
-        std::placeholders::_2);
+        std::placeholders::_2,
+        std::placeholders::_3);
 
     process_data_fragment_message_function_ = std::bind(
         &MessageReceiver::process_data_fragment_message_without_security,
@@ -97,7 +100,8 @@ MessageReceiver::MessageReceiver(
         std::placeholders::_2,
         std::placeholders::_3,
         std::placeholders::_4,
-        std::placeholders::_5);
+        std::placeholders::_5,
+        std::placeholders::_6);
 #if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 }
 
@@ -114,10 +118,16 @@ MessageReceiver::~MessageReceiver()
  #if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 void MessageReceiver::process_data_message_with_security(
         const EntityId_t& reader_id,
-        CacheChange_t& change)
+        CacheChange_t& change,
+        bool was_decoded)
 {
-    auto process_message = [&change, this](RTPSReader* reader)
+    auto process_message = [was_decoded, &change, this](RTPSReader* reader)
             {
+                if (!was_decoded && reader->getAttributes().security_attributes().is_submessage_protected)
+                {
+                    return;
+                }
+
                 if (!reader->getAttributes().security_attributes().is_payload_protected)
                 {
                     reader->processDataMsg(&change);
@@ -159,11 +169,17 @@ void MessageReceiver::process_data_fragment_message_with_security(
         CacheChange_t& change,
         uint32_t sample_size,
         uint32_t fragment_starting_num,
-        uint16_t fragments_in_submessage)
+        uint16_t fragments_in_submessage,
+        bool was_decoded)
 {
-    auto process_message =
-            [&change, sample_size, fragment_starting_num, fragments_in_submessage, this](RTPSReader* reader)
+    auto process_message = [was_decoded, &change, sample_size, fragment_starting_num, fragments_in_submessage, this](
+        RTPSReader* reader)
             {
+                if (!was_decoded && reader->getAttributes().security_attributes().is_submessage_protected)
+                {
+                    return;
+                }
+
                 if (!reader->getAttributes().security_attributes().is_payload_protected)
                 {
                     reader->processDataFragMsg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
@@ -195,7 +211,8 @@ void MessageReceiver::process_data_fragment_message_with_security(
 
 void MessageReceiver::process_data_message_without_security(
         const EntityId_t& reader_id,
-        CacheChange_t& change)
+        CacheChange_t& change,
+        bool /*was_decoded*/)
 {
     auto process_message = [&change](RTPSReader* reader)
             {
@@ -210,7 +227,8 @@ void MessageReceiver::process_data_fragment_message_without_security(
         CacheChange_t& change,
         uint32_t sample_size,
         uint32_t fragment_starting_num,
-        uint16_t fragments_in_submessage)
+        uint16_t fragments_in_submessage,
+        bool /*was_decoded*/)
 {
     auto process_message = [&change, sample_size, fragment_starting_num, fragments_in_submessage](RTPSReader* reader)
             {
@@ -386,11 +404,11 @@ void MessageReceiver::processCDRMsg(
     bool valid;
     SubmessageHeader_t submsgh; //Current submessage header
 
-    bool ignore_current_submessage;
-
     while (msg->pos < msg->length)// end of the message
     {
         CDRMessage_t* submessage = msg;
+
+        bool current_message_was_decoded = false;
 
 #if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
         decode_ret = security.decode_rtps_submessage(*msg, *auxiliary_buffer, source_guid_prefix_);
@@ -402,6 +420,7 @@ void MessageReceiver::processCDRMsg(
 
         if (decode_ret == 0)
         {
+            current_message_was_decoded = true;
             submessage = auxiliary_buffer;
         }
 #endif // if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
@@ -418,12 +437,10 @@ void MessageReceiver::processCDRMsg(
 
         // We ignore submessage if the source participant is to be ignored, unless the submessage king is INFO_SRC
         // which triggers a reevaluation of the flag.
-        ignore_current_submessage = ignore_submessages &&
-                submsgh.submessageId != INFO_SRC;
+        bool ignore_current_submessage = ignore_submessages && submsgh.submessageId != INFO_SRC;
 
         if (!ignore_current_submessage)
         {
-
             switch (submsgh.submessageId)
             {
                 case DATA:
@@ -436,7 +453,7 @@ void MessageReceiver::processCDRMsg(
                     {
                         EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Data Submsg received, processing.");
                         EntityId_t writerId = c_EntityId_Unknown;
-                        valid = proc_Submsg_Data(submessage, &submsgh, writerId);
+                        valid = proc_Submsg_Data(submessage, &submsgh, writerId, current_message_was_decoded);
 #if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
                         if (valid && writerId == c_EntityId_SPDPWriter)
                         {
@@ -456,7 +473,7 @@ void MessageReceiver::processCDRMsg(
                     else
                     {
                         EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "DataFrag Submsg received, processing.");
-                        valid = proc_Submsg_DataFrag(submessage, &submsgh);
+                        valid = proc_Submsg_DataFrag(submessage, &submsgh, current_message_was_decoded);
                     }
                     break;
                 case GAP:
@@ -469,7 +486,7 @@ void MessageReceiver::processCDRMsg(
                     else
                     {
                         EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Gap Submsg received, processing...");
-                        valid = proc_Submsg_Gap(submessage, &submsgh);
+                        valid = proc_Submsg_Gap(submessage, &submsgh, current_message_was_decoded);
                     }
                     break;
                 }
@@ -483,7 +500,7 @@ void MessageReceiver::processCDRMsg(
                     else
                     {
                         EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack Submsg received, processing...");
-                        valid = proc_Submsg_Acknack(submessage, &submsgh);
+                        valid = proc_Submsg_Acknack(submessage, &submsgh, current_message_was_decoded);
                     }
                     break;
                 }
@@ -497,7 +514,7 @@ void MessageReceiver::processCDRMsg(
                     else
                     {
                         EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "NackFrag Submsg received, processing...");
-                        valid = proc_Submsg_NackFrag(submessage, &submsgh);
+                        valid = proc_Submsg_NackFrag(submessage, &submsgh, current_message_was_decoded);
                     }
                     break;
                 }
@@ -510,7 +527,7 @@ void MessageReceiver::processCDRMsg(
                     else
                     {
                         EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Heartbeat Submsg received, processing...");
-                        valid = proc_Submsg_Heartbeat(submessage, &submsgh);
+                        valid = proc_Submsg_Heartbeat(submessage, &submsgh, current_message_was_decoded);
                     }
                     break;
                 }
@@ -524,7 +541,7 @@ void MessageReceiver::processCDRMsg(
                     else
                     {
                         EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "HeartbeatFrag Submsg received, processing...");
-                        valid = proc_Submsg_HeartbeatFrag(submessage, &submsgh);
+                        valid = proc_Submsg_HeartbeatFrag(submessage, &submsgh, current_message_was_decoded);
                     }
                     break;
                 }
@@ -721,7 +738,8 @@ void MessageReceiver::findAllReaders(
 bool MessageReceiver::proc_Submsg_Data(
         CDRMessage_t* msg,
         SubmessageHeader_t* smh,
-        EntityId_t& writerID) const
+        EntityId_t& writerID,
+        bool was_decoded) const
 {
     eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
 
@@ -879,7 +897,7 @@ bool MessageReceiver::proc_Submsg_Data(
             associated_readers_.size());
 
     //Look for the correct reader to add the change
-    process_data_message_function_(readerID, ch);
+    process_data_message_function_(readerID, ch, was_decoded);
 
     IPayloadPool* payload_pool = ch.payload_owner();
     if (payload_pool)
@@ -897,7 +915,8 @@ bool MessageReceiver::proc_Submsg_Data(
 
 bool MessageReceiver::proc_Submsg_DataFrag(
         CDRMessage_t* msg,
-        SubmessageHeader_t* smh) const
+        SubmessageHeader_t* smh,
+        bool was_decoded) const
 {
     eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
 
@@ -1061,7 +1080,8 @@ bool MessageReceiver::proc_Submsg_DataFrag(
 
     EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
             associated_readers_.size());
-    process_data_fragment_message_function_(readerID, ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
+    process_data_fragment_message_function_(readerID, ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage,
+            was_decoded);
     ch.serializedPayload.data = nullptr;
     ch.inline_qos.data = nullptr;
 
@@ -1072,7 +1092,8 @@ bool MessageReceiver::proc_Submsg_DataFrag(
 
 bool MessageReceiver::proc_Submsg_Heartbeat(
         CDRMessage_t* msg,
-        SubmessageHeader_t* smh) const
+        SubmessageHeader_t* smh,
+        bool was_decoded) const
 {
     eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
 
@@ -1121,9 +1142,16 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
 
     //Look for the correct reader and writers:
     findAllReaders(readerGUID.entityId,
-            [&writerGUID, &HBCount, &firstSN, &lastSN, finalFlag, livelinessFlag](RTPSReader* reader)
+            [was_decoded, &writerGUID, &HBCount, &firstSN, &lastSN, finalFlag, livelinessFlag](RTPSReader* reader)
             {
-                reader->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag);
+                // Only used when HAVE_SECURITY is defined
+                static_cast<void>(was_decoded);
+#if HAVE_SECURITY
+                if (was_decoded || !reader->getAttributes().security_attributes().is_submessage_protected)
+#endif  // HAVE_SECURITY
+                {
+                    reader->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag);
+                }
             });
 
     return true;
@@ -1131,8 +1159,12 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
 
 bool MessageReceiver::proc_Submsg_Acknack(
         CDRMessage_t* msg,
-        SubmessageHeader_t* smh) const
+        SubmessageHeader_t* smh,
+        bool was_decoded) const
 {
+    // Only used when HAVE_SECURITY is defined
+    static_cast<void>(was_decoded);
+
     eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
 
     bool endiannessFlag = (smh->flags & BIT(0)) != 0;
@@ -1164,14 +1196,19 @@ bool MessageReceiver::proc_Submsg_Acknack(
     //Look for the correct writer to use the acknack
     for (RTPSWriter* it : associated_writers_)
     {
-        bool result;
-        if (it->process_acknack(writerGUID, readerGUID, Ackcount, SNSet, finalFlag, result))
+#if HAVE_SECURITY
+        if (was_decoded || !it->getAttributes().security_attributes().is_submessage_protected)
+#endif  // HAVE_SECURITY
         {
-            if (!result)
+            bool result;
+            if (it->process_acknack(writerGUID, readerGUID, Ackcount, SNSet, finalFlag, result))
             {
-                EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack msg to NOT stateful writer ");
+                if (!result)
+                {
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack msg to NOT stateful writer ");
+                }
+                return result;
             }
-            return result;
         }
     }
     EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack msg to UNKNOWN writer (I looked through "
@@ -1181,7 +1218,8 @@ bool MessageReceiver::proc_Submsg_Acknack(
 
 bool MessageReceiver::proc_Submsg_Gap(
         CDRMessage_t* msg,
-        SubmessageHeader_t* smh) const
+        SubmessageHeader_t* smh,
+        bool was_decoded) const
 {
     eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
 
@@ -1211,9 +1249,16 @@ bool MessageReceiver::proc_Submsg_Gap(
     }
 
     findAllReaders(readerGUID.entityId,
-            [&writerGUID, &gapStart, &gapList](RTPSReader* reader)
+            [was_decoded, &writerGUID, &gapStart, &gapList](RTPSReader* reader)
             {
-                reader->processGapMsg(writerGUID, gapStart, gapList);
+                // Only used when HAVE_SECURITY is defined
+                static_cast<void>(was_decoded);
+#if HAVE_SECURITY
+                if (was_decoded || !reader->getAttributes().security_attributes().is_submessage_protected)
+#endif  // HAVE_SECURITY
+                {
+                    reader->processGapMsg(writerGUID, gapStart, gapList);
+                }
             });
 
     return true;
@@ -1309,8 +1354,12 @@ bool MessageReceiver::proc_Submsg_InfoSRC(
 
 bool MessageReceiver::proc_Submsg_NackFrag(
         CDRMessage_t* msg,
-        SubmessageHeader_t* smh) const
+        SubmessageHeader_t* smh,
+        bool was_decoded) const
 {
+    // Only used when HAVE_SECURITY is defined
+    static_cast<void>(was_decoded);
+
     eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
 
     bool endiannessFlag = (smh->flags & BIT(0)) != 0;
@@ -1347,14 +1396,19 @@ bool MessageReceiver::proc_Submsg_NackFrag(
     //Look for the correct writer to use the acknack
     for (RTPSWriter* it : associated_writers_)
     {
-        bool result;
-        if (it->process_nack_frag(writerGUID, readerGUID, Ackcount, writerSN, fnState, result))
+#if HAVE_SECURITY
+        if (was_decoded || !it->getAttributes().security_attributes().is_submessage_protected)
+#endif  // HAVE_SECURITY
         {
-            if (!result)
+            bool result;
+            if (it->process_nack_frag(writerGUID, readerGUID, Ackcount, writerSN, fnState, result))
             {
-                EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack msg to NOT stateful writer ");
+                if (!result)
+                {
+                    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack msg to NOT stateful writer ");
+                }
+                return result;
             }
-            return result;
         }
     }
     EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack msg to UNKNOWN writer (I looked through "
@@ -1364,7 +1418,8 @@ bool MessageReceiver::proc_Submsg_NackFrag(
 
 bool MessageReceiver::proc_Submsg_HeartbeatFrag(
         CDRMessage_t* msg,
-        SubmessageHeader_t* smh) const
+        SubmessageHeader_t* smh,
+        bool /*was_decoded*/) const
 {
     eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
 
