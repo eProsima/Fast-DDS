@@ -182,6 +182,7 @@ bool HelloWorldSubscriber::init(
     }
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
     rqos.data_sharing().off();
+    rqos.history().kind = KEEP_ALL_HISTORY_QOS;
 
     // Data sharing set in endpoint. If it is not default, set it to off
     if (transport != DEFAULT)
@@ -285,9 +286,65 @@ void HelloWorldSubscriber::SubListener::on_data_available(
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
+            // Latency
+            auto transmission_finish_time = std::chrono::high_resolution_clock::now();
+            auto transmission_start_time =
+                std::chrono::seconds(bigdata_.timestamp_value().sec()) +
+                std::chrono::nanoseconds(bigdata_.timestamp_value().nanosec());
+
+            auto transmission_time = transmission_finish_time - transmission_start_time;
+
+            int64_t transmission_size = bigdata_.getCdrSerializedSize(bigdata_);
+            std::chrono::duration<double> elapsed = transmission_time.time_since_epoch();
+            double rate = transmission_size / elapsed.count();
+            double bandwidth_bps = rate * 8.0;
+            double bandwidth_mbps = bandwidth_bps / 1024.0 / 1024.0;
+            double bandwidth_MByteps = rate / 1000000;
+
+            // std::cout <<
+            // std::chrono::duration_cast<std::chrono::seconds>(
+            //   transmission_finish_time.time_since_epoch()).count() <<
+            // '.' << std::setfill('0') << std::setw(9) <<
+            // std::chrono::duration_cast<std::chrono::nanoseconds>(
+            //   transmission_finish_time.time_since_epoch()).count() % 1000000000 << std::endl;
+
+
+            // std::cout <<
+            //   transmission_time.time_since_epoch().count() <<
+            //   ',' << transmission_size <<
+            //   ',' << std::fixed << rate <<
+            //   ',' << std::fixed << bandwidth_bps <<
+            //   ',' << std::1000000000fixed << bandwidth_mbps <<
+            //   std::endl;
+
+            sum_ += bandwidth_MByteps;
             samples_++;
+            float mean = sum_ / samples_;
+
+            // Messages Lost
+            uint16_t lost_messages = 0;
+            lost_messages = bigdata_.index() - last_index_ - 1;
+            last_index_ = bigdata_.index();
+            // if (!first_received_)
+            // {
+            //     last_index_ = bigdata_.index();
+            //     first_received_ = true;
+            //     lost_messages = bigdata_.index() - last_index_;
+            // }
+            // else
+            // {
+            //     lost_messages = bigdata_.index() - last_index_ - 1;
+            //     last_index_ = bigdata_.index();
+            // }
+
+            if (lost_messages > 0) 
+            {
+                total_lost_ += lost_messages;
+            }
+            
             // Print your structure data here.
-            std::cout << "Message with Index: " << bigdata_.index() << " RECEIVED" << std::endl;
+            std::cout << "[" << bigdata_.index() << "]: Troughtput (MB/s): " << std::fixed << 
+                std::setw(8) << std::setprecision(3) << mean << ", Messages lost: " << total_lost_ << std::endl;
             if (max_messages_ > 0 && (samples_ >= max_messages_))
             {
                 stop();

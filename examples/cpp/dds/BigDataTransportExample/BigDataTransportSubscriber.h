@@ -23,6 +23,7 @@
 #include <atomic>
 #include <condition_variable>
 #include <mutex>
+#include <iomanip>
 
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -124,6 +125,14 @@ private:
 
         //! Number of messages to be received before triggering termination of execution
         uint32_t max_messages_;
+
+        float sum_ = 0.0;
+
+        uint16_t last_index_ = 0;
+    
+        uint16_t total_lost_ = 0;
+
+        bool first_received_ = false;
     }
     listener_;
 

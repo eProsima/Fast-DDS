@@ -141,6 +141,7 @@ bool HelloWorldPublisher::init(
     // CREATE THE WRITER
     DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
     wqos.data_sharing().off();
+    wqos.history().kind = KEEP_ALL_HISTORY_QOS;
 
     // Data sharing set in endpoint. If it is not default, set it to off
     if (transport != DEFAULT)
