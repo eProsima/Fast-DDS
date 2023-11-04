@@ -27,14 +27,16 @@ char dummy;
 #endif  // _WIN32
 
 #include "StringTest.h"
-#include <fastdds/rtps/common/CdrSerialization.hpp>
+
+#if FASTCDR_VERSION_MAJOR > 1
+
+#include <fastcdr/Cdr.h>
+
+
+#include <fastcdr/exceptions/BadParamException.h>
+using namespace eprosima::fastcdr::exception;
 
 #include <utility>
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "StringTestCdrAux.ipp"
-
-using namespace eprosima::fastcdr::exception;
 
 
 
@@ -87,19 +89,6 @@ bool StringTest::operator !=(
     return !(*this == x);
 }
 
-void StringTest::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void StringTest::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
-
 /*!
  * @brief This function copies the value in member message
  * @param _message New value to be copied in member message
@@ -138,3 +127,8 @@ eprosima::fastcdr::fixed_string<10000>& StringTest::message()
     return m_message;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "StringTestCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

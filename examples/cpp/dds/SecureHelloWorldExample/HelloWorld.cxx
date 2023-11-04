@@ -27,14 +27,16 @@ char dummy;
 #endif  // _WIN32
 
 #include "HelloWorld.h"
-#include <fastdds/rtps/common/CdrSerialization.hpp>
+
+#if FASTCDR_VERSION_MAJOR > 1
+
+#include <fastcdr/Cdr.h>
+
+
+#include <fastcdr/exceptions/BadParamException.h>
+using namespace eprosima::fastcdr::exception;
 
 #include <utility>
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "HelloWorldCdrAux.ipp"
-
-using namespace eprosima::fastcdr::exception;
 
 
 
@@ -91,19 +93,6 @@ bool HelloWorld::operator !=(
 {
     return !(*this == x);
 }
-
-void HelloWorld::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void HelloWorld::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 
 /*!
  * @brief This function sets a value in member index
@@ -172,3 +161,8 @@ std::string& HelloWorld::message()
     return m_message;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "HelloWorldCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

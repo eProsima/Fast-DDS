@@ -27,16 +27,18 @@ char dummy;
 #endif  // _WIN32
 
 #include "ContentFilterTestType.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include "ContentFilterTestTypeTypeObject.h"
 
-#include <fastdds/rtps/common/CdrSerialization.hpp>
+#include <fastcdr/Cdr.h>
+
+
+#include <fastcdr/exceptions/BadParamException.h>
+using namespace eprosima::fastcdr::exception;
 
 #include <utility>
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "ContentFilterTestTypeCdrAux.ipp"
-
-using namespace eprosima::fastcdr::exception;
 
 
 
@@ -160,19 +162,6 @@ bool StructType::operator !=(
 {
     return !(*this == x);
 }
-
-void StructType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void StructType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 
 /*!
  * @brief This function sets a value in member char_field
@@ -989,19 +978,6 @@ bool ContentFilterTestType::operator !=(
 {
     return !(*this == x);
 }
-
-void ContentFilterTestType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void ContentFilterTestType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 
 /*!
  * @brief This function sets a value in member char_field
@@ -3358,3 +3334,8 @@ std::vector<StructType>& ContentFilterTestType::unbounded_sequence_struct_field(
     return m_unbounded_sequence_struct_field;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "ContentFilterTestTypeCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

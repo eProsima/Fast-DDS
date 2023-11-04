@@ -56,8 +56,10 @@ set(XTYPES_TEST_SOURCE
     XTypesTests.cpp
     idl/TypesTypeObject.cxx
     idl/Types.cxx
+    idl/Typesv1.cxx
     idl/WideEnumTypeObject.cxx
     idl/WideEnum.cxx
+    idl/WideEnumv1.cxx
     ${XTYPES_SOURCE}
     )
 

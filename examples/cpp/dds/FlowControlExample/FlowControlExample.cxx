@@ -27,14 +27,16 @@ char dummy;
 #endif  // _WIN32
 
 #include "FlowControlExample.h"
-#include <fastdds/rtps/common/CdrSerialization.hpp>
+
+#if FASTCDR_VERSION_MAJOR > 1
+
+#include <fastcdr/Cdr.h>
+
+
+#include <fastcdr/exceptions/BadParamException.h>
+using namespace eprosima::fastcdr::exception;
 
 #include <utility>
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "FlowControlExampleCdrAux.ipp"
-
-using namespace eprosima::fastcdr::exception;
 
 
 
@@ -91,19 +93,6 @@ bool FlowControlExample::operator !=(
 {
     return !(*this == x);
 }
-
-void FlowControlExample::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void FlowControlExample::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 
 /*!
  * @brief This function copies the value in member message
@@ -172,3 +161,8 @@ char& FlowControlExample::wasFast()
     return m_wasFast;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "FlowControlExampleCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

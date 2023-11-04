@@ -37,6 +37,7 @@ endif()
 message(STATUS "Configuring Request-Reply example...")
 set(DDS_REQUEST_REPLY_EXAMPLE_COMMON_SOURCES
     Calculator.cxx
+    Calculatorv1.cxx
     CalculatorPubSubTypes.cxx
     )
 set( DDS_REQUEST_REPLY_EXAMPLE_CLIENT_SOURCES

@@ -27,16 +27,18 @@ char dummy;
 #endif  // _WIN32
 
 #include "WideEnum.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include "WideEnumTypeObject.h"
 
-#include <fastdds/rtps/common/CdrSerialization.hpp>
+#include <fastcdr/Cdr.h>
+
+
+#include <fastcdr/exceptions/BadParamException.h>
+using namespace eprosima::fastcdr::exception;
 
 #include <utility>
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "WideEnumCdrAux.ipp"
-
-using namespace eprosima::fastcdr::exception;
 
 
 
@@ -90,19 +92,6 @@ bool MyEnumWideStruct::operator !=(
 {
     return !(*this == x);
 }
-
-void MyEnumWideStruct::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MyEnumWideStruct::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 
 /*!
  * @brief This function sets a value in member my_enum_wide
@@ -505,20 +494,6 @@ uint8_t& SimpleWideUnion::third()
 }
 
 
-void SimpleWideUnion::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void SimpleWideUnion::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
-
-
 
 
 SimpleWideUnionStruct::SimpleWideUnionStruct()
@@ -571,19 +546,6 @@ bool SimpleWideUnionStruct::operator !=(
     return !(*this == x);
 }
 
-void SimpleWideUnionStruct::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void SimpleWideUnionStruct::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
-
 /*!
  * @brief This function copies the value in member my_union
  * @param _my_union New value to be copied in member my_union
@@ -622,3 +584,8 @@ SimpleWideUnion& SimpleWideUnionStruct::my_union()
     return m_my_union;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "WideEnumCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

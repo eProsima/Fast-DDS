@@ -27,16 +27,18 @@ char dummy;
 #endif  // _WIN32
 
 #include "TestRegression3361.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include "TestRegression3361TypeObject.h"
 
-#include <fastdds/rtps/common/CdrSerialization.hpp>
+#include <fastcdr/Cdr.h>
+
+
+#include <fastcdr/exceptions/BadParamException.h>
+using namespace eprosima::fastcdr::exception;
 
 #include <utility>
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "TestRegression3361CdrAux.ipp"
-
-using namespace eprosima::fastcdr::exception;
 
 
 
@@ -91,19 +93,6 @@ bool TestRegression3361::operator !=(
     return !(*this == x);
 }
 
-void TestRegression3361::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void TestRegression3361::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
-
 /*!
  * @brief This function copies the value in member uuid
  * @param _uuid New value to be copied in member uuid
@@ -142,3 +131,8 @@ TestModule::MACHINEID& TestRegression3361::uuid()
     return m_uuid;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "TestRegression3361CdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

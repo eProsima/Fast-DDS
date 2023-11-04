@@ -27,16 +27,18 @@ char dummy;
 #endif  // _WIN32
 
 #include "Test.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include "TestTypeObject.h"
 
-#include <fastdds/rtps/common/CdrSerialization.hpp>
+#include <fastcdr/Cdr.h>
+
+
+#include <fastcdr/exceptions/BadParamException.h>
+using namespace eprosima::fastcdr::exception;
 
 #include <utility>
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "TestCdrAux.ipp"
-
-using namespace eprosima::fastcdr::exception;
 
 
 
@@ -150,19 +152,6 @@ bool BasicStruct::operator !=(
 {
     return !(*this == x);
 }
-
-void BasicStruct::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void BasicStruct::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 
 /*!
  * @brief This function sets a value in member my_bool
@@ -704,19 +693,6 @@ bool ComplexStruct::operator !=(
 {
     return !(*this == x);
 }
-
-void ComplexStruct::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void ComplexStruct::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 
 /*!
  * @brief This function sets a value in member my_octet
@@ -1781,20 +1757,6 @@ ComplexStruct& MyUnion::complex()
 }
 
 
-void MyUnion::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MyUnion::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
-
-
 
 
 MyUnion2::MyUnion2()
@@ -2177,20 +2139,6 @@ int32_t& MyUnion2::tres()
 }
 
 
-void MyUnion2::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MyUnion2::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
-
-
 
 
 CompleteStruct::CompleteStruct()
@@ -2247,19 +2195,6 @@ bool CompleteStruct::operator !=(
 {
     return !(*this == x);
 }
-
-void CompleteStruct::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteStruct::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 
 /*!
  * @brief This function copies the value in member my_union
@@ -2396,19 +2331,6 @@ bool KeyedStruct::operator !=(
     return !(*this == x);
 }
 
-void KeyedStruct::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void KeyedStruct::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
-
 /*!
  * @brief This function sets a value in member key
  * @param _key New value for member key
@@ -2476,3 +2398,8 @@ BasicStruct& KeyedStruct::basic()
     return m_basic;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "TestCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

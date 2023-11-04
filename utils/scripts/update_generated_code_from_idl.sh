@@ -27,11 +27,14 @@ files_needing_output_dir=(
     )
 
 
+red='\E[1;31m'
 yellow='\E[1;33m'
 textreset='\E[1;0m'
 
-if [[ $(ls update_generated_code_from_idl.sh 2>/dev/null | wc -l) != 1 ]]; then
-    echo "Please, execute this script from its directory"
+current_dir=$(git rev-parse --show-toplevel)
+
+if [[ ! "$(pwd -P)" -ef "$current_dir" ]]; then
+    echo -e "${red}This script must be executed in the repository root directory.${textreset}"
     exit -1
 fi
 
@@ -39,8 +42,6 @@ if [[ -z "$(which fastddsgen)" ]]; then
     echo "Cannot find fastddsgen. Please, include it in PATH environment variable"
     exit -1
 fi
-
-cd ../..
 
 readarray -d '' idl_files < <(find . -iname \*.idl -print0)
 
@@ -75,14 +76,14 @@ for idl_file in "${idl_files[@]}"; do
             od_entry_split=(${od_entry//\|/ })
             for od_entry_split_element in ${od_entry_split[@]:1}; do
                 od_arg="-d ${od_entry_split_element}"
-                fastddsgen -replace $to_arg $cs_arg $od_arg "$file_from_gen"
+                fastddsgen -cdr both -replace $to_arg $cs_arg $od_arg "$file_from_gen"
             done
             break
         fi
     done
 
     if $not_processed ; then
-        fastddsgen -replace $to_arg $cs_arg "$file_from_gen"
+        fastddsgen -cdr both -replace $to_arg $cs_arg "$file_from_gen"
     fi
 
     if [[ $? != 0 ]]; then
@@ -91,7 +92,5 @@ for idl_file in "${idl_files[@]}"; do
 
     cd -
 done
-
-cd utils/scripts
 
 exit $ret_value

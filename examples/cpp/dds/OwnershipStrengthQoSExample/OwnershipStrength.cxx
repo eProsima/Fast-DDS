@@ -27,14 +27,16 @@ char dummy;
 #endif  // _WIN32
 
 #include "OwnershipStrength.h"
-#include <fastdds/rtps/common/CdrSerialization.hpp>
+
+#if FASTCDR_VERSION_MAJOR > 1
+
+#include <fastcdr/Cdr.h>
+
+
+#include <fastcdr/exceptions/BadParamException.h>
+using namespace eprosima::fastcdr::exception;
 
 #include <utility>
-
-// Include auxiliary functions like for serializing/deserializing.
-#include "OwnershipStrengthCdrAux.ipp"
-
-using namespace eprosima::fastcdr::exception;
 
 
 
@@ -96,19 +98,6 @@ bool ExampleMessage::operator !=(
 {
     return !(*this == x);
 }
-
-void ExampleMessage::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void ExampleMessage::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 
 /*!
  * @brief This function sets a value in member index
@@ -206,3 +195,8 @@ std::string& ExampleMessage::message()
     return m_message;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "OwnershipStrengthCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1
