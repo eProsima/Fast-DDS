@@ -94,6 +94,45 @@ public:
         return module.first->structs_.count(module.second) > 0;
     }
 
+    v1_3::DynamicType& structure(
+            const std::string& name)
+    {
+        // Solve scope
+        PairModuleSymbol module = resolve_scope(name);
+        if (module.first == nullptr)
+        {
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Cannot solve scope for structure '" << name << "'.");
+            throw std::runtime_error("Cannot solve scope for structure '" + name + "'.");
+        }
+
+        auto it = module.first->structs_.find(module.second);
+        if (it == module.first->structs_.end())
+        {
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Cannot find structure '" << name << "'.");
+            throw std::runtime_error("Cannot find structure '" + name + "'.");
+        }
+
+        return const_cast<v1_3::DynamicType&>(*it->second.get());
+    }
+
+    bool structure(
+            v1_3::DynamicType& struct_type)
+    {
+        if (struct_type.get_name().find("::") != std::string::npos)
+        {
+            return false; // Cannot add a symbol with scoped name.
+        }
+
+        std::string name = struct_type.get_name();
+        std::string name_space = scope();
+        // TODO set name of struct type?
+        //struct_type.set_name(name_space + (name_space.empty() ? "" : "::") + name);
+        auto result = structs_.emplace(
+            name,
+            Type(*this, struct_type));
+        return result.second;
+    }
+
     bool structure(
             v1_3::DynamicType&& struct_type,
             bool replace = false)
@@ -135,7 +174,28 @@ public:
         return module.first->unions_.count(module.second) > 0;
     }
 
-    v1_3::DynamicType_ptr union_switch(
+    const v1_3::DynamicType union_switch(
+            const std::string& name) const
+    {
+        // Solve scope
+        PairModuleSymbol module = resolve_scope(name);
+        if (!module.first)
+        {
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Cannot solve scope for union '" << name << "'.");
+            throw std::runtime_error("Cannot solve scope for union '" + name + "' was already declared'.");
+        }
+
+        auto it = module.first->unions_.find(module.second);
+        if (it == module.first->unions_.end())
+        {
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Cannot find union '" << name << "'.");
+            throw std::runtime_error("Cannot find union '" + name + "'.");
+        }
+
+        return *it->second.get();
+    }
+
+    v1_3::DynamicType union_switch(
             const std::string& name)
     {
         // Solve scope
@@ -143,44 +203,62 @@ public:
         if (!module.first)
         {
             EPROSIMA_LOG_ERROR(IDLPARSER, "Cannot solve scope for union '" << name << "'.");
-            return nullptr;
+            throw std::runtime_error("Cannot solve scope for union '" + name + "' was already declared'.");
         }
 
         auto it = module.first->unions_.find(module.second);
         if (it == module.first->unions_.end())
         {
             EPROSIMA_LOG_ERROR(IDLPARSER, "Cannot find union '" << name << "'.");
-            return nullptr;
+            throw std::runtime_error("Cannot find union '" + name + "'.");
         }
 
-        return it->second.get();
+        return const_cast<v1_3::DynamicType&>(*it->second.get());
     }
 
     bool union_switch(
-            v1_3::DynamicType_ptr union_type,
+            v1_3::DynamicType& union_type)
+    {
+        if (union_type.get_name().find("::") != std::string::npos)
+        {
+            return false; // Cannot add a symbol with scoped name.
+        }
+
+        std::string name = union_type.get_name();
+        std::string name_space = scope();
+        // TODO set name of union type?
+        //union_type.set_name(name_space + (name_space.empty() ? "" : "::") + name);
+        auto result = unions_.emplace(
+            name,
+            Type(*this, union_type));
+        return result.second;
+    }
+
+    bool union_switch(
+            v1_3::DynamicType&& union_type,
             bool replace = false)
     {
-        if (union_type->get_name().find("::") != std::string::npos)
+        if (union_type.get_name().find("::") != std::string::npos)
         {
             return false; // Cannot add a symbol with scoped name.
         }
 
         if (replace)
         {
-            auto it = unions_.find(union_type->get_name());
+            auto it = unions_.find(union_type.get_name());
             if (it != unions_.end())
             {
                 unions_.erase(it);
             }
         }
 
-        std::string name = union_type->get_name();
+        std::string name = union_type.get_name();
         std::string name_space = scope();
         // TODO set name of union type?
         //union_type.set_name(name_space + (name_space.empty() ? "" : "::") + name);
         auto result = unions_.emplace(
             name,
-            Type(*this, *union_type));
+            Type(*this, std::move(union_type)));
         return result.second;
     }
 

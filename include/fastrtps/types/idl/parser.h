@@ -1023,7 +1023,7 @@ struct action<union_forward_dcl>
         builder->set_name(union_name);
         auto union_type = builder->build();
         EPROSIMA_LOG_INFO(IDLPARSER, "Found forward union declaration: " << union_name);
-        module.union_switch(union_type);
+        module.union_switch(std::move(const_cast<v1_3::DynamicType&>(*union_type)));
 
         state.erase("union_name");
         state.erase("union_discriminant");
@@ -1309,7 +1309,7 @@ struct action<union_def>
         builder->set_name(union_name);
         auto union_type = builder->build();
         EPROSIMA_LOG_INFO(IDLPARSER, "Found union: " << union_name);
-        module.union_switch(union_type);
+        module.union_switch(std::move(const_cast<v1_3::DynamicType&>(*union_type)));
 
         state.erase("union_name");
         state.erase("union_discriminant");
