@@ -74,10 +74,9 @@ bool HelloWorldPublisher::init(
         const std::string& partitions,
         bool use_ownership,
         unsigned int ownership_strength,
-        const std::string& profile)
+        const std::string& profile,
+        uint32_t history)
 {
-    // hello_.index(0);
-    // memcpy(hello_.message().data(), "HelloWorld ", strlen("HelloWorld") + 1);
     bigdata_ = dds_types_bigdata::random_bigdata();
     std::cout << "Msg size in bytes: " << bigdata_.getCdrSerializedSize(bigdata_) << std::endl;
     bigdata_.index(0);
@@ -130,7 +129,6 @@ bool HelloWorldPublisher::init(
     }
 
     // CREATE THE TOPIC
-    // topic_ = participant_->create_topic(topic_name, "HelloWorld", TOPIC_QOS_DEFAULT);
     topic_ = participant_->create_topic(topic_name, "BigData", TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
@@ -140,8 +138,6 @@ bool HelloWorldPublisher::init(
 
     // CREATE THE WRITER
     DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
-    wqos.data_sharing().off();
-    wqos.history().kind = KEEP_ALL_HISTORY_QOS;
 
     // Data sharing set in endpoint. If it is not default, set it to off
     if (transport != DEFAULT)
@@ -185,12 +181,24 @@ bool HelloWorldPublisher::init(
                                                             // writters' qos actually is TRANSIENT_LOCAL)
     }
 
+    if (history)
+    {
+        wqos.history().kind = KEEP_LAST_HISTORY_QOS;
+        wqos.history().depth = history;
+    }
+    else 
+    {
+        wqos.history().kind = KEEP_ALL_HISTORY_QOS;
+    }
+
     // Set ownership
     if (use_ownership)
     {
         wqos.ownership().kind = OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
         wqos.ownership_strength().value = ownership_strength;
     }
+
+    wqos.data_sharing().off();
 
     writer_ = publisher_->create_datawriter(topic_, wqos, &listener_);
 

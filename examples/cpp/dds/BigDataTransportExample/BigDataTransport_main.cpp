@@ -63,6 +63,7 @@ int main(
     int hops = -1;
     bool reliable = false;
     bool transient = false; // transient local
+    int history = 0;
     std::string partitions = "";
     bool use_ownership = false;
     unsigned int ownership_strength = 0;
@@ -200,6 +201,10 @@ int main(
                 transient = true;
                 break;
 
+            case optionIndex::HISTORY:
+                history = strtol(opt.arg, nullptr, 10);
+                break;
+
             case optionIndex::TTL:
                 hops = strtol(opt.arg, nullptr, 10);
                 break;
@@ -252,7 +257,7 @@ int main(
             HelloWorldPublisher mypub;
             if (mypub.init(topic_name, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
                     transport, reliable, transient, hops, partitions, use_ownership, ownership_strength,
-                    participant_profile))
+                    participant_profile, static_cast<uint32_t>(history)))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
@@ -262,7 +267,7 @@ int main(
         {
             HelloWorldSubscriber mysub;
             if (mysub.init(topic_name, static_cast<uint32_t>(count), static_cast<uint32_t>(domain), transport,
-                    reliable, transient, hops, partitions, use_ownership, participant_profile))
+                    reliable, transient, hops, partitions, use_ownership, participant_profile, static_cast<uint32_t>(history)))
             {
                 mysub.run(static_cast<uint32_t>(count));
             }

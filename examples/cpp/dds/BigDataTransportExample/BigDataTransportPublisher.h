@@ -28,13 +28,12 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include "HelloWorldPubSubTypes.h"
 #include "datatypesPubSubTypes.h"
 #include "types.hpp"
 
 /**
  * Class used to group into a single working unit a Publisher with a DataWriter, its listener, and a TypeSupport member
- * corresponding to the HelloWorld datatype
+ * corresponding to the BigData datatype
  */
 class HelloWorldPublisher
 {
@@ -57,7 +56,8 @@ public:
             const std::string& partitions,
             bool use_ownership,
             unsigned int ownership_strength,
-            const std::string& profile);
+            const std::string& profile,
+            uint32_t history);
 
     //! Publish a sample
     void publish();
@@ -74,8 +74,6 @@ public:
     static void stop();
 
 private:
-
-    HelloWorld hello_;
 
     BigData bigdata_;
 

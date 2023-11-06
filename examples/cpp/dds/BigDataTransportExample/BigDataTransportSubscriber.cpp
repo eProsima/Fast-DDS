@@ -69,7 +69,8 @@ bool HelloWorldSubscriber::init(
         int hops,
         const std::string& partitions,
         bool use_ownership,
-        const std::string& profile)
+        const std::string& profile,
+        uint32_t history)
 {
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
@@ -181,8 +182,6 @@ bool HelloWorldSubscriber::init(
         listener_.set_max_messages(max_messages);
     }
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
-    rqos.data_sharing().off();
-    rqos.history().kind = KEEP_ALL_HISTORY_QOS;
 
     // Data sharing set in endpoint. If it is not default, set it to off
     if (transport != DEFAULT)
@@ -213,11 +212,23 @@ bool HelloWorldSubscriber::init(
         rqos.durability().kind = VOLATILE_DURABILITY_QOS;   // default
     }
 
+    if (history)
+    {
+        rqos.history().kind = KEEP_LAST_HISTORY_QOS;
+        rqos.history().depth = history;
+    }
+    else 
+    {
+        rqos.history().kind = KEEP_ALL_HISTORY_QOS;
+    }
+
     // Set ownership
     if (use_ownership)
     {
         rqos.ownership().kind = OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
     }
+
+    rqos.data_sharing().off();
 
     reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
 
@@ -351,6 +362,11 @@ void HelloWorldSubscriber::SubListener::on_data_available(
             }
         }
     }
+}
+
+void HelloWorldSubscriber::SubListener::on_sample_lost(DataReader* reader, const SampleLostStatus& status)
+{
+    std::cout << "Total samples lost: " << status.total_count << std::endl;
 }
 
 void HelloWorldSubscriber::run(

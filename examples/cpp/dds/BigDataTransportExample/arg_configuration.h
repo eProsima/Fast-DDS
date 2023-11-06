@@ -172,6 +172,7 @@ enum optionIndex
     TRANSPORT,
     RELIABLE,
     TRANSIENT_LOCAL,
+    HISTORY,
     TTL,
     PARTITIONS,
     OWNERSHIP_STRENGTH,
@@ -226,6 +227,8 @@ const option::Descriptor usage[] = {
       "  -r \t--reliable \tSet reliability to reliable (best-effort by default)." },
     { TRANSIENT_LOCAL, 0, "", "transient",        Arg::None,
       "  \t--transient \tSet durability to transient local (volatile by default, ineffective when not reliable)." },
+    { HISTORY, 0, "", "history",              Arg::NumericRange<>,
+      "  \t--history <num> \tDepth of history with config KEEP_LAST (Default: 0 => KEEP_ALL)." },
     { PARTITIONS, 0, "p", "partitions",        Arg::String,
       "  -p <str> \t--partitions=<str> \tPartitions to match separated by ';'."
       " Single or double quotes required with multiple partitions."

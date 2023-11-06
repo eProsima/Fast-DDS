@@ -9,7 +9,7 @@
                 <port>5100</port> <!-- Default Unicast Locator-->
                 <port>5200</port> <!-- Metatraffic Unicast Locator-->
             </listening_ports>
-            <!-- <wan_addr>127.0.0.1</wan_addr> -->
+            <wan_addr>127.0.0.1</wan_addr>
             <sendBufferSize>200000</sendBufferSize>
             <receiveBufferSize>200000</receiveBufferSize>
             <maxMessageSize>200000</maxMessageSize> <!-- Default: 65500-->
@@ -23,7 +23,7 @@
         </transport_descriptor>
     </transport_descriptors>
 
-    <participant profile_name="bigdata_pub_profile">
+    <participant profile_name="bigdata_pub_discServer_profile">
         <domainId>42</domainId>
         <rtps>
             <name>BigDataParticipant_pub</name>
@@ -40,52 +40,48 @@
                 </locator>
             </defaultUnicastLocatorList>
 
-            
             <!-- <sendSocketBufferSize>8192</sendSocketBufferSize>
 
             <listenSocketBufferSize>8192</listenSocketBufferSize> -->
            
-
             <builtin>
+
+                <discovery_config>
+                    <discoveryProtocol>CLIENT</discoveryProtocol>
+                    <discoveryServersList>
+                        <RemoteServer prefix="72.61.73.70.66.61.72.6d.74.65.73.74">
+                            <metatrafficUnicastLocatorList>
+                                <locator>
+                                    <tcpv4>
+                                        <!-- Both physical and logical (port), useful in TCP transports -->
+                                        <physical_port>5100</physical_port>
+                                        <port>5100</port>
+                                        <!-- <wan_address>127.0.0.1</wan_address> -->
+                                        <address>127.0.0.1</address>
+                                    </tcpv4>
+                                </locator>
+                            </metatrafficUnicastLocatorList>
+                            <metatrafficMulticastLocatorList>
+                                <locator>
+                                    <udpv4>
+                                        <address>127.0.0.1</address>
+                                    </udpv4>
+                                </locator>
+                            </metatrafficMulticastLocatorList>
+                        </RemoteServer>
+                    </discoveryServersList>
+                </discovery_config>
 
                 <avoid_builtin_multicast>true</avoid_builtin_multicast>
 
                 <use_WriterLivelinessProtocol>true</use_WriterLivelinessProtocol>
 
-                <metatrafficUnicastLocatorList>
-                    <locator>
-                        <tcpv4>
-                            <!-- Both physical and logical (port), useful in TCP transports -->
-                            <physical_port>5100</physical_port>
-                            <port>5100</port>
-                            <!-- <wan_address>127.0.0.1</wan_address> -->
-                            <!-- <address>192.168.1.55</address> -->
-                        </tcpv4>
-                    </locator>
-                </metatrafficUnicastLocatorList>
-
-                <metatrafficMulticastLocatorList>
-                    <locator>
-                        <udpv4>
-                            <address>127.0.0.1</address>
-                        </udpv4>
-                    </locator>
-                </metatrafficMulticastLocatorList>
-
                 <readerHistoryMemoryPolicy>PREALLOCATED</readerHistoryMemoryPolicy>
 
                 <writerHistoryMemoryPolicy>PREALLOCATED</writerHistoryMemoryPolicy>
 
-                <readerPayloadSize>512</readerPayloadSize>
-
-                <writerPayloadSize>512</writerPayloadSize>
-
                 <mutation_tries>100</mutation_tries>
 
-                <!-- <typelookup_config>
-                    <use_client>true</use_client>
-                    <use_server>true</use_server>
-                </typelookup_config> -->
             </builtin>
 
             <participantID>42</participantID>

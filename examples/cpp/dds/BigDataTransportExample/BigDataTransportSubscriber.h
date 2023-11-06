@@ -29,7 +29,6 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 
-#include "HelloWorldPubSubTypes.h"
 #include "datatypesPubSubTypes.h"
 #include "types.hpp"
 
@@ -56,7 +55,8 @@ public:
             int hops,
             const std::string& partitions,
             bool use_ownership,
-            const std::string& profile);
+            const std::string& profile,
+            uint32_t history);
 
     //! RUN the subscriber until number samples are received
     void run(
@@ -111,9 +111,11 @@ private:
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-    private:
+        void on_sample_lost(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SampleLostStatus& status) override;
 
-        HelloWorld hello_;
+    private:
 
         BigData bigdata_;
 

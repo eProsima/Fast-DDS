@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+
+    <transport_descriptors>
+        <transport_descriptor>
+                <transport_id>udp_transport_1</transport_id>
+                <type>UDPv4</type>
+                <sendBufferSize>200000</sendBufferSize>
+                <receiveBufferSize>200000</receiveBufferSize>
+                <maxMessageSize>65500</maxMessageSize> <!-- Default: 65500-->
+        </transport_descriptor>
+    </transport_descriptors>
+
+    <participant profile_name="server_discServer_profile" is_default_profile="true">
+        <!-- <domainId>42</domainId> -->
+        <rtps>
+            <name>DiscServerParticipant</name>
+           
+            <builtin>
+
+                <discovery_config>
+                    <discoveryProtocol>SERVER</discoveryProtocol>
+                </discovery_config>
+
+                <metatrafficUnicastLocatorList>
+                    <locator>
+                        <udpv4>
+                            <address>127.0.0.1</address>
+                            <port>56542</port>
+                        </udpv4>
+                    </locator>
+                </metatrafficUnicastLocatorList>
+
+            </builtin>
+            
+            <prefix>72.61.73.70.66.61.72.6d.74.65.73.74</prefix>
+
+            <!-- <participantID>42</participantID> -->
+
+            <useBuiltinTransports>false</useBuiltinTransports>
+
+            <userTransports>
+                <transport_id>udp_transport_1</transport_id>
+            </userTransports>
+
+        </rtps>
+    </participant>
+</profiles>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
