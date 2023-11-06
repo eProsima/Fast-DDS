@@ -296,50 +296,6 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistUnicast)
     reader.block_for_all();
 }
 
-// Setting the interface whitelist by the interface names,
-// check if the connection is established anyways.
-// All available interfaces case for both publisher and subscriber
-TEST_P(NetworkConfig, PubSubInterfaceWhitelistName)
-{
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    std::vector<IPFinder::info_IP> interfaces;
-    use_udpv4 ? GetIP4s(interfaces) : GetIP6s(interfaces);
-
-
-    for (const auto& interface_ : interfaces)
-    {
-        descriptor_->interfaceWhiteList.push_back(interface_.dev);
-    }
-
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
-            disable_builtin_transport().
-            add_user_transport_to_pparams(descriptor_).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
-            disable_builtin_transport().
-            add_user_transport_to_pparams(descriptor_).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Because its volatile the durability
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    writer.send(data);
-    ASSERT_TRUE(data.empty());
-    reader.block_for_all();
-
-}
-
 
 // Setting the interface whitelist by the interface names in one of the endpoints,
 // but not in the other, check if the connection is NOT established anyways.
@@ -473,9 +429,9 @@ void interface_whitelist_test(
     reader.block_for_all();
 }
 
-// Setting the interface whitelist by the interface names in one of the endpoints,
+// - Setting the interface whitelist by the interface names in one of the endpoints,
 // but not in the other, check if the connection is established anyways.
-// All available interfaces case.
+// - All available interfaces case for both publisher and subscriber
 TEST_P(NetworkConfig, PubSubAsymmetricInterfaceWhitelistAllInterfacesName)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -483,7 +439,12 @@ TEST_P(NetworkConfig, PubSubAsymmetricInterfaceWhitelistAllInterfacesName)
 
     std::vector<IPFinder::info_IP> no_interfaces;
     std::vector<IPFinder::info_IP> all_interfaces_name;
-    GetIP4s(all_interfaces_name, false);
+    use_udpv4 ? GetIP4s(all_interfaces_name) : GetIP6s(all_interfaces_name);
+
+    {
+        // Whitelist 
+        interface_whitelist_test(all_interfaces_name, all_interfaces_name, true);
+    }
 
     {
         // Whitelist only in publisher
