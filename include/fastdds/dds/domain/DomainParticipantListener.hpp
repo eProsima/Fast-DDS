@@ -214,7 +214,7 @@ public:
     virtual void on_type_dependencies_reply(
             DomainParticipant* participant,
             const fastrtps::rtps::SampleIdentity& request_sample_id,
-            const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
+            const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies)
     {
         static_cast<void>(participant);
         static_cast<void>(request_sample_id);

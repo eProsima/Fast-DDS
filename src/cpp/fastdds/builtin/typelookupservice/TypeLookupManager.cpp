@@ -261,6 +261,31 @@ eprosima::fastrtps::rtps::SampleIdentity TypeLookupManager::get_type_dependencie
     eprosima::fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
+        bool seen_complete = false;
+        bool seen_minimal = false;
+        for (const TypeIdentifier& type_id : id_seq)
+        {
+            // Check if type_id._d is SCC or not direct HASH
+            if (type_id._d == TI_STRONG_COMPONENT||
+                !is_direct_hash_type_identifier(type_id))
+            {
+                return id;
+            }
+            // Check for mixing of EK_COMPLETE and EK_MINIMAL
+            if (type_id._d == EK_COMPLETE)
+            {
+                seen_complete = true;
+            }
+            else if (type_id._d == EK_MINIMAL)
+            {
+                seen_minimal = true;
+            }            
+            if (seen_complete && seen_minimal)
+            {
+                return id;
+            }
+        }
+
         TypeLookup_getTypeDependencies_In in;
         in.type_ids() = id_seq;
         TypeLookup_RequestPubSubType type;
@@ -282,6 +307,15 @@ eprosima::fastrtps::rtps::SampleIdentity TypeLookupManager::get_types(
     eprosima::fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
+        for (const TypeIdentifier& type_id : id_seq)
+        {
+            // Check if type_id._d is direct HASH
+            if (!is_direct_hash_type_identifier(type_id))
+            {
+                return id;
+            }
+        }
+
         TypeLookup_getTypes_In in;
         in.type_ids() = id_seq;
         TypeLookup_RequestPubSubType type;

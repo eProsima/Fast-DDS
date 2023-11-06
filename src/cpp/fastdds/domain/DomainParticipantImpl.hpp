@@ -707,7 +707,7 @@ protected:
         void on_type_dependencies_reply(
                 fastrtps::rtps::RTPSParticipant* participant,
                 const fastrtps::rtps::SampleIdentity& request_sample_id,
-                const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies) override;
+                const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies) override;
 
         void on_type_information_received(
                 fastrtps::rtps::RTPSParticipant* participant,
@@ -738,7 +738,7 @@ protected:
 
     bool check_get_dependencies_request(
             const fastrtps::rtps::SampleIdentity& requestId,
-            const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies);
+            const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies);
 
     virtual PublisherImpl* create_publisher_impl(
             const PublisherQos& qos,

@@ -13,7 +13,7 @@ module rtps {
 };//rtps
 module types {
     struct ReturnCode_t;
-};//rtps
+};//types
 };//fastrtps
 
 module fastdds {
@@ -75,7 +75,7 @@ module builtin {
     };
 
     union TypeLookup_getTypes_Result switch(long) {
-        case fastrtps::rtps::ReturnCode_t::RETCODE_OK:
+        case ReturnCode_t::RETCODE_OK:
             TypeLookup_getTypes_Out result;
     };
 
@@ -93,7 +93,7 @@ module builtin {
     };
 
     union TypeLookup_getTypeDependencies_Result switch(long){
-        case fastrtps::rtps::ReturnCode_t::RETCODE_OK:
+        case ReturnCode_t::RETCODE_OK:
             TypeLookup_getTypeDependencies_Out result;
     };
 

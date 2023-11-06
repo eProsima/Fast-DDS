@@ -19,7 +19,7 @@
 #include <vector>
 #include <gmock/gmock.h>
 
-#include <fastdds/dds/builtin/typelookupservice/TypeLookupTypes.hpp>
+#include <fastdds/dds/builtin/typelookupservice/TypeLookupTypes.h>
 
 namespace eprosima {
 

@@ -23,6 +23,7 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypeIdentifier.h>
@@ -194,7 +195,7 @@ public:
     virtual void on_type_dependencies_reply(
             RTPSParticipant* participant,
             const SampleIdentity& request_sample_id,
-            const types::TypeIdentifierWithSizeSeq& dependencies)
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq& dependencies)
     {
         static_cast<void>(participant);
         static_cast<void>(request_sample_id);

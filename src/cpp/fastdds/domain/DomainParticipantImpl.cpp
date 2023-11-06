@@ -1629,7 +1629,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
 void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_reply(
         RTPSParticipant*,
         const fastrtps::rtps::SampleIdentity& request_sample_id,
-        const xtypes1_3::TypeIdentifierWithSizeSeq& dependencies)
+        const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies)
 {
     Sentry sentinel(this);
     if (sentinel)
@@ -1904,7 +1904,7 @@ void DomainParticipantImpl::fill_pending_dependencies(
 
 bool DomainParticipantImpl::check_get_dependencies_request(
         const fastrtps::rtps::SampleIdentity& requestId,
-        const xtypes1_3::TypeIdentifierWithSizeSeq& dependencies)
+        const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies)
 {
     using namespace fastrtps::types;
 
