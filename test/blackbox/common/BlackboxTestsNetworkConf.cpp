@@ -266,65 +266,65 @@ void interface_whitelist_test(
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
 
-    std::shared_ptr<UDPTransportDescriptor> pub_upv_descriptor;
+    std::shared_ptr<UDPTransportDescriptor> pub_udp_descriptor;
 
     if (use_udpv4)
     {
-        pub_upv_descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        pub_udp_descriptor = std::make_shared<UDPv4TransportDescriptor>();
     }
     else
     {
-        pub_upv_descriptor = std::make_shared<UDPv6TransportDescriptor>();
+        pub_udp_descriptor = std::make_shared<UDPv6TransportDescriptor>();
     }
 
     // include the interfaces in the transport descriptor
-    for (const auto& interface_ : pub_interfaces)
+    for (const auto& interface : pub_interfaces)
     {
         if (!interface_name)
         {
-            pub_upv_descriptor->interfaceWhiteList.push_back(interface_.name);
+            pub_udp_descriptor->interfaceWhiteList.push_back(interface.name);
         }
         else
         {
-            pub_upv_descriptor->interfaceWhiteList.push_back(interface_.dev);
+            pub_udp_descriptor->interfaceWhiteList.push_back(interface.dev);
         }
     }
 
     // Set the transport descriptor WITH interfaces in the writer
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
             disable_builtin_transport().
-            add_user_transport_to_pparams(pub_upv_descriptor).init();
+            add_user_transport_to_pparams(pub_udp_descriptor).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
-    std::shared_ptr<UDPTransportDescriptor> sub_upv_descriptor;
+    std::shared_ptr<UDPTransportDescriptor> sub_udp_descriptor;
 
     if (use_udpv4)
     {
-        sub_upv_descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        sub_udp_descriptor = std::make_shared<UDPv4TransportDescriptor>();
     }
     else
     {
-        sub_upv_descriptor = std::make_shared<UDPv6TransportDescriptor>();
+        sub_udp_descriptor = std::make_shared<UDPv6TransportDescriptor>();
     }
 
     // include the interfaces in the transport descriptor
-    for (const auto& interface_ : sub_interfaces)
+    for (const auto& interface : sub_interfaces)
     {
         if (!interface_name)
         {
-            sub_upv_descriptor->interfaceWhiteList.push_back(interface_.name);
+            sub_udp_descriptor->interfaceWhiteList.push_back(interface.name);
         }
         else
         {
-            sub_upv_descriptor->interfaceWhiteList.push_back(interface_.dev);
+            sub_udp_descriptor->interfaceWhiteList.push_back(interface.dev);
         }
     }
 
     // Set the transport descriptor WITH interfaces in the reader
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
             disable_builtin_transport().
-            add_user_transport_to_pparams(sub_upv_descriptor).init();
+            add_user_transport_to_pparams(sub_udp_descriptor).init();
 
     ASSERT_TRUE(reader.isInitialized());
 

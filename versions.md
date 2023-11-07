@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * Enable configuration of thread setting for all threads.
+* Added the possibility to define interfaces in the whitelist by interface name.
 
 Version 2.12.0
 --------------
@@ -17,7 +18,6 @@ Version 2.12.0
     - **API break**. Changed a `MEMBER_INVALID` identifier from a `#define` to a `constexpr`.
       Although this is not a new major version, using a `#define` is a bad conduct which was decided to be changed.
       Note that new `constexpr` is inside namespace `eprosima::fastrtps::types`.
-* Added the possibility to define interfaces in the whitelist by interface name 
 
 Version 2.11.0
 --------------
