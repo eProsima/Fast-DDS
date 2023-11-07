@@ -282,11 +282,114 @@ ReturnCode_t TypeObjectRegistry::are_types_compatible(
 
 ReturnCode_t TypeObjectRegistry::get_type_dependencies(
         const TypeIdentifierSeq& type_identifiers,
-        std::unordered_set<TypeIdentfierWithSize> type_dependencies)
+        std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
 {
-    static_cast<void>(type_identifiers);
-    static_cast<void>(type_dependencies);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    ReturnCode_t ret_code = ReturnCode_t::RETCODE_OK;
+    for (const TypeIdentifier& type_id : type_identifiers)
+    {
+        if (!TypeObjectUtils::is_direct_hash_type_identifier(type_id))
+        {
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+        TypeObject type_object;
+        ret_code = get_type_object(type_id, type_object);
+        if (ReturnCode_t::RETCODE_OK == ret_code)
+        {
+            ret_code = get_dependencies_from_type_object(type_object, type_dependencies);
+            if (ReturnCode_t::RETCODE_OK != ret_code)
+            {
+                break;
+            }
+        }
+    }
+    return ret_code;
+}
+
+ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
+        const TypeObject& type_object,
+        std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+{
+    ReturnCode_t ret_code = ReturnCode_t::RETCODE_OK;
+    TypeIdentifierSeq dependent_type_ids;
+    TypeIdentfierWithSize type_id_size;
+    switch (type_object._d())
+    {
+        case EK_MINIMAL:
+            switch (type_object.minimal()._d())
+            {
+                case TK_ALIAS:
+                    ret_code = get_alias_dependencies(type_object.minimal().alias_type(), type_dependencies);
+                    break;
+                case TK_ANNOTATION:
+                    ret_code = get_annotation_dependencies(type_object.minimal().annotation_type(), type_dependencies);
+                    break;
+                case TK_STRUCTURE:
+                    ret_code = get_structure_dependencies(type_object.minimal().struct_type(), type_dependencies);
+                    break;
+                case TK_UNION:
+                    ret_code = get_union_dependencies(type_object.minimal().union_type(), type_dependencies);
+                    break;
+                case TK_SEQUENCE:
+                    ret_code = get_sequence_array_dependencies(type_object.minimal().sequence_type(),
+                        type_dependencies);
+                    break;
+                case TK_ARRAY:
+                    ret_code = get_sequence_array_dependencies(type_object.minimal().array_type(), type_dependencies);
+                    break;
+                case TK_MAP:
+                    ret_code = get_map_dependencies(type_object.minimal().map_type(), type_dependencies);
+                    break;
+                // No dependencies
+                case TK_BITSET:
+                case TK_ENUM:
+                case TK_BITMASK:
+                    break;
+            }
+            break;
+        case EK_COMPLETE:
+            switch (type_object.complete()._d())
+            {
+                case TK_ALIAS:
+                    ret_code = get_alias_dependencies(type_object.complete().alias_type(), type_dependencies);
+                    break;
+                case TK_ANNOTATION:
+                    ret_code = get_annotation_dependencies(type_object.complete().annotation_type(), type_dependencies);
+                    break;
+                case TK_STRUCTURE:
+                    ret_code = get_structure_dependencies(type_object.complete().struct_type(), type_dependencies);
+                    break;
+                case TK_UNION:
+                    ret_code = get_union_dependencies(type_object.complete().union_type(), type_dependencies);
+                    break;
+                case TK_SEQUENCE:
+                    ret_code = get_sequence_array_dependencies(type_object.complete().sequence_type(),
+                        type_dependencies);
+                    break;
+                case TK_ARRAY:
+                    ret_code = get_sequence_array_dependencies(type_object.complete().array_type(), type_dependencies);
+                    break;
+                case TK_MAP:
+                    ret_code = get_map_dependencies(type_object.minimal().map_type(), type_dependencies);
+                    break;
+                // No dependencies
+                case TK_BITSET:
+                case TK_ENUM:
+                case TK_BITMASK:
+                    break;
+            }
+            break;
+    }
+    return ret_code;
+}
+
+void TypeObjectRegistry::add_dependency(
+        const TypeIdentifier& type_id,
+        std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+{
+    TypeIdentfierWithSize type_id_size;
+    type_id_size.type_id(type_id);
+    type_id_size.typeobject_serialized_size(type_registry_entries_.at(type_id).type_object_serialized_size_);
+    type_dependencies.insert(type_id_size);
 }
 
 bool TypeObjectRegistry::is_type_identifier_known(
