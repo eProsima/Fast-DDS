@@ -41,7 +41,7 @@ bool TypeRegistryEntry::operator !=(
         const TypeRegistryEntry& entry)
 {
     return this->type_object_ != entry.type_object_ ||
-        this->type_object_serialized_size_ != entry.type_object_serialized_size_;
+           this->type_object_serialized_size_ != entry.type_object_serialized_size_;
 }
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
@@ -177,7 +177,7 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
     if (ReturnCode_t::RETCODE_OK == ret_code)
     {
         if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
-            !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
+                !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
 >>>>>>> 4eed34295 (Refs #19837: TypeObjectRegistry::get_type_objects implementation)
@@ -185,6 +185,7 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
         if (EK_MINIMAL == type_ids.type_identifier1()._d())
         {
             type_objects.minimal_type_object =
+<<<<<<< HEAD
 <<<<<<< HEAD
                     type_registry_entries_.at(type_ids.type_identifier1()).type_object_.minimal();
             type_objects.complete_type_object =
@@ -194,10 +195,16 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
             type_objects.complete_type_object =
                 type_registry_entries_.at(type_ids.type_identifier2()).type_object_.complete();
 >>>>>>> 4eed34295 (Refs #19837: TypeObjectRegistry::get_type_objects implementation)
+=======
+                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_.minimal();
+            type_objects.complete_type_object =
+                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_.complete();
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
         }
         else
         {
             type_objects.complete_type_object =
+<<<<<<< HEAD
 <<<<<<< HEAD
                     type_registry_entries_.at(type_ids.type_identifier1()).type_object_.complete();
             type_objects.minimal_type_object =
@@ -207,6 +214,11 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
             type_objects.minimal_type_object =
                 type_registry_entries_.at(type_ids.type_identifier2()).type_object_.minimal();
 >>>>>>> 4eed34295 (Refs #19837: TypeObjectRegistry::get_type_objects implementation)
+=======
+                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_.complete();
+            type_objects.minimal_type_object =
+                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_.minimal();
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
         }
     }
     return ret_code;
@@ -258,9 +270,9 @@ TypeObjectRegistry::TypeObjectRegistry()
 TypeObjectRegistry::TypeObjectRegistry()
 {
     register_primitive_type_identifiers();
-/* TODO(jlbueno)
-    register_builtin_annotations_type_objects();
-*/
+    /* TODO(jlbueno)
+        register_builtin_annotations_type_objects();
+     */
 }
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
@@ -271,11 +283,15 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     TypeObject minimal_type_object;
     if (type_identifier._d() != type_object._d() ||
 <<<<<<< HEAD
+<<<<<<< HEAD
             type_identifier != get_type_identifier(type_object, type_object_serialized_size))
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
 =======
         type_identifier != get_type_identifier(type_object, type_object_serialized_size))
+=======
+            type_identifier != get_type_identifier(type_object, type_object_serialized_size))
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 >>>>>>> 8ee946999 (Refs #19837: TypeObjectRegistry::register_type_object implementation)
@@ -344,7 +360,7 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
     if (ReturnCode_t::RETCODE_OK == ret_code)
     {
         if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
-        !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
+                !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
 >>>>>>> 31faf9cf3 (Refs #19837: TypeObjectRegistry::get_type_information implementation)
@@ -354,6 +370,7 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
             type_information.complete().typeid_with_size().type_id(type_ids.type_identifier1());
             type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
 <<<<<<< HEAD
+<<<<<<< HEAD
                         type_ids.type_identifier1()).type_object_serialized_size_);
             type_information.complete().dependent_typeid_count(-1);
             type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier2());
@@ -366,12 +383,20 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
             type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
                 type_ids.type_identifier2()).type_object_serialized_size_);
 >>>>>>> 31faf9cf3 (Refs #19837: TypeObjectRegistry::get_type_information implementation)
+=======
+                        type_ids.type_identifier1()).type_object_serialized_size_);
+            type_information.complete().dependent_typeid_count(-1);
+            type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier2());
+            type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                        type_ids.type_identifier2()).type_object_serialized_size_);
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
             type_information.minimal().dependent_typeid_count(-1);
         }
         else
         {
             type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier1());
             type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+<<<<<<< HEAD
 <<<<<<< HEAD
                         type_ids.type_identifier1()).type_object_serialized_size_);
             type_information.minimal().dependent_typeid_count(-1);
@@ -385,6 +410,13 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
             type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
                 type_ids.type_identifier2()).type_object_serialized_size_);
 >>>>>>> 31faf9cf3 (Refs #19837: TypeObjectRegistry::get_type_information implementation)
+=======
+                        type_ids.type_identifier1()).type_object_serialized_size_);
+            type_information.minimal().dependent_typeid_count(-1);
+            type_information.complete().typeid_with_size().type_id(type_ids.type_identifier2());
+            type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                        type_ids.type_identifier2()).type_object_serialized_size_);
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
             type_information.complete().dependent_typeid_count(-1);
         }
     }
@@ -468,7 +500,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     break;
                 case TK_SEQUENCE:
                     ret_code = get_sequence_array_dependencies(type_object.minimal().sequence_type(),
-                        type_dependencies);
+                                    type_dependencies);
                     break;
                 case TK_ARRAY:
                     ret_code = get_sequence_array_dependencies(type_object.minimal().array_type(), type_dependencies);
@@ -500,7 +532,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     break;
                 case TK_SEQUENCE:
                     ret_code = get_sequence_array_dependencies(type_object.complete().sequence_type(),
-                        type_dependencies);
+                                    type_dependencies);
                     break;
                 case TK_ARRAY:
                     ret_code = get_sequence_array_dependencies(type_object.complete().array_type(), type_dependencies);

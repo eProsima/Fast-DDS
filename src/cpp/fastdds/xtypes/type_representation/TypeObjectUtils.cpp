@@ -2288,8 +2288,12 @@ void TypeObjectUtils::applied_annotation_type_identifier_consistency(
     if (ReturnCode_t::RETCODE_OK == ret_code)
     {
         if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ANNOTATION) ||
+<<<<<<< HEAD
             (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ANNOTATION))
 >>>>>>> 548f0711c (Refs #19837: TypeObjectRegistry::get_type_object implementation)
+=======
+                (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ANNOTATION))
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
         {
             throw InvalidArgumentError("Applied Annotation TypeIdentifier does not correspond with an Annotation type");
         }
@@ -2488,19 +2492,24 @@ void TypeObjectUtils::structure_base_type_consistency(
     ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(base_type,
                     type_object);
     if (ret_code == ReturnCode_t::RETCODE_OK &&
-        EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
+            EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
     {
         structure_base_type_consistency(type_object.complete().alias_type().body().common().related_type());
     }
     else if (ret_code == ReturnCode_t::RETCODE_OK &&
-        EK_MINIMAL == type_object._d() && type_object.minimal()._d() == TK_ALIAS)
+            EK_MINIMAL == type_object._d() && type_object.minimal()._d() == TK_ALIAS)
     {
         structure_base_type_consistency(type_object.minimal().alias_type().body().common().related_type());
     }
     else if (ret_code != ReturnCode_t::RETCODE_OK ||
+<<<<<<< HEAD
         (EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_STRUCTURE) ||
         (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_STRUCTURE))
 >>>>>>> 548f0711c (Refs #19837: TypeObjectRegistry::get_type_object implementation)
+=======
+            (EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_STRUCTURE) ||
+            (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_STRUCTURE))
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
     {
         throw InvalidArgumentError("Inconsistent base TypeIdentifier: must be related to a structure TypeObject");
     }
@@ -2660,10 +2669,14 @@ void TypeObjectUtils::common_discriminator_member_type_identifier_consistency(
             }
             else if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ENUM) ||
 <<<<<<< HEAD
+<<<<<<< HEAD
                     (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
 =======
                 (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
 >>>>>>> 548f0711c (Refs #19837: TypeObjectRegistry::get_type_object implementation)
+=======
+                    (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
             {
                 throw InvalidArgumentError("Inconsistent CommonDiscriminatorMember TypeIdentifier");
             }
@@ -2753,10 +2766,14 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
                 }
                 else if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ENUM) ||
 <<<<<<< HEAD
+<<<<<<< HEAD
                         (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
 =======
                     (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
 >>>>>>> 548f0711c (Refs #19837: TypeObjectRegistry::get_type_object implementation)
+=======
+                        (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
                 {
                     throw InvalidArgumentError(
                               "Given annotation parameter value is inconsistent with given TypeIdentifier");

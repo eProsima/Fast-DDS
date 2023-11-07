@@ -634,7 +634,11 @@ TEST(TypeObjectUtilsTests, register_s_sequence)
                 another_plain_seq,
                 "small_sequence"));
     std::string type_name;
+<<<<<<< HEAD
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET,
+=======
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
             TypeObjectUtils::build_and_register_s_sequence_type_identifier(another_plain_seq, type_name));
 }
 
@@ -660,7 +664,11 @@ TEST(TypeObjectUtilsTests, register_l_sequence)
                 another_plain_seq,
                 "large_sequence"));
     std::string type_name;
+<<<<<<< HEAD
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET,
+=======
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
             TypeObjectUtils::build_and_register_l_sequence_type_identifier(another_plain_seq, type_name));
 }
 
@@ -1936,7 +1944,11 @@ TEST(TypeObjectUtilsTests, register_alias_type_object)
             TypeObjectUtils::build_and_register_alias_type_object(other_alias,
             "alias"));
     std::string type_name;
+<<<<<<< HEAD
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_alias_type_object(
+=======
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_alias_type_object(
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
                 other_alias, type_name));
 }
 
@@ -2121,7 +2133,11 @@ TEST(TypeObjectUtilsTests, register_array_type_object)
             TypeObjectUtils::build_and_register_array_type_object(other_array,
             "array"));
     std::string type_name;
+<<<<<<< HEAD
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_array_type_object(
+=======
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_array_type_object(
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
                 other_array, type_name));
 }
 
@@ -2184,11 +2200,19 @@ TEST(TypeObjectUtilsTests, register_enumerated_type_object)
     CompleteEnumeratedHeader other_header = TypeObjectUtils::build_complete_enumerated_header(common_header, detail);
     CompleteEnumeratedType other_enumeration = TypeObjectUtils::build_complete_enumerated_type(0, other_header,
                     literal_seq);
+<<<<<<< HEAD
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
             TypeObjectUtils::build_and_register_enumerated_type_object(other_enumeration,
             "enum"));
     std::string type_name;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_enumerated_type_object(
+=======
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_enumerated_type_object(other_enumeration,
+            "enum"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_enumerated_type_object(
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
                 other_enumeration, type_name));
 }
 
@@ -2218,11 +2242,19 @@ TEST(TypeObjectUtilsTests, register_bitmask_type_object)
     CompleteBitflag other_bitflag = TypeObjectUtils::build_complete_bitflag(common, other_member_detail);
     TypeObjectUtils::add_complete_bitflag(bitflag_seq, other_bitflag);
     CompleteBitmaskType other_bitmask = TypeObjectUtils::build_complete_bitmask_type(0, header, bitflag_seq);
+<<<<<<< HEAD
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
             TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
             "bitmask"));
     std::string type_name;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_bitmask_type_object(
+=======
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
+            "bitmask"));
+    std::string type_name;
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_bitmask_type_object(
+>>>>>>> 6cc824ab2 (Refs #19837: linters)
                 other_bitmask, type_name));
 }
 
