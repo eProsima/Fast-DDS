@@ -38,7 +38,7 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
 
     //! Test shim parameters
     //! Percentage of data messages being dropped
-    uint8_t dropDataMessagesPercentage;
+    mutable std::atomic<uint8_t> dropDataMessagesPercentage;
     //! Filtering function for dropping data messages
     filter drop_data_messages_filter_;
     //! Flag to enable dropping of discovery Participant DATA(P) messages
@@ -48,24 +48,24 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     //! Flag to enable dropping of discovery Reader DATA(R) messages
     bool dropSubscriptionBuiltinTopicData;
     //! Percentage of data fragments being dropped
-    uint8_t dropDataFragMessagesPercentage;
+    mutable std::atomic<uint8_t> dropDataFragMessagesPercentage;
     //! Filtering function for dropping data fragments messages
     filter drop_data_frag_messages_filter_;
     //! Percentage of heartbeats being dropped
-    uint8_t dropHeartbeatMessagesPercentage;
+    mutable std::atomic<uint8_t> dropHeartbeatMessagesPercentage;
     //! Filtering function for dropping heartbeat messages
     filter drop_heartbeat_messages_filter_;
     //! Percentage of AckNacks being dropped
-    uint8_t dropAckNackMessagesPercentage;
+    mutable std::atomic<uint8_t> dropAckNackMessagesPercentage;
     //! Filtering function for dropping AckNacks
     filter drop_ack_nack_messages_filter_;
     //! Percentage of gap messages being dropped
-    uint8_t dropGapMessagesPercentage;
+    mutable std::atomic<uint8_t> dropGapMessagesPercentage;
     //! Filtering function for dropping gap messages
     filter drop_gap_messages_filter_;
 
     // General drop percentage (indiscriminate)
-    uint8_t percentageOfMessagesToDrop;
+    mutable std::atomic<uint8_t> percentageOfMessagesToDrop;
     // General filtering function for all kind of messages (indiscriminate)
     filter messages_filter_;
 
