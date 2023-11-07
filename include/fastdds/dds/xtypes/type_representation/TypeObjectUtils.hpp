@@ -25,7 +25,6 @@
 #include <fastcdr/cdr/fixed_size_string.hpp>
 #include <fastcdr/xcdr/optional.hpp>
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/xtypes/common.hpp>
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
