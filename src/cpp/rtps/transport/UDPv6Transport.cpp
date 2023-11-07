@@ -113,9 +113,9 @@ UDPv6Transport::UDPv6Transport(
 
         for (IPFinder::info_IP& infoIP : local_interfaces)
         {
-            if (std::find_if(white_begin, white_end, [infoIP](const std::string& white_list_element)
+            if (std::find_if(white_begin, white_end, [this, infoIP](const std::string& white_list_element)
                     {
-                        return white_list_element == infoIP.dev || white_list_element == infoIP.name;
+                        return (white_list_element == infoIP.dev) || compare_ips(white_list_element, infoIP.name);
                     }) != white_end )
             {
                 interface_whitelist_.emplace_back(ip::address_v6::from_string(infoIP.name));
