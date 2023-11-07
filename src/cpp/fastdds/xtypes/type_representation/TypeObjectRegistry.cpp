@@ -34,7 +34,7 @@ bool TypeRegistryEntry::operator !=(
         const TypeRegistryEntry& entry)
 {
     return this->type_object_ != entry.type_object_ ||
-        this->type_object_serialized_size_ != entry.type_object_serialized_size_;
+           this->type_object_serialized_size_ != entry.type_object_serialized_size_;
 }
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
@@ -62,17 +62,17 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     minimal_entry.type_object_ = build_minimal_from_complete_type_object(complete_type_object);
     TypeIdentifierPair type_ids;
     type_ids.type_identifier1(get_type_identifier(minimal_entry.type_object_,
-        minimal_entry.type_object_serialized_size_));
+            minimal_entry.type_object_serialized_size_));
     type_ids.type_identifier2(get_type_identifier(complete_entry.type_object_,
-        complete_entry.type_object_serialized_size_));
+            complete_entry.type_object_serialized_size_));
     auto type_ids_result = local_type_identifiers_.insert({type_name, type_ids});
     auto min_entry_result = type_registry_entries_.insert({type_ids.type_identifier1(), minimal_entry});
     auto max_entry_result = type_registry_entries_.insert({type_ids.type_identifier2(), complete_entry});
     if (!type_ids_result.second || !min_entry_result.second || !max_entry_result.second)
     {
         if (local_type_identifiers_[type_name] != type_ids ||
-            type_registry_entries_[type_ids.type_identifier1()] != minimal_entry ||
-            type_registry_entries_[type_ids.type_identifier2()] != complete_entry)
+                type_registry_entries_[type_ids.type_identifier1()] != minimal_entry ||
+                type_registry_entries_[type_ids.type_identifier2()] != complete_entry)
         {
             if (type_ids_result.second)
             {
@@ -138,23 +138,23 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
     if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
     {
         if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
-            !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
+                !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
         {
             return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
         if (EK_MINIMAL == type_ids.type_identifier1()._d())
         {
             type_objects.minimal_type_object =
-                type_registry_entries_.at(type_ids.type_identifier1()).type_object_.minimal();
+                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_.minimal();
             type_objects.complete_type_object =
-                type_registry_entries_.at(type_ids.type_identifier2()).type_object_.complete();
+                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_.complete();
         }
         else
         {
             type_objects.complete_type_object =
-                type_registry_entries_.at(type_ids.type_identifier1()).type_object_.complete();
+                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_.complete();
             type_objects.minimal_type_object =
-                type_registry_entries_.at(type_ids.type_identifier2()).type_object_.minimal();
+                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_.minimal();
         }
     }
     return ret_code;
@@ -182,9 +182,9 @@ ReturnCode_t TypeObjectRegistry::get_type_identifiers(
 TypeObjectRegistry::TypeObjectRegistry()
 {
     register_primitive_type_identifiers();
-/* TODO(jlbueno)
-    register_builtin_annotations_type_objects();
-*/
+    /* TODO(jlbueno)
+        register_builtin_annotations_type_objects();
+     */
 }
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
@@ -194,7 +194,7 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     uint32_t type_object_serialized_size = 0;
     TypeObject minimal_type_object;
     if (type_identifier._d() != type_object._d() ||
-        type_identifier != get_type_identifier(type_object, type_object_serialized_size))
+            type_identifier != get_type_identifier(type_object, type_object_serialized_size))
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -240,7 +240,7 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
     if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
     {
         if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
-        !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
+                !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
         {
             return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
@@ -248,22 +248,22 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
         {
             type_information.complete().typeid_with_size().type_id(type_ids.type_identifier1());
             type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                type_ids.type_identifier1()).type_object_serialized_size_);
+                        type_ids.type_identifier1()).type_object_serialized_size_);
             type_information.complete().dependent_typeid_count(-1);
             type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier2());
             type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                type_ids.type_identifier2()).type_object_serialized_size_);
+                        type_ids.type_identifier2()).type_object_serialized_size_);
             type_information.minimal().dependent_typeid_count(-1);
         }
         else
         {
             type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier1());
             type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                type_ids.type_identifier1()).type_object_serialized_size_);
+                        type_ids.type_identifier1()).type_object_serialized_size_);
             type_information.minimal().dependent_typeid_count(-1);
             type_information.complete().typeid_with_size().type_id(type_ids.type_identifier2());
             type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                type_ids.type_identifier2()).type_object_serialized_size_);
+                        type_ids.type_identifier2()).type_object_serialized_size_);
             type_information.complete().dependent_typeid_count(-1);
         }
     }
@@ -330,7 +330,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     break;
                 case TK_SEQUENCE:
                     ret_code = get_sequence_array_dependencies(type_object.minimal().sequence_type(),
-                        type_dependencies);
+                                    type_dependencies);
                     break;
                 case TK_ARRAY:
                     ret_code = get_sequence_array_dependencies(type_object.minimal().array_type(), type_dependencies);
@@ -362,7 +362,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     break;
                 case TK_SEQUENCE:
                     ret_code = get_sequence_array_dependencies(type_object.complete().sequence_type(),
-                        type_dependencies);
+                                    type_dependencies);
                     break;
                 case TK_ARRAY:
                     ret_code = get_sequence_array_dependencies(type_object.complete().array_type(), type_dependencies);
@@ -437,17 +437,19 @@ bool TypeObjectRegistry::is_builtin_annotation_name(
         const std::string& name)
 {
     if (name == id_annotation_name || name == autoid_annotation_name || name == optional_annotation_name ||
-        name == position_annotation_name || name == value_annotation_name || name == extensibility_annotation_name ||
-        name == final_annotation_name || name == appendable_annotation_name || name == mutable_annotation_name ||
-        name == key_annotation_name || name == must_understand_annotation_name ||
-        name == default_literal_annotation_name || name == default_annotation_name || name == range_annotation_name ||
-        name == min_annotation_name || name == max_annotation_name || name == unit_annotation_name ||
-        name == bit_bound_annotation_name || name == external_annotation_name || name == nested_annotation_name ||
-        name == verbatim_annotation_name || name == service_annotation_name || name == oneway_annotation_name ||
-        name == ami_annotation_name || name == hashid_annotation_name || name == default_nested_annotation_name ||
-        name == ignore_literal_names_annotation_name || name == try_construct_annotation_name ||
-        name == non_serialized_annotation_name || name == data_representation_annotation_name ||
-        name == topic_annotation_name)
+            name == position_annotation_name || name == value_annotation_name ||
+            name == extensibility_annotation_name ||
+            name == final_annotation_name || name == appendable_annotation_name || name == mutable_annotation_name ||
+            name == key_annotation_name || name == must_understand_annotation_name ||
+            name == default_literal_annotation_name || name == default_annotation_name ||
+            name == range_annotation_name ||
+            name == min_annotation_name || name == max_annotation_name || name == unit_annotation_name ||
+            name == bit_bound_annotation_name || name == external_annotation_name || name == nested_annotation_name ||
+            name == verbatim_annotation_name || name == service_annotation_name || name == oneway_annotation_name ||
+            name == ami_annotation_name || name == hashid_annotation_name || name == default_nested_annotation_name ||
+            name == ignore_literal_names_annotation_name || name == try_construct_annotation_name ||
+            name == non_serialized_annotation_name || name == data_representation_annotation_name ||
+            name == topic_annotation_name)
     {
         return true;
     }
@@ -462,10 +464,10 @@ const TypeIdentifier TypeObjectRegistry::get_type_identifier(
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     size_t current_alignment {0};
     eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
-        calculator.calculate_serialized_size(type_object, current_alignment)));
+                calculator.calculate_serialized_size(type_object, current_alignment)));
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::CdrVersion::XCDRv2);
+            eprosima::fastcdr::CdrVersion::XCDRv2);
     ser << type_object;
     type_object_serialized_size = static_cast<uint32_t>(ser.get_serialized_data_length());
     EquivalenceHash equivalence_hash;
@@ -585,7 +587,7 @@ const MinimalAnnotationType TypeObjectRegistry::build_minimal_from_complete_anno
         MinimalAnnotationParameter minimal_annotation_parameter;
         minimal_annotation_parameter.common(complete_annotation_parameter.common());
         minimal_annotation_parameter.name_hash(TypeObjectUtils::name_hash(
-            complete_annotation_parameter.name().c_str()));
+                    complete_annotation_parameter.name().c_str()));
         minimal_annotation_parameter.default_value(complete_annotation_parameter.default_value());
         minimal_annotation_parameter_sequence.push_back(minimal_annotation_parameter);
     }
@@ -606,7 +608,7 @@ const MinimalStructType TypeObjectRegistry::build_minimal_from_complete_struct_t
         MinimalStructMember minimal_struct_member;
         minimal_struct_member.common(complete_struct_member.common());
         minimal_struct_member.detail().name_hash(TypeObjectUtils::name_hash(
-            complete_struct_member.detail().name().c_str()));
+                    complete_struct_member.detail().name().c_str()));
         minimal_struct_member_sequence.push_back(minimal_struct_member);
     }
     minimal_struct_type.member_seq(minimal_struct_member_sequence);
@@ -626,7 +628,7 @@ const MinimalUnionType TypeObjectRegistry::build_minimal_from_complete_union_typ
         MinimalUnionMember minimal_union_member;
         minimal_union_member.common(complete_union_member.common());
         minimal_union_member.detail().name_hash(TypeObjectUtils::name_hash(
-            complete_union_member.detail().name().c_str()));
+                    complete_union_member.detail().name().c_str()));
         minimal_union_member_sequence.push_back(minimal_union_member);
     }
     minimal_union_type.member_seq(minimal_union_member_sequence);
@@ -645,7 +647,7 @@ const MinimalBitsetType TypeObjectRegistry::build_minimal_from_complete_bitset_t
         MinimalBitfield minimal_bitfield;
         minimal_bitfield.common(complete_bitfield.common());
         minimal_bitfield.name_hash(TypeObjectUtils::name_hash(
-            complete_bitfield.detail().name().c_str()));
+                    complete_bitfield.detail().name().c_str()));
         minimal_bitfield_sequence.push_back(minimal_bitfield);
     }
     minimal_bitset_type.field_seq(minimal_bitfield_sequence);
@@ -695,7 +697,7 @@ const MinimalEnumeratedType TypeObjectRegistry::build_minimal_from_complete_enum
         MinimalEnumeratedLiteral minimal_enumerated_literal;
         minimal_enumerated_literal.common(complete_enumerated_literal.common());
         minimal_enumerated_literal.detail().name_hash(TypeObjectUtils::name_hash(
-            complete_enumerated_literal.detail().name().c_str()));
+                    complete_enumerated_literal.detail().name().c_str()));
         minimal_enumerated_literal_sequence.push_back(minimal_enumerated_literal);
     }
     minimal_enumerated_type.literal_seq(minimal_enumerated_literal_sequence);
@@ -714,7 +716,7 @@ const MinimalBitmaskType TypeObjectRegistry::build_minimal_from_complete_bitmask
         MinimalBitflag minimal_bitflag;
         minimal_bitflag.common(complete_bitflag.common());
         minimal_bitflag.detail().name_hash(TypeObjectUtils::name_hash(
-            complete_bitflag.detail().name().c_str()));
+                    complete_bitflag.detail().name().c_str()));
         minimal_bitflag_sequence.push_back(minimal_bitflag);
     }
     minimal_bitmask_type.flag_seq(minimal_bitflag_sequence);
