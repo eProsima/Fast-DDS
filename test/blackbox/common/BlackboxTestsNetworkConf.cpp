@@ -351,6 +351,7 @@ void interface_whitelist_test(
     reader.block_for_all();
 }
 
+// Setting the interface whitelist with all available interfaces case, checking UDP case
 TEST_P(NetworkConfig, PubSubInterfaceWhitelistUnicast)
 {
     std::vector<IPFinder::info_IP> all_interfaces;
@@ -384,7 +385,7 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistUnicast)
 }
 
 
-// Regression test for redmine issue #18854 to check in UDP (v4) that setting the interface whitelist in one
+// Regression test for redmine issue #18854 to check in UDP that setting the interface whitelist in one
 // of the endpoints, but not in the other, connection is established anyways.
 // All available interfaces case.
 TEST(NetworkConfig, PubSubAsymmetricInterfaceWhitelistAllInterfaces)
@@ -421,7 +422,7 @@ TEST(NetworkConfig, PubSubAsymmetricInterfaceWhitelistAllInterfaces)
     }
 }
 
-// Regression test for redmine issue #18854 to check in UDP (v4) that setting the interface whitelist in one
+// Regression test for redmine issue #18854 to check in UDP that setting the interface whitelist in one
 // of the endpoints, but not in the other, connection is established anyways.
 // Only loopback interface case.
 TEST(NetworkConfig, PubSubAsymmetricInterfaceWhitelistLocalhostOnly)
@@ -479,7 +480,7 @@ TEST(NetworkConfig, PubSubAsymmetricInterfaceWhitelistLocalhostOnly)
     }
 }
 
-// Regression test for redmine issue #18854 to check in UDP (v4) that setting the interface whitelist in one
+// Regression test for redmine issue #18854 to check in UDP that setting the interface whitelist in one
 // of the endpoints, but not in the other, connection is established anyways.
 // All available interfaces except loopback case.
 TEST(NetworkConfig, PubSubAsymmetricInterfaceWhitelistAllExceptLocalhost)
