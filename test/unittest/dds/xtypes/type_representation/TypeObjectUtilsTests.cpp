@@ -601,7 +601,7 @@ TEST(TypeObjectUtilsTests, register_s_sequence)
                 another_plain_seq, "small_sequence"));
     std::string type_name;
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
-                TypeObjectUtils::build_and_register_s_sequence_type_identifier(another_plain_seq, type_name));
+            TypeObjectUtils::build_and_register_s_sequence_type_identifier(another_plain_seq, type_name));
 }
 
 // Register large sequence. This test does not check member consistency (only checked in Debug build mode).
@@ -625,7 +625,7 @@ TEST(TypeObjectUtilsTests, register_l_sequence)
                 another_plain_seq, "large_sequence"));
     std::string type_name;
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
-                TypeObjectUtils::build_and_register_l_sequence_type_identifier(another_plain_seq, type_name));
+            TypeObjectUtils::build_and_register_l_sequence_type_identifier(another_plain_seq, type_name));
 }
 
 // Register small array. This test does not check member consistency (only checked in Debug build mode).
@@ -1724,7 +1724,7 @@ TEST(TypeObjectUtilsTests, register_alias_type_object)
             "alias"));
     std::string type_name;
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_alias_type_object(
-            other_alias, type_name));
+                other_alias, type_name));
 }
 
 // Register annotation TypeObject
@@ -1900,7 +1900,7 @@ TEST(TypeObjectUtilsTests, register_array_type_object)
             "array"));
     std::string type_name;
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_array_type_object(
-            other_array, type_name));
+                other_array, type_name));
 }
 
 // Register map TypeObject
@@ -1959,11 +1959,12 @@ TEST(TypeObjectUtilsTests, register_enumerated_type_object)
     CompleteEnumeratedHeader other_header = TypeObjectUtils::build_complete_enumerated_header(common_header, detail);
     CompleteEnumeratedType other_enumeration = TypeObjectUtils::build_complete_enumerated_type(0, other_header,
                     literal_seq);
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_enumerated_type_object(other_enumeration,
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_enumerated_type_object(other_enumeration,
             "enum"));
     std::string type_name;
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_enumerated_type_object(
-            other_enumeration, type_name));
+                other_enumeration, type_name));
 }
 
 // Register bitmask TypeObject
@@ -1990,11 +1991,12 @@ TEST(TypeObjectUtilsTests, register_bitmask_type_object)
     CompleteBitflag other_bitflag = TypeObjectUtils::build_complete_bitflag(common, other_member_detail);
     TypeObjectUtils::add_complete_bitflag(bitflag_seq, other_bitflag);
     CompleteBitmaskType other_bitmask = TypeObjectUtils::build_complete_bitmask_type(0, header, bitflag_seq);
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
             "bitmask"));
     std::string type_name;
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_bitmask_type_object(
-            other_bitmask, type_name));
+                other_bitmask, type_name));
 }
 
 } // xtypes1_3

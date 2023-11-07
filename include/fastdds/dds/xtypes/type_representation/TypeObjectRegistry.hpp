@@ -75,7 +75,7 @@ struct TypeRegistryEntry
     uint32_t type_object_serialized_size_ {0};
 
     bool operator !=(
-        const TypeRegistryEntry& entry);
+            const TypeRegistryEntry& entry);
 
 };
 
@@ -287,8 +287,8 @@ protected:
      */
     template<typename T>
     ReturnCode_t get_alias_dependencies(
-                const T& alias_type,
-                std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+            const T& alias_type,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
     {
         TypeIdentifier type_id = alias_type.body().common().related_type();
         if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
@@ -312,8 +312,8 @@ protected:
      */
     template<typename T>
     ReturnCode_t get_annotation_dependencies(
-                const T& annotation_type,
-                std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+            const T& annotation_type,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
     {
         TypeIdentifierSeq type_ids;
         for (auto member : annotation_type.member_seq())

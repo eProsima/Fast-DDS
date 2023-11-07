@@ -2102,7 +2102,7 @@ void TypeObjectUtils::applied_annotation_type_identifier_consistency(
     if (ReturnCode_t::RETCODE_OK == ret_code)
     {
         if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ANNOTATION) ||
-            (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ANNOTATION))
+                (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ANNOTATION))
         {
             throw InvalidArgumentError("AppliedAnnotation TypeIdentifier does not correspond with an Annotation type");
         }
@@ -2282,18 +2282,18 @@ void TypeObjectUtils::structure_base_type_consistency(
     ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(base_type,
                     type_object);
     if (ret_code == ReturnCode_t::RETCODE_OK &&
-        EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
+            EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
     {
         structure_base_type_consistency(type_object.complete().alias_type().body().common().related_type());
     }
     else if (ret_code == ReturnCode_t::RETCODE_OK &&
-        EK_MINIMAL == type_object._d() && type_object.minimal()._d() == TK_ALIAS)
+            EK_MINIMAL == type_object._d() && type_object.minimal()._d() == TK_ALIAS)
     {
         structure_base_type_consistency(type_object.minimal().alias_type().body().common().related_type());
     }
     else if (ret_code != ReturnCode_t::RETCODE_OK ||
-        (EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_STRUCTURE) ||
-        (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_STRUCTURE))
+            (EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_STRUCTURE) ||
+            (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_STRUCTURE))
     {
         throw InvalidArgumentError("Inconsistent base TypeIdentifier: must be related to a structure TypeObject");
     }
@@ -2449,7 +2449,7 @@ void TypeObjectUtils::common_discriminator_member_type_identifier_consistency(
                     type_object.minimal().alias_type().body().common().related_type());
             }
             else if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ENUM) ||
-                (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
+                    (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
             {
                 throw InvalidArgumentError("Inconsistent CommonDiscriminatorMember TypeIdentifier");
             }
@@ -2534,7 +2534,7 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
                         type_object.minimal().alias_type().body().common().related_type(), value);
                 }
                 else if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ENUM) ||
-                    (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
+                        (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
                 {
                     throw InvalidArgumentError(
                               "Given annotation parameter value is inconsistent with given TypeIdentifier");
