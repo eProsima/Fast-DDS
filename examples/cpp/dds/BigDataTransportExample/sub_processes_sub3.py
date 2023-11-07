@@ -15,7 +15,7 @@ samples_arg = '-s 200 '
 history_arg = '--history '
 
 # Timeout in seconds for subscriber
-timeout = 60
+timeout = 30
 
 def udp_default():
 

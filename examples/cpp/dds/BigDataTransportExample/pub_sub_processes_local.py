@@ -10,7 +10,7 @@ import subprocess
 
 root_dir = '/home/carlos/fastdds_ws/build/fastrtps/examples/cpp/dds/BigDataTransportExample/'
 xml_dir = '/home/carlos/fastdds_ws/src/fastrtps/examples/cpp/dds/BigDataTransportExample/'
-interval_arg = '-i 100 '
+interval_arg = '-i 1000 '
 samples_arg = '-s 10 '
 history_arg = '--history '
 

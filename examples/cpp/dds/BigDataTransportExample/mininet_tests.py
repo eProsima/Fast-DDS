@@ -178,6 +178,7 @@ def run_python_pub_sub_scenario11(net, scenario_module, config):
             print(l.strip())
     else:
         print('[200]: Troughtput (MB/s):  0.0, Messages lost: 200')
+    time.sleep(3)
 
 def main():
     '''
@@ -202,9 +203,10 @@ def main():
     if scenario_name == 'scenario11':
         ping_test_scenario11(net, scenario_module)
         tshark = pyutils.start_tshark_on_source_scenario11(net, scenario_module, path + '_large_data.pcap')
-        for i in range(4):
-            run_python_pub_sub_scenario11(net, scenario_module, i+1)
-        # run_python_pub_sub_scenario11(net, scenario_module, 4)
+        # for i in range(4):
+        #     run_python_pub_sub_scenario11(net, scenario_module, i+1)
+        run_python_pub_sub_scenario11(net, scenario_module, 3)
+        run_python_pub_sub_scenario11(net, scenario_module, 4)
         pyutils.stop_tshark(tshark)
     else:
         ping_test(net, scenario_module)

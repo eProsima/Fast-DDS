@@ -72,6 +72,7 @@ def tcp_with_udp():
         "BigDataTransportExample subscriber --xml-profile bigdata_sub_profile " + samples_arg + history_arg + "1 "
     result_sub = subprocess.Popen(command,
                                   shell=True,
+                                  preexec_fn=os.setsid,
                                   text=True,
                                   universal_newlines=True)
 

@@ -9,7 +9,7 @@
                 <port>5100</port> <!-- Default Unicast Locator-->
                 <port>5200</port> <!-- Metatraffic Unicast Locator-->
             </listening_ports>
-            <!-- <wan_addr>127.0.0.1</wan_addr> -->
+            <wan_addr>127.0.0.1</wan_addr>
             <sendBufferSize>200000</sendBufferSize>
             <receiveBufferSize>200000</receiveBufferSize>
             <maxMessageSize>200000</maxMessageSize> <!-- Default: 65500-->

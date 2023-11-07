@@ -10,9 +10,11 @@ import subprocess
 
 root_dir = '/home/carlos/fastdds_ws/build/fastrtps/examples/cpp/dds/BigDataTransportExample/'
 xml_dir = '/home/carlos/fastdds_ws/src/fastrtps/examples/cpp/dds/BigDataTransportExample/'
-interval_arg = '-i 100 '
+interval_arg = '-i 5000 '
 samples_arg = '-s 200 '
 history_arg = '--history '
+
+timeout = 32
 
 def udp_default():
 
@@ -20,11 +22,15 @@ def udp_default():
     xml_pub = xml_dir + 'pub_udp_reduce_maxMessageSize.xml'
     command = "FASTRTPS_DEFAULT_PROFILES_FILE=" + xml_pub + " " + root_dir + \
         "BigDataTransportExample publisher --xml-profile bigdata_pub_profile " + interval_arg + samples_arg + history_arg + "1 " + "--transient --reliable"
-    result_pub = subprocess.run(command,
-                                shell=True,
-                                stdout=subprocess.PIPE,
-                                text=True,
-                                universal_newlines=True)
+    result_pub = subprocess.Popen(command,
+                                  shell=True,
+                                  preexec_fn=os.setsid,
+                                  stdout=subprocess.PIPE,
+                                  text=True,
+                                  universal_newlines=True)
+    time.sleep(timeout)
+    # Make sure pub is finished after timeout
+    os.killpg(os.getpgid(result_pub.pid), SIGKILL)
 
 def udp_transient_local():
     print('\nPublisher UDP Reliable & Transient with Keep_all history')
@@ -32,11 +38,15 @@ def udp_transient_local():
     xml_pub = xml_dir + 'pub_udp_reduce_maxMessageSize.xml'
     command = "FASTRTPS_DEFAULT_PROFILES_FILE=" + xml_pub + " " + root_dir + \
         "BigDataTransportExample publisher --xml-profile bigdata_pub_profile " + interval_arg + samples_arg + "--transient --reliable"
-    result_pub = subprocess.run(command,
-                                shell=True,
-                                stdout=subprocess.PIPE,
-                                text=True,
-                                universal_newlines=True)
+    result_pub = subprocess.Popen(command,
+                                  shell=True,
+                                  preexec_fn=os.setsid,
+                                  stdout=subprocess.PIPE,
+                                  text=True,
+                                  universal_newlines=True)
+    time.sleep(timeout)
+    # Make sure pub is finished after timeout
+    os.killpg(os.getpgid(result_pub.pid), SIGKILL)
 
 def udp_reliable_transient_history(history):
     print('\nPublisher UDP Reliable & Transient with History', history)
@@ -44,22 +54,31 @@ def udp_reliable_transient_history(history):
     xml_pub = xml_dir + 'pub_udp_reduce_maxMessageSize.xml'
     command = "FASTRTPS_DEFAULT_PROFILES_FILE=" + xml_pub + " " + root_dir + \
         "BigDataTransportExample publisher --xml-profile bigdata_pub_profile " + interval_arg + samples_arg + "--transient --reliable " + history_arg + history
-    result_pub = subprocess.run(command,
-                                shell=True,
-                                text=True,
-                                universal_newlines=True)
+    result_pub = subprocess.Popen(command,
+                                  shell=True,
+                                  preexec_fn=os.setsid,
+                                  stdout=subprocess.PIPE,
+                                  text=True,
+                                  universal_newlines=True)
+    time.sleep(timeout)
+    # Make sure pub is finished after timeout
+    os.killpg(os.getpgid(result_pub.pid), SIGKILL)
 
 def tcp_with_udp():
     print('\nPublisher TCP with UDP discovery')
 
     xml_pub = xml_dir + 'participant_config_pub_mininet.xml'
     command = "FASTRTPS_DEFAULT_PROFILES_FILE=" + xml_pub + " " + root_dir + \
-        "BigDataTransportExample publisher --xml-profile bigdata_pub_profile -w 3 " + interval_arg + samples_arg + history_arg + "1 " + "--transient --reliable"
-    result_pub = subprocess.run(command,
-                                shell=True,
-                                stdout=subprocess.PIPE,
-                                text=True,
-                                universal_newlines=True)
+        "BigDataTransportExample publisher --xml-profile bigdata_pub_profile -w 3 " + interval_arg + samples_arg + history_arg + "1 "
+    result_pub = subprocess.Popen(command,
+                                  shell=True,
+                                  preexec_fn=os.setsid,
+                                  stdout=subprocess.PIPE,
+                                  text=True,
+                                  universal_newlines=True)
+    time.sleep(timeout)
+    # Make sure pub is finished after timeout
+    os.killpg(os.getpgid(result_pub.pid), SIGKILL)
 
 def main():
 

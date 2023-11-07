@@ -28,7 +28,7 @@ class ScenarioTopo(Topo):
         switch = self.addSwitch('s1')
         access_point = self.addSwitch('a1')
         subscriber_1 = self.addHost('h1', ip='10.0.0.1/24')
-        subscriber_2 = self.addHost('h2', ip='10.0.0.4/24')
+        subscriber_2 = self.addHost('h2', ip='10.0.0.5/24')
         subscriber_3 = self.addHost('h3', ip='10.0.0.3/24')
         robot = self.addHost('w1', ip='10.0.0.2/24')
         internet = self.addHost('h10')
