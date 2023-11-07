@@ -26,6 +26,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <fastrtps/fastrtps_dll.h>
 
 namespace std {
@@ -61,8 +62,6 @@ namespace fastdds {
 namespace dds {
 
 namespace xtypes {
-
-class TypeObjectUtils;
 
 using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
@@ -244,14 +243,226 @@ protected:
      * @brief Get the type dependencies of the given type identifiers.
      *
      * @param[in] type_identifiers Sequence with the queried TypeIdentifiers.
-     * @param[out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.
      */
     ReturnCode_t get_type_dependencies(
             const TypeIdentifierSeq& type_identifiers,
-            std::unordered_set<TypeIdentfierWithSize> type_dependencies);
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
+
+    /**
+     * @brief Get the type dependencies of the given TypeObject.
+     *
+     * @param[in] type_object TypeObject queried for its dependencies.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.
+     */
+    ReturnCode_t get_dependencies_from_type_object(
+            const TypeObject& type_object,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
+
+    /**
+     * @brief Add type dependency to the sequence.
+     *
+     * @param[in] type_id TypeIdentifier to be added.
+     * @param[in out] type_dependencies TypeIdentfierWithSize sequence.
+     */
+    void add_dependency(
+            const TypeIdentifier& type_id,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
+
+    /**
+     * @brief Get the alias type dependencies.
+     *
+     * @tparam T Either a CompleteAliasType or MinimalAliasType.
+     * @param[in] alias_type Alias Type.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     */
+    template<typename T>
+    ReturnCode_t get_alias_dependencies(
+                const T& alias_type,
+                std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+    {
+        TypeIdentifier type_id = alias_type.body().common().related_type();
+        if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
+        {
+            add_dependency(type_id, type_dependencies);
+            TypeIdentifierSeq type_ids;
+            type_ids.push_back(type_id);
+            return get_type_dependencies(type_ids, type_dependencies);
+        }
+        return eprosima::fastdds::dds::RETCODE_OK;
+    }
+
+    /**
+     * @brief Get the annotation type dependencies.
+     *
+     * @tparam T Either a CompleteAnnotationType or MinimalAnnotationType.
+     * @param[in] annotation_type Annotation Type.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     */
+    template<typename T>
+    ReturnCode_t get_annotation_dependencies(
+                const T& annotation_type,
+                std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+    {
+        TypeIdentifierSeq type_ids;
+        for (auto member : annotation_type.member_seq())
+        {
+            TypeIdentifier type_id = member.common().member_type_id();
+            if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
+            {
+                add_dependency(type_id, type_dependencies);
+                type_ids.push_back(type_id);
+            }
+        }
+        if (!type_ids.empty())
+        {
+            return get_type_dependencies(type_ids, type_dependencies);
+        }
+        return eprosima::fastdds::dds::RETCODE_OK;
+    }
+
+    /**
+     * @brief Get the structure type dependencies.
+     *
+     * @tparam T Either a CompleteStructType or MinimalStructType.
+     * @param[in] struct_type Structure Type.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     */
+    template<typename T>
+    ReturnCode_t get_structure_dependencies(
+            const T& struct_type,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+    {
+        TypeIdentifierSeq type_ids;
+        TypeIdentifier parent_type_id = struct_type.header().base_type();
+        if (TypeObjectUtils::is_direct_hash_type_identifier(parent_type_id))
+        {
+            add_dependency(parent_type_id, type_dependencies);
+            type_ids.push_back(parent_type_id);
+        }
+        for (auto member : struct_type.member_seq())
+        {
+            TypeIdentifier type_id = member.common().member_type_id();
+            if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
+            {
+                add_dependency(type_id, type_dependencies);
+                type_ids.push_back(type_id);
+            }
+        }
+        if (!type_ids.empty())
+        {
+            return get_type_dependencies(type_ids, type_dependencies);
+        }
+        return eprosima::fastdds::dds::RETCODE_OK;
+    }
+
+    /**
+     * @brief Get the union type dependencies.
+     *
+     * @tparam T Either a CompleteUnionType or MinimalUnionType.
+     * @param[in] union_type Union Type.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     */
+    template<typename T>
+    ReturnCode_t get_union_dependencies(
+            const T& union_type,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+    {
+        TypeIdentifierSeq type_ids;
+        TypeIdentifier discriminator_type_id = union_type.discriminator().common().type_id();
+        if (TypeObjectUtils::is_direct_hash_type_identifier(discriminator_type_id))
+        {
+            add_dependency(discriminator_type_id, type_dependencies);
+            type_ids.push_back(discriminator_type_id);
+        }
+        for (auto member : union_type.member_seq())
+        {
+            TypeIdentifier type_id = member.common().type_id();
+            if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
+            {
+                add_dependency(type_id, type_dependencies);
+                type_ids.push_back(type_id);
+            }
+        }
+        if (!type_ids.empty())
+        {
+            return get_type_dependencies(type_ids, type_dependencies);
+        }
+        return eprosima::fastdds::dds::RETCODE_OK;
+    }
+
+    /**
+     * @brief Get the sequence/array type dependencies.
+     *
+     * @tparam T Either a CompleteSequenceType/MinimalSequenceType/CompleteArrayType/MinimalArrayType.
+     * @param[in] collection_type Sequence or Array Type.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     */
+    template<typename T>
+    ReturnCode_t get_sequence_array_dependencies(
+            const T& collection_type,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+    {
+        TypeIdentifier type_id = collection_type.element().common().type();
+        if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
+        {
+            add_dependency(type_id, type_dependencies);
+            TypeIdentifierSeq type_ids;
+            type_ids.push_back(type_id);
+            return get_type_dependencies(type_ids, type_dependencies);
+        }
+        return eprosima::fastdds::dds::RETCODE_OK;
+    }
+
+    /**
+     * @brief Get the map type dependencies.
+     *
+     * @tparam T Either a CompleteMapType or MinimalmapType.
+     * @param[in] map_type Map Type.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     */
+    template<typename T>
+    ReturnCode_t get_map_dependencies(
+            const T& map_type,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+    {
+        TypeIdentifierSeq type_ids;
+        TypeIdentifier key_type_id = map_type.key().common().type();
+        if (TypeObjectUtils::is_direct_hash_type_identifier(key_type_id))
+        {
+            add_dependency(key_type_id, type_dependencies);
+            type_ids.push_back(key_type_id);
+        }
+        TypeIdentifier element_type_id = map_type.element().common().type();
+        if (TypeObjectUtils::is_direct_hash_type_identifier(element_type_id))
+        {
+            add_dependency(element_type_id, type_dependencies);
+            type_ids.push_back(element_type_id);
+        }
+        if (!type_ids.empty())
+        {
+            return get_type_dependencies(type_ids, type_dependencies);
+        }
+        return eprosima::fastdds::dds::RETCODE_OK;
+    }
 
     /**
      * @brief Check if the given TypeIdentifier is known by the registry.
