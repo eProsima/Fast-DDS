@@ -200,6 +200,21 @@ inline bool appendMsg(
  */
 /// @{
 
+template<typename T>
+inline bool addPrimitive(
+        CDRMessage_t* msg,
+        T value);
+
+inline bool hasSpace(
+        CDRMessage_t* msg,
+        const uint32_t length);
+
+inline void copyToBuffer(
+        CDRMessage_t* msg,
+        const octet* data,
+        const uint32_t length,
+        bool reverse = false);
+
 inline bool addData(
         CDRMessage_t*,
         const octet*,
