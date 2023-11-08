@@ -18,9 +18,7 @@
 // threading.hpp implementations
 #ifdef _WIN32
 #include "thread_impl/thread_impl_win32.ipp"
-#elif defined(__APPLE__)
-#include "thread_impl/thread_impl_osx.ipp"
-#elif defined(_POSIX_SOURCE) || defined(__QNXNTO__) || defined(__ANDROID__)
+#elif defined(__APPLE__) || defined(_POSIX_SOURCE) || defined(__QNXNTO__) || defined(__ANDROID__)
 #include "thread_impl/thread_impl_pthread.ipp"
 #else
 #include "thread_impl/thread_impl_basic.ipp"
