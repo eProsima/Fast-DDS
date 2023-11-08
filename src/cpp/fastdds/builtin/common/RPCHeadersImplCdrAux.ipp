@@ -68,11 +68,7 @@ void serialize(
     scdr << data.relatedRequestId.sequence_number().high;
     scdr << data.relatedRequestId.sequence_number().low;
 
-#if FASTCDR_VERSION_MAJOR == 1
     scdr << static_cast<uint32_t>(data.remoteEx);
-#else
-    scdr << static_cast<uint32_t>(data.remoteEx);
-#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
