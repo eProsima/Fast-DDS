@@ -28,6 +28,7 @@ namespace fastdds{
 namespace rtps {
 
 struct SimplePDPEndpoints;
+struct SimplePDPEndpointsSecure;
 
 } /* namespace rtps */
 } /* namespace fastdds */
@@ -153,16 +154,24 @@ private:
 #endif  // HAVE_SECURITY
 
     /**
-     * Performs the creation of SPDP endpoints.
+     * Performs the creation of PDP endpoints.
      *
      * @param [in,out]  endpoints  Container where the created resources should be kept.
-     * @param [in]      secure     Whether the created endpoints should be secure.
      *
      * @return whether the endpoints were successfully created.
      */
-    bool create_simple_pdp_endpoints(
-            fastdds::rtps::SimplePDPEndpoints& endpoints,
-            bool secure);
+    bool create_simple_pdp_best_effort_endpoints(
+            fastdds::rtps::SimplePDPEndpoints& endpoints);
+
+    /**
+     * Performs the creation of SPDP endpoints.
+     *
+     * @param [in,out]  endpoints  Container where the created resources should be kept.
+     *
+     * @return whether the endpoints were successfully created.
+     */
+    bool create_simple_pdp_reliable_endpoints(
+            fastdds::rtps::SimplePDPEndpointsSecure& endpoints);
 };
 
 } /* namespace rtps */

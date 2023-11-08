@@ -42,6 +42,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/builtin/discovery/participant/simple/SimplePDPEndpoints.hpp>
+#include <rtps/builtin/discovery/participant/simple/SimplePDPEndpointsSecure.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
@@ -251,10 +252,11 @@ bool PDPSimple::create_secure_pdp_endpoints()
 {
     EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning PDPSimple Secure PDP Endpoints creation");
 
-    auto endpoints = new fastdds::rtps::SimplePDPEndpoints();
+    auto endpoints = new fastdds::rtps::SimplePDPEndpointsSecure();
     builtin_endpoints_.reset(endpoints);
 
-    bool ret_val = create_simple_pdp_endpoints(*endpoints, true);
+    bool ret_val = create_simple_pdp_best_effort_endpoints(*endpoints) &&
+            create_simple_pdp_reliable_endpoints(*endpoints);
 
     EPROSIMA_LOG_INFO(RTPS_PDP, "PDPSimple Secure PDP Endpoints creation finished");
 
@@ -270,16 +272,15 @@ bool PDPSimple::create_conventional_pdp_endpoints()
     auto endpoints = new fastdds::rtps::SimplePDPEndpoints();
     builtin_endpoints_.reset(endpoints);
 
-    bool ret_val = create_simple_pdp_endpoints(*endpoints, false);
+    bool ret_val = create_simple_pdp_best_effort_endpoints(*endpoints);
 
     EPROSIMA_LOG_INFO(RTPS_PDP, "PDPSimple Conventional PDP Endpoints creation finished");
 
     return ret_val;
 }
 
-bool PDPSimple::create_simple_pdp_endpoints(
-        fastdds::rtps::SimplePDPEndpoints& endpoints,
-        bool /*secure*/)
+bool PDPSimple::create_simple_pdp_best_effort_endpoints(
+        fastdds::rtps::SimplePDPEndpoints& endpoints)
 {
     EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning");
 
@@ -428,6 +429,12 @@ bool PDPSimple::create_simple_pdp_endpoints(
         return false;
     }
     EPROSIMA_LOG_INFO(RTPS_PDP, "SPDP Endpoints creation finished");
+    return true;
+}
+
+bool create_simple_pdp_reliable_endpoints(
+        fastdds::rtps::SimplePDPEndpointsSecure& /*endpoints*/)
+{
     return true;
 }
 
