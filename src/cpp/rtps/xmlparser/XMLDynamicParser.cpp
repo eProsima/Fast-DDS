@@ -724,7 +724,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
      */
     XMLP_ret ret = XMLP_ret::XML_OK;
     const char* name = p_root->Attribute(NAME);
-    if (!name)
+    if (nullptr == name || name[0] == '\0')
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Missing required attribute 'name' in 'structDcl'.");
         return XMLP_ret::XML_ERROR;
