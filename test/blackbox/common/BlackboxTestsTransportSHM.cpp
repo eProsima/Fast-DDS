@@ -113,22 +113,26 @@ TEST(SHM, IgnoreNonExistentSegment)
 
     reader.wait_discovery();
 
-    // Create and quickly destroy several participants
-    std::thread other_participant_thread([]()
-            {
-                constexpr size_t num_parts = 2;
-                for (size_t i = 0; i < num_parts; ++i)
+    // Create and quickly destroy several participants in several threads
+    std::vector<std::thread> threads;
+    for (size_t i = 0; i < 10; i++)
+    {
+        threads.push_back(std::thread([]()
                 {
-                    PubSubWriter<Data1mbPubSubType> late_writer(TEST_TOPIC_NAME);
-                    late_writer
-                            .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
-                            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-                            .disable_builtin_transport()
-                            .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
-                            .init();
-                    ASSERT_TRUE(late_writer.isInitialized());
-                }
-            });
+                        constexpr size_t num_parts = 10;
+                        for (size_t i = 0; i < num_parts; ++i)
+                        {
+                        PubSubWriter<Data1mbPubSubType> late_writer(TEST_TOPIC_NAME);
+                        late_writer
+                                .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
+                                .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                                .disable_builtin_transport()
+                                .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
+                                .init();
+                        ASSERT_TRUE(late_writer.isInitialized());
+                        }
+                }));
+    }
 
     // Destroy the writer participant.
     writer.destroy();
@@ -136,8 +140,10 @@ TEST(SHM, IgnoreNonExistentSegment)
     // Check that reader receives the unmatched.
     reader.wait_participant_undiscovery();
 
-    other_participant_thread.join();
-
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
     // Check logs
     Log::Flush();
     EXPECT_EQ(helper_consumer->ConsumedEntries().size(), 0);
