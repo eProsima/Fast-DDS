@@ -1011,6 +1011,18 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <check_crc>false</check_crc>\
                     <enable_tcp_nodelay>false</enable_tcp_nodelay>\
                     <tls><!-- TLS Section --></tls>\
+                    <keep_alive_thread>\
+                        <scheduling_policy>12</scheduling_policy>\
+                        <priority>12</priority>\
+                        <affinity>12</affinity>\
+                        <stack_size>12</stack_size>\
+                    </keep_alive_thread>\
+                    <accept_thread>\
+                        <scheduling_policy>12</scheduling_policy>\
+                        <priority>12</priority>\
+                        <affinity>12</affinity>\
+                        <stack_size>12</stack_size>\
+                    </accept_thread>\
                     <default_reception_threads>\
                         <scheduling_policy>12</scheduling_policy>\
                         <priority>12</priority>\
@@ -1033,7 +1045,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     </reception_threads>\
                 </transport_descriptor>\
                 ";
-        constexpr size_t xml_len {3000};
+        constexpr size_t xml_len {3500};
         char xml[xml_len];
 
         // TCPv4
@@ -1063,6 +1075,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pTCPv4Desc->logical_port_increment, 2u);
         EXPECT_EQ(pTCPv4Desc->listening_ports[0], 5100u);
         EXPECT_EQ(pTCPv4Desc->listening_ports[1], 5200u);
+        EXPECT_EQ(pTCPv4Desc->keep_alive_thread, modified_thread_settings);
+        EXPECT_EQ(pTCPv4Desc->accept_thread, modified_thread_settings);
         EXPECT_EQ(pTCPv4Desc->default_reception_threads(), modified_thread_settings);
         EXPECT_EQ(pTCPv4Desc->get_thread_config_for_port(12345), modified_thread_settings);
         EXPECT_EQ(pTCPv4Desc->get_thread_config_for_port(12346), modified_thread_settings);
@@ -1091,6 +1105,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pTCPv6Desc->logical_port_increment, 2u);
         EXPECT_EQ(pTCPv6Desc->listening_ports[0], 5100u);
         EXPECT_EQ(pTCPv6Desc->listening_ports[1], 5200u);
+        EXPECT_EQ(pTCPv4Desc->keep_alive_thread, modified_thread_settings);
+        EXPECT_EQ(pTCPv4Desc->accept_thread, modified_thread_settings);
         EXPECT_EQ(pTCPv6Desc->default_reception_threads(), modified_thread_settings);
         EXPECT_EQ(pTCPv6Desc->get_thread_config_for_port(12345), modified_thread_settings);
         EXPECT_EQ(pTCPv6Desc->get_thread_config_for_port(12346), modified_thread_settings);
@@ -1210,6 +1226,8 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
         "check_crc",
         "enable_tcp_nodelay",
         "tls",
+        "keep_alive_thread",
+        "accept_thread",
         "default_reception_threads",
         "reception_threads",
         "bad_element"
