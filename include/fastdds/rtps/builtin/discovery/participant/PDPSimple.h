@@ -24,6 +24,13 @@
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 
 namespace eprosima {
+namespace fastdds{
+namespace rtps {
+
+struct SimplePDPEndpoints;
+
+} /* namespace rtps */
+} /* namespace fastdds */
 namespace fastrtps {
 namespace rtps {
 
@@ -145,6 +152,17 @@ private:
     bool create_secure_pdp_endpoints() override;
 #endif  // HAVE_SECURITY
 
+    /**
+     * Performs the creation of SPDP endpoints.
+     *
+     * @param [in,out]  endpoints  Container where the created resources should be kept.
+     * @param [in]      secure     Whether the created endpoints should be secure.
+     *
+     * @return whether the endpoints were successfully created.
+     */
+    bool create_simple_pdp_endpoints(
+            fastdds::rtps::SimplePDPEndpoints& endpoints,
+            bool secure);
 };
 
 } /* namespace rtps */
