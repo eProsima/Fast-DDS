@@ -981,6 +981,11 @@ bool PDP::pairing_remote_reader_with_local_writer_after_security(
     return mp_EDP->pairing_remote_reader_with_local_writer_after_security(local_writer, remote_reader_data);
 }
 
+bool PDP::should_protect_discovery()
+{
+    return mp_RTPSParticipant->is_secure() && mp_RTPSParticipant->security_attributes().is_discovery_protected;
+}
+
 #endif // HAVE_SECURITY
 
 bool PDP::remove_remote_participant(

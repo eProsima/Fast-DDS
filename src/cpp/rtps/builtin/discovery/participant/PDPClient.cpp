@@ -235,11 +235,6 @@ bool PDPClient::createPDPEndpoints()
 }
 
 #if HAVE_SECURITY
-bool PDPClient::should_protect_discovery()
-{
-    return mp_RTPSParticipant->is_secure() && mp_RTPSParticipant->security_attributes().is_discovery_protected;
-}
-
 bool PDPClient::create_secure_ds_pdp_endpoints()
 {
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Beginning PDPClient Secure PDP Endpoints creation");

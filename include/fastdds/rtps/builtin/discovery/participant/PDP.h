@@ -428,6 +428,11 @@ public:
     virtual bool pairing_remote_reader_with_local_writer_after_security(
             const GUID_t& local_writer,
             const ReaderProxyData& remote_reader_data);
+
+    /**
+     * Returns whether discovery should be secured
+     */
+    bool should_protect_discovery();
 #endif // HAVE_SECURITY
 
 protected:

@@ -197,10 +197,6 @@ private:
             const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override);
 
 #if HAVE_SECURITY
-    /**
-     * Returns whether discovery should be secured
-     */
-    bool should_protect_discovery();
 
     /**
      * Performs creation of secured DS PDP endpoints

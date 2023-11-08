@@ -319,11 +319,6 @@ private:
 
 #if HAVE_SECURITY
     /**
-     * Returns whether discovery should be secured
-     */
-    bool should_protect_discovery();
-
-    /**
      * Performs creation of secured DS PDP endpoints
      */
     bool create_secure_ds_pdp_endpoints();
