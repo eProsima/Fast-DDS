@@ -654,11 +654,10 @@ void deserialize(
 {
     dcdr >> data.header();
     dcdr >> data.bound();
-    if (data.element_identifier() == nullptr)
-    {
-        data.element_identifier(new eprosima::fastrtps::types::TypeIdentifier);
-    }
-    dcdr >> *data.element_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier elem_type_id;
+    dcdr >> elem_type_id;
+    data.element_identifier(&elem_type_id);
 }
 
 template<>
@@ -686,11 +685,10 @@ void deserialize(
 {
     dcdr >> data.header();
     dcdr >> data.bound();
-    if (data.element_identifier() == nullptr)
-    {
-        data.element_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.element_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier elem_type_id;
+    dcdr >> elem_type_id;
+    data.element_identifier(&elem_type_id);
 }
 
 template<>
@@ -719,11 +717,10 @@ void deserialize(
 {
     dcdr >> data.header();
     dcdr >> data.array_bound_seq();
-    if (data.element_identifier() == nullptr)
-    {
-        data.element_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.element_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier elem_type_id;
+    dcdr >> elem_type_id;
+    data.element_identifier(&elem_type_id);
 }
 
 template<>
@@ -751,11 +748,10 @@ void deserialize(
 {
     dcdr >> data.header();
     dcdr >> data.array_bound_seq();
-    if (data.element_identifier() == nullptr)
-    {
-        data.element_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.element_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier elem_type_id;
+    dcdr >> elem_type_id;
+    data.element_identifier(&elem_type_id);
 }
 
 template<>
@@ -798,11 +794,10 @@ void deserialize(
 {
     dcdr >> data.header();
     dcdr >> data.bound();
-    if (data.element_identifier() == nullptr)
-    {
-        data.element_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.element_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier elem_type_id;
+    dcdr >> elem_type_id;
+    data.element_identifier(&elem_type_id);
 #if FASTCDR_VERSION_MAJOR == 1
     uint16_t bits;
     dcdr >> bits;
@@ -810,11 +805,10 @@ void deserialize(
 #else
     dcdr >> data.key_flags();
 #endif // FASTCDR_VERSION_MAJOR == 1
-    if (data.key_identifier() == nullptr)
-    {
-        data.key_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.key_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier key_type_id;
+    dcdr >> key_type_id;
+    data.key_identifier(&key_type_id);
 }
 
 template<>
@@ -857,11 +851,10 @@ void deserialize(
 {
     dcdr >> data.header();
     dcdr >> data.bound();
-    if (data.element_identifier() == nullptr)
-    {
-        data.element_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.element_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier elem_type_id;
+    dcdr >> elem_type_id;
+    data.element_identifier(&elem_type_id);
 #if FASTCDR_VERSION_MAJOR == 1
     uint16_t bits;
     dcdr >> bits;
@@ -869,11 +862,10 @@ void deserialize(
 #else
     dcdr >> data.key_flags();
 #endif // FASTCDR_VERSION_MAJOR == 1
-    if (data.key_identifier() == nullptr)
-    {
-        data.key_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.key_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier key_type_id;
+    dcdr >> key_type_id;
+    data.key_identifier(&key_type_id);
 }
 
 template<>
