@@ -271,10 +271,16 @@ public:
             WriterDiscoveryInfo::DISCOVERY_STATUS reason);
 
     /**
-     * Create the SPDP Writer and Reader
+     * Creates the corresponding PDP Writer and Reader
      * @return True if correct.
      */
-    virtual bool createPDPEndpoints() = 0;
+    bool create_pdp_endpoints();
+
+    /**
+     * Creates the usual PDP Writer and Reader
+     * @return True if correct.
+     */
+    virtual bool create_conventional_pdp_endpoints() = 0;
 
     /**
      * This method assigns remote endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.
@@ -433,6 +439,12 @@ public:
      * Returns whether discovery should be secured
      */
     bool should_protect_discovery();
+
+    /**
+     * Creates the secure PDP Writer and Reader
+     * @return True if correct.
+     */
+    virtual bool create_secure_pdp_endpoints() = 0;
 #endif // HAVE_SECURITY
 
 protected:

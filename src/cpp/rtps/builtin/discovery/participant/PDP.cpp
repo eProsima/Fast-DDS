@@ -384,6 +384,18 @@ void PDP::initializeParticipantProxyData(
     set_external_participant_properties_(participant_data);
 }
 
+bool PDP::create_pdp_endpoints()
+{
+#if HAVE_SECURITY
+    if (should_protect_discovery())
+    {
+        return create_secure_pdp_endpoints();
+    }
+#endif  // HAVE_SECURITY
+
+    return create_conventional_pdp_endpoints();
+}
+
 bool PDP::initPDP(
         RTPSParticipantImpl* part)
 {
@@ -392,7 +404,7 @@ bool PDP::initPDP(
     m_discovery = mp_RTPSParticipant->getAttributes().builtin;
     initial_announcements_ = m_discovery.discovery_config.initial_announcements;
     //CREATE ENDPOINTS
-    if (!createPDPEndpoints())
+    if (!create_pdp_endpoints())
     {
         return false;
     }

@@ -89,10 +89,9 @@ public:
             const fastrtps::rtps::GUID_t& writer_guid) override;
 
     /**
-     * Create the SPDP Writer and Reader
-     * @return True if correct.
+     * Performs the creation of standard DS PDP endpoints
      */
-    bool createPDPEndpoints() override;
+    bool create_conventional_pdp_endpoints() override;
 
     /**
      * This method removes a remote RTPSParticipant and all its writers and readers.
@@ -319,18 +318,14 @@ private:
 
 #if HAVE_SECURITY
     /**
-     * Performs creation of secured DS PDP endpoints
+     * performs the creation of secured DS PDP endpoints
      */
-    bool create_secure_ds_pdp_endpoints();
+    bool create_secure_pdp_endpoints() override;
+
 #endif  // HAVE_SECURITY
 
     /**
-     * Performs creation of standard DS PDP endpoints
-     */
-    bool create_ds_pdp_endpoints();
-
-    /**
-     * Performs creation of DS (reliable) PDP endpoints.
+     * performs the creation of DS (reliable) PDP endpoints.
      *
      * @param [in,out]  endpoints  Container where the created resources should be kept.
      * @param [in]      secure     Whether the created endpoints should be secure.
@@ -342,7 +337,7 @@ private:
             bool secure);
 
     /**
-     * Performs creation of DS best-effort PDP reader.
+     * performs the creation of DS best-effort PDP reader.
      *
      * @param [in,out]  endpoints  Container where the created resources should be kept.
      *

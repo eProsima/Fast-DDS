@@ -235,20 +235,8 @@ void PDPServer::update_builtin_locators()
     mp_builtin->updateMetatrafficLocators(endpoints->reader.reader_->getAttributes().unicastLocatorList);
 }
 
-bool PDPServer::createPDPEndpoints()
-{
 #if HAVE_SECURITY
-    if (should_protect_discovery())
-    {
-        return create_secure_ds_pdp_endpoints();
-    }
-#endif  // HAVE_SECURITY
-
-    return create_ds_pdp_endpoints();
-}
-
-#if HAVE_SECURITY
-bool PDPServer::create_secure_ds_pdp_endpoints()
+bool PDPServer::create_secure_pdp_endpoints()
 {
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
 
@@ -336,7 +324,7 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
 
 #endif  // HAVE_SECURITY
 
-bool PDPServer::create_ds_pdp_endpoints()
+bool PDPServer::create_conventional_pdp_endpoints()
 {
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
 

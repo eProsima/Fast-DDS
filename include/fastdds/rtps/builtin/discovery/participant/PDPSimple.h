@@ -68,6 +68,11 @@ public:
             const GUID_t& writer_guid) override;
 
     /**
+     * Performs the creation of standard SPDP endpoints
+     */
+    bool create_conventional_pdp_endpoints() override;
+
+    /**
      * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic
      * @return true if EDP endpoinst must be match
      */
@@ -133,11 +138,12 @@ private:
     void initializeParticipantProxyData(
             ParticipantProxyData* participant_data) override;
 
+#if HAVE_SECURITY
     /**
-     * Create the SPDP Writer and Reader
-     * @return True if correct.
+     * Performs the creation of secured SPDP endpoints
      */
-    bool createPDPEndpoints() override;
+    bool create_secure_pdp_endpoints() override;
+#endif  // HAVE_SECURITY
 
 };
 

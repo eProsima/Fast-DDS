@@ -81,10 +81,9 @@ public:
             const GUID_t& writer_guid) override;
 
     /**
-     * Create the SPDP Writer and Reader
-     * @return True if correct.
+     * Performs the creation of standard DS PDP endpoints
      */
-    bool createPDPEndpoints() override;
+    bool create_conventional_pdp_endpoints() override;
 
     /**
      * Check if all servers have acknowledge the client PDP data
@@ -197,21 +196,15 @@ private:
             const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override);
 
 #if HAVE_SECURITY
-
     /**
-     * Performs creation of secured DS PDP endpoints
+     * Performs the creation of secured DS PDP endpoints
      */
-    bool create_secure_ds_pdp_endpoints();
+    bool create_secure_pdp_endpoints() override;
 
 #endif  // HAVE_SECURITY
 
     /**
-     * Performs creation of standard DS PDP endpoints
-     */
-    bool create_ds_pdp_endpoints();
-
-    /**
-     * Performs creation of DS (reliable) PDP endpoints.
+     * Performs the creation of DS (reliable) PDP endpoints.
      *
      * @param [in,out]  endpoints  Container where the created resources should be kept.
      * @param [in]      secure     Whether the created endpoints should be secure.
@@ -223,7 +216,7 @@ private:
             bool is_discovery_protected);
 
     /**
-     * Performs creation of DS best-effort PDP reader.
+     * Performs the creation of DS best-effort PDP reader.
      *
      * @param [in,out]  endpoints  Container where the created resources should be kept.
      *
