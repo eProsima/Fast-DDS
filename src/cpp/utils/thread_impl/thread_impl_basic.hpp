@@ -38,9 +38,11 @@ public:
     thread& operator =(const thread&) = delete;
     // *INDENT-ON*
 
-    inline bool is_calling_thread() const noexcept {
+    inline bool is_calling_thread() const noexcept
+    {
         return get_id() == std::this_thread::get_id();
     }
+
 };
 
 } // eprosima
