@@ -43,7 +43,6 @@ class thread
         // Finish thread
         return 0;
     }
-
 #else
     // This method is a generic proxy that serves as the starting address of the thread
     template <typename CalleeType>
@@ -57,7 +56,6 @@ class thread
         // Finish thread
         return nullptr;
     }
-
 #endif  // _WIN32
 
 public:
@@ -111,7 +109,7 @@ public:
             thread&& other) noexcept
         : thread_hnd_(native_handle_type())
     {
-        std::swap(thread_hnd_, other.thread_hnd_);
+        swap(other);
     }
 
     thread& operator =(
@@ -122,7 +120,7 @@ public:
             std::terminate();
         }
         thread_hnd_ = native_handle_type();
-        std::swap(thread_hnd_, other.thread_hnd_);
+        swap(other);
         return *this;
     }
 
