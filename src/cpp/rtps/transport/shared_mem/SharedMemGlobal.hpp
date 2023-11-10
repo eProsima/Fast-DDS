@@ -286,9 +286,9 @@ public:
                         if (status.is_processing)
                         {
                             if ((last_checked_buffer.validity_id == status.descriptor.validity_id) &&
-                               (last_checked_buffer.source_segment_id == status.descriptor.source_segment_id) &&
-                               (last_checked_buffer.buffer_node_offset == status.descriptor.buffer_node_offset)) 
-                                
+                                    (last_checked_buffer.source_segment_id == status.descriptor.source_segment_id) &&
+                                    (last_checked_buffer.buffer_node_offset == status.descriptor.buffer_node_offset))
+
                             {
                                 return false;
                             }
@@ -304,11 +304,11 @@ public:
                                 {
                                     status.last_verified_counter = status.counter;
                                 }
-                                else             // Counter is freeze => this listener is blocked!!!
+                                else             // Counter is frozen => this listener is blocked!!!
                                 {
                                     return false;
                                 }
-                            } 
+                            }
                         }
                         if (listeners_found == port_node->num_listeners)
                         {
@@ -461,7 +461,7 @@ public:
             node_->ref_counter.fetch_add(1);
 
             auto port_context = std::make_shared<Port::WatchTask::PortContext>();
-            *port_context = {port_segment_, node_, buffer_.get(), BufferDescriptor{}};
+            *port_context = {port_segment_, node_, buffer_.get(), { BufferDescriptor{} } };
             Port::WatchTask::get()->add_port(std::move(port_context));
         }
 
@@ -624,6 +624,14 @@ public:
         inline bool is_port_ok() const
         {
             return node_->is_port_ok;
+        }
+
+        /**
+         * Checks if a port is OK and is opened for reading with listeners active
+         */
+        inline bool port_has_listeners() const
+        {
+            return node_->is_port_ok && node_->is_opened_for_reading && node_->num_listeners > 0;
         }
 
         inline uint32_t port_id() const
@@ -959,52 +967,6 @@ public:
             return false;
         }
 
-        static bool is_shared_mode_zombie(
-                uint32_t port_id,
-                const std::string& domain_name)
-        {
-            bool was_lock_created;
-            std::string lock_name;
-
-            try
-            {
-                // A shared port is zombie when it has a "_sl" file & the file is not locked
-                lock_name = domain_name + "_port" + std::to_string(port_id) + "_sl";
-                bool was_lock_released;
-                RobustSharedLock zombie_test(lock_name, &was_lock_created, &was_lock_released);
-                // Lock acquired, did the file exist and was release before the acquire?
-                if (!was_lock_created && was_lock_released)
-                {
-                    // Yes, is zombie
-                    return true;
-                }
-            }
-            catch (const std::exception&)
-            {
-                // Resource locked => not zombie.
-            }
-
-            return false;
-        }
-
-        static bool is_port_zombie(
-                uint32_t port_id,
-                const std::string& domain_name,
-                Port::OpenMode open_mode
-                )
-        {
-            if (open_mode == Port::OpenMode::ReadExclusive)
-            {
-                return is_zombie(port_id, domain_name);
-            }
-            else if (open_mode == Port::OpenMode::ReadShared)
-            {
-                return is_shared_mode_zombie(port_id, domain_name);
-            }
-
-            return false;
-        }
-
     }; // Port
 
     /**
@@ -1101,17 +1063,14 @@ private:
 
         try
         {
-            //if (open_mode == Port::OpenMode::ReadExclusive && Port::is_zombie(port_id, domain_name_))
-            if (Port::is_port_zombie(port_id, domain_name_, open_mode))
+            if (Port::is_zombie(port_id, domain_name_))
             {
                 EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, THREADID << "Port "
                                                                   << port_id << " Zombie. Reset the port");
 
-                if (open_mode != Port::OpenMode::ReadShared) 
-                {
-                    SharedMemSegment::remove(port_segment_name.c_str());
-                    throw std::runtime_error("zombie port");
-                }
+                SharedMemSegment::remove(port_segment_name.c_str());
+
+                throw std::runtime_error("zombie port");
             }
 
             // Try to open
