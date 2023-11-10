@@ -427,6 +427,8 @@ XMLP_ret XMLParser::validateXMLTransportElements(
                 strcmp(name, LISTENING_PORTS) == 0 ||
                 strcmp(name, CALCULATE_CRC) == 0 ||
                 strcmp(name, CHECK_CRC) == 0 ||
+                strcmp(name, KEEP_ALIVE_THREAD) == 0 ||
+                strcmp(name, ACCEPT_THREAD) == 0 ||
                 strcmp(name, ENABLE_TCP_NODELAY) == 0 ||
                 strcmp(name, TLS) == 0 ||
                 strcmp(name, SEGMENT_SIZE) == 0 ||
@@ -634,6 +636,8 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
                 <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="keep_alive_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="accept_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
      */
@@ -740,6 +744,22 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
             {
                 if (XMLP_ret::XML_OK != parse_tls_config(p_aux0, p_transport))
                 {
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else if (strcmp(name, KEEP_ALIVE_THREAD) == 0)
+            {
+                if (getXMLThreadSettings(*p_aux0, pTCPDesc->keep_alive_thread) != XMLP_ret::XML_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Incorrect thread settings");
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else if (strcmp(name, ACCEPT_THREAD) == 0)
+            {
+                if (getXMLThreadSettings(*p_aux0, pTCPDesc->accept_thread) != XMLP_ret::XML_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Incorrect thread settings");
                     return XMLP_ret::XML_ERROR;
                 }
             }

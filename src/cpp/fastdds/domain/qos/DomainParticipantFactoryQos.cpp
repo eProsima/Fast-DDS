@@ -13,8 +13,19 @@
 // limitations under the License.
 
 /**
- * @file DomainParticipantQos.cpp
+ * @file DomainParticipantFactoryQos.cpp
  *
  */
 
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+
+
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+
+const DomainParticipantFactoryQos PARTICIPANT_FACTORY_QOS_DEFAULT;
+
+} /* namespace dds */
+} /* namespace fastdds */
+} /* namespace eprosima */

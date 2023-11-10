@@ -19,23 +19,24 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/log/LogResources.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/utils/QosConverters.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLEndpointParser.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <fastdds/log/LogResources.hpp>
-#include <fastdds/domain/DomainParticipantImpl.hpp>
-#include <fastdds/utils/QosConverters.hpp>
-#include <rtps/RTPSDomainImpl.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/RTPSDomainImpl.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
-#include <utils/SystemInfo.hpp>
 #include <utils/shared_memory/SharedMemWatchdog.hpp>
+#include <utils/SystemInfo.hpp>
 
 using namespace eprosima::fastrtps::xmlparser;
 
@@ -156,8 +157,6 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         const StatusMask& mask)
 {
     load_profiles();
-
-    RTPSDomain::set_filewatch_thread_config(factory_qos_.file_watch_threads(), factory_qos_.file_watch_threads());
 
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
@@ -337,11 +336,19 @@ ReturnCode_t DomainParticipantFactory::load_profiles()
         // Change as already loaded
         default_xml_profiles_loaded = true;
 
+        // Only change factory qos when not explicitly set by the user
+        if (factory_qos_ == PARTICIPANT_FACTORY_QOS_DEFAULT)
+        {
+            XMLProfileManager::getDefaultDomainParticipantFactoryQos(factory_qos_);
+        }
+
         // Only change default participant qos when not explicitly set by the user
         if (default_participant_qos_ == PARTICIPANT_QOS_DEFAULT)
         {
             reset_default_participant_qos();
         }
+
+        RTPSDomain::set_filewatch_thread_config(factory_qos_.file_watch_threads(), factory_qos_.file_watch_threads());
     }
 
     return ReturnCode_t::RETCODE_OK;
