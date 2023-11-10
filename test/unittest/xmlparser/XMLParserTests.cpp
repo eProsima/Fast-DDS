@@ -859,8 +859,8 @@ TEST_F(XMLParserTests, loadXMLProfiles)
 /*
  * This test checks the return of the parseXMLTransportData method  and the storage of the values in the XMLProfileManager
  * xml is parsed
- * 1. Check the correct parsing of a UDP transport descriptor for birth v4 and v6
- * 2. Check the correct parsing of a TCP transport descriptor for birth v4 and v6
+ * 1. Check the correct parsing of a UDP transport descriptor for both v4 and v6
+ * 2. Check the correct parsing of a TCP transport descriptor for both v4 and v6
  * 3. Check the correct parsing of a SHM transport descriptor
  */
 TEST_F(XMLParserTests, parseXMLTransportData)
@@ -890,6 +890,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <interfaceWhiteList>\
                         <address>192.168.1.41</address>\
                         <address>127.0.0.1</address>\
+                        <address>wlp0s20f3</address>\
+                        <address>lo</address>\
                     </interfaceWhiteList>\
                     <wan_addr>80.80.55.44</wan_addr>\
                     <output_port>5101</output_port>\
@@ -951,6 +953,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pUDPv4Desc->max_initial_peers_range(), 100u);
         EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[0], "192.168.1.41");
         EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[1], "127.0.0.1");
+        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[2], "wlp0s20f3");
+        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[3], "lo");
         EXPECT_EQ(pUDPv4Desc->m_output_udp_socket, 5101u);
         EXPECT_EQ(pUDPv4Desc->default_reception_threads(), modified_thread_settings);
         EXPECT_EQ(pUDPv4Desc->get_thread_config_for_port(12345), modified_thread_settings);
@@ -974,6 +978,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pUDPv6Desc->max_initial_peers_range(), 100u);
         EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[0], "192.168.1.41");
         EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[1], "127.0.0.1");
+        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[2], "wlp0s20f3");
+        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[3], "lo");
         EXPECT_EQ(pUDPv6Desc->m_output_udp_socket, 5101u);
         EXPECT_EQ(pUDPv6Desc->default_reception_threads(), modified_thread_settings);
         EXPECT_EQ(pUDPv6Desc->get_thread_config_for_port(12345), modified_thread_settings);
@@ -1180,149 +1186,6 @@ TEST_F(XMLParserTests, parseXMLTransportData)
 
         xmlparser::XMLProfileManager::DeleteInstance();
     }
-}
-
-
-/*
- * This test checks the return of the parseXMLTransportData whitelist argument passed byt name  and the storage of the values in the XMLProfileManager
- * xml is parsed
- * 1. Check the correct parsing of a UDP transport descriptor for birth v4 and v6
- * 2. Check the correct parsing of a TCP transport descriptor for birth v4 and v6
- */
-TEST_F(XMLParserTests, parseXMLWhiteListByName)
-{
-    // Test UDPv4 and UDPv6
-    {
-        tinyxml2::XMLDocument xml_doc;
-        tinyxml2::XMLElement* titleElement;
-
-        const char* xml_p =
-                "\
-                <transport_descriptor>\
-                    <transport_id>TransportId1</transport_id>\
-                    <type>UDPv%s</type>\
-                    <sendBufferSize>8192</sendBufferSize>\
-                    <receiveBufferSize>8192</receiveBufferSize>\
-                    <TTL>250</TTL>\
-                    <non_blocking_send>false</non_blocking_send>\
-                    <maxMessageSize>16384</maxMessageSize>\
-                    <maxInitialPeersRange>100</maxInitialPeersRange>\
-                    <interfaceWhiteList>\
-                        <address>wlp0s20f3</address>\
-                        <address>lo</address>\
-                    </interfaceWhiteList>\
-                    <wan_addr>80.80.55.44</wan_addr>\
-                    <output_port>5101</output_port>\
-                    <keep_alive_frequency_ms>5000</keep_alive_frequency_ms>\
-                    <keep_alive_timeout_ms>25000</keep_alive_timeout_ms>\
-                    <max_logical_port>9000</max_logical_port>\
-                    <logical_port_range>100</logical_port_range>\
-                    <logical_port_increment>2</logical_port_increment>\
-                    <listening_ports>\
-                        <port>5100</port>\
-                        <port>5200</port>\
-                    </listening_ports>\
-                    <calculate_crc>false</calculate_crc>\
-                    <check_crc>false</check_crc>\
-                    <enable_tcp_nodelay>false</enable_tcp_nodelay>\
-                    <tls><!-- TLS Section --></tls>\
-                    <segment_size>262144</segment_size>\
-                    <port_queue_capacity>512</port_queue_capacity>\
-                    <healthy_check_timeout_ms>1000</healthy_check_timeout_ms>\
-                    <rtps_dump_file>rtsp_messages.log</rtps_dump_file>\
-                </transport_descriptor>\
-                ";
-        constexpr size_t xml_len {2000};
-        char xml[xml_len];
-
-        // UDPv4
-        snprintf(xml, xml_len, xml_p, "4");
-        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-        titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        std::shared_ptr<rtps::UDPv4TransportDescriptor> pUDPv4Desc =
-                std::dynamic_pointer_cast<rtps::UDPv4TransportDescriptor>(
-            xmlparser::XMLProfileManager::getTransportById("TransportId1"));
-        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[0], "wlp0s20f3");
-        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[1], "lo");
-        xmlparser::XMLProfileManager::DeleteInstance();
-
-        // UDPv6
-        snprintf(xml, xml_len, xml_p, "6");
-        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-        titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        std::shared_ptr<rtps::UDPv6TransportDescriptor> pUDPv6Desc =
-                std::dynamic_pointer_cast<rtps::UDPv6TransportDescriptor>(
-            xmlparser::XMLProfileManager::getTransportById("TransportId1"));
-        EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[0], "wlp0s20f3");
-        EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[1], "lo");
-        xmlparser::XMLProfileManager::DeleteInstance();
-    }
-
-    // Test TCPv4 and TCPv6
-    {
-        tinyxml2::XMLDocument xml_doc;
-        tinyxml2::XMLElement* titleElement;
-
-        const char* xml_p =
-                "\
-                <transport_descriptor>\
-                    <transport_id>TransportId1</transport_id>\
-                    <type>TCPv%s</type>\
-                    <sendBufferSize>8192</sendBufferSize>\
-                    <receiveBufferSize>8192</receiveBufferSize>\
-                    <TTL>250</TTL>\
-                    <maxMessageSize>16384</maxMessageSize>\
-                    <maxInitialPeersRange>100</maxInitialPeersRange>\
-                    <interfaceWhiteList>\
-                        <address>wlp0s20f3</address>\
-                        <address>lo</address>\
-                    </interfaceWhiteList>\
-                    <wan_addr>80.80.55.44</wan_addr>\
-                    <keep_alive_frequency_ms>5000</keep_alive_frequency_ms>\
-                    <keep_alive_timeout_ms>25000</keep_alive_timeout_ms>\
-                    <max_logical_port>9000</max_logical_port>\
-                    <logical_port_range>100</logical_port_range>\
-                    <logical_port_increment>2</logical_port_increment>\
-                    <listening_ports>\
-                        <port>5100</port>\
-                        <port>5200</port>\
-                    </listening_ports>\
-                    <calculate_crc>false</calculate_crc>\
-                    <check_crc>false</check_crc>\
-                    <enable_tcp_nodelay>false</enable_tcp_nodelay>\
-                    <tls><!-- TLS Section --></tls>\
-                </transport_descriptor>\
-                ";
-        constexpr size_t xml_len {2000};
-        char xml[xml_len];
-
-        // TCPv4
-        snprintf(xml, xml_len, xml_p, "4");
-        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-        titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        std::shared_ptr<rtps::TCPv4TransportDescriptor> pTCPv4Desc =
-                std::dynamic_pointer_cast<rtps::TCPv4TransportDescriptor>(
-            xmlparser::XMLProfileManager::getTransportById("TransportId1"));
-        EXPECT_EQ(pTCPv4Desc->interfaceWhiteList[0], "wlp0s20f3");
-        EXPECT_EQ(pTCPv4Desc->interfaceWhiteList[1], "lo");
-        xmlparser::XMLProfileManager::DeleteInstance();
-
-        // TCPv6
-        snprintf(xml, xml_len, xml_p, "6");
-        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-        titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        std::shared_ptr<rtps::TCPv6TransportDescriptor> pTCPv6Desc =
-                std::dynamic_pointer_cast<rtps::TCPv6TransportDescriptor>(
-            xmlparser::XMLProfileManager::getTransportById("TransportId1"));
-        EXPECT_EQ(pTCPv6Desc->interfaceWhiteList[0], "wlp0s20f3");
-        EXPECT_EQ(pTCPv6Desc->interfaceWhiteList[1], "lo");
-        xmlparser::XMLProfileManager::DeleteInstance();
-    }
-
 }
 
 
