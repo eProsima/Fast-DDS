@@ -15,18 +15,22 @@
 /**
  * @file Publisher.cpp
  */
-#include <asio.hpp>
 
 #include "Publisher.hpp"
-#include <fastrtps/participant/Participant.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/publisher/Publisher.h>
-#include <fastrtps/Domain.h>
-#include <fastrtps/TopicDataType.h>
 
+#include <chrono>
 #include <fstream>
 #include <string>
+#include <thread>
+
+#include <asio.hpp>
+
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/Domain.h>
+#include <fastrtps/participant/Participant.h>
+#include <fastrtps/publisher/Publisher.h>
+#include <fastrtps/TopicDataType.h>
 
 Publisher::~Publisher()
 {

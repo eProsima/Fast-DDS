@@ -20,6 +20,8 @@
 #include "HelloWorldPublisher.h"
 #include "HelloWorldSubscriber.h"
 
+#include <thread>
+
 #include <fastrtps/Domain.h>
 #include <fastrtps/log/Log.h>
 

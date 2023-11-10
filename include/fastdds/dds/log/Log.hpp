@@ -15,10 +15,8 @@
 #ifndef _FASTDDS_DDS_LOG_LOG_HPP_
 #define _FASTDDS_DDS_LOG_LOG_HPP_
 
-#include <atomic>
 #include <regex>
 #include <sstream>
-#include <thread>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastrtps/fastrtps_dll.h>

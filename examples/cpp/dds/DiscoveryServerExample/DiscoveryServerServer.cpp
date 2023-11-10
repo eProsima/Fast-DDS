@@ -20,6 +20,7 @@
 #include <condition_variable>
 #include <csignal>
 #include <mutex>
+#include <thread>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>

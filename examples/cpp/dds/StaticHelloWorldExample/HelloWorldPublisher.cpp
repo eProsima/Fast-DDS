@@ -18,8 +18,12 @@
  */
 
 #include "HelloWorldPublisher.h"
-#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+
+#include <chrono>
+#include <thread>
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 
 using namespace eprosima::fastdds::dds;
