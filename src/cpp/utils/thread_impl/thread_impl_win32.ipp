@@ -12,61 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <exception>
-#include <limits>
-#include <memory>
-#include <stdexcept>
-#include <system_error>
-#include <thread>
-#include <type_traits>
-#include <utility>
+#include "utils/thread.hpp"
 
 #include <process.h>
-
-#ifndef NOMINMAX
-#define NOMINMAX
 #include <windows.h>
-#undef NOMINMAX
-#else
-#include <windows.h>
-#endif
 
 namespace eprosima {
 
-class thread
+thread::native_handle_type thread::start_thread_impl(
+        int32_t stack_size,
+        thread::start_routine_type start,
+        void* arg)
 {
-    // This method is a generic proxy that serves as the starting address of the thread
-    template <typename CalleeType>
-    static unsigned __stdcall ThreadProxy(
-            void* Ptr)
-    {
-        // Take ownership of the trampoline
-        std::unique_ptr<CalleeType> Callee(static_cast<CalleeType*>(Ptr));
-        // Call the trampoline
-        (*Callee)();
-        // Finish thread
-        return 0;
-    }
-
-public:
-
-    using native_handle_type = HANDLE;
-    using id = DWORD;
-
-    thread()
-        : thread_hnd_(native_handle_type())
-    {
-    }
-
-    template<class _Fn>
-    thread(
-            int32_t stack_size,
-            _Fn&& f)
-    {
-        // Prepare trampoline to pass to ThreadProxy
-        using CalleeType = typename std::decay<_Fn>::type;
-        std::unique_ptr<CalleeType> callee(new CalleeType(std::forward<_Fn>(f)));
-
         // Set the requested stack size, if given.
         unsigned stack_attr = 0;
         if (stack_size > 0)
@@ -81,117 +38,42 @@ public:
         }
 
         // Construct and execute the thread.
-        HANDLE hnd = (HANDLE) ::_beginthreadex(NULL, stack_attr, ThreadProxy<CalleeType>, callee.get(), 0, NULL);
+        HANDLE hnd = (HANDLE) ::_beginthreadex(NULL, stack_attr, start, arg, 0, NULL);
         if(!hnd)
         {
             throw std::system_error(std::make_error_code(std::errc::resource_unavailable_try_again));
         }
 
-        thread_hnd_ = hnd;
-        if (thread_hnd_ != native_handle_type())
-        {
-            // Thread has been correctly created. Since the ThreadProxy will
-            // take ownership of the trampoline, we need to release ownership here
-            callee.release();
-        }
+        return hnd;
     }
 
-    ~thread()
+thread::id thread::get_thread_id_impl(
+        thread::native_handle_type hnd)
+{
+    return ::GetThreadId(hnd);
+}
+
+void thread::join_thread_impl(
+        thread::native_handle_type hnd)
+{
+    if (::WaitForSingleObject(hnd, INFINITE) == WAIT_FAILED)
     {
-        if (joinable())
-        {
-            std::terminate();
-        }
+        throw std::system_error(std::make_error_code(std::errc::no_such_process));
     }
+}
 
-    // *INDENT-OFF*
-    thread(const thread&) = delete;
-    thread& operator =(const thread&) = delete;
-    // *INDENT-ON*
-
-    thread(
-            thread&& other) noexcept
-        : thread_hnd_(native_handle_type())
+void thread::detach_thread_impl(
+        thread::native_handle_type hnd)
+{
+    if (::CloseHandle(hnd) == FALSE)
     {
-        std::swap(thread_hnd_, other.thread_hnd_);
+        throw std::system_error(std::make_error_code(std::errc::no_such_process));
     }
+}
 
-    thread& operator =(
-            thread&& other) noexcept
-    {
-        if (joinable())
-        {
-            std::terminate();
-        }
-        thread_hnd_ = native_handle_type();
-        std::swap(thread_hnd_, other.thread_hnd_);
-        return *this;
-    }
-
-    void swap(
-            thread& other) noexcept
-    {
-        std::swap(thread_hnd_, other.thread_hnd_);
-    }
-
-    inline bool joinable() const noexcept
-    {
-        return thread_hnd_ != native_handle_type();
-    }
-
-    inline id get_id() const noexcept
-    {
-        return ::GetThreadId(thread_hnd_);;
-    }
-
-    inline native_handle_type native_handle() const noexcept
-    {
-        return thread_hnd_;
-    }
-
-    static unsigned hardware_concurrency()
-    {
-        return std::thread::hardware_concurrency();
-    }
-
-    inline void join()
-    {
-        if (!joinable())
-        {
-            throw std::system_error(std::make_error_code(std::errc::invalid_argument));
-        }
-
-        if (is_calling_thread())
-        {
-            throw std::system_error(std::make_error_code(std::errc::resource_deadlock_would_occur));
-        }
-
-        if (::WaitForSingleObject(thread_hnd_, INFINITE) == WAIT_FAILED)
-        {
-            throw std::system_error(std::make_error_code(std::errc::no_such_process));
-        }
-
-        thread_hnd_ = native_handle_type();
-    }
-
-    inline void detach()
-    {
-        if (::CloseHandle(thread_hnd_) == FALSE)
-        {
-            throw std::system_error(std::make_error_code(std::errc::no_such_process));
-        }
-
-        thread_hnd_ = native_handle_type();
-    }
-
-    inline bool is_calling_thread() const noexcept
-    {
-        return get_id() == ::GetCurrentThreadId();
-    }
-
-private:
-
-    native_handle_type thread_hnd_;
-};
+thread::id thread::get_current_thread_id_impl()
+{
+    return ::GetCurrentThreadId();
+}
 
 } // eprosima

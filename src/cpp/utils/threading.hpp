@@ -15,7 +15,7 @@
 #ifndef UTILS__THREADING_HPP_
 #define UTILS__THREADING_HPP_
 
-#include "./thread_impl.hpp"
+#include "./thread.hpp"
 
 namespace eprosima {
 

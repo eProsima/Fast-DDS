@@ -12,202 +12,92 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <exception>
-#include <limits>
-#include <memory>
-#include <stdexcept>
-#include <system_error>
-#include <thread>
-#include <type_traits>
-#include <utility>
+#include "utils/thread.hpp"
 
 #include <pthread.h>
 
 namespace eprosima {
 
-class thread
+thread::native_handle_type thread::start_thread_impl(
+        int32_t stack_size,
+        thread::start_routine_type start,
+        void* arg)
 {
-    // This method is a generic proxy that serves as the starting address of the thread
-    template <typename CalleeType>
-    static void* ThreadProxy(
-            void* Ptr)
+    int errnum;
+
+    // Construct the attributes object.
+    pthread_attr_t attr;
+    if ((errnum = ::pthread_attr_init(&attr)) != 0)
     {
-        // Take ownership of the trampoline
-        std::unique_ptr<CalleeType> Callee(static_cast<CalleeType*>(Ptr));
-        // Call the trampoline
-        (*Callee)();
-        // Finish thread
-        return nullptr;
+        throw std::system_error(errnum, std::system_category(), "pthread_attr_init failed");
     }
 
-public:
-
-    using native_handle_type = pthread_t;
-    using id = pthread_t;
-
-    thread()
-        : thread_hnd_(native_handle_type())
-    {
-    }
-
-    template<class _Fn>
-    thread(
-            int32_t stack_size,
-            _Fn&& f)
-    {
-        int errnum;
-
-        // Prepare trampoline to pass to ThreadProxy
-        using CalleeType = typename std::decay<_Fn>::type;
-        std::unique_ptr<CalleeType> callee(new CalleeType(std::forward<_Fn>(f)));
-
-        // Construct the attributes object.
-        pthread_attr_t attr;
-        if ((errnum = ::pthread_attr_init(&attr)) != 0)
-        {
-            throw std::system_error(errnum, std::system_category(), "pthread_attr_init failed");
-        }
-
-        // Ensure the attributes object is destroyed
-        auto attr_deleter = [](pthread_attr_t* a)
+    // Ensure the attributes object is destroyed
+    auto attr_deleter = [](pthread_attr_t* a)
+            {
+                int err;
+                if ((err = ::pthread_attr_destroy(a)) != 0)
                 {
-                    int err;
-                    if ((err = ::pthread_attr_destroy(a)) != 0)
-                    {
-                        throw std::system_error(err, std::system_category(), "pthread_attr_destroy failed");
-                    }
-                };
-        std::unique_ptr<pthread_attr_t, decltype(attr_deleter)> attr_scope_destroy(&attr, attr_deleter);
+                    throw std::system_error(err, std::system_category(), "pthread_attr_destroy failed");
+                }
+            };
+    std::unique_ptr<pthread_attr_t, decltype(attr_deleter)> attr_scope_destroy(&attr, attr_deleter);
 
-        // Set the requested stack size, if given.
-        if (stack_size > 0)
+    // Set the requested stack size, if given.
+    if (stack_size > 0)
+    {
+        if (sizeof(unsigned) <= sizeof(int32_t) &&
+                stack_size > static_cast<int32_t>(std::numeric_limits<unsigned>::max() / 2))
         {
-            if (sizeof(unsigned) <= sizeof(int32_t) &&
-                    stack_size > static_cast<int32_t>(std::numeric_limits<unsigned>::max() / 2))
-            {
-                throw std::invalid_argument("Cannot cast stack_size into unsigned");
-            }
-
-            if ((errnum = ::pthread_attr_setstacksize(&attr, stack_size)) != 0)
-            {
-                throw std::system_error(errnum, std::system_category(), "pthread_attr_setstacksize failed");
-            }
+            throw std::invalid_argument("Cannot cast stack_size into unsigned");
         }
 
-        // Construct and execute the thread.
-        pthread_t hnd;
-        if ((errnum = ::pthread_create(&hnd, &attr, ThreadProxy<CalleeType>, callee.get())) != 0)
+        if ((errnum = ::pthread_attr_setstacksize(&attr, stack_size)) != 0)
         {
-            throw std::system_error(errnum, std::system_category(), "pthread_create failed");
-        }
-
-        thread_hnd_ = hnd;
-        if (thread_hnd_ != native_handle_type())
-        {
-            // Thread has been correctly created. Since the ThreadProxy will
-            // take ownership of the trampoline, we need to release ownership here
-            callee.release();
+            throw std::system_error(errnum, std::system_category(), "pthread_attr_setstacksize failed");
         }
     }
 
-    ~thread()
+    // Construct and execute the thread.
+    pthread_t hnd;
+    if ((errnum = ::pthread_create(&hnd, &attr, start, arg)) != 0)
     {
-        if (joinable())
-        {
-            std::terminate();
-        }
+        throw std::system_error(errnum, std::system_category(), "pthread_create failed");
     }
 
-    // *INDENT-OFF*
-    thread(const thread&) = delete;
-    thread& operator =(const thread&) = delete;
-    // *INDENT-ON*
+    return hnd;
+}
 
-    thread(
-            thread&& other) noexcept
-        : thread_hnd_(native_handle_type())
+thread::id thread::get_thread_id_impl(
+        thread::native_handle_type hnd)
+{
+    return hnd;
+}
+
+void thread::join_thread_impl(
+        thread::native_handle_type hnd)
+{
+    int errnum;
+    if ((errnum = ::pthread_join(hnd, nullptr)) != 0)
     {
-        std::swap(thread_hnd_, other.thread_hnd_);
+        throw std::system_error(std::make_error_code(std::errc::no_such_process), "pthread_join failed");
     }
+}
 
-    thread& operator =(
-            thread&& other) noexcept
+void thread::detach_thread_impl(
+        thread::native_handle_type hnd)
+{
+    int errnum;
+
+    if ((errnum = ::pthread_detach(hnd)) != 0)
     {
-        if (joinable())
-        {
-            std::terminate();
-        }
-        thread_hnd_ = native_handle_type();
-        std::swap(thread_hnd_, other.thread_hnd_);
-        return *this;
+        throw std::system_error(errnum, std::system_category(), "pthread_detach failed");
     }
+}
 
-    void swap(
-            thread& other) noexcept
-    {
-        std::swap(thread_hnd_, other.thread_hnd_);
-    }
-
-    inline bool joinable() const noexcept
-    {
-        return thread_hnd_ != native_handle_type();
-    }
-
-    inline id get_id() const noexcept
-    {
-        return thread_hnd_;
-    }
-
-    inline native_handle_type native_handle() const noexcept
-    {
-        return thread_hnd_;
-    }
-
-    static unsigned hardware_concurrency()
-    {
-        return std::thread::hardware_concurrency();
-    }
-
-    inline void join()
-    {
-        if (!joinable())
-        {
-            throw std::system_error(std::make_error_code(std::errc::invalid_argument));
-        }
-
-        if (is_calling_thread())
-        {
-            throw std::system_error(std::make_error_code(std::errc::resource_deadlock_would_occur));
-        }
-
-        int errnum;
-
-        if ((errnum = ::pthread_join(thread_hnd_, nullptr)) != 0)
-        {
-            throw std::system_error(std::make_error_code(std::errc::no_such_process), "pthread_join failed");
-        }
-        thread_hnd_ = native_handle_type();
-    }
-
-    inline void detach()
-    {
-        int errnum;
-
-        if ((errnum = ::pthread_detach(thread_hnd_)) != 0)
-        {
-            throw std::system_error(errnum, std::system_category(), "pthread_detach failed");
-        }
-        thread_hnd_ = native_handle_type();
-    }
-
-    inline bool is_calling_thread() const noexcept
-    {
-        return thread_hnd_ == ::pthread_self();
-    }
-
-private:
-
-    native_handle_type thread_hnd_;
-};
+thread::id thread::get_current_thread_id_impl()
+{
+    return ::pthread_self();
+}
 
 } // eprosima

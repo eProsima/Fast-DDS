@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UTILS__THREAD_IMPL_HPP_
-#define UTILS__THREAD_IMPL_HPP_
+#ifndef UTILS__THREAD_HPP_
+#define UTILS__THREAD_HPP_
 
 // threading.hpp implementations
-#ifdef _WIN32
-#include "thread_impl/thread_impl_win32.ipp"
-#elif defined(__APPLE__) || defined(_POSIX_SOURCE) || defined(__QNXNTO__) || defined(__ANDROID__)
-#include "thread_impl/thread_impl_pthread.ipp"
+#if defined(_WIN32) || defined(__APPLE__) || defined(_POSIX_SOURCE) || defined(__QNXNTO__) || defined(__ANDROID__)
+#include "thread_impl/thread_impl_custom.hpp"
 #else
-#include "thread_impl/thread_impl_basic.ipp"
+#include "thread_impl/thread_impl_basic.hpp"
 #endif // Platform selection
 
-#endif  // UTILS__THREADING_IMPL_HPP_
+#endif  // UTILS__THREAD_HPP_
