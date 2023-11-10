@@ -119,9 +119,9 @@ TEST(SHM, IgnoreNonExistentSegment)
     {
         threads.push_back(std::thread([]()
                 {
-                        constexpr size_t num_parts = 10;
-                        for (size_t i = 0; i < num_parts; ++i)
-                        {
+                    constexpr size_t num_parts = 10;
+                    for (size_t i = 0; i < num_parts; ++i)
+                    {
                         PubSubWriter<Data1mbPubSubType> late_writer(TEST_TOPIC_NAME);
                         late_writer
                                 .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
@@ -130,7 +130,7 @@ TEST(SHM, IgnoreNonExistentSegment)
                                 .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
                                 .init();
                         ASSERT_TRUE(late_writer.isInitialized());
-                        }
+                    }
                 }));
     }
 
