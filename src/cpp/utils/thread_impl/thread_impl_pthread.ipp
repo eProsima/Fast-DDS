@@ -44,7 +44,7 @@ thread::native_handle_type thread::start_thread_impl(
     std::unique_ptr<pthread_attr_t, decltype(attr_deleter)> attr_scope_destroy(&attr, attr_deleter);
 
     // Set the requested stack size, if given.
-    if (stack_size > 0)
+    if (stack_size >= 0)
     {
         if (sizeof(unsigned) <= sizeof(int32_t) &&
                 stack_size > static_cast<int32_t>(std::numeric_limits<unsigned>::max() / 2))
