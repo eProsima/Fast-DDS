@@ -855,6 +855,8 @@
         ├ calculate_crc             [bool],                    (ONLY available for TCP   type)
         ├ check_crc                 [bool],                    (ONLY available for TCP   type)
         ├ enable_tcp_nodelay        [bool],                    (ONLY available for TCP   type)
+        ├ keep_alive_thread         [threadSettingsType],      (ONLY available for TCP   type)
+        ├ accept_thread             [threadSettingsType],      (ONLY available for TCP   type)
         ├ segment_size              [uint32],                  (ONLY available for   SHM type)
         ├ port_queue_capacity       [uint32],                  (ONLY available for   SHM type)
         ├ healthy_check_timeout_ms  [uint32],                  (ONLY available for   SHM type)
@@ -912,6 +914,8 @@
             <xs:element name="check_crc" type="boolean" minOccurs="0" maxOccurs="1"/>
             <xs:element name="enable_tcp_nodelay" type="boolean" minOccurs="0" maxOccurs="1"/>
             <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="keep_alive_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="accept_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="segment_size" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="port_queue_capacity" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="healthy_check_timeout_ms" type="uint32" minOccurs="0" maxOccurs="1"/>

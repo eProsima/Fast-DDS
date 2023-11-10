@@ -162,6 +162,8 @@ private:
 
 };
 
+RTPS_DllAPI extern const DomainParticipantFactoryQos PARTICIPANT_FACTORY_QOS_DEFAULT;
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
