@@ -43,6 +43,7 @@ class thread
         // Finish thread
         return 0;
     }
+
 #else
     // This method is a generic proxy that serves as the starting address of the thread
     template <typename CalleeType>
@@ -56,6 +57,7 @@ class thread
         // Finish thread
         return nullptr;
     }
+
 #endif  // _WIN32
 
 public:
