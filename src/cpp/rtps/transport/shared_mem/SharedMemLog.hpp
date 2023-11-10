@@ -23,6 +23,7 @@
 
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
 namespace eprosima {

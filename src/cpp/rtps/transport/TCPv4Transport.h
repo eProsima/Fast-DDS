@@ -15,7 +15,6 @@
 #ifndef _FASTDDS_TCPV4_TRANSPORT_H_
 #define _FASTDDS_TCPV4_TRANSPORT_H_
 
-#include <thread>
 #include <vector>
 #include <map>
 #include <mutex>

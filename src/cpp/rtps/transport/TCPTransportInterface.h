@@ -15,7 +15,6 @@
 #ifndef _FASTDDS_TCP_TRANSPORT_INTERFACE_H_
 #define _FASTDDS_TCP_TRANSPORT_INTERFACE_H_
 
-#include <thread>
 #include <vector>
 #include <map>
 #include <memory>
@@ -39,7 +38,7 @@
 #endif // if TLS_FOUND
 
 #include <statistics/rtps/messages/OutputTrafficManager.hpp>
-#include <utils/threading.hpp>
+#include <utils/thread.hpp>
 
 namespace eprosima {
 namespace fastdds {

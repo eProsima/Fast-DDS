@@ -17,7 +17,6 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
-#include <thread>
 
 #include <fastrtps/utils/DBQueue.h>
 
@@ -27,6 +26,7 @@
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/dds/log/Colors.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
 namespace eprosima {

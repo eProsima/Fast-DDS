@@ -15,6 +15,7 @@
 #include <fastrtps/utils/TimedMutex.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
 namespace eprosima {

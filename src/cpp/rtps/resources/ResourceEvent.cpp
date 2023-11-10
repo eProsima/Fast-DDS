@@ -17,12 +17,12 @@
  */
 
 #include <cassert>
-#include <thread>
 
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/dds/log/Log.hpp>
 
 #include "TimedEventImpl.h"
+#include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
 namespace eprosima {

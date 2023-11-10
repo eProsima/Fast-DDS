@@ -15,7 +15,7 @@
 #ifndef UTILS__THREAD_HPP_
 #define UTILS__THREAD_HPP_
 
-// threading.hpp implementations
+// thread.hpp declarations
 #if defined(_WIN32) || defined(__APPLE__) || defined(_POSIX_SOURCE) || defined(__QNXNTO__) || defined(__ANDROID__)
 #include "thread_impl/thread_impl_custom.hpp"
 #else

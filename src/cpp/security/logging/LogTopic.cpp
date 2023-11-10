@@ -2,6 +2,7 @@
 
 #include <functional>
 
+#include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
 namespace eprosima {

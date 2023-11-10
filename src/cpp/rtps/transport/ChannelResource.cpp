@@ -14,9 +14,7 @@
 
 #include <rtps/transport/ChannelResource.h>
 
-#include <thread>
-
-#include <asio.hpp>
+#include <utils/thread.hpp>
 
 namespace eprosima {
 namespace fastdds {

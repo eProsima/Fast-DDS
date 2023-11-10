@@ -54,6 +54,7 @@
 
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
 #include "tcp/RTCPHeader.h"

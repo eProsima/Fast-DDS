@@ -18,6 +18,7 @@
 
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
+#include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
 #include <memory>

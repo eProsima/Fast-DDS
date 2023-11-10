@@ -15,13 +15,12 @@
 #ifndef _FASTDDS_CHANNEL_RESOURCE_INFO_
 #define _FASTDDS_CHANNEL_RESOURCE_INFO_
 
-#include <memory>
-#include <map>
+#include <atomic>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 
-#include <utils/threading.hpp>
+#include <utils/thread.hpp>
 
 namespace eprosima {
 namespace fastdds {

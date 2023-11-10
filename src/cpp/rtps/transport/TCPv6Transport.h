@@ -15,12 +15,12 @@
 #ifndef _FASTDDS_TCPV6_TRANSPORT_H_
 #define _FASTDDS_TCPV6_TRANSPORT_H_
 
-#include <thread>
-#include <vector>
 #include <map>
 #include <mutex>
+#include <vector>
 
 #include <asio.hpp>
+
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <rtps/transport/TCPTransportInterface.h>

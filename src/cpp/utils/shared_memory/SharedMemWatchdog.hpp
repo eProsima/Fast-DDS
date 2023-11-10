@@ -23,6 +23,7 @@
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
+#include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
 namespace eprosima {

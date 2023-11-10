@@ -30,7 +30,7 @@
 #include <rtps/DataSharing/IDataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotification.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
-#include <utils/threading.hpp>
+#include <utils/thread.hpp>
 
 namespace eprosima {
 namespace fastrtps {
