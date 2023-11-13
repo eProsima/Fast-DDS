@@ -15,7 +15,9 @@
 #ifndef _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
 #define _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
 
-#include <fastrtps/rtps/network/SenderResource.h>
+#include <fastdds/rtps/network/SenderResource.h>
+
+#include <rtps/transport/ChainingSenderResource.hpp>
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
 
 namespace eprosima {
@@ -66,6 +68,17 @@ public:
         if (sender_resource->kind() == transport.kind())
         {
             returned_resource = dynamic_cast<SharedMemSenderResource*>(sender_resource);
+
+            //! May be chained
+            if (!returned_resource)
+            {
+                auto chaining_sender = dynamic_cast<ChainingSenderResource*>(sender_resource);
+
+                if (chaining_sender)
+                {
+                    returned_resource = dynamic_cast<SharedMemSenderResource*>(chaining_sender->lower_sender_cast());
+                }
+            }
         }
 
         return returned_resource;
