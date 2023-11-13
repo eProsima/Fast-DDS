@@ -109,7 +109,7 @@ public:
         }
         catch (const std::exception& e)
         {
-            EPROSIMA_LOG_WARNING(RTPS_MSG_IN, e.what());
+            EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, e.what());
         }
     }
 
@@ -150,7 +150,7 @@ private:
             }
             else if (alive())
             {
-                EPROSIMA_LOG_WARNING(RTPS_MSG_IN, "Received Message, but no receiver attached");
+                EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "Received Message, but no receiver attached");
             }
 
             // Forces message release before waiting for the next
@@ -184,8 +184,9 @@ protected:
         catch (const std::exception& error)
         {
             (void)error;
-            EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Error receiving data: " << error.what() << " - " << message_receiver()
-                                                                        << " (" << this << ")");
+            EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM,
+                    "Error receiving data: " << error.what() << " - " << message_receiver()
+                                             << " (" << this << ")");
             return nullptr;
         }
     }
