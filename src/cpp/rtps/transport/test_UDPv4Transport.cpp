@@ -486,7 +486,7 @@ bool test_UDPv4Transport::log_drop(
 bool test_UDPv4Transport::should_be_dropped(
         PercentageData* percent)
 {
-    percent->accumulator += percent->percentage;
+    percent->accumulator += percent->percentage.load();
     if (percent->accumulator >= 100u)
     {
         percent->accumulator -= 100u;

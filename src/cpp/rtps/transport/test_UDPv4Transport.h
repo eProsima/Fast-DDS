@@ -73,13 +73,13 @@ private:
     struct PercentageData
     {
         PercentageData(
-                uint8_t percent)
+                std::atomic<uint8_t>& percent)
             : percentage(percent)
             , accumulator(0)
         {
         }
 
-        uint8_t percentage;
+        std::atomic<uint8_t>& percentage;
         uint8_t accumulator;
     };
 
