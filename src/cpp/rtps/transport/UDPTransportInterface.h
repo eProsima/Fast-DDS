@@ -173,6 +173,8 @@ public:
 
     bool is_localhost_allowed() const override;
 
+    bool is_transport_stream() const override;
+
 protected:
 
     friend class UDPChannelResource;

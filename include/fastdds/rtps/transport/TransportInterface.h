@@ -276,6 +276,8 @@ public:
         return true;
     }
 
+    virtual bool is_transport_stream() const = 0;
+
 protected:
 
     TransportInterface(

@@ -120,6 +120,9 @@ protected:
             const asio::ip::tcp::endpoint& endpoint,
             Locator& locator) const override;
 
+    //! Returns the default TCP port
+    uint16_t get_default_tcp_port();
+
 public:
 
     RTPS_DllAPI TCPv4Transport(

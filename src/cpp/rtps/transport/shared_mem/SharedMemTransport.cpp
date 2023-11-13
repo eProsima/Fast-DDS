@@ -181,6 +181,11 @@ bool SharedMemTransport::is_localhost_allowed() const
     return true;
 }
 
+bool SharedMemTransport::is_transport_stream() const
+{
+    return false;
+}
+
 void SharedMemTransport::delete_input_channel(
         SharedMemChannelResource* channel)
 {

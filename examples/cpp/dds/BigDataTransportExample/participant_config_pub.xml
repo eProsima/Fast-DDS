@@ -6,13 +6,15 @@
             <transport_id>tcp_transport_1</transport_id>
             <type>TCPv4</type>
             <listening_ports>
-                <port>5100</port> <!-- Default Unicast Locator-->
-                <port>5200</port> <!-- Metatraffic Unicast Locator-->
+                <!-- Default Unicast Locator-->
+                <port>0</port>
+                <!-- Metatraffic Unicast Locator--> 
+                <!-- <port>5200</port> -->
             </listening_ports>
             <wan_addr>127.0.0.1</wan_addr>
-            <sendBufferSize>200000</sendBufferSize>
-            <receiveBufferSize>200000</receiveBufferSize>
-            <maxMessageSize>200000</maxMessageSize> <!-- Default: 65500-->
+            <sendBufferSize>30100000</sendBufferSize>
+            <receiveBufferSize>30100000</receiveBufferSize>
+            <maxMessageSize>30100000</maxMessageSize> <!-- Default: 65500-->
         </transport_descriptor>
         <transport_descriptor>
                 <transport_id>udp_transport_1</transport_id>
@@ -32,19 +34,13 @@
                 <locator>
                     <tcpv4>
                         <!-- Both physical and logical (port), useful in TCP transports -->
-                        <physical_port>5200</physical_port>
-                        <port>5200</port>
+                        <!-- <physical_port>5500</physical_port>
+                        <port>5500</port> -->
                         <!-- <wan_address>127.0.0.1</wan_address> -->
                         <!-- <address>127.0.0.1</address> -->
                     </tcpv4>
                 </locator>
-            </defaultUnicastLocatorList>
-
-            
-            <!-- <sendSocketBufferSize>8192</sendSocketBufferSize>
-
-            <listenSocketBufferSize>8192</listenSocketBufferSize> -->
-           
+            </defaultUnicastLocatorList>         
 
             <builtin>
 
@@ -56,8 +52,8 @@
                     <locator>
                         <tcpv4>
                             <!-- Both physical and logical (port), useful in TCP transports -->
-                            <physical_port>5100</physical_port>
-                            <port>5100</port>
+                            <!-- <physical_port>5500</physical_port>
+                            <port>5500</port> -->
                             <!-- <wan_address>127.0.0.1</wan_address> -->
                             <!-- <address>192.168.1.55</address> -->
                         </tcpv4>
@@ -82,10 +78,6 @@
 
                 <mutation_tries>100</mutation_tries>
 
-                <!-- <typelookup_config>
-                    <use_client>true</use_client>
-                    <use_server>true</use_server>
-                </typelookup_config> -->
             </builtin>
 
             <participantID>42</participantID>
@@ -100,21 +92,3 @@
         </rtps>
     </participant>
 </profiles>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

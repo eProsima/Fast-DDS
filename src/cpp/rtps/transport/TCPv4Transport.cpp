@@ -81,10 +81,20 @@ TCPv4Transport::TCPv4Transport(
         interface_whitelist_.emplace_back(ip::address_v4::from_string(interface));
     }
 
-    for (uint16_t port : configuration_.listening_ports)
+    for (uint16_t &port : configuration_.listening_ports)
     {
-        Locator locator(LOCATOR_KIND_TCPv4, port);
-        create_acceptor_socket(locator);
+        if (port == 0)
+        {
+            // Autofill port
+            port = get_default_tcp_port();
+            Locator locator(LOCATOR_KIND_TCPv4, port);
+            create_acceptor_socket(locator);
+        }
+        else
+        {
+            Locator locator(LOCATOR_KIND_TCPv4, port);
+            create_acceptor_socket(locator);
+        }
     }
 
 #if !TLS_FOUND
@@ -412,6 +422,12 @@ bool TCPv4Transport::fillUnicastLocator(
             configuration_.wan_addr[2], configuration_.wan_addr[3]);
 
     return result;
+}
+
+uint16_t TCPv4Transport::get_default_tcp_port()
+{
+    // TODO: select which port is going to be used by default for TCP
+    return static_cast<uint16_t>(5100);
 }
 
 } // namespace rtps

@@ -27,6 +27,7 @@ enum  optionIndex
     SERVERID,
     IPADDRESS,
     PORT,
+    TCPADDRESS,
     BACKUP,
     XML_FILE
 };
@@ -53,29 +54,34 @@ const option::Descriptor usage[] = {
       "\nUsage: " FAST_SERVER_BINARY " [optional parameters] \nGeneral options:" },
 
     { HELP,      0, "h",  "help",         Arg::None,
-      "  -h  \t--help       Produce help message.\n" },
+      "  -h  \t--help        Produce help message.\n" },
 
     { SERVERID,  0, "i", "server-id",    Arg::check_server_id,
-      "  -i \t--server-id  Unique server identifier. Specifies zero based server\n"
-      "\t             position in ROS_DISCOVERY_SERVER environment variable.\n" },
+      "  -i \t--server-id   Unique server identifier. Specifies zero based server\n"
+      "\t              position in ROS_DISCOVERY_SERVER environment variable.\n" },
 
     { IPADDRESS, 0, "l", "ip-address",   Arg::required,
-      "  -l \t--ip-address IPv4/IPv6 address chosen to listen the clients. Defaults\n"
-      "\t             to any (0.0.0.0/::0). Instead of an address, a name can\n"
-      "\t             be specified."},
+      "  -l \t--ip-address  IPv4/IPv6 address chosen to listen the clients. Defaults\n"
+      "\t              to any (0.0.0.0/::0). Instead of an address, a name can\n"
+      "\t              be specified."},
 
     { PORT,      0, "p",  "port",         Arg::check_udp_port,
-      "  -p  \t--port       UDP port chosen to listen the clients. Defaults to 11811\n" },
+      "  -p  \t--port        UDP port chosen to listen the clients. Defaults to 11811\n" },
+
+    { TCPADDRESS, 0, "t", "tcp-address",   Arg::required,
+      "  -t \t--tcp-address IPv4/IPv6 address chosen to listen the clients using\n"
+      "\t              TCP transport. Defaults to any (0.0.0.0/::0). Instead of an \n"
+      "\t              address, a name can be specified."},
 
     { BACKUP,    0, "b",  "backup",       Arg::None,
-      "  -b  \t--backup     Creates a server with a backup file associated.\n" },
+      "  -b  \t--backup      Creates a server with a backup file associated.\n" },
 
     { XML_FILE,  0, "x",  "xml-file",     Arg::required,
-      "  -x  \t--xml-file   Gets config from XML file. If there is any argument in \n"
-      "\t             common with the config of the XML, the XML argument will \n"
-      "\t             be overriden. A XML file with several profiles will take\n"
-      "\t             the profile with \"is_default_profile=\"true\"\" unless \n"
-      "\t             another profile using uri with \"@\" character is defined.\n"},
+      "  -x  \t--xml-file    Gets config from XML file. If there is any argument in \n"
+      "\t              common with the config of the XML, the XML argument will \n"
+      "\t              be overriden. A XML file with several profiles will take\n"
+      "\t              the profile with \"is_default_profile=\"true\"\" unless \n"
+      "\t              another profile using uri with \"@\" character is defined.\n"},
 
     { UNKNOWN,   0, "",  "",              Arg::None,
       "Examples:\n"

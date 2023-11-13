@@ -12,11 +12,11 @@
     </transport_descriptors>
 
     <participant profile_name="bigdata_pub_profile">
-        <domainId>42</domainId>
+        <domainId>41</domainId>
         <rtps>
             <name>BigDataParticipant_pub</name>
 
-            <participantID>42</participantID>
+            <participantID>41</participantID>
 
             <userTransports>
                 <transport_id>udp_transport_1</transport_id>

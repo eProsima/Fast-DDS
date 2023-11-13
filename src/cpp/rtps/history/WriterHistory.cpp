@@ -20,6 +20,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastdds/rtps/common/WriteParams.h>
 #include <fastdds/core/policy//ParameterSerializer.hpp>
 
@@ -361,13 +362,29 @@ void WriterHistory::set_fragments(
             inline_qos_size);
     }
 
-    // If it is big data, fragment it.
+    // If it is big data and transport needs it, fragment it.
+    // ASK IF TRANSPORTS REQUIRE FRAGMENTATION. IN CASE TRANSPORT == TCP (STREAM) --> NO FRAG
+    // bool transport_stream = mp_writer->getRTPSParticipant()->network_factory().are_transports_stream();
+    // ONLY VALID FOR TCP AT THE MOMENT, NEED TO HANDLE FINAL_HIGH_MARK_FOR_FRAG FOR UDP
     if (change->serializedPayload.length > final_high_mark_for_frag)
     {
+        LocatorList_t user_traffic_locator;
+        user_traffic_locator = mp_writer->getRTPSParticipant()->getRTPSParticipantAttributes().defaultUnicastLocatorList;
+        bool transport_stream = true;
+        for (const Locator_t& locator : user_traffic_locator)
+        {
+            if (!(locator.kind == 4 || locator.kind == 6))
+            {
+                transport_stream = false;
+            }
+        }
         // Fragment the data.
         // Set the fragment size to the cachechange.
-        change->setFragmentSize(static_cast<uint16_t>(
+        // if (!transport_stream)
+        {
+            change->setFragmentSize(static_cast<uint16_t>(
                     (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
+        }
     }
 }
 

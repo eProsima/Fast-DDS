@@ -201,9 +201,6 @@ RTPSMessageGroup::RTPSMessageGroup(
     }
 
     full_msg_ = &(send_buffer_->rtpsmsg_fullmsg_);
-    if (full_msg_->length > 6000) {
-        std::cout << "Big msg" << std::endl;
-    }
     submessage_msg_ = &(send_buffer_->rtpsmsg_submessage_);
 
     // Init RTPS message.

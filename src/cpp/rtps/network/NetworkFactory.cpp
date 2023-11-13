@@ -471,6 +471,18 @@ void NetworkFactory::update_network_interfaces()
     }
 }
 
+bool NetworkFactory::are_transports_stream()
+{
+    for (auto& transport : mRegisteredTransports)
+    {
+        if (!transport->is_transport_stream())
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

@@ -309,14 +309,10 @@ BigData random_bigdata(bool include_image_and_pointcloud = true)
   data.timestamp_value();
 
   if (include_image_and_pointcloud) {
-    //std::cout << "Generating image" << std::endl;
-    //data.image_value(random_image(1920 * 1080 * 3));
-    //std::cout << "Generating point cloud" << std::endl;
-    //data.point_cloud_value(random_pointcloud(4 * 4 * 4 * 1280 * 960));
     std::cout << "Generating image" << std::endl;
-    data.image_value(random_image(30000000));
+    data.image_value(random_image(10000)); // Insert size of data in bytes
     std::cout << "Generating point cloud" << std::endl;
-    data.point_cloud_value(random_pointcloud(10)); // * 0.015625
+    data.point_cloud_value(random_pointcloud(10));
   } else {
     data.image_value(random_image(0));
     data.point_cloud_value(random_pointcloud(0));

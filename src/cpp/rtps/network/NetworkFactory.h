@@ -246,6 +246,11 @@ public:
      */
     void update_network_interfaces();
 
+    /**
+     * Check if Data transports are stream (TCP)
+    */
+    bool are_transports_stream();
+
 private:
 
     std::vector<std::unique_ptr<fastdds::rtps::TransportInterface>> mRegisteredTransports;
