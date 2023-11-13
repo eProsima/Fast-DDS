@@ -359,15 +359,11 @@ if(IS_THIRDPARTY_BOOST_OK)
         ${PROJECT_SOURCE_DIR}/src/cpp
         ${THIRDPARTY_BOOST_INCLUDE_DIR}
         )
-<<<<<<< HEAD
-    target_link_libraries(SharedMemTests GTest::gtest ${MOCKS}
-=======
     target_link_libraries(SharedMemTests
         foonathan_memory
         fastcdr
         GTest::gtest
         ${MOCKS}
->>>>>>> df180560d (Use foonathan memory manager for reducing allocations in SharedMemManager.hpp (#3833))
         $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         ${THIRDPARTY_BOOST_LINK_LIBS}
         eProsima_atomic
