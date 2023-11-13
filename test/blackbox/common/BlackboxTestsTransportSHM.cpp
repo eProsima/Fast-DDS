@@ -19,7 +19,11 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
+#include "./mock/BlackboxMockConsumer.h"
+
 #include <gtest/gtest.h>
+
+#include <fastdds/dds/log/Log.hpp>
 
 #include <rtps/transport/shared_mem/test_SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
@@ -68,6 +72,84 @@ TEST(SHM, TransportPubSub)
 
     // Check that reader receives the unmatched.
     reader.wait_participant_undiscovery();
+}
+
+// Regression test for redmine #19500
+TEST(SHM, IgnoreNonExistentSegment)
+{
+    using namespace eprosima::fastdds::dds;
+
+    // Set up log
+    BlackboxMockConsumer* helper_consumer = new BlackboxMockConsumer();
+    Log::ClearConsumers();  // Remove default consumers
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(helper_consumer)); // Registering a consumer transfer ownership
+    // Filter specific message
+    Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
+    Log::SetCategoryFilter(std::regex("RTPS_TRANSPORT_SHM"));
+    Log::SetErrorStringFilter(std::regex("Error receiving data.*"));
+
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
+
+    writer
+            .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    reader.wait_discovery();
+
+    // Create and quickly destroy several participants in several threads
+    std::vector<std::thread> threads;
+    for (size_t i = 0; i < 10; i++)
+    {
+        threads.push_back(std::thread([]()
+                {
+                    constexpr size_t num_parts = 10;
+                    for (size_t i = 0; i < num_parts; ++i)
+                    {
+                        PubSubWriter<Data1mbPubSubType> late_writer(TEST_TOPIC_NAME);
+                        late_writer
+                                .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
+                                .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                                .disable_builtin_transport()
+                                .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
+                                .init();
+                        ASSERT_TRUE(late_writer.isInitialized());
+                    }
+                }));
+    }
+
+    // Destroy the writer participant.
+    writer.destroy();
+
+    // Check that reader receives the unmatched.
+    reader.wait_participant_undiscovery();
+
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
+    // Check logs
+    Log::Flush();
+    EXPECT_EQ(helper_consumer->ConsumedEntries().size(), 0);
+
+    // Clean-up
+    Log::Reset();  // This calls to ClearConsumers, which deletes the registered consumer
 }
 
 TEST(SHM, Test300KFragmentation)
