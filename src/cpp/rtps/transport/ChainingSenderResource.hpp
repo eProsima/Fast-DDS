@@ -56,6 +56,18 @@ public:
                 };
     }
 
+    fastrtps::rtps::SenderResource* lower_sender_cast()
+    {
+        fastrtps::rtps::SenderResource* lower_sender_cast = nullptr;
+
+        if (low_sender_resource_)
+        {
+            lower_sender_cast = static_cast<fastrtps::rtps::SenderResource*>(low_sender_resource_.get());
+        }
+
+        return lower_sender_cast;
+    }
+
     virtual ~ChainingSenderResource()
     {
         if (clean_up)
