@@ -25,6 +25,7 @@
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
+#include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
 #ifdef _WIN32
@@ -151,12 +152,12 @@ namespace filewatch {
         std::atomic<bool> _destory = { false };
         std::function<void(const T& file, const Event event_type)> _callback;
 
-        std::thread _watch_thread;
+        eprosima::thread _watch_thread;
 
         std::condition_variable _cv;
         std::mutex _callback_mutex;
         std::vector<std::pair<T, Event>> _callback_information;
-        std::thread _callback_thread;
+        eprosima::thread _callback_thread;
 
         std::promise<void> _running;
 

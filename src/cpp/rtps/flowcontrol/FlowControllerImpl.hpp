@@ -5,7 +5,6 @@
 #include <cassert>
 #include <chrono>
 #include <map>
-#include <thread>
 #include <unordered_map>
 
 #include "FlowController.hpp"
@@ -16,6 +15,7 @@
 #include <fastrtps/utils/TimedMutex.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
 namespace eprosima {
@@ -242,7 +242,7 @@ struct FlowControllerAsyncPublishMode
     {
     }
 
-    std::thread thread;
+    eprosima::thread thread;
 
     std::atomic_bool running {false};
 

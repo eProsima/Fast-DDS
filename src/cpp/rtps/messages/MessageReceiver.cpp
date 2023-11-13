@@ -17,12 +17,13 @@
  *
  */
 
+#include <cassert>
+#include <limits>
+#include <thread>
+
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
-
-#include <cassert>
-#include <limits>
 
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>

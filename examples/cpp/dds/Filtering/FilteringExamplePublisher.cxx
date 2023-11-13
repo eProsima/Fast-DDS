@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-
 #include "FilteringExamplePublisher.h"
+
+#include <chrono>
+#include <thread>
+
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;

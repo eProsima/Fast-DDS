@@ -26,6 +26,7 @@
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/dds/log/Colors.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
 namespace eprosima {
@@ -243,7 +244,7 @@ struct LogResources
         if (logging_thread_.joinable())
         {
             cv_.notify_all();
-            if (logging_thread_.get_id() != std::this_thread::get_id())
+            if (!logging_thread_.is_calling_thread())
             {
                 logging_thread_.join();
             }
@@ -342,7 +343,7 @@ private:
 
     fastrtps::DBQueue<Log::Entry> logs_;
     std::vector<std::unique_ptr<LogConsumer>> consumers_;
-    std::thread logging_thread_;
+    eprosima::thread logging_thread_;
 
     // Condition variable segment.
     std::condition_variable cv_;

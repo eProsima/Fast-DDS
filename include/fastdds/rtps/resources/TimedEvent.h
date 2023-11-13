@@ -22,11 +22,11 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/Time_t.h>
-
-#include <thread>
-#include <functional>
+#include <chrono>
 #include <cstdint>
+#include <functional>
+
+#include <fastdds/rtps/common/Time_t.h>
 
 namespace eprosima {
 namespace fastrtps {

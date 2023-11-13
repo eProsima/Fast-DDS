@@ -17,24 +17,30 @@
  */
 
 #include "TestPublisher.h"
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+
+#include <chrono>
+#include <thread>
+
+#include <asio.hpp>
+
+#include <gtest/gtest.h>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/transport/UDPv6TransportDescriptor.h>
-#include <fastrtps/types/DynamicTypePtr.h>
-#include <fastrtps/types/DynamicType.h>
 #include <fastrtps/Domain.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <gtest/gtest.h>
-#include <asio.hpp>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::xtypes;

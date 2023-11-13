@@ -18,16 +18,19 @@
  */
 
 #include "HelloWorldSubscriber.h"
+
+#include <chrono>
+#include <mutex>
+#include <thread>
+
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-
-#include <fastrtps/types/DynamicDataHelper.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
-#include <mutex>
+#include <fastrtps/types/DynamicDataHelper.hpp>
 
 using namespace eprosima::fastdds::dds;
 using eprosima::fastrtps::types::ReturnCode_t;

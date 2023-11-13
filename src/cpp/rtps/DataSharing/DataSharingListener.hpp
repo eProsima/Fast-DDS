@@ -30,6 +30,7 @@
 #include <rtps/DataSharing/IDataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotification.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
+#include <utils/thread.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -114,7 +115,7 @@ protected:
     std::shared_ptr<DataSharingNotification> notification_;
     std::atomic<bool> is_running_;
     RTPSReader* reader_;
-    std::thread listening_thread_;
+    eprosima::thread listening_thread_;
     ResourceLimitedVector<WriterInfo> writer_pools_;
     std::atomic<bool> writer_pools_changed_;
     std::string datasharing_pools_directory_;

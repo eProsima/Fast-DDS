@@ -54,8 +54,6 @@
 
 #include <rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp>
 
-#include <utils/threading.hpp>
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {

@@ -678,8 +678,9 @@ TEST_F(LogTests, thread_config)
 
     // Set thread settings
     eprosima::fastdds::rtps::ThreadSettings thr_settings{};
-#if defined(_POSIX_SOURCE)
+    thr_settings.stack_size = 1024 * 1024 * 4;
     thr_settings.affinity = 3;
+#if defined(_POSIX_SOURCE)
     thr_settings.scheduling_policy = SCHED_OTHER;
     thr_settings.priority = 1;
 #endif // if defined(_POSIX_SOURCE)

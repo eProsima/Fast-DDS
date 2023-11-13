@@ -18,7 +18,6 @@
 
 #include <chrono>
 #include <memory>
-#include <thread>
 #include <unordered_map>
 
 #if defined(_WIN32) || defined(__unix__)

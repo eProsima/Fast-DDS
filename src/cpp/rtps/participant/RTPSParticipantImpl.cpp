@@ -61,7 +61,6 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
-#include <utils/threading.hpp>
 
 #if HAVE_SECURITY
 #include <security/logging/LogTopic.h>

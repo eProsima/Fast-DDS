@@ -20,12 +20,13 @@
 #include <Windows.h>
 #endif // ifdef _MSC_VER
 
-#include <stdint.h>
-#include <random>
-#include <chrono>
-#include <vector>
-#include <mutex>
 #include <array>
+#include <cstdint>
+#include <chrono>
+#include <mutex>
+#include <random>
+#include <thread>
+#include <vector>
 
 namespace eprosima {
 namespace fastdds {
