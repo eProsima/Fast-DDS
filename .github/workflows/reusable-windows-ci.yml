@@ -49,7 +49,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: lukka/get-cmake@latest
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.16.3'
 
       - name: Patch SDK for source indexing
         run: |
