@@ -992,6 +992,11 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKeyUnorderedReception)
     writer.send(data);
     ASSERT_TRUE(data.empty());
 
+    reader.block_for_at_least(static_cast<size_t>(keys * depth * 0.1));
+
+    //! Avoid dropping deterministically the same re-sent samples
+    testTransport->dropDataMessagesPercentage.store(10);
+
     reader.block_for_all();
     reader.stopReception();
 }
