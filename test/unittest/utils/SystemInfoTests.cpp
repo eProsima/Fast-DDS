@@ -240,6 +240,8 @@ TEST_F(SystemInfoTests, FileWatchTest)
                         cv_.notify_all();
                     });
 
+    std::this_thread::sleep_for(_1s);
+
     // Read contents
     {
         std::ifstream file(filename);
