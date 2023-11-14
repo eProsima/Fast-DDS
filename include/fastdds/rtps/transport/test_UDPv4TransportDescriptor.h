@@ -91,11 +91,19 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
 
     //! Copy constructor
     RTPS_DllAPI test_UDPv4TransportDescriptor(
-            const test_UDPv4TransportDescriptor& t) = default;
+            const test_UDPv4TransportDescriptor& t) = delete;
 
     //! Copy assignment
     RTPS_DllAPI test_UDPv4TransportDescriptor& operator =(
-            const test_UDPv4TransportDescriptor& t) = default;
+            const test_UDPv4TransportDescriptor& t) = delete;
+
+    //! Move constructor
+    RTPS_DllAPI test_UDPv4TransportDescriptor(
+            test_UDPv4TransportDescriptor&& t) = delete;
+
+    //! Move assignment
+    RTPS_DllAPI test_UDPv4TransportDescriptor& operator =(
+            test_UDPv4TransportDescriptor&& t) = delete;
 
     //! Comparison operator
     // Filters are not included
