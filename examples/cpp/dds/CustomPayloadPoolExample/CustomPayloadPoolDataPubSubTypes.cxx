@@ -139,23 +139,24 @@ std::function<uint32_t()> CustomPayloadPoolDataPubSubType::getSerializedSizeProv
     return [data, data_representation]() -> uint32_t
            {
 #if FASTCDR_VERSION_MAJOR == 1
-                return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<CustomPayloadPoolData*>(data))) +
+               static_cast<void>(data_representation);
+               return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<CustomPayloadPoolData*>(data))) +
                       4u /*encapsulation*/;
 #else
-                try
-                {
-                    eprosima::fastcdr::CdrSizeCalculator calculator(
-                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-                    size_t current_alignment {0};
-                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                                *static_cast<CustomPayloadPoolData*>(data), current_alignment)) +
-                            4u /*encapsulation*/;
-                }
-                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-                {
-                    return 0;
-                }
+               try
+               {
+                   eprosima::fastcdr::CdrSizeCalculator calculator(
+                       data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                       eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                   size_t current_alignment {0};
+                   return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                               *static_cast<CustomPayloadPoolData*>(data), current_alignment)) +
+                           4u /*encapsulation*/;
+               }
+               catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+               {
+                   return 0;
+               }
 #endif // FASTCDR_VERSION_MAJOR == 1
            };
 }
