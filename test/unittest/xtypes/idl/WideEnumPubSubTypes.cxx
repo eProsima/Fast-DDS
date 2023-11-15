@@ -36,7 +36,7 @@ MyEnumWideStructPubSubType::MyEnumWideStructPubSubType()
     setName("MyEnumWideStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        MyEnumWideStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(MyEnumWideStruct::getMaxCdrSerializedSize());
 #else
         MyEnumWideStruct_max_cdr_typesize;
 #endif
@@ -230,7 +230,7 @@ SimpleWideUnionStructPubSubType::SimpleWideUnionStructPubSubType()
     setName("SimpleWideUnionStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SimpleWideUnionStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SimpleWideUnionStruct::getMaxCdrSerializedSize());
 #else
         SimpleWideUnionStruct_max_cdr_typesize;
 #endif

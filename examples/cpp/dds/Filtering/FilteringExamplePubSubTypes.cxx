@@ -36,7 +36,7 @@ FilteringExamplePubSubType::FilteringExamplePubSubType()
     setName("FilteringExample");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        FilteringExample::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(FilteringExample::getMaxCdrSerializedSize());
 #else
         FilteringExample_max_cdr_typesize;
 #endif

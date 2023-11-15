@@ -36,7 +36,7 @@ AllocTestTypePubSubType::AllocTestTypePubSubType()
     setName("AllocTestType");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        AllocTestType::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(AllocTestType::getMaxCdrSerializedSize());
 #else
         AllocTestType_max_cdr_typesize;
 #endif

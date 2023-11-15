@@ -36,7 +36,7 @@ MyEnumStructPubSubType::MyEnumStructPubSubType()
     setName("MyEnumStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        MyEnumStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(MyEnumStruct::getMaxCdrSerializedSize());
 #else
         MyEnumStruct_max_cdr_typesize;
 #endif
@@ -226,7 +226,7 @@ MyBadEnumStructPubSubType::MyBadEnumStructPubSubType()
     setName("MyBadEnumStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        MyBadEnumStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(MyBadEnumStruct::getMaxCdrSerializedSize());
 #else
         MyBadEnumStruct_max_cdr_typesize;
 #endif
@@ -418,7 +418,7 @@ MyAliasEnumStructPubSubType::MyAliasEnumStructPubSubType()
     setName("MyAliasEnumStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        MyAliasEnumStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(MyAliasEnumStruct::getMaxCdrSerializedSize());
 #else
         MyAliasEnumStruct_max_cdr_typesize;
 #endif
@@ -608,7 +608,7 @@ BasicStructPubSubType::BasicStructPubSubType()
     setName("BasicStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        BasicStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(BasicStruct::getMaxCdrSerializedSize());
 #else
         BasicStruct_max_cdr_typesize;
 #endif
@@ -798,7 +798,7 @@ BasicNamesStructPubSubType::BasicNamesStructPubSubType()
     setName("BasicNamesStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        BasicNamesStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(BasicNamesStruct::getMaxCdrSerializedSize());
 #else
         BasicNamesStruct_max_cdr_typesize;
 #endif
@@ -988,7 +988,7 @@ BasicBadStructPubSubType::BasicBadStructPubSubType()
     setName("BasicBadStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        BasicBadStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(BasicBadStruct::getMaxCdrSerializedSize());
 #else
         BasicBadStruct_max_cdr_typesize;
 #endif
@@ -1178,7 +1178,7 @@ BasicWideStructPubSubType::BasicWideStructPubSubType()
     setName("BasicWideStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        BasicWideStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(BasicWideStruct::getMaxCdrSerializedSize());
 #else
         BasicWideStruct_max_cdr_typesize;
 #endif
@@ -1368,7 +1368,7 @@ BadBasicWideStructPubSubType::BadBasicWideStructPubSubType()
     setName("BadBasicWideStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        BadBasicWideStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(BadBasicWideStruct::getMaxCdrSerializedSize());
 #else
         BadBasicWideStruct_max_cdr_typesize;
 #endif
@@ -1558,7 +1558,7 @@ StringStructPubSubType::StringStructPubSubType()
     setName("StringStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        StringStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(StringStruct::getMaxCdrSerializedSize());
 #else
         StringStruct_max_cdr_typesize;
 #endif
@@ -1748,7 +1748,7 @@ LargeStringStructPubSubType::LargeStringStructPubSubType()
     setName("LargeStringStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        LargeStringStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(LargeStringStruct::getMaxCdrSerializedSize());
 #else
         LargeStringStruct_max_cdr_typesize;
 #endif
@@ -1938,7 +1938,7 @@ WStringStructPubSubType::WStringStructPubSubType()
     setName("WStringStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        WStringStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(WStringStruct::getMaxCdrSerializedSize());
 #else
         WStringStruct_max_cdr_typesize;
 #endif
@@ -2128,7 +2128,7 @@ LargeWStringStructPubSubType::LargeWStringStructPubSubType()
     setName("LargeWStringStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        LargeWStringStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(LargeWStringStruct::getMaxCdrSerializedSize());
 #else
         LargeWStringStruct_max_cdr_typesize;
 #endif
@@ -2318,7 +2318,7 @@ ArrayStructPubSubType::ArrayStructPubSubType()
     setName("ArrayStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        ArrayStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(ArrayStruct::getMaxCdrSerializedSize());
 #else
         ArrayStruct_max_cdr_typesize;
 #endif
@@ -2508,7 +2508,7 @@ ArrayStructEqualPubSubType::ArrayStructEqualPubSubType()
     setName("ArrayStructEqual");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        ArrayStructEqual::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(ArrayStructEqual::getMaxCdrSerializedSize());
 #else
         ArrayStructEqual_max_cdr_typesize;
 #endif
@@ -2698,7 +2698,7 @@ ArrayBadStructPubSubType::ArrayBadStructPubSubType()
     setName("ArrayBadStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        ArrayBadStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(ArrayBadStruct::getMaxCdrSerializedSize());
 #else
         ArrayBadStruct_max_cdr_typesize;
 #endif
@@ -2888,7 +2888,7 @@ ArrayDimensionsStructPubSubType::ArrayDimensionsStructPubSubType()
     setName("ArrayDimensionsStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        ArrayDimensionsStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(ArrayDimensionsStruct::getMaxCdrSerializedSize());
 #else
         ArrayDimensionsStruct_max_cdr_typesize;
 #endif
@@ -3078,7 +3078,7 @@ ArraySizeStructPubSubType::ArraySizeStructPubSubType()
     setName("ArraySizeStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        ArraySizeStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(ArraySizeStruct::getMaxCdrSerializedSize());
 #else
         ArraySizeStruct_max_cdr_typesize;
 #endif
@@ -3270,7 +3270,7 @@ SequenceStructPubSubType::SequenceStructPubSubType()
     setName("SequenceStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SequenceStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SequenceStruct::getMaxCdrSerializedSize());
 #else
         SequenceStruct_max_cdr_typesize;
 #endif
@@ -3462,7 +3462,7 @@ SequenceStructEqualPubSubType::SequenceStructEqualPubSubType()
     setName("SequenceStructEqual");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SequenceStructEqual::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SequenceStructEqual::getMaxCdrSerializedSize());
 #else
         SequenceStructEqual_max_cdr_typesize;
 #endif
@@ -3654,7 +3654,7 @@ SequenceBadStructPubSubType::SequenceBadStructPubSubType()
     setName("SequenceBadStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SequenceBadStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SequenceBadStruct::getMaxCdrSerializedSize());
 #else
         SequenceBadStruct_max_cdr_typesize;
 #endif
@@ -3846,7 +3846,7 @@ SequenceBoundsStructPubSubType::SequenceBoundsStructPubSubType()
     setName("SequenceBoundsStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SequenceBoundsStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SequenceBoundsStruct::getMaxCdrSerializedSize());
 #else
         SequenceBoundsStruct_max_cdr_typesize;
 #endif
@@ -4040,7 +4040,7 @@ SequenceSequenceStructPubSubType::SequenceSequenceStructPubSubType()
     setName("SequenceSequenceStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SequenceSequenceStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SequenceSequenceStruct::getMaxCdrSerializedSize());
 #else
         SequenceSequenceStruct_max_cdr_typesize;
 #endif
@@ -4234,7 +4234,7 @@ SequenceSequenceBoundsStructPubSubType::SequenceSequenceBoundsStructPubSubType()
     setName("SequenceSequenceBoundsStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SequenceSequenceBoundsStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SequenceSequenceBoundsStruct::getMaxCdrSerializedSize());
 #else
         SequenceSequenceBoundsStruct_max_cdr_typesize;
 #endif
@@ -4426,7 +4426,7 @@ MapStructPubSubType::MapStructPubSubType()
     setName("MapStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        MapStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(MapStruct::getMaxCdrSerializedSize());
 #else
         MapStruct_max_cdr_typesize;
 #endif
@@ -4618,7 +4618,7 @@ MapStructEqualPubSubType::MapStructEqualPubSubType()
     setName("MapStructEqual");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        MapStructEqual::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(MapStructEqual::getMaxCdrSerializedSize());
 #else
         MapStructEqual_max_cdr_typesize;
 #endif
@@ -4810,7 +4810,7 @@ MapBadKeyStructPubSubType::MapBadKeyStructPubSubType()
     setName("MapBadKeyStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        MapBadKeyStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(MapBadKeyStruct::getMaxCdrSerializedSize());
 #else
         MapBadKeyStruct_max_cdr_typesize;
 #endif
@@ -5002,7 +5002,7 @@ MapBadElemStructPubSubType::MapBadElemStructPubSubType()
     setName("MapBadElemStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        MapBadElemStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(MapBadElemStruct::getMaxCdrSerializedSize());
 #else
         MapBadElemStruct_max_cdr_typesize;
 #endif
@@ -5194,7 +5194,7 @@ MapBoundsStructPubSubType::MapBoundsStructPubSubType()
     setName("MapBoundsStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        MapBoundsStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(MapBoundsStruct::getMaxCdrSerializedSize());
 #else
         MapBoundsStruct_max_cdr_typesize;
 #endif
@@ -5388,7 +5388,7 @@ MapMapStructPubSubType::MapMapStructPubSubType()
     setName("MapMapStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        MapMapStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(MapMapStruct::getMaxCdrSerializedSize());
 #else
         MapMapStruct_max_cdr_typesize;
 #endif
@@ -5582,7 +5582,7 @@ MapMapBoundsStructPubSubType::MapMapBoundsStructPubSubType()
     setName("MapMapBoundsStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        MapMapBoundsStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(MapMapBoundsStruct::getMaxCdrSerializedSize());
 #else
         MapMapBoundsStruct_max_cdr_typesize;
 #endif
@@ -5792,7 +5792,7 @@ SimpleUnionStructPubSubType::SimpleUnionStructPubSubType()
     setName("SimpleUnionStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SimpleUnionStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SimpleUnionStruct::getMaxCdrSerializedSize());
 #else
         SimpleUnionStruct_max_cdr_typesize;
 #endif
@@ -5982,7 +5982,7 @@ SimpleUnionStructEqualPubSubType::SimpleUnionStructEqualPubSubType()
     setName("SimpleUnionStructEqual");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SimpleUnionStructEqual::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SimpleUnionStructEqual::getMaxCdrSerializedSize());
 #else
         SimpleUnionStructEqual_max_cdr_typesize;
 #endif
@@ -6172,7 +6172,7 @@ SimpleUnionNamesStructPubSubType::SimpleUnionNamesStructPubSubType()
     setName("SimpleUnionNamesStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SimpleUnionNamesStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SimpleUnionNamesStruct::getMaxCdrSerializedSize());
 #else
         SimpleUnionNamesStruct_max_cdr_typesize;
 #endif
@@ -6362,7 +6362,7 @@ SimpleTypeUnionStructPubSubType::SimpleTypeUnionStructPubSubType()
     setName("SimpleTypeUnionStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SimpleTypeUnionStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SimpleTypeUnionStruct::getMaxCdrSerializedSize());
 #else
         SimpleTypeUnionStruct_max_cdr_typesize;
 #endif
@@ -6552,7 +6552,7 @@ SimpleBadUnionStructPubSubType::SimpleBadUnionStructPubSubType()
     setName("SimpleBadUnionStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SimpleBadUnionStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SimpleBadUnionStruct::getMaxCdrSerializedSize());
 #else
         SimpleBadUnionStruct_max_cdr_typesize;
 #endif
@@ -6742,7 +6742,7 @@ SimplBadDiscUnionStructPubSubType::SimplBadDiscUnionStructPubSubType()
     setName("SimplBadDiscUnionStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        SimplBadDiscUnionStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(SimplBadDiscUnionStruct::getMaxCdrSerializedSize());
 #else
         SimplBadDiscUnionStruct_max_cdr_typesize;
 #endif

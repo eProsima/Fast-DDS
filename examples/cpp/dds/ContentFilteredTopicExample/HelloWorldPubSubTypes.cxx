@@ -36,7 +36,7 @@ HelloWorldPubSubType::HelloWorldPubSubType()
     setName("HelloWorld");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        HelloWorld::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(HelloWorld::getMaxCdrSerializedSize());
 #else
         HelloWorld_max_cdr_typesize;
 #endif

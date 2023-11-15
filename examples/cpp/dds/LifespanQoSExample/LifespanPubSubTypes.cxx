@@ -36,7 +36,7 @@ LifespanPubSubType::LifespanPubSubType()
     setName("Lifespan");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        Lifespan::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(Lifespan::getMaxCdrSerializedSize());
 #else
         Lifespan_max_cdr_typesize;
 #endif

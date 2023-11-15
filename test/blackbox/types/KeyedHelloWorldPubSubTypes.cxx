@@ -36,7 +36,7 @@ KeyedHelloWorldPubSubType::KeyedHelloWorldPubSubType()
     setName("KeyedHelloWorld");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        KeyedHelloWorld::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(KeyedHelloWorld::getMaxCdrSerializedSize());
 #else
         KeyedHelloWorld_max_cdr_typesize;
 #endif

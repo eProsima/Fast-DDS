@@ -38,7 +38,7 @@ Data64kbPubSubType::Data64kbPubSubType()
     setName("Data64kb");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        Data64kb::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(Data64kb::getMaxCdrSerializedSize());
 #else
         Data64kb_max_cdr_typesize;
 #endif

@@ -42,7 +42,7 @@ BasicStructPubSubType::BasicStructPubSubType()
     setName("BasicStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        BasicStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(BasicStruct::getMaxCdrSerializedSize());
 #else
         BasicStruct_max_cdr_typesize;
 #endif
@@ -244,7 +244,7 @@ ComplexStructPubSubType::ComplexStructPubSubType()
     setName("ComplexStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        ComplexStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(ComplexStruct::getMaxCdrSerializedSize());
 #else
         ComplexStruct_max_cdr_typesize;
 #endif
@@ -442,7 +442,7 @@ CompleteStructPubSubType::CompleteStructPubSubType()
     setName("CompleteStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        CompleteStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(CompleteStruct::getMaxCdrSerializedSize());
 #else
         CompleteStruct_max_cdr_typesize;
 #endif
@@ -632,7 +632,7 @@ KeyedStructPubSubType::KeyedStructPubSubType()
     setName("KeyedStruct");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        KeyedStruct::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(KeyedStruct::getMaxCdrSerializedSize());
 #else
         KeyedStruct_max_cdr_typesize;
 #endif

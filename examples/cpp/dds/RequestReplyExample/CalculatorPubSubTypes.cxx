@@ -36,7 +36,7 @@ RequestTypePubSubType::RequestTypePubSubType()
     setName("RequestType");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        RequestType::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(RequestType::getMaxCdrSerializedSize());
 #else
         RequestType_max_cdr_typesize;
 #endif
@@ -226,7 +226,7 @@ ReplyTypePubSubType::ReplyTypePubSubType()
     setName("ReplyType");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        ReplyType::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(ReplyType::getMaxCdrSerializedSize());
 #else
         ReplyType_max_cdr_typesize;
 #endif

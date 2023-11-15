@@ -36,7 +36,7 @@ ExampleMessagePubSubType::ExampleMessagePubSubType()
     setName("ExampleMessage");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        ExampleMessage::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(ExampleMessage::getMaxCdrSerializedSize());
 #else
         ExampleMessage_max_cdr_typesize;
 #endif

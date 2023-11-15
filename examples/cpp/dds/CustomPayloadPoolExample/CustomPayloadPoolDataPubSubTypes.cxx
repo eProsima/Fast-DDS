@@ -36,7 +36,7 @@ CustomPayloadPoolDataPubSubType::CustomPayloadPoolDataPubSubType()
     setName("CustomPayloadPoolData");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        CustomPayloadPoolData::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(CustomPayloadPoolData::getMaxCdrSerializedSize());
 #else
         CustomPayloadPoolData_max_cdr_typesize;
 #endif

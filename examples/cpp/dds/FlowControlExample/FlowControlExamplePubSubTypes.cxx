@@ -36,7 +36,7 @@ FlowControlExamplePubSubType::FlowControlExamplePubSubType()
     setName("FlowControlExample");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        FlowControlExample::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(FlowControlExample::getMaxCdrSerializedSize());
 #else
         FlowControlExample_max_cdr_typesize;
 #endif

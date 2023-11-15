@@ -36,7 +36,7 @@ TopicPubSubType::TopicPubSubType()
     setName("Topic");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        Topic::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(Topic::getMaxCdrSerializedSize());
 #else
         Topic_max_cdr_typesize;
 #endif

@@ -36,7 +36,7 @@ NewAliasesPubSubType::NewAliasesPubSubType()
     setName("NewAliases");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        NewAliases::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(NewAliases::getMaxCdrSerializedSize());
 #else
         NewAliases_max_cdr_typesize;
 #endif
@@ -239,7 +239,7 @@ namespace bitmodule {
         setName("bitmodule::BitsetBitmask");
         uint32_t type_size =
     #if FASTCDR_VERSION_MAJOR == 1
-            BitsetBitmask::getMaxCdrSerializedSize();
+            static_cast<uint32_t>(BitsetBitmask::getMaxCdrSerializedSize());
     #else
             bitmodule_BitsetBitmask_max_cdr_typesize;
     #endif
@@ -429,7 +429,7 @@ namespace bitmodule {
         setName("bitmodule::BM2");
         uint32_t type_size =
     #if FASTCDR_VERSION_MAJOR == 1
-            BM2::getMaxCdrSerializedSize();
+            static_cast<uint32_t>(BM2::getMaxCdrSerializedSize());
     #else
             bitmodule_BM2_max_cdr_typesize;
     #endif
@@ -622,7 +622,7 @@ StructTestPubSubType::StructTestPubSubType()
     setName("StructTest");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        StructTest::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(StructTest::getMaxCdrSerializedSize());
 #else
         StructTest_max_cdr_typesize;
 #endif

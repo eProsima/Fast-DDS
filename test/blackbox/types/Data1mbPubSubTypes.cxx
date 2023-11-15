@@ -38,7 +38,7 @@ Data1mbPubSubType::Data1mbPubSubType()
     setName("Data1mb");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        Data1mb::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(Data1mb::getMaxCdrSerializedSize());
 #else
         Data1mb_max_cdr_typesize;
 #endif

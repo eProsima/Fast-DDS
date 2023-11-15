@@ -36,7 +36,7 @@ LoanableHelloWorldPubSubType::LoanableHelloWorldPubSubType()
     setName("LoanableHelloWorld");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        LoanableHelloWorld::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(LoanableHelloWorld::getMaxCdrSerializedSize());
 #else
         LoanableHelloWorld_max_cdr_typesize;
 #endif

@@ -36,7 +36,7 @@ StringTestPubSubType::StringTestPubSubType()
     setName("StringTest");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        StringTest::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(StringTest::getMaxCdrSerializedSize());
 #else
         StringTest_max_cdr_typesize;
 #endif

@@ -36,7 +36,7 @@ samplePubSubType::samplePubSubType()
     setName("sample");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        sample::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(sample::getMaxCdrSerializedSize());
 #else
         sample_max_cdr_typesize;
 #endif

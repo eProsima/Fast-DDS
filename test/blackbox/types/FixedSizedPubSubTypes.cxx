@@ -36,7 +36,7 @@ FixedSizedPubSubType::FixedSizedPubSubType()
     setName("FixedSized");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        FixedSized::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(FixedSized::getMaxCdrSerializedSize());
 #else
         FixedSized_max_cdr_typesize;
 #endif

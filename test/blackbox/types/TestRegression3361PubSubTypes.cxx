@@ -36,7 +36,7 @@ TestRegression3361PubSubType::TestRegression3361PubSubType()
     setName("TestRegression3361");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        TestRegression3361::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(TestRegression3361::getMaxCdrSerializedSize());
 #else
         TestRegression3361_max_cdr_typesize;
 #endif

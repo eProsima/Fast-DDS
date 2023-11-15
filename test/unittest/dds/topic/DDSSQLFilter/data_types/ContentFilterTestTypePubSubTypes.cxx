@@ -36,7 +36,7 @@ StructTypePubSubType::StructTypePubSubType()
     setName("StructType");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        StructType::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(StructType::getMaxCdrSerializedSize());
 #else
         StructType_max_cdr_typesize;
 #endif
@@ -232,7 +232,7 @@ ContentFilterTestTypePubSubType::ContentFilterTestTypePubSubType()
     setName("ContentFilterTestType");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        ContentFilterTestType::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(ContentFilterTestType::getMaxCdrSerializedSize());
 #else
         ContentFilterTestType_max_cdr_typesize;
 #endif

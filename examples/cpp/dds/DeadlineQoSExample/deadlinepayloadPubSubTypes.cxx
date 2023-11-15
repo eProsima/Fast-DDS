@@ -36,7 +36,7 @@ HelloMsgPubSubType::HelloMsgPubSubType()
     setName("HelloMsg");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        HelloMsg::getMaxCdrSerializedSize();
+        static_cast<uint32_t>(HelloMsg::getMaxCdrSerializedSize());
 #else
         HelloMsg_max_cdr_typesize;
 #endif
