@@ -133,7 +133,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::StringSTypeDefn::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::StringSTypeDefn::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const StringSTypeDefn& data,
@@ -144,7 +144,7 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::StringSTypeDefn::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::StringSTypeDefn::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -153,7 +153,7 @@ public:
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::StringSTypeDefn::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::StringSTypeDefn::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -252,7 +252,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::StringLTypeDefn::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::StringLTypeDefn::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const StringLTypeDefn& data,
@@ -263,7 +263,7 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::StringLTypeDefn::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::StringLTypeDefn::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -272,7 +272,7 @@ public:
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::StringLTypeDefn::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::StringLTypeDefn::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -399,7 +399,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainCollectionHeader::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainCollectionHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const PlainCollectionHeader& data,
@@ -410,7 +410,7 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainCollectionHeader::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainCollectionHeader::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -419,7 +419,7 @@ public:
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainCollectionHeader::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainCollectionHeader::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -578,7 +578,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainSequenceSElemDefn::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainSequenceSElemDefn::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const PlainSequenceSElemDefn& data,
@@ -589,7 +589,7 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainSequenceSElemDefn::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainSequenceSElemDefn::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -598,7 +598,7 @@ public:
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainSequenceSElemDefn::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainSequenceSElemDefn::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -758,7 +758,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainSequenceLElemDefn::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainSequenceLElemDefn::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const PlainSequenceLElemDefn& data,
@@ -769,7 +769,7 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainSequenceLElemDefn::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainSequenceLElemDefn::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -778,7 +778,7 @@ public:
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainSequenceLElemDefn::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainSequenceLElemDefn::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -948,7 +948,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainArraySElemDefn::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainArraySElemDefn::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const PlainArraySElemDefn& data,
@@ -959,7 +959,7 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainArraySElemDefn::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainArraySElemDefn::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -968,7 +968,7 @@ public:
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainArraySElemDefn::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainArraySElemDefn::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -1138,7 +1138,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainArrayLElemDefn::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainArrayLElemDefn::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const PlainArrayLElemDefn& data,
@@ -1149,7 +1149,7 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainArrayLElemDefn::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainArrayLElemDefn::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -1158,7 +1158,7 @@ public:
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainArrayLElemDefn::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainArrayLElemDefn::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -1371,7 +1371,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainMapSTypeDefn::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainMapSTypeDefn::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const PlainMapSTypeDefn& data,
@@ -1382,7 +1382,7 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainMapSTypeDefn::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainMapSTypeDefn::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -1391,7 +1391,7 @@ public:
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainMapSTypeDefn::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainMapSTypeDefn::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -1606,7 +1606,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainMapLTypeDefn::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainMapLTypeDefn::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const PlainMapLTypeDefn& data,
@@ -1617,7 +1617,7 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainMapLTypeDefn::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainMapLTypeDefn::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -1626,7 +1626,7 @@ public:
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::PlainMapLTypeDefn::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::PlainMapLTypeDefn::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -1791,7 +1791,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::StronglyConnectedComponentId::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::StronglyConnectedComponentId::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const StronglyConnectedComponentId& data,
@@ -1802,7 +1802,7 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::StronglyConnectedComponentId::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::StronglyConnectedComponentId::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -1811,7 +1811,7 @@ public:
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::StronglyConnectedComponentId::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::StronglyConnectedComponentId::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -1880,7 +1880,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::ExtendedTypeDefn::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::ExtendedTypeDefn::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const ExtendedTypeDefn& data,
@@ -1891,7 +1891,7 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::ExtendedTypeDefn::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::ExtendedTypeDefn::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI virtual void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -1900,7 +1900,7 @@ public:
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::ExtendedTypeDefn::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::ExtendedTypeDefn::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI virtual void deserialize(
             eprosima::fastcdr::Cdr& cdr);
