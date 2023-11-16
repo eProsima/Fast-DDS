@@ -2018,6 +2018,16 @@ protected:
             MemberFlag member_flags);
 
     /**
+     * @brief Check CollectionElementFlag consistency.
+     *
+     * @param[in] collection_element_flag CollectionElementFlag to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CollectionElementFlag
+     *            is not consistent.
+     */
+    static void collection_element_flag_consistency(
+            CollectionElementFlag collection_element_flag);
+
+    /**
      * @brief Check StructMemberFlag consistency: MemberFlag consistency (try construct annotation).
      *        XTypes v1.3 Clause 7.2.2.4.4.4.8 Key members shall never be optional, and they shall always have their
      *        "must understand" attribute set to true.
@@ -2028,6 +2038,36 @@ protected:
      */
     static void struct_member_flag_consistency(
             StructMemberFlag member_flags);
+
+    /**
+     * @brief Check UnionMemberFlag consistency.
+     *
+     * @param[in] union_member_flag UnionMemberFlag to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given UnionMemberFlag
+     *            is not consistent.
+     */
+    static void union_member_flag_consistency(
+            UnionMemberFlag union_member_flag);
+
+    /**
+     * @brief Check UnionDiscriminatorFlag consistency.
+     *
+     * @param[in] union_discriminator_flag UnionDiscriminatorFlag to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given UnionDiscriminatorFlag
+     *            is not consistent.
+     */
+    static void union_discriminator_flag_consistency(
+            UnionDiscriminatorFlag union_discriminator_flag);
+
+    /**
+     * @brief Check EnumeratedLiteralFlag consistency: any flag different from default are not set.
+     *
+     * @param[in] enumerated_literal_flag Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given EnumeratedLiteralFlag
+     *            is not consistent.
+     */
+    static void enumerated_literal_flag_consistency(
+            EnumeratedLiteralFlag enumerated_literal_flag);
 
     /**
      * @brief Check TypeFlag consistency: exactly one extensibility flag is set.
@@ -2056,16 +2096,6 @@ protected:
             throw InvalidArgumentError("Flags should be empty. No flags apply");
         }
     }
-
-    /**
-     * @brief Check EnumeratedLiteralFlag consistency: any flag different from default are not set.
-     *
-     * @param[in] enumerated_literal_flag Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given EnumeratedLiteralFlag
-     *            is not consistent.
-     */
-    static void enumerated_literal_flag_consistency(
-            EnumeratedLiteralFlag enumerated_literal_flag);
 
     /**
      * @brief Check PlainCollectionHeader consistency:
