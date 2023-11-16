@@ -45,6 +45,15 @@ TEST(TypeObjectUtilsTests, build_type_object_hash_id_wrong_discriminator)
                 EK_COMPLETE, hash));
 }
 
+// Build inconsistent StructMemberFlag
+TEST(TypeObjectUtilsTests, build_inconsistent_struct_member_flag)
+{
+    EXPECT_THROW(TypeObjectUtils::build_struct_member_flag(TryConstructKind::DISCARD, true, false, true, false),
+            InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::build_struct_member_flag(TryConstructKind::DISCARD, true, false, false, false));
+    EXPECT_NO_THROW(TypeObjectUtils::build_struct_member_flag(TryConstructKind::DISCARD, false, false, true, false));
+}
+
 // Build StringSTypeDefn with bound equal 0 (INVALID_SBOUND).
 TEST(TypeObjectUtilsTests, build_string_s_type_defn_invalid_bound)
 {
