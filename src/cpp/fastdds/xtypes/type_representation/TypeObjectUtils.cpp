@@ -811,10 +811,13 @@ void TypeObjectUtils::add_complete_struct_member(
     complete_struct_member_consistency(member);
     for (CompleteStructMember struct_member : member_seq)
     {
-        if (struct_member.common().member_id() == member.common().member_id() ||
-                struct_member.detail().name() == member.detail().name())
+        if (struct_member.common().member_id() == member.common().member_id())
         {
-            throw InvalidArgumentError("Sequence has another member with same ID/name");
+            throw InvalidArgumentError("Sequence has another member with same ID");
+        }
+        if (struct_member.detail().name() == member.detail().name())
+        {
+            throw InvalidArgumentError("Sequence has another member with same name");
         }
     }
 #endif // !defined(NDEBUG)
@@ -966,10 +969,13 @@ void TypeObjectUtils::add_complete_union_member(
     }
     for (CompleteUnionMember union_member : complete_union_member_seq)
     {
-        if (union_member.common().member_id() == member.common().member_id() ||
-                union_member.detail().name() == member.detail().name())
+        if (union_member.common().member_id() == member.common().member_id())
         {
-            throw InvalidArgumentError("Sequence has another member with same ID/name");
+            throw InvalidArgumentError("Sequence has another member with same ID");
+        }
+        if (union_member.detail().name() == member.detail().name())
+        {
+            throw InvalidArgumentError("Sequence has another member with same name");
         }
         if (member.common().member_flags() & MemberFlagBits::IS_DEFAULT &&
                 union_member.common().member_flags() & MemberFlagBits::IS_DEFAULT)
@@ -1386,10 +1392,13 @@ void TypeObjectUtils::add_complete_enumerated_literal(
     complete_enumerated_literal_consistency(enum_literal);
     for (CompleteEnumeratedLiteral literal : sequence)
     {
-        if (literal.detail().name() == enum_literal.detail().name() ||
-                literal.common().value() == enum_literal.common().value())
+        if (literal.detail().name() == enum_literal.detail().name())
         {
-            throw InvalidArgumentError("Sequence has another literal with the same value/member name");
+            throw InvalidArgumentError("Sequence has another literal with the same member name");
+        }
+        if (literal.common().value() == enum_literal.common().value())
+        {
+            throw InvalidArgumentError("Sequence has another literal with the same value");
         }
     }
 #endif // !defined(NDEBUG)
@@ -1484,10 +1493,13 @@ void TypeObjectUtils::add_complete_bitflag(
     complete_bitflag_consistency(bitflag);
     for (CompleteBitflag bitflag_elem : sequence)
     {
-        if (bitflag_elem.common().position() == bitflag.common().position() ||
-                bitflag_elem.detail().name() == bitflag.detail().name())
+        if (bitflag_elem.common().position() == bitflag.common().position())
         {
-            throw InvalidArgumentError("Sequence has another bitflag with the same position/name");
+            throw InvalidArgumentError("Sequence has another bitflag with the same position");
+        }
+        if (bitflag_elem.detail().name() == bitflag.detail().name())
+        {
+            throw InvalidArgumentError("Sequence has another bitflag with the same name");
         }
     }
 #endif // !defined(NDEBUG)
@@ -1560,10 +1572,13 @@ void TypeObjectUtils::add_complete_bitfield(
         size_t bitfield_elem_end = bitfield_elem_init + bitfield_elem.common().bitcount();
         size_t bitfield_init = bitfield.common().position();
         size_t bitfield_end = bitfield_init + bitfield.common().bitcount();
-        if (bitfield_elem.detail().name() == bitfield.detail().name() ||
-                (bitfield_init <= bitfield_elem_end && bitfield_end >= bitfield_elem_init))
+        if (bitfield_elem.detail().name() == bitfield.detail().name())
         {
-            throw InvalidArgumentError("Sequence has another bitfield with the same positions/name");
+            throw InvalidArgumentError("Sequence has another bitfield with the same name");
+        }
+        if (bitfield_init <= bitfield_elem_end && bitfield_end >= bitfield_elem_init)
+        {
+            throw InvalidArgumentError("Sequence has another bitfield with the same positions");
         }
     }
 #endif // !defined(NDEBUG)
@@ -2143,16 +2158,16 @@ void TypeObjectUtils::applied_annotation_type_identifier_consistency(
     {
         if (type_objects.complete_type_object._d() != TK_ANNOTATION)
         {
-            throw InvalidArgumentError("AppliedAnnotation TypeIdentifier does not correspond with an Annotation type");
+            throw InvalidArgumentError("Applied Annotation TypeIdentifier does not correspond with an Annotation type");
         }
     }
     else if (ReturnCode_t::RETCODE_NO_DATA == ret_code)
     {
-        throw InvalidArgumentError("Annotation TypeIdentifier unknown to TypeObjectRegistry");
+        throw InvalidArgumentError("Applied Annotation TypeIdentifier unknown to TypeObjectRegistry");
     }
     else
     {
-        throw InvalidArgumentError("Annotation TypeIdentifier is not direct HASH");
+        throw InvalidArgumentError("Applied Annotation TypeIdentifier is not direct HASH");
     }
 }
 
@@ -2277,10 +2292,13 @@ void TypeObjectUtils::complete_struct_member_seq_consistency(
     std::set<MemberName> member_names;
     for (const CompleteStructMember& member : complete_struct_member_seq)
     {
-        if (!member_ids.insert(member.common().member_id()).second ||
-                !member_names.insert(member.detail().name()).second)
+        if (!member_ids.insert(member.common().member_id()).second)
         {
-            throw InvalidArgumentError("Repeated member id/name in the sequence");
+            throw InvalidArgumentError("Repeated member id in the sequence");
+        }
+        if (!member_names.insert(member.detail().name()).second)
+        {
+            throw InvalidArgumentError("Repeated member name in the sequence");
         }
         complete_struct_member_consistency(member);
     }
@@ -2417,10 +2435,13 @@ void TypeObjectUtils::complete_union_member_seq_consistency(
     bool default_member = false;
     for (const CompleteUnionMember& member : complete_member_union_seq)
     {
-        if (!member_ids.insert(member.common().member_id()).second ||
-            !member_names.insert(member.detail().name()).second)
+        if (!member_ids.insert(member.common().member_id()).second)
         {
-            throw InvalidArgumentError("Repeated member id/name in the sequence");
+            throw InvalidArgumentError("Repeated member id in the sequence");
+        }
+        if (!member_names.insert(member.detail().name()).second)
+        {
+            throw InvalidArgumentError("Repeated member name in the sequence");
         }
         if (member.common().member_flags() & MemberFlagBits::IS_DEFAULT)
         {
@@ -2467,6 +2488,10 @@ void TypeObjectUtils::common_discriminator_member_type_identifier_consistency(
             {
                 throw InvalidArgumentError("Inconsistent CommonDiscriminatorMember TypeIdentifier");
             }
+        }
+        else
+        {
+            throw InvalidArgumentError("Given TypeIdentifier is not found in TypeObjectRegistry");
         }
     }
 }
@@ -2622,7 +2647,7 @@ void TypeObjectUtils::hashid_builtin_annotation_not_applied_consistency(
 {
     if (ann_builtin.has_value() && ann_builtin.value().hash_id().has_value())
     {
-        throw InvalidArgumentError("@hashid builtin annotation cannot be applied to alias declaration");
+        throw InvalidArgumentError("@hashid builtin annotation cannot be applied to this specific declaration");
     }
 }
 
@@ -2759,10 +2784,13 @@ void TypeObjectUtils::complete_enumerated_literal_seq_consistency(
     bool default_member = false;
     for (const CompleteEnumeratedLiteral& literal : complete_enumerated_literal_seq)
     {
-        if (!values.insert(literal.common().value()).second ||
-            !member_names.insert(literal.detail().name()).second)
+        if (!values.insert(literal.common().value()).second)
         {
-            throw InvalidArgumentError("Repeated literal value/name in the sequence");
+            throw InvalidArgumentError("Repeated literal value in the sequence");
+        }
+        if (!member_names.insert(literal.detail().name()).second)
+        {
+            throw InvalidArgumentError("Repeated literal name in the sequence");
         }
         if (literal.common().flags() & MemberFlagBits::IS_DEFAULT)
         {
@@ -2790,7 +2818,7 @@ void TypeObjectUtils::bitmask_bit_bound_consistency(
 {
     if (bit_bound == 0 || bit_bound > 64)
     {
-        throw InvalidArgumentError("Bit_bound must be greater than zero and no greater than 64");
+        throw InvalidArgumentError("Bitmask bit_bound must must take a value between 1 and 64");
     }
 }
 
@@ -2862,10 +2890,13 @@ void TypeObjectUtils::complete_bitflag_seq_consistency(
     std::set<MemberName> bitflag_names;
     for (const CompleteBitflag& bitflag : complete_bitflag_seq)
     {
-        if (!positions.insert(bitflag.common().position()).second ||
-            !bitflag_names.insert(bitflag.detail().name()).second)
+        if (!positions.insert(bitflag.common().position()).second)
         {
-            throw InvalidArgumentError("Repeated bitflag position/name");
+            throw InvalidArgumentError("Repeated bitflag position");
+        }
+        if (!bitflag_names.insert(bitflag.detail().name()).second)
+        {
+            throw InvalidArgumentError("Repeated bitflag name");
         }
         complete_bitflag_consistency(bitflag);
     }
