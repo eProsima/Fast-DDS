@@ -964,7 +964,6 @@ void TypeObjectUtils::add_complete_union_member(
     {
         case_labels.insert(label);
     }
-    size_t case_labels_length = member.common().label_seq().size();
     for (CompleteUnionMember union_member : complete_union_member_seq)
     {
         if (union_member.common().member_id() == member.common().member_id() ||
@@ -977,15 +976,13 @@ void TypeObjectUtils::add_complete_union_member(
         {
             throw InvalidArgumentError("Union member sequence already has a default member");
         }
-        for (size_t i = 0; i < union_member.common().label_seq().size(); i++)
+        for (int32_t label : union_member.common().label_seq())
         {
-            case_labels.insert(union_member.common().label_seq()[i]);
-            if (case_labels.size() != case_labels_length + i + 1)
+            if (!case_labels.insert(label).second)
             {
                 throw InvalidArgumentError("Repeated union case label");
             }
         }
-        case_labels_length += union_member.common().label_seq().size();
     }
 #endif // !defined(NDEBUG)
     complete_union_member_seq.push_back(member);
@@ -2127,10 +2124,9 @@ void TypeObjectUtils::applied_annotation_parameter_seq_consistency(
         const AppliedAnnotationParameterSeq& applied_annotation_parameter_seq)
 {
     std::set<NameHash> param_hashes;
-    for (size_t i = 0; i < applied_annotation_parameter_seq.size(); i++)
+    for (const AppliedAnnotationParameter& param : applied_annotation_parameter_seq)
     {
-        param_hashes.insert(applied_annotation_parameter_seq[i].paramname_hash());
-        if (param_hashes.size() != (i + 1))
+        if (!param_hashes.insert(param.paramname_hash()).second)
         {
             throw InvalidArgumentError("Repeated annotation parameters in the sequence");
         }
@@ -2179,14 +2175,13 @@ void TypeObjectUtils::applied_annotation_seq_consistency(
         const AppliedAnnotationSeq& applied_annotation_seq)
 {
     std::unordered_set<TypeIdentifier> annotation_typeids;
-    for (size_t i = 0; i < applied_annotation_seq.size(); i++)
+    for (const AppliedAnnotation& annotation : applied_annotation_seq)
     {
-        annotation_typeids.insert(applied_annotation_seq[i].annotation_typeid());
-        if (annotation_typeids.size() != (i + 1))
+        if (annotation_typeids.insert(annotation.annotation_typeid()).second)
         {
             throw InvalidArgumentError("Repeated annotation in the sequence");
         }
-        applied_annotation_consistency(applied_annotation_seq[i]);
+        applied_annotation_consistency(annotation);
     }
 }
 
@@ -2280,15 +2275,14 @@ void TypeObjectUtils::complete_struct_member_seq_consistency(
 {
     std::set<MemberId> member_ids;
     std::set<MemberName> member_names;
-    for (size_t i = 0; i < complete_struct_member_seq.size(); i++)
+    for (const CompleteStructMember& member : complete_struct_member_seq)
     {
-        member_ids.insert(complete_struct_member_seq[i].common().member_id());
-        member_names.insert(complete_struct_member_seq[i].detail().name());
-        if ((member_ids.size() != (i + 1)) || (member_names.size() != (i + 1)))
+        if (!member_ids.insert(member.common().member_id()).second ||
+                !member_names.insert(member.detail().name()).second)
         {
             throw InvalidArgumentError("Repeated member id/name in the sequence");
         }
-        complete_struct_member_consistency(complete_struct_member_seq[i]);
+        complete_struct_member_consistency(member);
     }
 }
 
@@ -2356,10 +2350,9 @@ void TypeObjectUtils::union_case_label_seq_consistency(
         const UnionCaseLabelSeq& union_case_label_seq)
 {
     std::set<int32_t> labels;
-    for (size_t i = 0; i < union_case_label_seq.size(); i++)
+    for (int32_t label : union_case_label_seq)
     {
-        labels.insert(union_case_label_seq[i]);
-        if (labels.size() != (i + 1))
+        if (!labels.insert(label).second)
         {
             throw InvalidArgumentError("Repeated union case labels");
         }
@@ -2414,24 +2407,22 @@ void TypeObjectUtils::complete_union_member_consistency(
 void TypeObjectUtils::complete_union_member_seq_consistency(
         const CompleteUnionMemberSeq& complete_member_union_seq)
 {
+    if (complete_member_union_seq.size() == 0)
+    {
+        throw InvalidArgumentError("Unions require at least one union member");
+    }
     std::set<MemberId> member_ids;
     std::set<MemberName> member_names;
     std::set<int32_t> case_labels;
-    size_t case_labels_length = 0;
     bool default_member = false;
-    for (size_t i = 0; i < complete_member_union_seq.size(); i++)
+    for (const CompleteUnionMember& member : complete_member_union_seq)
     {
-        if (complete_member_union_seq.size() == 0)
-        {
-            throw InvalidArgumentError("Unions require at least one union member");
-        }
-        member_ids.insert(complete_member_union_seq[i].common().member_id());
-        member_names.insert(complete_member_union_seq[i].detail().name());
-        if ((member_ids.size() != (i + 1)) || (member_names.size() != (i + 1)))
+        if (!member_ids.insert(member.common().member_id()).second ||
+            !member_names.insert(member.detail().name()).second)
         {
             throw InvalidArgumentError("Repeated member id/name in the sequence");
         }
-        if (complete_member_union_seq[i].common().member_flags() & MemberFlagBits::IS_DEFAULT)
+        if (member.common().member_flags() & MemberFlagBits::IS_DEFAULT)
         {
             if (default_member)
             {
@@ -2439,16 +2430,14 @@ void TypeObjectUtils::complete_union_member_seq_consistency(
             }
             default_member = true;
         }
-        for (size_t j = 0; j < complete_member_union_seq[i].common().label_seq().size(); j++)
+        for (int32_t label : member.common().label_seq())
         {
-            case_labels.insert(complete_member_union_seq[i].common().label_seq()[j]);
-            if (case_labels.size() != (case_labels_length + j + 1))
+            if (!case_labels.insert(label).second)
             {
                 throw InvalidArgumentError("Repeated union case label");
             }
         }
-        case_labels_length += complete_member_union_seq[i].common().label_seq().size();
-        complete_union_member_consistency(complete_member_union_seq[i]);
+        complete_union_member_consistency(member);
     }
 }
 
@@ -2594,14 +2583,13 @@ void TypeObjectUtils::complete_annotation_parameter_seq_consistency(
         const CompleteAnnotationParameterSeq& complete_annotation_parameter_seq)
 {
     std::set<MemberName> member_names;
-    for (size_t i = 0; i < complete_annotation_parameter_seq.size(); i++)
+    for (const CompleteAnnotationParameter& param : complete_annotation_parameter_seq)
     {
-        member_names.insert(complete_annotation_parameter_seq[i].name());
-        if (member_names.size() != (i + 1))
+        if (!member_names.insert(param.name()).second)
         {
             throw InvalidArgumentError("Repeated parameter name in the sequence");
         }
-        complete_annotation_parameter_consistency(complete_annotation_parameter_seq[i]);
+        complete_annotation_parameter_consistency(param);
     }
 }
 
@@ -2762,22 +2750,21 @@ void TypeObjectUtils::complete_enumerated_literal_consistency(
 void TypeObjectUtils::complete_enumerated_literal_seq_consistency(
         const CompleteEnumeratedLiteralSeq& complete_enumerated_literal_seq)
 {
+    if (complete_enumerated_literal_seq.size() == 0)
+    {
+        throw InvalidArgumentError("Enumerations require at least one enum literal");
+    }
     std::set<int32_t> values;
     std::set<MemberName> member_names;
     bool default_member = false;
-    for (size_t i = 0; i < complete_enumerated_literal_seq.size(); i++)
+    for (const CompleteEnumeratedLiteral& literal : complete_enumerated_literal_seq)
     {
-        if (complete_enumerated_literal_seq.size() == 0)
-        {
-            throw InvalidArgumentError("Enumerations require at least one enum literal");
-        }
-        values.insert(complete_enumerated_literal_seq[i].common().value());
-        member_names.insert(complete_enumerated_literal_seq[i].detail().name());
-        if (values.size() != (i + 1) || member_names.size() != (i + 1))
+        if (!values.insert(literal.common().value()).second ||
+            !member_names.insert(literal.detail().name()).second)
         {
             throw InvalidArgumentError("Repeated literal value/name in the sequence");
         }
-        if (complete_enumerated_literal_seq[i].common().flags() & MemberFlagBits::IS_DEFAULT)
+        if (literal.common().flags() & MemberFlagBits::IS_DEFAULT)
         {
             if (default_member)
             {
@@ -2785,7 +2772,7 @@ void TypeObjectUtils::complete_enumerated_literal_seq_consistency(
             }
             default_member = true;
         }
-        complete_enumerated_literal_consistency(complete_enumerated_literal_seq[i]);
+        complete_enumerated_literal_consistency(literal);
     }
 }
 
@@ -2867,21 +2854,20 @@ void TypeObjectUtils::complete_bitflag_consistency(
 void TypeObjectUtils::complete_bitflag_seq_consistency(
         const CompleteBitflagSeq& complete_bitflag_seq)
 {
+    if (complete_bitflag_seq.size() == 0)
+    {
+        throw InvalidArgumentError("At least one bitflag must be defined within the bitmask");
+    }
     std::set<uint16_t> positions;
     std::set<MemberName> bitflag_names;
-    for (size_t i = 0; i < complete_bitflag_seq.size(); i++)
+    for (const CompleteBitflag& bitflag : complete_bitflag_seq)
     {
-        if (complete_bitflag_seq.size() == 0)
-        {
-            throw InvalidArgumentError("At least one bitflag must be defined within the bitmask");
-        }
-        positions.insert(complete_bitflag_seq[i].common().position());
-        bitflag_names.insert(complete_bitflag_seq[i].detail().name());
-        if (positions.size() != (i + 1) || bitflag_names.size() != (i + 1))
+        if (!positions.insert(bitflag.common().position()).second ||
+            !bitflag_names.insert(bitflag.detail().name()).second)
         {
             throw InvalidArgumentError("Repeated bitflag position/name");
         }
-        complete_bitflag_consistency(complete_bitflag_seq[i]);
+        complete_bitflag_consistency(bitflag);
     }
 }
 
@@ -2948,31 +2934,27 @@ void TypeObjectUtils::complete_bitfield_consistency(
 void TypeObjectUtils::complete_bitfield_seq_consistency(
         const CompleteBitfieldSeq& complete_bitfield_seq)
 {
+    if (complete_bitfield_seq.size() == 0)
+    {
+        throw InvalidArgumentError("Bitset requires at least one bitfield definition");
+    }
     std::set<MemberName> bitfield_names;
     std::set<uint16_t> positions;
-    size_t bitset_length = 0;
-    for (size_t i = 0; i < complete_bitfield_seq.size(); i++)
+    for (const CompleteBitfield& bitfield : complete_bitfield_seq)
     {
-        if (complete_bitfield_seq.size() == 0)
-        {
-            throw InvalidArgumentError("Bitset requires at least one bitfield definition");
-        }
-        bitfield_names.insert(complete_bitfield_seq[i].detail().name());
-        if (bitfield_names.size() != (i + 1))
+        if (!bitfield_names.insert(bitfield.detail().name()).second)
         {
             throw InvalidArgumentError("Repeated bitfield name");
         }
-        for (uint16_t j = complete_bitfield_seq[i].common().position();
-                j < complete_bitfield_seq[i].common().bitcount(); j++)
+        for (uint16_t j = bitfield.common().position();
+                j < bitfield.common().bitcount(); j++)
         {
-            positions.insert(complete_bitfield_seq[i].common().position() + j);
-            if (positions.size() != (bitset_length + j + 1))
+            if (!positions.insert(bitfield.common().position() + j).second)
             {
                 throw InvalidArgumentError("Bitfields with repeated/overlapping positions");
             }
         }
-        bitset_length = positions.size();
-        complete_bitfield_consistency(complete_bitfield_seq[i]);
+        complete_bitfield_consistency(bitfield);
     }
 }
 
