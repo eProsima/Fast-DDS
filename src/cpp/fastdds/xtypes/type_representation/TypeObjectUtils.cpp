@@ -39,6 +39,12 @@ constexpr const char* begin_declaration = "begin-declaration";
 constexpr const char* end_declaration = "end-declaration";
 constexpr const char* after_declaration = "after-declaration";
 constexpr const char* end_declaration_file = "end-declaration-file";
+constexpr const CollectionElementFlag collection_element_flag_mask = MemberFlagBits::IS_OPTIONAL |
+        MemberFlagBits::IS_MUST_UNDERSTAND | MemberFlagBits::IS_KEY | MemberFlagBits::IS_DEFAULT;
+constexpr const UnionMemberFlag union_member_flag_mask = MemberFlagBits::IS_OPTIONAL |
+        MemberFlagBits::IS_MUST_UNDERSTAND | MemberFlagBits::IS_KEY;
+constexpr const UnionDiscriminatorFlag union_discriminator_flag_mask = MemberFlagBits::IS_EXTERNAL |
+        MemberFlagBits::IS_OPTIONAL | MemberFlagBits::IS_MUST_UNDERSTAND | MemberFlagBits::IS_DEFAULT;
 constexpr const EnumeratedLiteralFlag enum_literal_flag_mask = MemberFlagBits::TRY_CONSTRUCT1 |
         MemberFlagBits::TRY_CONSTRUCT2 | MemberFlagBits::IS_EXTERNAL | MemberFlagBits::IS_OPTIONAL |
         MemberFlagBits::IS_MUST_UNDERSTAND | MemberFlagBits::IS_KEY;
@@ -193,7 +199,7 @@ const PlainCollectionHeader TypeObjectUtils::build_plain_collection_header(
         CollectionElementFlag element_flags)
 {
 #if !defined(NDEBUG)
-    member_flag_consistency(element_flags);
+    collection_element_flag_consistency(element_flags);
 #endif // !defined(NDEBUG)
     PlainCollectionHeader plain_collection_header;
     switch (equiv_kind)
@@ -299,10 +305,10 @@ const PlainMapSTypeDefn TypeObjectUtils::build_plain_map_s_type_defn(
 #if !defined(NDEBUG)
     plain_collection_header_consistency(header);
     type_identifier_consistency(*element_identifier);
+    collection_element_flag_consistency(key_flags);
 #endif // !defined(NDEBUG)
     bound_consistency(bound);
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
-    member_flag_consistency(key_flags);
     map_key_type_identifier_consistency(*key_identifier);
     PlainMapSTypeDefn plain_map_s_type_defn;
     plain_map_s_type_defn.header(header);
@@ -323,10 +329,10 @@ const PlainMapLTypeDefn TypeObjectUtils::build_plain_map_l_type_defn(
 #if !defined(NDEBUG)
     plain_collection_header_consistency(header);
     type_identifier_consistency(*element_identifier);
+    collection_element_flag_consistency(key_flags);
 #endif // !defined(NDEBUG)
     l_bound_consistency(bound);
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
-    member_flag_consistency(key_flags);
     map_key_type_identifier_consistency(*key_identifier);
     PlainMapLTypeDefn plain_map_l_type_defn;
     plain_map_l_type_defn.header(header);
@@ -915,7 +921,7 @@ const CommonUnionMember TypeObjectUtils::build_common_union_member(
         const UnionCaseLabelSeq& label_seq)
 {
 #if !defined(NDEBUG)
-    member_flag_consistency(member_flags);
+    union_member_flag_consistency(member_flags);
     type_identifier_consistency(type_id);
     union_case_label_seq_consistency(label_seq);
 #endif // !defined(NDEBUG)
@@ -990,7 +996,7 @@ const CommonDiscriminatorMember TypeObjectUtils::build_common_discriminator_memb
         const TypeIdentifier& type_id)
 {
 #if !defined(NDEBUG)
-    member_flag_consistency(member_flags);
+    union_discriminator_flag_consistency(member_flags);
 #endif // if !defined(NDEBUG)
     common_discriminator_member_type_identifier_consistency(type_id);
     CommonDiscriminatorMember common_discriminator_member;
@@ -1217,7 +1223,7 @@ const CommonCollectionElement TypeObjectUtils::build_common_collection_element(
         const TypeIdentifier& type)
 {
 #if !defined(NDEBUG)
-    member_flag_consistency(element_flags);
+    collection_element_flag_consistency(element_flags);
     type_identifier_consistency(type);
 #endif // !defined(NDEBUG)
     CommonCollectionElement common_collection_element;
@@ -1886,6 +1892,16 @@ void TypeObjectUtils::member_flag_consistency(
     }
 }
 
+void TypeObjectUtils::collection_element_flag_consistency(
+        CollectionElementFlag collection_element_flag)
+{
+    member_flag_consistency(collection_element_flag);
+    if ((collection_element_flag & collection_element_flag_mask) != 0)
+    {
+        throw InvalidArgumentError("Only try construct and external flags apply to collection elements");
+    }
+}
+
 void TypeObjectUtils::struct_member_flag_consistency(
         StructMemberFlag member_flags)
 {
@@ -1897,6 +1913,39 @@ void TypeObjectUtils::struct_member_flag_consistency(
     if (member_flags & MemberFlagBits::IS_KEY && !(member_flags & MemberFlagBits::IS_MUST_UNDERSTAND))
     {
         throw InvalidArgumentError("Keyed members must have their \"must understand\" attribute set to true");
+    }
+    if ((member_flags & MemberFlagBits::IS_DEFAULT) != 0)
+    {
+        throw InvalidArgumentError("Default flag does not apply to structure members");
+    }
+}
+
+void TypeObjectUtils::union_member_flag_consistency(
+        UnionMemberFlag union_member_flag)
+{
+    member_flag_consistency(union_member_flag);
+    if((union_member_flag & union_member_flag_mask) != 0)
+    {
+        throw InvalidArgumentError("Only try construct, default and external flags apply to union members");
+    }
+}
+
+void TypeObjectUtils::union_discriminator_flag_consistency(
+        UnionDiscriminatorFlag union_discriminator_flag)
+{
+    member_flag_consistency(union_discriminator_flag);
+    if ((union_discriminator_flag & union_discriminator_flag_mask) != 0)
+    {
+        throw InvalidArgumentError("Only try construct and key flags apply to union discriminator member");
+    }
+}
+
+void TypeObjectUtils::enumerated_literal_flag_consistency(
+        EnumeratedLiteralFlag enumerated_literal_flag)
+{
+    if ((enumerated_literal_flag & enum_literal_flag_mask) != 0)
+    {
+        throw InvalidArgumentError("Only default flag applies to enumerated literals");
     }
 }
 
@@ -1911,19 +1960,10 @@ void TypeObjectUtils::type_flag_consistency(
     }
 }
 
-void TypeObjectUtils::enumerated_literal_flag_consistency(
-        EnumeratedLiteralFlag enumerated_literal_flag)
-{
-    if ((enumerated_literal_flag & enum_literal_flag_mask) != 0)
-    {
-        throw InvalidArgumentError("Only default flag applies to enumerated literals");
-    }
-}
-
 void TypeObjectUtils::plain_collection_header_consistency(
         const PlainCollectionHeader& header)
 {
-    member_flag_consistency(header.element_flags());
+    collection_element_flag_consistency(header.element_flags());
     if (header.equiv_kind() != EK_COMPLETE && header.equiv_kind() != EK_MINIMAL && header.equiv_kind() != EK_BOTH)
     {
         throw InvalidArgumentError("Inconsistent PlainCollectionHeader, invalid EquivalenceKind");
@@ -2013,7 +2053,7 @@ void TypeObjectUtils::map_sdefn_consistency(
     bound_consistency(plain_map.bound());
     type_identifier_consistency(*plain_map.element_identifier());
     plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
-    member_flag_consistency(plain_map.key_flags());
+    collection_element_flag_consistency(plain_map.key_flags());
     map_key_type_identifier_consistency(*plain_map.key_identifier());
 }
 
@@ -2024,7 +2064,7 @@ void TypeObjectUtils::map_ldefn_consistency(
     l_bound_consistency(plain_map.bound());
     type_identifier_consistency(*plain_map.element_identifier());
     plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
-    member_flag_consistency(plain_map.key_flags());
+    collection_element_flag_consistency(plain_map.key_flags());
     map_key_type_identifier_consistency(*plain_map.key_identifier());
 }
 
@@ -2329,7 +2369,7 @@ void TypeObjectUtils::union_case_label_seq_consistency(
 void TypeObjectUtils::common_union_member_consistency(
         const CommonUnionMember& common_union_member)
 {
-    member_flag_consistency(common_union_member.member_flags());
+    union_member_flag_consistency(common_union_member.member_flags());
     type_identifier_consistency(common_union_member.type_id());
     union_case_label_seq_consistency(common_union_member.label_seq());
     if (!(common_union_member.member_flags() & MemberFlagBits::IS_DEFAULT) &&
@@ -2445,7 +2485,7 @@ void TypeObjectUtils::common_discriminator_member_type_identifier_consistency(
 void TypeObjectUtils::common_discriminator_member_consistency(
         const CommonDiscriminatorMember& common_discriminator_member)
 {
-    member_flag_consistency(common_discriminator_member.member_flags());
+    union_discriminator_flag_consistency(common_discriminator_member.member_flags());
     common_discriminator_member_type_identifier_consistency(common_discriminator_member.type_id());
 }
 
@@ -2636,7 +2676,7 @@ void TypeObjectUtils::complete_element_detail_consistency(
 void TypeObjectUtils::common_collection_element_consistency(
         const CommonCollectionElement& common_collection_element)
 {
-    member_flag_consistency(common_collection_element.element_flags());
+    collection_element_flag_consistency(common_collection_element.element_flags());
     type_identifier_consistency(common_collection_element.type());
 }
 
