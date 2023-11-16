@@ -81,6 +81,10 @@ StructMemberFlag TypeObjectUtils::build_struct_member_flag(
         bool key,
         bool external)
 {
+    if (optional && key)
+    {
+        throw InvalidArgumentError("Keyed members cannot be optional");
+    }
     StructMemberFlag struct_member_flag = 0;
     set_try_construct_behavior(struct_member_flag, try_construct_kind);
     if (optional)

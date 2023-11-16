@@ -75,6 +75,8 @@ public:
      * @param[in] must_understand must_understand annotation value.
      * @param[in] key key annotation value.
      * @param[in] external external annotation value.
+     * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if both key and optional flags are
+     *            enabled.
      * @return StructMemberFlag instance.
      */
     RTPS_DllAPI static StructMemberFlag build_struct_member_flag(
