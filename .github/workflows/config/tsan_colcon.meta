@@ -20,6 +20,7 @@
                 "-DFASTRTPS_API_TESTS=OFF",
                 "-DFASTDDS_PIM_API_TESTS=ON",
                 "-DPERFORMANCE_TESTS=ON",
+                "-DNO_TLS=OFF",
                 "-DSECURITY=ON",
                 "-DFASTDDS_STATISTICS=ON",
                 "-DCMAKE_C_FLAGS='-fsanitize=thread -O2 -g -fno-omit-frame-pointer'",
