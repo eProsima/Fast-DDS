@@ -62,6 +62,8 @@
 
 
 
+
+
 /*!
  * @brief This class represents the structure FixedSized defined by the user in the IDL file.
  * @ingroup FixedSized
@@ -189,3 +191,6 @@ private:
 #endif // _FAST_DDS_GENERATED_FIXEDSIZED_HPP_
 
 
+
+
+#endif // FASTCDR_VERSION_MAJOR > 1

@@ -2344,6 +2344,8 @@ const TypeObject* GetCompleteMyMiniArrayObject()
     return TypeObjectFactory::get_instance()->get_type_object("MyMiniArray", true);
 }
 
+
+
 const TypeIdentifier* GetMySequenceLongIdentifier(bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MySequenceLong", complete);

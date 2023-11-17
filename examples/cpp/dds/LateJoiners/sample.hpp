@@ -62,6 +62,8 @@
 
 
 
+
+
 /*!
  * @brief This class represents the structure sample defined by the user in the IDL file.
  * @ingroup sample
@@ -226,3 +228,6 @@ private:
 #endif // _FAST_DDS_GENERATED_SAMPLE_HPP_
 
 
+
+
+#endif // FASTCDR_VERSION_MAJOR > 1

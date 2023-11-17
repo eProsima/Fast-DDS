@@ -65,6 +65,8 @@
 
 
 
+
+
 /*!
  * @brief This class represents the structure TestRegression3361 defined by the user in the IDL file.
  * @ingroup TestRegression3361
@@ -204,3 +206,6 @@ private:
 #endif // _FAST_DDS_GENERATED_TESTREGRESSION3361_HPP_
 
 
+
+
+#endif // FASTCDR_VERSION_MAJOR > 1

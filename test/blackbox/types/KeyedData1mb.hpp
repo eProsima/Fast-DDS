@@ -62,6 +62,10 @@
 
 
 
+
+
+
+
 /*!
  * @brief This class represents the structure KeyedData1mb defined by the user in the IDL file.
  * @ingroup KeyedData1mb
@@ -236,3 +240,6 @@ private:
 #endif // _FAST_DDS_GENERATED_KEYEDDATA1MB_HPP_
 
 
+
+
+#endif // FASTCDR_VERSION_MAJOR > 1

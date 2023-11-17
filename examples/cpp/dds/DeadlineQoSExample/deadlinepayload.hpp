@@ -62,6 +62,8 @@
 
 
 
+
+
 /*!
  * @brief This class represents the structure HelloMsg defined by the user in the IDL file.
  * @ingroup deadlinepayload
@@ -236,3 +238,6 @@ private:
 #endif // _FAST_DDS_GENERATED_DEADLINEPAYLOAD_HPP_
 
 
+
+
+#endif // FASTCDR_VERSION_MAJOR > 1

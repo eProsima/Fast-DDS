@@ -319,6 +319,8 @@ namespace bitmodule
 
 
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type StructTest defined by the user in the IDL file.
  * @ingroup new_features_4_2

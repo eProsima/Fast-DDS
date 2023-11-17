@@ -667,6 +667,8 @@ typedef std::array<MyAliasEnum3, 42> MA3;
 
 typedef std::array<int32_t, 2> MyMiniArray;
 
+
+
 typedef std::vector<int32_t> MySequenceLong;
 
 
@@ -2927,3 +2929,6 @@ private:
 #endif // _FAST_DDS_GENERATED_TEST_HPP_
 
 
+
+
+#endif // FASTCDR_VERSION_MAJOR > 1

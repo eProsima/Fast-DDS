@@ -1177,6 +1177,8 @@ namespace eprosima {
 
 
 
+
+
             DiscoveryTimePubSubType::DiscoveryTimePubSubType()
             {
                 setName("eprosima::fastdds::statistics::DiscoveryTime");

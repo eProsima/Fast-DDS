@@ -101,6 +101,8 @@ eProsima_user_DllExport const TypeObject* GetMyMiniArrayObject(bool complete = f
 eProsima_user_DllExport const TypeObject* GetMinimalMyMiniArrayObject();
 eProsima_user_DllExport const TypeObject* GetCompleteMyMiniArrayObject();
 
+
+
 eProsima_user_DllExport const TypeIdentifier* GetMySequenceLongIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMySequenceLongObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalMySequenceLongObject();

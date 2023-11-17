@@ -62,6 +62,8 @@
 
 
 
+
+
 /*!
  * @brief This class represents the structure KeyedHelloWorld defined by the user in the IDL file.
  * @ingroup KeyedHelloWorld
@@ -273,3 +275,6 @@ private:
 #endif // _FAST_DDS_GENERATED_KEYEDHELLOWORLD_HPP_
 
 
+
+
+#endif // FASTCDR_VERSION_MAJOR > 1

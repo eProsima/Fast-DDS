@@ -62,6 +62,8 @@
 
 
 
+
+
 /*!
  * @brief This class represents the structure AllocTestType defined by the user in the IDL file.
  * @ingroup AllocTestType
@@ -189,3 +191,6 @@ private:
 #endif // _FAST_DDS_GENERATED_ALLOCTESTTYPE_HPP_
 
 
+
+
+#endif // FASTCDR_VERSION_MAJOR > 1

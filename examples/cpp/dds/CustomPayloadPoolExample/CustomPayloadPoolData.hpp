@@ -62,6 +62,8 @@
 
 
 
+
+
 /*!
  * @brief This class represents the structure CustomPayloadPoolData defined by the user in the IDL file.
  * @ingroup CustomPayloadPoolData
@@ -236,3 +238,6 @@ private:
 #endif // _FAST_DDS_GENERATED_CUSTOMPAYLOADPOOLDATA_HPP_
 
 
+
+
+#endif // FASTCDR_VERSION_MAJOR > 1

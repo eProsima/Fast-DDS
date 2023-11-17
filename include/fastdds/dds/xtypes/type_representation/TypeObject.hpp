@@ -28,3 +28,8 @@
 
 #endif // _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECT_HPP_
 
+namespace TestModule {
+
+
+} // namespace TestModule
+#endif // FASTCDR_VERSION_MAJOR > 1

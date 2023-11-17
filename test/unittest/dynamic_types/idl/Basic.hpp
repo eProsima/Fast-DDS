@@ -3668,6 +3668,8 @@ public:
     }
 
 
+
+
 private:
 
     std::bitset<30> m_bitset;
@@ -5689,3 +5691,6 @@ private:
 #endif // _FAST_DDS_GENERATED_BASIC_HPP_
 
 
+
+
+#endif // FASTCDR_VERSION_MAJOR > 1

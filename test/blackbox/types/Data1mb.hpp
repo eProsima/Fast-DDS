@@ -62,6 +62,10 @@
 
 
 
+
+
+
+
 /*!
  * @brief This class represents the structure Data1mb defined by the user in the IDL file.
  * @ingroup Data1mb
@@ -199,3 +203,6 @@ private:
 #endif // _FAST_DDS_GENERATED_DATA1MB_HPP_
 
 
+
+
+#endif // FASTCDR_VERSION_MAJOR > 1

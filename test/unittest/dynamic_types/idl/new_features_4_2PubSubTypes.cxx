@@ -610,6 +610,8 @@ namespace bitmodule {
 
 
 
+
+
 StructTestPubSubType::StructTestPubSubType()
 {
     setName("StructTest");

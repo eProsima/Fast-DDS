@@ -62,6 +62,8 @@
 
 
 
+
+
 /*!
  * @brief This class represents the structure FlowControlExample defined by the user in the IDL file.
  * @ingroup FlowControlExample
@@ -233,3 +235,6 @@ private:
 #endif // _FAST_DDS_GENERATED_FLOWCONTROLEXAMPLE_HPP_
 
 
+
+
+#endif // FASTCDR_VERSION_MAJOR > 1
