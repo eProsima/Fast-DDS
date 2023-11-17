@@ -2549,8 +2549,8 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
 {
     TypeObjectPair type_objects;
     // Primitive types
-    if (((type_id._d() > 0 && type_id._d() <= 0x0D) || (type_id._d() == TK_CHAR8 || type_id._d() == TK_CHAR16)) &&
-            (type_id._d() != value._d()))
+    if (((type_id._d() > TK_NONE && type_id._d() <= TK_UINT8) ||
+            (type_id._d() == TK_CHAR8 || type_id._d() == TK_CHAR16)) && (type_id._d() != value._d()))
     {
         throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
     }
@@ -2925,30 +2925,19 @@ void TypeObjectUtils::bitfield_holder_type_consistency(
         TypeKind holder_type,
         uint8_t bitcount)
 {
-    if (holder_type != TK_BOOLEAN && holder_type != TK_BYTE && holder_type != TK_INT16 && holder_type != TK_INT32 &&
-            holder_type != TK_INT64 && holder_type != TK_UINT16 && holder_type != TK_UINT32 &&
-            holder_type != TK_UINT64 &&
-            holder_type != TK_INT8 && holder_type != TK_UINT8)
+    bool holds_1_bit = (holder_type == TK_BOOLEAN);
+    bool holds_8_bits = (holder_type == TK_BYTE || holder_type == TK_INT8 || holder_type == TK_UINT8);
+    bool holds_16_bits = (holder_type == TK_INT16 || holder_type == TK_UINT16);
+    bool holds_32_bits = (holder_type == TK_INT32 || holder_type == TK_UINT32);
+    bool holds_64_bits = (holder_type == TK_INT64 || holder_type == TK_UINT64);
+    if (!(holds_1_bit || holds_8_bits || holds_16_bits || holds_32_bits || holds_64_bits))
     {
         throw InvalidArgumentError("Inconsistent bitfield holder type");
     }
-    if (bitcount < 9 && holder_type == TK_BOOLEAN)
+    if ((holds_1_bit && bitcount > 1) || (holds_8_bits && bitcount > 8) || (holds_16_bits && bitcount > 16) ||
+            (holds_32_bits && bitcount > 32))
     {
-        throw InvalidArgumentError("Inconsistent bitfield holder type");
-    }
-    else if ((bitcount < 17 && bitcount > 8) && (holder_type == TK_BOOLEAN || holder_type == TK_BYTE ||
-            holder_type == TK_INT8 || holder_type == TK_UINT8))
-    {
-        throw InvalidArgumentError("Inconsistent bitfield holder type");
-    }
-    else if ((bitcount < 33 && bitcount > 16) && (holder_type != TK_INT64 && holder_type != TK_UINT64 &&
-            holder_type != TK_INT32 && holder_type != TK_UINT32))
-    {
-        throw InvalidArgumentError("Inconsistent bitfield holder type");
-    }
-    else if (bitcount > 32 && (holder_type != TK_INT64 && holder_type != TK_UINT64))
-    {
-        throw InvalidArgumentError("Inconsistent bitfield holder type");
+        throw InvalidArgumentError("Bitcount exceeds the size of the holder type");
     }
 }
 
