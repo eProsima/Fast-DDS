@@ -39,6 +39,7 @@ constexpr const char* begin_declaration = "begin-declaration";
 constexpr const char* end_declaration = "end-declaration";
 constexpr const char* after_declaration = "after-declaration";
 constexpr const char* end_declaration_file = "end-declaration-file";
+constexpr const char* union_member_protected_name = "discriminator";
 constexpr const CollectionElementFlag collection_element_flag_mask = MemberFlagBits::IS_OPTIONAL |
         MemberFlagBits::IS_MUST_UNDERSTAND | MemberFlagBits::IS_KEY | MemberFlagBits::IS_DEFAULT;
 constexpr const UnionMemberFlag union_member_flag_mask = MemberFlagBits::IS_OPTIONAL |
@@ -959,6 +960,11 @@ void TypeObjectUtils::add_complete_union_member(
         CompleteUnionMemberSeq& complete_union_member_seq,
         const CompleteUnionMember& member)
 {
+    if (union_member_protected_name == member.detail().name().to_string())
+    {
+        throw InvalidArgumentError(
+            "discriminator name is reserved and is not permitted for type-specific union members");
+    }
 #if !defined(NDEBUG)
     complete_union_member_consistency(member);
     std::set<int32_t> case_labels;
@@ -2435,6 +2441,11 @@ void TypeObjectUtils::complete_union_member_seq_consistency(
     bool default_member = false;
     for (const CompleteUnionMember& member : complete_member_union_seq)
     {
+        if (union_member_protected_name == member.detail().name().to_string())
+        {
+            throw InvalidArgumentError(
+                "discriminator name is reserved and is not permitted for type-specific union members");
+        }
         if (!member_ids.insert(member.common().member_id()).second)
         {
             throw InvalidArgumentError("Repeated member id in the sequence");

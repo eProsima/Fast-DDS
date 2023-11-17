@@ -967,6 +967,7 @@ public:
      *              3. If the given member is marked as default, if there is already another member marked as default
      *                 (only in Debug build mode).
      *              4. There are repeated union case labels (only in Debug build mode).
+     *              5. Member name is protected ("discriminator").
      */
     RTPS_DllAPI static void add_complete_union_member(
             CompleteUnionMemberSeq& complete_union_member_seq,

@@ -1077,6 +1077,24 @@ TEST(TypeObjectUtilsTests, build_common_discriminator_member_inconsistent_type_i
             alias_type_identifiers.type_identifier1()));
 }
 
+// Add CompleteUnionMember to sequence with invalid name
+TEST(TypeObjectUtilsTests, build_complete_union_member_invalid_name)
+{
+    std::string invalid_name = "discriminator";
+    UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::DISCARD, false, false);
+    TypeIdentifier type_id;
+    type_id._d(TK_FLOAT128);
+    UnionCaseLabelSeq case_labels;
+    TypeObjectUtils::add_union_case_label(case_labels, 5);
+    CommonUnionMember common_member = TypeObjectUtils::build_common_union_member(3, member_flags, type_id, case_labels);
+    CompleteMemberDetail invalid_member_detail = TypeObjectUtils::build_complete_member_detail(invalid_name,
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteUnionMember member = TypeObjectUtils::build_complete_union_member(common_member, invalid_member_detail);
+    CompleteUnionMemberSeq member_seq;
+    EXPECT_THROW(TypeObjectUtils::add_complete_union_member(member_seq, member), InvalidArgumentError);
+}
+
 // Build CommonAnnotationParameter with non-empty flags
 TEST(TypeObjectUtilsTests, build_common_annotation_parameter_non_empty_flags)
 {
