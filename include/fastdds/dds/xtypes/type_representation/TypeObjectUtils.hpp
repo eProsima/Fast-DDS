@@ -252,6 +252,10 @@ public:
             array& array_bound_seq,
             element dimension_bound)
     {
+        if (dimension_bound == INVALID_LBOUND)
+        {
+            throw InvalidArgumentError("bound parameter must be greater than 0");
+        }
         array_bound_seq.push_back(dimension_bound);
     }
 

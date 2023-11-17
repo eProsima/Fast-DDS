@@ -2002,14 +2002,38 @@ void TypeObjectUtils::plain_collection_type_identifier_header_consistency(
 void TypeObjectUtils::map_key_type_identifier_consistency(
         const TypeIdentifier& key_identifier)
 {
-    if (key_identifier._d() != TK_INT8 && key_identifier._d() != TK_UINT8 && key_identifier._d() != TK_INT16 &&
+    if ((key_identifier._d() != TK_INT8 && key_identifier._d() != TK_UINT8 && key_identifier._d() != TK_INT16 &&
             key_identifier._d() != TK_UINT16 && key_identifier._d() != TK_INT32 && key_identifier._d() != TK_UINT32 &&
             key_identifier._d() != TK_INT64 && key_identifier._d() != TK_UINT64 &&
             key_identifier._d() != TI_STRING8_SMALL && key_identifier._d() != TI_STRING8_LARGE &&
-            key_identifier._d() != TI_STRING16_SMALL && key_identifier._d() != TI_STRING16_LARGE)
+            key_identifier._d() != TI_STRING16_SMALL && key_identifier._d() != TI_STRING16_LARGE) ||
+            !is_direct_hash_type_identifier(key_identifier))
     {
         throw InvalidArgumentError(
                   "Inconsistent key identifier: only signed/unsigned integer types and w/string keys are supported");
+    }
+    if (is_direct_hash_type_identifier(key_identifier))
+    {
+        TypeObjectPair type_objects;
+        if (ReturnCode_t::RETCODE_OK ==
+                DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(key_identifier,
+                type_objects))
+        {
+            if (type_objects.complete_type_object._d() == TK_ALIAS)
+            {
+                map_key_type_identifier_consistency(
+                    type_objects.complete_type_object.alias_type().body().common().related_type());
+            }
+            else
+            {
+                throw InvalidArgumentError(
+                    "Inconsistent key identifier: only signed/unsigned integer types and w/string keys are supported");
+            }
+        }
+        else
+        {
+            throw InvalidArgumentError("Given key TypeIdentifier is not found in TypeObjectRegistry");
+        }
     }
 #if !defined(NDEBUG)
     type_identifier_consistency(key_identifier);
