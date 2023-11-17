@@ -10,7 +10,7 @@
                 "-DFASTRTPS_API_TESTS=OFF",
                 "-DFASTDDS_PIM_API_TESTS=ON",
                 "-DPERFORMANCE_TESTS=ON",
-                "-DNO_TLS=ON",
+                "-DNO_TLS=OFF",
                 "-DSECURITY=ON",
                 "-DMEMORYCHECK_COMMAND_OPTIONS=-q --tool=memcheck --leak-check=yes --show-reachable=yes
                     --num-callers=50 --log-fd=2 --error-exitcode=1",

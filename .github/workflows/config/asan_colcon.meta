@@ -12,6 +12,7 @@
                 "-DFASTRTPS_API_TESTS=ON",
                 "-DFASTDDS_PIM_API_TESTS=ON",
                 "-DPERFORMANCE_TESTS=ON",
+                "-DNO_TLS=OFF",
                 "-DSECURITY=ON",
                 "-DFASTDDS_STATISTICS=ON",
                 "-DSANITIZER=Address",
