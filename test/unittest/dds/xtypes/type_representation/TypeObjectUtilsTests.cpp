@@ -176,6 +176,9 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_l_elem_defn_inconsistencies)
     LBound wrong_bound = 255;
     EXPECT_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
                 complete_header, wrong_bound, test_identifier), InvalidArgumentError);
+    wrong_bound = 0;
+    EXPECT_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
+                complete_header, wrong_bound, test_identifier), InvalidArgumentError);
 
     // Primitive TypeIdentifier
     EXPECT_NO_THROW(test_identifier->_d(TK_BOOLEAN));
@@ -215,6 +218,17 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_l_elem_defn_inconsistencies)
     // TypeIdentifier inconsistent with fully-descriptive header
     EXPECT_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
                 fully_descriptive_header, 256, test_identifier), InvalidArgumentError);
+}
+
+// Add inconsistent dimension to array
+TEST(TypeObjectUtilsTests, add_inconsistent_array_dimension)
+{
+    SBoundSeq small_dimensions;
+    LBoundSeq large_dimensions;
+    SBound invalid_sbound = 0;
+    LBound invalid_lbound = 0;
+    EXPECT_THROW(TypeObjectUtils::add_array_dimension(small_dimensions, invalid_sbound), InvalidArgumentError);
+    EXPECT_THROW(TypeObjectUtils::add_array_dimension(large_dimensions, invalid_lbound), InvalidArgumentError);
 }
 
 // Build PlainArraySElemDefn with inconsistent parameters.
@@ -371,7 +385,7 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
 }
 
 // Build PlainMapSTypeDefn with inconsistent parameters.
-TEST(TypeObjectUtilsTests, build_plain_map_s_elem_defn_inconsistencies)
+TEST(TypeObjectUtilsTests, build_plain_map_s_type_defn_inconsistencies)
 {
     eprosima::fastcdr::external<TypeIdentifier> test_identifier{new TypeIdentifier()};
     eprosima::fastcdr::external<TypeIdentifier> key_identifier{new TypeIdentifier()};
@@ -462,7 +476,7 @@ TEST(TypeObjectUtilsTests, build_plain_map_s_elem_defn_inconsistencies)
 }
 
 // Build PlainMapLTypeDefn with inconsistent parameters.
-TEST(TypeObjectUtilsTests, build_plain_map_l_elem_defn_inconsistencies)
+TEST(TypeObjectUtilsTests, build_plain_map_l_type_defn_inconsistencies)
 {
     eprosima::fastcdr::external<TypeIdentifier> test_identifier{new TypeIdentifier()};
     eprosima::fastcdr::external<TypeIdentifier> key_identifier{new TypeIdentifier()};
@@ -484,6 +498,9 @@ TEST(TypeObjectUtilsTests, build_plain_map_l_elem_defn_inconsistencies)
 #endif // !defined(NDEBUG)
     // Check LBound consistency
     LBound wrong_bound = 255;
+    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
+                complete_header, wrong_bound, test_identifier, flags, key_identifier), InvalidArgumentError);
+    wrong_bound = 0;
     EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
                 complete_header, wrong_bound, test_identifier, flags, key_identifier), InvalidArgumentError);
 
@@ -1527,6 +1544,121 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     key_type_id._d(TK_INT32);
     CommonCollectionElement common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
     CompleteCollectionElement key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element));
+    key_type_id._d(TK_BOOLEAN);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    key_type_id._d(TK_BYTE);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    key_type_id._d(TK_FLOAT64);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    key_type_id._d(TK_FLOAT128);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    key_type_id._d(TK_CHAR8);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    key_type_id._d(TK_CHAR16);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    small_string_type_identifier(key_type_id);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element));
+    type_id._d(TI_STRING16_SMALL);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element));
+    large_string_type_identifier(key_type_id);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element));
+    type_id._d(TI_STRING16_LARGE);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element));
+    small_sequence_type_identifier(key_type_id);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    large_sequence_type_identifier(key_type_id);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    small_array_type_identifier(key_type_id);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    large_array_type_identifier(key_type_id);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    small_map_type_identifier(key_type_id);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    large_map_type_identifier(key_type_id);
+    common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    TypeIdentifierPair try_construct_enum_type_identifiers;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+                    get_type_identifiers("TryConstructFailAction", try_construct_enum_type_identifiers));
+    common_key = TypeObjectUtils::build_common_collection_element(flags,
+            try_construct_enum_type_identifiers.type_identifier1());
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    TypeIdentifierPair data_representation_bitmask_type_identifiers;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+                    get_type_identifiers("DataRepresentationMask", data_representation_bitmask_type_identifiers));
+    common_key = TypeObjectUtils::build_common_collection_element(flags,
+            data_representation_bitmask_type_identifiers.type_identifier1());
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    CompleteAliasType int16_alias = int_16_alias();
+    CompleteAliasType float_alias = float32_alias();
+    TypeObjectUtils::build_and_register_alias_type_object(int16_alias, "alias_int16");
+    TypeObjectUtils::build_and_register_alias_type_object(float_alias, "alias_float");
+    TypeIdentifierPair alias_type_identifiers;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+                    get_type_identifiers("alias_float", alias_type_identifiers));
+    common_key = TypeObjectUtils::build_common_collection_element(flags,
+            alias_type_identifiers.type_identifier1());
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
+    EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
+            key, element), InvalidArgumentError);
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+                    get_type_identifiers("alias_int16", alias_type_identifiers));
+    common_key = TypeObjectUtils::build_common_collection_element(flags,
+            alias_type_identifiers.type_identifier1());
+    key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element));
 }
