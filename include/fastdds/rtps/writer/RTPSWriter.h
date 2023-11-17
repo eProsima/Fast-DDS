@@ -25,8 +25,6 @@
 #include <mutex>
 #include <vector>
 
-#include <fastcdr/CdrSizeCalculator.hpp>
-
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
@@ -125,10 +123,14 @@ public:
     {
         return new_change([data]() -> uint32_t
                        {
+#if FASTCDR_VERSION_MAJOR == 1
+                           return (uint32_t)T::getCdrSerializedSize(data);
+#else
                            eprosima::fastcdr::CdrSizeCalculator calculator(
                                eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
                            size_t current_alignment {0};
                            return (uint32_t)calculator.calculate_serialized_size(data, current_alignment);
+#endif // if FASTCDR_VERSION_MAJOR == 1
                        }, changeKind, handle);
     }
 

@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "Lifespan.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 Lifespan::Lifespan()
 {
-
 }
 
 Lifespan::~Lifespan()
@@ -65,7 +69,6 @@ Lifespan& Lifespan::operator =(
 
     m_index = x.m_index;
     m_message = x.m_message;
-
     return *this;
 }
 
@@ -75,7 +78,6 @@ Lifespan& Lifespan::operator =(
 
     m_index = x.m_index;
     m_message = std::move(x.m_message);
-
     return *this;
 }
 
@@ -162,3 +164,5 @@ std::string& Lifespan::message()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "LifespanCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

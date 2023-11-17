@@ -1394,9 +1394,9 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-/* TODO Commented because deprecated xtypes 1.1 will not be fix. Uncomment in future xtypes 1.3 api.
-   TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
-   {
+#if FASTCDR_VERSION_MAJOR == 1
+TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
+{
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_char16_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -1495,8 +1495,8 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
-   }
- */
+}
+#endif // if FASTCDR_VERSION_MAJOR == 1
 
 TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
 {
@@ -1941,9 +1941,9 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-/* TODO Commented because deprecated xtypes 1.1 will not be fix. Uncomment in future xtypes 1.3 api.
-   TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
-   {
+#if FASTCDR_VERSION_MAJOR == 1
+TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
+{
     uint32_t length = 15;
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(
@@ -2051,8 +2051,8 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
-   }
- */
+}
+#endif // if FASTCDR_VERSION_MAJOR == 1
 
 TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
 {

@@ -20,10 +20,8 @@
 #ifndef FASTDDS_CORE_PLICY__QOSPOLICIESSERIALIZER_HPP_
 #define FASTDDS_CORE_PLICY__QOSPOLICIESSERIALIZER_HPP_
 
-#include <fastcdr/Cdr.h>
-#include <fastcdr/CdrSizeCalculator.hpp>
-
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include "ParameterSerializer.hpp"
 
 namespace eprosima {
@@ -908,8 +906,13 @@ inline bool QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(
     ser.serialize_encapsulation();
 
     ser << qos_policy.m_type_identifier;
+#if FASTCDR_VERSION_MAJOR == 1
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    size = (ser.getSerializedDataLength() + 3) & ~3;
+#else
     payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     size = (ser.get_serialized_data_length() + 3) & ~3;
+#endif // FASTCDR_VERSION_MAJOR == 1
 
     bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
     valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
@@ -934,7 +937,11 @@ inline bool QosPoliciesSerializer<TypeIdV1>::read_content_from_cdr_message(
 
     fastrtps::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
+#if FASTCDR_VERSION_MAJOR == 1
+            , eprosima::fastcdr::Cdr::CdrType::DDS_CDR
+#endif // FASTCDR_VERSION_MAJOR == 1
+            );
 
     try
     {
@@ -981,8 +988,13 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(
     ser.serialize_encapsulation();
 
     ser << qos_policy.m_type_object;
+#if FASTCDR_VERSION_MAJOR == 1
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    size = (ser.getSerializedDataLength() + 3) & ~3;
+#else
     payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     size = (ser.get_serialized_data_length() + 3) & ~3;
+#endif // FASTCDR_VERSION_MAJOR == 1
 
     bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
     valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
@@ -1007,7 +1019,11 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::read_content_from_cdr_message(
 
     fastrtps::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
+#if FASTCDR_VERSION_MAJOR == 1
+            , eprosima::fastcdr::Cdr::CdrType::DDS_CDR
+#endif // FASTCDR_VERSION_MAJOR == 1
+            );
 
     try
     {
@@ -1055,8 +1071,13 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::add_to_cdr_message(
     ser.serialize_encapsulation();
 
     ser << qos_policy.type_information;
+#if FASTCDR_VERSION_MAJOR == 1
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    size = (ser.getSerializedDataLength() + 3) & ~3;
+#else
     payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     size = (ser.get_serialized_data_length() + 3) & ~3;
+#endif // FASTCDR_VERSION_MAJOR == 1
 
     bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
     valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
@@ -1081,7 +1102,11 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::read_content_from_cd
 
     fastrtps::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
+#if FASTCDR_VERSION_MAJOR == 1
+            , eprosima::fastcdr::Cdr::CdrType::DDS_CDR
+#endif // FASTCDR_VERSION_MAJOR == 1
+            );
 
     try
     {

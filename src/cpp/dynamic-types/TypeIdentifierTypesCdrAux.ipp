@@ -23,6 +23,16 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::StringSTypeDefn& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    static_cast<void>(data);
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    return current_alignment - initial_alignment;
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -34,6 +44,8 @@ size_t calculate_serialized_size(
 
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -42,6 +54,18 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::StringLTypeDefn& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    static_cast<void>(data);
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -53,6 +77,8 @@ size_t calculate_serialized_size(
 
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -61,6 +87,20 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::PlainCollectionHeader& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    static_cast<void>(data);
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -74,6 +114,8 @@ size_t calculate_serialized_size(
 
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -82,6 +124,30 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::PlainSequenceSElemDefn& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculate_serialized_size(calculator, data.header(), current_alignment);
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if (data.element_identifier() != nullptr)
+    {
+        size_t size = calculate_serialized_size(calculator, *data.element_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        size_t size = calculate_serialized_size(calculator, emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -105,6 +171,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -113,6 +181,30 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::PlainSequenceLElemDefn& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculate_serialized_size(calculator, data.header(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if (data.element_identifier() != nullptr)
+    {
+        size_t size = calculate_serialized_size(calculator, *data.element_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        size_t size = calculate_serialized_size(calculator, emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -136,6 +228,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -144,6 +238,31 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::PlainArraySElemDefn& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculate_serialized_size(calculator, data.header(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += (data.array_bound_seq().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if (data.element_identifier() != nullptr)
+    {
+        size_t size = calculate_serialized_size(calculator, *data.element_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        size_t size = calculate_serialized_size(calculator, emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+
+    return current_alignment - initial_alignment;
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -167,6 +286,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -175,6 +296,31 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::PlainArrayLElemDefn& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculate_serialized_size(calculator, data.header(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += (data.array_bound_seq().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if (data.element_identifier() != nullptr)
+    {
+        size_t size = calculate_serialized_size(calculator, *data.element_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        size_t size = calculate_serialized_size(calculator, emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -198,6 +344,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -206,6 +354,47 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::PlainMapSTypeDefn& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculate_serialized_size(calculator, data.header(), current_alignment);
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    size_t size = 0;
+    if (data.element_identifier() != nullptr)
+    {
+        size = calculate_serialized_size(calculator, *data.element_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        size = calculate_serialized_size(calculator, emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if (data.key_identifier() != nullptr)
+    {
+        size = calculate_serialized_size(calculator, *data.key_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        size = calculate_serialized_size(calculator, emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -242,6 +431,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -250,6 +441,46 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::PlainMapLTypeDefn& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculate_serialized_size(calculator, data.header(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    size_t size = 0;
+    if (data.element_identifier() != nullptr)
+    {
+        size = calculate_serialized_size(calculator, *data.element_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        size = calculate_serialized_size(calculator, emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if (data.key_identifier() != nullptr)
+    {
+        size = calculate_serialized_size(calculator, *data.key_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        size = calculate_serialized_size(calculator, emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -286,6 +517,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -294,6 +527,20 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::StronglyConnectedComponentId& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+    size_t initial_alignment = current_alignment;
+
+    //current_alignment += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    size_t size = calculate_serialized_size(calculator, data.sc_component_id(), current_alignment);
+    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    return current_alignment - initial_alignment;
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -308,6 +555,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -357,7 +606,12 @@ void serialize(
         const eprosima::fastrtps::types::PlainCollectionHeader& data)
 {
     scdr << data.equiv_kind();
+#if FASTCDR_VERSION_MAJOR == 1
+    uint16_t bits = static_cast<uint16_t>(data.element_flags().bitset().to_ulong());
+    scdr << bits;
+#else
     scdr << data.element_flags();
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -366,7 +620,13 @@ void deserialize(
         eprosima::fastrtps::types::PlainCollectionHeader& data)
 {
     dcdr >> data.equiv_kind();
+#if FASTCDR_VERSION_MAJOR == 1
+    uint16_t bits;
+    dcdr >> bits;
+    data.element_flags().bitset(std::bitset<16>(bits));
+#else
     dcdr >> data.element_flags();
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -394,11 +654,10 @@ void deserialize(
 {
     dcdr >> data.header();
     dcdr >> data.bound();
-    if (data.element_identifier() == nullptr)
-    {
-        data.element_identifier(new eprosima::fastrtps::types::TypeIdentifier);
-    }
-    dcdr >> *data.element_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier elem_type_id;
+    dcdr >> elem_type_id;
+    data.element_identifier(&elem_type_id);
 }
 
 template<>
@@ -426,11 +685,10 @@ void deserialize(
 {
     dcdr >> data.header();
     dcdr >> data.bound();
-    if (data.element_identifier() == nullptr)
-    {
-        data.element_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.element_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier elem_type_id;
+    dcdr >> elem_type_id;
+    data.element_identifier(&elem_type_id);
 }
 
 template<>
@@ -459,11 +717,10 @@ void deserialize(
 {
     dcdr >> data.header();
     dcdr >> data.array_bound_seq();
-    if (data.element_identifier() == nullptr)
-    {
-        data.element_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.element_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier elem_type_id;
+    dcdr >> elem_type_id;
+    data.element_identifier(&elem_type_id);
 }
 
 template<>
@@ -491,11 +748,10 @@ void deserialize(
 {
     dcdr >> data.header();
     dcdr >> data.array_bound_seq();
-    if (data.element_identifier() == nullptr)
-    {
-        data.element_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.element_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier elem_type_id;
+    dcdr >> elem_type_id;
+    data.element_identifier(&elem_type_id);
 }
 
 template<>
@@ -514,7 +770,12 @@ void serialize(
         eprosima::fastrtps::types::TypeIdentifier emptyId;
         scdr << emptyId;
     }
+#if FASTCDR_VERSION_MAJOR == 1
+    uint16_t bits = static_cast<uint16_t>(data.key_flags().bitset().to_ulong());
+    scdr << bits;
+#else
     scdr << data.key_flags();
+#endif // FASTCDR_VERSION_MAJOR == 1
     if (data.key_identifier() != nullptr)
     {
         scdr << *data.key_identifier();
@@ -533,17 +794,21 @@ void deserialize(
 {
     dcdr >> data.header();
     dcdr >> data.bound();
-    if (data.element_identifier() == nullptr)
-    {
-        data.element_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.element_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier elem_type_id;
+    dcdr >> elem_type_id;
+    data.element_identifier(&elem_type_id);
+#if FASTCDR_VERSION_MAJOR == 1
+    uint16_t bits;
+    dcdr >> bits;
+    data.key_flags().bitset(std::bitset<16>(bits));
+#else
     dcdr >> data.key_flags();
-    if (data.key_identifier() == nullptr)
-    {
-        data.key_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.key_identifier();
+#endif // FASTCDR_VERSION_MAJOR == 1
+
+    eprosima::fastrtps::types::TypeIdentifier key_type_id;
+    dcdr >> key_type_id;
+    data.key_identifier(&key_type_id);
 }
 
 template<>
@@ -562,7 +827,12 @@ void serialize(
         eprosima::fastrtps::types::TypeIdentifier emptyId;
         scdr << emptyId;
     }
+#if FASTCDR_VERSION_MAJOR == 1
+    uint16_t bits = static_cast<uint16_t>(data.key_flags().bitset().to_ulong());
+    scdr << bits;
+#else
     scdr << data.key_flags();
+#endif // FASTCDR_VERSION_MAJOR == 1
     if (data.key_identifier() != nullptr)
     {
         scdr << *data.key_identifier();
@@ -581,17 +851,21 @@ void deserialize(
 {
     dcdr >> data.header();
     dcdr >> data.bound();
-    if (data.element_identifier() == nullptr)
-    {
-        data.element_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.element_identifier();
+
+    eprosima::fastrtps::types::TypeIdentifier elem_type_id;
+    dcdr >> elem_type_id;
+    data.element_identifier(&elem_type_id);
+#if FASTCDR_VERSION_MAJOR == 1
+    uint16_t bits;
+    dcdr >> bits;
+    data.key_flags().bitset(std::bitset<16>(bits));
+#else
     dcdr >> data.key_flags();
-    if (data.key_identifier() == nullptr)
-    {
-        data.key_identifier(new eprosima::fastrtps::types::TypeIdentifier());
-    }
-    dcdr >> *data.key_identifier();
+#endif // FASTCDR_VERSION_MAJOR == 1
+
+    eprosima::fastrtps::types::TypeIdentifier key_type_id;
+    dcdr >> key_type_id;
+    data.key_identifier(&key_type_id);
 }
 
 template<>

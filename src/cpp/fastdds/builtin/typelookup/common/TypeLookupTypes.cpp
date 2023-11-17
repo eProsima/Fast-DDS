@@ -17,11 +17,8 @@
  *
  */
 
-#include <fastcdr/Cdr.h>
-#include <fastcdr/CdrSizeCalculator.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 #include <fastdds/dds/builtin/typelookup/common/TypeLookupTypes.hpp>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 
 using namespace eprosima;
@@ -1072,7 +1069,12 @@ bool TypeLookup_RequestTypeSupport::serialize(
         return false;
     }
 
+#if FASTCDR_VERSION_MAJOR == 1
+    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());     //Get the serialized length
+#else
     payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());     //Get the serialized length
+#endif // FASTCDR_VERSION_MAJOR == 1
+       //
     return true;
 }
 
@@ -1083,7 +1085,11 @@ bool TypeLookup_RequestTypeSupport::deserialize(
     TypeLookup_Request* p_type = static_cast<TypeLookup_Request*>(data);    //Convert DATA to pointer of your type
     //eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);    // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
+#if FASTCDR_VERSION_MAJOR == 1
+            , eprosima::fastcdr::Cdr::CdrType::DDS_CDR
+#endif // FASTCDR_VERSION_MAJOR == 1
+            );
 
     try
     {
@@ -1167,7 +1173,12 @@ bool TypeLookup_ReplyTypeSupport::serialize(
         return false;
     }
 
+#if FASTCDR_VERSION_MAJOR == 1
+    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());     //Get the serialized length
+#else
     payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());     //Get the serialized length
+#endif // FASTCDR_VERSION_MAJOR == 1
+
     return true;
 }
 
@@ -1177,7 +1188,11 @@ bool TypeLookup_ReplyTypeSupport::deserialize(
 {
     TypeLookup_Reply* p_type = static_cast<TypeLookup_Reply*>(data);    //Convert DATA to pointer of your type
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);  // Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
+#if FASTCDR_VERSION_MAJOR == 1
+            , eprosima::fastcdr::Cdr::CdrType::DDS_CDR
+#endif // FASTCDR_VERSION_MAJOR == 1
+            );
 
     try
     {

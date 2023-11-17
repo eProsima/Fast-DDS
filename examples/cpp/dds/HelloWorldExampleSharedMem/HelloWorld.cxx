@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "HelloWorld.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 HelloWorld::HelloWorld()
 {
-
 }
 
 HelloWorld::~HelloWorld()
@@ -68,7 +72,6 @@ HelloWorld& HelloWorld::operator =(
     m_index = x.m_index;
     m_message = x.m_message;
     m_data = x.m_data;
-
     return *this;
 }
 
@@ -79,7 +82,6 @@ HelloWorld& HelloWorld::operator =(
     m_index = x.m_index;
     m_message = std::move(x.m_message);
     m_data = std::move(x.m_data);
-
     return *this;
 }
 
@@ -170,7 +172,7 @@ std::string& HelloWorld::message()
  * @param _data New value to be copied in member data
  */
 void HelloWorld::data(
-        const std::array<char, 1048576>& _data)
+        const std::array<char, 1024*1024>& _data)
 {
     m_data = _data;
 }
@@ -180,7 +182,7 @@ void HelloWorld::data(
  * @param _data New value to be moved in member data
  */
 void HelloWorld::data(
-        std::array<char, 1048576>&& _data)
+        std::array<char, 1024*1024>&& _data)
 {
     m_data = std::move(_data);
 }
@@ -189,7 +191,7 @@ void HelloWorld::data(
  * @brief This function returns a constant reference to member data
  * @return Constant reference to member data
  */
-const std::array<char, 1048576>& HelloWorld::data() const
+const std::array<char, 1024*1024>& HelloWorld::data() const
 {
     return m_data;
 }
@@ -198,7 +200,7 @@ const std::array<char, 1048576>& HelloWorld::data() const
  * @brief This function returns a reference to member data
  * @return Reference to member data
  */
-std::array<char, 1048576>& HelloWorld::data()
+std::array<char, 1024*1024>& HelloWorld::data()
 {
     return m_data;
 }
@@ -206,3 +208,5 @@ std::array<char, 1048576>& HelloWorld::data()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "HelloWorldCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

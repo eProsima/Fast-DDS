@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "WideEnum.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include "WideEnumTypeObject.h"
 
 #include <fastcdr/Cdr.h>
@@ -38,9 +41,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 MyEnumWideStruct::MyEnumWideStruct()
 {
-
     // Just to register all known types
     registerWideEnumTypes();
 }
@@ -66,7 +70,6 @@ MyEnumWideStruct& MyEnumWideStruct::operator =(
 {
 
     m_my_enum_wide = x.m_my_enum_wide;
-
     return *this;
 }
 
@@ -75,7 +78,6 @@ MyEnumWideStruct& MyEnumWideStruct::operator =(
 {
 
     m_my_enum_wide = x.m_my_enum_wide;
-
     return *this;
 }
 
@@ -118,6 +120,8 @@ MyEnumWide& MyEnumWideStruct::my_enum_wide()
 {
     return m_my_enum_wide;
 }
+
+
 
 
 SimpleWideUnion::SimpleWideUnion()
@@ -315,6 +319,8 @@ void SimpleWideUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -488,9 +494,10 @@ uint8_t& SimpleWideUnion::third()
 }
 
 
+
+
 SimpleWideUnionStruct::SimpleWideUnionStruct()
 {
-
     // Just to register all known types
     registerWideEnumTypes();
 }
@@ -516,7 +523,6 @@ SimpleWideUnionStruct& SimpleWideUnionStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -525,7 +531,6 @@ SimpleWideUnionStruct& SimpleWideUnionStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -582,3 +587,5 @@ SimpleWideUnion& SimpleWideUnionStruct::my_union()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "WideEnumCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

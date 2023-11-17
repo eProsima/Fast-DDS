@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "KeyedHelloWorld.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 KeyedHelloWorld::KeyedHelloWorld()
 {
-
 }
 
 KeyedHelloWorld::~KeyedHelloWorld()
@@ -68,7 +72,6 @@ KeyedHelloWorld& KeyedHelloWorld::operator =(
     m_key = x.m_key;
     m_index = x.m_index;
     m_message = x.m_message;
-
     return *this;
 }
 
@@ -79,7 +82,6 @@ KeyedHelloWorld& KeyedHelloWorld::operator =(
     m_key = x.m_key;
     m_index = x.m_index;
     m_message = std::move(x.m_message);
-
     return *this;
 }
 
@@ -196,3 +198,5 @@ eprosima::fastcdr::fixed_string<128>& KeyedHelloWorld::message()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "KeyedHelloWorldCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

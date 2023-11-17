@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "deadlinepayload.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 HelloMsg::HelloMsg()
 {
-
 }
 
 HelloMsg::~HelloMsg()
@@ -65,7 +69,6 @@ HelloMsg& HelloMsg::operator =(
 
     m_deadlinekey = x.m_deadlinekey;
     m_payload = x.m_payload;
-
     return *this;
 }
 
@@ -75,7 +78,6 @@ HelloMsg& HelloMsg::operator =(
 
     m_deadlinekey = x.m_deadlinekey;
     m_payload = std::move(x.m_payload);
-
     return *this;
 }
 
@@ -162,3 +164,5 @@ eprosima::fastcdr::fixed_string<256>& HelloMsg::payload()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "deadlinepayloadCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

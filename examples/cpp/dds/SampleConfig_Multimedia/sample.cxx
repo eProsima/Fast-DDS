@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "sample.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 sample::sample()
 {
-
 }
 
 sample::~sample()
@@ -65,7 +69,6 @@ sample& sample::operator =(
 
     m_index = x.m_index;
     m_key_value = x.m_key_value;
-
     return *this;
 }
 
@@ -75,7 +78,6 @@ sample& sample::operator =(
 
     m_index = x.m_index;
     m_key_value = x.m_key_value;
-
     return *this;
 }
 
@@ -152,3 +154,5 @@ uint8_t& sample::key_value()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "sampleCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

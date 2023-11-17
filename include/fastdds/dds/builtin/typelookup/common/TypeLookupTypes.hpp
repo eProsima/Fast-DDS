@@ -45,18 +45,18 @@ struct TypeLookup_getTypes_In
     std::vector<fastrtps::types::TypeIdentifier> type_ids;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeLookup_getTypes_In& data,
             size_t current_alignment = 0);
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -76,18 +76,18 @@ struct TypeLookup_getTypes_Out
     std::vector<fastrtps::types::TypeIdentifierPair> complete_to_minimal;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeLookup_getTypes_Out& data,
             size_t current_alignment = 0);
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -138,18 +138,18 @@ public:
     RTPS_DllAPI TypeLookup_getTypes_Out& result();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeLookup_getTypes_Result& data,
             size_t current_alignment = 0);
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -175,19 +175,19 @@ public:
     std::vector<uint8_t> continuation_point;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3,
+    FASTDDS_SER_METHOD_DEPRECATED(3,
             "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeLookup_getTypeDependencies_In& data,
             size_t current_alignment = 0);
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -209,19 +209,19 @@ public:
     std::vector<uint8_t> continuation_point;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3,
+    FASTDDS_SER_METHOD_DEPRECATED(3,
             "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeLookup_getTypeDependencies_Out& data,
             size_t current_alignment = 0);
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -272,19 +272,19 @@ public:
     RTPS_DllAPI TypeLookup_getTypeDependencies_Out& result();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3,
+    FASTDDS_SER_METHOD_DEPRECATED(3,
             "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeLookup_getTypeDependencies_Result& data,
             size_t current_alignment = 0);
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -349,18 +349,18 @@ public:
     RTPS_DllAPI TypeLookup_getTypeDependencies_In& getTypeDependencies();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_Call::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Call::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeLookup_Call& data,
             size_t current_alignment = 0);
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_Call::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Call::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_Call::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Call::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -388,18 +388,18 @@ public:
     TypeLookup_Call data;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_Request::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Request::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeLookup_Request& data,
             size_t current_alignment = 0);
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_Request::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Request::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_Request::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Request::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -460,18 +460,18 @@ public:
     RTPS_DllAPI TypeLookup_getTypeDependencies_Result& getTypeDependencies();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_Return::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Return::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeLookup_Return& data,
             size_t current_alignment = 0);
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_Return::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Return::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_Return::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Return::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -499,18 +499,18 @@ public:
     TypeLookup_Return return_value;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_Reply::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Reply::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeLookup_Reply& data,
             size_t current_alignment = 0);
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_Reply::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Reply::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::builtin::TypeLookup_Reply::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Reply::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);

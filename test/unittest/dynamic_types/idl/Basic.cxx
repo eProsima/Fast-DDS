@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "Basic.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include "BasicTypeObject.h"
 
 #include <fastcdr/Cdr.h>
@@ -38,9 +41,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 EnumStruct::EnumStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -66,7 +70,6 @@ EnumStruct& EnumStruct::operator =(
 {
 
     m_my_enum = x.m_my_enum;
-
     return *this;
 }
 
@@ -75,7 +78,6 @@ EnumStruct& EnumStruct::operator =(
 {
 
     m_my_enum = x.m_my_enum;
-
     return *this;
 }
 
@@ -120,9 +122,10 @@ MyEnum& EnumStruct::my_enum()
 }
 
 
+
+
 AliasStruct::AliasStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -148,7 +151,6 @@ AliasStruct& AliasStruct::operator =(
 {
 
     m_my_alias = x.m_my_alias;
-
     return *this;
 }
 
@@ -157,7 +159,6 @@ AliasStruct& AliasStruct::operator =(
 {
 
     m_my_alias = x.m_my_alias;
-
     return *this;
 }
 
@@ -202,9 +203,10 @@ MyAliasEnum& AliasStruct::my_alias()
 }
 
 
+
+
 AliasAliasStruct::AliasAliasStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -230,7 +232,6 @@ AliasAliasStruct& AliasAliasStruct::operator =(
 {
 
     m_my_alias_alias = x.m_my_alias_alias;
-
     return *this;
 }
 
@@ -239,7 +240,6 @@ AliasAliasStruct& AliasAliasStruct::operator =(
 {
 
     m_my_alias_alias = x.m_my_alias_alias;
-
     return *this;
 }
 
@@ -284,9 +284,10 @@ MyAliasAliasEnum& AliasAliasStruct::my_alias_alias()
 }
 
 
+
+
 BoolStruct::BoolStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -312,7 +313,6 @@ BoolStruct& BoolStruct::operator =(
 {
 
     m_my_bool = x.m_my_bool;
-
     return *this;
 }
 
@@ -321,7 +321,6 @@ BoolStruct& BoolStruct::operator =(
 {
 
     m_my_bool = x.m_my_bool;
-
     return *this;
 }
 
@@ -366,9 +365,10 @@ bool& BoolStruct::my_bool()
 }
 
 
+
+
 OctetStruct::OctetStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -394,7 +394,6 @@ OctetStruct& OctetStruct::operator =(
 {
 
     m_my_octet = x.m_my_octet;
-
     return *this;
 }
 
@@ -403,7 +402,6 @@ OctetStruct& OctetStruct::operator =(
 {
 
     m_my_octet = x.m_my_octet;
-
     return *this;
 }
 
@@ -448,9 +446,10 @@ uint8_t& OctetStruct::my_octet()
 }
 
 
+
+
 ShortStruct::ShortStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -476,7 +475,6 @@ ShortStruct& ShortStruct::operator =(
 {
 
     m_my_int16 = x.m_my_int16;
-
     return *this;
 }
 
@@ -485,7 +483,6 @@ ShortStruct& ShortStruct::operator =(
 {
 
     m_my_int16 = x.m_my_int16;
-
     return *this;
 }
 
@@ -530,9 +527,10 @@ int16_t& ShortStruct::my_int16()
 }
 
 
+
+
 LongStruct::LongStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -558,7 +556,6 @@ LongStruct& LongStruct::operator =(
 {
 
     m_my_int32 = x.m_my_int32;
-
     return *this;
 }
 
@@ -567,7 +564,6 @@ LongStruct& LongStruct::operator =(
 {
 
     m_my_int32 = x.m_my_int32;
-
     return *this;
 }
 
@@ -612,9 +608,10 @@ int32_t& LongStruct::my_int32()
 }
 
 
+
+
 LongLongStruct::LongLongStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -640,7 +637,6 @@ LongLongStruct& LongLongStruct::operator =(
 {
 
     m_my_int64 = x.m_my_int64;
-
     return *this;
 }
 
@@ -649,7 +645,6 @@ LongLongStruct& LongLongStruct::operator =(
 {
 
     m_my_int64 = x.m_my_int64;
-
     return *this;
 }
 
@@ -694,9 +689,10 @@ int64_t& LongLongStruct::my_int64()
 }
 
 
+
+
 UShortStruct::UShortStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -722,7 +718,6 @@ UShortStruct& UShortStruct::operator =(
 {
 
     m_my_uint16 = x.m_my_uint16;
-
     return *this;
 }
 
@@ -731,7 +726,6 @@ UShortStruct& UShortStruct::operator =(
 {
 
     m_my_uint16 = x.m_my_uint16;
-
     return *this;
 }
 
@@ -776,9 +770,10 @@ uint16_t& UShortStruct::my_uint16()
 }
 
 
+
+
 ULongStruct::ULongStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -804,7 +799,6 @@ ULongStruct& ULongStruct::operator =(
 {
 
     m_my_uint32 = x.m_my_uint32;
-
     return *this;
 }
 
@@ -813,7 +807,6 @@ ULongStruct& ULongStruct::operator =(
 {
 
     m_my_uint32 = x.m_my_uint32;
-
     return *this;
 }
 
@@ -858,9 +851,10 @@ uint32_t& ULongStruct::my_uint32()
 }
 
 
+
+
 ULongLongStruct::ULongLongStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -886,7 +880,6 @@ ULongLongStruct& ULongLongStruct::operator =(
 {
 
     m_my_uint64 = x.m_my_uint64;
-
     return *this;
 }
 
@@ -895,7 +888,6 @@ ULongLongStruct& ULongLongStruct::operator =(
 {
 
     m_my_uint64 = x.m_my_uint64;
-
     return *this;
 }
 
@@ -940,9 +932,10 @@ uint64_t& ULongLongStruct::my_uint64()
 }
 
 
+
+
 FloatStruct::FloatStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -968,7 +961,6 @@ FloatStruct& FloatStruct::operator =(
 {
 
     m_my_float32 = x.m_my_float32;
-
     return *this;
 }
 
@@ -977,7 +969,6 @@ FloatStruct& FloatStruct::operator =(
 {
 
     m_my_float32 = x.m_my_float32;
-
     return *this;
 }
 
@@ -1022,9 +1013,10 @@ float& FloatStruct::my_float32()
 }
 
 
+
+
 DoubleStruct::DoubleStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1050,7 +1042,6 @@ DoubleStruct& DoubleStruct::operator =(
 {
 
     m_my_float64 = x.m_my_float64;
-
     return *this;
 }
 
@@ -1059,7 +1050,6 @@ DoubleStruct& DoubleStruct::operator =(
 {
 
     m_my_float64 = x.m_my_float64;
-
     return *this;
 }
 
@@ -1104,9 +1094,10 @@ double& DoubleStruct::my_float64()
 }
 
 
+
+
 LongDoubleStruct::LongDoubleStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1132,7 +1123,6 @@ LongDoubleStruct& LongDoubleStruct::operator =(
 {
 
     m_my_float128 = x.m_my_float128;
-
     return *this;
 }
 
@@ -1141,7 +1131,6 @@ LongDoubleStruct& LongDoubleStruct::operator =(
 {
 
     m_my_float128 = x.m_my_float128;
-
     return *this;
 }
 
@@ -1186,9 +1175,10 @@ long double& LongDoubleStruct::my_float128()
 }
 
 
+
+
 CharStruct::CharStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1214,7 +1204,6 @@ CharStruct& CharStruct::operator =(
 {
 
     m_my_char = x.m_my_char;
-
     return *this;
 }
 
@@ -1223,7 +1212,6 @@ CharStruct& CharStruct::operator =(
 {
 
     m_my_char = x.m_my_char;
-
     return *this;
 }
 
@@ -1268,9 +1256,10 @@ char& CharStruct::my_char()
 }
 
 
+
+
 WCharStruct::WCharStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1296,7 +1285,6 @@ WCharStruct& WCharStruct::operator =(
 {
 
     m_my_wchar = x.m_my_wchar;
-
     return *this;
 }
 
@@ -1305,7 +1293,6 @@ WCharStruct& WCharStruct::operator =(
 {
 
     m_my_wchar = x.m_my_wchar;
-
     return *this;
 }
 
@@ -1350,9 +1337,10 @@ wchar_t& WCharStruct::my_wchar()
 }
 
 
+
+
 StringStruct::StringStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1378,7 +1366,6 @@ StringStruct& StringStruct::operator =(
 {
 
     m_my_string = x.m_my_string;
-
     return *this;
 }
 
@@ -1387,7 +1374,6 @@ StringStruct& StringStruct::operator =(
 {
 
     m_my_string = std::move(x.m_my_string);
-
     return *this;
 }
 
@@ -1442,9 +1428,10 @@ std::string& StringStruct::my_string()
 }
 
 
+
+
 WStringStruct::WStringStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1470,7 +1457,6 @@ WStringStruct& WStringStruct::operator =(
 {
 
     m_my_wstring = x.m_my_wstring;
-
     return *this;
 }
 
@@ -1479,7 +1465,6 @@ WStringStruct& WStringStruct::operator =(
 {
 
     m_my_wstring = std::move(x.m_my_wstring);
-
     return *this;
 }
 
@@ -1534,9 +1519,10 @@ std::wstring& WStringStruct::my_wstring()
 }
 
 
+
+
 LargeStringStruct::LargeStringStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1562,7 +1548,6 @@ LargeStringStruct& LargeStringStruct::operator =(
 {
 
     m_my_large_string = x.m_my_large_string;
-
     return *this;
 }
 
@@ -1571,7 +1556,6 @@ LargeStringStruct& LargeStringStruct::operator =(
 {
 
     m_my_large_string = std::move(x.m_my_large_string);
-
     return *this;
 }
 
@@ -1626,9 +1610,10 @@ eprosima::fastcdr::fixed_string<41925>& LargeStringStruct::my_large_string()
 }
 
 
+
+
 LargeWStringStruct::LargeWStringStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1654,7 +1639,6 @@ LargeWStringStruct& LargeWStringStruct::operator =(
 {
 
     m_my_large_wstring = x.m_my_large_wstring;
-
     return *this;
 }
 
@@ -1663,7 +1647,6 @@ LargeWStringStruct& LargeWStringStruct::operator =(
 {
 
     m_my_large_wstring = std::move(x.m_my_large_wstring);
-
     return *this;
 }
 
@@ -1718,9 +1701,10 @@ std::wstring& LargeWStringStruct::my_large_wstring()
 }
 
 
+
+
 ArraytStruct::ArraytStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1746,7 +1730,6 @@ ArraytStruct& ArraytStruct::operator =(
 {
 
     m_my_array = x.m_my_array;
-
     return *this;
 }
 
@@ -1755,7 +1738,6 @@ ArraytStruct& ArraytStruct::operator =(
 {
 
     m_my_array = std::move(x.m_my_array);
-
     return *this;
 }
 
@@ -1811,9 +1793,10 @@ std::array<std::array<std::array<int32_t, 2>, 2>, 2>& ArraytStruct::my_array()
 
 
 
+
+
 ArrayArrayStruct::ArrayArrayStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1839,7 +1822,6 @@ ArrayArrayStruct& ArrayArrayStruct::operator =(
 {
 
     m_my_array_array = x.m_my_array_array;
-
     return *this;
 }
 
@@ -1848,7 +1830,6 @@ ArrayArrayStruct& ArrayArrayStruct::operator =(
 {
 
     m_my_array_array = std::move(x.m_my_array_array);
-
     return *this;
 }
 
@@ -1903,9 +1884,12 @@ std::array<std::array<MyArray, 2>, 2>& ArrayArrayStruct::my_array_array()
 }
 
 
+
+
+
+
 SequenceStruct::SequenceStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -1931,7 +1915,6 @@ SequenceStruct& SequenceStruct::operator =(
 {
 
     m_my_sequence = x.m_my_sequence;
-
     return *this;
 }
 
@@ -1940,7 +1923,6 @@ SequenceStruct& SequenceStruct::operator =(
 {
 
     m_my_sequence = std::move(x.m_my_sequence);
-
     return *this;
 }
 
@@ -1995,9 +1977,14 @@ std::vector<int32_t>& SequenceStruct::my_sequence()
 }
 
 
+
+
+
+
+
+
 SequenceSequenceStruct::SequenceSequenceStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -2023,7 +2010,6 @@ SequenceSequenceStruct& SequenceSequenceStruct::operator =(
 {
 
     m_my_sequence_sequence = x.m_my_sequence_sequence;
-
     return *this;
 }
 
@@ -2032,7 +2018,6 @@ SequenceSequenceStruct& SequenceSequenceStruct::operator =(
 {
 
     m_my_sequence_sequence = std::move(x.m_my_sequence_sequence);
-
     return *this;
 }
 
@@ -2087,9 +2072,12 @@ std::vector<std::vector<int32_t>>& SequenceSequenceStruct::my_sequence_sequence(
 }
 
 
+
+
+
+
 MapStruct::MapStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -2115,7 +2103,6 @@ MapStruct& MapStruct::operator =(
 {
 
     m_my_map = x.m_my_map;
-
     return *this;
 }
 
@@ -2124,7 +2111,6 @@ MapStruct& MapStruct::operator =(
 {
 
     m_my_map = std::move(x.m_my_map);
-
     return *this;
 }
 
@@ -2179,9 +2165,14 @@ std::map<int32_t, int32_t>& MapStruct::my_map()
 }
 
 
+
+
+
+
+
+
 MapMapStruct::MapMapStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -2207,7 +2198,6 @@ MapMapStruct& MapMapStruct::operator =(
 {
 
     m_my_map_map = x.m_my_map_map;
-
     return *this;
 }
 
@@ -2216,7 +2206,6 @@ MapMapStruct& MapMapStruct::operator =(
 {
 
     m_my_map_map = std::move(x.m_my_map_map);
-
     return *this;
 }
 
@@ -2381,26 +2370,26 @@ std::bitset<30> MyBitset::bitset() const
 {
     std::string str_value;
 
-
     str_value = m_bitset.to_string() + str_value;
 
     return std::bitset<30>(str_value);
 }
 
-void MyBitset::bitset(const std::bitset<30>& bitset)
+void MyBitset::bitset(
+        const std::bitset<30>& bitset)
 {
     std::string str_value {bitset.to_string()};
     size_t base_diff {0};
     size_t last_post {std::string::npos};
 
-
     base_diff += 30;
     m_bitset = std::bitset<30>(str_value.substr(str_value.length() - base_diff, last_post));
 }
 
+
+
 BitsetStruct::BitsetStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -2426,7 +2415,6 @@ BitsetStruct& BitsetStruct::operator =(
 {
 
     m_a = x.m_a;
-
     return *this;
 }
 
@@ -2435,7 +2423,6 @@ BitsetStruct& BitsetStruct::operator =(
 {
 
     m_a = std::move(x.m_a);
-
     return *this;
 }
 
@@ -2490,9 +2477,10 @@ MyBitset& BitsetStruct::a()
 }
 
 
+
+
 StructStruct::StructStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -2521,7 +2509,6 @@ StructStruct& StructStruct::operator =(
 
     m_a = x.m_a;
     m_b = x.m_b;
-
     return *this;
 }
 
@@ -2531,7 +2518,6 @@ StructStruct& StructStruct::operator =(
 
     m_a = x.m_a;
     m_b = x.m_b;
-
     return *this;
 }
 
@@ -2606,9 +2592,10 @@ int64_t& StructStruct::b()
 }
 
 
+
+
 StructStructStruct::StructStructStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -2637,7 +2624,6 @@ StructStructStruct& StructStructStruct::operator =(
 
     m_child_struct = x.m_child_struct;
     m_child_int64 = x.m_child_int64;
-
     return *this;
 }
 
@@ -2647,7 +2633,6 @@ StructStructStruct& StructStructStruct::operator =(
 
     m_child_struct = std::move(x.m_child_struct);
     m_child_int64 = x.m_child_int64;
-
     return *this;
 }
 
@@ -2730,6 +2715,8 @@ int64_t& StructStructStruct::child_int64()
 {
     return m_child_int64;
 }
+
+
 
 
 SimpleUnion::SimpleUnion()
@@ -2890,6 +2877,8 @@ void SimpleUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -3010,6 +2999,8 @@ int64_t& SimpleUnion::second()
 
     return m_second;
 }
+
+
 
 
 UnionUnion::UnionUnion()
@@ -3172,6 +3163,8 @@ void UnionUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -3300,6 +3293,8 @@ SimpleUnion& UnionUnion::second()
 
     return m_second;
 }
+
+
 
 
 WCharUnion::WCharUnion()
@@ -3460,6 +3455,8 @@ void WCharUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -3582,9 +3579,10 @@ int64_t& WCharUnion::second()
 }
 
 
+
+
 SimpleUnionStruct::SimpleUnionStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -3610,7 +3608,6 @@ SimpleUnionStruct& SimpleUnionStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -3619,7 +3616,6 @@ SimpleUnionStruct& SimpleUnionStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -3674,9 +3670,10 @@ SimpleUnion& SimpleUnionStruct::my_union()
 }
 
 
+
+
 UnionUnionUnionStruct::UnionUnionUnionStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -3702,7 +3699,6 @@ UnionUnionUnionStruct& UnionUnionUnionStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -3711,7 +3707,6 @@ UnionUnionUnionStruct& UnionUnionUnionStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -3766,9 +3761,10 @@ UnionUnion& UnionUnionUnionStruct::my_union()
 }
 
 
+
+
 WCharUnionStruct::WCharUnionStruct()
 {
-
     // Just to register all known types
     registerBasicTypes();
 }
@@ -3794,7 +3790,6 @@ WCharUnionStruct& WCharUnionStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -3803,7 +3798,6 @@ WCharUnionStruct& WCharUnionStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -3860,3 +3854,5 @@ WCharUnion& WCharUnionStruct::my_union()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "BasicCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

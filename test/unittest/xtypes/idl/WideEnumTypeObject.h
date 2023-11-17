@@ -59,15 +59,21 @@ eProsima_user_DllExport const TypeObject* GetMyEnumWideObject(bool complete = fa
 eProsima_user_DllExport const TypeObject* GetMinimalMyEnumWideObject();
 eProsima_user_DllExport const TypeObject* GetCompleteMyEnumWideObject();
 
+
+
 eProsima_user_DllExport const TypeIdentifier* GetMyEnumWideStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMyEnumWideStructObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalMyEnumWideStructObject();
 eProsima_user_DllExport const TypeObject* GetCompleteMyEnumWideStructObject();
 
+
+
 eProsima_user_DllExport const TypeIdentifier* GetSimpleWideUnionIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetSimpleWideUnionObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalSimpleWideUnionObject();
 eProsima_user_DllExport const TypeObject* GetCompleteSimpleWideUnionObject();
+
+
 
 eProsima_user_DllExport const TypeIdentifier* GetSimpleWideUnionStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetSimpleWideUnionStructObject(bool complete = false);

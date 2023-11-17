@@ -135,119 +135,194 @@ namespace fastcdr {
 class Cdr;
 class CdrSizeCalculator;
 
+
+
+
+
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const EnumStruct& data);
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasStruct& data);
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasAliasStruct& data);
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BoolStruct& data);
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const OctetStruct& data);
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ShortStruct& data);
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const LongStruct& data);
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const LongLongStruct& data);
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UShortStruct& data);
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ULongStruct& data);
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ULongLongStruct& data);
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FloatStruct& data);
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DoubleStruct& data);
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const LongDoubleStruct& data);
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const CharStruct& data);
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const WCharStruct& data);
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StringStruct& data);
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const WStringStruct& data);
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const LargeStringStruct& data);
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const LargeWStringStruct& data);
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraytStruct& data);
 
 
+
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayArrayStruct& data);
+
+
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceStruct& data);
 
+
+
+
+
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceSequenceStruct& data);
 
+
+
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStruct& data);
+
+
+
+
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapMapStruct& data);
 
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BitsetStruct& data);
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructStruct& data);
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
@@ -256,13 +331,28 @@ eProsima_user_DllExport void serialize_key(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SimpleUnionStruct& data);
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionUnionUnionStruct& data);
+
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
@@ -273,3 +363,4 @@ eProsima_user_DllExport void serialize_key(
 } // namespace eprosima
 
 #endif // _FAST_DDS_GENERATED_BASICCDRAUX_HPP_
+

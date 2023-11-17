@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "Data1mb.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,12 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
+
+
 Data1mb::Data1mb()
 {
-
 }
 
 Data1mb::~Data1mb()
@@ -62,7 +68,6 @@ Data1mb& Data1mb::operator =(
 {
 
     m_data = x.m_data;
-
     return *this;
 }
 
@@ -71,7 +76,6 @@ Data1mb& Data1mb::operator =(
 {
 
     m_data = std::move(x.m_data);
-
     return *this;
 }
 
@@ -128,3 +132,5 @@ std::vector<uint8_t>& Data1mb::data()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "Data1mbCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

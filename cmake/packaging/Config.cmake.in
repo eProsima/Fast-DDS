@@ -22,7 +22,7 @@ endif()
 set_and_check(@PROJECT_NAME@_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
 set_and_check(@PROJECT_NAME@_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
 
-find_package(fastcdr 2 REQUIRED)
+find_package(fastcdr REQUIRED)
 find_package(foonathan_memory REQUIRED)
 find_package(TinyXML2 QUIET)
 @FASTRTPS_INSTALLER_DEPS_ANCILLARY@

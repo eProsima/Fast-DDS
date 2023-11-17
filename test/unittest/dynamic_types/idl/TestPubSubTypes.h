@@ -41,6 +41,8 @@ typedef MyEnum MyAliasEnum;
 typedef MyAliasEnum MyAliasEnum2;
 typedef MyAliasEnum2 MyAliasEnum3;
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type BasicStruct defined by the user in the IDL file.
  * @ingroup Test
@@ -132,7 +134,11 @@ typedef std::array<uint8_t, 500> MyOctetArray500;
 typedef std::array<BasicStruct, 5> BSAlias5;
 typedef std::array<MyAliasEnum3, 42> MA3;
 typedef std::array<int32_t, 2> MyMiniArray;
+
+
 typedef std::vector<int32_t> MySequenceLong;
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type ComplexStruct defined by the user in the IDL file.
@@ -224,6 +230,14 @@ public:
 
 
 
+
+
+
+
+
+
+
+
 /*!
  * @brief This class represents the TopicDataType of the type CompleteStruct defined by the user in the IDL file.
  * @ingroup Test
@@ -311,6 +325,8 @@ public:
     unsigned char* m_keyBuffer;
 
 };
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type KeyedStruct defined by the user in the IDL file.

@@ -65,7 +65,11 @@ public:
         }
 
         // Get the serialized length
+#if FASTCDR_VERSION_MAJOR == 1
+        payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+#else
         payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+#endif // FASTCDR_VERSION_MAJOR == 1
         return true;
     }
 
@@ -80,7 +84,12 @@ public:
         eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fb);
+        eprosima::fastcdr::Cdr deser(fb
+#if FASTCDR_VERSION_MAJOR == 1
+                , eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
+                , eprosima::fastcdr::Cdr::CdrType::DDS_CDR
+#endif // FASTCDR_VERSION_MAJOR == 1
+                );
 
         // Deserialize encapsulation.
         deser.read_encapsulation();

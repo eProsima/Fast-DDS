@@ -222,6 +222,7 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/reader/StatisticsReaderImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/writer/StatisticsWriterImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesv1.cxx
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
             )
 

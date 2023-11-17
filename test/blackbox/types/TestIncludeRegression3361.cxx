@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "TestIncludeRegression3361.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include "TestIncludeRegression3361TypeObject.h"
 
 #include <fastcdr/Cdr.h>
@@ -38,3 +41,8 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+namespace TestModule {
+
+
+} // namespace TestModule
+#endif // FASTCDR_VERSION_MAJOR > 1

@@ -23,6 +23,66 @@ size_t calculate_serialized_size(
         const eprosima::fastrtps::types::TypeIdentifier& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TI_STRING8_SMALL:
+        case eprosima::fastrtps::types::TI_STRING16_SMALL:
+            calculate_serialized_size(calculator, data.string_sdefn(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TI_STRING8_LARGE:
+        case eprosima::fastrtps::types::TI_STRING16_LARGE:
+            calculate_serialized_size(calculator, data.string_ldefn(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_SEQUENCE_SMALL:
+            calculate_serialized_size(calculator, data.seq_sdefn(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_SEQUENCE_LARGE:
+            calculate_serialized_size(calculator, data.seq_ldefn(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_ARRAY_SMALL:
+            calculate_serialized_size(calculator, data.array_sdefn(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_ARRAY_LARGE:
+            calculate_serialized_size(calculator, data.array_ldefn(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_MAP_SMALL:
+            calculate_serialized_size(calculator, data.map_sdefn(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_MAP_LARGE:
+            calculate_serialized_size(calculator, data.map_ldefn(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TI_STRONGLY_CONNECTED_COMPONENT:
+            calculate_serialized_size(calculator, data.sc_component_id(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_MINIMAL:
+            current_alignment += 14 + eprosima::fastcdr::Cdr::alignment(current_alignment, 14);
+
+            break;
+        default:
+            calculate_serialized_size(calculator, data.extended_defn(), current_alignment);
+            break;
+    }
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -92,6 +152,8 @@ size_t calculate_serialized_size(
     }
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>

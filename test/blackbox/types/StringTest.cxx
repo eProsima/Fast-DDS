@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "StringTest.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 StringTest::StringTest()
 {
-
 }
 
 StringTest::~StringTest()
@@ -62,7 +66,6 @@ StringTest& StringTest::operator =(
 {
 
     m_message = x.m_message;
-
     return *this;
 }
 
@@ -71,7 +74,6 @@ StringTest& StringTest::operator =(
 {
 
     m_message = std::move(x.m_message);
-
     return *this;
 }
 
@@ -128,3 +130,5 @@ eprosima::fastcdr::fixed_string<10000>& StringTest::message()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "StringTestCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "Data64kb.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,12 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
+
+
 Data64kb::Data64kb()
 {
-
 }
 
 Data64kb::~Data64kb()
@@ -62,7 +68,6 @@ Data64kb& Data64kb::operator =(
 {
 
     m_data = x.m_data;
-
     return *this;
 }
 
@@ -71,7 +76,6 @@ Data64kb& Data64kb::operator =(
 {
 
     m_data = std::move(x.m_data);
-
     return *this;
 }
 
@@ -128,3 +132,5 @@ std::vector<uint8_t>& Data64kb::data()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "Data64kbCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

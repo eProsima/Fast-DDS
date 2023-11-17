@@ -23,6 +23,19 @@ size_t calculate_serialized_size(
         const eprosima::fastdds::dds::rpc::ReplyHeader&,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity.GUID_t
+    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // SampleIdentity.SequenceNumber_t
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4); // RemoteException
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -34,6 +47,8 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -72,7 +87,13 @@ void deserialize(
     dcdr >> data.relatedRequestId.sequence_number().high;
     dcdr >> data.relatedRequestId.sequence_number().low;
 
+#if FASTCDR_VERSION_MAJOR == 1
+    uint32_t aux;
+    dcdr >> aux;
+    data.remoteEx = static_cast<eprosima::fastdds::dds::rpc::RemoteExceptionCode_t>(aux);
+#else
     dcdr >> data.remoteEx;
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -81,6 +102,19 @@ size_t calculate_serialized_size(
         const eprosima::fastdds::dds::rpc::RequestHeader& data,
         size_t& current_alignment)
 {
+#if FASTCDR_VERSION_MAJOR == 1
+
+    static_cast<void>(calculator);
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity.GUID_t
+    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // SampleIdentity.SequenceNumber_t
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.instanceName.size() + 1;
+
+    return current_alignment - initial_alignment;
+
+#else
+
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
@@ -93,6 +127,8 @@ size_t calculate_serialized_size(
 
 
     return calculated_size;
+
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -111,7 +147,11 @@ void serialize(
     scdr << data.requestId.sequence_number().high;
     scdr << data.requestId.sequence_number().low;
 
+#if FASTCDR_VERSION_MAJOR == 1
     scdr << data.instanceName.to_string();
+#else
+    scdr << data.instanceName;
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 template<>
@@ -130,7 +170,13 @@ void deserialize(
     dcdr >> data.requestId.sequence_number().high;
     dcdr >> data.requestId.sequence_number().low;
 
+#if FASTCDR_VERSION_MAJOR == 1
+    std::string aux;
+    dcdr >> aux;
+    data.instanceName = aux;
+#else
     dcdr >> data.instanceName;
+#endif // FASTCDR_VERSION_MAJOR == 1
 }
 
 } // namespace fastcdr

@@ -38,6 +38,8 @@
 #endif  // GEN_API_VER
 
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type NewAliases defined by the user in the IDL file.
  * @ingroup new_features_4_2
@@ -128,8 +130,19 @@ public:
 
 
 
+
+
+
+
+
+
+
+
+
 namespace bitmodule
 {
+
+
 
     /*!
      * @brief This class represents the TopicDataType of the type BitsetBitmask defined by the user in the IDL file.
@@ -219,6 +232,8 @@ namespace bitmodule
 
     };
 
+
+
     /*!
      * @brief This class represents the TopicDataType of the type BM2 defined by the user in the IDL file.
      * @ingroup new_features_4_2
@@ -307,6 +322,8 @@ namespace bitmodule
 
     };
 }
+
+
 
 /*!
  * @brief This class represents the TopicDataType of the type StructTest defined by the user in the IDL file.

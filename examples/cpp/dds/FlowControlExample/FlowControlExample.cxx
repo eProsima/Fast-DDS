@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "FlowControlExample.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 FlowControlExample::FlowControlExample()
 {
-
 }
 
 FlowControlExample::~FlowControlExample()
@@ -65,7 +69,6 @@ FlowControlExample& FlowControlExample::operator =(
 
     m_message = x.m_message;
     m_wasFast = x.m_wasFast;
-
     return *this;
 }
 
@@ -75,7 +78,6 @@ FlowControlExample& FlowControlExample::operator =(
 
     m_message = std::move(x.m_message);
     m_wasFast = x.m_wasFast;
-
     return *this;
 }
 
@@ -162,3 +164,5 @@ char& FlowControlExample::wasFast()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "FlowControlExampleCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

@@ -74,6 +74,8 @@ eProsima_user_DllExport const TypeObject* GetMyAliasEnum3Object(bool complete = 
 eProsima_user_DllExport const TypeObject* GetMinimalMyAliasEnum3Object();
 eProsima_user_DllExport const TypeObject* GetCompleteMyAliasEnum3Object();
 
+
+
 eProsima_user_DllExport const TypeIdentifier* GetBasicStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetBasicStructObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalBasicStructObject();
@@ -99,30 +101,42 @@ eProsima_user_DllExport const TypeObject* GetMyMiniArrayObject(bool complete = f
 eProsima_user_DllExport const TypeObject* GetMinimalMyMiniArrayObject();
 eProsima_user_DllExport const TypeObject* GetCompleteMyMiniArrayObject();
 
+
+
 eProsima_user_DllExport const TypeIdentifier* GetMySequenceLongIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMySequenceLongObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalMySequenceLongObject();
 eProsima_user_DllExport const TypeObject* GetCompleteMySequenceLongObject();
+
+
 
 eProsima_user_DllExport const TypeIdentifier* GetComplexStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetComplexStructObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalComplexStructObject();
 eProsima_user_DllExport const TypeObject* GetCompleteComplexStructObject();
 
+
+
 eProsima_user_DllExport const TypeIdentifier* GetMyUnionIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMyUnionObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalMyUnionObject();
 eProsima_user_DllExport const TypeObject* GetCompleteMyUnionObject();
+
+
 
 eProsima_user_DllExport const TypeIdentifier* GetMyUnion2Identifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMyUnion2Object(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalMyUnion2Object();
 eProsima_user_DllExport const TypeObject* GetCompleteMyUnion2Object();
 
+
+
 eProsima_user_DllExport const TypeIdentifier* GetCompleteStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetCompleteStructObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalCompleteStructObject();
 eProsima_user_DllExport const TypeObject* GetCompleteCompleteStructObject();
+
+
 
 eProsima_user_DllExport const TypeIdentifier* GetKeyedStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetKeyedStructObject(bool complete = false);

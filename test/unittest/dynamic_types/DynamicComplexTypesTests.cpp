@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/TypesBase.h>
 #include <gtest/gtest.h>
+
+#include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
@@ -27,9 +30,6 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastdds/dds/log/Log.hpp>
-
-#include <fastcdr/CdrSizeCalculator.hpp>
 
 #include "idl/Test.h"
 #include "idl/TestPubSubTypes.h"

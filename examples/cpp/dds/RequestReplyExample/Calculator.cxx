@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "Calculator.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 RequestType::RequestType()
 {
-
 }
 
 RequestType::~RequestType()
@@ -68,7 +72,6 @@ RequestType& RequestType::operator =(
     m_operation = x.m_operation;
     m_x = x.m_x;
     m_y = x.m_y;
-
     return *this;
 }
 
@@ -79,7 +82,6 @@ RequestType& RequestType::operator =(
     m_operation = x.m_operation;
     m_x = x.m_x;
     m_y = x.m_y;
-
     return *this;
 }
 
@@ -184,9 +186,10 @@ int32_t& RequestType::y()
 }
 
 
+
+
 ReplyType::ReplyType()
 {
-
 }
 
 ReplyType::~ReplyType()
@@ -210,7 +213,6 @@ ReplyType& ReplyType::operator =(
 {
 
     m_z = x.m_z;
-
     return *this;
 }
 
@@ -219,7 +221,6 @@ ReplyType& ReplyType::operator =(
 {
 
     m_z = x.m_z;
-
     return *this;
 }
 
@@ -266,3 +267,5 @@ int64_t& ReplyType::z()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "CalculatorCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

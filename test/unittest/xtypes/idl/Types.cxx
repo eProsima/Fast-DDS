@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "Types.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include "TypesTypeObject.h"
 
 #include <fastcdr/Cdr.h>
@@ -38,9 +41,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 MyEnumStruct::MyEnumStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -66,7 +70,6 @@ MyEnumStruct& MyEnumStruct::operator =(
 {
 
     m_my_enum = x.m_my_enum;
-
     return *this;
 }
 
@@ -75,7 +78,6 @@ MyEnumStruct& MyEnumStruct::operator =(
 {
 
     m_my_enum = x.m_my_enum;
-
     return *this;
 }
 
@@ -120,9 +122,10 @@ MyEnum& MyEnumStruct::my_enum()
 }
 
 
+
+
 MyBadEnumStruct::MyBadEnumStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -148,7 +151,6 @@ MyBadEnumStruct& MyBadEnumStruct::operator =(
 {
 
     m_my_enum = x.m_my_enum;
-
     return *this;
 }
 
@@ -157,7 +159,6 @@ MyBadEnumStruct& MyBadEnumStruct::operator =(
 {
 
     m_my_enum = x.m_my_enum;
-
     return *this;
 }
 
@@ -203,9 +204,10 @@ MyBadEnum& MyBadEnumStruct::my_enum()
 
 
 
+
+
 MyAliasEnumStruct::MyAliasEnumStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -231,7 +233,6 @@ MyAliasEnumStruct& MyAliasEnumStruct::operator =(
 {
 
     m_my_enum = x.m_my_enum;
-
     return *this;
 }
 
@@ -240,7 +241,6 @@ MyAliasEnumStruct& MyAliasEnumStruct::operator =(
 {
 
     m_my_enum = x.m_my_enum;
-
     return *this;
 }
 
@@ -285,9 +285,10 @@ MyAliasEnum& MyAliasEnumStruct::my_enum()
 }
 
 
+
+
 BasicStruct::BasicStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -319,7 +320,6 @@ BasicStruct& BasicStruct::operator =(
     m_my_bool = x.m_my_bool;
     m_my_int32 = x.m_my_int32;
     m_my_string = x.m_my_string;
-
     return *this;
 }
 
@@ -330,7 +330,6 @@ BasicStruct& BasicStruct::operator =(
     m_my_bool = x.m_my_bool;
     m_my_int32 = x.m_my_int32;
     m_my_string = std::move(x.m_my_string);
-
     return *this;
 }
 
@@ -445,9 +444,10 @@ std::string& BasicStruct::my_string()
 }
 
 
+
+
 BasicNamesStruct::BasicNamesStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -479,7 +479,6 @@ BasicNamesStruct& BasicNamesStruct::operator =(
     m_my_bool_name = x.m_my_bool_name;
     m_my_int32_name = x.m_my_int32_name;
     m_my_string_name = x.m_my_string_name;
-
     return *this;
 }
 
@@ -490,7 +489,6 @@ BasicNamesStruct& BasicNamesStruct::operator =(
     m_my_bool_name = x.m_my_bool_name;
     m_my_int32_name = x.m_my_int32_name;
     m_my_string_name = std::move(x.m_my_string_name);
-
     return *this;
 }
 
@@ -605,9 +603,10 @@ std::string& BasicNamesStruct::my_string_name()
 }
 
 
+
+
 BasicBadStruct::BasicBadStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -639,7 +638,6 @@ BasicBadStruct& BasicBadStruct::operator =(
     m_my_bool = x.m_my_bool;
     m_my_int32 = x.m_my_int32;
     m_my_string = x.m_my_string;
-
     return *this;
 }
 
@@ -650,7 +648,6 @@ BasicBadStruct& BasicBadStruct::operator =(
     m_my_bool = x.m_my_bool;
     m_my_int32 = x.m_my_int32;
     m_my_string = std::move(x.m_my_string);
-
     return *this;
 }
 
@@ -765,9 +762,10 @@ std::string& BasicBadStruct::my_string()
 }
 
 
+
+
 BasicWideStruct::BasicWideStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -805,7 +803,6 @@ BasicWideStruct& BasicWideStruct::operator =(
     m_my_string = x.m_my_string;
     m_new_int32 = x.m_new_int32;
     m_new_string = x.m_new_string;
-
     return *this;
 }
 
@@ -818,7 +815,6 @@ BasicWideStruct& BasicWideStruct::operator =(
     m_my_string = std::move(x.m_my_string);
     m_new_int32 = x.m_new_int32;
     m_new_string = std::move(x.m_new_string);
-
     return *this;
 }
 
@@ -1003,9 +999,10 @@ std::string& BasicWideStruct::new_string()
 }
 
 
+
+
 BadBasicWideStruct::BadBasicWideStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -1043,7 +1040,6 @@ BadBasicWideStruct& BadBasicWideStruct::operator =(
     m_my_bool = x.m_my_bool;
     m_my_int32 = x.m_my_int32;
     m_my_string = x.m_my_string;
-
     return *this;
 }
 
@@ -1056,7 +1052,6 @@ BadBasicWideStruct& BadBasicWideStruct::operator =(
     m_my_bool = x.m_my_bool;
     m_my_int32 = x.m_my_int32;
     m_my_string = std::move(x.m_my_string);
-
     return *this;
 }
 
@@ -1241,9 +1236,10 @@ std::string& BadBasicWideStruct::my_string()
 }
 
 
+
+
 StringStruct::StringStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -1269,7 +1265,6 @@ StringStruct& StringStruct::operator =(
 {
 
     m_my_string = x.m_my_string;
-
     return *this;
 }
 
@@ -1278,7 +1273,6 @@ StringStruct& StringStruct::operator =(
 {
 
     m_my_string = std::move(x.m_my_string);
-
     return *this;
 }
 
@@ -1333,9 +1327,10 @@ std::string& StringStruct::my_string()
 }
 
 
+
+
 LargeStringStruct::LargeStringStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -1361,7 +1356,6 @@ LargeStringStruct& LargeStringStruct::operator =(
 {
 
     m_my_large_string = x.m_my_large_string;
-
     return *this;
 }
 
@@ -1370,7 +1364,6 @@ LargeStringStruct& LargeStringStruct::operator =(
 {
 
     m_my_large_string = std::move(x.m_my_large_string);
-
     return *this;
 }
 
@@ -1425,9 +1418,10 @@ eprosima::fastcdr::fixed_string<41925>& LargeStringStruct::my_large_string()
 }
 
 
+
+
 WStringStruct::WStringStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -1453,7 +1447,6 @@ WStringStruct& WStringStruct::operator =(
 {
 
     m_my_wstring = x.m_my_wstring;
-
     return *this;
 }
 
@@ -1462,7 +1455,6 @@ WStringStruct& WStringStruct::operator =(
 {
 
     m_my_wstring = std::move(x.m_my_wstring);
-
     return *this;
 }
 
@@ -1517,9 +1509,10 @@ std::wstring& WStringStruct::my_wstring()
 }
 
 
+
+
 LargeWStringStruct::LargeWStringStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -1545,7 +1538,6 @@ LargeWStringStruct& LargeWStringStruct::operator =(
 {
 
     m_my_large_wstring = x.m_my_large_wstring;
-
     return *this;
 }
 
@@ -1554,7 +1546,6 @@ LargeWStringStruct& LargeWStringStruct::operator =(
 {
 
     m_my_large_wstring = std::move(x.m_my_large_wstring);
-
     return *this;
 }
 
@@ -1609,9 +1600,10 @@ std::wstring& LargeWStringStruct::my_large_wstring()
 }
 
 
+
+
 ArrayStruct::ArrayStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -1637,7 +1629,6 @@ ArrayStruct& ArrayStruct::operator =(
 {
 
     m_my_array = x.m_my_array;
-
     return *this;
 }
 
@@ -1646,7 +1637,6 @@ ArrayStruct& ArrayStruct::operator =(
 {
 
     m_my_array = std::move(x.m_my_array);
-
     return *this;
 }
 
@@ -1701,9 +1691,10 @@ std::array<int32_t, 2>& ArrayStruct::my_array()
 }
 
 
+
+
 ArrayStructEqual::ArrayStructEqual()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -1729,7 +1720,6 @@ ArrayStructEqual& ArrayStructEqual::operator =(
 {
 
     m_my_array_equal = x.m_my_array_equal;
-
     return *this;
 }
 
@@ -1738,7 +1728,6 @@ ArrayStructEqual& ArrayStructEqual::operator =(
 {
 
     m_my_array_equal = std::move(x.m_my_array_equal);
-
     return *this;
 }
 
@@ -1793,9 +1782,10 @@ std::array<int32_t, 2>& ArrayStructEqual::my_array_equal()
 }
 
 
+
+
 ArrayBadStruct::ArrayBadStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -1821,7 +1811,6 @@ ArrayBadStruct& ArrayBadStruct::operator =(
 {
 
     m_my_array = x.m_my_array;
-
     return *this;
 }
 
@@ -1830,7 +1819,6 @@ ArrayBadStruct& ArrayBadStruct::operator =(
 {
 
     m_my_array = std::move(x.m_my_array);
-
     return *this;
 }
 
@@ -1885,9 +1873,10 @@ std::array<uint8_t, 2>& ArrayBadStruct::my_array()
 }
 
 
+
+
 ArrayDimensionsStruct::ArrayDimensionsStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -1913,7 +1902,6 @@ ArrayDimensionsStruct& ArrayDimensionsStruct::operator =(
 {
 
     m_my_array = x.m_my_array;
-
     return *this;
 }
 
@@ -1922,7 +1910,6 @@ ArrayDimensionsStruct& ArrayDimensionsStruct::operator =(
 {
 
     m_my_array = std::move(x.m_my_array);
-
     return *this;
 }
 
@@ -1977,9 +1964,10 @@ std::array<std::array<int32_t, 2>, 2>& ArrayDimensionsStruct::my_array()
 }
 
 
+
+
 ArraySizeStruct::ArraySizeStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -2005,7 +1993,6 @@ ArraySizeStruct& ArraySizeStruct::operator =(
 {
 
     m_my_array = x.m_my_array;
-
     return *this;
 }
 
@@ -2014,7 +2001,6 @@ ArraySizeStruct& ArraySizeStruct::operator =(
 {
 
     m_my_array = std::move(x.m_my_array);
-
     return *this;
 }
 
@@ -2069,9 +2055,12 @@ std::array<int32_t, 5>& ArraySizeStruct::my_array()
 }
 
 
+
+
+
+
 SequenceStruct::SequenceStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -2097,7 +2086,6 @@ SequenceStruct& SequenceStruct::operator =(
 {
 
     m_my_sequence = x.m_my_sequence;
-
     return *this;
 }
 
@@ -2106,7 +2094,6 @@ SequenceStruct& SequenceStruct::operator =(
 {
 
     m_my_sequence = std::move(x.m_my_sequence);
-
     return *this;
 }
 
@@ -2161,9 +2148,12 @@ std::vector<int32_t>& SequenceStruct::my_sequence()
 }
 
 
+
+
+
+
 SequenceStructEqual::SequenceStructEqual()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -2189,7 +2179,6 @@ SequenceStructEqual& SequenceStructEqual::operator =(
 {
 
     m_my_sequence_equal = x.m_my_sequence_equal;
-
     return *this;
 }
 
@@ -2198,7 +2187,6 @@ SequenceStructEqual& SequenceStructEqual::operator =(
 {
 
     m_my_sequence_equal = std::move(x.m_my_sequence_equal);
-
     return *this;
 }
 
@@ -2253,9 +2241,12 @@ std::vector<int32_t>& SequenceStructEqual::my_sequence_equal()
 }
 
 
+
+
+
+
 SequenceBadStruct::SequenceBadStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -2281,7 +2272,6 @@ SequenceBadStruct& SequenceBadStruct::operator =(
 {
 
     m_my_sequence = x.m_my_sequence;
-
     return *this;
 }
 
@@ -2290,7 +2280,6 @@ SequenceBadStruct& SequenceBadStruct::operator =(
 {
 
     m_my_sequence = std::move(x.m_my_sequence);
-
     return *this;
 }
 
@@ -2345,9 +2334,12 @@ std::vector<uint8_t>& SequenceBadStruct::my_sequence()
 }
 
 
+
+
+
+
 SequenceBoundsStruct::SequenceBoundsStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -2373,7 +2365,6 @@ SequenceBoundsStruct& SequenceBoundsStruct::operator =(
 {
 
     m_my_sequence = x.m_my_sequence;
-
     return *this;
 }
 
@@ -2382,7 +2373,6 @@ SequenceBoundsStruct& SequenceBoundsStruct::operator =(
 {
 
     m_my_sequence = std::move(x.m_my_sequence);
-
     return *this;
 }
 
@@ -2437,9 +2427,14 @@ std::vector<int32_t>& SequenceBoundsStruct::my_sequence()
 }
 
 
+
+
+
+
+
+
 SequenceSequenceStruct::SequenceSequenceStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -2465,7 +2460,6 @@ SequenceSequenceStruct& SequenceSequenceStruct::operator =(
 {
 
     m_my_sequence_sequence = x.m_my_sequence_sequence;
-
     return *this;
 }
 
@@ -2474,7 +2468,6 @@ SequenceSequenceStruct& SequenceSequenceStruct::operator =(
 {
 
     m_my_sequence_sequence = std::move(x.m_my_sequence_sequence);
-
     return *this;
 }
 
@@ -2529,9 +2522,14 @@ std::vector<std::vector<int32_t>>& SequenceSequenceStruct::my_sequence_sequence(
 }
 
 
+
+
+
+
+
+
 SequenceSequenceBoundsStruct::SequenceSequenceBoundsStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -2557,7 +2555,6 @@ SequenceSequenceBoundsStruct& SequenceSequenceBoundsStruct::operator =(
 {
 
     m_my_sequence_sequence = x.m_my_sequence_sequence;
-
     return *this;
 }
 
@@ -2566,7 +2563,6 @@ SequenceSequenceBoundsStruct& SequenceSequenceBoundsStruct::operator =(
 {
 
     m_my_sequence_sequence = std::move(x.m_my_sequence_sequence);
-
     return *this;
 }
 
@@ -2621,9 +2617,12 @@ std::vector<std::vector<int32_t>>& SequenceSequenceBoundsStruct::my_sequence_seq
 }
 
 
+
+
+
+
 MapStruct::MapStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -2649,7 +2648,6 @@ MapStruct& MapStruct::operator =(
 {
 
     m_my_map = x.m_my_map;
-
     return *this;
 }
 
@@ -2658,7 +2656,6 @@ MapStruct& MapStruct::operator =(
 {
 
     m_my_map = std::move(x.m_my_map);
-
     return *this;
 }
 
@@ -2713,9 +2710,12 @@ std::map<int32_t, int32_t>& MapStruct::my_map()
 }
 
 
+
+
+
+
 MapStructEqual::MapStructEqual()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -2741,7 +2741,6 @@ MapStructEqual& MapStructEqual::operator =(
 {
 
     m_my_map_equal = x.m_my_map_equal;
-
     return *this;
 }
 
@@ -2750,7 +2749,6 @@ MapStructEqual& MapStructEqual::operator =(
 {
 
     m_my_map_equal = std::move(x.m_my_map_equal);
-
     return *this;
 }
 
@@ -2805,9 +2803,12 @@ std::map<int32_t, int32_t>& MapStructEqual::my_map_equal()
 }
 
 
+
+
+
+
 MapBadKeyStruct::MapBadKeyStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -2833,7 +2834,6 @@ MapBadKeyStruct& MapBadKeyStruct::operator =(
 {
 
     m_my_map = x.m_my_map;
-
     return *this;
 }
 
@@ -2842,7 +2842,6 @@ MapBadKeyStruct& MapBadKeyStruct::operator =(
 {
 
     m_my_map = std::move(x.m_my_map);
-
     return *this;
 }
 
@@ -2897,9 +2896,12 @@ std::map<uint8_t, int32_t>& MapBadKeyStruct::my_map()
 }
 
 
+
+
+
+
 MapBadElemStruct::MapBadElemStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -2925,7 +2927,6 @@ MapBadElemStruct& MapBadElemStruct::operator =(
 {
 
     m_my_map = x.m_my_map;
-
     return *this;
 }
 
@@ -2934,7 +2935,6 @@ MapBadElemStruct& MapBadElemStruct::operator =(
 {
 
     m_my_map = std::move(x.m_my_map);
-
     return *this;
 }
 
@@ -2989,9 +2989,12 @@ std::map<int32_t, int64_t>& MapBadElemStruct::my_map()
 }
 
 
+
+
+
+
 MapBoundsStruct::MapBoundsStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -3017,7 +3020,6 @@ MapBoundsStruct& MapBoundsStruct::operator =(
 {
 
     m_my_map = x.m_my_map;
-
     return *this;
 }
 
@@ -3026,7 +3028,6 @@ MapBoundsStruct& MapBoundsStruct::operator =(
 {
 
     m_my_map = std::move(x.m_my_map);
-
     return *this;
 }
 
@@ -3081,9 +3082,14 @@ std::map<int32_t, int32_t>& MapBoundsStruct::my_map()
 }
 
 
+
+
+
+
+
+
 MapMapStruct::MapMapStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -3109,7 +3115,6 @@ MapMapStruct& MapMapStruct::operator =(
 {
 
     m_my_map_map = x.m_my_map_map;
-
     return *this;
 }
 
@@ -3118,7 +3123,6 @@ MapMapStruct& MapMapStruct::operator =(
 {
 
     m_my_map_map = std::move(x.m_my_map_map);
-
     return *this;
 }
 
@@ -3173,9 +3177,14 @@ std::map<int32_t, std::map<int32_t, int32_t>>& MapMapStruct::my_map_map()
 }
 
 
+
+
+
+
+
+
 MapMapBoundsStruct::MapMapBoundsStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -3201,7 +3210,6 @@ MapMapBoundsStruct& MapMapBoundsStruct::operator =(
 {
 
     m_my_map_map = x.m_my_map_map;
-
     return *this;
 }
 
@@ -3210,7 +3218,6 @@ MapMapBoundsStruct& MapMapBoundsStruct::operator =(
 {
 
     m_my_map_map = std::move(x.m_my_map_map);
-
     return *this;
 }
 
@@ -3263,6 +3270,8 @@ std::map<int32_t, std::map<int32_t, int32_t>>& MapMapBoundsStruct::my_map_map()
 {
     return m_my_map_map;
 }
+
+
 
 
 SimpleUnion::SimpleUnion()
@@ -3423,6 +3432,8 @@ void SimpleUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -3543,6 +3554,8 @@ int64_t& SimpleUnion::second()
 
     return m_second;
 }
+
+
 
 
 SimpleUnionNames::SimpleUnionNames()
@@ -3703,6 +3716,8 @@ void SimpleUnionNames::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -3823,6 +3838,8 @@ int64_t& SimpleUnionNames::second_case()
 
     return m_second_case;
 }
+
+
 
 
 SimpleTypeUnion::SimpleTypeUnion()
@@ -3983,6 +4000,8 @@ void SimpleTypeUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -4103,6 +4122,8 @@ int64_t& SimpleTypeUnion::second()
 
     return m_second;
 }
+
+
 
 
 SimpleBadUnion::SimpleBadUnion()
@@ -4263,6 +4284,8 @@ void SimpleBadUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -4383,6 +4406,8 @@ int64_t& SimpleBadUnion::second()
 
     return m_second;
 }
+
+
 
 
 SimpleBadDiscUnion::SimpleBadDiscUnion()
@@ -4543,6 +4568,8 @@ void SimpleBadDiscUnion::_d(
             }
             break;
 
+        default:
+            break;
     }
 
     if (!b)
@@ -4665,9 +4692,10 @@ int64_t& SimpleBadDiscUnion::second()
 }
 
 
+
+
 SimpleUnionStruct::SimpleUnionStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -4693,7 +4721,6 @@ SimpleUnionStruct& SimpleUnionStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -4702,7 +4729,6 @@ SimpleUnionStruct& SimpleUnionStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -4757,9 +4783,10 @@ SimpleUnion& SimpleUnionStruct::my_union()
 }
 
 
+
+
 SimpleUnionStructEqual::SimpleUnionStructEqual()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -4785,7 +4812,6 @@ SimpleUnionStructEqual& SimpleUnionStructEqual::operator =(
 {
 
     m_my_union_equal = x.m_my_union_equal;
-
     return *this;
 }
 
@@ -4794,7 +4820,6 @@ SimpleUnionStructEqual& SimpleUnionStructEqual::operator =(
 {
 
     m_my_union_equal = std::move(x.m_my_union_equal);
-
     return *this;
 }
 
@@ -4849,9 +4874,10 @@ SimpleUnion& SimpleUnionStructEqual::my_union_equal()
 }
 
 
+
+
 SimpleUnionNamesStruct::SimpleUnionNamesStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -4877,7 +4903,6 @@ SimpleUnionNamesStruct& SimpleUnionNamesStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -4886,7 +4911,6 @@ SimpleUnionNamesStruct& SimpleUnionNamesStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -4941,9 +4965,10 @@ SimpleUnionNames& SimpleUnionNamesStruct::my_union()
 }
 
 
+
+
 SimpleTypeUnionStruct::SimpleTypeUnionStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -4969,7 +4994,6 @@ SimpleTypeUnionStruct& SimpleTypeUnionStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -4978,7 +5002,6 @@ SimpleTypeUnionStruct& SimpleTypeUnionStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -5033,9 +5056,10 @@ SimpleTypeUnion& SimpleTypeUnionStruct::my_union()
 }
 
 
+
+
 SimpleBadUnionStruct::SimpleBadUnionStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -5061,7 +5085,6 @@ SimpleBadUnionStruct& SimpleBadUnionStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -5070,7 +5093,6 @@ SimpleBadUnionStruct& SimpleBadUnionStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -5125,9 +5147,10 @@ SimpleBadUnion& SimpleBadUnionStruct::my_union()
 }
 
 
+
+
 SimplBadDiscUnionStruct::SimplBadDiscUnionStruct()
 {
-
     // Just to register all known types
     registerTypesTypes();
 }
@@ -5153,7 +5176,6 @@ SimplBadDiscUnionStruct& SimplBadDiscUnionStruct::operator =(
 {
 
     m_my_union = x.m_my_union;
-
     return *this;
 }
 
@@ -5162,7 +5184,6 @@ SimplBadDiscUnionStruct& SimplBadDiscUnionStruct::operator =(
 {
 
     m_my_union = std::move(x.m_my_union);
-
     return *this;
 }
 
@@ -5219,3 +5240,5 @@ SimpleBadDiscUnion& SimplBadDiscUnionStruct::my_union()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "TypesCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

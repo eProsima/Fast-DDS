@@ -38,6 +38,8 @@
 #endif  // GEN_API_VER
 
 
+
+
 /*!
  * @brief This class represents the TopicDataType of the type CustomPayloadPoolData defined by the user in the IDL file.
  * @ingroup CustomPayloadPoolData
@@ -103,7 +105,7 @@ public:
     }
 
     eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
         static_cast<void>(data_representation);
         return false;

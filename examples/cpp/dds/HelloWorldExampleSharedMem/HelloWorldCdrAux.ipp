@@ -34,6 +34,8 @@ using namespace eprosima::fastcdr::exception;
 namespace eprosima {
 namespace fastcdr {
 
+
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -81,7 +83,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.message()
         << eprosima::fastcdr::MemberId(2) << data.data()
 ;
-
     scdr.end_serialize_type(current_state);
 }
 
@@ -132,3 +133,4 @@ void serialize_key(
 } // namespace eprosima
 
 #endif // _FAST_DDS_GENERATED_HELLOWORLDCDRAUX_IPP_
+

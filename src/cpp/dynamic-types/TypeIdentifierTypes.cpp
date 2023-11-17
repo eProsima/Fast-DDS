@@ -22,10 +22,7 @@
 #include <cstring>
 #include <utility>
 
-#include <fastcdr/Cdr.h>
-#include <fastcdr/CdrSizeCalculator.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/types/TypeIdentifierTypes.h>
 #include <fastrtps/qos/QosPolicies.h>

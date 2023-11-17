@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "OwnershipStrength.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 ExampleMessage::ExampleMessage()
 {
-
 }
 
 ExampleMessage::~ExampleMessage()
@@ -68,7 +72,6 @@ ExampleMessage& ExampleMessage::operator =(
     m_index = x.m_index;
     m_ownershipStrength = x.m_ownershipStrength;
     m_message = x.m_message;
-
     return *this;
 }
 
@@ -79,7 +82,6 @@ ExampleMessage& ExampleMessage::operator =(
     m_index = x.m_index;
     m_ownershipStrength = x.m_ownershipStrength;
     m_message = std::move(x.m_message);
-
     return *this;
 }
 
@@ -196,3 +198,5 @@ std::string& ExampleMessage::message()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "OwnershipStrengthCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

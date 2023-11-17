@@ -54,6 +54,8 @@ using namespace eprosima::fastrtps::types;
 
 eProsima_user_DllExport void registerHelloWorldTypes();
 
+
+
 eProsima_user_DllExport const TypeIdentifier* GetHelloWorldIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetHelloWorldObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalHelloWorldObject();

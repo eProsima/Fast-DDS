@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "AllocTestType.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 AllocTestType::AllocTestType()
 {
-
 }
 
 AllocTestType::~AllocTestType()
@@ -62,7 +66,6 @@ AllocTestType& AllocTestType::operator =(
 {
 
     m_index = x.m_index;
-
     return *this;
 }
 
@@ -71,7 +74,6 @@ AllocTestType& AllocTestType::operator =(
 {
 
     m_index = x.m_index;
-
     return *this;
 }
 
@@ -118,3 +120,5 @@ uint32_t& AllocTestType::index()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "AllocTestTypeCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

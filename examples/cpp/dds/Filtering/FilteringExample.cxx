@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "FilteringExample.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -36,9 +39,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 FilteringExample::FilteringExample()
 {
-
 }
 
 FilteringExample::~FilteringExample()
@@ -62,7 +66,6 @@ FilteringExample& FilteringExample::operator =(
 {
 
     m_sampleNumber = x.m_sampleNumber;
-
     return *this;
 }
 
@@ -71,7 +74,6 @@ FilteringExample& FilteringExample::operator =(
 {
 
     m_sampleNumber = x.m_sampleNumber;
-
     return *this;
 }
 
@@ -118,3 +120,5 @@ int32_t& FilteringExample::sampleNumber()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "FilteringExampleCdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1

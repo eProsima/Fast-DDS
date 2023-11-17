@@ -27,6 +27,9 @@ char dummy;
 #endif  // _WIN32
 
 #include "TestRegression3361.h"
+
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include "TestRegression3361TypeObject.h"
 
 #include <fastcdr/Cdr.h>
@@ -38,9 +41,10 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
+
+
 TestRegression3361::TestRegression3361()
 {
-
     // Just to register all known types
     registerTestRegression3361Types();
 }
@@ -66,7 +70,6 @@ TestRegression3361& TestRegression3361::operator =(
 {
 
     m_uuid = x.m_uuid;
-
     return *this;
 }
 
@@ -75,7 +78,6 @@ TestRegression3361& TestRegression3361::operator =(
 {
 
     m_uuid = std::move(x.m_uuid);
-
     return *this;
 }
 
@@ -132,3 +134,5 @@ TestModule::MACHINEID& TestRegression3361::uuid()
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "TestRegression3361CdrAux.ipp"
+
+#endif // FASTCDR_VERSION_MAJOR > 1
