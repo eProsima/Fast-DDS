@@ -17,8 +17,8 @@ openssl ecparam -name prime256v1 -genkey -noout -out ca.key
 # openssl ecparam -name prime256v1 -genkey | openssl ec -aes256 -out ca.key -passout pass:cakey # with password
 
 # Generate the Certificate Authority Certificate > ca.crt
-openssl req -new -x509 -sha256 -key ca.key -out ca.crt -days 365 -config ca.cnf
-# openssl req -new -x509 -sha256 -key ca.key -out ca.crt -days 365 -config ca.cnf -passin pass:cakey # with password
+openssl req -new -x509 -sha256 -key ca.key -out ca.crt -days 1825 -config ca.cnf
+# openssl req -new -x509 -sha256 -key ca.key -out ca.crt -days 1825 -config ca.cnf -passin pass:cakey # with password
 ```
 
 ### Fast DDS Certificate
@@ -33,8 +33,8 @@ openssl req -new -sha256 -key fastdds.key -out fastdds.csr -config fastdds.cnf
 # openssl req -new -sha256 -key fastdds.key -out fastdds.csr -config fastdds.cnf -passin pass:fastddspwd # with password
 
 # Generate the Fast DDS Certificate (computed on the CA side) > fastdds.crt
-openssl x509 -req -in fastdds.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out fastdds.crt -days 1000 -sha256
-# openssl x509 -req -in fastdds.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out fastdds.crt -days 1000 -sha256 -passin pass:cakey # with password
+openssl x509 -req -in fastdds.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out fastdds.crt -days 1825 -sha256
+# openssl x509 -req -in fastdds.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out fastdds.crt -days 1825 -sha256 -passin pass:cakey # with password
 ```
 
 ### DH PARAMETERS
