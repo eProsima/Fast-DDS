@@ -709,7 +709,7 @@ public:
      *
      * @param[in out] param_seq AppliedAnnotationParameter sequence to be modified.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the parameter being added has
-     *            already been included in the sequence (only in Debug build mode).
+     *            already been included in the sequence.
      * @param[in] param AppliedAnnotationParameter to be added.
      */
     RTPS_DllAPI static void add_applied_annotation_parameter(
@@ -740,7 +740,7 @@ public:
      * @param[in] ann_custom AppliedAnnotation to be added.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if:
      *              1. Given AppliedAnnotation is not consistent (only in Debug build mode).
-     *              2. Given AppliedAnnotation is already present in the sequence (only in Debug build mode).
+     *              2. Given AppliedAnnotation is already present in the sequence.
      */
     RTPS_DllAPI static void add_applied_annotation(
             AppliedAnnotationSeq& ann_custom_seq,

@@ -749,6 +749,26 @@ TEST(TypeObjectUtilsTests, register_l_map)
                 other_plain_map, type_name));
 }
 
+// Build AppliedAnnotation invalid TypeIdentifier
+TEST(TypeObjectUtilsTests, build_applied_annotation_invalid_type_identifier)
+{
+    TypeIdentifier type_id;
+    type_id._d(TK_INT32);
+    EXPECT_THROW(AppliedAnnotation annotation = TypeObjectUtils::build_applied_annotation(type_id,
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>()), InvalidArgumentError);
+    CompleteAnnotationHeader annotation_header = TypeObjectUtils::build_complete_annotation_header("custom_annotation");
+    CompleteAnnotationType custom_annotation = TypeObjectUtils::build_complete_annotation_type(0, annotation_header,
+            CompleteAnnotationParameterSeq());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(custom_annotation,
+            "custom"));
+    TypeIdentifierPair custom_annotation_ids;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK,
+            DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("custom",
+            custom_annotation_ids));
+    EXPECT_NO_THROW(AppliedAnnotation annotation = TypeObjectUtils::build_applied_annotation(
+            custom_annotation_ids.type_identifier1(), eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>()));
+}
+
 // Build CompleteMemberDetail with empty name
 TEST(TypeObjectUtilsTests, build_complete_member_detail_empty_member_name)
 {
@@ -1758,6 +1778,19 @@ TEST(TypeObjectUtilsTests, build_complete_bitflag_invalid_builtin_annotations)
             InvalidArgumentError);
 }
 
+// Build CommonEnumeratedHeader with inconsistent bitmask bit bound
+TEST(TypeObjectUtilsTests, build_common_enumerated_header_inconsistent_bitmask_bit_bound)
+{
+    BitBound bit_bound = 0;
+    EXPECT_THROW(CommonEnumeratedHeader header = TypeObjectUtils::build_common_enumerated_header(bit_bound, true),
+            InvalidArgumentError);
+    bit_bound = 33;
+    EXPECT_NO_THROW(CommonEnumeratedHeader header = TypeObjectUtils::build_common_enumerated_header(bit_bound, true));
+    bit_bound = 65;
+    EXPECT_THROW(CommonEnumeratedHeader header = TypeObjectUtils::build_common_enumerated_header(bit_bound, true),
+            InvalidArgumentError);
+}
+
 // Build CompleteBitmaskType with non-empty flags
 TEST(TypeObjectUtilsTests, build_complete_bitmask_type_non_empty_flags)
 {
@@ -2151,6 +2184,313 @@ TEST(TypeObjectUtilsTests, register_bitmask_type_object)
     std::string type_name;
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
             type_name));
+}
+
+// Test add element to AppliedAnnotationParameterSeq
+TEST(TypeObjectUtilsTests, add_to_applied_annotation_parameter_seq)
+{
+    NameHash get_dependencies_hash = TypeObjectUtils::name_hash("getDependencies"); // 0x31FBAA_5
+    NameHash color_hash = TypeObjectUtils::name_hash("color");                      // 0x70DDA5DF
+    NameHash shapesize_hash = TypeObjectUtils::name_hash("shapesize");              // 0xDA907714
+    EXPECT_TRUE(color_hash < shapesize_hash);
+    AnnotationParameterValue param_value = TypeObjectUtils::build_annotation_parameter_value(true);
+    AppliedAnnotationParameter get_dependencies_param = TypeObjectUtils::build_applied_annotation_parameter(
+            get_dependencies_hash, param_value);
+    AppliedAnnotationParameter color_param = TypeObjectUtils::build_applied_annotation_parameter(color_hash,
+            param_value);
+    AppliedAnnotationParameter shapesize_param = TypeObjectUtils::build_applied_annotation_parameter(shapesize_hash,
+            param_value);
+    AppliedAnnotationParameterSeq param_seq;
+    EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation_parameter(param_seq, shapesize_param));
+    EXPECT_THROW(TypeObjectUtils::add_applied_annotation_parameter(param_seq, shapesize_param), InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation_parameter(param_seq, get_dependencies_param));
+    EXPECT_THROW(TypeObjectUtils::add_applied_annotation_parameter(param_seq, get_dependencies_param),
+            InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation_parameter(param_seq, color_param));
+    EXPECT_THROW(TypeObjectUtils::add_applied_annotation_parameter(param_seq, color_param), InvalidArgumentError);
+    EXPECT_EQ(3, param_seq.size());
+    EXPECT_EQ(get_dependencies_param, param_seq[0]);
+    EXPECT_EQ(color_param, param_seq[1]);
+    EXPECT_EQ(shapesize_param, param_seq[2]);
+}
+
+// Test add element to AppliedAnnotationSeq
+TEST(TypeObjectUtilsTests, add_to_applied_annotation_seq)
+{
+    CompleteAnnotationHeader first_ann = TypeObjectUtils::build_complete_annotation_header("first");
+    CompleteAnnotationHeader second_ann = TypeObjectUtils::build_complete_annotation_header("second");
+    CompleteAnnotationHeader third_ann = TypeObjectUtils::build_complete_annotation_header("third");
+    CompleteAnnotationType first_custom_annotation = TypeObjectUtils::build_complete_annotation_type(0, first_ann,
+            CompleteAnnotationParameterSeq());
+    CompleteAnnotationType second_custom_annotation = TypeObjectUtils::build_complete_annotation_type(0, second_ann,
+            CompleteAnnotationParameterSeq());
+    CompleteAnnotationType third_custom_annotation = TypeObjectUtils::build_complete_annotation_type(0, third_ann,
+            CompleteAnnotationParameterSeq());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
+            first_custom_annotation, "first_custom"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
+            second_custom_annotation, "second_custom"));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
+            third_custom_annotation, "third_custom"));
+    TypeIdentifierPair first_custom_annotation_ids;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK,
+            DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("first_custom",
+            first_custom_annotation_ids));
+    TypeIdentifierPair second_custom_annotation_ids;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK,
+            DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("second_custom",
+            second_custom_annotation_ids));
+    TypeIdentifierPair third_custom_annotation_ids;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK,
+            DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("third_custom",
+            third_custom_annotation_ids));
+    AppliedAnnotation first_annotation = TypeObjectUtils::build_applied_annotation(
+            first_custom_annotation_ids.type_identifier1(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    AppliedAnnotation second_annotation = TypeObjectUtils::build_applied_annotation(
+            second_custom_annotation_ids.type_identifier1(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    AppliedAnnotation third_annotation = TypeObjectUtils::build_applied_annotation(
+            third_custom_annotation_ids.type_identifier1(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    AppliedAnnotationSeq applied_annotation_seq;
+    EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, third_annotation));
+    EXPECT_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, third_annotation), 
+            InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, first_annotation));
+    EXPECT_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, first_annotation),
+            InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, second_annotation));
+    EXPECT_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, second_annotation),
+            InvalidArgumentError);
+    EXPECT_EQ(3, applied_annotation_seq.size());
+    EXPECT_EQ(first_annotation, applied_annotation_seq[0]);
+    EXPECT_EQ(second_annotation, applied_annotation_seq[1]);
+    EXPECT_EQ(third_annotation, applied_annotation_seq[2]);
+}
+
+// Test add element to CompleteStructMemberSeq
+TEST(TypeObjectUtilsTests, add_to_complete_struct_member_seq)
+{
+    StructMemberFlag flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::DISCARD, false, false, false,
+        false);
+    TypeIdentifier type_id;
+    type_id._d(TK_INT32);
+    CommonStructMember first_member = TypeObjectUtils::build_common_struct_member(0, flags, type_id);
+    CommonStructMember second_member = TypeObjectUtils::build_common_struct_member(1, flags, type_id);
+    CommonStructMember third_member = TypeObjectUtils::build_common_struct_member(2, flags, type_id);
+    CompleteMemberDetail first_detail = TypeObjectUtils::build_complete_member_detail("first",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail second_detail = TypeObjectUtils::build_complete_member_detail("second",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail third_detail = TypeObjectUtils::build_complete_member_detail("third",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteStructMember first = TypeObjectUtils::build_complete_struct_member(first_member, first_detail);
+    CompleteStructMember second = TypeObjectUtils::build_complete_struct_member(second_member, second_detail);
+    CompleteStructMember third = TypeObjectUtils::build_complete_struct_member(third_member, third_detail);
+    CompleteStructMember invalid = TypeObjectUtils::build_complete_struct_member(first_member, third_detail);
+    CompleteStructMemberSeq member_seq;
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_struct_member(member_seq, third));
+    EXPECT_THROW(TypeObjectUtils::add_complete_struct_member(member_seq, third), InvalidArgumentError);
+#if !defined(NDEBUG)
+    EXPECT_THROW(TypeObjectUtils::add_complete_struct_member(member_seq, invalid), InvalidArgumentError);
+#endif // !defined(NDEBUG)
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_struct_member(member_seq, first));
+    EXPECT_THROW(TypeObjectUtils::add_complete_struct_member(member_seq, first),
+            InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_struct_member(member_seq, second));
+    EXPECT_THROW(TypeObjectUtils::add_complete_struct_member(member_seq, second), InvalidArgumentError);
+    EXPECT_EQ(3, member_seq.size());
+    EXPECT_EQ(first, member_seq[0]);
+    EXPECT_EQ(second, member_seq[1]);
+    EXPECT_EQ(third, member_seq[2]);
+}
+
+// Test add element to UnionCaseLabelSeq
+TEST(TypeObjectUtilsTests, add_to_union_case_label_seq)
+{
+    UnionCaseLabelSeq labels;
+    EXPECT_NO_THROW(TypeObjectUtils::add_union_case_label(labels, 3));
+    EXPECT_EQ(1, labels.size());
+    EXPECT_NO_THROW(TypeObjectUtils::add_union_case_label(labels, 3));
+    EXPECT_EQ(1, labels.size());
+    EXPECT_NO_THROW(TypeObjectUtils::add_union_case_label(labels, 1));
+    EXPECT_NO_THROW(TypeObjectUtils::add_union_case_label(labels, 2));
+    EXPECT_EQ(3, labels.size());
+    EXPECT_EQ(1, labels[0]);
+    EXPECT_EQ(2, labels[1]);
+    EXPECT_EQ(3, labels[2]);
+}
+
+// Test add element to CompleteUnionMemberSeq
+TEST(TypeObjectUtilsTests, add_to_complete_union_member_seq)
+{
+    UnionMemberFlag flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::DISCARD, false, false);
+    TypeIdentifier type_id;
+    type_id._d(TK_UINT32);
+    UnionCaseLabelSeq label_1;
+    UnionCaseLabelSeq label_2;
+    UnionCaseLabelSeq label_3;
+    TypeObjectUtils::add_union_case_label(label_1, 1);
+    TypeObjectUtils::add_union_case_label(label_2, 2);
+    TypeObjectUtils::add_union_case_label(label_3, 3);
+    CommonUnionMember member_1 = TypeObjectUtils::build_common_union_member(1, flags, type_id, label_1);
+    CommonUnionMember member_2 = TypeObjectUtils::build_common_union_member(2, flags, type_id, label_2);
+    CommonUnionMember member_3 = TypeObjectUtils::build_common_union_member(3, flags, type_id, label_3);
+    CompleteMemberDetail first_detail = TypeObjectUtils::build_complete_member_detail("first",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail second_detail = TypeObjectUtils::build_complete_member_detail("second",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail third_detail = TypeObjectUtils::build_complete_member_detail("third",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteUnionMember first_member = TypeObjectUtils::build_complete_union_member(member_1, first_detail);
+    CompleteUnionMember second_member = TypeObjectUtils::build_complete_union_member(member_2, second_detail);
+    CompleteUnionMember third_member = TypeObjectUtils::build_complete_union_member(member_3, third_detail);
+    CompleteUnionMemberSeq member_seq;
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_union_member(member_seq, third_member));
+    EXPECT_THROW(TypeObjectUtils::add_complete_union_member(member_seq, third_member), InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_union_member(member_seq, first_member));
+    EXPECT_THROW(TypeObjectUtils::add_complete_union_member(member_seq, first_member),
+            InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_union_member(member_seq, second_member));
+    EXPECT_THROW(TypeObjectUtils::add_complete_union_member(member_seq, second_member), InvalidArgumentError);
+    EXPECT_EQ(3, member_seq.size());
+    EXPECT_EQ(first_member, member_seq[0]);
+    EXPECT_EQ(second_member, member_seq[1]);
+    EXPECT_EQ(third_member, member_seq[2]);
+}
+
+// Test add element to CompleteAnnotationParameterSeq
+TEST(TypeObjectUtilsTests, add_to_complete_annotation_parameter_seq)
+{
+    TypeIdentifier type_id;
+    type_id._d(TK_BOOLEAN);
+    CommonAnnotationParameter common = TypeObjectUtils::build_common_annotation_parameter(0, type_id);
+    AnnotationParameterValue default_value = TypeObjectUtils::build_annotation_parameter_value(false);
+    MemberName first = "first";
+    MemberName second = "second";
+    MemberName third = "third";
+    CompleteAnnotationParameter first_param = TypeObjectUtils::build_complete_annotation_parameter(common, first,
+            default_value);
+    CompleteAnnotationParameter second_param = TypeObjectUtils::build_complete_annotation_parameter(common, second,
+            default_value);
+    CompleteAnnotationParameter third_param = TypeObjectUtils::build_complete_annotation_parameter(common, third,
+            default_value);
+    CompleteAnnotationParameterSeq param_seq;
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_annotation_parameter(param_seq, third_param));
+    EXPECT_THROW(TypeObjectUtils::add_complete_annotation_parameter(param_seq, third_param), InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_annotation_parameter(param_seq, first_param));
+    EXPECT_THROW(TypeObjectUtils::add_complete_annotation_parameter(param_seq, first_param),
+            InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_annotation_parameter(param_seq, second_param));
+    EXPECT_THROW(TypeObjectUtils::add_complete_annotation_parameter(param_seq, second_param), InvalidArgumentError);
+    EXPECT_EQ(3, param_seq.size());
+    EXPECT_EQ(first_param, param_seq[0]);
+    EXPECT_EQ(second_param, param_seq[1]);
+    EXPECT_EQ(third_param, param_seq[2]);
+}
+
+// Test add element to CompleteEnumeratedLiteralSeq
+TEST(TypeObjectUtils, add_to_complete_enumerated_literal_seq)
+{
+    EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
+    CommonEnumeratedLiteral first = TypeObjectUtils::build_common_enumerated_literal(1, flags);
+    CommonEnumeratedLiteral second = TypeObjectUtils::build_common_enumerated_literal(2, flags);
+    CommonEnumeratedLiteral third = TypeObjectUtils::build_common_enumerated_literal(3, flags);
+    CompleteMemberDetail first_detail = TypeObjectUtils::build_complete_member_detail("first",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail second_detail = TypeObjectUtils::build_complete_member_detail("second",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail third_detail = TypeObjectUtils::build_complete_member_detail("third",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteEnumeratedLiteral first_literal = TypeObjectUtils::build_complete_enumerated_literal(first, first_detail);
+    CompleteEnumeratedLiteral second_literal = TypeObjectUtils::build_complete_enumerated_literal(second, second_detail);
+    CompleteEnumeratedLiteral third_literal = TypeObjectUtils::build_complete_enumerated_literal(third, third_detail);
+    CompleteEnumeratedLiteralSeq literal_seq;
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_enumerated_literal(literal_seq, third_literal));
+    EXPECT_THROW(TypeObjectUtils::add_complete_enumerated_literal(literal_seq, third_literal), InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_enumerated_literal(literal_seq, first_literal));
+    EXPECT_THROW(TypeObjectUtils::add_complete_enumerated_literal(literal_seq, first_literal),
+            InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_enumerated_literal(literal_seq, second_literal));
+    EXPECT_THROW(TypeObjectUtils::add_complete_enumerated_literal(literal_seq, second_literal), InvalidArgumentError);
+    EXPECT_EQ(3, literal_seq.size());
+    EXPECT_EQ(first_literal, literal_seq[0]);
+    EXPECT_EQ(second_literal, literal_seq[1]);
+    EXPECT_EQ(third_literal, literal_seq[2]);
+}
+
+// Test add element to CompleteBitflagSeq
+TEST(TypeObjectUtilsTests, add_to_complete_bitflag_seq)
+{
+    CompleteMemberDetail first_detail = TypeObjectUtils::build_complete_member_detail("first",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail second_detail = TypeObjectUtils::build_complete_member_detail("second",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail third_detail = TypeObjectUtils::build_complete_member_detail("third",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CommonBitflag first = TypeObjectUtils::build_common_bitflag(1, 0);
+    CommonBitflag second = TypeObjectUtils::build_common_bitflag(2, 0);
+    CommonBitflag third = TypeObjectUtils::build_common_bitflag(3, 0);
+    CompleteBitflag first_bitflag = TypeObjectUtils::build_complete_bitflag(first, first_detail);
+    CompleteBitflag second_bitflag = TypeObjectUtils::build_complete_bitflag(second, second_detail);
+    CompleteBitflag third_bitflag = TypeObjectUtils::build_complete_bitflag(third, third_detail);
+    CompleteBitflagSeq bitflag_seq;
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_bitflag(bitflag_seq, third_bitflag));
+    EXPECT_THROW(TypeObjectUtils::add_complete_bitflag(bitflag_seq, third_bitflag), InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_bitflag(bitflag_seq, first_bitflag));
+    EXPECT_THROW(TypeObjectUtils::add_complete_bitflag(bitflag_seq, first_bitflag),
+            InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_bitflag(bitflag_seq, second_bitflag));
+    EXPECT_THROW(TypeObjectUtils::add_complete_bitflag(bitflag_seq, second_bitflag), InvalidArgumentError);
+    EXPECT_EQ(3, bitflag_seq.size());
+    EXPECT_EQ(first_bitflag, bitflag_seq[0]);
+    EXPECT_EQ(second_bitflag, bitflag_seq[1]);
+    EXPECT_EQ(third_bitflag, bitflag_seq[2]);
+}
+
+// Test add element to CompleteBitfieldSeq
+TEST(TypeObjectUtilsTests, add_to_complete_bitfield_seq)
+{
+    CompleteMemberDetail first_detail = TypeObjectUtils::build_complete_member_detail("first",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail second_detail = TypeObjectUtils::build_complete_member_detail("second",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteMemberDetail third_detail = TypeObjectUtils::build_complete_member_detail("third",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CommonBitfield first = TypeObjectUtils::build_common_bitfield(1, 0, 1, TK_BOOLEAN);
+    CommonBitfield second = TypeObjectUtils::build_common_bitfield(2, 0, 1, TK_BOOLEAN);
+    CommonBitfield third = TypeObjectUtils::build_common_bitfield(3, 0, 1, TK_BOOLEAN);
+    CompleteBitfield first_bitfield = TypeObjectUtils::build_complete_bitfield(first, first_detail);
+    CompleteBitfield second_bitfield = TypeObjectUtils::build_complete_bitfield(second, second_detail);
+    CompleteBitfield third_bitfield = TypeObjectUtils::build_complete_bitfield(third, third_detail);
+    CompleteBitfieldSeq bitfield_seq;
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_bitfield(bitfield_seq, third_bitfield));
+    EXPECT_THROW(TypeObjectUtils::add_complete_bitfield(bitfield_seq, third_bitfield), InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_bitfield(bitfield_seq, first_bitfield));
+    EXPECT_THROW(TypeObjectUtils::add_complete_bitfield(bitfield_seq, first_bitfield),
+            InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::add_complete_bitfield(bitfield_seq, second_bitfield));
+    EXPECT_THROW(TypeObjectUtils::add_complete_bitfield(bitfield_seq, second_bitfield), InvalidArgumentError);
+    EXPECT_EQ(3, bitfield_seq.size());
+    EXPECT_EQ(first_bitfield, bitfield_seq[0]);
+    EXPECT_EQ(second_bitfield, bitfield_seq[1]);
+    EXPECT_EQ(third_bitfield, bitfield_seq[2]);
 }
 
 } // xtypes1_3
