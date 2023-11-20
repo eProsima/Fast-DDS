@@ -999,7 +999,7 @@ void TypeObjectUtils::add_complete_union_member(
     if (union_member_protected_name == member.detail().name().to_string())
     {
         throw InvalidArgumentError(
-            "discriminator name is reserved and is not permitted for type-specific union members");
+                  "discriminator name is reserved and is not permitted for type-specific union members");
     }
 #if !defined(NDEBUG)
     complete_union_member_consistency(member);
@@ -2014,7 +2014,7 @@ void TypeObjectUtils::struct_member_flag_consistency(
     {
         throw InvalidArgumentError("Keyed members must have their \"must understand\" attribute set to true");
     }
-    if ((member_flags & MemberFlagBits::IS_DEFAULT) != 0)
+    if ((MemberFlagBits::IS_DEFAULT & member_flags) != 0)
     {
         throw InvalidArgumentError("Default flag does not apply to structure members");
     }
@@ -2024,7 +2024,7 @@ void TypeObjectUtils::union_member_flag_consistency(
         UnionMemberFlag union_member_flag)
 {
     member_flag_consistency(union_member_flag);
-    if((union_member_flag & union_member_flag_mask) != 0)
+    if ((union_member_flag & union_member_flag_mask) != 0)
     {
         throw InvalidArgumentError("Only try construct, default and external flags apply to union members");
     }
@@ -2109,7 +2109,7 @@ void TypeObjectUtils::map_key_type_identifier_consistency(
             else
             {
                 throw InvalidArgumentError(
-                    "Inconsistent key identifier: only signed/unsigned integer types and w/string keys are supported");
+                          "Inconsistent key identifier: only signed/unsigned integer types and w/string keys are supported");
             }
         }
         else
@@ -2550,7 +2550,7 @@ void TypeObjectUtils::complete_union_member_seq_consistency(
         if (union_member_protected_name == member.detail().name().to_string())
         {
             throw InvalidArgumentError(
-                "discriminator name is reserved and is not permitted for type-specific union members");
+                      "discriminator name is reserved and is not permitted for type-specific union members");
         }
         if (!member_ids.insert(member.common().member_id()).second)
         {

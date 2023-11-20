@@ -758,7 +758,7 @@ TEST(TypeObjectUtilsTests, build_applied_annotation_invalid_type_identifier)
             eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>()), InvalidArgumentError);
     CompleteAnnotationHeader annotation_header = TypeObjectUtils::build_complete_annotation_header("custom_annotation");
     CompleteAnnotationType custom_annotation = TypeObjectUtils::build_complete_annotation_type(0, annotation_header,
-            CompleteAnnotationParameterSeq());
+                    CompleteAnnotationParameterSeq());
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(custom_annotation,
             "custom"));
     TypeIdentifierPair custom_annotation_ids;
@@ -766,7 +766,8 @@ TEST(TypeObjectUtilsTests, build_applied_annotation_invalid_type_identifier)
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("custom",
             custom_annotation_ids));
     EXPECT_NO_THROW(AppliedAnnotation annotation = TypeObjectUtils::build_applied_annotation(
-            custom_annotation_ids.type_identifier1(), eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>()));
+                custom_annotation_ids.type_identifier1(),
+                eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>()));
 }
 
 // Build CompleteMemberDetail with empty name
@@ -1650,7 +1651,7 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("TryConstructFailAction", try_construct_enum_type_identifiers));
     common_key = TypeObjectUtils::build_common_collection_element(flags,
-            try_construct_enum_type_identifiers.type_identifier1());
+                    try_construct_enum_type_identifiers.type_identifier1());
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element), InvalidArgumentError);
@@ -1658,7 +1659,7 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("DataRepresentationMask", data_representation_bitmask_type_identifiers));
     common_key = TypeObjectUtils::build_common_collection_element(flags,
-            data_representation_bitmask_type_identifiers.type_identifier1());
+                    data_representation_bitmask_type_identifiers.type_identifier1());
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element), InvalidArgumentError);
@@ -1670,14 +1671,14 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("alias_float", alias_type_identifiers));
     common_key = TypeObjectUtils::build_common_collection_element(flags,
-            alias_type_identifiers.type_identifier1());
+                    alias_type_identifiers.type_identifier1());
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element), InvalidArgumentError);
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("alias_int16", alias_type_identifiers));
     common_key = TypeObjectUtils::build_common_collection_element(flags,
-            alias_type_identifiers.type_identifier1());
+                    alias_type_identifiers.type_identifier1());
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element));
@@ -2195,11 +2196,11 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_parameter_seq)
     EXPECT_TRUE(color_hash < shapesize_hash);
     AnnotationParameterValue param_value = TypeObjectUtils::build_annotation_parameter_value(true);
     AppliedAnnotationParameter get_dependencies_param = TypeObjectUtils::build_applied_annotation_parameter(
-            get_dependencies_hash, param_value);
+        get_dependencies_hash, param_value);
     AppliedAnnotationParameter color_param = TypeObjectUtils::build_applied_annotation_parameter(color_hash,
-            param_value);
+                    param_value);
     AppliedAnnotationParameter shapesize_param = TypeObjectUtils::build_applied_annotation_parameter(shapesize_hash,
-            param_value);
+                    param_value);
     AppliedAnnotationParameterSeq param_seq;
     EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation_parameter(param_seq, shapesize_param));
     EXPECT_THROW(TypeObjectUtils::add_applied_annotation_parameter(param_seq, shapesize_param), InvalidArgumentError);
@@ -2221,17 +2222,17 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_seq)
     CompleteAnnotationHeader second_ann = TypeObjectUtils::build_complete_annotation_header("second");
     CompleteAnnotationHeader third_ann = TypeObjectUtils::build_complete_annotation_header("third");
     CompleteAnnotationType first_custom_annotation = TypeObjectUtils::build_complete_annotation_type(0, first_ann,
-            CompleteAnnotationParameterSeq());
+                    CompleteAnnotationParameterSeq());
     CompleteAnnotationType second_custom_annotation = TypeObjectUtils::build_complete_annotation_type(0, second_ann,
-            CompleteAnnotationParameterSeq());
+                    CompleteAnnotationParameterSeq());
     CompleteAnnotationType third_custom_annotation = TypeObjectUtils::build_complete_annotation_type(0, third_ann,
-            CompleteAnnotationParameterSeq());
+                    CompleteAnnotationParameterSeq());
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
-            first_custom_annotation, "first_custom"));
+                first_custom_annotation, "first_custom"));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
-            second_custom_annotation, "second_custom"));
+                second_custom_annotation, "second_custom"));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
-            third_custom_annotation, "third_custom"));
+                third_custom_annotation, "third_custom"));
     TypeIdentifierPair first_custom_annotation_ids;
     ASSERT_EQ(ReturnCode_t::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("first_custom",
@@ -2245,17 +2246,17 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_seq)
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("third_custom",
             third_custom_annotation_ids));
     AppliedAnnotation first_annotation = TypeObjectUtils::build_applied_annotation(
-            first_custom_annotation_ids.type_identifier1(),
-            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+        first_custom_annotation_ids.type_identifier1(),
+        eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
     AppliedAnnotation second_annotation = TypeObjectUtils::build_applied_annotation(
-            second_custom_annotation_ids.type_identifier1(),
-            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+        second_custom_annotation_ids.type_identifier1(),
+        eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
     AppliedAnnotation third_annotation = TypeObjectUtils::build_applied_annotation(
-            third_custom_annotation_ids.type_identifier1(),
-            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+        third_custom_annotation_ids.type_identifier1(),
+        eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
     AppliedAnnotationSeq applied_annotation_seq;
     EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, third_annotation));
-    EXPECT_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, third_annotation), 
+    EXPECT_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, third_annotation),
             InvalidArgumentError);
     EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, first_annotation));
     EXPECT_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, first_annotation),
@@ -2273,21 +2274,21 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_seq)
 TEST(TypeObjectUtilsTests, add_to_complete_struct_member_seq)
 {
     StructMemberFlag flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::DISCARD, false, false, false,
-        false);
+                    false);
     TypeIdentifier type_id;
     type_id._d(TK_INT32);
     CommonStructMember first_member = TypeObjectUtils::build_common_struct_member(0, flags, type_id);
     CommonStructMember second_member = TypeObjectUtils::build_common_struct_member(1, flags, type_id);
     CommonStructMember third_member = TypeObjectUtils::build_common_struct_member(2, flags, type_id);
     CompleteMemberDetail first_detail = TypeObjectUtils::build_complete_member_detail("first",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteMemberDetail second_detail = TypeObjectUtils::build_complete_member_detail("second",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteMemberDetail third_detail = TypeObjectUtils::build_complete_member_detail("third",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteStructMember first = TypeObjectUtils::build_complete_struct_member(first_member, first_detail);
     CompleteStructMember second = TypeObjectUtils::build_complete_struct_member(second_member, second_detail);
     CompleteStructMember third = TypeObjectUtils::build_complete_struct_member(third_member, third_detail);
@@ -2341,14 +2342,14 @@ TEST(TypeObjectUtilsTests, add_to_complete_union_member_seq)
     CommonUnionMember member_2 = TypeObjectUtils::build_common_union_member(2, flags, type_id, label_2);
     CommonUnionMember member_3 = TypeObjectUtils::build_common_union_member(3, flags, type_id, label_3);
     CompleteMemberDetail first_detail = TypeObjectUtils::build_complete_member_detail("first",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteMemberDetail second_detail = TypeObjectUtils::build_complete_member_detail("second",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteMemberDetail third_detail = TypeObjectUtils::build_complete_member_detail("third",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteUnionMember first_member = TypeObjectUtils::build_complete_union_member(member_1, first_detail);
     CompleteUnionMember second_member = TypeObjectUtils::build_complete_union_member(member_2, second_detail);
     CompleteUnionMember third_member = TypeObjectUtils::build_complete_union_member(member_3, third_detail);
@@ -2377,11 +2378,11 @@ TEST(TypeObjectUtilsTests, add_to_complete_annotation_parameter_seq)
     MemberName second = "second";
     MemberName third = "third";
     CompleteAnnotationParameter first_param = TypeObjectUtils::build_complete_annotation_parameter(common, first,
-            default_value);
+                    default_value);
     CompleteAnnotationParameter second_param = TypeObjectUtils::build_complete_annotation_parameter(common, second,
-            default_value);
+                    default_value);
     CompleteAnnotationParameter third_param = TypeObjectUtils::build_complete_annotation_parameter(common, third,
-            default_value);
+                    default_value);
     CompleteAnnotationParameterSeq param_seq;
     EXPECT_NO_THROW(TypeObjectUtils::add_complete_annotation_parameter(param_seq, third_param));
     EXPECT_THROW(TypeObjectUtils::add_complete_annotation_parameter(param_seq, third_param), InvalidArgumentError);
@@ -2404,16 +2405,17 @@ TEST(TypeObjectUtils, add_to_complete_enumerated_literal_seq)
     CommonEnumeratedLiteral second = TypeObjectUtils::build_common_enumerated_literal(2, flags);
     CommonEnumeratedLiteral third = TypeObjectUtils::build_common_enumerated_literal(3, flags);
     CompleteMemberDetail first_detail = TypeObjectUtils::build_complete_member_detail("first",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteMemberDetail second_detail = TypeObjectUtils::build_complete_member_detail("second",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteMemberDetail third_detail = TypeObjectUtils::build_complete_member_detail("third",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteEnumeratedLiteral first_literal = TypeObjectUtils::build_complete_enumerated_literal(first, first_detail);
-    CompleteEnumeratedLiteral second_literal = TypeObjectUtils::build_complete_enumerated_literal(second, second_detail);
+    CompleteEnumeratedLiteral second_literal =
+            TypeObjectUtils::build_complete_enumerated_literal(second, second_detail);
     CompleteEnumeratedLiteral third_literal = TypeObjectUtils::build_complete_enumerated_literal(third, third_detail);
     CompleteEnumeratedLiteralSeq literal_seq;
     EXPECT_NO_THROW(TypeObjectUtils::add_complete_enumerated_literal(literal_seq, third_literal));
@@ -2433,14 +2435,14 @@ TEST(TypeObjectUtils, add_to_complete_enumerated_literal_seq)
 TEST(TypeObjectUtilsTests, add_to_complete_bitflag_seq)
 {
     CompleteMemberDetail first_detail = TypeObjectUtils::build_complete_member_detail("first",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteMemberDetail second_detail = TypeObjectUtils::build_complete_member_detail("second",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteMemberDetail third_detail = TypeObjectUtils::build_complete_member_detail("third",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CommonBitflag first = TypeObjectUtils::build_common_bitflag(1, 0);
     CommonBitflag second = TypeObjectUtils::build_common_bitflag(2, 0);
     CommonBitflag third = TypeObjectUtils::build_common_bitflag(3, 0);
@@ -2465,14 +2467,14 @@ TEST(TypeObjectUtilsTests, add_to_complete_bitflag_seq)
 TEST(TypeObjectUtilsTests, add_to_complete_bitfield_seq)
 {
     CompleteMemberDetail first_detail = TypeObjectUtils::build_complete_member_detail("first",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteMemberDetail second_detail = TypeObjectUtils::build_complete_member_detail("second",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteMemberDetail third_detail = TypeObjectUtils::build_complete_member_detail("third",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CommonBitfield first = TypeObjectUtils::build_common_bitfield(1, 0, 1, TK_BOOLEAN);
     CommonBitfield second = TypeObjectUtils::build_common_bitfield(2, 0, 1, TK_BOOLEAN);
     CommonBitfield third = TypeObjectUtils::build_common_bitfield(3, 0, 1, TK_BOOLEAN);
