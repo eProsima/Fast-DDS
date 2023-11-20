@@ -2374,7 +2374,7 @@ void TypeObjectUtils::string_member_id_consistency(
         const std::string& string_value)
 {
     NameHash hash = name_hash(string_value);
-    if (member_id != ((hash[3] << 24 | hash[2] << 16 | hash[1] << 8 | hash[0]) & 0x0FFFFFFF))
+    if (member_id != static_cast<uint32_t>((hash[3] << 24 | hash[2] << 16 | hash[1] << 8 | hash[0]) & 0x0FFFFFFF))
     {
         throw InvalidArgumentError("Inconsistent member id coming from a string value");
     }
