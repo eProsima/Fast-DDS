@@ -667,10 +667,6 @@ const AppliedAnnotation TypeObjectUtils::build_applied_annotation(
         const TypeIdentifier& annotation_typeid,
         const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
 {
-    if (!is_direct_hash_type_identifier(annotation_typeid))
-    {
-        throw InvalidArgumentError("Invalid annotation TypeIdentifier");
-    }
 #if !defined(NDEBUG)
     applied_annotation_type_identifier_consistency(annotation_typeid);
     if (param_seq.has_value())
@@ -899,10 +895,6 @@ const CompleteStructHeader TypeObjectUtils::build_complete_struct_header(
         const TypeIdentifier& base_type,
         const CompleteTypeDetail& detail)
 {
-    if (base_type._d() != TK_NONE && !is_direct_hash_type_identifier(base_type))
-    {
-        throw InvalidArgumentError("Base TypeIdentifier must be direct HASH TypeIdentifier");
-    }
 #if !defined(NDEBUG)
     if (base_type._d() != TK_NONE)
     {
@@ -2263,6 +2255,10 @@ void TypeObjectUtils::applied_annotation_parameter_seq_consistency(
 void TypeObjectUtils::applied_annotation_type_identifier_consistency(
         const TypeIdentifier& annotation_type_id)
 {
+    if (!is_direct_hash_type_identifier(annotation_type_id))
+    {
+        throw InvalidArgumentError("Applied Annotation TypeIdentifier is not direct HASH");
+    }
     TypeObjectPair type_objects;
     ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
         annotation_type_id, type_objects);
@@ -2276,10 +2272,6 @@ void TypeObjectUtils::applied_annotation_type_identifier_consistency(
     else if (ReturnCode_t::RETCODE_NO_DATA == ret_code)
     {
         throw InvalidArgumentError("Applied Annotation TypeIdentifier unknown to TypeObjectRegistry");
-    }
-    else
-    {
-        throw InvalidArgumentError("Applied Annotation TypeIdentifier is not direct HASH");
     }
 }
 
@@ -2445,6 +2437,10 @@ void TypeObjectUtils::complete_type_detail_consistency(
 void TypeObjectUtils::structure_base_type_consistency(
         const TypeIdentifier& base_type)
 {
+    if (!is_direct_hash_type_identifier(base_type))
+    {
+        throw InvalidArgumentError("Structure base_type TypeIdentifier is not direct HASH");
+    }
     TypeObjectPair type_objects;
     ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(base_type,
                     type_objects);
@@ -2459,10 +2455,6 @@ void TypeObjectUtils::complete_struct_header_consistency(
 {
     if (complete_struct_header.base_type()._d() != TK_NONE)
     {
-        if (!is_direct_hash_type_identifier(complete_struct_header.base_type()))
-        {
-            throw InvalidArgumentError("Base TypeIdentifier must be direct HASH TypeIdentifier");
-        }
         structure_base_type_consistency(complete_struct_header.base_type());
     }
     complete_type_detail_consistency(complete_struct_header.detail());
