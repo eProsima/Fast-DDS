@@ -647,22 +647,30 @@ void TypeObjectUtils::add_applied_annotation_parameter(
         AppliedAnnotationParameterSeq& param_seq,
         const AppliedAnnotationParameter& param)
 {
-#if !defined(NDEBUG)
-    for (AppliedAnnotationParameter parameter : param_seq)
+    auto it = param_seq.begin();
+    for (; it != param_seq.end(); ++it)
     {
-        if (parameter.paramname_hash() == param.paramname_hash())
+        // Sorted by AppliedAnnotationParameter.paramname_hash
+        if (it->paramname_hash() > param.paramname_hash())
+        {
+            break;
+        }
+        else if (it->paramname_hash() == param.paramname_hash())
         {
             throw InvalidArgumentError("Annotation parameter already applied");
         }
     }
-#endif // !defined(NDEBUG)
-    param_seq.push_back(param);
+    param_seq.emplace(it, param);
 }
 
 const AppliedAnnotation TypeObjectUtils::build_applied_annotation(
         const TypeIdentifier& annotation_typeid,
         const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
 {
+    if (!is_direct_hash_type_identifier(annotation_typeid))
+    {
+        throw InvalidArgumentError("Invalid annotation TypeIdentifier");
+    }
 #if !defined(NDEBUG)
     applied_annotation_type_identifier_consistency(annotation_typeid);
     if (param_seq.has_value())
@@ -686,15 +694,28 @@ void TypeObjectUtils::add_applied_annotation(
 {
 #if !defined(NDEBUG)
     applied_annotation_consistency(ann_custom);
-    for (AppliedAnnotation annotation : ann_custom_seq)
-    {
-        if (annotation.annotation_typeid() == ann_custom.annotation_typeid())
-        {
-            throw InvalidArgumentError("Annotation already applied");
-        }
-    }
 #endif // !defined(NDEBUG)
-    ann_custom_seq.push_back(ann_custom);
+    if (!is_direct_hash_type_identifier(ann_custom.annotation_typeid()))
+    {
+        throw InvalidArgumentError("Invalid annotation TypeIdentifier");
+    }
+    else
+    {
+        auto it = ann_custom_seq.begin();
+        for (; it != ann_custom_seq.end(); ++it)
+        {
+            // Sorted by AppliedAnnotation.annotation_typeid
+            if (it->annotation_typeid().equivalence_hash() > ann_custom.annotation_typeid().equivalence_hash())
+            {
+                break;
+            }
+            else if (it->annotation_typeid().equivalence_hash() == ann_custom.annotation_typeid().equivalence_hash())
+            {
+                throw InvalidArgumentError("Annotation already applied");
+            }
+        }
+        ann_custom_seq.emplace(it, ann_custom);
+    }
 }
 
 const AppliedVerbatimAnnotation TypeObjectUtils::build_applied_verbatim_annotation(
@@ -810,19 +831,28 @@ void TypeObjectUtils::add_complete_struct_member(
 {
 #if !defined(NDEBUG)
     complete_struct_member_consistency(member);
-    for (CompleteStructMember struct_member : member_seq)
+    for (const CompleteStructMember& struct_member : member_seq)
     {
-        if (struct_member.common().member_id() == member.common().member_id())
-        {
-            throw InvalidArgumentError("Sequence has another member with same ID");
-        }
         if (struct_member.detail().name() == member.detail().name())
         {
             throw InvalidArgumentError("Sequence has another member with same name");
         }
     }
 #endif // !defined(NDEBUG)
-    member_seq.push_back(member);
+    auto it = member_seq.begin();
+    for (; it != member_seq.end(); ++it)
+    {
+        // Ordered by the member_index
+        if (it->common().member_id() > member.common().member_id())
+        {
+            break;
+        }
+        else if (it->common().member_id() == member.common().member_id())
+        {
+            throw InvalidArgumentError("Sequence has another member with same ID");
+        }
+    }
+    member_seq.emplace(it, member);
 }
 
 const AppliedBuiltinTypeAnnotations TypeObjectUtils::build_applied_builtin_type_annotations(
@@ -907,15 +937,21 @@ void TypeObjectUtils::add_union_case_label(
         UnionCaseLabelSeq& label_seq,
         int32_t label)
 {
-    for (int32_t label_ : label_seq)
+    auto it = label_seq.begin();
+    for (; it != label_seq.end(); ++it)
     {
-        if (label == label_)
+        // Ordered by their values
+        if (*it > label)
+        {
+            break;
+        }
+        else if (label == *it)
         {
             // Not fail but not add repeated member.
             return;
         }
     }
-    label_seq.push_back(label);
+    label_seq.emplace(it, label);
 }
 
 const CommonUnionMember TypeObjectUtils::build_common_union_member(
@@ -975,10 +1011,6 @@ void TypeObjectUtils::add_complete_union_member(
     }
     for (CompleteUnionMember union_member : complete_union_member_seq)
     {
-        if (union_member.common().member_id() == member.common().member_id())
-        {
-            throw InvalidArgumentError("Sequence has another member with same ID");
-        }
         if (union_member.detail().name() == member.detail().name())
         {
             throw InvalidArgumentError("Sequence has another member with same name");
@@ -997,7 +1029,20 @@ void TypeObjectUtils::add_complete_union_member(
         }
     }
 #endif // !defined(NDEBUG)
-    complete_union_member_seq.push_back(member);
+    auto it = complete_union_member_seq.begin();
+    for (; it != complete_union_member_seq.end(); ++it)
+    {
+        // Ordered by member_index
+        if (it->common().member_id() > member.common().member_id())
+        {
+            break;
+        }
+        else if (it->common().member_id() == member.common().member_id())
+        {
+            throw InvalidArgumentError("Sequence has another member with same ID");
+        }
+    }
+    complete_union_member_seq.emplace(it, member);
 }
 
 const CommonDiscriminatorMember TypeObjectUtils::build_common_discriminator_member(
@@ -1108,15 +1153,21 @@ void TypeObjectUtils::add_complete_annotation_parameter(
 {
 #if !defined(NDEBUG)
     complete_annotation_parameter_consistency(param);
-    for (CompleteAnnotationParameter ann_param : sequence)
+#endif // if !defined(NDEBUG)
+    auto it = sequence.begin();
+    for (; it != sequence.end(); ++it)
     {
-        if (ann_param.name() == param.name())
+        // Ordered by CompleteAnnotationParameter.name
+        if (it->name() > param.name())
+        {
+            break;
+        }
+        else if (it->name() == param.name())
         {
             throw InvalidArgumentError("Sequence has another parameter with same name");
         }
     }
-#endif // if !defined(NDEBUG)
-    sequence.push_back(param);
+    sequence.emplace(it, param);
 }
 
 const CompleteAnnotationHeader TypeObjectUtils::build_complete_annotation_header(
@@ -1396,19 +1447,28 @@ void TypeObjectUtils::add_complete_enumerated_literal(
 {
 #if !defined(NDEBUG)
     complete_enumerated_literal_consistency(enum_literal);
-    for (CompleteEnumeratedLiteral literal : sequence)
+    for (const CompleteEnumeratedLiteral& literal : sequence)
     {
         if (literal.detail().name() == enum_literal.detail().name())
         {
             throw InvalidArgumentError("Sequence has another literal with the same member name");
         }
-        if (literal.common().value() == enum_literal.common().value())
+    }
+#endif // !defined(NDEBUG)
+    auto it = sequence.begin();
+    for (; it != sequence.end(); ++it)
+    {
+        // Ordered by EnumeratedLiteral.common.value
+        if (it->common().value() > enum_literal.common().value())
+        {
+            break;
+        }
+        else if (it->common().value() == enum_literal.common().value())
         {
             throw InvalidArgumentError("Sequence has another literal with the same value");
         }
     }
-#endif // !defined(NDEBUG)
-    sequence.push_back(enum_literal);
+    sequence.emplace(it, enum_literal);
 }
 
 const CommonEnumeratedHeader TypeObjectUtils::build_common_enumerated_header(
@@ -1499,17 +1559,26 @@ void TypeObjectUtils::add_complete_bitflag(
     complete_bitflag_consistency(bitflag);
     for (CompleteBitflag bitflag_elem : sequence)
     {
-        if (bitflag_elem.common().position() == bitflag.common().position())
-        {
-            throw InvalidArgumentError("Sequence has another bitflag with the same position");
-        }
         if (bitflag_elem.detail().name() == bitflag.detail().name())
         {
             throw InvalidArgumentError("Sequence has another bitflag with the same name");
         }
     }
 #endif // !defined(NDEBUG)
-    sequence.push_back(bitflag);
+    auto it = sequence.begin();
+    for (; it != sequence.end(); ++it)
+    {
+        // Ordered by Bitflag.position
+        if (it->common().position() > bitflag.common().position())
+        {
+            break;
+        }
+        else if (it->common().position() == bitflag.common().position())
+        {
+            throw InvalidArgumentError("Sequence has another bitflag with the same position");
+        }
+    }
+    sequence.emplace(it, bitflag);
 }
 
 const CompleteBitmaskType TypeObjectUtils::build_complete_bitmask_type(
@@ -1575,9 +1644,9 @@ void TypeObjectUtils::add_complete_bitfield(
     for (CompleteBitfield bitfield_elem : sequence)
     {
         size_t bitfield_elem_init = bitfield_elem.common().position();
-        size_t bitfield_elem_end = bitfield_elem_init + bitfield_elem.common().bitcount();
+        size_t bitfield_elem_end = bitfield_elem_init + bitfield_elem.common().bitcount() - 1;
         size_t bitfield_init = bitfield.common().position();
-        size_t bitfield_end = bitfield_init + bitfield.common().bitcount();
+        size_t bitfield_end = bitfield_init + bitfield.common().bitcount() - 1;
         if (bitfield_elem.detail().name() == bitfield.detail().name())
         {
             throw InvalidArgumentError("Sequence has another bitfield with the same name");
@@ -1588,7 +1657,20 @@ void TypeObjectUtils::add_complete_bitfield(
         }
     }
 #endif // !defined(NDEBUG)
-    sequence.push_back(bitfield);
+    auto it = sequence.begin();
+    for (; it != sequence.end(); ++it)
+    {
+        // Ordered by Bitfield.position
+        if (it->common().position() > bitfield.common().position())
+        {
+            break;
+        }
+        else if (it->common().position() == bitfield.common().position())
+        {
+            throw InvalidArgumentError("Sequence has another bitfield with the same positions");
+        }
+    }
+    sequence.emplace(it, bitfield);
 }
 
 const CompleteBitsetHeader TypeObjectUtils::build_complete_bitset_header(
