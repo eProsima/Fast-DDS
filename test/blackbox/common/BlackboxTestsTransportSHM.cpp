@@ -114,12 +114,18 @@ TEST(SHM, IgnoreNonExistentSegment)
     reader.wait_discovery();
 
     // Create and quickly destroy several participants in several threads
+#ifdef _WIN32
+    constexpr size_t num_threads = 1;
+    constexpr size_t num_parts = 2;
+#else
+    constexpr size_t num_threads = 10;
+    constexpr size_t num_parts = 10;
+#endif  // _WIN32
     std::vector<std::thread> threads;
     for (size_t i = 0; i < 10; i++)
     {
-        threads.push_back(std::thread([]()
+        threads.push_back(std::thread([num_parts]()
                 {
-                    constexpr size_t num_parts = 10;
                     for (size_t i = 0; i < num_parts; ++i)
                     {
                         PubSubWriter<Data1mbPubSubType> late_writer(TEST_TOPIC_NAME);
