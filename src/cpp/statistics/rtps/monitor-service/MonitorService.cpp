@@ -540,6 +540,8 @@ bool MonitorService::create_endpoint()
         tatts.topicName = MONITOR_SERVICE_TOPIC;
         tatts.topicDataType = type_.getName();
         tatts.topicKind = WITH_KEY;
+        tatts.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+        tatts.historyQos.depth = 20;
 
         endpoint_registrator_(status_writer_, tatts, wqos);
     }
