@@ -60,7 +60,7 @@ public:
 const eprosima::fastdds::statistics::dds::DataReaderQos STATISTICS_DATAREADER_QOS;
 
 //! Constant to access default Monitor Servie Statistics DataReader Qos
-const eprosima::fastdds::statistics::dds::DataReaderQos MONITOR_SERVICE_DATAREADER_QOS;
+const eprosima::fastdds::statistics::dds::MonitorServiceDataReaderQos MONITOR_SERVICE_DATAREADER_QOS;
 
 } // dds
 } // statistics
