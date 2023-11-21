@@ -285,6 +285,7 @@ endif()
 if(MSVC OR MSVC_IDE)
     target_link_libraries(UDPv4Tests ${PRIVACY} iphlpapi Shlwapi )
 endif()
+<<<<<<< HEAD
 gtest_discover_tests(UDPv4Tests)
 
 add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
@@ -389,6 +390,114 @@ if(NOT DISABLE_UDPV6_TESTS)
     gtest_discover_tests(TCPv6Tests)
 endif()
 
+=======
+add_gtest(UDPv4Tests SOURCES ${UDPV4TESTS_SOURCE})
+set(TRANSPORT_XFAIL_LIST XFAIL_UDP4)
+
+add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
+target_compile_definitions(test_UDPv4Tests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(test_UDPv4Tests PRIVATE
+    ${Asio_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
+    )
+target_link_libraries(test_UDPv4Tests
+    fastcdr
+    GTest::gtest
+    ${MOCKS})
+if(QNX)
+    target_link_libraries(test_UDPv4Tests socket)
+endif()
+if(MSVC OR MSVC_IDE)
+    target_link_libraries(test_UDPv4Tests ${PRIVACY} iphlpapi Shlwapi)
+endif()
+add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
+set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TEST_UDP4)
+
+##########################
+# IPv6 tests
+##########################
+option(DISABLE_UDPV6_TESTS "Disable UDPv6 tests because fails in some systems" OFF)
+
+if(NOT DISABLE_UDPV6_TESTS)
+    ##########################
+    # UDPv6 tests
+    ##########################
+    add_executable(UDPv6Tests ${UDPV6TESTS_SOURCE})
+    target_compile_definitions(UDPv6Tests PRIVATE
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_include_directories(UDPv6Tests PRIVATE
+        ${Asio_INCLUDE_DIR}
+        ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+        ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+        ${PROJECT_SOURCE_DIR}/src/cpp
+        )
+    target_link_libraries(UDPv6Tests
+        fastcdr
+        GTest::gtest
+        ${MOCKS})
+    if(QNX)
+        target_link_libraries(UDPv6Tests socket)
+    endif()
+    if(MSVC OR MSVC_IDE)
+        target_link_libraries(UDPv6Tests ${PRIVACY} iphlpapi Shlwapi )
+    endif()
+    add_gtest(UDPv6Tests SOURCES ${UDPV6TESTS_SOURCE})
+    set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_UDP6)
+
+    ##########################
+    # TCPv6 tests
+    ##########################
+    add_executable(TCPv6Tests ${TCPV6TESTS_SOURCE})
+    target_compile_definitions(TCPv6Tests PRIVATE
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_include_directories(TCPv6Tests PRIVATE
+        ${Asio_INCLUDE_DIR}
+        ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
+        ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
+        ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+        ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+        ${PROJECT_SOURCE_DIR}/src/cpp
+        $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
+        )
+    target_link_libraries(TCPv6Tests
+        fastcdr
+        GTest::gtest
+        ${MOCKS}
+        $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
+    if(QNX)
+        target_link_libraries(TCPv6Tests socket)
+    endif()
+    if(MSVC OR MSVC_IDE)
+        target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr iphlpapi Shlwapi)
+    else()
+        target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr)
+    endif()
+    add_gtest(TCPv6Tests SOURCES ${TCPV6TESTS_SOURCE})
+    set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TCP6)
+endif()
+
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
 ##########################
 # TCPv4 tests
 ##########################
@@ -472,6 +581,18 @@ set_property(DIRECTORY APPEND PROPERTY
     TEST_INCLUDE_FILES ${CMAKE_CURRENT_LIST_DIR}/xfail_tests.cmake
     )
 
+<<<<<<< HEAD
+=======
+if(ANDROID)
+    set_property(TARGET UDPv4Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET UDPv6Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET TCPv4Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET TCPv6Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET SharedMemTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET test_UDPv4Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()
+
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
 #####################################
 # PortBasedTransportDescriptor tests
 #####################################
@@ -499,4 +620,10 @@ target_link_libraries(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
     GTest::gtest
     ${MOCKS})
 
+<<<<<<< HEAD
 gtest_discover_tests(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET})
+=======
+add_gtest(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
+    SOURCES
+    ${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_SOURCES})
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))

@@ -84,7 +84,10 @@ set(LISTENERTESTS_SOURCE ListenerTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectUtils.cpp
+<<<<<<< HEAD
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/utils/QosConverters.cpp
+=======
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp

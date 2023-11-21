@@ -3685,9 +3685,13 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             default_thread_settings,
             default_thread_settings,
             default_thread_settings,
+<<<<<<< HEAD
 #if HAVE_SECURITY
             default_thread_settings
 #endif // if HAVE_SECURITY
+=======
+            default_thread_settings
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
         },
         {
             "builtin_controllers_sender_thread_nok",
@@ -3712,9 +3716,13 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             default_thread_settings,
             default_thread_settings,
             default_thread_settings,
+<<<<<<< HEAD
 #if HAVE_SECURITY
             default_thread_settings
 #endif // if HAVE_SECURITY
+=======
+            default_thread_settings
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
         },
         {
             "timed_events_thread_ok",
@@ -3739,9 +3747,13 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             modified_thread_settings,
             default_thread_settings,
             default_thread_settings,
+<<<<<<< HEAD
 #if HAVE_SECURITY
             default_thread_settings
 #endif // if HAVE_SECURITY
+=======
+            default_thread_settings
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
         },
         {
             "timed_events_thread_nok",
@@ -3766,9 +3778,13 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             modified_thread_settings,
             default_thread_settings,
             default_thread_settings,
+<<<<<<< HEAD
 #if HAVE_SECURITY
             default_thread_settings
 #endif // if HAVE_SECURITY
+=======
+            default_thread_settings
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
         },
         {
             "discovery_server_thread_ok",
@@ -3793,9 +3809,13 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             default_thread_settings,
             modified_thread_settings,
             default_thread_settings,
+<<<<<<< HEAD
 #if HAVE_SECURITY
             default_thread_settings
 #endif // if HAVE_SECURITY
+=======
+            default_thread_settings
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
         },
         {
             "discovery_server_thread_nok",
@@ -3820,9 +3840,13 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             default_thread_settings,
             modified_thread_settings,
             default_thread_settings,
+<<<<<<< HEAD
 #if HAVE_SECURITY
             default_thread_settings
 #endif // if HAVE_SECURITY
+=======
+            default_thread_settings
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
         },
         {
             "builtin_transports_reception_threads_ok",
@@ -3847,9 +3871,13 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             default_thread_settings,
             default_thread_settings,
             modified_thread_settings,
+<<<<<<< HEAD
 #if HAVE_SECURITY
             default_thread_settings
 #endif // if HAVE_SECURITY
+=======
+            default_thread_settings
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
         },
         {
             "builtin_transports_reception_threads_nok",
@@ -3874,9 +3902,13 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             default_thread_settings,
             default_thread_settings,
             modified_thread_settings,
+<<<<<<< HEAD
 #if HAVE_SECURITY
             default_thread_settings
 #endif // if HAVE_SECURITY
+=======
+            default_thread_settings
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
         },
 #if HAVE_SECURITY
         {

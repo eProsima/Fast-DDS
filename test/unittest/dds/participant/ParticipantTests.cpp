@@ -3024,6 +3024,33 @@ TEST(ParticipantTests, UpdatableDomainParticipantQos)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 #endif // if HAVE_SECURITY
 
+<<<<<<< HEAD
+=======
+    // Check that the builtin_controllers_sender_thread can not be changed in an enabled participant
+    participant->get_qos(pqos);
+    pqos.builtin_controllers_sender_thread().affinity = 1;
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+    // Check that the timed_events_thread can not be changed in an enabled participant
+    participant->get_qos(pqos);
+    pqos.timed_events_thread().affinity = 1;
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+    // Check that the discovery_server_thread can not be changed in an enabled participant
+    participant->get_qos(pqos);
+    pqos.discovery_server_thread().affinity = 1;
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+#if HAVE_SECURITY
+    // Check that the security_log_thread can not be changed in an enabled participant
+    participant->get_qos(pqos);
+    pqos.security_log_thread().affinity = 1;
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+#endif // if HAVE_SECURITY
+
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
 }
 
 /*

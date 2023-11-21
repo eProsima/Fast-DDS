@@ -35,4 +35,17 @@ target_link_libraries(
     GTest::gtest
     ${CMAKE_DL_LIBS})
 
+<<<<<<< HEAD
 gtest_discover_tests(${THREAD_SETTINGS_TESTS_EXEC})
+=======
+add_gtest(
+    ${THREAD_SETTINGS_TESTS_EXEC}
+    SOURCES
+    ${THREAD_SETTINGS_TESTS_SOURCE})
+
+if(ANDROID)
+    set_property(
+        TARGET ${THREAD_SETTINGS_TESTS_EXEC}
+        PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
