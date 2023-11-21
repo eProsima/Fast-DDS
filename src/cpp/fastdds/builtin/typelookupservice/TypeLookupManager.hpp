@@ -29,8 +29,6 @@
 #include <fastdds/builtin/typelookupservice/TypeLookupTypes.h>
 #include <fastdds/builtin/typelookupservice/TypeLookupTypesPubSubTypes.h>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
-
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 
@@ -103,11 +101,11 @@ public:
             fastrtps::rtps::ParticipantProxyData* ppd);
 
     //DomainParticipantImpl::get_type_dependencies
-    eprosima::fastrtps::rtps::SampleIdentity get_type_dependencies(
+    fastrtps::rtps::SampleIdentity get_type_dependencies(
             const xtypes1_3::TypeIdentifierSeq& in) const;
 
     //DomainParticipantImpl::get_types
-    eprosima::fastrtps::rtps::SampleIdentity get_types(
+    fastrtps::rtps::SampleIdentity get_types(
             const xtypes1_3::TypeIdentifierSeq& in) const;
 
 private:
@@ -135,6 +133,11 @@ private:
         const TypeLookup_getTypeDependencies_In& in,
         TypeLookup_getTypeDependencies_Out& out);
 
+    size_t continuation_point_size(const std::vector<uint8_t>& continuation_point) const;
+    void advance_sequence_number() const;
+    GUID_t get_guid_from_rtps(const fastrtps::rtps::GUID_t& rtps_guid) const;
+    fastrtps::rtps::GUID_t get_rtps_guid(const GUID_t& guid) const;
+    fastrtps::rtps::SampleIdentity get_rtps_sample_identity(const SampleIdentity& sampleid) const;
 
     std::string get_instanceName() const;
     fastrtps::rtps::RTPSParticipantImpl* get_RTPS_participant();
@@ -147,7 +150,6 @@ private:
     fastrtps::rtps::WriterHistory* get_builtin_reply_writer_history();
     fastrtps::rtps::ReaderHistory* get_builtin_request_reader_history();
     fastrtps::rtps::ReaderHistory* get_builtin_reply_reader_history();
-
 
     std::string instance_name_;//As defined in 7.6.3.3.4 of the XTypes 1.3 document
     fastrtps::rtps::RTPSParticipantImpl* participant_;
@@ -167,7 +169,7 @@ private:
     fastrtps::rtps::ReaderProxyData temp_reader_proxy_data_;
     fastrtps::rtps::WriterProxyData temp_writer_proxy_data_;
 
-    mutable fastrtps::rtps::SequenceNumber_t request_seq_number_;
+    mutable SequenceNumber_t request_seq_number_;
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
 

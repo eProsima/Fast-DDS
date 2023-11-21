@@ -24,7 +24,7 @@
 
 #include "TypeLookupTypes.h"
 
-constexpr uint32_t eprosima_fastdds_dds_rpc_ReplyHeader_max_cdr_typesize {12UL};
+constexpr uint32_t eprosima_fastdds_dds_rpc_ReplyHeader_max_cdr_typesize {48UL};
 constexpr uint32_t eprosima_fastdds_dds_rpc_ReplyHeader_max_key_cdr_typesize {0UL};
 
 
@@ -39,6 +39,8 @@ constexpr uint32_t eprosima_fastdds_dds_rpc_ReplyHeader_max_key_cdr_typesize {0U
 
 
 
+constexpr uint32_t eprosima_fastdds_dds_GUID_t_max_cdr_typesize {24UL};
+constexpr uint32_t eprosima_fastdds_dds_GUID_t_max_key_cdr_typesize {0UL};
 
 
 
@@ -69,7 +71,8 @@ constexpr uint32_t eprosima_fastdds_dds_rpc_ReplyHeader_max_key_cdr_typesize {0U
 
 
 
-constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_cdr_typesize {28631760452UL};
+
+constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_cdr_typesize {2631760488UL};
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_key_cdr_typesize {0UL};
 
 
@@ -86,23 +89,23 @@ constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_key_cdr_typ
 
 
 
-constexpr uint32_t eprosima_fastrtps_rtps_SampleIdentity_max_cdr_typesize {4UL};
-constexpr uint32_t eprosima_fastrtps_rtps_SampleIdentity_max_key_cdr_typesize {0UL};
-
 
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_cdr_typesize {42412UL};
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_key_cdr_typesize {0UL};
 
 
+constexpr uint32_t eprosima_fastdds_dds_EntityId_t_max_cdr_typesize {8UL};
+constexpr uint32_t eprosima_fastdds_dds_EntityId_t_max_key_cdr_typesize {0UL};
 
 
 
 
 
 
+constexpr uint32_t eprosima_fastdds_dds_SampleIdentity_max_cdr_typesize {40UL};
+constexpr uint32_t eprosima_fastdds_dds_SampleIdentity_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t eprosima_fastrtps_types_ReturnCode_t_max_cdr_typesize {4UL};
-constexpr uint32_t eprosima_fastrtps_types_ReturnCode_t_max_key_cdr_typesize {0UL};
+
 
 
 
@@ -115,7 +118,7 @@ constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_O
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_max_key_cdr_typesize {0UL};
 
 
-constexpr uint32_t eprosima_fastdds_dds_rpc_RequestHeader_max_cdr_typesize {268UL};
+constexpr uint32_t eprosima_fastdds_dds_rpc_RequestHeader_max_cdr_typesize {304UL};
 constexpr uint32_t eprosima_fastdds_dds_rpc_RequestHeader_max_key_cdr_typesize {0UL};
 
 
@@ -135,11 +138,14 @@ constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_I
 
 
 
+constexpr uint32_t eprosima_fastdds_dds_SequenceNumber_t_max_cdr_typesize {12UL};
+constexpr uint32_t eprosima_fastdds_dds_SequenceNumber_t_max_key_cdr_typesize {0UL};
 
 
 
 
-constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_cdr_typesize {28631760420UL};
+
+constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_cdr_typesize {2631760420UL};
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_key_cdr_typesize {0UL};
 
 
@@ -161,8 +167,9 @@ constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_key_
 
 
 
-constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Request_max_cdr_typesize {42728UL};
+constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Request_max_cdr_typesize {42764UL};
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Request_max_key_cdr_typesize {0UL};
+
 
 
 
@@ -230,6 +237,32 @@ class CdrSizeCalculator;
 
 
 
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::EntityId_t& data);
+
+
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::GUID_t& data);
+
+
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::SequenceNumber_t& data);
+
+
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::SampleIdentity& data);
+
+
+
+
+
 
 
 
@@ -249,19 +282,9 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
-
-
-
-
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& data);
-
-
 
 
 
@@ -273,25 +296,15 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& data);
 
 
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& data);
-
-
-
-
 
 
 
@@ -307,15 +320,9 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::builtin::TypeLookup_Reply& data);
-
-
-
-
 
 
 } // namespace fastcdr

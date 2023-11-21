@@ -60,9 +60,9 @@ TypeLookupRequestListener::~TypeLookupRequestListener()
 
 void TypeLookupRequestListener::onNewCacheChangeAdded(
         RTPSReader* reader,
-        const CacheChange_t* const change)
+        const CacheChange_t* const changeIN)
 {
-    CacheChange_t* change = const_cast<CacheChange_t*>(change);
+    CacheChange_t* change = const_cast<CacheChange_t*>(changeIN);
 
     if (change->writerGUID.entityId != c_EntityId_TypeLookup_request_writer)
     {
@@ -87,7 +87,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                 const TypeLookup_getTypes_In in = request.data().getTypes();
                 TypeLookup_getTypes_Out out;
 
-                if(RETCODE_OK != tlm_->get_registered_type_object(in, out))
+                if(ReturnCode_t::RETCODE_OK != tlm_->get_registered_type_object(in, out))
                 {
                     //RETCODE_NO_DATA if the given TypeIdentifier is not found in the registry.
                     break;
@@ -97,7 +97,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                 TypeLookup_getTypes_Result result;
                 result.result(out);
                 reply->return_value().getType(result);
-                reply->header().requestId() = request.header().requestId();
+                reply->header().relatedRequestId() = request.header().requestId();
 
                 tlm_->send_reply(*reply);
                 tlm_->reply_type_.deleteData(reply);
@@ -109,7 +109,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                 const TypeLookup_getTypeDependencies_In in = request.data().getTypeDependencies();
                 TypeLookup_getTypeDependencies_Out out;
 
-                if(RETCODE_OK != tlm_->get_registered_type_dependencies(in, out))
+                if(ReturnCode_t::RETCODE_OK != tlm_->get_registered_type_dependencies(in, out))
                 {
                     //RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
                     //RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.

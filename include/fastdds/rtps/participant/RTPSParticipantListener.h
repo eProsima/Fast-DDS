@@ -169,14 +169,14 @@ public:
      * If the type was discovered using TypeLookup Service then "topic" will be empty, but will have
      * the request_sample_id of the petition that caused the discovery.
      * For example:
-     * fastrtps::types::TypeIdentifier new_type_id = *identifier;
+     * xtypes1_3::TypeIdentifier new_type_id = *identifier;
      */
     virtual void on_type_discovery(
             RTPSParticipant* participant,
             const SampleIdentity& request_sample_id,
             const string_255& topic,
-            const types::TypeIdentifier* identifier,
-            const types::TypeObject* object,
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* identifier,
+            const eprosima::fastdds::dds::xtypes1_3::TypeObject* object,
             types::DynamicType_ptr dyn_type)
     {
         static_cast<void>(participant);

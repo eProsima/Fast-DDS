@@ -76,7 +76,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     TypeLookup_Reply reply;
     if (tlm_->reply_reception(*change, reply))
     {
-        if (reply.header().requestId().writer_guid() != tlm_.builtin_request_writer_->getGuid())
+        if (reply.header().relatedRequestId().writer_guid() != tlm_->builtin_request_writer_->getGuid())
         {
             // This message isn't for us.
             return;
@@ -88,9 +88,17 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
             {
                 for (auto pair : reply.return_value().getType().result().types())
                 {
+                    // tlm_->participant_->getListener()->on_type_discovery(
+                    //     tlm_->participant_->getUserRTPSParticipant(),
+                    //     reply.header().relatedRequestId(),
+                    //     "",
+                    //     &pair.type_identifier(),
+                    //     &pair.type_object(),
+                    //     DynamicType_ptr(nullptr));
+
                     tlm_->participant_->getListener()->on_type_discovery(
                         tlm_->participant_->getUserRTPSParticipant(),
-                        reply.header().requestId(),
+                        tlm_->get_rtps_sample_identity(reply.header().relatedRequestId()),
                         "",
                         &pair.type_identifier(),
                         &pair.type_object(),
@@ -100,9 +108,13 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
             }
             case TypeLookup_getDependencies_HashId:
             {
+                // tlm_->get_RTPS_participant()->getListener()->on_type_dependencies_reply(
+                //     tlm_->builtin_protocols_->mp_participantImpl->getUserRTPSParticipant(),
+                //     reply.header().relatedRequestId(),
+                //     reply.return_value().getTypeDependencies().result().dependent_typeids);
                 tlm_->get_RTPS_participant()->getListener()->on_type_dependencies_reply(
                     tlm_->builtin_protocols_->mp_participantImpl->getUserRTPSParticipant(),
-                    reply.header().requestId(),
+                    tlm_->get_rtps_sample_identity(reply.header().relatedRequestId()),
                     reply.return_value().getTypeDependencies().result().dependent_typeids);
                 break;
             }

@@ -289,8 +289,8 @@ void TestSubscriber::PartListener::on_type_discovery(
         eprosima::fastdds::dds::DomainParticipant*,
         const rtps::SampleIdentity&,
         const eprosima::fastrtps::string_255& topic,
-        const eprosima::fastrtps::types::TypeIdentifier*,
-        const eprosima::fastrtps::types::TypeObject*,
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier*,
+        const eprosima::fastdds::dds::xtypes1_3::TypeObject*,
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
 {
     if (!parent_->using_typelookup_ || parent_->tls_callback_called_)

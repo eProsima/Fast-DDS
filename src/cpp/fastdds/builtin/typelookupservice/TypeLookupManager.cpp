@@ -44,23 +44,9 @@ using eprosima::fastdds::dds::Log;
 
 using namespace eprosima::fastrtps::types;
 
-
-
 namespace fastdds {
 namespace dds {
 namespace builtin {
-
-
-using eprosima::fastdds::dds::xtypes1_3::TypeIdentifier;
-using eprosima::fastdds::dds::xtypes1_3::TypeObject;
-using eprosima::fastdds::dds::xtypes1_3::TypeObjectPair;
-using eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair;
-using eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair;
-using eprosima::fastdds::dds::xtypes1_3::TypeObjectRegistry;
-using eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize;
-using eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq;
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
-
 
 TypeLookupManager::TypeLookupManager(
         BuiltinProtocols* bprot)
@@ -207,7 +193,7 @@ bool TypeLookupManager::assign_remote_endpoints(
 void TypeLookupManager::remove_remote_endpoints(
         fastrtps::rtps::ParticipantProxyData* ppd)
 {
-    GUID_t tmp_guid;
+    fastrtps::rtps::GUID_t tmp_guid;
     tmp_guid.guidPrefix = ppd->m_guid.guidPrefix;
 
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << ppd->m_guid);
@@ -255,28 +241,29 @@ void TypeLookupManager::remove_remote_endpoints(
     }
 }
 
-eprosima::fastrtps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies(
+fastrtps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies(
         const xtypes1_3::TypeIdentifierSeq& id_seq) const
 {
-    eprosima::fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
+    fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
         bool seen_complete = false;
         bool seen_minimal = false;
-        for (const TypeIdentifier& type_id : id_seq)
+        for (const xtypes1_3::TypeIdentifier& type_id : id_seq)
         {
-            // Check if type_id._d is SCC or not direct HASH
-            if (type_id._d == TI_STRONG_COMPONENT||
-                !is_direct_hash_type_identifier(type_id))
+            // Check if type_id._d is direct HASH
+            if (!(type_id._d() == EK_MINIMAL ||
+                type_id._d() == EK_COMPLETE ||
+                type_id._d() == TI_STRONGLY_CONNECTED_COMPONENT))
             {
                 return id;
             }
             // Check for mixing of EK_COMPLETE and EK_MINIMAL
-            if (type_id._d == EK_COMPLETE)
+            if (type_id._d() == EK_COMPLETE)
             {
                 seen_complete = true;
             }
-            else if (type_id._d == EK_MINIMAL)
+            else if (type_id._d() == EK_MINIMAL)
             {
                 seen_minimal = true;
             }            
@@ -294,23 +281,25 @@ eprosima::fastrtps::rtps::SampleIdentity TypeLookupManager::get_type_dependencie
 
         if (send_request(*request))
         {
-            id = request->header().requestId();
+            id = get_rtps_sample_identity(request->header().requestId());
         }
         type.deleteData(request);
     }
     return id;
 }
 
-eprosima::fastrtps::rtps::SampleIdentity TypeLookupManager::get_types(
+fastrtps::rtps::SampleIdentity TypeLookupManager::get_types(
         const xtypes1_3::TypeIdentifierSeq& id_seq) const
 {
-    eprosima::fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
+    fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
-        for (const TypeIdentifier& type_id : id_seq)
+        for (const xtypes1_3::TypeIdentifier& type_id : id_seq)
         {
             // Check if type_id._d is direct HASH
-            if (!is_direct_hash_type_identifier(type_id))
+            if (!(type_id._d() == EK_MINIMAL ||
+                type_id._d() == EK_COMPLETE ||
+                type_id._d() == TI_STRONGLY_CONNECTED_COMPONENT))
             {
                 return id;
             }
@@ -324,12 +313,13 @@ eprosima::fastrtps::rtps::SampleIdentity TypeLookupManager::get_types(
 
         if (send_request(*request))
         {
-            id = request->header().requestId();
+            id = get_rtps_sample_identity(request->header().requestId());
         }
         type.deleteData(request);
     }
     return id;
 }
+
 
 bool TypeLookupManager::create_endpoints()
 {
@@ -481,9 +471,9 @@ bool TypeLookupManager::send_request(
         TypeLookup_Request& req) const
 {
     req.header().instanceName() = get_instanceName();
-    req.header().requestId().writer_guid(builtin_request_writer_->getGuid());
+    req.header().requestId().writer_guid(get_guid_from_rtps(builtin_request_writer_->getGuid()));
     req.header().requestId().sequence_number(request_seq_number_);
-    ++request_seq_number_;
+    advance_sequence_number();
 
     CacheChange_t* change = builtin_request_writer_->new_change(
         [&req]()
@@ -631,10 +621,10 @@ ReturnCode_t TypeLookupManager::get_registered_type_object(
     const TypeLookup_getTypes_In& in,
     TypeLookup_getTypes_Out& out)
 {
-    for (const TypeIdentifier& type_id : in.type_ids())
+    for (const xtypes1_3::TypeIdentifier& type_id : in.type_ids())
     {
         // Ask the TypeObjectRegistry for the TypeObject of the current TypeIdentifier.
-        TypeObject obj;
+        xtypes1_3::TypeObject obj;
         ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, obj);
         if(ret_code != ReturnCode_t::RETCODE_OK)
         {
@@ -642,7 +632,7 @@ ReturnCode_t TypeLookupManager::get_registered_type_object(
             continue;
         }
         // Create TypeIdentifierTypeObjectPair with the TypeObject registered for this TypeIdentifier.
-        TypeIdentifierTypeObjectPair id_obj_pair;
+        xtypes1_3::TypeIdentifierTypeObjectPair id_obj_pair;
         id_obj_pair.type_identifier(type_id);
         id_obj_pair.type_object(obj);
 
@@ -656,24 +646,24 @@ ReturnCode_t TypeLookupManager::get_registered_type_dependencies(
     TypeLookup_getTypeDependencies_Out& out)
 {
     const size_t max_size = 255;
-    TypeIdentfierWithSizeSeq result;    
-    size_t continuation_point = fastrtps::types::to_size_t(in.continuation_point());
+    xtypes1_3::TypeIdentfierWithSizeSeq result;    
+    size_t continuation_point = continuation_point_size(in.continuation_point());    
     size_t start_index = max_size * continuation_point;
 
     {
         std::lock_guard<std::mutex> lock(dependencies_requests_cache_mutex);
         // Check if the identifier is already in the cache
-        auto [dependencies_requests_cache_it, new_inserted] = dependencies_requests_cache_.emplace(in.type_ids(), std::unordered_set<TypeIdentfierWithSize>{});
+        auto result = dependencies_requests_cache_.emplace(in.type_ids(), std::unordered_set<xtypes1_3::TypeIdentfierWithSize>{});
 
-        if (new_inserted)
+        if (result.second)
         {
             // If not in cache, query the registry and handle errors
-            std::unordered_set<TypeIdentfierWithSize> full_type_dependencies;
+            std::unordered_set<xtypes1_3::TypeIdentfierWithSize> full_type_dependencies;
             ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_dependencies(in.type_ids(), full_type_dependencies);
             if(ret_code == ReturnCode_t::RETCODE_OK)
             {
                 // Moving the retrieved data into the cache entry.
-                dependencies_requests_cache_it->second = std::move(full_type_dependencies);
+                result.first->second = std::move(full_type_dependencies);
             }else{
                 //RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
                 //RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.
@@ -682,7 +672,7 @@ ReturnCode_t TypeLookupManager::get_registered_type_dependencies(
         }
 
         // At this point, dependencies_requests_cache_ it is guaranteed to be valid
-        const auto& dependencies = dependencies_requests_cache_it->second;
+        const auto& dependencies = result.first->second;
         auto dependencies_it = dependencies.begin();
         
         // Advance the iterator to the starting point, respecting the set boundaries
@@ -720,7 +710,78 @@ ReturnCode_t TypeLookupManager::get_registered_type_dependencies(
     return ReturnCode_t::RETCODE_OK;
 }
 
+size_t TypeLookupManager::continuation_point_size(
+        const std::vector<uint8_t>& continuation_point) const
+{
+    if (continuation_point.size() > 4)
+    {
+        // If doesn't fit in a size_t, return size_t::max
+        size_t aux = 0;
+        for (size_t i = 3; i < continuation_point.size(); ++i)
+        {
+            aux += continuation_point[i];
+        }
+        if (aux > 0)
+        {
+            return std::numeric_limits<size_t>::max();
+        }
+    }
 
+    size_t result = 0;
+
+    // result = s[0] + (s[1] * 255) + (s[2] * 255²) + (s[3] * 255³);
+    for (size_t i = 0; i < continuation_point.size() && i < 4; ++i)
+    {
+        result += (static_cast<size_t>(std::pow(255, i)) * continuation_point[i]);
+    }
+
+    return result;
+}
+
+void TypeLookupManager::advance_sequence_number() const
+{
+    ++request_seq_number_.low();
+    if (request_seq_number_.low() == 0)
+    {
+        ++request_seq_number_.high();
+    }
+}
+
+GUID_t TypeLookupManager::get_guid_from_rtps(const fastrtps::rtps::GUID_t& rtps_guid) const
+{
+    GUID_t guid;
+    std::memcpy(guid.guidPrefix().data(), rtps_guid.guidPrefix.value, 12);
+    for (size_t i = 0; i < 3; i++)
+    {
+        guid.entityId().entityKey()[i] = rtps_guid.entityId.value[i + 1];
+    }
+    guid.entityId().entityKind() = rtps_guid.entityId.value[0];
+
+    return guid;
+}
+
+fastrtps::rtps::GUID_t TypeLookupManager::get_rtps_guid(const GUID_t& guid) const
+{
+    fastrtps::rtps::GUID_t rtps_guid;
+    std::memcpy(rtps_guid.guidPrefix.value, guid.guidPrefix().data(), 12);
+    for (size_t i = 0; i < 3; i++)
+    {
+         rtps_guid.entityId.value[i + 1] = guid.entityId().entityKey()[i];
+    }
+    rtps_guid.entityId.value[0] = guid.entityId().entityKind();
+
+    return rtps_guid;
+}
+
+fastrtps::rtps::SampleIdentity TypeLookupManager::get_rtps_sample_identity(const SampleIdentity& sampleid) const
+{
+    fastrtps::rtps::SampleIdentity rtps_sampleid;
+    rtps_sampleid.writer_guid(get_rtps_guid(sampleid.writer_guid()));
+    rtps_sampleid.sequence_number().high = sampleid.sequence_number().high();
+    rtps_sampleid.sequence_number().low = sampleid.sequence_number().low();
+
+    return rtps_sampleid;
+}
 
 std::string TypeLookupManager::get_instanceName() const
 {
@@ -776,6 +837,7 @@ ReaderHistory* TypeLookupManager::get_builtin_reply_reader_history()
 {
     return builtin_reply_reader_history_;
 }
+
 
 } // namespace builtin
 } // namespace dds

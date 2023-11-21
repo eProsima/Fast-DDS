@@ -1,23 +1,36 @@
 /* TypeLookupTypes.idl */
 
-
 #include "../../../../../include/fastdds/dds/xtypes/type_representation/TypeObject.idl"
-//#include <fastdds/rtps/common/SampleIdentity.h>
-//#include <fastrtps/types/TypesBase.h>
+
+const long DDS_RETCODE_OK = 0;
 
 module eprosima {
 
-module fastrtps {
-module rtps {
-    struct SampleIdentity;
-};//rtps
-module types {
-    struct ReturnCode_t;
-};//types
-};//fastrtps
-
 module fastdds {
 module dds {
+
+typedef octet GuidPrefix_t[12];
+
+struct EntityId_t {
+    octet entityKey[3]; octet entityKind;
+};
+
+struct GUID_t {
+    GuidPrefix_t guidPrefix;
+    EntityId_t entityId;
+};
+
+struct SequenceNumber_t {
+    long high;
+    unsigned long low;
+};
+
+struct SampleIdentity {
+    GUID_t writer_guid;
+    SequenceNumber_t sequence_number;
+};
+
+
 module rpc {
 
     typedef octet UnknownOperation;
@@ -39,21 +52,22 @@ module rpc {
     @nested
     struct RequestHeader 
     {
-        fastrtps::rtps::SampleIdentity requestId;
+        SampleIdentity requestId;
         InstanceName instanceName;
     };
 
     @nested
     struct ReplyHeader 
     {
-        fastrtps::rtps::SampleIdentity relatedRequestId;
+        SampleIdentity relatedRequestId;
         dds::rpc::RemoteExceptionCode_t remoteEx;
     };
 
 }; // module rpc
-}; // module dds
 
-module dds {
+
+
+
 module builtin {
 
     // computed from @hashid("getTypes")
@@ -75,7 +89,7 @@ module builtin {
     };
 
     union TypeLookup_getTypes_Result switch(long) {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             TypeLookup_getTypes_Out result;
     };
 
@@ -93,7 +107,7 @@ module builtin {
     };
 
     union TypeLookup_getTypeDependencies_Result switch(long){
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             TypeLookup_getTypeDependencies_Out result;
     };
 
@@ -122,7 +136,7 @@ module builtin {
     @RPCReplyType
     struct TypeLookup_Reply {
         rpc::ReplyHeader header;
-        TypeLookup_Return return_value;//This name was changed from "return" to "return_value" to avoid problems in c++
+        TypeLookup_Return return_value; //This name was changed from "return" to "return_value" to avoid problems in c++
     };
 
 }; // builtin

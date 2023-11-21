@@ -136,8 +136,8 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         DomainParticipant*,
         const eprosima::fastrtps::rtps::SampleIdentity&,
         const eprosima::fastrtps::string_255& topic_name,
-        const eprosima::fastrtps::types::TypeIdentifier*,
-        const eprosima::fastrtps::types::TypeObject*,
+        const xtypes1_3::TypeIdentifier*,
+        const xtypes1_3::TypeObject*,
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
 {
     std::cout << "Discovered type: " << dyn_type->get_name() << " from topic " << topic_name << std::endl;

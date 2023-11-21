@@ -1230,8 +1230,8 @@ void PDP::check_and_notify_type_discovery(
         RTPSParticipantListener* listener,
         const string_255& topic_name,
         const string_255& type_name,
-        const types::TypeIdentifier* type_id,
-        const types::TypeObject* type_obj,
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_id,
+        const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_obj,
         const xtypes::TypeInformation* type_info) const
 {
     // Notify about type_info

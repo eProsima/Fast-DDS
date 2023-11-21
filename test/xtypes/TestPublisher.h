@@ -161,8 +161,8 @@ public:
                 eprosima::fastdds::dds::DomainParticipant* participant,
                 const eprosima::fastrtps::rtps::SampleIdentity& request_sample_id,
                 const eprosima::fastrtps::string_255& topic,
-                const eprosima::fastrtps::types::TypeIdentifier* identifier,
-                const eprosima::fastrtps::types::TypeObject* object,
+                const xtypes1_3::TypeIdentifier* identifier,
+                const xtypes1_3::TypeObject* object,
                 eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
 
         void on_type_information_received(

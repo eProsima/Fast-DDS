@@ -27,7 +27,6 @@ char dummy;
 #endif  // _WIN32
 
 #include "TypeLookupTypes.h"
-#include "TypeLookupTypesTypeObject.h"
 
 #include <fastcdr/Cdr.h>
 
@@ -40,52 +39,539 @@ using namespace eprosima::fastcdr::exception;
 
 namespace eprosima {
 
-namespace fastrtps {
-
-namespace rtps {
-
-
-} // namespace rtps
-namespace types {
-
-
-} // namespace types
-
-
-} // namespace fastrtps
 namespace fastdds {
 
 namespace dds {
+
+
+
+EntityId_t::EntityId_t()
+{
+}
+
+EntityId_t::~EntityId_t()
+{
+}
+
+EntityId_t::EntityId_t(
+        const EntityId_t& x)
+{
+    m_entityKey = x.m_entityKey;
+    m_entityKind = x.m_entityKind;
+}
+
+EntityId_t::EntityId_t(
+        EntityId_t&& x) noexcept
+{
+    m_entityKey = std::move(x.m_entityKey);
+    m_entityKind = x.m_entityKind;
+}
+
+EntityId_t& EntityId_t::operator =(
+        const EntityId_t& x)
+{
+
+    m_entityKey = x.m_entityKey;
+    m_entityKind = x.m_entityKind;
+    return *this;
+}
+
+EntityId_t& EntityId_t::operator =(
+        EntityId_t&& x) noexcept
+{
+
+    m_entityKey = std::move(x.m_entityKey);
+    m_entityKind = x.m_entityKind;
+    return *this;
+}
+
+bool EntityId_t::operator ==(
+        const EntityId_t& x) const
+{
+    return (m_entityKey == x.m_entityKey &&
+           m_entityKind == x.m_entityKind);
+}
+
+bool EntityId_t::operator !=(
+        const EntityId_t& x) const
+{
+    return !(*this == x);
+}
+
+/*!
+ * @brief This function copies the value in member entityKey
+ * @param _entityKey New value to be copied in member entityKey
+ */
+void EntityId_t::entityKey(
+        const std::array<uint8_t, 3>& _entityKey)
+{
+    m_entityKey = _entityKey;
+}
+
+/*!
+ * @brief This function moves the value in member entityKey
+ * @param _entityKey New value to be moved in member entityKey
+ */
+void EntityId_t::entityKey(
+        std::array<uint8_t, 3>&& _entityKey)
+{
+    m_entityKey = std::move(_entityKey);
+}
+
+/*!
+ * @brief This function returns a constant reference to member entityKey
+ * @return Constant reference to member entityKey
+ */
+const std::array<uint8_t, 3>& EntityId_t::entityKey() const
+{
+    return m_entityKey;
+}
+
+/*!
+ * @brief This function returns a reference to member entityKey
+ * @return Reference to member entityKey
+ */
+std::array<uint8_t, 3>& EntityId_t::entityKey()
+{
+    return m_entityKey;
+}
+
+
+/*!
+ * @brief This function sets a value in member entityKind
+ * @param _entityKind New value for member entityKind
+ */
+void EntityId_t::entityKind(
+        uint8_t _entityKind)
+{
+    m_entityKind = _entityKind;
+}
+
+/*!
+ * @brief This function returns the value of member entityKind
+ * @return Value of member entityKind
+ */
+uint8_t EntityId_t::entityKind() const
+{
+    return m_entityKind;
+}
+
+/*!
+ * @brief This function returns a reference to member entityKind
+ * @return Reference to member entityKind
+ */
+uint8_t& EntityId_t::entityKind()
+{
+    return m_entityKind;
+}
+
+
+
+
+GUID_t::GUID_t()
+{
+}
+
+GUID_t::~GUID_t()
+{
+}
+
+GUID_t::GUID_t(
+        const GUID_t& x)
+{
+    m_guidPrefix = x.m_guidPrefix;
+    m_entityId = x.m_entityId;
+}
+
+GUID_t::GUID_t(
+        GUID_t&& x) noexcept
+{
+    m_guidPrefix = std::move(x.m_guidPrefix);
+    m_entityId = std::move(x.m_entityId);
+}
+
+GUID_t& GUID_t::operator =(
+        const GUID_t& x)
+{
+
+    m_guidPrefix = x.m_guidPrefix;
+    m_entityId = x.m_entityId;
+    return *this;
+}
+
+GUID_t& GUID_t::operator =(
+        GUID_t&& x) noexcept
+{
+
+    m_guidPrefix = std::move(x.m_guidPrefix);
+    m_entityId = std::move(x.m_entityId);
+    return *this;
+}
+
+bool GUID_t::operator ==(
+        const GUID_t& x) const
+{
+    return (m_guidPrefix == x.m_guidPrefix &&
+           m_entityId == x.m_entityId);
+}
+
+bool GUID_t::operator !=(
+        const GUID_t& x) const
+{
+    return !(*this == x);
+}
+
+/*!
+ * @brief This function copies the value in member guidPrefix
+ * @param _guidPrefix New value to be copied in member guidPrefix
+ */
+void GUID_t::guidPrefix(
+        const eprosima::fastdds::dds::GuidPrefix_t& _guidPrefix)
+{
+    m_guidPrefix = _guidPrefix;
+}
+
+/*!
+ * @brief This function moves the value in member guidPrefix
+ * @param _guidPrefix New value to be moved in member guidPrefix
+ */
+void GUID_t::guidPrefix(
+        eprosima::fastdds::dds::GuidPrefix_t&& _guidPrefix)
+{
+    m_guidPrefix = std::move(_guidPrefix);
+}
+
+/*!
+ * @brief This function returns a constant reference to member guidPrefix
+ * @return Constant reference to member guidPrefix
+ */
+const eprosima::fastdds::dds::GuidPrefix_t& GUID_t::guidPrefix() const
+{
+    return m_guidPrefix;
+}
+
+/*!
+ * @brief This function returns a reference to member guidPrefix
+ * @return Reference to member guidPrefix
+ */
+eprosima::fastdds::dds::GuidPrefix_t& GUID_t::guidPrefix()
+{
+    return m_guidPrefix;
+}
+
+
+/*!
+ * @brief This function copies the value in member entityId
+ * @param _entityId New value to be copied in member entityId
+ */
+void GUID_t::entityId(
+        const eprosima::fastdds::dds::EntityId_t& _entityId)
+{
+    m_entityId = _entityId;
+}
+
+/*!
+ * @brief This function moves the value in member entityId
+ * @param _entityId New value to be moved in member entityId
+ */
+void GUID_t::entityId(
+        eprosima::fastdds::dds::EntityId_t&& _entityId)
+{
+    m_entityId = std::move(_entityId);
+}
+
+/*!
+ * @brief This function returns a constant reference to member entityId
+ * @return Constant reference to member entityId
+ */
+const eprosima::fastdds::dds::EntityId_t& GUID_t::entityId() const
+{
+    return m_entityId;
+}
+
+/*!
+ * @brief This function returns a reference to member entityId
+ * @return Reference to member entityId
+ */
+eprosima::fastdds::dds::EntityId_t& GUID_t::entityId()
+{
+    return m_entityId;
+}
+
+
+
+
+SequenceNumber_t::SequenceNumber_t()
+{
+}
+
+SequenceNumber_t::~SequenceNumber_t()
+{
+}
+
+SequenceNumber_t::SequenceNumber_t(
+        const SequenceNumber_t& x)
+{
+    m_high = x.m_high;
+    m_low = x.m_low;
+}
+
+SequenceNumber_t::SequenceNumber_t(
+        SequenceNumber_t&& x) noexcept
+{
+    m_high = x.m_high;
+    m_low = x.m_low;
+}
+
+SequenceNumber_t& SequenceNumber_t::operator =(
+        const SequenceNumber_t& x)
+{
+
+    m_high = x.m_high;
+    m_low = x.m_low;
+    return *this;
+}
+
+SequenceNumber_t& SequenceNumber_t::operator =(
+        SequenceNumber_t&& x) noexcept
+{
+
+    m_high = x.m_high;
+    m_low = x.m_low;
+    return *this;
+}
+
+bool SequenceNumber_t::operator ==(
+        const SequenceNumber_t& x) const
+{
+    return (m_high == x.m_high &&
+           m_low == x.m_low);
+}
+
+bool SequenceNumber_t::operator !=(
+        const SequenceNumber_t& x) const
+{
+    return !(*this == x);
+}
+
+/*!
+ * @brief This function sets a value in member high
+ * @param _high New value for member high
+ */
+void SequenceNumber_t::high(
+        int32_t _high)
+{
+    m_high = _high;
+}
+
+/*!
+ * @brief This function returns the value of member high
+ * @return Value of member high
+ */
+int32_t SequenceNumber_t::high() const
+{
+    return m_high;
+}
+
+/*!
+ * @brief This function returns a reference to member high
+ * @return Reference to member high
+ */
+int32_t& SequenceNumber_t::high()
+{
+    return m_high;
+}
+
+
+/*!
+ * @brief This function sets a value in member low
+ * @param _low New value for member low
+ */
+void SequenceNumber_t::low(
+        uint32_t _low)
+{
+    m_low = _low;
+}
+
+/*!
+ * @brief This function returns the value of member low
+ * @return Value of member low
+ */
+uint32_t SequenceNumber_t::low() const
+{
+    return m_low;
+}
+
+/*!
+ * @brief This function returns a reference to member low
+ * @return Reference to member low
+ */
+uint32_t& SequenceNumber_t::low()
+{
+    return m_low;
+}
+
+
+
+
+SampleIdentity::SampleIdentity()
+{
+}
+
+SampleIdentity::~SampleIdentity()
+{
+}
+
+SampleIdentity::SampleIdentity(
+        const SampleIdentity& x)
+{
+    m_writer_guid = x.m_writer_guid;
+    m_sequence_number = x.m_sequence_number;
+}
+
+SampleIdentity::SampleIdentity(
+        SampleIdentity&& x) noexcept
+{
+    m_writer_guid = std::move(x.m_writer_guid);
+    m_sequence_number = std::move(x.m_sequence_number);
+}
+
+SampleIdentity& SampleIdentity::operator =(
+        const SampleIdentity& x)
+{
+
+    m_writer_guid = x.m_writer_guid;
+    m_sequence_number = x.m_sequence_number;
+    return *this;
+}
+
+SampleIdentity& SampleIdentity::operator =(
+        SampleIdentity&& x) noexcept
+{
+
+    m_writer_guid = std::move(x.m_writer_guid);
+    m_sequence_number = std::move(x.m_sequence_number);
+    return *this;
+}
+
+bool SampleIdentity::operator ==(
+        const SampleIdentity& x) const
+{
+    return (m_writer_guid == x.m_writer_guid &&
+           m_sequence_number == x.m_sequence_number);
+}
+
+bool SampleIdentity::operator !=(
+        const SampleIdentity& x) const
+{
+    return !(*this == x);
+}
+
+/*!
+ * @brief This function copies the value in member writer_guid
+ * @param _writer_guid New value to be copied in member writer_guid
+ */
+void SampleIdentity::writer_guid(
+        const eprosima::fastdds::dds::GUID_t& _writer_guid)
+{
+    m_writer_guid = _writer_guid;
+}
+
+/*!
+ * @brief This function moves the value in member writer_guid
+ * @param _writer_guid New value to be moved in member writer_guid
+ */
+void SampleIdentity::writer_guid(
+        eprosima::fastdds::dds::GUID_t&& _writer_guid)
+{
+    m_writer_guid = std::move(_writer_guid);
+}
+
+/*!
+ * @brief This function returns a constant reference to member writer_guid
+ * @return Constant reference to member writer_guid
+ */
+const eprosima::fastdds::dds::GUID_t& SampleIdentity::writer_guid() const
+{
+    return m_writer_guid;
+}
+
+/*!
+ * @brief This function returns a reference to member writer_guid
+ * @return Reference to member writer_guid
+ */
+eprosima::fastdds::dds::GUID_t& SampleIdentity::writer_guid()
+{
+    return m_writer_guid;
+}
+
+
+/*!
+ * @brief This function copies the value in member sequence_number
+ * @param _sequence_number New value to be copied in member sequence_number
+ */
+void SampleIdentity::sequence_number(
+        const eprosima::fastdds::dds::SequenceNumber_t& _sequence_number)
+{
+    m_sequence_number = _sequence_number;
+}
+
+/*!
+ * @brief This function moves the value in member sequence_number
+ * @param _sequence_number New value to be moved in member sequence_number
+ */
+void SampleIdentity::sequence_number(
+        eprosima::fastdds::dds::SequenceNumber_t&& _sequence_number)
+{
+    m_sequence_number = std::move(_sequence_number);
+}
+
+/*!
+ * @brief This function returns a constant reference to member sequence_number
+ * @return Constant reference to member sequence_number
+ */
+const eprosima::fastdds::dds::SequenceNumber_t& SampleIdentity::sequence_number() const
+{
+    return m_sequence_number;
+}
+
+/*!
+ * @brief This function returns a reference to member sequence_number
+ * @return Reference to member sequence_number
+ */
+eprosima::fastdds::dds::SequenceNumber_t& SampleIdentity::sequence_number()
+{
+    return m_sequence_number;
+}
+
 
 namespace rpc {
 
 
 
-eprosima::fastdds::dds::rpc::RequestHeader::RequestHeader()
-{
-    // Just to register all known types
-    registerTypeLookupTypesTypes();
-}
-
-eprosima::fastdds::dds::rpc::RequestHeader::~RequestHeader()
+RequestHeader::RequestHeader()
 {
 }
 
-eprosima::fastdds::dds::rpc::RequestHeader::RequestHeader(
+RequestHeader::~RequestHeader()
+{
+}
+
+RequestHeader::RequestHeader(
         const RequestHeader& x)
 {
     m_requestId = x.m_requestId;
     m_instanceName = x.m_instanceName;
 }
 
-eprosima::fastdds::dds::rpc::RequestHeader::RequestHeader(
+RequestHeader::RequestHeader(
         RequestHeader&& x) noexcept
 {
     m_requestId = std::move(x.m_requestId);
     m_instanceName = std::move(x.m_instanceName);
 }
 
-eprosima::fastdds::dds::rpc::RequestHeader& eprosima::fastdds::dds::rpc::RequestHeader::operator =(
+RequestHeader& RequestHeader::operator =(
         const RequestHeader& x)
 {
 
@@ -94,7 +580,7 @@ eprosima::fastdds::dds::rpc::RequestHeader& eprosima::fastdds::dds::rpc::Request
     return *this;
 }
 
-eprosima::fastdds::dds::rpc::RequestHeader& eprosima::fastdds::dds::rpc::RequestHeader::operator =(
+RequestHeader& RequestHeader::operator =(
         RequestHeader&& x) noexcept
 {
 
@@ -103,14 +589,14 @@ eprosima::fastdds::dds::rpc::RequestHeader& eprosima::fastdds::dds::rpc::Request
     return *this;
 }
 
-bool eprosima::fastdds::dds::rpc::RequestHeader::operator ==(
+bool RequestHeader::operator ==(
         const RequestHeader& x) const
 {
     return (m_requestId == x.m_requestId &&
            m_instanceName == x.m_instanceName);
 }
 
-bool eprosima::fastdds::dds::rpc::RequestHeader::operator !=(
+bool RequestHeader::operator !=(
         const RequestHeader& x) const
 {
     return !(*this == x);
@@ -120,8 +606,8 @@ bool eprosima::fastdds::dds::rpc::RequestHeader::operator !=(
  * @brief This function copies the value in member requestId
  * @param _requestId New value to be copied in member requestId
  */
-void eprosima::fastdds::dds::rpc::RequestHeader::requestId(
-        const eprosima::fastrtps::rtps::SampleIdentity& _requestId)
+void RequestHeader::requestId(
+        const eprosima::fastdds::dds::SampleIdentity& _requestId)
 {
     m_requestId = _requestId;
 }
@@ -130,8 +616,8 @@ void eprosima::fastdds::dds::rpc::RequestHeader::requestId(
  * @brief This function moves the value in member requestId
  * @param _requestId New value to be moved in member requestId
  */
-void eprosima::fastdds::dds::rpc::RequestHeader::requestId(
-        eprosima::fastrtps::rtps::SampleIdentity&& _requestId)
+void RequestHeader::requestId(
+        eprosima::fastdds::dds::SampleIdentity&& _requestId)
 {
     m_requestId = std::move(_requestId);
 }
@@ -140,7 +626,7 @@ void eprosima::fastdds::dds::rpc::RequestHeader::requestId(
  * @brief This function returns a constant reference to member requestId
  * @return Constant reference to member requestId
  */
-const eprosima::fastrtps::rtps::SampleIdentity& eprosima::fastdds::dds::rpc::RequestHeader::requestId() const
+const eprosima::fastdds::dds::SampleIdentity& RequestHeader::requestId() const
 {
     return m_requestId;
 }
@@ -149,7 +635,7 @@ const eprosima::fastrtps::rtps::SampleIdentity& eprosima::fastdds::dds::rpc::Req
  * @brief This function returns a reference to member requestId
  * @return Reference to member requestId
  */
-eprosima::fastrtps::rtps::SampleIdentity& eprosima::fastdds::dds::rpc::RequestHeader::requestId()
+eprosima::fastdds::dds::SampleIdentity& RequestHeader::requestId()
 {
     return m_requestId;
 }
@@ -159,7 +645,7 @@ eprosima::fastrtps::rtps::SampleIdentity& eprosima::fastdds::dds::rpc::RequestHe
  * @brief This function copies the value in member instanceName
  * @param _instanceName New value to be copied in member instanceName
  */
-void eprosima::fastdds::dds::rpc::RequestHeader::instanceName(
+void RequestHeader::instanceName(
         const eprosima::fastdds::dds::rpc::InstanceName& _instanceName)
 {
     m_instanceName = _instanceName;
@@ -169,7 +655,7 @@ void eprosima::fastdds::dds::rpc::RequestHeader::instanceName(
  * @brief This function moves the value in member instanceName
  * @param _instanceName New value to be moved in member instanceName
  */
-void eprosima::fastdds::dds::rpc::RequestHeader::instanceName(
+void RequestHeader::instanceName(
         eprosima::fastdds::dds::rpc::InstanceName&& _instanceName)
 {
     m_instanceName = std::move(_instanceName);
@@ -179,7 +665,7 @@ void eprosima::fastdds::dds::rpc::RequestHeader::instanceName(
  * @brief This function returns a constant reference to member instanceName
  * @return Constant reference to member instanceName
  */
-const eprosima::fastdds::dds::rpc::InstanceName& eprosima::fastdds::dds::rpc::RequestHeader::instanceName() const
+const eprosima::fastdds::dds::rpc::InstanceName& RequestHeader::instanceName() const
 {
     return m_instanceName;
 }
@@ -188,7 +674,7 @@ const eprosima::fastdds::dds::rpc::InstanceName& eprosima::fastdds::dds::rpc::Re
  * @brief This function returns a reference to member instanceName
  * @return Reference to member instanceName
  */
-eprosima::fastdds::dds::rpc::InstanceName& eprosima::fastdds::dds::rpc::RequestHeader::instanceName()
+eprosima::fastdds::dds::rpc::InstanceName& RequestHeader::instanceName()
 {
     return m_instanceName;
 }
@@ -196,31 +682,29 @@ eprosima::fastdds::dds::rpc::InstanceName& eprosima::fastdds::dds::rpc::RequestH
 
 
 
-eprosima::fastdds::dds::rpc::ReplyHeader::ReplyHeader()
-{
-    // Just to register all known types
-    registerTypeLookupTypesTypes();
-}
-
-eprosima::fastdds::dds::rpc::ReplyHeader::~ReplyHeader()
+ReplyHeader::ReplyHeader()
 {
 }
 
-eprosima::fastdds::dds::rpc::ReplyHeader::ReplyHeader(
+ReplyHeader::~ReplyHeader()
+{
+}
+
+ReplyHeader::ReplyHeader(
         const ReplyHeader& x)
 {
     m_relatedRequestId = x.m_relatedRequestId;
     m_remoteEx = x.m_remoteEx;
 }
 
-eprosima::fastdds::dds::rpc::ReplyHeader::ReplyHeader(
+ReplyHeader::ReplyHeader(
         ReplyHeader&& x) noexcept
 {
     m_relatedRequestId = std::move(x.m_relatedRequestId);
     m_remoteEx = x.m_remoteEx;
 }
 
-eprosima::fastdds::dds::rpc::ReplyHeader& eprosima::fastdds::dds::rpc::ReplyHeader::operator =(
+ReplyHeader& ReplyHeader::operator =(
         const ReplyHeader& x)
 {
 
@@ -229,7 +713,7 @@ eprosima::fastdds::dds::rpc::ReplyHeader& eprosima::fastdds::dds::rpc::ReplyHead
     return *this;
 }
 
-eprosima::fastdds::dds::rpc::ReplyHeader& eprosima::fastdds::dds::rpc::ReplyHeader::operator =(
+ReplyHeader& ReplyHeader::operator =(
         ReplyHeader&& x) noexcept
 {
 
@@ -238,14 +722,14 @@ eprosima::fastdds::dds::rpc::ReplyHeader& eprosima::fastdds::dds::rpc::ReplyHead
     return *this;
 }
 
-bool eprosima::fastdds::dds::rpc::ReplyHeader::operator ==(
+bool ReplyHeader::operator ==(
         const ReplyHeader& x) const
 {
     return (m_relatedRequestId == x.m_relatedRequestId &&
            m_remoteEx == x.m_remoteEx);
 }
 
-bool eprosima::fastdds::dds::rpc::ReplyHeader::operator !=(
+bool ReplyHeader::operator !=(
         const ReplyHeader& x) const
 {
     return !(*this == x);
@@ -255,8 +739,8 @@ bool eprosima::fastdds::dds::rpc::ReplyHeader::operator !=(
  * @brief This function copies the value in member relatedRequestId
  * @param _relatedRequestId New value to be copied in member relatedRequestId
  */
-void eprosima::fastdds::dds::rpc::ReplyHeader::relatedRequestId(
-        const eprosima::fastrtps::rtps::SampleIdentity& _relatedRequestId)
+void ReplyHeader::relatedRequestId(
+        const eprosima::fastdds::dds::SampleIdentity& _relatedRequestId)
 {
     m_relatedRequestId = _relatedRequestId;
 }
@@ -265,8 +749,8 @@ void eprosima::fastdds::dds::rpc::ReplyHeader::relatedRequestId(
  * @brief This function moves the value in member relatedRequestId
  * @param _relatedRequestId New value to be moved in member relatedRequestId
  */
-void eprosima::fastdds::dds::rpc::ReplyHeader::relatedRequestId(
-        eprosima::fastrtps::rtps::SampleIdentity&& _relatedRequestId)
+void ReplyHeader::relatedRequestId(
+        eprosima::fastdds::dds::SampleIdentity&& _relatedRequestId)
 {
     m_relatedRequestId = std::move(_relatedRequestId);
 }
@@ -275,7 +759,7 @@ void eprosima::fastdds::dds::rpc::ReplyHeader::relatedRequestId(
  * @brief This function returns a constant reference to member relatedRequestId
  * @return Constant reference to member relatedRequestId
  */
-const eprosima::fastrtps::rtps::SampleIdentity& eprosima::fastdds::dds::rpc::ReplyHeader::relatedRequestId() const
+const eprosima::fastdds::dds::SampleIdentity& ReplyHeader::relatedRequestId() const
 {
     return m_relatedRequestId;
 }
@@ -284,7 +768,7 @@ const eprosima::fastrtps::rtps::SampleIdentity& eprosima::fastdds::dds::rpc::Rep
  * @brief This function returns a reference to member relatedRequestId
  * @return Reference to member relatedRequestId
  */
-eprosima::fastrtps::rtps::SampleIdentity& eprosima::fastdds::dds::rpc::ReplyHeader::relatedRequestId()
+eprosima::fastdds::dds::SampleIdentity& ReplyHeader::relatedRequestId()
 {
     return m_relatedRequestId;
 }
@@ -294,7 +778,7 @@ eprosima::fastrtps::rtps::SampleIdentity& eprosima::fastdds::dds::rpc::ReplyHead
  * @brief This function sets a value in member remoteEx
  * @param _remoteEx New value for member remoteEx
  */
-void eprosima::fastdds::dds::rpc::ReplyHeader::remoteEx(
+void ReplyHeader::remoteEx(
         eprosima::fastdds::dds::rpc::RemoteExceptionCode_t _remoteEx)
 {
     m_remoteEx = _remoteEx;
@@ -304,7 +788,7 @@ void eprosima::fastdds::dds::rpc::ReplyHeader::remoteEx(
  * @brief This function returns the value of member remoteEx
  * @return Value of member remoteEx
  */
-eprosima::fastdds::dds::rpc::RemoteExceptionCode_t eprosima::fastdds::dds::rpc::ReplyHeader::remoteEx() const
+eprosima::fastdds::dds::rpc::RemoteExceptionCode_t ReplyHeader::remoteEx() const
 {
     return m_remoteEx;
 }
@@ -313,49 +797,39 @@ eprosima::fastdds::dds::rpc::RemoteExceptionCode_t eprosima::fastdds::dds::rpc::
  * @brief This function returns a reference to member remoteEx
  * @return Reference to member remoteEx
  */
-eprosima::fastdds::dds::rpc::RemoteExceptionCode_t& eprosima::fastdds::dds::rpc::ReplyHeader::remoteEx()
+eprosima::fastdds::dds::rpc::RemoteExceptionCode_t& ReplyHeader::remoteEx()
 {
     return m_remoteEx;
 }
 
 
 
-
 } // namespace rpc
-
-
-} // namespace dds
-namespace dds {
-
 namespace builtin {
 
 
 
-
-
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::TypeLookup_getTypes_In()
-{
-    // Just to register all known types
-    registerTypeLookupTypesTypes();
-}
-
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::~TypeLookup_getTypes_In()
+TypeLookup_getTypes_In::TypeLookup_getTypes_In()
 {
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::TypeLookup_getTypes_In(
+TypeLookup_getTypes_In::~TypeLookup_getTypes_In()
+{
+}
+
+TypeLookup_getTypes_In::TypeLookup_getTypes_In(
         const TypeLookup_getTypes_In& x)
 {
     m_type_ids = x.m_type_ids;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::TypeLookup_getTypes_In(
+TypeLookup_getTypes_In::TypeLookup_getTypes_In(
         TypeLookup_getTypes_In&& x) noexcept
 {
     m_type_ids = std::move(x.m_type_ids);
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::operator =(
+TypeLookup_getTypes_In& TypeLookup_getTypes_In::operator =(
         const TypeLookup_getTypes_In& x)
 {
 
@@ -363,7 +837,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& eprosima::fastdds::dds:
     return *this;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::operator =(
+TypeLookup_getTypes_In& TypeLookup_getTypes_In::operator =(
         TypeLookup_getTypes_In&& x) noexcept
 {
 
@@ -371,13 +845,13 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& eprosima::fastdds::dds:
     return *this;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::operator ==(
+bool TypeLookup_getTypes_In::operator ==(
         const TypeLookup_getTypes_In& x) const
 {
     return (m_type_ids == x.m_type_ids);
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::operator !=(
+bool TypeLookup_getTypes_In::operator !=(
         const TypeLookup_getTypes_In& x) const
 {
     return !(*this == x);
@@ -387,7 +861,7 @@ bool eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::operator !=(
  * @brief This function copies the value in member type_ids
  * @param _type_ids New value to be copied in member type_ids
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::type_ids(
+void TypeLookup_getTypes_In::type_ids(
         const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& _type_ids)
 {
     m_type_ids = _type_ids;
@@ -397,7 +871,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::type_ids(
  * @brief This function moves the value in member type_ids
  * @param _type_ids New value to be moved in member type_ids
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::type_ids(
+void TypeLookup_getTypes_In::type_ids(
         std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>&& _type_ids)
 {
     m_type_ids = std::move(_type_ids);
@@ -407,7 +881,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::type_ids(
  * @brief This function returns a constant reference to member type_ids
  * @return Constant reference to member type_ids
  */
-const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::type_ids() const
+const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& TypeLookup_getTypes_In::type_ids() const
 {
     return m_type_ids;
 }
@@ -416,7 +890,7 @@ const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& eprosima::
  * @brief This function returns a reference to member type_ids
  * @return Reference to member type_ids
  */
-std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::type_ids()
+std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& TypeLookup_getTypes_In::type_ids()
 {
     return m_type_ids;
 }
@@ -424,33 +898,29 @@ std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& eprosima::fastdd
 
 
 
-
-
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::TypeLookup_getTypes_Out()
-{
-    // Just to register all known types
-    registerTypeLookupTypesTypes();
-}
-
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::~TypeLookup_getTypes_Out()
+TypeLookup_getTypes_Out::TypeLookup_getTypes_Out()
 {
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::TypeLookup_getTypes_Out(
+TypeLookup_getTypes_Out::~TypeLookup_getTypes_Out()
+{
+}
+
+TypeLookup_getTypes_Out::TypeLookup_getTypes_Out(
         const TypeLookup_getTypes_Out& x)
 {
     m_types = x.m_types;
     m_complete_to_minimal = x.m_complete_to_minimal;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::TypeLookup_getTypes_Out(
+TypeLookup_getTypes_Out::TypeLookup_getTypes_Out(
         TypeLookup_getTypes_Out&& x) noexcept
 {
     m_types = std::move(x.m_types);
     m_complete_to_minimal = std::move(x.m_complete_to_minimal);
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::operator =(
+TypeLookup_getTypes_Out& TypeLookup_getTypes_Out::operator =(
         const TypeLookup_getTypes_Out& x)
 {
 
@@ -459,7 +929,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& eprosima::fastdds::dds
     return *this;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::operator =(
+TypeLookup_getTypes_Out& TypeLookup_getTypes_Out::operator =(
         TypeLookup_getTypes_Out&& x) noexcept
 {
 
@@ -468,14 +938,14 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& eprosima::fastdds::dds
     return *this;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::operator ==(
+bool TypeLookup_getTypes_Out::operator ==(
         const TypeLookup_getTypes_Out& x) const
 {
     return (m_types == x.m_types &&
            m_complete_to_minimal == x.m_complete_to_minimal);
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::operator !=(
+bool TypeLookup_getTypes_Out::operator !=(
         const TypeLookup_getTypes_Out& x) const
 {
     return !(*this == x);
@@ -485,7 +955,7 @@ bool eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::operator !=(
  * @brief This function copies the value in member types
  * @param _types New value to be copied in member types
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::types(
+void TypeLookup_getTypes_Out::types(
         const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair>& _types)
 {
     m_types = _types;
@@ -495,7 +965,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::types(
  * @brief This function moves the value in member types
  * @param _types New value to be moved in member types
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::types(
+void TypeLookup_getTypes_Out::types(
         std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair>&& _types)
 {
     m_types = std::move(_types);
@@ -505,7 +975,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::types(
  * @brief This function returns a constant reference to member types
  * @return Constant reference to member types
  */
-const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair>& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::types() const
+const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair>& TypeLookup_getTypes_Out::types() const
 {
     return m_types;
 }
@@ -514,7 +984,7 @@ const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPai
  * @brief This function returns a reference to member types
  * @return Reference to member types
  */
-std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair>& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::types()
+std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair>& TypeLookup_getTypes_Out::types()
 {
     return m_types;
 }
@@ -524,7 +994,7 @@ std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierTypeObjectPair>& ep
  * @brief This function copies the value in member complete_to_minimal
  * @param _complete_to_minimal New value to be copied in member complete_to_minimal
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::complete_to_minimal(
+void TypeLookup_getTypes_Out::complete_to_minimal(
         const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair>& _complete_to_minimal)
 {
     m_complete_to_minimal = _complete_to_minimal;
@@ -534,7 +1004,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::complete_to_minim
  * @brief This function moves the value in member complete_to_minimal
  * @param _complete_to_minimal New value to be moved in member complete_to_minimal
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::complete_to_minimal(
+void TypeLookup_getTypes_Out::complete_to_minimal(
         std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair>&& _complete_to_minimal)
 {
     m_complete_to_minimal = std::move(_complete_to_minimal);
@@ -544,7 +1014,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::complete_to_minim
  * @brief This function returns a constant reference to member complete_to_minimal
  * @return Constant reference to member complete_to_minimal
  */
-const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair>& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::complete_to_minimal() const
+const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair>& TypeLookup_getTypes_Out::complete_to_minimal() const
 {
     return m_complete_to_minimal;
 }
@@ -553,7 +1023,7 @@ const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair>& eprosi
  * @brief This function returns a reference to member complete_to_minimal
  * @return Reference to member complete_to_minimal
  */
-std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair>& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::complete_to_minimal()
+std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair>& TypeLookup_getTypes_Out::complete_to_minimal()
 {
     return m_complete_to_minimal;
 }
@@ -561,23 +1031,23 @@ std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifierPair>& eprosima::fa
 
 
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::TypeLookup_getTypes_Result()
+TypeLookup_getTypes_Result::TypeLookup_getTypes_Result()
 {
-    m__d = ReturnCode_t::RETCODE_OK;
+    m__d = DDS_RETCODE_OK;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::~TypeLookup_getTypes_Result()
+TypeLookup_getTypes_Result::~TypeLookup_getTypes_Result()
 {
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::TypeLookup_getTypes_Result(
+TypeLookup_getTypes_Result::TypeLookup_getTypes_Result(
         const TypeLookup_getTypes_Result& x)
 {
     m__d = x.m__d;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             m_result = x.m_result;
             break;
 
@@ -586,14 +1056,14 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::TypeLookup_getTypes
     }
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::TypeLookup_getTypes_Result(
+TypeLookup_getTypes_Result::TypeLookup_getTypes_Result(
         TypeLookup_getTypes_Result&& x) noexcept
 {
     m__d = x.m__d;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             m_result = std::move(x.m_result);
 
             break;
@@ -603,14 +1073,14 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::TypeLookup_getTypes
     }
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::operator =(
+TypeLookup_getTypes_Result& TypeLookup_getTypes_Result::operator =(
         const TypeLookup_getTypes_Result& x)
 {
     m__d = x.m__d;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             m_result = x.m_result;
             break;
 
@@ -621,14 +1091,14 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& eprosima::fastdds::
     return *this;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::operator =(
+TypeLookup_getTypes_Result& TypeLookup_getTypes_Result::operator =(
         TypeLookup_getTypes_Result&& x) noexcept
 {
     m__d = x.m__d;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             m_result = std::move(x.m_result);
 
             break;
@@ -640,7 +1110,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& eprosima::fastdds::
     return *this;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::operator ==(
+bool TypeLookup_getTypes_Result::operator ==(
         const TypeLookup_getTypes_Result& x) const
 {
     if (m__d != x.m__d)
@@ -650,7 +1120,7 @@ bool eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::operator ==(
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             return (m_result == x.m_result);
             break;
 
@@ -660,23 +1130,23 @@ bool eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::operator ==(
     return false;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::operator !=(
+bool TypeLookup_getTypes_Result::operator !=(
         const TypeLookup_getTypes_Result& x) const
 {
     return !(*this == x);
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::_d(
+void TypeLookup_getTypes_Result::_d(
         int32_t __d)
 {
     bool b = false;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             switch (__d)
             {
-                case ReturnCode_t::RETCODE_OK:
+                case DDS_RETCODE_OK:
                     b = true;
                     break;
                 default:
@@ -696,39 +1166,39 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::_d(
     m__d = __d;
 }
 
-int32_t eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::_d() const
+int32_t TypeLookup_getTypes_Result::_d() const
 {
     return m__d;
 }
 
-int32_t& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::_d()
+int32_t& TypeLookup_getTypes_Result::_d()
 {
     return m__d;
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::result(
+void TypeLookup_getTypes_Result::result(
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& _result)
 {
     m_result = _result;
-    m__d = ReturnCode_t::RETCODE_OK;
+    m__d = DDS_RETCODE_OK;
 
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::result(
+void TypeLookup_getTypes_Result::result(
         eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out&& _result)
 {
     m_result = std::move(_result);
-    m__d = ReturnCode_t::RETCODE_OK;
+    m__d = DDS_RETCODE_OK;
 
 }
 
-const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::result() const
+const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& TypeLookup_getTypes_Result::result() const
 {
     bool b = false;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             b = true;
             break;
         default:
@@ -743,13 +1213,13 @@ const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& eprosima::fastdd
     return m_result;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::result()
+eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& TypeLookup_getTypes_Result::result()
 {
     bool b = false;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             b = true;
             break;
         default:
@@ -767,33 +1237,29 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& eprosima::fastdds::dds
 
 
 
-
-
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::TypeLookup_getTypeDependencies_In()
-{
-    // Just to register all known types
-    registerTypeLookupTypesTypes();
-}
-
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::~TypeLookup_getTypeDependencies_In()
+TypeLookup_getTypeDependencies_In::TypeLookup_getTypeDependencies_In()
 {
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::TypeLookup_getTypeDependencies_In(
+TypeLookup_getTypeDependencies_In::~TypeLookup_getTypeDependencies_In()
+{
+}
+
+TypeLookup_getTypeDependencies_In::TypeLookup_getTypeDependencies_In(
         const TypeLookup_getTypeDependencies_In& x)
 {
     m_type_ids = x.m_type_ids;
     m_continuation_point = x.m_continuation_point;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::TypeLookup_getTypeDependencies_In(
+TypeLookup_getTypeDependencies_In::TypeLookup_getTypeDependencies_In(
         TypeLookup_getTypeDependencies_In&& x) noexcept
 {
     m_type_ids = std::move(x.m_type_ids);
     m_continuation_point = std::move(x.m_continuation_point);
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::operator =(
+TypeLookup_getTypeDependencies_In& TypeLookup_getTypeDependencies_In::operator =(
         const TypeLookup_getTypeDependencies_In& x)
 {
 
@@ -802,7 +1268,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& eprosima::fa
     return *this;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::operator =(
+TypeLookup_getTypeDependencies_In& TypeLookup_getTypeDependencies_In::operator =(
         TypeLookup_getTypeDependencies_In&& x) noexcept
 {
 
@@ -811,14 +1277,14 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& eprosima::fa
     return *this;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::operator ==(
+bool TypeLookup_getTypeDependencies_In::operator ==(
         const TypeLookup_getTypeDependencies_In& x) const
 {
     return (m_type_ids == x.m_type_ids &&
            m_continuation_point == x.m_continuation_point);
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::operator !=(
+bool TypeLookup_getTypeDependencies_In::operator !=(
         const TypeLookup_getTypeDependencies_In& x) const
 {
     return !(*this == x);
@@ -828,7 +1294,7 @@ bool eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::operato
  * @brief This function copies the value in member type_ids
  * @param _type_ids New value to be copied in member type_ids
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::type_ids(
+void TypeLookup_getTypeDependencies_In::type_ids(
         const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& _type_ids)
 {
     m_type_ids = _type_ids;
@@ -838,7 +1304,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::type_id
  * @brief This function moves the value in member type_ids
  * @param _type_ids New value to be moved in member type_ids
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::type_ids(
+void TypeLookup_getTypeDependencies_In::type_ids(
         std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>&& _type_ids)
 {
     m_type_ids = std::move(_type_ids);
@@ -848,7 +1314,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::type_id
  * @brief This function returns a constant reference to member type_ids
  * @return Constant reference to member type_ids
  */
-const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::type_ids() const
+const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& TypeLookup_getTypeDependencies_In::type_ids() const
 {
     return m_type_ids;
 }
@@ -857,7 +1323,7 @@ const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& eprosima::
  * @brief This function returns a reference to member type_ids
  * @return Reference to member type_ids
  */
-std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::type_ids()
+std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& TypeLookup_getTypeDependencies_In::type_ids()
 {
     return m_type_ids;
 }
@@ -867,7 +1333,7 @@ std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>& eprosima::fastdd
  * @brief This function copies the value in member continuation_point
  * @param _continuation_point New value to be copied in member continuation_point
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::continuation_point(
+void TypeLookup_getTypeDependencies_In::continuation_point(
         const std::vector<uint8_t>& _continuation_point)
 {
     m_continuation_point = _continuation_point;
@@ -877,7 +1343,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::continu
  * @brief This function moves the value in member continuation_point
  * @param _continuation_point New value to be moved in member continuation_point
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::continuation_point(
+void TypeLookup_getTypeDependencies_In::continuation_point(
         std::vector<uint8_t>&& _continuation_point)
 {
     m_continuation_point = std::move(_continuation_point);
@@ -887,7 +1353,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::continu
  * @brief This function returns a constant reference to member continuation_point
  * @return Constant reference to member continuation_point
  */
-const std::vector<uint8_t>& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::continuation_point() const
+const std::vector<uint8_t>& TypeLookup_getTypeDependencies_In::continuation_point() const
 {
     return m_continuation_point;
 }
@@ -896,7 +1362,7 @@ const std::vector<uint8_t>& eprosima::fastdds::dds::builtin::TypeLookup_getTypeD
  * @brief This function returns a reference to member continuation_point
  * @return Reference to member continuation_point
  */
-std::vector<uint8_t>& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::continuation_point()
+std::vector<uint8_t>& TypeLookup_getTypeDependencies_In::continuation_point()
 {
     return m_continuation_point;
 }
@@ -904,33 +1370,29 @@ std::vector<uint8_t>& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDepende
 
 
 
-
-
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::TypeLookup_getTypeDependencies_Out()
-{
-    // Just to register all known types
-    registerTypeLookupTypesTypes();
-}
-
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::~TypeLookup_getTypeDependencies_Out()
+TypeLookup_getTypeDependencies_Out::TypeLookup_getTypeDependencies_Out()
 {
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::TypeLookup_getTypeDependencies_Out(
+TypeLookup_getTypeDependencies_Out::~TypeLookup_getTypeDependencies_Out()
+{
+}
+
+TypeLookup_getTypeDependencies_Out::TypeLookup_getTypeDependencies_Out(
         const TypeLookup_getTypeDependencies_Out& x)
 {
     m_dependent_typeids = x.m_dependent_typeids;
     m_continuation_point = x.m_continuation_point;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::TypeLookup_getTypeDependencies_Out(
+TypeLookup_getTypeDependencies_Out::TypeLookup_getTypeDependencies_Out(
         TypeLookup_getTypeDependencies_Out&& x) noexcept
 {
     m_dependent_typeids = std::move(x.m_dependent_typeids);
     m_continuation_point = std::move(x.m_continuation_point);
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::operator =(
+TypeLookup_getTypeDependencies_Out& TypeLookup_getTypeDependencies_Out::operator =(
         const TypeLookup_getTypeDependencies_Out& x)
 {
 
@@ -939,7 +1401,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& eprosima::f
     return *this;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::operator =(
+TypeLookup_getTypeDependencies_Out& TypeLookup_getTypeDependencies_Out::operator =(
         TypeLookup_getTypeDependencies_Out&& x) noexcept
 {
 
@@ -948,14 +1410,14 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& eprosima::f
     return *this;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::operator ==(
+bool TypeLookup_getTypeDependencies_Out::operator ==(
         const TypeLookup_getTypeDependencies_Out& x) const
 {
     return (m_dependent_typeids == x.m_dependent_typeids &&
            m_continuation_point == x.m_continuation_point);
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::operator !=(
+bool TypeLookup_getTypeDependencies_Out::operator !=(
         const TypeLookup_getTypeDependencies_Out& x) const
 {
     return !(*this == x);
@@ -965,7 +1427,7 @@ bool eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::operat
  * @brief This function copies the value in member dependent_typeids
  * @param _dependent_typeids New value to be copied in member dependent_typeids
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::dependent_typeids(
+void TypeLookup_getTypeDependencies_Out::dependent_typeids(
         const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>& _dependent_typeids)
 {
     m_dependent_typeids = _dependent_typeids;
@@ -975,7 +1437,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::depend
  * @brief This function moves the value in member dependent_typeids
  * @param _dependent_typeids New value to be moved in member dependent_typeids
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::dependent_typeids(
+void TypeLookup_getTypeDependencies_Out::dependent_typeids(
         std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>&& _dependent_typeids)
 {
     m_dependent_typeids = std::move(_dependent_typeids);
@@ -985,7 +1447,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::depend
  * @brief This function returns a constant reference to member dependent_typeids
  * @return Constant reference to member dependent_typeids
  */
-const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::dependent_typeids() const
+const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>& TypeLookup_getTypeDependencies_Out::dependent_typeids() const
 {
     return m_dependent_typeids;
 }
@@ -994,7 +1456,7 @@ const std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>& epr
  * @brief This function returns a reference to member dependent_typeids
  * @return Reference to member dependent_typeids
  */
-std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::dependent_typeids()
+std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>& TypeLookup_getTypeDependencies_Out::dependent_typeids()
 {
     return m_dependent_typeids;
 }
@@ -1004,7 +1466,7 @@ std::vector<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>& eprosima:
  * @brief This function copies the value in member continuation_point
  * @param _continuation_point New value to be copied in member continuation_point
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::continuation_point(
+void TypeLookup_getTypeDependencies_Out::continuation_point(
         const std::vector<uint8_t>& _continuation_point)
 {
     m_continuation_point = _continuation_point;
@@ -1014,7 +1476,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::contin
  * @brief This function moves the value in member continuation_point
  * @param _continuation_point New value to be moved in member continuation_point
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::continuation_point(
+void TypeLookup_getTypeDependencies_Out::continuation_point(
         std::vector<uint8_t>&& _continuation_point)
 {
     m_continuation_point = std::move(_continuation_point);
@@ -1024,7 +1486,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::contin
  * @brief This function returns a constant reference to member continuation_point
  * @return Constant reference to member continuation_point
  */
-const std::vector<uint8_t>& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::continuation_point() const
+const std::vector<uint8_t>& TypeLookup_getTypeDependencies_Out::continuation_point() const
 {
     return m_continuation_point;
 }
@@ -1033,7 +1495,7 @@ const std::vector<uint8_t>& eprosima::fastdds::dds::builtin::TypeLookup_getTypeD
  * @brief This function returns a reference to member continuation_point
  * @return Reference to member continuation_point
  */
-std::vector<uint8_t>& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::continuation_point()
+std::vector<uint8_t>& TypeLookup_getTypeDependencies_Out::continuation_point()
 {
     return m_continuation_point;
 }
@@ -1041,23 +1503,23 @@ std::vector<uint8_t>& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDepende
 
 
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::TypeLookup_getTypeDependencies_Result()
+TypeLookup_getTypeDependencies_Result::TypeLookup_getTypeDependencies_Result()
 {
-    m__d = ReturnCode_t::RETCODE_OK;
+    m__d = DDS_RETCODE_OK;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::~TypeLookup_getTypeDependencies_Result()
+TypeLookup_getTypeDependencies_Result::~TypeLookup_getTypeDependencies_Result()
 {
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::TypeLookup_getTypeDependencies_Result(
+TypeLookup_getTypeDependencies_Result::TypeLookup_getTypeDependencies_Result(
         const TypeLookup_getTypeDependencies_Result& x)
 {
     m__d = x.m__d;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             m_result = x.m_result;
             break;
 
@@ -1066,14 +1528,14 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::TypeLook
     }
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::TypeLookup_getTypeDependencies_Result(
+TypeLookup_getTypeDependencies_Result::TypeLookup_getTypeDependencies_Result(
         TypeLookup_getTypeDependencies_Result&& x) noexcept
 {
     m__d = x.m__d;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             m_result = std::move(x.m_result);
 
             break;
@@ -1083,14 +1545,14 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::TypeLook
     }
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::operator =(
+TypeLookup_getTypeDependencies_Result& TypeLookup_getTypeDependencies_Result::operator =(
         const TypeLookup_getTypeDependencies_Result& x)
 {
     m__d = x.m__d;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             m_result = x.m_result;
             break;
 
@@ -1101,14 +1563,14 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& eprosima
     return *this;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::operator =(
+TypeLookup_getTypeDependencies_Result& TypeLookup_getTypeDependencies_Result::operator =(
         TypeLookup_getTypeDependencies_Result&& x) noexcept
 {
     m__d = x.m__d;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             m_result = std::move(x.m_result);
 
             break;
@@ -1120,7 +1582,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& eprosima
     return *this;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::operator ==(
+bool TypeLookup_getTypeDependencies_Result::operator ==(
         const TypeLookup_getTypeDependencies_Result& x) const
 {
     if (m__d != x.m__d)
@@ -1130,7 +1592,7 @@ bool eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::ope
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             return (m_result == x.m_result);
             break;
 
@@ -1140,23 +1602,23 @@ bool eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::ope
     return false;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::operator !=(
+bool TypeLookup_getTypeDependencies_Result::operator !=(
         const TypeLookup_getTypeDependencies_Result& x) const
 {
     return !(*this == x);
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::_d(
+void TypeLookup_getTypeDependencies_Result::_d(
         int32_t __d)
 {
     bool b = false;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             switch (__d)
             {
-                case ReturnCode_t::RETCODE_OK:
+                case DDS_RETCODE_OK:
                     b = true;
                     break;
                 default:
@@ -1176,39 +1638,39 @@ void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::_d(
     m__d = __d;
 }
 
-int32_t eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::_d() const
+int32_t TypeLookup_getTypeDependencies_Result::_d() const
 {
     return m__d;
 }
 
-int32_t& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::_d()
+int32_t& TypeLookup_getTypeDependencies_Result::_d()
 {
     return m__d;
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::result(
+void TypeLookup_getTypeDependencies_Result::result(
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& _result)
 {
     m_result = _result;
-    m__d = ReturnCode_t::RETCODE_OK;
+    m__d = DDS_RETCODE_OK;
 
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::result(
+void TypeLookup_getTypeDependencies_Result::result(
         eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out&& _result)
 {
     m_result = std::move(_result);
-    m__d = ReturnCode_t::RETCODE_OK;
+    m__d = DDS_RETCODE_OK;
 
 }
 
-const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::result() const
+const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& TypeLookup_getTypeDependencies_Result::result() const
 {
     bool b = false;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             b = true;
             break;
         default:
@@ -1223,13 +1685,13 @@ const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& epros
     return m_result;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::result()
+eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& TypeLookup_getTypeDependencies_Result::result()
 {
     bool b = false;
 
     switch (m__d)
     {
-        case ReturnCode_t::RETCODE_OK:
+        case DDS_RETCODE_OK:
             b = true;
             break;
         default:
@@ -1247,16 +1709,16 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& eprosima::f
 
 
 
-eprosima::fastdds::dds::builtin::TypeLookup_Call::TypeLookup_Call()
+TypeLookup_Call::TypeLookup_Call()
 {
     m__d = TypeLookup_getTypes_HashId;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Call::~TypeLookup_Call()
+TypeLookup_Call::~TypeLookup_Call()
 {
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Call::TypeLookup_Call(
+TypeLookup_Call::TypeLookup_Call(
         const TypeLookup_Call& x)
 {
     m__d = x.m__d;
@@ -1277,7 +1739,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_Call::TypeLookup_Call(
     }
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Call::TypeLookup_Call(
+TypeLookup_Call::TypeLookup_Call(
         TypeLookup_Call&& x) noexcept
 {
     m__d = x.m__d;
@@ -1300,7 +1762,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_Call::TypeLookup_Call(
     }
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Call& eprosima::fastdds::dds::builtin::TypeLookup_Call::operator =(
+TypeLookup_Call& TypeLookup_Call::operator =(
         const TypeLookup_Call& x)
 {
     m__d = x.m__d;
@@ -1323,7 +1785,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_Call& eprosima::fastdds::dds::builti
     return *this;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Call& eprosima::fastdds::dds::builtin::TypeLookup_Call::operator =(
+TypeLookup_Call& TypeLookup_Call::operator =(
         TypeLookup_Call&& x) noexcept
 {
     m__d = x.m__d;
@@ -1348,7 +1810,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_Call& eprosima::fastdds::dds::builti
     return *this;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_Call::operator ==(
+bool TypeLookup_Call::operator ==(
         const TypeLookup_Call& x) const
 {
     if (m__d != x.m__d)
@@ -1373,13 +1835,13 @@ bool eprosima::fastdds::dds::builtin::TypeLookup_Call::operator ==(
     return false;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_Call::operator !=(
+bool TypeLookup_Call::operator !=(
         const TypeLookup_Call& x) const
 {
     return !(*this == x);
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_Call::_d(
+void TypeLookup_Call::_d(
         int32_t __d)
 {
     bool b = false;
@@ -1421,17 +1883,17 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Call::_d(
     m__d = __d;
 }
 
-int32_t eprosima::fastdds::dds::builtin::TypeLookup_Call::_d() const
+int32_t TypeLookup_Call::_d() const
 {
     return m__d;
 }
 
-int32_t& eprosima::fastdds::dds::builtin::TypeLookup_Call::_d()
+int32_t& TypeLookup_Call::_d()
 {
     return m__d;
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_Call::getTypes(
+void TypeLookup_Call::getTypes(
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& _getTypes)
 {
     m_getTypes = _getTypes;
@@ -1439,7 +1901,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Call::getTypes(
 
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_Call::getTypes(
+void TypeLookup_Call::getTypes(
         eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In&& _getTypes)
 {
     m_getTypes = std::move(_getTypes);
@@ -1447,7 +1909,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Call::getTypes(
 
 }
 
-const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& eprosima::fastdds::dds::builtin::TypeLookup_Call::getTypes() const
+const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& TypeLookup_Call::getTypes() const
 {
     bool b = false;
 
@@ -1468,7 +1930,7 @@ const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& eprosima::fastdds
     return m_getTypes;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& eprosima::fastdds::dds::builtin::TypeLookup_Call::getTypes()
+eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& TypeLookup_Call::getTypes()
 {
     bool b = false;
 
@@ -1490,7 +1952,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& eprosima::fastdds::dds:
 }
 
 
-void eprosima::fastdds::dds::builtin::TypeLookup_Call::getTypeDependencies(
+void TypeLookup_Call::getTypeDependencies(
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& _getTypeDependencies)
 {
     m_getTypeDependencies = _getTypeDependencies;
@@ -1498,7 +1960,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Call::getTypeDependencies(
 
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_Call::getTypeDependencies(
+void TypeLookup_Call::getTypeDependencies(
         eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In&& _getTypeDependencies)
 {
     m_getTypeDependencies = std::move(_getTypeDependencies);
@@ -1506,7 +1968,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Call::getTypeDependencies(
 
 }
 
-const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& eprosima::fastdds::dds::builtin::TypeLookup_Call::getTypeDependencies() const
+const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& TypeLookup_Call::getTypeDependencies() const
 {
     bool b = false;
 
@@ -1527,7 +1989,7 @@ const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& eprosi
     return m_getTypeDependencies;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& eprosima::fastdds::dds::builtin::TypeLookup_Call::getTypeDependencies()
+eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& TypeLookup_Call::getTypeDependencies()
 {
     bool b = false;
 
@@ -1551,31 +2013,29 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& eprosima::fa
 
 
 
-eprosima::fastdds::dds::builtin::TypeLookup_Request::TypeLookup_Request()
-{
-    // Just to register all known types
-    registerTypeLookupTypesTypes();
-}
-
-eprosima::fastdds::dds::builtin::TypeLookup_Request::~TypeLookup_Request()
+TypeLookup_Request::TypeLookup_Request()
 {
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Request::TypeLookup_Request(
+TypeLookup_Request::~TypeLookup_Request()
+{
+}
+
+TypeLookup_Request::TypeLookup_Request(
         const TypeLookup_Request& x)
 {
     m_header = x.m_header;
     m_data = x.m_data;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Request::TypeLookup_Request(
+TypeLookup_Request::TypeLookup_Request(
         TypeLookup_Request&& x) noexcept
 {
     m_header = std::move(x.m_header);
     m_data = std::move(x.m_data);
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Request& eprosima::fastdds::dds::builtin::TypeLookup_Request::operator =(
+TypeLookup_Request& TypeLookup_Request::operator =(
         const TypeLookup_Request& x)
 {
 
@@ -1584,7 +2044,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_Request& eprosima::fastdds::dds::bui
     return *this;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Request& eprosima::fastdds::dds::builtin::TypeLookup_Request::operator =(
+TypeLookup_Request& TypeLookup_Request::operator =(
         TypeLookup_Request&& x) noexcept
 {
 
@@ -1593,14 +2053,14 @@ eprosima::fastdds::dds::builtin::TypeLookup_Request& eprosima::fastdds::dds::bui
     return *this;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_Request::operator ==(
+bool TypeLookup_Request::operator ==(
         const TypeLookup_Request& x) const
 {
     return (m_header == x.m_header &&
            m_data == x.m_data);
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_Request::operator !=(
+bool TypeLookup_Request::operator !=(
         const TypeLookup_Request& x) const
 {
     return !(*this == x);
@@ -1610,7 +2070,7 @@ bool eprosima::fastdds::dds::builtin::TypeLookup_Request::operator !=(
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_Request::header(
+void TypeLookup_Request::header(
         const eprosima::fastdds::dds::rpc::RequestHeader& _header)
 {
     m_header = _header;
@@ -1620,7 +2080,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Request::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_Request::header(
+void TypeLookup_Request::header(
         eprosima::fastdds::dds::rpc::RequestHeader&& _header)
 {
     m_header = std::move(_header);
@@ -1630,7 +2090,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Request::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::rpc::RequestHeader& eprosima::fastdds::dds::builtin::TypeLookup_Request::header() const
+const eprosima::fastdds::dds::rpc::RequestHeader& TypeLookup_Request::header() const
 {
     return m_header;
 }
@@ -1639,7 +2099,7 @@ const eprosima::fastdds::dds::rpc::RequestHeader& eprosima::fastdds::dds::builti
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::rpc::RequestHeader& eprosima::fastdds::dds::builtin::TypeLookup_Request::header()
+eprosima::fastdds::dds::rpc::RequestHeader& TypeLookup_Request::header()
 {
     return m_header;
 }
@@ -1649,7 +2109,7 @@ eprosima::fastdds::dds::rpc::RequestHeader& eprosima::fastdds::dds::builtin::Typ
  * @brief This function copies the value in member data
  * @param _data New value to be copied in member data
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_Request::data(
+void TypeLookup_Request::data(
         const eprosima::fastdds::dds::builtin::TypeLookup_Call& _data)
 {
     m_data = _data;
@@ -1659,7 +2119,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Request::data(
  * @brief This function moves the value in member data
  * @param _data New value to be moved in member data
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_Request::data(
+void TypeLookup_Request::data(
         eprosima::fastdds::dds::builtin::TypeLookup_Call&& _data)
 {
     m_data = std::move(_data);
@@ -1669,7 +2129,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Request::data(
  * @brief This function returns a constant reference to member data
  * @return Constant reference to member data
  */
-const eprosima::fastdds::dds::builtin::TypeLookup_Call& eprosima::fastdds::dds::builtin::TypeLookup_Request::data() const
+const eprosima::fastdds::dds::builtin::TypeLookup_Call& TypeLookup_Request::data() const
 {
     return m_data;
 }
@@ -1678,7 +2138,7 @@ const eprosima::fastdds::dds::builtin::TypeLookup_Call& eprosima::fastdds::dds::
  * @brief This function returns a reference to member data
  * @return Reference to member data
  */
-eprosima::fastdds::dds::builtin::TypeLookup_Call& eprosima::fastdds::dds::builtin::TypeLookup_Request::data()
+eprosima::fastdds::dds::builtin::TypeLookup_Call& TypeLookup_Request::data()
 {
     return m_data;
 }
@@ -1686,16 +2146,16 @@ eprosima::fastdds::dds::builtin::TypeLookup_Call& eprosima::fastdds::dds::builti
 
 
 
-eprosima::fastdds::dds::builtin::TypeLookup_Return::TypeLookup_Return()
+TypeLookup_Return::TypeLookup_Return()
 {
     m__d = TypeLookup_getTypes_HashId;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Return::~TypeLookup_Return()
+TypeLookup_Return::~TypeLookup_Return()
 {
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Return::TypeLookup_Return(
+TypeLookup_Return::TypeLookup_Return(
         const TypeLookup_Return& x)
 {
     m__d = x.m__d;
@@ -1716,7 +2176,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_Return::TypeLookup_Return(
     }
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Return::TypeLookup_Return(
+TypeLookup_Return::TypeLookup_Return(
         TypeLookup_Return&& x) noexcept
 {
     m__d = x.m__d;
@@ -1739,7 +2199,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_Return::TypeLookup_Return(
     }
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Return& eprosima::fastdds::dds::builtin::TypeLookup_Return::operator =(
+TypeLookup_Return& TypeLookup_Return::operator =(
         const TypeLookup_Return& x)
 {
     m__d = x.m__d;
@@ -1762,7 +2222,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_Return& eprosima::fastdds::dds::buil
     return *this;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Return& eprosima::fastdds::dds::builtin::TypeLookup_Return::operator =(
+TypeLookup_Return& TypeLookup_Return::operator =(
         TypeLookup_Return&& x) noexcept
 {
     m__d = x.m__d;
@@ -1787,7 +2247,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_Return& eprosima::fastdds::dds::buil
     return *this;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_Return::operator ==(
+bool TypeLookup_Return::operator ==(
         const TypeLookup_Return& x) const
 {
     if (m__d != x.m__d)
@@ -1812,13 +2272,13 @@ bool eprosima::fastdds::dds::builtin::TypeLookup_Return::operator ==(
     return false;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_Return::operator !=(
+bool TypeLookup_Return::operator !=(
         const TypeLookup_Return& x) const
 {
     return !(*this == x);
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_Return::_d(
+void TypeLookup_Return::_d(
         int32_t __d)
 {
     bool b = false;
@@ -1860,17 +2320,17 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Return::_d(
     m__d = __d;
 }
 
-int32_t eprosima::fastdds::dds::builtin::TypeLookup_Return::_d() const
+int32_t TypeLookup_Return::_d() const
 {
     return m__d;
 }
 
-int32_t& eprosima::fastdds::dds::builtin::TypeLookup_Return::_d()
+int32_t& TypeLookup_Return::_d()
 {
     return m__d;
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_Return::getType(
+void TypeLookup_Return::getType(
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& _getType)
 {
     m_getType = _getType;
@@ -1878,7 +2338,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Return::getType(
 
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_Return::getType(
+void TypeLookup_Return::getType(
         eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result&& _getType)
 {
     m_getType = std::move(_getType);
@@ -1886,7 +2346,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Return::getType(
 
 }
 
-const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& eprosima::fastdds::dds::builtin::TypeLookup_Return::getType() const
+const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& TypeLookup_Return::getType() const
 {
     bool b = false;
 
@@ -1907,7 +2367,7 @@ const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& eprosima::fas
     return m_getType;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& eprosima::fastdds::dds::builtin::TypeLookup_Return::getType()
+eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& TypeLookup_Return::getType()
 {
     bool b = false;
 
@@ -1929,7 +2389,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& eprosima::fastdds::
 }
 
 
-void eprosima::fastdds::dds::builtin::TypeLookup_Return::getTypeDependencies(
+void TypeLookup_Return::getTypeDependencies(
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& _getTypeDependencies)
 {
     m_getTypeDependencies = _getTypeDependencies;
@@ -1937,7 +2397,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Return::getTypeDependencies(
 
 }
 
-void eprosima::fastdds::dds::builtin::TypeLookup_Return::getTypeDependencies(
+void TypeLookup_Return::getTypeDependencies(
         eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result&& _getTypeDependencies)
 {
     m_getTypeDependencies = std::move(_getTypeDependencies);
@@ -1945,7 +2405,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Return::getTypeDependencies(
 
 }
 
-const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& eprosima::fastdds::dds::builtin::TypeLookup_Return::getTypeDependencies() const
+const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& TypeLookup_Return::getTypeDependencies() const
 {
     bool b = false;
 
@@ -1966,7 +2426,7 @@ const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& ep
     return m_getTypeDependencies;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& eprosima::fastdds::dds::builtin::TypeLookup_Return::getTypeDependencies()
+eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& TypeLookup_Return::getTypeDependencies()
 {
     bool b = false;
 
@@ -1990,31 +2450,29 @@ eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& eprosima
 
 
 
-eprosima::fastdds::dds::builtin::TypeLookup_Reply::TypeLookup_Reply()
-{
-    // Just to register all known types
-    registerTypeLookupTypesTypes();
-}
-
-eprosima::fastdds::dds::builtin::TypeLookup_Reply::~TypeLookup_Reply()
+TypeLookup_Reply::TypeLookup_Reply()
 {
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Reply::TypeLookup_Reply(
+TypeLookup_Reply::~TypeLookup_Reply()
+{
+}
+
+TypeLookup_Reply::TypeLookup_Reply(
         const TypeLookup_Reply& x)
 {
     m_header = x.m_header;
     m_return_value = x.m_return_value;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Reply::TypeLookup_Reply(
+TypeLookup_Reply::TypeLookup_Reply(
         TypeLookup_Reply&& x) noexcept
 {
     m_header = std::move(x.m_header);
     m_return_value = std::move(x.m_return_value);
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Reply& eprosima::fastdds::dds::builtin::TypeLookup_Reply::operator =(
+TypeLookup_Reply& TypeLookup_Reply::operator =(
         const TypeLookup_Reply& x)
 {
 
@@ -2023,7 +2481,7 @@ eprosima::fastdds::dds::builtin::TypeLookup_Reply& eprosima::fastdds::dds::built
     return *this;
 }
 
-eprosima::fastdds::dds::builtin::TypeLookup_Reply& eprosima::fastdds::dds::builtin::TypeLookup_Reply::operator =(
+TypeLookup_Reply& TypeLookup_Reply::operator =(
         TypeLookup_Reply&& x) noexcept
 {
 
@@ -2032,14 +2490,14 @@ eprosima::fastdds::dds::builtin::TypeLookup_Reply& eprosima::fastdds::dds::built
     return *this;
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_Reply::operator ==(
+bool TypeLookup_Reply::operator ==(
         const TypeLookup_Reply& x) const
 {
     return (m_header == x.m_header &&
            m_return_value == x.m_return_value);
 }
 
-bool eprosima::fastdds::dds::builtin::TypeLookup_Reply::operator !=(
+bool TypeLookup_Reply::operator !=(
         const TypeLookup_Reply& x) const
 {
     return !(*this == x);
@@ -2049,7 +2507,7 @@ bool eprosima::fastdds::dds::builtin::TypeLookup_Reply::operator !=(
  * @brief This function copies the value in member header
  * @param _header New value to be copied in member header
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_Reply::header(
+void TypeLookup_Reply::header(
         const eprosima::fastdds::dds::rpc::ReplyHeader& _header)
 {
     m_header = _header;
@@ -2059,7 +2517,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Reply::header(
  * @brief This function moves the value in member header
  * @param _header New value to be moved in member header
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_Reply::header(
+void TypeLookup_Reply::header(
         eprosima::fastdds::dds::rpc::ReplyHeader&& _header)
 {
     m_header = std::move(_header);
@@ -2069,7 +2527,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Reply::header(
  * @brief This function returns a constant reference to member header
  * @return Constant reference to member header
  */
-const eprosima::fastdds::dds::rpc::ReplyHeader& eprosima::fastdds::dds::builtin::TypeLookup_Reply::header() const
+const eprosima::fastdds::dds::rpc::ReplyHeader& TypeLookup_Reply::header() const
 {
     return m_header;
 }
@@ -2078,7 +2536,7 @@ const eprosima::fastdds::dds::rpc::ReplyHeader& eprosima::fastdds::dds::builtin:
  * @brief This function returns a reference to member header
  * @return Reference to member header
  */
-eprosima::fastdds::dds::rpc::ReplyHeader& eprosima::fastdds::dds::builtin::TypeLookup_Reply::header()
+eprosima::fastdds::dds::rpc::ReplyHeader& TypeLookup_Reply::header()
 {
     return m_header;
 }
@@ -2088,7 +2546,7 @@ eprosima::fastdds::dds::rpc::ReplyHeader& eprosima::fastdds::dds::builtin::TypeL
  * @brief This function copies the value in member return_value
  * @param _return_value New value to be copied in member return_value
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_Reply::return_value(
+void TypeLookup_Reply::return_value(
         const eprosima::fastdds::dds::builtin::TypeLookup_Return& _return_value)
 {
     m_return_value = _return_value;
@@ -2098,7 +2556,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Reply::return_value(
  * @brief This function moves the value in member return_value
  * @param _return_value New value to be moved in member return_value
  */
-void eprosima::fastdds::dds::builtin::TypeLookup_Reply::return_value(
+void TypeLookup_Reply::return_value(
         eprosima::fastdds::dds::builtin::TypeLookup_Return&& _return_value)
 {
     m_return_value = std::move(_return_value);
@@ -2108,7 +2566,7 @@ void eprosima::fastdds::dds::builtin::TypeLookup_Reply::return_value(
  * @brief This function returns a constant reference to member return_value
  * @return Constant reference to member return_value
  */
-const eprosima::fastdds::dds::builtin::TypeLookup_Return& eprosima::fastdds::dds::builtin::TypeLookup_Reply::return_value() const
+const eprosima::fastdds::dds::builtin::TypeLookup_Return& TypeLookup_Reply::return_value() const
 {
     return m_return_value;
 }
@@ -2117,23 +2575,20 @@ const eprosima::fastdds::dds::builtin::TypeLookup_Return& eprosima::fastdds::dds
  * @brief This function returns a reference to member return_value
  * @return Reference to member return_value
  */
-eprosima::fastdds::dds::builtin::TypeLookup_Return& eprosima::fastdds::dds::builtin::TypeLookup_Reply::return_value()
+eprosima::fastdds::dds::builtin::TypeLookup_Return& TypeLookup_Reply::return_value()
 {
     return m_return_value;
 }
 
 
 
-
 } // namespace builtin
-
 
 } // namespace dds
 
-
 } // namespace fastdds
-
 
 } // namespace eprosima
 // Include auxiliary functions like for serializing/deserializing.
 #include "TypeLookupTypesCdrAux.ipp"
+

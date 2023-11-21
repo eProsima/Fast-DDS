@@ -41,6 +41,8 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupManager.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupTypes.h>
 
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/topic/TopicProxyFactory.hpp>
@@ -485,10 +487,10 @@ public:
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
     fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq& in) const;
+            const xtypes1_3::TypeIdentifierSeq& in) const;
 
     fastrtps::rtps::SampleIdentity get_types(
-            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq& in) const;
+            const xtypes1_3::TypeIdentifierSeq& in) const;
 
     /**
      * Helps the user to solve all dependencies calling internally to the typelookup service and
@@ -700,8 +702,8 @@ protected:
                 fastrtps::rtps::RTPSParticipant* participant,
                 const fastrtps::rtps::SampleIdentity& request_sample_id,
                 const fastrtps::string_255& topic,
-                const fastrtps::types::TypeIdentifier* identifier,
-                const fastrtps::types::TypeObject* object,
+                const xtypes1_3::TypeIdentifier* identifier,
+                const xtypes1_3::TypeObject* object,
                 fastrtps::types::DynamicType_ptr dyn_type) override;
 
         void on_type_dependencies_reply(
@@ -732,8 +734,8 @@ protected:
 
     bool check_get_type_request(
             const fastrtps::rtps::SampleIdentity& requestId,
-            const fastrtps::types::TypeIdentifier* identifier,
-            const fastrtps::types::TypeObject* object,
+            const xtypes1_3::TypeIdentifier* identifier,
+            const xtypes1_3::TypeObject* object,
             fastrtps::types::DynamicType_ptr dyn_type);
 
     bool check_get_dependencies_request(
@@ -761,9 +763,9 @@ protected:
             const fastrtps::rtps::SampleIdentity& parent);
 
     void fill_pending_dependencies(
-            const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies,
-            fastrtps::types::TypeIdentifierSeq& pending_identifiers,
-            fastrtps::types::TypeIdentifierSeq& pending_objects) const;
+            const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies,
+            xtypes1_3::TypeIdentifierSeq& pending_identifiers,
+            xtypes1_3::TypeIdentifierSeq& pending_objects) const;
 
     std::string get_inner_type_name(
             const fastrtps::rtps::SampleIdentity& id) const;

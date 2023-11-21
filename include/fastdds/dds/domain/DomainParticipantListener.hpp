@@ -188,14 +188,14 @@ public:
      * The ownership of all object belongs to the caller so if needs to be used after the
      * method ends, a full copy should be perform (except for dyn_type due to its shared_ptr nature.
      * For example:
-     * fastrtps::types::TypeIdentifier new_type_id = \*identifier;
+     * xtypes1_3::TypeIdentifier new_type_id = \*identifier;
      */
     virtual void on_type_discovery(
             DomainParticipant* participant,
             const fastrtps::rtps::SampleIdentity& request_sample_id,
             const fastrtps::string_255& topic,
-            const fastrtps::types::TypeIdentifier* identifier,
-            const fastrtps::types::TypeObject* object,
+            const xtypes1_3::TypeIdentifier* identifier,
+            const xtypes1_3::TypeObject* object,
             fastrtps::types::DynamicType_ptr dyn_type)
     {
         static_cast<void>(participant);
