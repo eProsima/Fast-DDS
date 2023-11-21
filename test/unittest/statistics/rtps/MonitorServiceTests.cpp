@@ -14,6 +14,7 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/resources/ResourceEvent.h>
