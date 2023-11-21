@@ -39,7 +39,7 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
     (void) topic_name;
     (void) dwqos;
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return fastdds::dds::RETCODE_UNSUPPORTED;
 #else
     return static_cast<DomainParticipantImpl*>(impl_)->enable_statistics_datawriter(topic_name, dwqos);
 #endif // FASTDDS_STATISTICS
@@ -53,7 +53,7 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter_with_profile(
     (void) profile_name;
     (void) topic_name;
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return fastdds::dds::RETCODE_UNSUPPORTED;
 #else
     return static_cast<DomainParticipantImpl*>(impl_)->enable_statistics_datawriter_with_profile(profile_name,
                    topic_name);
@@ -66,7 +66,7 @@ ReturnCode_t DomainParticipant::disable_statistics_datawriter(
 #ifndef FASTDDS_STATISTICS
     (void) topic_name;
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return fastdds::dds::RETCODE_UNSUPPORTED;
 #else
     return static_cast<DomainParticipantImpl*>(impl_)->disable_statistics_datawriter(topic_name);
 #endif // FASTDDS_STATISTICS

@@ -81,7 +81,7 @@ ReturnCode_t SubscriberImpl::enable()
         }
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void SubscriberImpl::disable()
@@ -140,7 +140,7 @@ ReturnCode_t SubscriberImpl::set_qos(
 
     if (enabled && !can_qos_be_updated(qos_, qos_to_set))
     {
-        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        return RETCODE_IMMUTABLE_POLICY;
     }
     set_qos(qos_, qos_to_set, !enabled);
 
@@ -156,7 +156,7 @@ ReturnCode_t SubscriberImpl::set_qos(
         }
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 const SubscriberListener* SubscriberImpl::get_listener() const
@@ -168,7 +168,7 @@ ReturnCode_t SubscriberImpl::set_listener(
         SubscriberListener* listener)
 {
     listener_ = listener;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 DataReaderImpl* SubscriberImpl::create_datareader_impl(
@@ -218,7 +218,7 @@ DataReader* SubscriberImpl::create_datareader(
 
     if (user_subscriber_->is_enabled() && qos_.entity_factory().autoenable_created_entities)
     {
-        if (ReturnCode_t::RETCODE_OK != reader->enable())
+        if (RETCODE_OK != reader->enable())
         {
             delete_datareader(reader);
             return nullptr;
@@ -252,7 +252,7 @@ ReturnCode_t SubscriberImpl::delete_datareader(
 {
     if (user_subscriber_ != reader->get_subscriber())
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
     std::unique_lock<std::mutex> lock(mtx_readers_);
     auto it = readers_.find(reader->impl_->get_topicdescription()->get_name());
@@ -265,7 +265,7 @@ ReturnCode_t SubscriberImpl::delete_datareader(
             DataReaderImpl* reader_impl = *dr_it;
             if (!reader_impl->can_be_deleted(false))
             {
-                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+                return RETCODE_PRECONDITION_NOT_MET;
             }
 
             it->second.erase(dr_it);
@@ -278,10 +278,10 @@ ReturnCode_t SubscriberImpl::delete_datareader(
             //Now we can delete it
             reader_impl->get_topicdescription()->get_impl()->dereference();
             delete (reader_impl);
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
         }
     }
-    return ReturnCode_t::RETCODE_ERROR;
+    return RETCODE_ERROR;
 }
 
 DataReader* SubscriberImpl::lookup_datareader(
@@ -307,7 +307,7 @@ ReturnCode_t SubscriberImpl::get_datareaders(
             readers.push_back(dr->user_datareader_);
         }
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 bool SubscriberImpl::has_datareaders() const
@@ -344,7 +344,7 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
             dr->listener_->on_data_available(dr->user_datareader_);
         }
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t SubscriberImpl::set_default_datareader_qos(
@@ -353,7 +353,7 @@ ReturnCode_t SubscriberImpl::set_default_datareader_qos(
     if (&qos == &DATAREADER_QOS_DEFAULT)
     {
         reset_default_datareader_qos();
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t check_result = DataReaderImpl::check_qos(qos);
@@ -363,7 +363,7 @@ ReturnCode_t SubscriberImpl::set_default_datareader_qos(
     }
 
     DataReaderImpl::set_qos(default_datareader_qos_, qos, true);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void SubscriberImpl::reset_default_datareader_qos()
@@ -412,10 +412,10 @@ const ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
     {
         qos = default_datareader_qos_;
         utils::set_qos_from_attributes(qos, attr);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
 /* TODO
@@ -577,7 +577,7 @@ ReturnCode_t SubscriberImpl::check_qos(
         const SubscriberQos& qos)
 {
     (void) qos;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 bool SubscriberImpl::can_qos_be_updated(
@@ -603,7 +603,7 @@ SubscriberListener* SubscriberImpl::get_listener_for(
 ReturnCode_t SubscriberImpl::delete_contained_entities()
 {
     // Let's be optimistic
-    ReturnCode_t result = ReturnCode_t::RETCODE_OK;
+    ReturnCode_t result = RETCODE_OK;
 
     std::lock_guard<std::mutex> lock(mtx_readers_);
     for (auto reader: readers_)
@@ -612,7 +612,7 @@ ReturnCode_t SubscriberImpl::delete_contained_entities()
         {
             if (!dr->can_be_deleted())
             {
-                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+                return RETCODE_PRECONDITION_NOT_MET;
             }
         }
     }
@@ -627,7 +627,7 @@ ReturnCode_t SubscriberImpl::delete_contained_entities()
         bool ret_code = reader_impl->can_be_deleted();
         if (!ret_code)
         {
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
         reader_impl->set_listener(nullptr);
         it = reader_iterator->second.erase(it);

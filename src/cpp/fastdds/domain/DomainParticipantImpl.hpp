@@ -125,12 +125,12 @@ public:
                     return !(rtps_listener_.callback_counter_ > 0);
                 }))
         {
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
 
         rtps_listener_.callback_counter_ = (listener == nullptr) ? -1 : 0;
         listener_ = listener;
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     DomainParticipantListener* get_listener() const

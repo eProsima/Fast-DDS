@@ -309,7 +309,7 @@ private:
             filter_parameters,
             new_filter);
 
-        if (ReturnCode_t::RETCODE_OK != ret)
+        if (RETCODE_OK != ret)
         {
             return false;
         }

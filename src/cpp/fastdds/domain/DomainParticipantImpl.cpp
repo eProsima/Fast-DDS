@@ -145,7 +145,7 @@ DomainParticipantImpl::DomainParticipantImpl(
     if (nullptr != property_value && property_value->empty())
     {
         std::string username = "unknown";
-        if (ReturnCode_t::RETCODE_OK == SystemInfo::get_username(username))
+        if (RETCODE_OK == SystemInfo::get_username(username))
         {
             property_value->assign(username);
         }
@@ -279,7 +279,7 @@ ReturnCode_t DomainParticipantImpl::enable()
         if (part == nullptr)
         {
             EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Problem creating RTPSParticipant");
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
     }
 
@@ -333,7 +333,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 
     part->enable();
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantImpl::set_qos(
@@ -363,7 +363,7 @@ ReturnCode_t DomainParticipantImpl::set_qos(
 
         if (enabled && !can_qos_be_updated(qos_, qos_to_set))
         {
-            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+            return RETCODE_IMMUTABLE_POLICY;
         }
 
         qos_should_be_updated = set_qos(qos_, qos_to_set, !enabled);
@@ -387,7 +387,7 @@ ReturnCode_t DomainParticipantImpl::set_qos(
         rtps_participant->update_attributes(patt);
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantImpl::get_qos(
@@ -395,7 +395,7 @@ ReturnCode_t DomainParticipantImpl::get_qos(
 {
     std::lock_guard<std::mutex> _(mtx_gs_);
     qos = qos_;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 const DomainParticipantQos& DomainParticipantImpl::get_qos() const
@@ -409,7 +409,7 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
 {
     if (get_participant() != pub->get_participant())
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
     std::lock_guard<std::mutex> lock(mtx_pubs_);
     auto pit = publishers_.find(const_cast<Publisher*>(pub));
@@ -420,16 +420,16 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
                 && "The publisher instance handle does not match the publisher implementation instance handle");
         if (pub->has_datawriters())
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
         pit->second->set_listener(nullptr);
         publishers_by_handle_.erase(publishers_by_handle_.find(pit->second->get_instance_handle()));
         delete pit->second;
         publishers_.erase(pit);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_ERROR;
+    return RETCODE_ERROR;
 }
 
 ReturnCode_t DomainParticipantImpl::delete_subscriber(
@@ -437,7 +437,7 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
 {
     if (get_participant() != sub->get_participant())
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
     std::lock_guard<std::mutex> lock(mtx_subs_);
     auto sit = subscribers_.find(const_cast<Subscriber*>(sub));
@@ -448,16 +448,16 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
                 && "The subscriber instance handle does not match the subscriber implementation instance handle");
         if (sub->has_datareaders())
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
         sit->second->set_listener(nullptr);
         subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->second->get_instance_handle()));
         delete sit->second;
         subscribers_.erase(sit);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_ERROR;
+    return RETCODE_ERROR;
 }
 
 Topic* DomainParticipantImpl::find_topic(
@@ -512,7 +512,7 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
 {
     if (topic == nullptr)
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
@@ -530,7 +530,7 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
         TopicProxy* proxy = dynamic_cast<TopicProxy*>(topic->get_impl());
         assert(nullptr != proxy);
         auto ret_code = it->second->delete_topic(proxy);
-        if (ReturnCode_t::RETCODE_OK == ret_code)
+        if (RETCODE_OK == ret_code)
         {
             topics_by_handle_.erase(handle);
 
@@ -544,7 +544,7 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
         return ret_code;
     }
 
-    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    return RETCODE_PRECONDITION_NOT_MET;
 }
 
 ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
@@ -613,7 +613,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
 
     // Tell filter factory to compile the expression
     IContentFilter* filter_instance = nullptr;
-    if (ReturnCode_t::RETCODE_OK !=
+    if (RETCODE_OK !=
             filter_factory->create_content_filter(filter_class_name, related_topic->get_type_name().c_str(),
             type.get(), filter_expression.c_str(), filter_parameters, filter_instance))
     {
@@ -641,7 +641,7 @@ ReturnCode_t DomainParticipantImpl::delete_contentfilteredtopic(
 {
     if (topic == nullptr)
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
@@ -651,13 +651,13 @@ ReturnCode_t DomainParticipantImpl::delete_contentfilteredtopic(
     {
         if (it->second->get_impl()->is_referenced())
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
         filtered_topics_.erase(it);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    return RETCODE_PRECONDITION_NOT_MET;
 }
 
 ReturnCode_t DomainParticipantImpl::register_content_filter_factory(
@@ -666,18 +666,18 @@ ReturnCode_t DomainParticipantImpl::register_content_filter_factory(
 {
     if (nullptr == filter_factory || nullptr == filter_class_name || strlen(filter_class_name) > 255)
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
     auto it = filter_factories_.find(filter_class_name);
     if ((it != filter_factories_.end()) || (0 == strcmp(filter_class_name, FASTDDS_SQLFILTER_NAME)))
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     filter_factories_[filter_class_name] = filter_factory;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 IContentFilterFactory* DomainParticipantImpl::lookup_content_filter_factory(
@@ -702,21 +702,21 @@ ReturnCode_t DomainParticipantImpl::unregister_content_filter_factory(
 {
     if (nullptr == filter_class_name)
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
     auto it = filter_factories_.find(filter_class_name);
     if ((it == filter_factories_.end()) || (it->first == FASTDDS_SQLFILTER_NAME))
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     for (auto& topic : filtered_topics_)
     {
         if (topic.second->impl_->filter_property.filter_class_name == filter_class_name)
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
     }
 
@@ -733,7 +733,7 @@ ReturnCode_t DomainParticipantImpl::unregister_content_filter_factory(
 
     filter_factories_.erase(it);
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 IContentFilterFactory* DomainParticipantImpl::find_content_filter_factory(
@@ -779,7 +779,7 @@ Publisher* DomainParticipantImpl::create_publisher(
 {
     if (!PublisherImpl::check_qos(qos))
     {
-        // The PublisherImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
+        // The PublisherImpl::check_qos() function is not yet implemented and always returns RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
         // EPROSIMA_LOG_ERROR(PARTICIPANT, "PublisherQos inconsistent or not supported");
         // return nullptr;
@@ -806,7 +806,7 @@ Publisher* DomainParticipantImpl::create_publisher(
     if (enabled && qos_.entity_factory().autoenable_created_entities)
     {
         ReturnCode_t ret_publisher_enable = pub->enable();
-        assert(ReturnCode_t::RETCODE_OK == ret_publisher_enable);
+        assert(RETCODE_OK == ret_publisher_enable);
         (void)ret_publisher_enable;
     }
 
@@ -853,9 +853,9 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
 ReturnCode_t DomainParticipantImpl::ignore_participant(
         const InstanceHandle_t& handle)
 {
-    return (nullptr == rtps_participant_) ? ReturnCode_t::RETCODE_NOT_ENABLED :
-           rtps_participant_->ignore_participant(iHandle2GUID(handle).guidPrefix) ? ReturnCode_t::RETCODE_OK :
-           ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return (nullptr == rtps_participant_) ? RETCODE_NOT_ENABLED :
+           rtps_participant_->ignore_participant(iHandle2GUID(handle).guidPrefix) ? RETCODE_OK :
+           RETCODE_BAD_PARAMETER;
 }
 
 /* TODO
@@ -900,7 +900,7 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
         can_be_deleted = subscriber.second->can_be_deleted();
         if (!can_be_deleted)
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
     }
 
@@ -913,18 +913,18 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
         can_be_deleted = publisher.second->can_be_deleted();
         if (!can_be_deleted)
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
     }
 
-    ReturnCode_t ret_code = ReturnCode_t::RETCODE_OK;
+    ReturnCode_t ret_code = RETCODE_OK;
 
     for (auto& subscriber : subscribers_)
     {
         ret_code = subscriber.first->delete_contained_entities();
         if (!ret_code)
         {
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
     }
 
@@ -942,7 +942,7 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
         ret_code = publisher.first->delete_contained_entities();
         if (!ret_code)
         {
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
     }
 
@@ -967,7 +967,7 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
         it_topics = topics_.erase(it_topics);
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
@@ -975,21 +975,21 @@ ReturnCode_t DomainParticipantImpl::assert_liveliness()
     fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
     if (rtps_participant == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     if (rtps_participant->wlp() != nullptr)
     {
         if (rtps_participant->wlp()->assert_liveliness_manual_by_participant())
         {
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Invalid WLP, cannot assert liveliness of participant");
     }
-    return ReturnCode_t::RETCODE_ERROR;
+    return RETCODE_ERROR;
 }
 
 ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
@@ -998,18 +998,18 @@ ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
     if (&qos == &PUBLISHER_QOS_DEFAULT)
     {
         reset_default_publisher_qos();
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t ret_val = PublisherImpl::check_qos(qos);
     if (!ret_val)
     {
-        // The PublisherImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
+        // The PublisherImpl::check_qos() function is not yet implemented and always returns RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
         // return ret_val;
     }
     PublisherImpl::set_qos(default_pub_qos_, qos, true);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void DomainParticipantImpl::reset_default_publisher_qos()
@@ -1035,10 +1035,10 @@ const ReturnCode_t DomainParticipantImpl::get_publisher_qos_from_profile(
     {
         qos = default_pub_qos_;
         utils::set_qos_from_attributes(qos, attr);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
@@ -1047,17 +1047,17 @@ ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
     if (&qos == &SUBSCRIBER_QOS_DEFAULT)
     {
         reset_default_subscriber_qos();
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     ReturnCode_t check_result = SubscriberImpl::check_qos(qos);
     if (!check_result)
     {
-        // The SubscriberImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
+        // The SubscriberImpl::check_qos() function is not yet implemented and always returns RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
         // return check_result;
     }
     SubscriberImpl::set_qos(default_sub_qos_, qos, true);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void DomainParticipantImpl::reset_default_subscriber_qos()
@@ -1083,10 +1083,10 @@ const ReturnCode_t DomainParticipantImpl::get_subscriber_qos_from_profile(
     {
         qos = default_sub_qos_;
         utils::set_qos_from_attributes(qos, attr);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
@@ -1095,7 +1095,7 @@ ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
     if (&qos == &TOPIC_QOS_DEFAULT)
     {
         reset_default_topic_qos();
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t ret_val = TopicImpl::check_qos(qos);
@@ -1105,7 +1105,7 @@ ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
     }
 
     TopicImpl::set_qos(default_topic_qos_, qos, true);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void DomainParticipantImpl::reset_default_topic_qos()
@@ -1131,10 +1131,10 @@ const ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
     {
         qos = default_topic_qos_;
         utils::set_qos_from_attributes(qos, attr);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
 /* TODO
@@ -1230,7 +1230,7 @@ ReturnCode_t DomainParticipantImpl::get_current_time(
     current_time.seconds = static_cast<int32_t>(seconds.count());
     current_time.nanosec = static_cast<uint32_t>(nanos.count());
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 std::vector<std::string> DomainParticipantImpl::get_participant_names() const
@@ -1249,7 +1249,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
 {
     if (!SubscriberImpl::check_qos(qos))
     {
-        // The SubscriberImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
+        // The SubscriberImpl::check_qos() function is not yet implemented and always returns RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
         // EPROSIMA_LOG_ERROR(PARTICIPANT, "SubscriberQos inconsistent or not supported");
         // return nullptr;
@@ -1278,7 +1278,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     if (enabled && qos_.entity_factory().autoenable_created_entities)
     {
         ReturnCode_t ret_subscriber_enable = sub->enable();
-        assert(ReturnCode_t::RETCODE_OK == ret_subscriber_enable);
+        assert(RETCODE_OK == ret_subscriber_enable);
         (void)ret_subscriber_enable;
     }
 
@@ -1358,7 +1358,7 @@ Topic* DomainParticipantImpl::create_topic(
     if (enabled && qos_.entity_factory().autoenable_created_entities)
     {
         ReturnCode_t ret_topic_enable = topic->enable();
-        assert(ReturnCode_t::RETCODE_OK == ret_topic_enable);
+        assert(RETCODE_OK == ret_topic_enable);
         (void)ret_topic_enable;
     }
 
@@ -1428,7 +1428,7 @@ ReturnCode_t DomainParticipantImpl::register_type(
     if (type_name.size() <= 0)
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Registered Type must have a name");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     TypeSupport t = find_type(type_name);
@@ -1437,11 +1437,11 @@ ReturnCode_t DomainParticipantImpl::register_type(
     {
         if (t == type)
         {
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
         }
 
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Another type with the same name '" << type_name << "' is already registered.");
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     EPROSIMA_LOG_INFO(PARTICIPANT, "Type " << type_name << " registered.");
@@ -1453,7 +1453,7 @@ ReturnCode_t DomainParticipantImpl::register_type(
         register_dynamic_type_to_factories(type);
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 bool DomainParticipantImpl::register_dynamic_type_to_factories(
@@ -1507,14 +1507,14 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
     if (type_name.size() <= 0)
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Registered Type must have a name");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     TypeSupport t = find_type(type_name);
 
     if (t.empty())
     {
-        return ReturnCode_t::RETCODE_OK; // Not registered, so unregistering complete.
+        return RETCODE_OK; // Not registered, so unregistering complete.
     }
 
     {
@@ -1525,7 +1525,7 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
         {
             if (sit.second->type_in_use(type_name))
             {
-                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET; // Is in use
+                return RETCODE_PRECONDITION_NOT_MET; // Is in use
             }
         }
     }
@@ -1538,7 +1538,7 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
         {
             if (pit.second->type_in_use(type_name))
             {
-                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET; // Is in use
+                return RETCODE_PRECONDITION_NOT_MET; // Is in use
             }
         }
     }
@@ -1546,7 +1546,7 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.erase(type_name);
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
@@ -1712,7 +1712,7 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
 
     if (get_rtps_participant() == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     TypeObjectFactory* factory = TypeObjectFactory::get_instance();
@@ -1801,9 +1801,9 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
         // Move the filled vector to the map
         parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
 
-        return ReturnCode_t::RETCODE_NO_DATA;
+        return RETCODE_NO_DATA;
     }
-    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    return RETCODE_PRECONDITION_NOT_MET;
 }
 
 bool DomainParticipantImpl::check_get_type_request(
@@ -1828,7 +1828,7 @@ bool DomainParticipantImpl::check_get_type_request(
             if (nullptr != dyn_type)
             {
                 dyn_type->set_name(name);
-                if (register_dynamic_type(dyn_type) == ReturnCode_t::RETCODE_OK)
+                if (register_dynamic_type(dyn_type) == RETCODE_OK)
                 {
                     callback(name, dyn_type);
                     remove_parent_request(requestId);
@@ -1849,7 +1849,7 @@ bool DomainParticipantImpl::check_get_type_request(
 
                 if (nullptr != dynamic)
                 {
-                    if (register_dynamic_type(dynamic) == ReturnCode_t::RETCODE_OK)
+                    if (register_dynamic_type(dynamic) == RETCODE_OK)
                     {
                         callback(name, dynamic);
                         remove_parent_request(requestId);
@@ -2194,9 +2194,9 @@ fastrtps::types::ReturnCode_t DomainParticipantImpl::check_qos(
     if (qos.allocation().data_limits.max_user_data == 0 ||
             qos.allocation().data_limits.max_user_data > qos.user_data().getValue().size())
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    return RETCODE_INCONSISTENT_POLICY;
 }
 
 bool DomainParticipantImpl::can_qos_be_updated(

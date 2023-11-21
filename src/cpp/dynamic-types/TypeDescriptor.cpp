@@ -124,17 +124,17 @@ ReturnCode_t TypeDescriptor::copy_from(
             bound_ = descriptor->bound_;
             element_type_ = descriptor->element_type_;
             key_element_type_ = descriptor->key_element_type_;
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
         }
         catch (std::exception& /*e*/)
         {
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying TypeDescriptor, invalid input descriptor");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -330,12 +330,12 @@ ReturnCode_t TypeDescriptor::apply_annotation(
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
         pNewDescriptor->copy_from(&descriptor);
         annotation_.push_back(pNewDescriptor);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -357,7 +357,7 @@ ReturnCode_t TypeDescriptor::apply_annotation(
         pNewDescriptor->set_value(key, value);
         annotation_.push_back(pNewDescriptor);
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 AnnotationDescriptor* TypeDescriptor::get_annotation(
@@ -399,7 +399,7 @@ bool TypeDescriptor::annotation_is_mutable() const
         if (ann != nullptr)
         {
             std::string value;
-            if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+            if (ann->get_value(value) == RETCODE_OK)
             {
                 return value.compare(EXTENSIBILITY_MUTABLE) == 0;
             }
@@ -420,7 +420,7 @@ bool TypeDescriptor::annotation_is_final() const
         if (ann != nullptr)
         {
             std::string value;
-            if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+            if (ann->get_value(value) == RETCODE_OK)
             {
                 return value.compare(EXTENSIBILITY_FINAL) == 0;
             }
@@ -441,7 +441,7 @@ bool TypeDescriptor::annotation_is_appendable() const
         if (ann != nullptr)
         {
             std::string value;
-            if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+            if (ann->get_value(value) == RETCODE_OK)
             {
                 return value.compare(EXTENSIBILITY_APPENDABLE) == 0;
             }
@@ -471,7 +471,7 @@ bool TypeDescriptor::annotation_is_non_serialized() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -486,7 +486,7 @@ std::string TypeDescriptor::annotation_get_extensibility() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return value;
         }
@@ -500,7 +500,7 @@ bool TypeDescriptor::annotation_get_nested() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -518,7 +518,7 @@ bool TypeDescriptor::annotation_get_key() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -532,7 +532,7 @@ uint16_t TypeDescriptor::annotation_get_bit_bound() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }

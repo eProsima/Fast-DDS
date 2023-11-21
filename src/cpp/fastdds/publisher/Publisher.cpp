@@ -52,17 +52,17 @@ ReturnCode_t Publisher::enable()
 {
     if (enable_)
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     if (false == impl_->get_participant()->is_enabled())
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     enable_ = true;
     ReturnCode_t ret_code = impl_->enable();
-    enable_ = ReturnCode_t::RETCODE_OK == ret_code;
+    enable_ = RETCODE_OK == ret_code;
     return ret_code;
 }
 
@@ -75,7 +75,7 @@ ReturnCode_t Publisher::get_qos(
         PublisherQos& qos) const
 {
     qos = impl_->get_qos();
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t Publisher::set_qos(
@@ -100,7 +100,7 @@ ReturnCode_t Publisher::set_listener(
         const StatusMask& mask)
 {
     ReturnCode_t ret_val = impl_->set_listener(listener);
-    if (ret_val == ReturnCode_t::RETCODE_OK)
+    if (ret_val == RETCODE_OK)
     {
         status_mask_ = mask;
     }
@@ -142,7 +142,7 @@ DataWriter* Publisher::lookup_datawriter(
 
 ReturnCode_t Publisher::suspend_publications()
 {
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
     /*
        return impl_->suspend_publications();
      */
@@ -150,7 +150,7 @@ ReturnCode_t Publisher::suspend_publications()
 
 ReturnCode_t Publisher::resume_publications()
 {
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
     /*
        return impl_->resume_publications();
      */
@@ -158,7 +158,7 @@ ReturnCode_t Publisher::resume_publications()
 
 ReturnCode_t Publisher::begin_coherent_changes()
 {
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
     /*
        return impl_->begin_coherent_changes();
      */
@@ -166,7 +166,7 @@ ReturnCode_t Publisher::begin_coherent_changes()
 
 ReturnCode_t Publisher::end_coherent_changes()
 {
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
     /*
        return impl_->end_coherent_changes();
      */
@@ -203,7 +203,7 @@ ReturnCode_t Publisher::get_default_datawriter_qos(
         DataWriterQos& qos) const
 {
     qos = impl_->get_default_datawriter_qos();
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t Publisher::copy_from_topic_qos(
@@ -212,7 +212,7 @@ ReturnCode_t Publisher::copy_from_topic_qos(
 {
     static_cast<void> (writer_qos);
     static_cast<void> (topic_qos);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
     /*
        return impl_->copy_from_topic_qos(writer_qos, topic_qos);
      */

@@ -81,7 +81,7 @@ ReturnCode_t PublisherImpl::enable()
         }
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void PublisherImpl::disable()
@@ -141,7 +141,7 @@ ReturnCode_t PublisherImpl::set_qos(
 
     if (enabled && !can_qos_be_updated(qos_, qos_to_set))
     {
-        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        return RETCODE_IMMUTABLE_POLICY;
     }
     set_qos(qos_, qos_to_set, !enabled);
 
@@ -157,7 +157,7 @@ ReturnCode_t PublisherImpl::set_qos(
         }
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 const PublisherListener* PublisherImpl::get_listener() const
@@ -169,7 +169,7 @@ ReturnCode_t PublisherImpl::set_listener(
         PublisherListener* listener)
 {
     listener_ = listener;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void PublisherImpl::PublisherWriterListener::on_publication_matched(
@@ -257,7 +257,7 @@ DataWriter* PublisherImpl::create_datawriter(
 
     if (user_publisher_->is_enabled() && qos_.entity_factory().autoenable_created_entities)
     {
-        if (ReturnCode_t::RETCODE_OK != writer->enable())
+        if (RETCODE_OK != writer->enable())
         {
             delete_datawriter(writer);
             return nullptr;
@@ -291,7 +291,7 @@ ReturnCode_t PublisherImpl::delete_datawriter(
 {
     if (user_publisher_ != writer->get_publisher())
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
     std::unique_lock<std::mutex> lock(mtx_writers_);
     auto vit = writers_.find(writer->get_topic()->get_name());
@@ -318,10 +318,10 @@ ReturnCode_t PublisherImpl::delete_datawriter(
             //Now we can delete it
             writer_impl->get_topic()->get_impl()->dereference();
             delete (writer_impl);
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
         }
     }
-    return ReturnCode_t::RETCODE_ERROR;
+    return RETCODE_ERROR;
 }
 
 DataWriter* PublisherImpl::lookup_datawriter(
@@ -416,7 +416,7 @@ ReturnCode_t PublisherImpl::set_default_datawriter_qos(
     if (&qos == &DATAWRITER_QOS_DEFAULT)
     {
         reset_default_datawriter_qos();
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t ret_val = DataWriterImpl::check_qos(qos);
@@ -425,7 +425,7 @@ ReturnCode_t PublisherImpl::set_default_datawriter_qos(
         return ret_val;
     }
     DataWriterImpl::set_qos(default_datawriter_qos_, qos, true);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void PublisherImpl::reset_default_datawriter_qos()
@@ -451,10 +451,10 @@ const ReturnCode_t PublisherImpl::get_datawriter_qos_from_profile(
     {
         qos = default_datawriter_qos_;
         utils::set_qos_from_attributes(qos, attr);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
 /* TODO
@@ -480,18 +480,18 @@ ReturnCode_t PublisherImpl::wait_for_acknowledgments(
             participant_->get_current_time(begin);
             if (!dw->wait_for_acknowledgments(current))
             {
-                return ReturnCode_t::RETCODE_ERROR;
+                return RETCODE_ERROR;
             }
             // Check ellapsed time and decrement
             participant_->get_current_time(end);
             current = current - (end - begin);
             if (current < fastrtps::c_TimeZero)
             {
-                return ReturnCode_t::RETCODE_TIMEOUT;
+                return RETCODE_TIMEOUT;
             }
         }
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 const DomainParticipant* PublisherImpl::get_participant() const
@@ -507,7 +507,7 @@ const Publisher* PublisherImpl::get_publisher() const
 ReturnCode_t PublisherImpl::delete_contained_entities()
 {
     // Let's be optimistic
-    ReturnCode_t result = ReturnCode_t::RETCODE_OK;
+    ReturnCode_t result = RETCODE_OK;
 
     bool can_be_deleted = true;
 
@@ -516,10 +516,10 @@ ReturnCode_t PublisherImpl::delete_contained_entities()
     {
         for (DataWriterImpl* dw: writer.second)
         {
-            can_be_deleted = dw->check_delete_preconditions() == ReturnCode_t::RETCODE_OK;
+            can_be_deleted = dw->check_delete_preconditions() == RETCODE_OK;
             if (!can_be_deleted)
             {
-                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+                return RETCODE_PRECONDITION_NOT_MET;
             }
         }
     }
@@ -534,7 +534,7 @@ ReturnCode_t PublisherImpl::delete_contained_entities()
         ReturnCode_t ret_code = writer_impl->check_delete_preconditions();
         if (!ret_code)
         {
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
         writer_impl->set_listener(nullptr);
         it = writer_iterator->second.erase(it);
@@ -558,7 +558,7 @@ bool PublisherImpl::can_be_deleted()
     {
         for (DataWriterImpl* dw : topic_writers.second)
         {
-            can_be_deleted = can_be_deleted && (dw->check_delete_preconditions() == ReturnCode_t::RETCODE_OK);
+            can_be_deleted = can_be_deleted && (dw->check_delete_preconditions() == RETCODE_OK);
             if (!can_be_deleted)
             {
                 return can_be_deleted;
@@ -621,7 +621,7 @@ ReturnCode_t PublisherImpl::check_qos(
         const PublisherQos& qos)
 {
     (void) qos;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 bool PublisherImpl::can_qos_be_updated(
