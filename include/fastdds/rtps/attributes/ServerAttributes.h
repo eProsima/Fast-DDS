@@ -178,6 +178,8 @@ const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.4
  */
 const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
 
+const char* const ROS_SUPER_CLIENT = "ROS_SUPER_CLIENT";
+
 /**
  * Retrieves a semicolon-separated list of locators from a string, and
  * populates a RemoteServerList_t mapping list position to default guid.
@@ -211,6 +213,8 @@ RTPS_DllAPI bool load_environment_server_info(
  */
 RTPS_DllAPI const std::string& ros_discovery_server_env();
 
+RTPS_DllAPI bool ros_super_client_env();
+
 /**
  * Returns the guidPrefix associated to the given server id
  * @param[in] id of the default server whose guidPrefix we want to retrieve
@@ -233,9 +237,11 @@ using fastdds::rtps::RemoteServerList_t;
 using fastdds::rtps::DEFAULT_ROS2_SERVER_PORT;
 using fastdds::rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX;
 using fastdds::rtps::DEFAULT_ROS2_MASTER_URI;
+using fastdds::rtps::ROS_SUPER_CLIENT;
 using fastdds::rtps::load_environment_server_info;
 using fastdds::rtps::ros_discovery_server_env;
 using fastdds::rtps::get_server_client_default_guidPrefix;
+using fastdds::rtps::ros_super_client_env;
 
 } // fastrtps
 } // rtps

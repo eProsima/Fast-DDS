@@ -537,6 +537,9 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         const RTPSParticipantAttributes& att,
         RTPSParticipantListener* listen)
 {
+    bool set_super_client = ros_super_client_env();
+    std::cout << "*** ROS_SUPER_CLIENT: " << set_super_client << std::endl;
+
     // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
     if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::SIMPLE)
     {

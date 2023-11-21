@@ -929,6 +929,41 @@ void PDPClient::match_pdp_reader_nts_(
     }
 }
 
+bool ros_super_client_env()
+{
+    std::string super_client_str;
+    bool super_client = false;
+    std::vector<std::string> true_vec = {"TRUE", "true", "True", "1"};
+    std::vector<std::string> false_vec = {"FALSE", "false", "False", "0"};
+
+    SystemInfo::get_env(ROS_SUPER_CLIENT, super_client_str);
+    if (super_client_str != "")
+    {
+        try
+        {
+            if (find(true_vec.begin(), true_vec.end(), super_client_str) != true_vec.end())
+            {
+                super_client = true;
+            }
+            else if (find(false_vec.begin(), false_vec.end(), super_client_str) != false_vec.end())
+            {
+                super_client = false;
+            }
+            else
+            {
+                std::stringstream ss;
+                ss << "Invalid ROS_SUPER_CLIENT argument " << super_client_str;
+                throw std::invalid_argument(ss.str());
+            }
+        }
+        catch (std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(SERVER_CLIENT_DISCOVERY, e.what());
+        }
+    }
+    return super_client;
+}
+
 const std::string& ros_discovery_server_env()
 {
     static std::string servers;
