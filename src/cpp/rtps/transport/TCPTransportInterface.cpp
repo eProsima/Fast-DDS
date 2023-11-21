@@ -12,28 +12,60 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <rtps/transport/TCPTransportInterface.h>
+#include "TCPTransportInterface.h"
 
-#include <utility>
-#include <cstring>
 #include <algorithm>
+#include <cassert>
 #include <chrono>
+#include <cstring>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <string>
 #include <thread>
+#include <utility>
+#include <vector>
 
+#include <asio/executor_work_guard.hpp>
+#include <asio/io_context.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/socket_base.hpp>
 #include <asio/steady_timer.hpp>
+#include <asio/system_error.hpp>
+#if TLS_FOUND
+#include <asio/ssl/verify_context.hpp>
+#endif // if TLS_FOUND
+
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/LocatorSelector.hpp>
+#include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
+#include <fastdds/rtps/common/PortParameters.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/transport/SenderResource.h>
+#include <fastdds/rtps/transport/SocketTransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPTransportDescriptor.h>
+#include <fastdds/rtps/transport/TransportReceiverInterface.h>
+#include <fastrtps/config.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
-#include <rtps/transport/tcp/RTCPMessageManager.h>
-#include <rtps/transport/TCPSenderResource.hpp>
-#include <rtps/transport/TCPChannelResourceBasic.h>
-#include <rtps/transport/TCPAcceptorBasic.h>
-#if TLS_FOUND
-#include <rtps/transport/TCPChannelResourceSecure.h>
-#include <rtps/transport/TCPAcceptorSecure.h>
-#endif // if TLS_FOUND
+
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/thread.hpp>
+#include <utils/threading.hpp>
+
+#include "tcp/RTCPHeader.h"
+#include "tcp/RTCPMessageManager.h"
+#include "TCPAcceptorBasic.h"
+#include "TCPChannelResourceBasic.h"
+#include "TCPSenderResource.hpp"
+#if TLS_FOUND
+#include "TCPAcceptorSecure.h"
+#include "TCPChannelResourceSecure.h"
+#endif // if TLS_FOUND
 
 using namespace std;
 using namespace asio;
@@ -91,6 +123,8 @@ TCPTransportDescriptor::TCPTransportDescriptor(
     , check_crc(t.check_crc)
     , apply_security(t.apply_security)
     , tls_config(t.tls_config)
+    , keep_alive_thread(t.keep_alive_thread)
+    , accept_thread(t.accept_thread)
 {
 }
 
@@ -116,6 +150,8 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator =(
     check_crc = t.check_crc;
     apply_security = t.apply_security;
     tls_config = t.tls_config;
+    keep_alive_thread = t.keep_alive_thread;
+    accept_thread = t.accept_thread;
     return *this;
 }
 
@@ -135,6 +171,8 @@ bool TCPTransportDescriptor::operator ==(
            this->check_crc == t.check_crc &&
            this->apply_security == t.apply_security &&
            this->tls_config == t.tls_config &&
+           this->keep_alive_thread == t.keep_alive_thread &&
+           this->accept_thread == t.accept_thread &&
            SocketTransportDescriptor::operator ==(t));
 }
 
@@ -159,11 +197,10 @@ void TCPTransportInterface::clean()
     alive_.store(false);
 
     keep_alive_event_.cancel();
-    if (io_service_timers_thread_)
+    if (io_service_timers_thread_.joinable())
     {
         io_service_timers_.stop();
-        io_service_timers_thread_->join();
-        io_service_timers_thread_ = nullptr;
+        io_service_timers_thread_.join();
     }
 
     {
@@ -205,11 +242,10 @@ void TCPTransportInterface::clean()
         }
     }
 
-    if (io_service_thread_)
+    if (io_service_thread_.joinable())
     {
         io_service_.stop();
-        io_service_thread_->join();
-        io_service_thread_ = nullptr;
+        io_service_thread_.join();
     }
 }
 
@@ -425,21 +461,22 @@ bool TCPTransportInterface::init(
 #endif // if ASIO_VERSION >= 101200
                 io_service_.run();
             };
-    io_service_thread_ = std::make_shared<std::thread>(ioServiceFunction);
+    io_service_thread_ = create_thread(ioServiceFunction, configuration()->accept_thread, "dds.tcp_accept");
 
     if (0 < configuration()->keep_alive_frequency_ms)
     {
-        io_service_timers_thread_ = std::make_shared<std::thread>([&]()
-                        {
-
+        auto ioServiceTimersFunction = [&]()
+                {
 #if ASIO_VERSION >= 101200
-                            asio::executor_work_guard<asio::io_service::executor_type> work(io_service_timers_.
+                    asio::executor_work_guard<asio::io_service::executor_type> work(io_service_timers_.
                                     get_executor());
 #else
-                            io_service::work work(io_service_timers_);
+                    io_service::work work(io_service_timers_);
 #endif // if ASIO_VERSION >= 101200
-                            io_service_timers_.run();
-                        });
+                    io_service_timers_.run();
+                };
+        io_service_timers_thread_ = create_thread(ioServiceTimersFunction,
+                        configuration()->keep_alive_thread, "dds.tcp_keep");
     }
 
     return true;
@@ -801,6 +838,20 @@ void TCPTransportInterface::keep_alive()
      */
 }
 
+void TCPTransportInterface::create_listening_thread(
+        const std::shared_ptr<TCPChannelResource>& channel)
+{
+    std::weak_ptr<TCPChannelResource> channel_weak_ptr = channel;
+    std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
+    auto fn = [this, channel_weak_ptr, rtcp_manager_weak_ptr]()
+            {
+                perform_listen_operation(channel_weak_ptr, rtcp_manager_weak_ptr);
+            };
+    uint32_t port = channel->local_endpoint().port();
+    const ThreadSettings& thr_config = configuration()->get_thread_config_for_port(port);
+    channel->thread(create_thread(fn, thr_config, "dds.tcp.%u", port));
+}
+
 void TCPTransportInterface::perform_listen_operation(
         std::weak_ptr<TCPChannelResource> channel_weak,
         std::weak_ptr<RTCPMessageManager> rtcp_manager)
@@ -818,6 +869,9 @@ void TCPTransportInterface::perform_listen_operation(
 
         if (channel)
         {
+            uint32_t port = channel->local_endpoint().port();
+            set_name_to_current_thread("dds.tcp.%u", port);
+
             if (channel->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE)
             {
                 rtcp_message_manager->sendConnectionRequest(channel);
@@ -1301,10 +1355,7 @@ void TCPTransportInterface::SocketAccepted(
             }
 
             channel->set_options(configuration());
-            std::weak_ptr<TCPChannelResource> channel_weak_ptr = channel;
-            std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-            channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                    channel_weak_ptr, rtcp_manager_weak_ptr));
+            create_listening_thread(channel);
 
             EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
                     << IPLocator::to_string(locator) << ", remote: "
@@ -1348,10 +1399,7 @@ void TCPTransportInterface::SecureSocketAccepted(
             }
 
             secure_channel->set_options(configuration());
-            std::weak_ptr<TCPChannelResource> channel_weak_ptr = secure_channel;
-            std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-            secure_channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                    channel_weak_ptr, rtcp_manager_weak_ptr));
+            create_listening_thread(secure_channel);
 
             EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
                                                                     << ", remote: " << socket->lowest_layer().remote_endpoint().address()
@@ -1393,10 +1441,7 @@ void TCPTransportInterface::SocketConnected(
                 {
                     channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
                     channel->set_options(configuration());
-
-                    std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-                    channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                            channel_weak_ptr, rtcp_manager_weak_ptr));
+                    create_listening_thread(channel);
                 }
             }
             else

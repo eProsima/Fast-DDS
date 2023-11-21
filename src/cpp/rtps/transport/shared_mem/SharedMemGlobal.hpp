@@ -19,6 +19,7 @@
 #include <vector>
 #include <mutex>
 #include <memory>
+#include <thread>
 
 #include <utils/shared_memory/SharedMemSegment.hpp>
 #include <utils/shared_memory/RobustExclusiveLock.hpp>

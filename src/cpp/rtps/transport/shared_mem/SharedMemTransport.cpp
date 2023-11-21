@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <thread>
 #include <utility>
 
 #ifdef ANDROID
@@ -290,7 +291,7 @@ bool SharedMemTransport::init(
             auto packets_file_consumer = std::unique_ptr<SHMPacketFileConsumer>(
                 new SHMPacketFileConsumer(configuration_.rtps_dump_file()));
 
-            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>();
+            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>(0, configuration_.dump_thread());
             packet_logger_->RegisterConsumer(std::move(packets_file_consumer));
         }
     }
@@ -341,7 +342,10 @@ SharedMemChannelResource* SharedMemTransport::CreateInputChannelResource(
             open_mode)->create_listener(),
         locator,
         receiver,
-        configuration_.rtps_dump_file());
+        configuration_.rtps_dump_file(),
+        configuration_.dump_thread(),
+        true,
+        configuration_.get_thread_config_for_port(locator.port));
 }
 
 bool SharedMemTransport::OpenOutputChannel(

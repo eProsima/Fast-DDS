@@ -24,6 +24,7 @@
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
@@ -121,6 +122,10 @@ XMLP_ret XMLParser::parseXML(
                     {
                         root->addChild(std::move(library_node));
                     }
+                }
+                else if (strcmp(tag, DOMAINPARTICIPANT_FACTORY) == 0)
+                {
+                    ret = parseXMLDomainParticipantFactoryProf(node, *root);
                 }
                 else if (strcmp(tag, PARTICIPANT) == 0)
                 {
@@ -249,6 +254,11 @@ XMLP_ret XMLParser::parseXMLTransportData(
         </xs:complexType>
      */
 
+    if (XMLP_ret::XML_OK != validateXMLTransportElements(*p_root))
+    {
+        return XMLP_ret::XML_ERROR;
+    }
+
     tinyxml2::XMLElement* p_aux0 = nullptr;
     p_aux0 = p_root->FirstChildElement(TRANSPORT_ID);
     if (nullptr == p_aux0)
@@ -361,9 +371,25 @@ XMLP_ret XMLParser::parseXMLTransportData(
         return XMLP_ret::XML_ERROR;
     }
 
+    ret = parseXMLCommonTransportData(p_root, pDescriptor);
+    if (ret != XMLP_ret::XML_OK)
+    {
+        return ret;
+    }
+
+    std::shared_ptr<fastdds::rtps::PortBasedTransportDescriptor> temp_1 =
+            std::dynamic_pointer_cast<fastdds::rtps::PortBasedTransportDescriptor>(pDescriptor);
+    ret = parseXMLPortBasedTransportData(p_root, temp_1);
+    if (ret != XMLP_ret::XML_OK)
+    {
+        return ret;
+    }
+
     if (sType != SHM)
     {
-        ret = parseXMLCommonTransportData(p_root, pDescriptor);
+        std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> temp_2 =
+                std::dynamic_pointer_cast<fastdds::rtps::SocketTransportDescriptor>(pDescriptor);
+        ret = parseXMLSocketTransportData(p_root, temp_2);
         if (ret != XMLP_ret::XML_OK)
         {
             return ret;
@@ -371,6 +397,55 @@ XMLP_ret XMLParser::parseXMLTransportData(
     }
 
     XMLProfileManager::insertTransportById(sId, pDescriptor);
+    return ret;
+}
+
+XMLP_ret XMLParser::validateXMLTransportElements(
+        tinyxml2::XMLElement& p_root)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    for (tinyxml2::XMLElement* p_aux0 = p_root.FirstChildElement(); p_aux0 != nullptr;
+            p_aux0 = p_aux0->NextSiblingElement())
+    {
+        const char* name = p_aux0->Name();
+        if (!(strcmp(name, TRANSPORT_ID) == 0 ||
+                strcmp(name, TYPE) == 0 ||
+                strcmp(name, SEND_BUFFER_SIZE) == 0 ||
+                strcmp(name, RECEIVE_BUFFER_SIZE) == 0 ||
+                strcmp(name, MAX_MESSAGE_SIZE) == 0 ||
+                strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0 ||
+                strcmp(name, WHITE_LIST) == 0 ||
+                strcmp(name, TTL) == 0 ||
+                strcmp(name, NON_BLOCKING_SEND) == 0 ||
+                strcmp(name, UDP_OUTPUT_PORT) == 0 ||
+                strcmp(name, TCP_WAN_ADDR) == 0 ||
+                strcmp(name, KEEP_ALIVE_FREQUENCY) == 0 ||
+                strcmp(name, KEEP_ALIVE_TIMEOUT) == 0 ||
+                strcmp(name, MAX_LOGICAL_PORT) == 0 ||
+                strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
+                strcmp(name, LOGICAL_PORT_INCREMENT) == 0 ||
+                strcmp(name, LISTENING_PORTS) == 0 ||
+                strcmp(name, CALCULATE_CRC) == 0 ||
+                strcmp(name, CHECK_CRC) == 0 ||
+                strcmp(name, KEEP_ALIVE_THREAD) == 0 ||
+                strcmp(name, ACCEPT_THREAD) == 0 ||
+                strcmp(name, ENABLE_TCP_NODELAY) == 0 ||
+                strcmp(name, TLS) == 0 ||
+                strcmp(name, SEGMENT_SIZE) == 0 ||
+                strcmp(name, PORT_QUEUE_CAPACITY) == 0 ||
+                strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 ||
+                strcmp(name, RTPS_DUMP_FILE) == 0 ||
+                strcmp(name, DEFAULT_RECEPTION_THREADS) == 0 ||
+                strcmp(name, RECEPTION_THREADS) == 0 ||
+                strcmp(name, DUMP_THREAD) == 0 ||
+                strcmp(name, PORT_OVERFLOW_POLICY) == 0 ||
+                strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0))
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'transportDescriptorType'. Name: " << name);
+            ret = XMLP_ret::XML_ERROR;
+        }
+    }
+
     return ret;
 }
 
@@ -383,28 +458,101 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(
             <xs:all minOccurs="0">
                 <xs:element name="transport_id" type="stringType"/>
                 <xs:element name="type" type="stringType"/>
-                <xs:element name="sendBufferSize" type="int32Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="receiveBufferSize" type="int32Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="TTL" type="uint8Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="maxMessageSize" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="maxInitialPeersRange" type="uint32Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="interfaceWhiteList" type="addressListType" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="wan_addr" type="stringType" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="output_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="keep_alive_frequency_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="keep_alive_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="max_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="logical_port_range" type="uint16Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="logical_port_increment" type="uint16Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="metadata_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="listening_ports" type="portListType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
      */
+    tinyxml2::XMLElement* p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, MAX_MESSAGE_SIZE) == 0)
+        {
+            // maxMessageSize - uint32Type
+            uint32_t uSize = 0;
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uSize, 0))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            p_transport->maxMessageSize = uSize;
+        }
+        else if (strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0)
+        {
+            // maxInitialPeersRange - uint32Type
+            uint32_t uRange = 0;
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uRange, 0))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            p_transport->maxInitialPeersRange = uRange;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
 
-    std::shared_ptr<rtps::SocketTransportDescriptor> pDesc =
-            std::dynamic_pointer_cast<rtps::SocketTransportDescriptor>(p_transport);
+XMLP_ret XMLParser::parseXMLPortBasedTransportData(
+        tinyxml2::XMLElement* p_root,
+        std::shared_ptr<fastdds::rtps::PortBasedTransportDescriptor> p_transport)
+{
+    /*
+        <xs:complexType name="rtpsTransportDescriptorType">
+            <xs:all minOccurs="0">
+                <xs:element name="default_reception_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="reception_threads" type="receptionThreadsListType" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+     */
+    tinyxml2::XMLElement* p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, DEFAULT_RECEPTION_THREADS) == 0)
+        {
+            fastdds::rtps::ThreadSettings thread_settings;
+            if (getXMLThreadSettings(*p_aux0, thread_settings) == XMLP_ret::XML_OK)
+            {
+                p_transport->default_reception_threads(thread_settings);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Incorrect thread settings");
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, RECEPTION_THREADS) == 0)
+        {
+            fastdds::rtps::PortBasedTransportDescriptor::ReceptionThreadsConfigMap reception_threads;
+            if (parseXMLReceptionThreads(*p_aux0, reception_threads) == XMLP_ret::XML_OK)
+            {
+                p_transport->reception_threads(reception_threads);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Incorrect thread settings");
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
 
+XMLP_ret XMLParser::parseXMLSocketTransportData(
+        tinyxml2::XMLElement* p_root,
+        std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport)
+{
+    /*
+        <xs:complexType name="rtpsTransportDescriptorType">
+            <xs:all minOccurs="0">
+                <xs:element name="sendBufferSize" type="int32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="receiveBufferSize" type="int32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="TTL" type="uint8Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="interfaceWhiteList" type="addressListType" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+     */
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
     for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
@@ -418,7 +566,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            pDesc->sendBufferSize = iSize;
+            p_transport->sendBufferSize = iSize;
         }
         else if (strcmp(name, RECEIVE_BUFFER_SIZE) == 0)
         {
@@ -428,7 +576,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            pDesc->receiveBufferSize = iSize;
+            p_transport->receiveBufferSize = iSize;
         }
         else if (strcmp(name, TTL) == 0)
         {
@@ -438,27 +586,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            pDesc->TTL = static_cast<uint8_t>(iTTL);
-        }
-        else if (strcmp(name, MAX_MESSAGE_SIZE) == 0)
-        {
-            // maxMessageSize - uint32Type
-            uint32_t uSize = 0;
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uSize, 0))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-            std::dynamic_pointer_cast<rtps::TransportDescriptorInterface>(p_transport)->maxMessageSize = uSize;
-        }
-        else if (strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0)
-        {
-            // maxInitialPeersRange - uint32Type
-            uint32_t uRange = 0;
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uRange, 0))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-            pDesc->maxInitialPeersRange = uRange;
+            p_transport->TTL = static_cast<uint8_t>(iTTL);
         }
         else if (strcmp(name, WHITE_LIST) == 0)
         {
@@ -473,7 +601,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(
                     std::string text = get_element_text(p_aux1);
                     if (!text.empty())
                     {
-                        pDesc->interfaceWhiteList.emplace_back(text);
+                        p_transport->interfaceWhiteList.emplace_back(text);
                     }
                 }
                 else
@@ -482,26 +610,6 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(
                     return XMLP_ret::XML_ERROR;
                 }
             }
-        }
-        else if (strcmp(name, TCP_WAN_ADDR) == 0 || strcmp(name, UDP_OUTPUT_PORT) == 0 ||
-                strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0 ||
-                strcmp(name, KEEP_ALIVE_FREQUENCY) == 0 || strcmp(name, KEEP_ALIVE_TIMEOUT) == 0 ||
-                strcmp(name, MAX_LOGICAL_PORT) == 0 || strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
-                strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0 ||
-                strcmp(name, CALCULATE_CRC) == 0 || strcmp(name, CHECK_CRC) == 0 ||
-                strcmp(name, ENABLE_TCP_NODELAY) == 0 || strcmp(name, TLS) == 0 ||
-                strcmp(name, NON_BLOCKING_SEND) == 0  ||
-                strcmp(name, SEGMENT_SIZE) == 0 || strcmp(name, PORT_QUEUE_CAPACITY) == 0 ||
-                strcmp(name, PORT_OVERFLOW_POLICY) == 0 || strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0 ||
-                strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 || strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 ||
-                strcmp(name, RTPS_DUMP_FILE) == 0)
-        {
-            // Parsed outside of this method
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
-            return XMLP_ret::XML_ERROR;
         }
     }
     return XMLP_ret::XML_OK;
@@ -528,6 +636,8 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
                 <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="keep_alive_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="accept_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
      */
@@ -637,19 +747,21 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
                     return XMLP_ret::XML_ERROR;
                 }
             }
-            else if (strcmp(name, TCP_WAN_ADDR) == 0 || strcmp(name, TRANSPORT_ID) == 0 ||
-                    strcmp(name, TYPE) == 0 || strcmp(name, SEND_BUFFER_SIZE) == 0 ||
-                    strcmp(name, RECEIVE_BUFFER_SIZE) == 0 || strcmp(name, TTL) == 0 ||
-                    strcmp(name, MAX_MESSAGE_SIZE) == 0 || strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0 ||
-                    strcmp(name, WHITE_LIST) == 0)
+            else if (strcmp(name, KEEP_ALIVE_THREAD) == 0)
             {
-                // Parsed Outside of this method
+                if (getXMLThreadSettings(*p_aux0, pTCPDesc->keep_alive_thread) != XMLP_ret::XML_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Incorrect thread settings");
+                    return XMLP_ret::XML_ERROR;
+                }
             }
-            else
+            else if (strcmp(name, ACCEPT_THREAD) == 0)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
-                return XMLP_ret::XML_ERROR;
+                if (getXMLThreadSettings(*p_aux0, pTCPDesc->accept_thread) != XMLP_ret::XML_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Incorrect thread settings");
+                    return XMLP_ret::XML_ERROR;
+                }
             }
         }
     }
@@ -675,7 +787,8 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(
                 <xs:element name="port_queue_capacity" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="healthy_check_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="rtps_dump_file" type="stringType" minOccurs="0" maxOccurs="1"/>
-                </xs:all>
+                <xs:element name="dump_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
         </xs:complexType>
      */
 
@@ -723,36 +836,17 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(
                 }
                 transport_descriptor->rtps_dump_file(str);
             }
-            else if (strcmp(name, MAX_MESSAGE_SIZE) == 0)
+            else if (strcmp(name, DUMP_THREAD) == 0)
             {
-                // maxMessageSize - uint32Type
-                uint32_t uSize = 0;
-                if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uSize, 0))
+                fastdds::rtps::ThreadSettings thread_settings;
+                if (getXMLThreadSettings(*p_aux0, thread_settings) != XMLP_ret::XML_OK)
                 {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Incorrect thread settings");
                     return XMLP_ret::XML_ERROR;
                 }
-                transport_descriptor->max_message_size(uSize);
+                transport_descriptor->dump_thread(thread_settings);
             }
-            else if (strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0)
-            {
-                // maxInitialPeersRange - uint32Type
-                uint32_t uRange = 0;
-                if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uRange, 0))
-                {
-                    return XMLP_ret::XML_ERROR;
-                }
-                transport_descriptor->maxInitialPeersRange = uRange;
-            }
-            else if (strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0)
-            {
-                // Parsed Outside of this method
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
-                return XMLP_ret::XML_ERROR;
-            }
+            // Do not parse nor fail on unkown tags; these may be parsed elsewhere
         }
     }
     else
@@ -1130,6 +1224,48 @@ XMLP_ret XMLParser::parse_tls_config(
     return ret;
 }
 
+XMLP_ret XMLParser::parseXMLReceptionThreads(
+        tinyxml2::XMLElement& p_root,
+        fastdds::rtps::PortBasedTransportDescriptor::ReceptionThreadsConfigMap& reception_threads)
+{
+    /*
+        <xs:complexType name="receptionThreadsListType">
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="reception_thread" type="threadSettingsType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+     */
+
+    /*
+     * The only allowed element is <reception_thread>
+     */
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    for (tinyxml2::XMLElement* p_element = p_root.FirstChildElement(); p_element != nullptr;
+            p_element = p_element->NextSiblingElement())
+    {
+        if (strcmp(p_element->Name(), RECEPTION_THREAD) == 0)
+        {
+            uint32_t port = 0;
+            fastdds::rtps::ThreadSettings thread_settings;
+            ret = getXMLThreadSettingsWithPort(*p_element, thread_settings, port);
+            if (XMLP_ret::XML_OK != ret || reception_threads.count(port) != 0)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing reception_threads thread settings. Port: " << port);
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+            reception_threads[port] = thread_settings;
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing reception_threads. Wrong tag: " << p_element->Name());
+            ret = XMLP_ret::XML_ERROR;
+            break;
+        }
+    }
+    return ret;
+}
+
 XMLP_ret XMLParser::parseXMLLibrarySettings(
         tinyxml2::XMLElement* p_root)
 {
@@ -1161,6 +1297,27 @@ XMLP_ret XMLParser::parseXMLLibrarySettings(
         }
 
         XMLProfileManager::library_settings(library_settings);
+    }
+
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLDomainParticipantFactoryProf(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    up_participantfactory_t factory_qos{new fastdds::dds::DomainParticipantFactoryQos};
+    up_node_participantfactory_t factory_node{new node_participantfactory_t{NodeType::DOMAINPARTICIPANT_FACTORY,
+                                                                            std::move(factory_qos)}};
+    if (XMLP_ret::XML_OK == fillDataNode(p_root, *factory_node))
+    {
+        rootNode.addChild(std::move(factory_node));
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing participant profile");
+        ret = XMLP_ret::XML_ERROR;
     }
 
     return ret;
@@ -1317,6 +1474,10 @@ XMLP_ret XMLParser::parseProfiles(
             {
                 parseOk &= parseXMLLibrarySettings(p_profile) == XMLP_ret::XML_OK;
             }
+            else if (strcmp(tag, DOMAINPARTICIPANT_FACTORY) == 0)
+            {
+                parseOk &= parseXMLDomainParticipantFactoryProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
+            }
             else if (strcmp(tag, PARTICIPANT) == 0)
             {
                 parseOk &= parseXMLParticipantProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
@@ -1384,6 +1545,7 @@ XMLP_ret XMLParser::parseLogConfig(
                 <xs:choice minOccurs="1">
                     <xs:element name="use_default" type="booleanCaps" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="consumer" type="logConsumerType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="thread_settings" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
                 </xs:choice>
             </xs:sequence>
         </xs:complexType>
@@ -1406,11 +1568,24 @@ XMLP_ret XMLParser::parseLogConfig(
         p_aux0 = p_root;
     }
 
+    std::set<std::string> tags_present;
     tinyxml2::XMLElement* p_element = p_aux0->FirstChildElement();
+    fastdds::rtps::ThreadSettings thread_settings;
+    bool set_thread_settings = false;
 
     while (ret == XMLP_ret::XML_OK && nullptr != p_element)
     {
+        const char* name = p_element->Name();
         const char* tag = p_element->Value();
+
+        // Fail on duplicated not allowed elements
+        if (strcmp(tag, CONSUMER) != 0 && tags_present.count(name) != 0)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'log'. Tag: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present.emplace(name);
+
         if (nullptr != tag)
         {
             if (strcmp(tag, USE_DEFAULT) == 0)
@@ -1439,6 +1614,18 @@ XMLP_ret XMLParser::parseLogConfig(
             {
                 ret = parseXMLConsumer(*p_element);
             }
+            else if (strcmp(tag, THREAD_SETTINGS) == 0)
+            {
+                ret = getXMLThreadSettings(*p_element, thread_settings);
+                if (ret == XMLP_ret::XML_OK)
+                {
+                    set_thread_settings = true;
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Incorrect thread settings");
+                }
+            }
             else
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Not expected tag: '" << tag << "'");
@@ -1448,8 +1635,13 @@ XMLP_ret XMLParser::parseLogConfig(
 
         if (ret == XMLP_ret::XML_OK)
         {
-            p_element = p_element->NextSiblingElement(CONSUMER);
+            p_element = p_element->NextSiblingElement();
         }
+    }
+
+    if (ret == XMLP_ret::XML_OK && set_thread_settings)
+    {
+        fastdds::dds::Log::SetThreadConfig(thread_settings);
     }
 
     return ret;
@@ -1719,6 +1911,54 @@ XMLP_ret XMLParser::fillDataNode(
 
 XMLP_ret XMLParser::fillDataNode(
         tinyxml2::XMLElement* p_profile,
+        DataNode<fastdds::dds::DomainParticipantFactoryQos>& factory_node)
+{
+    /*
+       <xs:complexType name="domainParticipantFactoryProfileType">
+        <xs:all>
+            <xs:element name="qos" type="domainParticipantFactoryQosPoliciesType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+        <xs:attribute name="profile_name" type="string" use="required"/>
+        <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+       </xs:complexType>
+     */
+
+    if (nullptr == p_profile)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Bad parameters!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    addAllAttributes(p_profile, factory_node);
+
+    /*
+     * The only allowed element <qos>, and its max is 1; look for it.
+     */
+    std::set<std::string> tags_present;
+    for (tinyxml2::XMLElement* p_element = p_profile->FirstChildElement(); p_element != nullptr;
+            p_element = p_element->NextSiblingElement())
+    {
+        const char* name = p_element->Name();
+        if (tags_present.count(name) != 0)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'participant'. Tag: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+        tags_present.emplace(name);
+
+        if (strcmp(p_element->Name(), QOS) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLDomainParticipantFactoryQos(*p_element, *factory_node.get()))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::fillDataNode(
+        tinyxml2::XMLElement* p_profile,
         DataNode<ParticipantAttributes>& participant_node)
 {
     /*
@@ -1960,6 +2200,49 @@ XMLP_ret XMLParser::fillDataNode(
                 return XMLP_ret::XML_ERROR;
             }
             participant_node.get()->rtps.setName(s.c_str());
+        }
+        else if (strcmp(name, BUILTIN_CONTROLLERS_SENDER_THREAD) == 0)
+        {
+            if (XMLP_ret::XML_OK !=
+                    getXMLThreadSettings(*p_aux0,
+                    participant_node.get()->rtps.builtin_controllers_sender_thread))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, TIMED_EVENTS_THREAD) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*p_aux0, participant_node.get()->rtps.timed_events_thread))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, DISCOVERY_SERVER_THREAD) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*p_aux0, participant_node.get()->rtps.discovery_server_thread))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, BUILTIN_TRANSPORTS_RECEPTION_THREADS) == 0)
+        {
+            if (XMLP_ret::XML_OK !=
+                    getXMLThreadSettings(*p_aux0,
+                    participant_node.get()->rtps.builtin_transports_reception_threads))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, SECURITY_LOG_THREAD) == 0)
+        {
+#if HAVE_SECURITY
+            if (XMLP_ret::XML_OK != getXMLThreadSettings(*p_aux0, participant_node.get()->rtps.security_log_thread))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+#else
+            EPROSIMA_LOG_WARNING(XMLPARSER, "Ignoring '" << SECURITY_LOG_THREAD << "' since security is disabled");
+#endif // if HAVE_SECURITY
         }
         else
         {

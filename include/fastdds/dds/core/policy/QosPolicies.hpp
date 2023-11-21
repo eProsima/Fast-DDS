@@ -23,17 +23,16 @@
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
-
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
-
+#include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
@@ -2763,6 +2762,7 @@ public:
                (this->use_builtin_transports == b.use_builtin_transports) &&
                (this->send_socket_buffer_size == b.send_socket_buffer_size) &&
                (this->listen_socket_buffer_size == b.listen_socket_buffer_size) &&
+               (this->builtin_transports_reception_threads_ == b.builtin_transports_reception_threads_) &&
                QosPolicy::operator ==(b);
     }
 
@@ -2788,6 +2788,9 @@ public:
      * By default, 0.
      */
     uint32_t listen_socket_buffer_size;
+
+    //! Thread settings for the builtin transports reception threads
+    rtps::ThreadSettings builtin_transports_reception_threads_;
 };
 
 //! Qos Policy to configure the endpoint
@@ -2948,6 +2951,7 @@ public:
                 max_domains_ :
                 b.domain_ids().size());
         domain_ids_ = b.domain_ids();
+        data_sharing_listener_thread_ = b.data_sharing_listener_thread();
 
         return *this;
     }
@@ -2958,6 +2962,7 @@ public:
         return kind_ == b.kind_ &&
                shm_directory_ == b.shm_directory_ &&
                domain_ids_ == b.domain_ids_ &&
+               data_sharing_listener_thread_ == b.data_sharing_listener_thread_ &&
                Parameter_t::operator ==(b) &&
                QosPolicy::operator ==(b);
     }
@@ -3134,6 +3139,37 @@ public:
         }
     }
 
+    /**
+     * Getter for DataSharing listener thread ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    rtps::ThreadSettings& data_sharing_listener_thread()
+    {
+        return data_sharing_listener_thread_;
+    }
+
+    /**
+     * Getter for DataSharing listener thread ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    const rtps::ThreadSettings& data_sharing_listener_thread() const
+    {
+        return data_sharing_listener_thread_;
+    }
+
+    /**
+     * Setter for the DataSharing listener thread ThreadSettings
+     *
+     * @param value New ThreadSettings to be set
+     */
+    void data_sharing_listener_thread(
+            const rtps::ThreadSettings& value)
+    {
+        data_sharing_listener_thread_ = value;
+    }
+
 private:
 
     void setup(
@@ -3162,6 +3198,9 @@ private:
 
     //! Only endpoints with matching domain IDs are DataSharing compatible
     std::vector<uint64_t> domain_ids_;
+
+    //! Thread settings for the DataSharing listener thread
+    rtps::ThreadSettings data_sharing_listener_thread_;
 };
 
 

@@ -160,7 +160,10 @@ bool PDPServer::init(
     getRTPSParticipant()->enableReader(edp->publications_reader_.first);
 
     // Initialize server dedicated thread.
-    resource_event_thread_.init_thread();
+    const RTPSParticipantAttributes& part_attr = getRTPSParticipant()->getRTPSParticipantAttributes();
+    uint32_t id_for_thread = static_cast<uint32_t>(part_attr.participantID);
+    const fastdds::rtps::ThreadSettings& thr_config = part_attr.discovery_server_thread;
+    resource_event_thread_.init_thread(thr_config, "dds.ds_ev.%u", id_for_thread);
 
     /*
         Given the fact that a participant is either a client or a server the

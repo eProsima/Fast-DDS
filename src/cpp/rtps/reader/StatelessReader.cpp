@@ -17,6 +17,10 @@
  *
  */
 
+#include <cassert>
+#include <mutex>
+#include <thread>
+
 #include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
@@ -30,11 +34,6 @@
 #include <rtps/DataSharing/ReaderPool.hpp>
 
 #include "rtps/RTPSDomainImpl.hpp"
-
-#include <mutex>
-#include <thread>
-
-#include <cassert>
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 

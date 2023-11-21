@@ -15,12 +15,15 @@
 #ifndef _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_
 #define _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_
 
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastrtps/rtps/common/Locator.h>
 
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
 #include <rtps/transport/ChannelResource.h>
+
+#include <utils/threading.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -37,7 +40,9 @@ public:
             const Locator& locator,
             TransportReceiverInterface* receiver,
             const std::string& dump_file,
-            bool should_init_thread = true)
+            const ThreadSettings& dump_thr_config,
+            bool should_init_thread,
+            const ThreadSettings& thr_config)
         : ChannelResource()
         , message_receiver_(receiver)
         , listener_(listener)
@@ -49,13 +54,13 @@ public:
             auto packets_file_consumer = std::unique_ptr<SHMPacketFileConsumer>(
                 new SHMPacketFileConsumer(dump_file));
 
-            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>();
+            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>(locator.port, dump_thr_config);
             packet_logger_->RegisterConsumer(std::move(packets_file_consumer));
         }
 
         if (should_init_thread)
         {
-            init_thread(locator);
+            init_thread(locator, thr_config);
         }
     }
 
@@ -164,9 +169,14 @@ private:
 protected:
 
     void init_thread(
-            const Locator& locator)
+            const Locator& locator,
+            const ThreadSettings& thr_config)
     {
-        this->thread(std::thread(&SharedMemChannelResource::perform_listen_operation, this, locator));
+        auto fn = [this, locator]()
+                {
+                    perform_listen_operation(locator);
+                };
+        this->thread(create_thread(fn, thr_config, "dds.shm.%u", locator.port));
     }
 
     /**

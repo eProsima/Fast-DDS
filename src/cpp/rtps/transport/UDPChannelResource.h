@@ -16,7 +16,10 @@
 #define _FASTDDS_UDP_CHANNEL_RESOURCE_INFO_
 
 #include <asio.hpp>
+
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Locator.h>
+
 #include <rtps/transport/ChannelResource.h>
 
 namespace eprosima {
@@ -110,7 +113,8 @@ public:
             uint32_t maxMsgSize,
             const Locator& locator,
             const std::string& sInterface,
-            TransportReceiverInterface* receiver);
+            TransportReceiverInterface* receiver,
+            const ThreadSettings& thread_config);
 
     virtual ~UDPChannelResource() override;
 

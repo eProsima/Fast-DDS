@@ -16,6 +16,7 @@
 #define _FASTDDS_RTPS_DOMAIN_H_
 
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>
@@ -43,6 +44,12 @@ class RTPSDomainImpl;
 class RTPSDomain
 {
 public:
+
+    static void set_filewatch_thread_config(
+            const fastdds::rtps::ThreadSettings&,
+            const fastdds::rtps::ThreadSettings&)
+    {
+    }
 
     static void stopAll()
     {

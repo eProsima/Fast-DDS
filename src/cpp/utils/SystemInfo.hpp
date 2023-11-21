@@ -25,6 +25,8 @@
 #include <memory>
 #include <string>
 
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
+
 #include <fastrtps/types/TypesBase.h>
 #include <utils/Host.hpp>
 
@@ -193,12 +195,16 @@ public:
      *
      * @param [in] filename Path/name of the file to watch.
      * @param [in] callback Callback to execute when the file changes.
+     * @param [in] watch_thread_config Thread settings for watch thread.
+     * @param [in] callback_thread_config Thread settings for callback thread.
      *
      * @return The handle that represents the watcher object.
      */
     static FileWatchHandle watch_file(
             std::string filename,
-            std::function<void()> callback);
+            std::function<void()> callback,
+            const fastdds::rtps::ThreadSettings& watch_thread_config,
+            const fastdds::rtps::ThreadSettings& callback_thread_config);
 
     /**
      * Stop a file watcher.

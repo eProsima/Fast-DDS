@@ -123,6 +123,26 @@
                 <participantID>66</participantID>
                 <useBuiltinTransports>true</useBuiltinTransports>
                 <name>test_name</name>
+                <builtin_controllers_sender_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </builtin_controllers_sender_thread>
+                <timed_events_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </timed_events_thread>
+                <discovery_server_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </discovery_server_thread>
+                <builtin_transports_reception_threads>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </builtin_transports_reception_threads>
+                <security_log_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </security_log_thread>
             </rtps>
         </participant>
 
@@ -248,6 +268,26 @@
                 <participantID>99</participantID>
                 <useBuiltinTransports>true</useBuiltinTransports>
                 <name>default_name</name>
+                <builtin_controllers_sender_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </builtin_controllers_sender_thread>
+                <timed_events_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </timed_events_thread>
+                <discovery_server_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </discovery_server_thread>
+                <builtin_transports_reception_threads>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </builtin_transports_reception_threads>
+                <security_log_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </security_log_thread>
             </rtps>
         </participant>
 

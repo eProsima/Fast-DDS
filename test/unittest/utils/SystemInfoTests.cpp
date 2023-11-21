@@ -238,7 +238,7 @@ TEST_F(SystemInfoTests, FileWatchTest)
                         eprosima::SystemInfo::wait_for_file_closure(filename, _1s);
                         ++times_called_;
                         cv_.notify_all();
-                    });
+                    }, {}, {});
 
     std::this_thread::sleep_for(_1s);
 

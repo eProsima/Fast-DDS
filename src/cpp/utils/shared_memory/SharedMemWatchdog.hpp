@@ -19,8 +19,12 @@
 #include <condition_variable>
 #include <memory>
 #include <mutex>
-#include <thread>
 #include <unordered_set>
+
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
+
+#include <utils/thread.hpp>
+#include <utils/threading.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -75,6 +79,12 @@ public:
         }
     }
 
+    static void set_thread_settings(
+            const ThreadSettings& thr_config)
+    {
+        thread_settings() = thr_config;
+    }
+
     static constexpr std::chrono::milliseconds period()
     {
         return std::chrono::milliseconds(1000);
@@ -90,7 +100,7 @@ public:
 private:
 
     std::unordered_set<Task*> tasks_;
-    std::thread thread_run_;
+    eprosima::thread thread_run_;
 
     std::mutex running_tasks_mutex_;
     std::condition_variable wake_run_cv_;
@@ -99,11 +109,21 @@ private:
 
     std::atomic_bool exit_thread_;
 
+    static ThreadSettings& thread_settings()
+    {
+        static ThreadSettings s_settings(ThreadSettings{});
+        return s_settings;
+    }
+
     SharedMemWatchdog()
         : wake_run_(false)
         , exit_thread_(false)
     {
-        thread_run_ = std::thread(&SharedMemWatchdog::run, this);
+        auto fn = [this]()
+                {
+                    run();
+                };
+        thread_run_ = create_thread(fn, thread_settings(), "dds.shm.wdog");
     }
 
     /**

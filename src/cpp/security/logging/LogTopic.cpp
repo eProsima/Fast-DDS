@@ -1,34 +1,42 @@
 #include <security/logging/LogTopic.h>
 
-#include <fastrtps/publisher/Publisher.h>
-#include <fastrtps/log/Log.h>
+#include <functional>
+
+#include <utils/thread.hpp>
+#include <utils/threading.hpp>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
 
-LogTopic::LogTopic()
+LogTopic::LogTopic(
+        uint32_t thread_id,
+        const fastdds::rtps::ThreadSettings& thr_config)
     : stop_(false)
-    , thread_([this]() {
-                    for (;;)
+    , thread_(
+        create_thread(
+            [this]()
+            {
+                while (true)
+                {
+                    // Put the thread asleep until there is
+                    // something to process
+                    auto p = queue_.wait_pop();
+
+                    if (!p)
                     {
-                        // Put the thread asleep until there is
-                        // something to process
-                        auto p = queue_.wait_pop();
-
-                        if (!p)
+                        if (stop_)
                         {
-                            if (stop_)
-                            {
-                                return;
-                            }
-                            continue;
+                            return;
                         }
-
-                        publish(*p);
+                        continue;
                     }
-                })
+
+                    publish(*p);
+                }
+            },
+            thr_config, "dds.slog.%u", thread_id))
 {
     //
 }
@@ -68,7 +76,7 @@ bool LogTopic::enable_logging_impl(
     {
         file_stream_.open(options.log_file, std::ios::out | std::ios::app);
 
-        if ( (file_stream_.rdstate() & std::ofstream::failbit ) != 0 )
+        if ((file_stream_.rdstate() & std::ofstream::failbit ) != 0 )
         {
             exception = SecurityException("Error opening file: " + options.log_file);
             return false;

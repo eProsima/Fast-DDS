@@ -16,13 +16,14 @@
  * @file ResourceEvent.cpp
  */
 
+#include <cassert>
+
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/dds/log/Log.hpp>
 
 #include "TimedEventImpl.h"
-
-#include <cassert>
-#include <thread>
+#include <utils/thread.hpp>
+#include <utils/threading.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -33,6 +34,11 @@ static bool event_compare(
         TimedEventImpl* rhs)
 {
     return lhs->next_trigger_time() < rhs->next_trigger_time();
+}
+
+ResourceEvent::ResourceEvent()
+    : thread_(new eprosima::thread())
+{
 }
 
 ResourceEvent::~ResourceEvent()
@@ -47,14 +53,14 @@ ResourceEvent::~ResourceEvent()
 void ResourceEvent::stop_thread()
 {
     EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "Removing event thread");
-    if (thread_.joinable())
+    if (thread_->joinable())
     {
         {
             std::lock_guard<TimedMutex> guard(mutex_);
             stop_.store(true);
             cv_.notify_one();
         }
-        thread_.join();
+        thread_->join();
     }
 }
 
@@ -75,7 +81,7 @@ void ResourceEvent::unregister_timer(
 {
     std::unique_lock<TimedMutex> lock(mutex_);
 
-    bool is_service_thread = std::this_thread::get_id() == thread_.get_id();
+    bool is_service_thread = thread_->is_calling_thread();
 
     //! Let the service thread to manipulate resources
     if (!is_service_thread)
@@ -303,7 +309,10 @@ void ResourceEvent::do_timer_actions()
     }
 }
 
-void ResourceEvent::init_thread()
+void ResourceEvent::init_thread(
+        const fastdds::rtps::ThreadSettings& thread_cfg,
+        const char* name_fmt,
+        uint32_t thread_id)
 {
     std::lock_guard<TimedMutex> lock(mutex_);
 
@@ -311,7 +320,10 @@ void ResourceEvent::init_thread()
     stop_.store(false);
     resize_collections();
 
-    thread_ = std::thread(&ResourceEvent::event_service, this);
+    *thread_ = eprosima::create_thread([this]()
+                    {
+                        event_service();
+                    }, thread_cfg, name_fmt, thread_id);
 }
 
 } /* namespace rtps */

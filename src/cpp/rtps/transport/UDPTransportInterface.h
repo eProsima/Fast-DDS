@@ -15,8 +15,12 @@
 #ifndef _FASTDDS_UDP_TRANSPORT_INTERFACE_H_
 #define _FASTDDS_UDP_TRANSPORT_INTERFACE_H_
 
+#include <map>
+#include <memory>
+#include <mutex>
+#include <vector>
+
 #include <asio.hpp>
-#include <thread>
 
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
@@ -24,11 +28,6 @@
 
 #include <rtps/transport/UDPChannelResource.h>
 #include <statistics/rtps/messages/OutputTrafficManager.hpp>
-
-#include <vector>
-#include <memory>
-#include <map>
-#include <mutex>
 
 namespace eprosima {
 namespace fastdds {

@@ -664,6 +664,38 @@ TEST_F(LogTests, flush_n)
     loggind_thread.join();
 }
 
+/**
+ * The goal of this test is to be able to manually check that the thread settings are applied, using an external
+ * tool like `htop` in Linux.
+ * It sets some scheduling configuration for the logging thread, and performs one log every second for 10 seconds,
+ * giving enough time for the tool to show the scheduling configuration and name of said thread.
+ */
+TEST_F(LogTests, thread_config)
+{
+    // Set general verbosity
+    Log::SetVerbosity(Log::Info);
+    const unsigned int n_logs = 10;
+
+    // Set thread settings
+    eprosima::fastdds::rtps::ThreadSettings thr_settings{};
+    thr_settings.stack_size = 1024 * 1024 * 4;
+    thr_settings.affinity = 3;
+#if defined(_POSIX_SOURCE)
+    thr_settings.scheduling_policy = SCHED_OTHER;
+    thr_settings.priority = 1;
+#endif // if defined(_POSIX_SOURCE)
+    Log::SetThreadConfig(thr_settings);
+
+    for (unsigned int i = 0; i < n_logs; i++)
+    {
+        EPROSIMA_LOG_INFO(TEST_THREADS, "Info message " << i);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+
+    auto entries = HELPER_WaitForEntries(n_logs);
+    EXPECT_EQ(entries.size(), n_logs);
+}
+
 int main(
         int argc,
         char** argv)

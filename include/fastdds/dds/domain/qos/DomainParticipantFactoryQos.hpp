@@ -20,8 +20,9 @@
 #ifndef _FASTDDS_PARTICIPANTFACTORYQOS_HPP_
 #define _FASTDDS_PARTICIPANTFACTORYQOS_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -53,7 +54,9 @@ public:
     bool operator ==(
             const DomainParticipantFactoryQos& b) const
     {
-        return (this->entity_factory_ == b.entity_factory());
+        return (this->shm_watchdog_thread_ == b.shm_watchdog_thread()) &&
+               (this->file_watch_threads_ == b.file_watch_threads()) &&
+               (this->entity_factory_ == b.entity_factory());
     }
 
     /**
@@ -84,11 +87,82 @@ public:
         entity_factory_ = entity_factory;
     }
 
+    /**
+     * Getter for SHM watchdog ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    rtps::ThreadSettings& shm_watchdog_thread()
+    {
+        return shm_watchdog_thread_;
+    }
+
+    /**
+     * Getter for SHM watchdog ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    const rtps::ThreadSettings& shm_watchdog_thread() const
+    {
+        return shm_watchdog_thread_;
+    }
+
+    /**
+     * Setter for the SHM watchdog ThreadSettings
+     *
+     * @param value New ThreadSettings to be set
+     */
+    void shm_watchdog_thread(
+            const rtps::ThreadSettings& value)
+    {
+        shm_watchdog_thread_ = value;
+    }
+
+    /**
+     * Getter for file watch related ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    rtps::ThreadSettings& file_watch_threads()
+    {
+        return file_watch_threads_;
+    }
+
+    /**
+     * Getter for file watch related ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    const rtps::ThreadSettings& file_watch_threads() const
+    {
+        return file_watch_threads_;
+    }
+
+    /**
+     * Setter for the file watch related ThreadSettings
+     *
+     * @param value New ThreadSettings to be set
+     */
+    void file_watch_threads(
+            const rtps::ThreadSettings& value)
+    {
+        file_watch_threads_ = value;
+    }
+
 private:
 
     //!EntityFactoryQosPolicy, implemented in the library.
     EntityFactoryQosPolicy entity_factory_;
+
+    //! Thread settings for the SHM watchdog thread
+    rtps::ThreadSettings shm_watchdog_thread_;
+
+    //! Thread settings for the file watch related threads
+    rtps::ThreadSettings file_watch_threads_;
+
 };
+
+RTPS_DllAPI extern const DomainParticipantFactoryQos PARTICIPANT_FACTORY_QOS_DEFAULT;
 
 } /* namespace dds */
 } /* namespace fastdds */

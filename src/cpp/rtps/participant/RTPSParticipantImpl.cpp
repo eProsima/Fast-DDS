@@ -62,6 +62,10 @@
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
 
+#if HAVE_SECURITY
+#include <security/logging/LogTopic.h>
+#endif  // HAVE_SECURITY
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -137,7 +141,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , internal_metatraffic_locators_(false)
     , internal_default_locators_(false)
 #if HAVE_SECURITY
-    , m_security_manager(this)
+    , m_security_manager(this, *this)
 #endif // if HAVE_SECURITY
     , mp_participantListener(plisten)
     , mp_userParticipant(par)
@@ -156,6 +160,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         UDPv4TransportDescriptor descriptor;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
+        descriptor.default_reception_threads(m_att.builtin_transports_reception_threads);
         if (is_intraprocess_only())
         {
             // Avoid multicast leaving the host for intraprocess-only participants
@@ -174,6 +179,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             shm_transport.segment_size(segment_size_udp_equivalent);
             // Use same default max_message_size on both UDP and SHM
             shm_transport.max_message_size(descriptor.max_message_size());
+            shm_transport.default_reception_threads(m_att.builtin_transports_reception_threads);
             has_shm_transport_ |= m_network_Factory.RegisterTransport(&shm_transport);
         }
 #endif // ifdef SHM_TRANSPORT_BUILTIN
@@ -239,7 +245,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 
     mp_userParticipant->mp_impl = this;
-    mp_event_thr.init_thread();
+    uint32_t id_for_thread = static_cast<uint32_t>(m_att.participantID);
+    const fastdds::rtps::ThreadSettings& thr_config = m_att.timed_events_thread;
+    mp_event_thr.init_thread(thr_config, "dds.ev.%u", id_for_thread);
 
     if (!networkFactoryHasRegisteredTransports())
     {
@@ -2194,6 +2202,12 @@ bool RTPSParticipantImpl::is_security_enabled_for_reader(
     }
 
     return false;
+}
+
+security::Logging* RTPSParticipantImpl::create_builtin_logging_plugin()
+{
+    uint32_t participant_id = static_cast<uint32_t>(m_att.participantID);
+    return new security::LogTopic(participant_id, m_att.security_log_thread);
 }
 
 #endif // if HAVE_SECURITY

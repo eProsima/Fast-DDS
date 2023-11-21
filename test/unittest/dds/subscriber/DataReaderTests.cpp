@@ -3545,6 +3545,108 @@ TEST_F(DataReaderTests, CustomPoolCreation)
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
+// Check DataReaderQos inmutabilities
+TEST_F(DataReaderTests, UpdateInmutableQos)
+{
+    /* Test setup */
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type(new FooTypeSupport());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+
+    /* Test actions */
+    // Resource limits
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.resource_limits().max_samples = reader_qos.resource_limits().max_samples - 1;
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    // History
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.history().depth = reader_qos.history().depth + 1;
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    // Durability
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    // Liveliness
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.liveliness().kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.liveliness().lease_duration = Duration_t{123, 123};
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.liveliness().announcement_period = Duration_t{123, 123};
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    // Relibility
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    // Ownsership
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    // Destination order (currently reports unsupported)
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+    ASSERT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->set_qos(reader_qos));
+
+    // Reader resource limits
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reader_resource_limits().matched_publisher_allocation.maximum =
+            reader_qos.reader_resource_limits().matched_publisher_allocation.maximum - 1;
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    // Datasharing
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.data_sharing().off();
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.data_sharing().automatic(".");
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.data_sharing().add_domain_id(static_cast<uint16_t>(12));
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.data_sharing().data_sharing_listener_thread().priority =
+            reader_qos.data_sharing().data_sharing_listener_thread().priority + 1;
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    // Unique network flows
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.properties().properties().push_back({"fastdds.unique_network_flows", "true"});
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    /* Cleanup */
+    participant->delete_contained_entities();
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
+}
+
 int main(
         int argc,
         char** argv)

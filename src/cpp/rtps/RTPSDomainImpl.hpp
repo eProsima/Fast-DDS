@@ -18,13 +18,13 @@
 
 #include <chrono>
 #include <memory>
-#include <thread>
 #include <unordered_map>
 
 #if defined(_WIN32) || defined(__unix__)
 #include <FileWatch.hpp>
 #endif // defined(_WIN32) || defined(__unix__)
 
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
@@ -203,6 +203,18 @@ public:
      */
     static void file_watch_callback();
 
+    /**
+     * Method to set the configuration of the threads created by the file watcher for the environment file.
+     * In order for these settings to take effect, this method must be called before the first call
+     * to @ref createParticipant.
+     *
+     * @param watch_thread     Settings for the thread watching the environment file.
+     * @param callback_thread  Settings for the thread executing the callback when the environment file changed.
+     */
+    static void set_filewatch_thread_config(
+            const fastdds::rtps::ThreadSettings& watch_thread,
+            const fastdds::rtps::ThreadSettings& callback_thread);
+
 private:
 
     /**
@@ -252,6 +264,8 @@ private:
     std::unordered_map<uint32_t, ParticipantIDState> m_RTPSParticipantIDs;
 
     FileWatchHandle file_watch_handle_;
+    fastdds::rtps::ThreadSettings watch_thread_config_;
+    fastdds::rtps::ThreadSettings callback_thread_config_;
 };
 
 } // namespace rtps

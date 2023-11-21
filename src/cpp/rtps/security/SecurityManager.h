@@ -18,7 +18,14 @@
 #ifndef _RTPS_SECURITY_SECURITYMANAGER_H_
 #define _RTPS_SECURITY_SECURITYMANAGER_H_
 
-#include <rtps/security/SecurityPluginFactory.h>
+#include <atomic>
+#include <list>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <thread>
+
+#include <rtps/security/ISecurityPluginFactory.h>
 
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
@@ -32,12 +39,6 @@
 #include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
 #include <fastrtps/utils/ProxyPool.hpp>
 #include <fastrtps/utils/shared_mutex.hpp>
-
-#include <map>
-#include <mutex>
-#include <atomic>
-#include <memory>
-#include <list>
 
 namespace eprosima {
 namespace fastrtps {
@@ -75,7 +76,8 @@ public:
      * @param participant RTPSParticipantImpl* references the associated participant
      */
     SecurityManager(
-            RTPSParticipantImpl* participant);
+            RTPSParticipantImpl* participant,
+            ISecurityPluginFactory& plugin_factory);
 
     // @brief Destructor
     ~SecurityManager();
@@ -769,30 +771,27 @@ private:
             const ParticipantProxyData& participant_data,
             const SecurityException& exception) const;
 
-    RTPSParticipantImpl* participant_;
-    StatelessWriter* participant_stateless_message_writer_;
-    WriterHistory* participant_stateless_message_writer_history_;
-    StatelessReader* participant_stateless_message_reader_;
-    ReaderHistory* participant_stateless_message_reader_history_;
-    StatefulWriter* participant_volatile_message_secure_writer_;
-    WriterHistory* participant_volatile_message_secure_writer_history_;
-    StatefulReader* participant_volatile_message_secure_reader_;
-    ReaderHistory* participant_volatile_message_secure_reader_history_;
-    SecurityPluginFactory factory_;
+    RTPSParticipantImpl* participant_ = nullptr;
+    StatelessWriter* participant_stateless_message_writer_ = nullptr;
+    WriterHistory* participant_stateless_message_writer_history_ = nullptr;
+    StatelessReader* participant_stateless_message_reader_ = nullptr;
+    ReaderHistory* participant_stateless_message_reader_history_ = nullptr;
+    StatefulWriter* participant_volatile_message_secure_writer_ = nullptr;
+    WriterHistory* participant_volatile_message_secure_writer_history_ = nullptr;
+    StatefulReader* participant_volatile_message_secure_reader_ = nullptr;
+    ReaderHistory* participant_volatile_message_secure_reader_history_ = nullptr;
+    ISecurityPluginFactory& factory_;
 
-    Logging* logging_plugin_;
+    Logging* logging_plugin_ = nullptr;
+    Authentication* authentication_plugin_ = nullptr;
+    AccessControl* access_plugin_ = nullptr;
+    Cryptography* crypto_plugin_ = nullptr;
 
-    Authentication* authentication_plugin_;
+    uint32_t domain_id_ = 0;
 
-    AccessControl* access_plugin_;
+    IdentityHandle* local_identity_handle_ = nullptr;
 
-    Cryptography* crypto_plugin_;
-
-    uint32_t domain_id_;
-
-    IdentityHandle* local_identity_handle_;
-
-    PermissionsHandle* local_permissions_handle_;
+    PermissionsHandle* local_permissions_handle_ = nullptr;
 
     std::shared_ptr<ParticipantCryptoHandle> local_participant_crypto_handle_;
 

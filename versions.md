@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Enable configuration of thread setting for all threads.
+
 Version 2.12.0
 --------------
 

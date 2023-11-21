@@ -35,6 +35,7 @@
 
 #include <nlohmann/json.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <utils/threading.hpp>
 
 namespace eprosima {
 
@@ -213,7 +214,9 @@ const std::string& SystemInfo::get_environment_file()
 
 FileWatchHandle SystemInfo::watch_file(
         std::string filename,
-        std::function<void()> callback)
+        std::function<void()> callback,
+        const fastdds::rtps::ThreadSettings& watch_thread_config,
+        const fastdds::rtps::ThreadSettings& callback_thread_config)
 {
 #if defined(_WIN32) || defined(__unix__)
     return FileWatchHandle (new filewatch::FileWatch<std::string>(filename,
@@ -228,10 +231,12 @@ FileWatchHandle SystemInfo::watch_file(
                                // No-op
                                break;
                        }
-                   }));
+                   }, watch_thread_config, callback_thread_config));
 #else // defined(_WIN32) || defined(__unix__)
     static_cast<void>(filename);
     static_cast<void>(callback);
+    static_cast<void>(watch_thread_config);
+    static_cast<void>(callback_thread_config);
     return FileWatchHandle();
 #endif // defined(_WIN32) || defined(__unix__)
 }
@@ -275,3 +280,17 @@ std::string SystemInfo::get_timestamp(
 std::string SystemInfo::environment_file_;
 
 } // eprosima
+
+// threading.hpp implementations
+#ifdef _WIN32
+#include "threading/threading_win32.ipp"
+#include "thread_impl/thread_impl_win32.ipp"
+#elif defined(__APPLE__)
+#include "threading/threading_osx.ipp"
+#include "thread_impl/thread_impl_pthread.ipp"
+#elif defined(_POSIX_SOURCE) || defined(__QNXNTO__) || defined(__ANDROID__)
+#include "threading/threading_pthread.ipp"
+#include "thread_impl/thread_impl_pthread.ipp"
+#else
+#include "threading/threading_empty.ipp"
+#endif // Platform selection

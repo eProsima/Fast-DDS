@@ -21,13 +21,11 @@
 #define XMLENDPOINTPARSER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
-
-
 
 /**
  * Class XMLEndpointParser used to parse the XML file that contains information about remote endpoints.
