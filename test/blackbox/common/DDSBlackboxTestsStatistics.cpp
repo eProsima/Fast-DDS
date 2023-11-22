@@ -53,9 +53,9 @@
 #include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/types/TypesBase.h>
 
-#include "../types/HelloWorld.h"
+#include "../types/HelloWorld.hpp"
 #include "../types/HelloWorldPubSubTypes.h"
-#include "../types/statistics/types.h"
+#include "../types/statistics/types.hpp"
 #include "../types/statistics/typesPubSubTypes.h"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"

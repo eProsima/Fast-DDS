@@ -86,8 +86,6 @@ endif()
 # Unit tests
 ###############################################################################
 set(XTYPES_TESTS_SOURCE XTypesTests.cpp
-    idl/Types.cxx
-    idl/Typesv1.cxx
     idl/TypesPubSubTypes.cxx
     idl/TypesTypeObject.cxx
     TestPublisher.cpp

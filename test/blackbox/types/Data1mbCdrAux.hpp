@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_DATA1MBCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_DATA1MBCDRAUX_HPP_
 
-#include "Data1mb.h"
+#include "Data1mb.hpp"
 
 constexpr uint32_t Data1mb_max_cdr_typesize {1024008UL};
 constexpr uint32_t Data1mb_max_key_cdr_typesize {0UL};
@@ -33,8 +33,6 @@ namespace fastcdr {
 
 class Cdr;
 class CdrSizeCalculator;
-
-
 
 
 

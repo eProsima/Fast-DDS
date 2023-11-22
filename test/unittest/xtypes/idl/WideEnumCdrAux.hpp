@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_WIDEENUMCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_WIDEENUMCDRAUX_HPP_
 
-#include "WideEnum.h"
+#include "WideEnum.hpp"
 
 constexpr uint32_t MyEnumWideStruct_max_cdr_typesize {8UL};
 constexpr uint32_t MyEnumWideStruct_max_key_cdr_typesize {0UL};
@@ -44,8 +44,6 @@ class CdrSizeCalculator;
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MyEnumWideStruct& data);
-
-
 
 
 

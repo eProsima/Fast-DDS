@@ -29,7 +29,7 @@
 #include "fastdds/dds/core/StackAllocatedSequence.hpp"
 #include "fastdds/dds/log/Log.hpp"
 
-#include "data_types/ContentFilterTestType.h"
+#include "data_types/ContentFilterTestType.hpp"
 #include "data_types/ContentFilterTestTypePubSubTypes.h"
 #include "data_types/ContentFilterTestTypeTypeObject.h"
 

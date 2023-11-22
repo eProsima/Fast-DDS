@@ -4217,8 +4217,6 @@ bool ArrayArrayStructPubSubType::getKey(
 
 
 
-
-
 SequenceStructPubSubType::SequenceStructPubSubType()
 {
     setName("SequenceStruct");
@@ -4406,10 +4404,6 @@ bool SequenceStructPubSubType::getKey(
     }
     return true;
 }
-
-
-
-
 
 
 
@@ -4792,7 +4786,6 @@ bool MapStructPubSubType::getKey(
     }
     return true;
 }
-
 
 
 
@@ -5566,12 +5559,6 @@ bool StructStructStructPubSubType::getKey(
 
 
 
-
-
-
-
-
-
 SimpleUnionStructPubSubType::SimpleUnionStructPubSubType()
 {
     setName("SimpleUnionStruct");
@@ -6140,3 +6127,6 @@ bool WCharUnionStructPubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "BasicCdrAux.ipp"

@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_TYPESCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_TYPESCDRAUX_HPP_
 
-#include "types.h"
+#include "types.hpp"
 
 constexpr uint32_t eprosima_fastdds_statistics_DiscoveryTime_max_cdr_typesize {852UL};
 constexpr uint32_t eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesize {56UL};
@@ -113,7 +113,6 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::DiscoveryTime& data);
@@ -159,11 +158,6 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::PhysicalData& data);
-
-
-
-
-
 
 
 

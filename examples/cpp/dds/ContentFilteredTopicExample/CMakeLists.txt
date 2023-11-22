@@ -31,8 +31,6 @@ set(CFT_COMMON_SOURCES
     ContentFilteredTopicExample_main.cpp
     ContentFilteredTopicExamplePublisher.cpp
     ContentFilteredTopicExampleSubscriber.cpp
-    HelloWorld.cxx
-    HelloWorldv1.cxx
     HelloWorldPubSubTypes.cxx
     HelloWorldTypeObject.cxx
     )
