@@ -52,13 +52,15 @@ CMAKE_ARGS += -DBUILD_SHARED_LIBS=ON \
              -DCMAKE_INSTALL_LIBDIR=$(FAST-DDS_INSTALL_ROOT)/$(CPUVARDIR)/usr/lib \
              -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
              -DINCLUDE_INSTALL_DIR=$(FAST-DDS_INSTALL_ROOT)/usr/include \
-             -DLIB_INSTALL_DIR=$(FAST-DDS_INSTALL_ROOT)/$(CPUVARDIR)/usr/lib
+             -DLIB_INSTALL_DIR=$(FAST-DDS_INSTALL_ROOT)/$(CPUVARDIR)/usr/lib \
+			 -DCMAKE_CROSSCOMPILING_EMULATOR=$(FAST-DDS_INSTALL_ROOT)/$(CPUVARDIR)/usr/bin/Fast-DDS_test/qnx_local_test_proxy.sh
 
 FAST-DDS_CMAKE_ARGS = $(CMAKE_ARGS) \
                      -DQNX_INSTALL_ROOT=$(FAST-DDS_INSTALL_ROOT) \
                      -DSECURITY=ON \
                      -DCOMPILE_EXAMPLES=OFF \
-                     -DEPROSIMA_BUILD_TESTS=OFF
+                     -DEPROSIMA_BUILD_TESTS=OFF \
+					 -DGTEST_INDIVIDUAL=ON
 
 CONFIGURE_ASIO = $(ASIO_ROOT)/configure --exec-prefix $(FAST-DDS_INSTALL_ROOT)/$(CPUVARDIR) --prefix $(FAST-DDS_INSTALL_ROOT)
 
@@ -106,4 +108,11 @@ clean iclean spotless:
 	@cd $(ASIO_ROOT) && make clean
 	@rm -rf build
 
+test:
+	@echo Test.
+	@ctest --test-dir build/build_fast-dds/test --timeout 60
+
+test_filter:
+	@echo Running tests with filter $(GTEST_FILTER)
+	@ctest --test-dir build/build_fast-dds/test --timeout 60 -R $(GTEST_FILTER)
 endif

@@ -1,0 +1,42 @@
+#!/bin/sh
+
+# QNX Testing helper script
+#
+# This script sets up the environment for the proper test execution and then runs the command itself.
+
+LIBPATH=@TESTING_ROOT@/lib
+TESTPATH=@TESTING_ROOT@/test
+COMMAND=""
+ARGUMENTS=""
+
+while getopts ":c:e:l:a:p:" arg; do
+  case $arg in
+    a) ARGUMENTS="${ARGUMENTS} ${OPTARG}"
+      ;;
+    e) export ${OPTARG}
+      ;;
+    l)
+      LIBPATH=${OPTARG}
+      ;;
+    c)
+      COMMAND=${OPTARG}
+      ;;
+    p)
+      TESTPATH=${OPTARG}
+      ;;
+    *) 
+      exit 0
+      ;;
+  esac
+done
+
+export LD_LIBRARY_PATH=${LIBPATH}:${LD_LIBRARY_PATH}
+
+TESTDIR=$(dirname ${COMMAND})
+cd ${TESTDIR}
+echo $PWD
+TESTNAME=$(basename ${COMMAND})
+echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
+echo "${COMMAND} ${ARGUMENTS}"
+
+${COMMAND} ${ARGUMENTS}

@@ -67,6 +67,13 @@ macro(add_gtest)
                 string(REGEX REPLACE ["\) \(,"] ";" GTEST_TEST_NAME ${GTEST_TEST_NAME})
                 list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
                 list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
+
+                if(CMAKE_CROSSCOMPILING_EMULATOR)
+                    set(TEST_PROXY_COMMAND "${CMAKE_CROSSCOMPILING_EMULATOR};${command}")
+                else()
+                    set(TEST_PROXY_COMMAND ${command})
+                endif()
+
                 add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
                     COMMAND ${command}
                     --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}:*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/*:${GTEST_GROUP_NAME}/*.${GTEST_TEST_NAME})
