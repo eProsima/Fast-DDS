@@ -582,6 +582,16 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
     client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
     // RemoteServerAttributes already fill in above
 
+    if (ros_super_client_env())
+    {
+        client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SUPER_CLIENT;
+        std::cout << "entered4 *** ROS_SUPER_CLIENT: TRUE" << std::endl;
+    }
+    else
+    {
+        std::cout << "entered4 *** ROS_SUPER_CLIENT: FALSE" << std::endl;
+    }
+
     RTPSParticipant* part = createParticipant(domain_id, enabled, client_att, listen);
     if (nullptr != part)
     {
