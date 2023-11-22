@@ -43,7 +43,8 @@ if(SQLITE3_SUPPORT)
         )
     target_link_libraries(PersistenceTests
         foonathan_memory
-            GTest::gmock
+        fastcdr
+        GTest::gmock
         ${CMAKE_DL_LIBS}
         )
     if(MSVC OR MSVC_IDE)

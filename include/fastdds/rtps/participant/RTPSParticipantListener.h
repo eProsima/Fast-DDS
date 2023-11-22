@@ -209,7 +209,7 @@ public:
             RTPSParticipant* participant,
             const string_255& topic_name,
             const string_255& type_name,
-            const types::TypeInformation& type_information)
+            const eprosima::fastdds::dds::xtypes1_3::TypeInformation& type_information)
     {
         static_cast<void>(participant);
         static_cast<void>(topic_name);

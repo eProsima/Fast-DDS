@@ -40,21 +40,29 @@
 namespace eprosima {
 
 namespace fastdds {
+
+        
 namespace rtps {
 
 class PDPServerListener;
 class PDPEndpoints;
 
 } // namespace rtps
-} // namespace fastdds
 
-namespace fastrtps {
-namespace types {
+namespace dds {
+namespace xtypes1_3 {
 
 class TypeObject;
 class TypeIdentifier;
+class TypeInformation;
 
-} // namespace types
+} // namespace xtypes1_3
+} // namespace dds
+
+} // namespace fastdds
+
+namespace fastrtps {
+
 namespace rtps {
 
 class RTPSWriter;
@@ -554,8 +562,8 @@ private:
             RTPSParticipantListener* listener,
             const string_255& topic_name,
             const string_255& type_name,
-            const types::TypeIdentifier* type_id,
-            const types::TypeObject* type_obj,
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_id,
+            const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_obj,
             const xtypes::TypeInformation* type_info) const;
 
     /**

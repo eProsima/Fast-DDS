@@ -51,7 +51,7 @@ target_include_directories(WriterProxyTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(WriterProxyTests foonathan_memory
+target_link_libraries(WriterProxyTests foonathan_memory fastcdr
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(WriterProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
@@ -101,7 +101,7 @@ target_include_directories(WriterProxyStopTest PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(WriterProxyStopTest foonathan_memory
+target_link_libraries(WriterProxyStopTest foonathan_memory fastcdr
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(WriterProxyStopTest SOURCES ${WRITERPROXYSTOPTEST_SOURCE})
@@ -122,6 +122,7 @@ set(WRITERPROXYACKNACKTESTS_SOURCE WriterProxyAcknackTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
@@ -145,11 +146,10 @@ target_include_directories(WriterProxyAcknackTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
     ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ResourceEvent
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(WriterProxyAcknackTests foonathan_memory
+target_link_libraries(WriterProxyAcknackTests foonathan_memory fastcdr
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(WriterProxyAcknackTests SOURCES ${WRITERPROXYACKNACKTESTS_SOURCE})

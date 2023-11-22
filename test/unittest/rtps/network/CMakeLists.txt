@@ -115,6 +115,7 @@ add_executable(ExternalLocatorsProcessorTests
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifier.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifierTypes.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeNamesGenerator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObject.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObject.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp

@@ -1245,14 +1245,16 @@ void PDP::check_and_notify_type_discovery(
     types::DynamicType_ptr dyn_type;
     if (type_obj && type_obj->_d() == types::EK_COMPLETE) // Writer shares a Complete TypeObject
     {
-        dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-            type_name.to_string(), type_id, type_obj);
+        // dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
+        //     type_name.to_string(), type_id, type_obj);
+        //TODO Adrian
     }
     else if (type_id && type_id->_d() != static_cast<octet>(0x00)
             && type_id->_d() < types::EK_MINIMAL) // Writer shares a TypeIdentifier that doesn't need TypeObject
     {
-        dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-            type_name.to_string(), type_id);
+        // dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
+        //     type_name.to_string(), type_id);
+        //TODO Adrian
     }
 
     if (dyn_type != nullptr)

@@ -20,7 +20,7 @@
 #include <fastdds/builtin/typelookupservice/TypeLookupRequestListener.hpp>
 #include <fastdds/builtin/typelookupservice/TypeLookupManager.hpp>
 #include <fastdds/builtin/typelookupservice/TypeLookupTypes.h>
-
+#include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastdds/dds/log/Log.hpp>
@@ -74,7 +74,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
     TypeLookup_Request request;
     if (tlm_->request_reception(*change, request))
     {
-        if (request.header().requestId().writer_guid() == tlm_->builtin_request_writer_->getGuid())
+        if (tlm_->get_rtps_guid(request.header().requestId().writer_guid()) == tlm_->builtin_request_writer_->getGuid())
         {
             // Message from ourselves.
             return;

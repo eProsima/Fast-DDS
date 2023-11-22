@@ -117,10 +117,11 @@ set(${PROJECT_NAME}_source_files
     fastdds/domain/DomainParticipant.cpp
     fastdds/domain/qos/DomainParticipantQos.cpp
     fastdds/domain/qos/DomainParticipantFactoryQos.cpp
-    fastdds/builtin/typelookupservice/TypeLookupTypes.cxx
     fastdds/builtin/typelookupservice/TypeLookupManager.cpp
     fastdds/builtin/typelookupservice/TypeLookupRequestListener.cpp
     fastdds/builtin/typelookupservice/TypeLookupReplyListener.cpp
+    fastdds/builtin/typelookupservice/TypeLookupTypesPubSubTypes.cxx
+    fastdds/builtin/typelookupservice/TypeLookupTypes.cxx
     rtps/transport/ChainingTransport.cpp
     rtps/transport/ChannelResource.cpp
     rtps/transport/PortBasedTransportDescriptor.cpp

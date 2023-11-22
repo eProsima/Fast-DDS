@@ -487,10 +487,10 @@ public:
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
     fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const xtypes1_3::TypeIdentifierSeq& in) const;
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq& in) const;
 
     fastrtps::rtps::SampleIdentity get_types(
-            const xtypes1_3::TypeIdentifierSeq& in) const;
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq& in) const;
 
     /**
      * Helps the user to solve all dependencies calling internally to the typelookup service and
@@ -702,20 +702,20 @@ protected:
                 fastrtps::rtps::RTPSParticipant* participant,
                 const fastrtps::rtps::SampleIdentity& request_sample_id,
                 const fastrtps::string_255& topic,
-                const xtypes1_3::TypeIdentifier* identifier,
-                const xtypes1_3::TypeObject* object,
+                const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* identifier,
+                const eprosima::fastdds::dds::xtypes1_3::TypeObject* object,
                 fastrtps::types::DynamicType_ptr dyn_type) override;
 
         void on_type_dependencies_reply(
                 fastrtps::rtps::RTPSParticipant* participant,
                 const fastrtps::rtps::SampleIdentity& request_sample_id,
-                const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies) override;
+                const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq& dependencies) override;
 
         void on_type_information_received(
                 fastrtps::rtps::RTPSParticipant* participant,
                 const fastrtps::string_255& topic_name,
                 const fastrtps::string_255& type_name,
-                const fastrtps::types::TypeInformation& type_information) override;
+                const eprosima::fastdds::dds::xtypes1_3::TypeInformation& type_information) override;
 
         DomainParticipantImpl* participant_;
         int callback_counter_ = 0;
@@ -734,13 +734,13 @@ protected:
 
     bool check_get_type_request(
             const fastrtps::rtps::SampleIdentity& requestId,
-            const xtypes1_3::TypeIdentifier* identifier,
-            const xtypes1_3::TypeObject* object,
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* identifier,
+            const eprosima::fastdds::dds::xtypes1_3::TypeObject* object,
             fastrtps::types::DynamicType_ptr dyn_type);
 
     bool check_get_dependencies_request(
             const fastrtps::rtps::SampleIdentity& requestId,
-            const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies);
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq& dependencies);
 
     virtual PublisherImpl* create_publisher_impl(
             const PublisherQos& qos,
@@ -763,7 +763,7 @@ protected:
             const fastrtps::rtps::SampleIdentity& parent);
 
     void fill_pending_dependencies(
-            const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies,
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq& dependencies,
             xtypes1_3::TypeIdentifierSeq& pending_identifiers,
             xtypes1_3::TypeIdentifierSeq& pending_objects) const;
 

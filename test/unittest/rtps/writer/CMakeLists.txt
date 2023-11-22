@@ -89,7 +89,7 @@ target_include_directories(LivelinessManagerTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(LivelinessManagerTests PRIVATE
+target_link_libraries(LivelinessManagerTests PRIVATE fastcdr
     GTest::gmock)
 add_gtest(LivelinessManagerTests SOURCES ${LIVELINESSMANAGERTESTS_SOURCE})
 

@@ -38,6 +38,11 @@ set(LISTENERTESTS_SOURCE ListenerTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/TypeLookupManager.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/TypeLookupReplyListener.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/TypeLookupRequestListener.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/TypeLookupTypes.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/TypeLookupTypesPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusCondition.cpp

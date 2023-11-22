@@ -165,10 +165,6 @@ private:
     fastrtps::rtps::ReaderHistory* builtin_request_reader_history_;
     fastrtps::rtps::ReaderHistory* builtin_reply_reader_history_;
 
-    std::mutex temp_proxy_data_lock_;
-    fastrtps::rtps::ReaderProxyData temp_reader_proxy_data_;
-    fastrtps::rtps::WriterProxyData temp_writer_proxy_data_;
-
     mutable SequenceNumber_t request_seq_number_;
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
@@ -176,6 +172,10 @@ private:
     TypeLookupRequestListener* request_listener_;
     TypeLookupReplyListener* reply_listener_;
 
+    std::mutex temp_proxy_data_lock_;
+    fastrtps::rtps::ReaderProxyData temp_reader_proxy_data_;
+    fastrtps::rtps::WriterProxyData temp_writer_proxy_data_;
+    
     std::mutex dependencies_requests_cache_mutex;
     std::unordered_map<xtypes1_3::TypeIdentifierSeq, std::unordered_set<xtypes1_3::TypeIdentfierWithSize>> dependencies_requests_cache_;
 };

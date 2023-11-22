@@ -24,6 +24,8 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 
+#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastdds/dds/log/Log.hpp>
@@ -76,7 +78,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     TypeLookup_Reply reply;
     if (tlm_->reply_reception(*change, reply))
     {
-        if (reply.header().relatedRequestId().writer_guid() != tlm_->builtin_request_writer_->getGuid())
+        if (tlm_->get_rtps_guid(reply.header().relatedRequestId().writer_guid()) != tlm_->builtin_request_writer_->getGuid())
         {
             // This message isn't for us.
             return;
@@ -115,7 +117,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                 tlm_->get_RTPS_participant()->getListener()->on_type_dependencies_reply(
                     tlm_->builtin_protocols_->mp_participantImpl->getUserRTPSParticipant(),
                     tlm_->get_rtps_sample_identity(reply.header().relatedRequestId()),
-                    reply.return_value().getTypeDependencies().result().dependent_typeids);
+                    reply.return_value().getTypeDependencies().result().dependent_typeids());
                 break;
             }
             default:

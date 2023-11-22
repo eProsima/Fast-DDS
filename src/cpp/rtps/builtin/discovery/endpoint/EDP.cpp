@@ -182,8 +182,9 @@ bool EDP::newLocalReaderProxyData(
                     // TypeInformation, TypeObject and TypeIdentifier
                     if (!att.type_information.assigned())
                     {
-                        const types::TypeInformation* type_info =
-                                types::TypeObjectFactory::get_instance()->get_type_information(rpd->typeName().c_str());
+                        // const types::TypeInformation* type_info =
+                        //         types::TypeObjectFactory::get_instance()->get_type_information(rpd->typeName().c_str());
+                        const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_info;
                         if (type_info != nullptr)
                         {
                             rpd->type_information() = *type_info;
@@ -197,9 +198,11 @@ bool EDP::newLocalReaderProxyData(
                     if (att.type_id.m_type_identifier._d() == static_cast<uint8_t>(0x00))
                     {
                         has_type_id = false;
-                        const types::TypeIdentifier* type_id =
-                                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                            rpd->typeName().c_str());
+                        // const types::TypeIdentifier* type_id =
+                        //         types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                        //     rpd->typeName().c_str());
+                        //TODO Adrian
+                        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_id;
                         if (type_id != nullptr)
                         {
                             has_type_id = true;
@@ -211,9 +214,11 @@ bool EDP::newLocalReaderProxyData(
                     {
                         bool type_is_complete = has_type_id &&
                                 rpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
-                        const types::TypeObject* type_obj =
-                                types::TypeObjectFactory::get_instance()->get_type_object(
-                            rpd->typeName().c_str(), type_is_complete);
+                        // const types::TypeObject* type_obj =
+                        //         types::TypeObjectFactory::get_instance()->get_type_object(
+                        //     rpd->typeName().c_str(), type_is_complete);
+                        //TODO Adrian
+                        const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_obj;
                         if (type_obj != nullptr)
                         {
                             rpd->type().m_type_object = *type_obj;
@@ -317,8 +322,10 @@ bool EDP::newLocalWriterProxyData(
                     // TypeInformation, TypeObject and TypeIdentifier
                     if (!att.type_information.assigned())
                     {
-                        const types::TypeInformation* type_info =
-                                types::TypeObjectFactory::get_instance()->get_type_information(wpd->typeName().c_str());
+                        //const types::TypeInformation* type_info =
+                        //        types::TypeObjectFactory::get_instance()->get_type_information(wpd->typeName().c_str());
+                        //TODO Adrian
+                        const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_info;
                         if (type_info != nullptr)
                         {
                             wpd->type_information() = *type_info;
@@ -332,9 +339,11 @@ bool EDP::newLocalWriterProxyData(
                     if (att.type_id.m_type_identifier._d() == static_cast<uint8_t>(0x00))
                     {
                         has_type_id = false;
-                        const types::TypeIdentifier* type_id =
-                                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                            wpd->typeName().c_str());
+                        // const types::TypeIdentifier* type_id =
+                        //         types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                        //     wpd->typeName().c_str());
+                        //TODO Adrian
+                        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_id;
                         if (type_id != nullptr)
                         {
                             has_type_id = true;
@@ -346,9 +355,11 @@ bool EDP::newLocalWriterProxyData(
                     {
                         bool type_is_complete = has_type_id &&
                                 wpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
-                        const types::TypeObject* type_obj =
-                                types::TypeObjectFactory::get_instance()->get_type_object(
-                            wpd->typeName().c_str(), type_is_complete);
+                        // const types::TypeObject* type_obj =
+                        //         types::TypeObjectFactory::get_instance()->get_type_object(
+                        //     wpd->typeName().c_str(), type_is_complete);
+                        //TODO Adrian
+                        const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_obj;
                         if (type_obj != nullptr)
                         {
                             wpd->type().m_type_object = *type_obj;
@@ -432,8 +443,10 @@ bool EDP::updatedLocalReader(
                     // TypeInformation, TypeObject and TypeIdentifier
                     if (!rdata->type_information().assigned())
                     {
-                        const types::TypeInformation* type_info =
-                                types::TypeObjectFactory::get_instance()->get_type_information(rdata->typeName().c_str());
+                        // const types::TypeInformation* type_info =
+                        //         types::TypeObjectFactory::get_instance()->get_type_information(rdata->typeName().c_str());
+                        //TODO Adrian
+                        const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_info;
                         if (type_info != nullptr)
                         {
                             rdata->type_information() = *type_info;
@@ -446,9 +459,11 @@ bool EDP::updatedLocalReader(
 
                     if (rdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
                     {
-                        const types::TypeIdentifier* type_id =
-                                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                            rdata->typeName().c_str());
+                        // const types::TypeIdentifier* type_id =
+                        //         types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                        //     rdata->typeName().c_str());
+                        //TODO Adrian
+                        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_id;
                         if (type_id != nullptr)
                         {
                             rdata->type_id().m_type_identifier = *type_id;
@@ -457,9 +472,11 @@ bool EDP::updatedLocalReader(
 
                     if (rdata->type().m_type_object._d() == static_cast<uint8_t>(0x00))
                     {
-                        const types::TypeObject* type_obj =
-                                types::TypeObjectFactory::get_instance()->get_type_object(
-                            rdata->typeName().c_str(), rdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
+                        // const types::TypeObject* type_obj =
+                        //         types::TypeObjectFactory::get_instance()->get_type_object(
+                        //     rdata->typeName().c_str(), rdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
+                        //TODO Adrian
+                        const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_obj;
                         if (type_obj != nullptr)
                         {
                             rdata->type().m_type_object = *type_obj;
@@ -517,8 +534,10 @@ bool EDP::updatedLocalWriter(
                     // TypeInformation, TypeObject and TypeIdentifier
                     if (!wdata->type_information().assigned())
                     {
-                        const types::TypeInformation* type_info =
-                                types::TypeObjectFactory::get_instance()->get_type_information(wdata->typeName().c_str());
+                        // const types::TypeInformation* type_info =
+                        //         types::TypeObjectFactory::get_instance()->get_type_information(wdata->typeName().c_str());
+                        //TODO Adrian
+                        const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_info;
                         if (type_info != nullptr)
                         {
                             wdata->type_information() = *type_info;
@@ -531,9 +550,11 @@ bool EDP::updatedLocalWriter(
 
                     if (wdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
                     {
-                        const types::TypeIdentifier* type_id =
-                                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                            wdata->typeName().c_str());
+                        // const types::TypeIdentifier* type_id =
+                        //         types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                        //     wdata->typeName().c_str());
+                        //TODO Adrian
+                        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_id;
                         if (type_id != nullptr)
                         {
                             wdata->type_id().m_type_identifier = *type_id;
@@ -542,9 +563,11 @@ bool EDP::updatedLocalWriter(
 
                     if (wdata->type().m_type_object._d() == static_cast<uint8_t>(0x00))
                     {
-                        const types::TypeObject* type_obj =
-                                types::TypeObjectFactory::get_instance()->get_type_object(
-                            wdata->typeName().c_str(), wdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
+                        // const types::TypeObject* type_obj =
+                        //         types::TypeObjectFactory::get_instance()->get_type_object(
+                        //     wdata->typeName().c_str(), wdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
+                        //TODO Adrian
+                        const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_obj;
                         if (type_obj != nullptr)
                         {
                             wdata->type().m_type_object = *type_obj;
@@ -1684,10 +1707,12 @@ bool EDP::checkTypeIdentifier(
     coercion.m_force_type_validation = true;
     coercion.m_prevent_type_widening = true;
     coercion.m_ignore_sequence_bounds = false;
-    return wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
-           wdata->type_id().m_type_identifier.consistent(
-        //rdata->type_id().m_type_identifier, rdata->m_qos.type_consistency);
-        rdata->type_id().m_type_identifier, coercion);
+    return wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00);
+        //                                                             &&
+        //    wdata->type_id().m_type_identifier.consistent(
+        // //rdata->type_id().m_type_identifier, rdata->m_qos.type_consistency);
+        // rdata->type_id().m_type_identifier, coercion);
+        //TODO Adrian
 }
 
 bool EDP::hasTypeIdentifier(
@@ -1705,8 +1730,8 @@ bool EDP::checkTypeObject(
     if (wdata->has_type_information() && wdata->type_information().assigned() &&
             rdata->has_type_information() && rdata->type_information().assigned())
     {
-        const types::TypeIdentifier* rtype = nullptr;
-        const types::TypeIdentifier* wtype = nullptr;
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* rtype = nullptr;
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* wtype = nullptr;
 
         if (wdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
                 static_cast<uint8_t>(0x00) &&
@@ -1744,7 +1769,9 @@ bool EDP::checkTypeObject(
             coercion.m_prevent_type_widening = true;
             coercion.m_ignore_sequence_bounds = false;
             //return wtype->consistent(*rtype, rdata->m_qos.type_consistency);
-            return wtype->consistent(*rtype, coercion);
+            //return wtype->consistent(*rtype, coercion);
+            //TODO Adrian
+            return true;
         }
 
         return false;
@@ -1770,7 +1797,9 @@ bool EDP::checkTypeObject(
         coercion.m_prevent_type_widening = true;
         coercion.m_ignore_sequence_bounds = false;
         //return wdata->type().m_type_object.consistent(rdata->type().m_type_object, rdata->m_qos.type_consistency);
-        return wdata->type().m_type_object.consistent(rdata->type().m_type_object, coercion);
+        //return wdata->type().m_type_object.consistent(rdata->type().m_type_object, coercion);
+        //TODO Adrian
+        return true;
     }
 
     return false;

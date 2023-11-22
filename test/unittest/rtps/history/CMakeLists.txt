@@ -76,7 +76,7 @@ target_include_directories(ReaderHistoryTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-target_link_libraries(ReaderHistoryTests
+target_link_libraries(ReaderHistoryTests fastcdr
     GTest::gmock
     ${CMAKE_DL_LIBS})
 add_gtest(ReaderHistoryTests SOURCES ${READERHISTORYTESTS_SOURCE})

@@ -228,7 +228,7 @@ public:
             DomainParticipant* participant,
             const fastrtps::string_255 topic_name,
             const fastrtps::string_255 type_name,
-            const fastrtps::types::TypeInformation& type_information)
+            const xtypes1_3::TypeInformation& type_information)
     {
         static_cast<void>(participant);
         static_cast<void>(topic_name);

@@ -125,6 +125,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/TypeLookupReplyListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/TypeLookupRequestListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/TypeLookupTypes.cxx
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/TypeLookupTypesPubSubTypes.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Entity.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp

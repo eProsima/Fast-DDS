@@ -1605,8 +1605,8 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
         RTPSParticipant*,
         const fastrtps::rtps::SampleIdentity& request_sample_id,
         const fastrtps::string_255& topic,
-        const xtypes1_3::TypeIdentifier* identifier,
-        const xtypes1_3::TypeObject* object,
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* identifier,
+        const eprosima::fastdds::dds::xtypes1_3::TypeObject* object,
         fastrtps::types::DynamicType_ptr dyn_type)
 {
     Sentry sentinel(this);
@@ -1627,7 +1627,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
 void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_reply(
         RTPSParticipant*,
         const fastrtps::rtps::SampleIdentity& request_sample_id,
-        const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies)
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq& dependencies)
 {
     Sentry sentinel(this);
     if (sentinel)
@@ -1643,7 +1643,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_recei
         RTPSParticipant*,
         const fastrtps::string_255& topic_name,
         const fastrtps::string_255& type_name,
-        const fastrtps::types::TypeInformation& type_information)
+        const eprosima::fastdds::dds::xtypes1_3::TypeInformation& type_information)
 {
     Sentry sentinel(this);
     if (sentinel)
@@ -1684,7 +1684,7 @@ ResourceEvent& DomainParticipantImpl::get_resource_event() const
 }
 
 fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_type_dependencies(
-        const xtypes1_3::TypeIdentifierSeq& in) const
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq& in) const
 {
     const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
     return nullptr != rtps_participant ?
@@ -1693,7 +1693,7 @@ fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_type_dependencies(
 }
 
 fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_types(
-        const xtypes1_3::TypeIdentifierSeq& in) const
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq& in) const
 {
     const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
     return nullptr != rtps_participant ?
@@ -1806,8 +1806,8 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
 
 bool DomainParticipantImpl::check_get_type_request(
         const fastrtps::rtps::SampleIdentity& requestId,
-        const xtypes1_3::TypeIdentifier* identifier,
-        const xtypes1_3::TypeObject* object,
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* identifier,
+        const eprosima::fastdds::dds::xtypes1_3::TypeObject* object,
         fastrtps::types::DynamicType_ptr dyn_type)
 {
     // Maybe we have a pending request?
@@ -1874,11 +1874,11 @@ bool DomainParticipantImpl::check_get_type_request(
 }
 
 void DomainParticipantImpl::fill_pending_dependencies(
-        const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies,
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq& dependencies,
         xtypes1_3::TypeIdentifierSeq& pending_identifiers,
         xtypes1_3::TypeIdentifierSeq& pending_objects) const
 {
-    for (const xtypes1_3::TypeIdentfierWithSize& tiws : dependencies)
+    for (const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize& tiws : dependencies)
     {
         // Check that we don't know that dependency
         if (!DomainParticipantFactory::get_instance()->type_object_registry().is_type_identifier_known(tiws.type_id()))
@@ -1886,7 +1886,7 @@ void DomainParticipantImpl::fill_pending_dependencies(
             pending_identifiers.push_back(tiws.type_id());
         }
         // Check if we need to retrieve the TypeObject
-        if (tiws.type_id()._d() >= EK_MINIMAL)
+        if (tiws.type_id()._d() >= xtypes1_3::EK_MINIMAL)
         {
             xtypes1_3::TypeObject obj;
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(tiws.type_id(), obj);
@@ -1901,7 +1901,7 @@ void DomainParticipantImpl::fill_pending_dependencies(
 
 bool DomainParticipantImpl::check_get_dependencies_request(
         const fastrtps::rtps::SampleIdentity& requestId,
-        const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies)
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq& dependencies)
 {
     // Maybe we have a pending request?
     if (builtin::INVALID_SAMPLE_IDENTITY != requestId)
@@ -1929,9 +1929,9 @@ bool DomainParticipantImpl::check_get_dependencies_request(
             }
 
             // Add received dependencies to the factory
-            for (const xtypes1_3::TypeIdentfierWithSize& tiws : dependencies)
+            for (const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize& tiws : dependencies)
             {
-                if (tiws.type_id()._d() >= EK_MINIMAL)
+                if (tiws.type_id()._d() >= xtypes1_3::EK_MINIMAL)
                 {
                     // This dependency needs a TypeObject
                     retrieve_objects.push_back(tiws.type_id());
@@ -1981,9 +1981,9 @@ bool DomainParticipantImpl::check_get_dependencies_request(
             }
 
             // Add received dependencies to the factory
-            for (const xtypes1_3::TypeIdentfierWithSize& tiws : dependencies)
+            for (const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize& tiws : dependencies)
             {
-                if (tiws.type_id()._d() >= EK_MINIMAL)
+                if (tiws.type_id()._d() >= xtypes1_3::EK_MINIMAL)
                 {
                     // This dependency needs a TypeObject
                     retrieve_objects.push_back(tiws.type_id());
