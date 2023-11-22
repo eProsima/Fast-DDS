@@ -50,4 +50,4 @@ target_include_directories(DDSSQLFilterTests PRIVATE
 target_link_libraries(DDSSQLFilterTests fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
-gtest_discover_tests(DDSSQLFilterTests PROPERTIES TIMEOUT 500)
+gtest_discover_tests(DDSSQLFilterTests)
