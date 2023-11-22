@@ -175,8 +175,8 @@ TEST(PublisherTests, GetPublisherParticipant)
 
     ASSERT_EQ(publisher->get_participant(), participant);
 
-    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(PublisherTests, GetPSMPublisherParticipant)
@@ -286,7 +286,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     // . data_sharing
     qos.data_sharing().on("/");
 
-    ASSERT_TRUE(publisher->set_default_datawriter_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(publisher->set_default_datawriter_qos(qos) == RETCODE_OK);
     DataWriterQos wqos;
     publisher->get_default_datawriter_qos(wqos);
 
@@ -407,8 +407,8 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
 
     EXPECT_TRUE(qos == wqos);
 
-    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 
@@ -451,8 +451,8 @@ TEST(PublisherTests, ChangePublisherQos)
     ASSERT_TRUE(qos == pqos);
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 
-    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 
 }
 
@@ -490,10 +490,10 @@ TEST(PublisherTests, CreateDataWriter)
     DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(datawriter, nullptr);
 
-    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher->delete_datawriter(datawriter), RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 void check_datawriter_with_profile (
@@ -567,17 +567,17 @@ TEST(PublisherTests, CreateDataWriterWithProfile)
     DataWriter* default_datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(default_datawriter, nullptr);
     check_datawriter_with_profile(default_datawriter, "test_default_publisher_profile");
-    ASSERT_TRUE(publisher->delete_datawriter(default_datawriter) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(publisher->delete_datawriter(default_datawriter) == RETCODE_OK);
 
     //participant using non-default profile
     DataWriter* datawriter = publisher->create_datawriter_with_profile(topic, "test_publisher_profile");
     ASSERT_NE(datawriter, nullptr);
     check_datawriter_with_profile(datawriter, "test_publisher_profile");
-    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
 
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 TEST(PublisherTests, CreateDataWriterWithProfileFromString)
@@ -599,17 +599,17 @@ TEST(PublisherTests, CreateDataWriterWithProfileFromString)
     DataWriter* default_datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(default_datawriter, nullptr);
     check_datawriter_with_profile(default_datawriter, "test_default_publisher_profile_string");
-    ASSERT_TRUE(publisher->delete_datawriter(default_datawriter) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(publisher->delete_datawriter(default_datawriter) == RETCODE_OK);
 
     //participant using non-default profile
     DataWriter* datawriter = publisher->create_datawriter_with_profile(topic, "test_publisher_profile_string");
     ASSERT_NE(datawriter, nullptr);
     check_datawriter_with_profile(datawriter, "test_publisher_profile_string");
-    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
 
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 TEST(PublisherTests, GetDataWriterProfileQos)
@@ -629,7 +629,7 @@ TEST(PublisherTests, GetDataWriterProfileQos)
     DataWriterQos qos;
     EXPECT_EQ(
         publisher->get_datawriter_qos_from_profile("test_publisher_profile", qos),
-        ReturnCode_t::RETCODE_OK);
+        RETCODE_OK);
 
     //Datawriter using the extracted qos
     DataWriter* datawriter = publisher->create_datawriter(topic, qos);
@@ -640,13 +640,13 @@ TEST(PublisherTests, GetDataWriterProfileQos)
     // Test return when a non-existent profile is used
     EXPECT_EQ(
         publisher->get_datawriter_qos_from_profile("incorrect_profile_name", qos),
-        ReturnCode_t::RETCODE_BAD_PARAMETER);
+        RETCODE_BAD_PARAMETER);
 
     // Clean up
-    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher->delete_datawriter(datawriter), RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 TEST(PublisherTests, DeletePublisherWithWriters)
@@ -667,13 +667,13 @@ TEST(PublisherTests, DeletePublisherWithWriters)
     DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(datawriter, nullptr);
 
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_PRECONDITION_NOT_MET);
 
-    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher->delete_datawriter(datawriter), RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
 
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 
@@ -682,7 +682,7 @@ void set_listener_test (
         PublisherListener* listener,
         StatusMask mask)
 {
-    ASSERT_EQ(publisher->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher->set_listener(listener, mask), RETCODE_OK);
     ASSERT_EQ(publisher->get_status_mask(), mask);
 }
 
@@ -726,8 +726,8 @@ TEST(PublisherTests, SetListener)
                 std::get<2>(testing_case));
     }
 
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 // Delete contained entities test
@@ -759,23 +759,23 @@ TEST(Publisher, DeleteContainedEntities)
 
     data_writer_list.clear();
     void* loan_data;
-    ASSERT_EQ(data_writer_bar->loan_sample(loan_data), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(data_writer_bar->loan_sample(loan_data), RETCODE_OK);
 
-    ASSERT_EQ(publisher->delete_contained_entities(), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(publisher->delete_contained_entities(), RETCODE_PRECONDITION_NOT_MET);
     publisher->get_datawriters(data_writer_list);
     ASSERT_EQ(data_writer_list.size(), 2u);
 
     data_writer_list.clear();
     data_writer_bar->discard_loan(loan_data);
 
-    ASSERT_EQ(publisher->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher->delete_contained_entities(), RETCODE_OK);
     publisher->get_datawriters(data_writer_list);
     ASSERT_FALSE(publisher->has_datawriters());
 }
 
 /*
  * This test checks that the Publisher methods defined in the standard not yet implemented in FastDDS return
- * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
+ * RETCODE_UNSUPPORTED. The following methods are checked:
  * 1. copy_from_topic_qos
  * 2. suspend_publications
  * 3. resume_publications
@@ -792,14 +792,14 @@ TEST(PublisherTests, UnsupportedPublisherMethods)
 
     fastdds::dds::DataWriterQos writer_qos;
     fastdds::dds::TopicQos topic_qos;
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->copy_from_topic_qos(writer_qos, topic_qos));
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->suspend_publications());
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->resume_publications());
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->begin_coherent_changes());
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->end_coherent_changes());
+    EXPECT_EQ(RETCODE_UNSUPPORTED, publisher->copy_from_topic_qos(writer_qos, topic_qos));
+    EXPECT_EQ(RETCODE_UNSUPPORTED, publisher->suspend_publications());
+    EXPECT_EQ(RETCODE_UNSUPPORTED, publisher->resume_publications());
+    EXPECT_EQ(RETCODE_UNSUPPORTED, publisher->begin_coherent_changes());
+    EXPECT_EQ(RETCODE_UNSUPPORTED, publisher->end_coherent_changes());
 
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 } // namespace dds

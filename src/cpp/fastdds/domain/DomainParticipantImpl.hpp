@@ -376,7 +376,7 @@ public:
 
     const PublisherQos& get_default_publisher_qos() const;
 
-    const ReturnCode_t get_publisher_qos_from_profile(
+    ReturnCode_t get_publisher_qos_from_profile(
             const std::string& profile_name,
             PublisherQos& qos) const;
 
@@ -387,7 +387,7 @@ public:
 
     const SubscriberQos& get_default_subscriber_qos() const;
 
-    const ReturnCode_t get_subscriber_qos_from_profile(
+    ReturnCode_t get_subscriber_qos_from_profile(
             const std::string& profile_name,
             SubscriberQos& qos) const;
 
@@ -398,7 +398,7 @@ public:
 
     const TopicQos& get_default_topic_qos() const;
 
-    const ReturnCode_t get_topic_qos_from_profile(
+    ReturnCode_t get_topic_qos_from_profile(
             const std::string& profile_name,
             TopicQos& qos) const;
 

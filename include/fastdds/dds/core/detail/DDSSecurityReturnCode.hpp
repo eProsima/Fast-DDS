@@ -22,18 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_DDSSECURITYRETURNCODE_HPP_
 #define _FAST_DDS_GENERATED_DDSSECURITYRETURNCODE_HPP_
 
-#include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
-#include <string>
-#include <utility>
-#include <vector>
-
-#include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
 
 #include "DDSReturnCode.hpp"
 

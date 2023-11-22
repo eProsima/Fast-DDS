@@ -118,28 +118,28 @@ public:
 
         if (data_writer_)
         {
-            ASSERT_EQ(publisher_->delete_datawriter(data_writer_), ReturnCode_t::RETCODE_OK);
+            ASSERT_EQ(publisher_->delete_datawriter(data_writer_), RETCODE_OK);
         }
         if (data_reader_)
         {
-            ASSERT_EQ(subscriber_->delete_datareader(data_reader_), ReturnCode_t::RETCODE_OK);
+            ASSERT_EQ(subscriber_->delete_datareader(data_reader_), RETCODE_OK);
         }
         if (topic_)
         {
-            ASSERT_EQ(participant_->delete_topic(topic_), ReturnCode_t::RETCODE_OK);
+            ASSERT_EQ(participant_->delete_topic(topic_), RETCODE_OK);
         }
         if (publisher_)
         {
-            ASSERT_EQ(participant_->delete_publisher(publisher_), ReturnCode_t::RETCODE_OK);
+            ASSERT_EQ(participant_->delete_publisher(publisher_), RETCODE_OK);
         }
         if (subscriber_)
         {
-            ASSERT_EQ(participant_->delete_subscriber(subscriber_), ReturnCode_t::RETCODE_OK);
+            ASSERT_EQ(participant_->delete_subscriber(subscriber_), RETCODE_OK);
         }
         if (participant_)
         {
             auto factory = DomainParticipantFactory::get_instance();
-            ASSERT_EQ(factory->delete_participant(participant_), ReturnCode_t::RETCODE_OK);
+            ASSERT_EQ(factory->delete_participant(participant_), RETCODE_OK);
         }
     }
 
@@ -193,7 +193,7 @@ protected:
             LoanableCollection& data_values,
             SampleInfoSeq& infos)
     {
-        if (ReturnCode_t::RETCODE_OK == code)
+        if (RETCODE_OK == code)
         {
             data_values.length(0);
             infos.length(0);
@@ -210,7 +210,7 @@ protected:
         {
             if (infos[i].valid_data)
             {
-                EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(buffer[i], HANDLE_NIL));
+                EXPECT_EQ(RETCODE_OK, data_writer_->write(buffer[i], HANDLE_NIL));
             }
         }
     }
@@ -237,14 +237,14 @@ protected:
             LoanableCollection& data_values,
             SampleInfoSeq& infos)
     {
-        ReturnCode_t expected_return_loan_ret = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-        if (ReturnCode_t::RETCODE_OK == code || ReturnCode_t::RETCODE_NOT_ENABLED == code)
+        ReturnCode_t expected_return_loan_ret = RETCODE_PRECONDITION_NOT_MET;
+        if (RETCODE_OK == code || RETCODE_NOT_ENABLED == code)
         {
             expected_return_loan_ret = code;
         }
         EXPECT_EQ(expected_return_loan_ret, data_reader->return_loan(data_values, infos));
 
-        if (ReturnCode_t::RETCODE_OK == expected_return_loan_ret)
+        if (RETCODE_OK == expected_return_loan_ret)
         {
             EXPECT_TRUE(data_values.has_ownership());
             EXPECT_EQ(0, data_values.maximum());
@@ -278,7 +278,7 @@ protected:
         reset_lengths_if_ok(instance_ok_code, data_values, infos);
 
         EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, max_samples, handle));
-        if (ReturnCode_t::RETCODE_OK == instance_ok_code)
+        if (RETCODE_OK == instance_ok_code)
         {
             // Write received data so it can be taken again
             send_data(data_values, infos);
@@ -336,8 +336,8 @@ protected:
             bool two_valid_instances = false)
     {
         // Calc expected result of `return_loan` for calls with a wrong instance handle.
-        ReturnCode_t wrong_loan_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-        if (ReturnCode_t::RETCODE_NOT_ENABLED == instance_bad_code)
+        ReturnCode_t wrong_loan_code = RETCODE_PRECONDITION_NOT_MET;
+        if (RETCODE_NOT_ENABLED == instance_bad_code)
         {
             wrong_loan_code = instance_bad_code;
         }
@@ -395,7 +395,7 @@ protected:
             SampleInfo info;
 
             EXPECT_EQ(code, data_reader->take_next_sample(&data, &info));
-            if (ReturnCode_t::RETCODE_OK == code)
+            if (RETCODE_OK == code)
             {
                 // Send taken sample so it can be read again
                 data_writer_->write(&data);
@@ -405,15 +405,15 @@ protected:
         }
 
         // Return code when requesting a bad instance
-        ReturnCode_t instance_bad_code = ReturnCode_t::RETCODE_BAD_PARAMETER;
-        if (ReturnCode_t::RETCODE_NOT_ENABLED == code)
+        ReturnCode_t instance_bad_code = RETCODE_BAD_PARAMETER;
+        if (RETCODE_NOT_ENABLED == code)
         {
             instance_bad_code = code;
         }
 
         // Return code when requesting a correct instance
         ReturnCode_t instance_ok_code = instance_bad_code;
-        if (ReturnCode_t::RETCODE_OK == code && type_->m_isGetKeyDefined)
+        if (RETCODE_OK == code && type_->m_isGetKeyDefined)
         {
             instance_ok_code = code;
         }
@@ -431,7 +431,7 @@ protected:
             reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take(data_values, infos));
-            if (ReturnCode_t::RETCODE_OK == code)
+            if (RETCODE_OK == code)
             {
                 send_data(data_values, infos);
                 data_reader->wait_for_unread_message(time_to_wait);
@@ -440,7 +440,7 @@ protected:
             reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take_next_instance(data_values, infos));
-            if (ReturnCode_t::RETCODE_OK == code)
+            if (RETCODE_OK == code)
             {
                 send_data(data_values, infos);
                 data_reader->wait_for_unread_message(time_to_wait);
@@ -458,10 +458,10 @@ protected:
             SampleInfoSeq infos(1);
 
             ReturnCode_t expected_return_loan_ret = code;
-            if (ReturnCode_t::RETCODE_OK == code)
+            if (RETCODE_OK == code)
             {
                 // Even when read returns data, no loan will be performed
-                expected_return_loan_ret = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+                expected_return_loan_ret = RETCODE_PRECONDITION_NOT_MET;
             }
 
             EXPECT_EQ(code, data_reader->read(data_values, infos));
@@ -472,7 +472,7 @@ protected:
             reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take(data_values, infos));
-            if (ReturnCode_t::RETCODE_OK == code)
+            if (RETCODE_OK == code)
             {
                 send_data(data_values, infos);
                 data_reader->wait_for_unread_message(time_to_wait);
@@ -481,7 +481,7 @@ protected:
             reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take_next_instance(data_values, infos));
-            if (ReturnCode_t::RETCODE_OK == code)
+            if (RETCODE_OK == code)
             {
                 send_data(data_values, infos);
                 data_reader->wait_for_unread_message(time_to_wait);
@@ -533,33 +533,33 @@ protected:
         EXPECT_EQ(0ull, data_reader_->get_unread_count());
 
         // Read / take operations should all return NOT_ENABLED
-        basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_);
+        basic_read_apis_check<DataType, DataSeq>(RETCODE_NOT_ENABLED, data_reader_);
 
         // Enable the DataReader and check NO_DATA should be returned
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
+        EXPECT_EQ(RETCODE_OK, data_reader_->enable());
         EXPECT_TRUE(data_reader_->is_enabled());
-        basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_NO_DATA, data_reader_);
+        basic_read_apis_check<DataType, DataSeq>(RETCODE_NO_DATA, data_reader_);
 
         // Send data
         DataType data;
         data.index(0);
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
+        EXPECT_EQ(RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
 
         // Wait for data to arrive and check OK should be returned
         Duration_t wait_time(1, 0);
         EXPECT_TRUE(data_reader_->wait_for_unread_message(wait_time));
-        basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_OK, data_reader_);
+        basic_read_apis_check<DataType, DataSeq>(RETCODE_OK, data_reader_);
 
         // Check with data on second instance
         data.index(2u);
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
-        basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_OK, data_reader_, true);
+        EXPECT_EQ(RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
+        basic_read_apis_check<DataType, DataSeq>(RETCODE_OK, data_reader_, true);
 
         // Check with disposed instance
         if (type_->m_isGetKeyDefined)
         {
-            EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->dispose(&data, handle_wrong_));
-            basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_OK, data_reader_, true);
+            EXPECT_EQ(RETCODE_OK, data_writer_->dispose(&data, handle_wrong_));
+            basic_read_apis_check<DataType, DataSeq>(RETCODE_OK, data_reader_, true);
         }
     }
 
@@ -655,12 +655,12 @@ TEST_F(DataReaderTests, get_guid)
     }
     ASSERT_EQ(guid, discovery_listener.guid);
 
-    ASSERT_TRUE(subscriber->delete_datareader(datareader) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(subscriber->delete_datareader(datareader) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_subscriber(subscriber) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
-                listener_participant) == ReturnCode_t::RETCODE_OK);
+                listener_participant) == RETCODE_OK);
 }
 
 TEST_F(DataReaderTests, InvalidQos)
@@ -670,11 +670,11 @@ TEST_F(DataReaderTests, InvalidQos)
     create_entities();
 
     ASSERT_TRUE(data_reader_->is_enabled());
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_qos(qos));
+    ASSERT_EQ(RETCODE_OK, data_reader_->get_qos(qos));
     ASSERT_EQ(qos, DATAREADER_QOS_DEFAULT);
 
     /* Unsupported QoS */
-    const ReturnCode_t unsupported_code = ReturnCode_t::RETCODE_UNSUPPORTED;
+    const ReturnCode_t unsupported_code = RETCODE_UNSUPPORTED;
 
     qos = DATAREADER_QOS_DEFAULT;
     qos.durability().kind = PERSISTENT_DURABILITY_QOS;
@@ -685,7 +685,7 @@ TEST_F(DataReaderTests, InvalidQos)
     EXPECT_EQ(unsupported_code, data_reader_->set_qos(qos));
 
     /* Inconsistent QoS */
-    const ReturnCode_t inconsistent_code = ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    const ReturnCode_t inconsistent_code = RETCODE_INCONSISTENT_POLICY;
 
     qos = DATAREADER_QOS_DEFAULT;
     qos.reader_resource_limits().max_samples_per_read = -1;
@@ -708,7 +708,7 @@ TEST_F(DataReaderTests, InvalidQos)
     EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
 
     /* Inmutable QoS */
-    const ReturnCode_t inmutable_code = ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+    const ReturnCode_t inmutable_code = RETCODE_IMMUTABLE_POLICY;
 
     qos = DATAREADER_QOS_DEFAULT;
     qos.resource_limits().max_samples = 5000;
@@ -813,8 +813,8 @@ TEST_F(DataReaderTests, collection_preconditions)
     create_entities();
     create_instance_handles();
 
-    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_NO_DATA;
-    const ReturnCode_t& wrong_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    const ReturnCode_t& ok_code = RETCODE_NO_DATA;
+    const ReturnCode_t& wrong_code = RETCODE_PRECONDITION_NOT_MET;
 
     // Helper buffers to create loaned sequences
     FooArray arr;
@@ -908,7 +908,7 @@ TEST_F(DataReaderTests, collection_preconditions)
         { {false_10_1, info_false_10_1}, wrong_code}
     };
 
-    const ReturnCode_t& instance_bad_code = ReturnCode_t::RETCODE_BAD_PARAMETER;
+    const ReturnCode_t& instance_bad_code = RETCODE_BAD_PARAMETER;
     for (const ok_test_case_t& test : ok_cases)
     {
         EXPECT_EQ(test.second, data_reader_->read(test.first.first, test.first.second));
@@ -985,11 +985,11 @@ TEST_F(DataReaderTests, return_loan)
     FooSeq data_values_2;
     SampleInfoSeq infos_2;
 
-    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
-    const ReturnCode_t& precondition_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    const ReturnCode_t& ok_code = RETCODE_OK;
+    const ReturnCode_t& precondition_code = RETCODE_PRECONDITION_NOT_MET;
 
     // Calling return loan on disabled reader should return NOT_ENABLED
-    EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_->return_loan(data_values, infos));
+    EXPECT_EQ(RETCODE_NOT_ENABLED, data_reader_->return_loan(data_values, infos));
 
     // Enable both readers
     EXPECT_EQ(ok_code, data_reader_->enable());
@@ -1110,9 +1110,9 @@ TEST_F(DataReaderTests, resource_limits)
 {
     static constexpr int32_t num_samples = 100;
 
-    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
-    const ReturnCode_t& resources_code = ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
-    const ReturnCode_t& no_data_code = ReturnCode_t::RETCODE_NO_DATA;
+    const ReturnCode_t& ok_code = RETCODE_OK;
+    const ReturnCode_t& resources_code = RETCODE_OUT_OF_RESOURCES;
+    const ReturnCode_t& no_data_code = RETCODE_NO_DATA;
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
     writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
@@ -1325,8 +1325,8 @@ TEST_F(DataReaderTests, read_unread)
     static constexpr int32_t num_samples = 10;
     static constexpr uint64_t num_samples_check = static_cast<uint64_t>(num_samples);
 
-    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
-    const ReturnCode_t& no_data_code = ReturnCode_t::RETCODE_NO_DATA;
+    const ReturnCode_t& ok_code = RETCODE_OK;
+    const ReturnCode_t& no_data_code = RETCODE_NO_DATA;
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
     writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
@@ -1589,7 +1589,7 @@ TEST_F(DataReaderTests, get_unread_count)
     static constexpr int32_t num_samples = 10;
     static constexpr uint64_t num_samples_check = static_cast<uint64_t>(num_samples);
 
-    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
+    const ReturnCode_t& ok_code = RETCODE_OK;
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
     writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
@@ -1630,7 +1630,7 @@ TEST_F(DataReaderTests, get_unread_count)
     }
 
     SampleInfo sample_info;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_first_untaken_info(&sample_info));
+    ASSERT_EQ(RETCODE_OK, data_reader_->get_first_untaken_info(&sample_info));
     ASSERT_EQ(SampleStateKind::NOT_READ_SAMPLE_STATE, sample_info.sample_state);
 
     // Calling get_unread_count(false) several times should always return the same value
@@ -1639,13 +1639,13 @@ TEST_F(DataReaderTests, get_unread_count)
         EXPECT_EQ(num_samples_check, data_reader_->get_unread_count(false));
     }
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_first_untaken_info(&sample_info));
+    ASSERT_EQ(RETCODE_OK, data_reader_->get_first_untaken_info(&sample_info));
     ASSERT_EQ(SampleStateKind::NOT_READ_SAMPLE_STATE, sample_info.sample_state);
 
     // Calling get_unread_count(true) once will return the correct value
     EXPECT_EQ(num_samples_check, data_reader_->get_unread_count(true));
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_first_untaken_info(&sample_info));
+    ASSERT_EQ(RETCODE_OK, data_reader_->get_first_untaken_info(&sample_info));
     ASSERT_EQ(SampleStateKind::READ_SAMPLE_STATE, sample_info.sample_state);
 
     // All variants should then return 0
@@ -1817,19 +1817,19 @@ TEST_F(DataReaderTests, sample_info)
                 case TestCmd::DISPOSE:
                     writer = open_writer(cmd.writer_index);
                     ret_code = writer->dispose(&data_[cmd.instance_index], handles_[cmd.instance_index]);
-                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret_code);
+                    EXPECT_EQ(RETCODE_OK, ret_code);
                     break;
 
                 case TestCmd::UNREGISTER:
                     writer = open_writer(cmd.writer_index);
                     ret_code = writer->unregister_instance(&data_[cmd.instance_index], handles_[cmd.instance_index]);
-                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret_code);
+                    EXPECT_EQ(RETCODE_OK, ret_code);
                     break;
 
                 case TestCmd::WRITE:
                     writer = open_writer(cmd.writer_index);
                     ret_code = writer->write(&data_[cmd.instance_index], handles_[cmd.instance_index]);
-                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret_code);
+                    EXPECT_EQ(RETCODE_OK, ret_code);
                     break;
             }
         }
@@ -1845,13 +1845,13 @@ TEST_F(DataReaderTests, sample_info)
 
             ret_code = reader->read_instance(values, infos, LENGTH_UNLIMITED, handles_[instance_index]);
             EXPECT_EQ(ret_code, instance_result.ret_code);
-            if (ReturnCode_t::RETCODE_OK == ret_code)
+            if (RETCODE_OK == ret_code)
             {
                 EXPECT_EQ(instance_result.instance_state, infos[0].instance_state);
                 EXPECT_EQ(instance_result.view_state, infos[0].view_state);
                 EXPECT_EQ(instance_result.disposed_generation_count, infos[0].disposed_generation_count);
                 EXPECT_EQ(instance_result.no_writers_generation_count, infos[0].no_writers_generation_count);
-                EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(values, infos));
+                EXPECT_EQ(RETCODE_OK, reader->return_loan(values, infos));
 
                 EXPECT_EQ(handles_[instance_index], reader->lookup_instance(&data_[instance_index]));
             }
@@ -1901,32 +1901,32 @@ TEST_F(DataReaderTests, sample_info)
             // Instances have never been written
             {},
             {
-                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
-                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
             }
         },
         {
             // One writer writes on first instance => that instance should be NEW and ALIVE
             { {0, TestCmd::WRITE, 0} },
             {
-                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
-                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
             }
         },
         {
             // Same writer writes on first instance => instance becomes NOT_NEW
             { {0, TestCmd::WRITE, 0} },
             {
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
-                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
             }
         },
         {
             // Same writer disposes first instance => instance becomes NOT_ALIVE_DISPOSED
             { {0, TestCmd::DISPOSE, 0} },
             {
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 0},
-                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 0},
+                {RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
             }
         },
         {
@@ -1934,48 +1934,48 @@ TEST_F(DataReaderTests, sample_info)
             // Second writer writes first instance => NEW and ALIVE
             { {0, TestCmd::WRITE, 1}, {1, TestCmd::WRITE, 0} },
             {
-                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 0},
-                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 0},
+                {RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
             }
         },
         {
             // Both writers write on second instance => NOT_NEW and ALIVE
             { {0, TestCmd::WRITE, 1}, {1, TestCmd::WRITE, 1} },
             {
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 0},
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 0},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
             }
         },
         {
             // Second writer closes => first instance becomes NOT_ALIVE_NO_WRITERS
             { {1, TestCmd::CLOSE, 0} },
             {
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 0},
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 0},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
             }
         },
         {
             // First writer unregisters second instance => NOT_ALIVE_NO_WRITERS
             { {0, TestCmd::UNREGISTER, 1} },
             {
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 0},
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 0, 0},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 0},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 0, 0},
             }
         },
         {
             // Both writers write both instances
             { {0, TestCmd::WRITE, 0}, {1, TestCmd::WRITE, 0}, {0, TestCmd::WRITE, 1}, {1, TestCmd::WRITE, 1} },
             {
-                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
-                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 1},
+                {RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
+                {RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 1},
             }
         },
         {
             // Reading twice should return NOT_NEW
             {},
             {
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 1},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 1},
             }
         },
         {
@@ -1983,8 +1983,8 @@ TEST_F(DataReaderTests, sample_info)
             // 1 - Disposing while having another alive writer is always done
             { {0, TestCmd::UNREGISTER, 0}, {1, TestCmd::DISPOSE, 1} },
             {
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 1},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 1},
             }
         },
         {
@@ -1992,8 +1992,8 @@ TEST_F(DataReaderTests, sample_info)
             // 1 - Unregister a disposed instance should not change state
             { {0, TestCmd::WRITE, 0}, {0, TestCmd::UNREGISTER, 1}, {1, TestCmd::UNREGISTER, 0} },
             {
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 1},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 1},
             }
         },
         {
@@ -2001,8 +2001,8 @@ TEST_F(DataReaderTests, sample_info)
             // 1 - Closing both writers on a disposed instance should not change state
             { {0, TestCmd::CLOSE, 0}, {1, TestCmd::CLOSE, 0} },
             {
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 1},
-                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 1},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 1},
+                {RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 1},
             }
         },
     };
@@ -2014,8 +2014,8 @@ TEST_F(DataReaderTests, sample_info)
     // Taking all data should remove instance information
     FooSeq data;
     SampleInfoSeq infos;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->take(data, infos));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
+    EXPECT_EQ(RETCODE_OK, data_reader_->take(data, infos));
+    EXPECT_EQ(RETCODE_OK, data_reader_->return_loan(data, infos));
 
     // Run test again
     state.run_test(data_reader_, steps);
@@ -2086,7 +2086,7 @@ TEST_F(DataReaderTests, check_read_take_iteration)
             oarraystream out(data.message());
             out << i;
 
-            EXPECT_EQ(data_writer_->write(&data, handles[i]), ReturnCode_t::RETCODE_OK);
+            EXPECT_EQ(data_writer_->write(&data, handles[i]), RETCODE_OK);
         }
     }
 
@@ -2105,10 +2105,10 @@ TEST_F(DataReaderTests, check_read_take_iteration)
                         NEW_VIEW_STATE,
                         ALIVE_INSTANCE_STATE);
 
-        if ( ret == ReturnCode_t::RETCODE_OK)
+        if ( ret == RETCODE_OK)
         {
             received += data.length();
-            EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
+            EXPECT_EQ(RETCODE_OK, data_reader_->return_loan(data, infos));
         }
         else
         {
@@ -2129,11 +2129,11 @@ TEST_F(DataReaderTests, check_read_take_iteration)
         SampleInfoSeq infos;
 
         EXPECT_EQ(data_reader_->take_instance(data, infos, 1, handles[i]),
-                ReturnCode_t::RETCODE_OK);
+                RETCODE_OK);
 
         EXPECT_EQ(i, std::atoi(data[0].message().data()));
 
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
+        EXPECT_EQ(RETCODE_OK, data_reader_->return_loan(data, infos));
     }
 
     // Iterate over available instances with data and check all are retrieved
@@ -2157,10 +2157,10 @@ TEST_F(DataReaderTests, check_read_take_iteration)
             received += data.length();
             handle = infos[0].instance_handle;
             EXPECT_TRUE(std::atoi(data[0].message().data()) % 2 == 1);
-            EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
+            EXPECT_EQ(RETCODE_OK, data_reader_->return_loan(data, infos));
         }
     }
-    while (ret == ReturnCode_t::RETCODE_OK);
+    while (ret == RETCODE_OK);
 
     EXPECT_EQ(received, max_handles);
 
@@ -2184,10 +2184,10 @@ TEST_F(DataReaderTests, check_read_take_iteration)
             received += data.length();
             handle = infos[0].instance_handle;
             EXPECT_TRUE(std::atoi(data[0].message().data()) % 2 == 1);
-            EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
+            EXPECT_EQ(RETCODE_OK, data_reader_->return_loan(data, infos));
         }
     }
-    while (ret == ReturnCode_t::RETCODE_OK);
+    while (ret == RETCODE_OK);
 
     EXPECT_EQ(received, max_handles);
 }
@@ -2232,8 +2232,8 @@ TEST_F(DataReaderTests, Deserialization_errors)
     static const Duration_t time_to_wait(0, 100 * 1000 * 1000);
     static constexpr int32_t num_samples = 10;
 
-    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
-    const ReturnCode_t& no_data_code = ReturnCode_t::RETCODE_NO_DATA;
+    const ReturnCode_t& ok_code = RETCODE_OK;
+    const ReturnCode_t& no_data_code = RETCODE_NO_DATA;
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
     writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
@@ -2380,7 +2380,7 @@ void set_listener_test (
         DataReaderListener* listener,
         StatusMask mask)
 {
-    ASSERT_EQ(reader->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(reader->set_listener(listener, mask), RETCODE_OK);
     ASSERT_EQ(reader->get_status_mask(), mask);
 }
 
@@ -2454,11 +2454,11 @@ TEST_F(DataReaderTests, get_listening_locators)
 
     // Calling on disabled reader should return NOT_ENABLED
     LocatorList locator_list;
-    EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_->get_listening_locators(locator_list));
+    EXPECT_EQ(RETCODE_NOT_ENABLED, data_reader_->get_listening_locators(locator_list));
 
     // Enable and try again
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_listening_locators(locator_list));
+    EXPECT_EQ(RETCODE_OK, data_reader_->enable());
+    EXPECT_EQ(RETCODE_OK, data_reader_->get_listening_locators(locator_list));
 
     EXPECT_EQ(locator_list.size(), 2u);
     bool unicast_found = false;
@@ -2512,7 +2512,7 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
     ASSERT_TRUE(data_reader_->wait_for_unread_message(Duration_t(3, 0)));
 
     // now the writer is removed
-    ASSERT_EQ(publisher_->delete_datawriter(data_writer_), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher_->delete_datawriter(data_writer_), RETCODE_OK);
     data_writer_ = nullptr;
 
     // here the DataReader History state must be coherent and don't loop endlessly
@@ -2526,7 +2526,7 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
 
                 // If the DataWriter is destroyed only the non-notified samples must be removed
                 // this operation MUST succeed
-                ASSERT_EQ(res, ReturnCode_t::RETCODE_OK);
+                ASSERT_EQ(res, RETCODE_OK);
 
                 data_reader_->return_loan(samples, infos);
             });
@@ -2587,7 +2587,7 @@ public:
 
 /*
  * This test checks that the DataReader methods defined in the standard not yet implemented in FastDDS return
- * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
+ * RETCODE_UNSUPPORTED. The following methods are checked:
  * 1. get_matched_publication_data
  * 2. create_querycondition
  * 3. get_matched_publications
@@ -2616,7 +2616,7 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
     builtin::PublicationBuiltinTopicData publication_data;
     InstanceHandle_t publication_handle;
     EXPECT_EQ(
-        ReturnCode_t::RETCODE_UNSUPPORTED,
+        RETCODE_UNSUPPORTED,
         data_reader->get_matched_publication_data(publication_data, publication_handle));
 
     {
@@ -2636,20 +2636,20 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
     }
 
     std::vector<InstanceHandle_t> publication_handles;
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_matched_publications(publication_handles));
+    EXPECT_EQ(RETCODE_UNSUPPORTED, data_reader->get_matched_publications(publication_handles));
 
     InstanceHandle_t key_handle;
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_key_value(nullptr, key_handle));
+    EXPECT_EQ(RETCODE_UNSUPPORTED, data_reader->get_key_value(nullptr, key_handle));
 
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->wait_for_historical_data({0, 1}));
+    EXPECT_EQ(RETCODE_UNSUPPORTED, data_reader->wait_for_historical_data({0, 1}));
 
     // Expected logWarnings: create_querycondition
     HELPER_WaitForEntries(1);
 
-    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 // Regression test for #12133.
@@ -2660,7 +2660,7 @@ TEST_F(DataReaderTests, read_samples_with_future_changes)
     eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(att);
     static constexpr int32_t num_samples = 8;
     static constexpr int32_t expected_samples = 4;
-    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
+    const ReturnCode_t& ok_code = RETCODE_OK;
     bool start_dropping_acks = false;
     bool start_dropping_datas = false;
     static const Duration_t time_to_wait(0, 100 * 1000 * 1000);
@@ -2738,7 +2738,7 @@ TEST_F(DataReaderTests, read_samples_with_future_changes)
     EXPECT_EQ(ok_code, data_reader_->take(data_seq, info_seq, num_samples, NOT_READ_SAMPLE_STATE));
     check_collection(data_seq, true, num_samples, expected_samples);
 
-    ASSERT_EQ(publisher_->delete_datawriter(data_writer2), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher_->delete_datawriter(data_writer2), RETCODE_OK);
 }
 
 // Delete contained entities test
@@ -2786,10 +2786,10 @@ TEST_F(DataReaderTests, delete_contained_entities)
     ASSERT_EQ(query_condition, nullptr);
 
     // Should fail with outstanding ReadConditions
-    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), RETCODE_PRECONDITION_NOT_MET);
 
     // Should not fail with outstanding ReadConditions
-    ASSERT_EQ(data_reader->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(data_reader->delete_contained_entities(), RETCODE_OK);
 }
 
 TEST_F(DataReaderTests, read_conditions_management)
@@ -2813,7 +2813,7 @@ TEST_F(DataReaderTests, read_conditions_management)
     cond = reader.create_readcondition( sample_states, view_states, instance_states);
     EXPECT_NE(cond, nullptr);
     ReturnCode_t res = reader.delete_readcondition(cond);
-    EXPECT_EQ(res, ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(res, RETCODE_OK);
 
     // 3- Create several ReadConditions associated to the same masks (share implementation)
     std::forward_list<ReadCondition*> conds;
@@ -2825,7 +2825,7 @@ TEST_F(DataReaderTests, read_conditions_management)
 
     for (ReadCondition* c : conds)
     {
-        EXPECT_EQ(reader.delete_readcondition(c), ReturnCode_t::RETCODE_OK);
+        EXPECT_EQ(reader.delete_readcondition(c), RETCODE_OK);
     }
     conds.clear();
 
@@ -2841,7 +2841,7 @@ TEST_F(DataReaderTests, read_conditions_management)
 
     for (ReadCondition* c : conds)
     {
-        EXPECT_EQ(reader.delete_readcondition(c), ReturnCode_t::RETCODE_OK);
+        EXPECT_EQ(reader.delete_readcondition(c), RETCODE_OK);
     }
     conds.clear();
 
@@ -2855,7 +2855,7 @@ TEST_F(DataReaderTests, read_conditions_management)
         conds.push_front(reader.create_readcondition( ++sample_states, ++view_states, ++instance_states));
     }
 
-    EXPECT_EQ(reader.delete_contained_entities(), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(reader.delete_contained_entities(), RETCODE_OK);
     conds.clear();
 
     // 6- Check a DataReader only handles its own ReadConditions
@@ -2864,14 +2864,14 @@ TEST_F(DataReaderTests, read_conditions_management)
 
     cond = another_reader->create_readcondition(sample_states, view_states, instance_states);
     EXPECT_NE(cond, nullptr);
-    EXPECT_EQ(reader.delete_readcondition(cond), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    EXPECT_EQ(reader.delete_readcondition(cond), RETCODE_PRECONDITION_NOT_MET);
 
     // 7- Check the DataReader cannot be deleted with outstanding conditions
-    EXPECT_EQ(subscriber_->delete_datareader(another_reader), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    EXPECT_EQ(subscriber_->delete_datareader(another_reader), RETCODE_PRECONDITION_NOT_MET);
     // but delete_contained_entities() succeeds with outstanding ReadConditions
-    EXPECT_EQ(another_reader->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(another_reader->delete_contained_entities(), RETCODE_OK);
     // no outstanding conditions (killed above)
-    EXPECT_EQ(subscriber_->delete_datareader(another_reader), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(subscriber_->delete_datareader(another_reader), RETCODE_OK);
 }
 
 TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
@@ -2903,9 +2903,9 @@ TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
 
     // Create the waitset and associate
     WaitSet ws;
-    EXPECT_EQ(ws.attach_condition(*read_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.attach_condition(*not_read_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.attach_condition(*any_read_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*read_cond), RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*not_read_cond), RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*any_read_cond), RETCODE_OK);
 
     // 1- Check NOT_READ_SAMPLE_STATE
     // Send sample from a background thread
@@ -2922,7 +2922,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
             });
 
     ConditionSeq triggered;
-    EXPECT_EQ(ws.wait(triggered, 2.0), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.wait(triggered, 2.0), RETCODE_OK);
     bw.join();
 
     // Check the data is there
@@ -2945,16 +2945,16 @@ TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
                 datas,
                 infos,
                 1,
-                not_read_cond), ReturnCode_t::RETCODE_OK);
+                not_read_cond), RETCODE_OK);
 
     triggered.clear();
-    EXPECT_EQ(ws.wait(triggered, 1.0), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.wait(triggered, 1.0), RETCODE_OK);
 
     // Check data is good
     ASSERT_TRUE(infos[0].valid_data);
     EXPECT_EQ(datas[0].index(), 1u);
     EXPECT_EQ(datas[0].message(), test_message);
-    EXPECT_EQ(data_reader.return_loan(datas, infos), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_reader.return_loan(datas, infos), RETCODE_OK);
 
     // Check the conditions triggered were the expected ones
     ASSERT_TRUE(read_cond->get_trigger_value());
@@ -2969,21 +2969,21 @@ TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
                 datas,
                 infos,
                 1,
-                read_cond), ReturnCode_t::RETCODE_OK);
+                read_cond), RETCODE_OK);
 
     // Check data is good
     ASSERT_TRUE(infos[0].valid_data);
     EXPECT_EQ(datas[0].index(), 1u);
     EXPECT_EQ(datas[0].message(), test_message);
-    EXPECT_EQ(data_reader.return_loan(datas, infos), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_reader.return_loan(datas, infos), RETCODE_OK);
 
     // Detach conditions & destroy
-    EXPECT_EQ(ws.detach_condition(*read_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(data_reader.delete_readcondition(read_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.detach_condition(*not_read_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(data_reader.delete_readcondition(not_read_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.detach_condition(*any_read_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(data_reader.delete_readcondition(any_read_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*read_cond), RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(read_cond), RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*not_read_cond), RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(not_read_cond), RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*any_read_cond), RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(any_read_cond), RETCODE_OK);
 }
 
 TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
@@ -3015,9 +3015,9 @@ TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
 
     // Create the waitset and associate
     WaitSet ws;
-    EXPECT_EQ(ws.attach_condition(*view_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.attach_condition(*not_view_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.attach_condition(*any_view_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*view_cond), RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*not_view_cond), RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*any_view_cond), RETCODE_OK);
 
     // 1- Check NEW_VIEW_STATE
     // Send sample from a background thread
@@ -3034,7 +3034,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
             });
 
     ConditionSeq triggered;
-    EXPECT_EQ(ws.wait(triggered, 2.0), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.wait(triggered, 2.0), RETCODE_OK);
     bw.join();
 
     // Check the data is there
@@ -3057,16 +3057,16 @@ TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
                 datas,
                 infos,
                 1,
-                view_cond), ReturnCode_t::RETCODE_OK);
+                view_cond), RETCODE_OK);
 
     triggered.clear();
-    EXPECT_EQ(ws.wait(triggered, 1.0), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.wait(triggered, 1.0), RETCODE_OK);
 
     // Check data is good
     ASSERT_TRUE(infos[0].valid_data);
     EXPECT_EQ(datas[0].index(), 1u);
     EXPECT_EQ(datas[0].message(), test_message);
-    EXPECT_EQ(data_reader.return_loan(datas, infos), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_reader.return_loan(datas, infos), RETCODE_OK);
 
     // Check the conditions triggered were the expected ones
     ASSERT_FALSE(view_cond->get_trigger_value());
@@ -3077,12 +3077,12 @@ TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
     EXPECT_NE(std::find(triggered.begin(), triggered.end(), any_view_cond), triggered.end());
 
     // Detach conditions & destroy
-    EXPECT_EQ(ws.detach_condition(*view_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(data_reader.delete_readcondition(view_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.detach_condition(*not_view_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(data_reader.delete_readcondition(not_view_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.detach_condition(*any_view_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(data_reader.delete_readcondition(any_view_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*view_cond), RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(view_cond), RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*not_view_cond), RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(not_view_cond), RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*any_view_cond), RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(any_view_cond), RETCODE_OK);
 }
 
 TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
@@ -3118,10 +3118,10 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
 
     // Create the waitset and associate
     WaitSet ws;
-    EXPECT_EQ(ws.attach_condition(*alive_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.attach_condition(*disposed_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.attach_condition(*no_writer_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.attach_condition(*any_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*alive_cond), RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*disposed_cond), RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*no_writer_cond), RETCODE_OK);
+    EXPECT_EQ(ws.attach_condition(*any_cond), RETCODE_OK);
 
     // 1- Check ALIVE_INSTANCE_STATE
     // Send sample from a background thread
@@ -3139,7 +3139,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
             });
 
     ConditionSeq triggered;
-    EXPECT_EQ(ws.wait(triggered, 2.0), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.wait(triggered, 2.0), RETCODE_OK);
     bw.join();
 
     // Check the data is there
@@ -3157,10 +3157,10 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
 
     // 2 - Check NOT_ALIVE_DISPOSED_INSTANCE_STATE
     // unregister the instance
-    EXPECT_EQ(data_writer.unregister_instance(&msg, HANDLE_NIL), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_writer.unregister_instance(&msg, HANDLE_NIL), RETCODE_OK);
 
     triggered.clear();
-    EXPECT_EQ(ws.wait(triggered, 1.0), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.wait(triggered, 1.0), RETCODE_OK);
 
     // Check the conditions triggered were the expected ones
     ASSERT_FALSE(alive_cond->get_trigger_value());
@@ -3181,12 +3181,12 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
                 infos,
                 1,
                 HANDLE_NIL,
-                disposed_cond), ReturnCode_t::RETCODE_OK);
+                disposed_cond), RETCODE_OK);
 
     // Check data is bad because the sample for instance 1 was unregistered
     ASSERT_FALSE(infos[0].valid_data);
     InstanceHandle_t prev_handle = infos[0].instance_handle;
-    EXPECT_EQ(data_reader.return_loan(datas, infos), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_reader.return_loan(datas, infos), RETCODE_OK);
 
     // new instance
     msg.index(2u);
@@ -3197,21 +3197,21 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
                 infos,
                 1,
                 prev_handle,
-                alive_cond), ReturnCode_t::RETCODE_OK);
+                alive_cond), RETCODE_OK);
 
     // Check data is good
     ASSERT_TRUE(infos[0].valid_data);
     EXPECT_EQ(datas[0].index(), 2u);
     EXPECT_EQ(datas[0].message(), test_message);
-    EXPECT_EQ(data_reader.return_loan(datas, infos), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data_reader.return_loan(datas, infos), RETCODE_OK);
 
     // 5 - Check NOT_ALIVE_NO_WRITERS_INSTANCE_STATE
     // delete the writer to remove all writers from a new instance
-    ASSERT_EQ(publisher_->delete_datawriter(data_writer_), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher_->delete_datawriter(data_writer_), RETCODE_OK);
     data_writer_ = nullptr;
 
     triggered.clear();
-    EXPECT_EQ(ws.wait(triggered, 1.0), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.wait(triggered, 1.0), RETCODE_OK);
 
     // Check the conditions triggered were the expected ones
     ASSERT_FALSE(alive_cond->get_trigger_value());
@@ -3224,14 +3224,14 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
     EXPECT_NE(std::find(triggered.begin(), triggered.end(), any_cond), triggered.end());
 
     // Detach conditions & destroy
-    EXPECT_EQ(ws.detach_condition(*alive_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(data_reader.delete_readcondition(alive_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.detach_condition(*disposed_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(data_reader.delete_readcondition(disposed_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.detach_condition(*no_writer_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(data_reader.delete_readcondition(no_writer_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(ws.detach_condition(*any_cond), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(data_reader.delete_readcondition(any_cond), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*alive_cond), RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(alive_cond), RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*disposed_cond), RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(disposed_cond), RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*no_writer_cond), RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(no_writer_cond), RETCODE_OK);
+    EXPECT_EQ(ws.detach_condition(*any_cond), RETCODE_OK);
+    EXPECT_EQ(data_reader.delete_readcondition(any_cond), RETCODE_OK);
 }
 
 /*
@@ -3312,50 +3312,50 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyNotKeyed)
     // This allows to change inmutable policies
     SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
     subscriber_qos.entity_factory().autoenable_created_entities = false;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, subscriber->set_qos(subscriber_qos));
+    ASSERT_EQ(RETCODE_OK, subscriber->set_qos(subscriber_qos));
 
     // Next QoS config checks the default qos configuration,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // set_qos() should return RETCODE_OK = 0
     DataReaderQos qos2 = DATAREADER_QOS_DEFAULT;
     DataReader* default_data_reader2 = subscriber->create_datareader(topic, qos2);
     ASSERT_NE(default_data_reader2, nullptr);
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_data_reader2->set_qos(qos2));
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
     // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_instances = -1;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_data_reader2->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // set_qos() should return RETCODE_OK = 0
     // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_samples = 4999;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_data_reader2->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // set_qos() should return RETCODE_OK = 0
     // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_samples = 5001;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_data_reader2->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples infinite
     // and ( max_instances * max_samples_per_instance ) finite,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // set_qos() should return RETCODE_OK = 0
     // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_samples = 0;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_data_reader2->set_qos(qos2));
 }
 
 /*
@@ -3443,22 +3443,22 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyKeyed)
     // This allows to change inmutable policies
     SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
     subscriber_qos.entity_factory().autoenable_created_entities = false;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, subscriber->set_qos(subscriber_qos));
+    ASSERT_EQ(RETCODE_OK, subscriber->set_qos(subscriber_qos));
 
     // Next QoS config checks the default qos configuration,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0, as the by default values are already infinite.
+    // set_qos() should return RETCODE_OK = 0, as the by default values are already infinite.
     DataReaderQos qos2 = DATAREADER_QOS_DEFAULT;
     DataReader* default_data_reader2 = subscriber->create_datareader(topic, qos2);
     ASSERT_NE(default_data_reader2, nullptr);
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_data_reader2->set_qos(qos2));
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
     qos2.resource_limits().max_samples = 0;
     qos2.resource_limits().max_instances = -1;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_data_reader2->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
     // set_qos() should return a value != 0 (not OK)
@@ -3466,32 +3466,32 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyKeyed)
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_NE(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+    ASSERT_NE(RETCODE_OK, default_data_reader2->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    // set_qos() should return RETCODE_OK = 0.
     qos2.resource_limits().max_samples = 5001;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_data_reader2->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples = ( max_instances * max_samples_per_instance ) ,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    // set_qos() should return RETCODE_OK = 0.
     qos2.resource_limits().max_samples = 5000;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_data_reader2->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples infinite
     // and ( max_instances * max_samples_per_instance ) finite,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    // set_qos() should return RETCODE_OK = 0.
     qos2.resource_limits().max_samples = 0;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_data_reader2->set_qos(qos2));
 }
 
 /*
@@ -3569,78 +3569,78 @@ TEST_F(DataReaderTests, UpdateInmutableQos)
     // Resource limits
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.resource_limits().max_samples = reader_qos.resource_limits().max_samples - 1;
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     // History
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.history().depth = reader_qos.history().depth + 1;
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     // Durability
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     // Liveliness
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.liveliness().kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.liveliness().lease_duration = Duration_t{123, 123};
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.liveliness().announcement_period = Duration_t{123, 123};
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     // Relibility
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     // Ownsership
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     // Destination order (currently reports unsupported)
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
-    ASSERT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_UNSUPPORTED, data_reader->set_qos(reader_qos));
 
     // Reader resource limits
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.reader_resource_limits().matched_publisher_allocation.maximum =
             reader_qos.reader_resource_limits().matched_publisher_allocation.maximum - 1;
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     // Datasharing
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.data_sharing().off();
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.data_sharing().automatic(".");
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.data_sharing().add_domain_id(static_cast<uint16_t>(12));
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.data_sharing().data_sharing_listener_thread().priority =
             reader_qos.data_sharing().data_sharing_listener_thread().priority + 1;
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     // Unique network flows
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.properties().properties().push_back({"fastdds.unique_network_flows", "true"});
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     /* Cleanup */
     participant->delete_contained_entities();

@@ -138,7 +138,7 @@ void LivelinessSubscriber::SubListener::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    if (reader->take_next_sample(&topic, &info) == ReturnCode_t::RETCODE_OK)
+    if (reader->take_next_sample(&topic, &info) == RETCODE_OK)
     {
         if (info.valid_data)
         {

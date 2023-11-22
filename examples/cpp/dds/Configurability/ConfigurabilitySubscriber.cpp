@@ -363,7 +363,7 @@ int main()
         }
         else if ( c == std::string("r"))
         {
-            while (EarlyReader->read_next_sample(&my_sample, &sample_info) == ReturnCode_t::RETCODE_OK)
+            while (EarlyReader->read_next_sample(&my_sample, &sample_info) == RETCODE_OK)
             {
                 std::cout << "Sample Received! Index:" << std::to_string(my_sample.index()) << " Key:" <<
                     std::to_string(my_sample.key_value()) << std::endl;

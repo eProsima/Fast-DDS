@@ -42,8 +42,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
-
 class DDSFindTopicTest : public testing::Test
 {
     /**
@@ -363,27 +361,27 @@ TEST_F(DDSFindTopicTest, find_topic_delete_topic)
 
     // Steps 1-4.
     {
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant_->delete_topic(topic_3));
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_2));
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_1));
+        EXPECT_EQ(RETCODE_OK, participant_->delete_topic(topic_3));
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_2));
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_1));
         EXPECT_EQ(nullptr, create_test_topic());
     }
 
     // Steps 5-9.
     {
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, publisher->delete_datawriter(data_writer));
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_3));
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_2));
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant_->delete_topic(topic_1));
+        EXPECT_EQ(RETCODE_OK, publisher->delete_datawriter(data_writer));
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_3));
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_2));
+        EXPECT_EQ(RETCODE_OK, participant_->delete_topic(topic_1));
         EXPECT_EQ(nullptr, create_test_topic());
     }
 
     // Steps 10-14.
     {
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(data_reader));
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_3));
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant_->delete_topic(topic_2));
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_1));
+        EXPECT_EQ(RETCODE_OK, subscriber->delete_datareader(data_reader));
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_3));
+        EXPECT_EQ(RETCODE_OK, participant_->delete_topic(topic_2));
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, participant_->delete_topic(topic_1));
         EXPECT_NE(nullptr, create_test_topic());
     }
 }

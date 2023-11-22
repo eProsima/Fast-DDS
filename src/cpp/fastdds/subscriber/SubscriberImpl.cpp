@@ -403,7 +403,7 @@ bool SubscriberImpl::contains_entity(
     return false;
 }
 
-const ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
+ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
         const std::string& profile_name,
         DataReaderQos& qos) const
 {

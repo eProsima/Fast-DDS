@@ -442,7 +442,7 @@ const DataWriterQos& PublisherImpl::get_default_datawriter_qos() const
     return default_datawriter_qos_;
 }
 
-const ReturnCode_t PublisherImpl::get_datawriter_qos_from_profile(
+ReturnCode_t PublisherImpl::get_datawriter_qos_from_profile(
         const std::string& profile_name,
         DataWriterQos& qos) const
 {

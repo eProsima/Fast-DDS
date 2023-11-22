@@ -132,7 +132,7 @@ private:
             type data;
             eprosima::fastdds::dds::SampleInfo info;
 
-            while (ReturnCode_t::RETCODE_OK == reader->take_next_sample(&data, &info))
+            while (eprosima::fastdds::dds::RETCODE_OK == reader->take_next_sample(&data, &info))
             {
                 participant_->data_received();
             }
@@ -644,7 +644,7 @@ public:
         // Update QoS before updating user data as statistics properties might have changed internally
         participant_qos_ = participant_->get_qos();
         participant_qos_.user_data().data_vec(user_data);
-        return ReturnCode_t::RETCODE_OK == participant_->set_qos(participant_qos_);
+        return eprosima::fastdds::dds::RETCODE_OK == participant_->set_qos(participant_qos_);
     }
 
     PubSubParticipant& wire_protocol(
@@ -659,7 +659,7 @@ public:
     {
         eprosima::fastdds::dds::DomainParticipantQos participant_qos = participant_qos_;
         participant_qos.wire_protocol() = wire_protocol;
-        if (ReturnCode_t::RETCODE_OK == participant_->set_qos(participant_qos))
+        if (eprosima::fastdds::dds::RETCODE_OK == participant_->set_qos(participant_qos))
         {
             participant_qos_ = participant_qos;
             return true;
@@ -775,7 +775,7 @@ public:
         qos = std::get<2>(subscribers_[index])->get_qos();
         qos.deadline().period = deadline_period;
 
-        return ReturnCode_t::RETCODE_OK == std::get<2>(subscribers_[index])->set_qos(qos);
+        return eprosima::fastdds::dds::RETCODE_OK == std::get<2>(subscribers_[index])->set_qos(qos);
     }
 
     void pub_liveliness_lost()
