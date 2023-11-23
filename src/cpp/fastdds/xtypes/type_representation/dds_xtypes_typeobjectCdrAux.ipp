@@ -104,6 +104,8 @@ namespace fastcdr {
 
 
 
+
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -1687,78 +1689,88 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                                 data.byte_value(), current_alignment);
                     break;
 
-        case TK_INT16:
+        case TK_INT8:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                                data.int8_value(), current_alignment);
+                    break;
+
+        case TK_UINT8:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                                data.uint8_value(), current_alignment);
+                    break;
+
+        case TK_INT16:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.int16_value(), current_alignment);
                     break;
 
         case TK_UINT16:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.uint_16_value(), current_alignment);
                     break;
 
         case TK_INT32:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.int32_value(), current_alignment);
                     break;
 
         case TK_UINT32:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.uint32_value(), current_alignment);
                     break;
 
         case TK_INT64:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
                                 data.int64_value(), current_alignment);
                     break;
 
         case TK_UINT64:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
                                 data.uint64_value(), current_alignment);
                     break;
 
         case TK_FLOAT32:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                                 data.float32_value(), current_alignment);
                     break;
 
         case TK_FLOAT64:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
                                 data.float64_value(), current_alignment);
                     break;
 
         case TK_FLOAT128:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(12),
                                 data.float128_value(), current_alignment);
                     break;
 
         case TK_CHAR8:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(13),
                                 data.char_value(), current_alignment);
                     break;
 
         case TK_CHAR16:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(12),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(14),
                                 data.wchar_value(), current_alignment);
                     break;
 
         case TK_ENUM:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(13),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(15),
                                 data.enumerated_value(), current_alignment);
                     break;
 
         case TK_STRING8:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(14),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(16),
                                 data.string8_value(), current_alignment);
                     break;
 
         case TK_STRING16:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(15),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(17),
                                 data.string16_value(), current_alignment);
                     break;
 
                 default:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(16),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(18),
                                 data.extended_value(), current_alignment);
                     break;
 
@@ -1795,64 +1807,72 @@ eProsima_user_DllExport void serialize(
                     scdr << eprosima::fastcdr::MemberId(1) << data.byte_value();
                     break;
 
+                case TK_INT8:
+                    scdr << eprosima::fastcdr::MemberId(2) << data.int8_value();
+                    break;
+
+                case TK_UINT8:
+                    scdr << eprosima::fastcdr::MemberId(3) << data.uint8_value();
+                    break;
+
                 case TK_INT16:
-                    scdr << eprosima::fastcdr::MemberId(2) << data.int16_value();
+                    scdr << eprosima::fastcdr::MemberId(4) << data.int16_value();
                     break;
 
                 case TK_UINT16:
-                    scdr << eprosima::fastcdr::MemberId(3) << data.uint_16_value();
+                    scdr << eprosima::fastcdr::MemberId(5) << data.uint_16_value();
                     break;
 
                 case TK_INT32:
-                    scdr << eprosima::fastcdr::MemberId(4) << data.int32_value();
+                    scdr << eprosima::fastcdr::MemberId(6) << data.int32_value();
                     break;
 
                 case TK_UINT32:
-                    scdr << eprosima::fastcdr::MemberId(5) << data.uint32_value();
+                    scdr << eprosima::fastcdr::MemberId(7) << data.uint32_value();
                     break;
 
                 case TK_INT64:
-                    scdr << eprosima::fastcdr::MemberId(6) << data.int64_value();
+                    scdr << eprosima::fastcdr::MemberId(8) << data.int64_value();
                     break;
 
                 case TK_UINT64:
-                    scdr << eprosima::fastcdr::MemberId(7) << data.uint64_value();
+                    scdr << eprosima::fastcdr::MemberId(9) << data.uint64_value();
                     break;
 
                 case TK_FLOAT32:
-                    scdr << eprosima::fastcdr::MemberId(8) << data.float32_value();
+                    scdr << eprosima::fastcdr::MemberId(10) << data.float32_value();
                     break;
 
                 case TK_FLOAT64:
-                    scdr << eprosima::fastcdr::MemberId(9) << data.float64_value();
+                    scdr << eprosima::fastcdr::MemberId(11) << data.float64_value();
                     break;
 
                 case TK_FLOAT128:
-                    scdr << eprosima::fastcdr::MemberId(10) << data.float128_value();
+                    scdr << eprosima::fastcdr::MemberId(12) << data.float128_value();
                     break;
 
                 case TK_CHAR8:
-                    scdr << eprosima::fastcdr::MemberId(11) << data.char_value();
+                    scdr << eprosima::fastcdr::MemberId(13) << data.char_value();
                     break;
 
                 case TK_CHAR16:
-                    scdr << eprosima::fastcdr::MemberId(12) << data.wchar_value();
+                    scdr << eprosima::fastcdr::MemberId(14) << data.wchar_value();
                     break;
 
                 case TK_ENUM:
-                    scdr << eprosima::fastcdr::MemberId(13) << data.enumerated_value();
+                    scdr << eprosima::fastcdr::MemberId(15) << data.enumerated_value();
                     break;
 
                 case TK_STRING8:
-                    scdr << eprosima::fastcdr::MemberId(14) << data.string8_value();
+                    scdr << eprosima::fastcdr::MemberId(16) << data.string8_value();
                     break;
 
                 case TK_STRING16:
-                    scdr << eprosima::fastcdr::MemberId(15) << data.string16_value();
+                    scdr << eprosima::fastcdr::MemberId(17) << data.string16_value();
                     break;
 
                 default:
-                    scdr << eprosima::fastcdr::MemberId(16) << data.extended_value();
+                    scdr << eprosima::fastcdr::MemberId(18) << data.extended_value();
                     break;
 
     }
@@ -1887,6 +1907,14 @@ eProsima_user_DllExport void deserialize(
 
                                                         case TK_BYTE:
                                                             dcdr >> data.byte_value();
+                                                            break;
+
+                                                        case TK_INT8:
+                                                            dcdr >> data.int8_value();
+                                                            break;
+
+                                                        case TK_UINT8:
+                                                            dcdr >> data.uint8_value();
                                                             break;
 
                                                         case TK_INT16:

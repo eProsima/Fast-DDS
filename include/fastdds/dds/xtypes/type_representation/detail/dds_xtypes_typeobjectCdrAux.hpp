@@ -493,6 +493,8 @@ class CdrSizeCalculator;
 
 
 
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::StringSTypeDefn& data);

@@ -25,6 +25,8 @@ module DDS { module XTypes {
     const octet TK_FLOAT32    = 0x09;
     const octet TK_FLOAT64    = 0x0A;
     const octet TK_FLOAT128   = 0x0B;
+    const octet TK_INT8       = 0x0C;
+    const octet TK_UINT8      = 0x0D;
     const octet TK_CHAR8      = 0x10;
     const octet TK_CHAR16     = 0x11;
 
@@ -274,9 +276,11 @@ module DDS { module XTypes {
         case TK_NONE:
         case TK_BOOLEAN:       
         case TK_BYTE_TYPE:
+        case TK_INT8_TYPE:
         case TK_INT16_TYPE:
         case TK_INT32_TYPE:
         case TK_INT64_TYPE:
+        case TK_UINT8_TYPE:
         case TK_UINT16_TYPE:
         case TK_UINT32_TYPE:
         case TK_UINT64_TYPE:
@@ -351,6 +355,10 @@ module DDS { module XTypes {
             boolean             boolean_value;
         case TK_BYTE:
             octet               byte_value;
+        case TK_INT8:
+            int8                int8_value;
+        case TK_UINT8:
+            uint8               uint8_value;
         case TK_INT16:
             short               int16_value;
         case TK_UINT16:
