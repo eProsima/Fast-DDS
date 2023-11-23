@@ -3150,7 +3150,6 @@ public:
 
                 break;
         }
-        return false;
     }
 
     /*!
@@ -4920,7 +4919,6 @@ public:
 
                 break;
         }
-        return false;
     }
 
     /*!
@@ -21620,7 +21618,6 @@ public:
 
                 break;
         }
-        return false;
     }
 
     /*!
@@ -23179,7 +23176,6 @@ public:
 
                 break;
         }
-        return false;
     }
 
     /*!
