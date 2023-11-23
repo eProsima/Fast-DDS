@@ -120,7 +120,6 @@ static bool are_types_compatible(
 }
 
 using DDSFilterFactory = DDSSQLFilter::DDSFilterFactory;
-using ReturnCode_t = DDSFilterFactory::ReturnCode_t;
 
 static ReturnCode_t create_content_filter(
         DDSFilterFactory& factory,

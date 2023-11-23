@@ -21,11 +21,9 @@
 #define _FASTDDS_STATUS_CONDITION_HPP_
 
 #include <fastdds/dds/core/condition/Condition.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/types/TypesBase.h>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastdds {

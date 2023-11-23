@@ -27,8 +27,6 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {

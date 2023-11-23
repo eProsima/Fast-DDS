@@ -42,8 +42,6 @@
 
 namespace efd = eprosima::fastdds::dds;
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
@@ -65,7 +63,7 @@ public:
      * RETCODE_OK if the DataWriter has been created or if it has been created previously,
      * and RETCODE_ERROR otherwise
      */
-    ReturnCode_t enable_statistics_datawriter(
+    efd::ReturnCode_t enable_statistics_datawriter(
             const std::string& topic_name,
             const efd::DataWriterQos& dwqos);
 
@@ -79,7 +77,7 @@ public:
      * RETCODE_OK if the DataWriter has been created or if it has been created previously,
      * and RETCODE_ERROR otherwise
      */
-    ReturnCode_t enable_statistics_datawriter_with_profile(
+    efd::ReturnCode_t enable_statistics_datawriter_with_profile(
             const std::string& profile_name,
             const std::string& topic_name);
 
@@ -92,7 +90,7 @@ public:
      * RETCODE_OK if the DataWriter has been correctly deleted or does not exist,
      * and RETCODE_ERROR otherwise
      */
-    ReturnCode_t disable_statistics_datawriter(
+    efd::ReturnCode_t disable_statistics_datawriter(
             const std::string& topic_name);
 
     /**
@@ -100,7 +98,7 @@ public:
      *
      * @return RETCODE_OK if successful
      */
-    ReturnCode_t enable() override;
+    efd::ReturnCode_t enable() override;
 
     void disable() override;
 
@@ -117,7 +115,7 @@ public:
      *
      * @return RETCODE_OK if successful
      */
-    ReturnCode_t delete_contained_entities() override;
+    efd::ReturnCode_t delete_contained_entities() override;
 
 protected:
 

@@ -38,8 +38,6 @@ namespace detail {
 
 struct SampleInfoPool
 {
-    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
-
     explicit SampleInfoPool(
             const DataReaderQos& qos)
         : free_items_(qos.reader_resource_limits().sample_infos_allocation)
