@@ -149,7 +149,7 @@ void fastest()
 
     //Read the contents of both histories:
     std::cout << "The Reliable Subscriber (with a history depth of 5) holds: " << std::endl;
-    while (myReader->read_next_sample(&my_sample, &sample_info) == ReturnCode_t::RETCODE_OK)
+    while (myReader->read_next_sample(&my_sample, &sample_info) == RETCODE_OK)
     {
         std::cout << std::to_string(my_sample.index()) << " ";
     }

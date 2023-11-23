@@ -141,7 +141,7 @@ public:
             DataReader* reader) override
     {
         SampleInfo info;
-        if (reader->take_next_sample(&m_sample, &info) == ReturnCode_t::RETCODE_OK)
+        if (reader->take_next_sample(&m_sample, &info) == RETCODE_OK)
         {
             if (info.valid_data)
             {
@@ -365,7 +365,7 @@ void keys()
     //Read the contents of both histories:
     std::vector< std::pair<int, int>> sampleList;
     std::cout << "The Subscriber holds: " << std::endl;
-    while (myReader->read_next_sample(&my_sample, &sample_info) == ReturnCode_t::RETCODE_OK)
+    while (myReader->read_next_sample(&my_sample, &sample_info) == RETCODE_OK)
     {
         sampleList.push_back(std::pair<int, int>(my_sample.index(), my_sample.key_value()));
     }

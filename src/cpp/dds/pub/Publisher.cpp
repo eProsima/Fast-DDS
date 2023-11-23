@@ -65,15 +65,15 @@ void Publisher::qos(
         const qos::PublisherQos& pqos)
 {
     ReturnCode_t code = this->delegate()->set_qos(pqos);
-    if (code == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
+    if (code == eprosima::fastdds::dds::RETCODE_IMMUTABLE_POLICY)
     {
         throw dds::core::ImmutablePolicyError("Immutable Qos");
     }
-    else if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    else if (code == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
     }
-    else if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    else if (code == eprosima::fastdds::dds::RETCODE_UNSUPPORTED)
     {
         throw dds::core::UnsupportedError("Unsupported values on DomainParticipantQos");
     }
@@ -97,11 +97,11 @@ Publisher& Publisher::default_datawriter_qos(
         const qos::DataWriterQos& dwqos)
 {
     ReturnCode_t code = this->delegate()->set_default_datawriter_qos(dwqos);
-    if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    if (code == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
     }
-    if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    if (code == eprosima::fastdds::dds::RETCODE_UNSUPPORTED)
     {
         throw dds::core::UnsupportedError("Unsupported values on DataWriterQos");
     }

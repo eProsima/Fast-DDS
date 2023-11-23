@@ -59,12 +59,12 @@ public:
     {
         if (nullptr != reader_)
         {
-            return ReturnCode_t::RETCODE_OK;
+            return efd::RETCODE_OK;
         }
 
         ReturnCode_t ret = BaseType::enable();
 
-        if (ReturnCode_t::RETCODE_OK == ret &&
+        if (efd::RETCODE_OK == ret &&
                 !DomainParticipantImpl::is_statistics_topic_name(topic_->get_name()))
         {
             reader_->add_statistics_listener(statistics_listener_);

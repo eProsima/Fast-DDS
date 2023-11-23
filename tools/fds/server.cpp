@@ -117,7 +117,7 @@ int fastdds_discovery_server(
                 sXMLConfigFile = sXMLConfigFile.substr(delimiter_pos + 1, sXMLConfigFile.length());
             }
 
-            if (ReturnCode_t::RETCODE_OK != DomainParticipantFactory::get_instance()->load_XML_profiles_file(
+            if (RETCODE_OK != DomainParticipantFactory::get_instance()->load_XML_profiles_file(
                         sXMLConfigFile))
             {
                 std::cout << "Cannot open XML file " << sXMLConfigFile << ". Please, check the path of this "
@@ -145,7 +145,7 @@ int fastdds_discovery_server(
                 }
 #endif // ifdef _WIN32
                 // Set default participant QoS from XML file
-                if (ReturnCode_t::RETCODE_OK != DomainParticipantFactory::get_instance()->load_profiles())
+                if (RETCODE_OK != DomainParticipantFactory::get_instance()->load_profiles())
                 {
                     std::cout << "Error setting default DomainParticipantQos from XML default profile." << std::endl;
                     return 1;
@@ -154,7 +154,7 @@ int fastdds_discovery_server(
             }
             else
             {
-                if (ReturnCode_t::RETCODE_OK !=
+                if (RETCODE_OK !=
                         DomainParticipantFactory::get_instance()->get_participant_qos_from_profile(
                             profile, participantQos))
                 {

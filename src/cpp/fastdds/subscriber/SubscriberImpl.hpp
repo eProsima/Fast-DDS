@@ -148,7 +148,7 @@ public:
 
     DataReaderQos& get_default_datareader_qos();
 
-    const ReturnCode_t get_datareader_qos_from_profile(
+    ReturnCode_t get_datareader_qos_from_profile(
             const std::string& profile_name,
             DataReaderQos& qos) const;
 

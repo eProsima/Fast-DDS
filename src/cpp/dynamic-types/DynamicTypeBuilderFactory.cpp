@@ -113,9 +113,9 @@ ReturnCode_t DynamicTypeBuilderFactory::delete_instance()
     {
         delete g_instance;
         g_instance = nullptr;
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_ERROR;
+    return RETCODE_ERROR;
 }
 
 DynamicTypeBuilderFactory::DynamicTypeBuilderFactory()
@@ -804,13 +804,13 @@ ReturnCode_t DynamicTypeBuilderFactory::delete_builder(
         else
         {
             EPROSIMA_LOG_WARNING(DYN_TYPES, "The given type has been deleted previously.");
-            return ReturnCode_t::RETCODE_ALREADY_DELETED;
+            return RETCODE_ALREADY_DELETED;
         }
 #else
         delete builder;
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_type(
@@ -820,7 +820,7 @@ ReturnCode_t DynamicTypeBuilderFactory::delete_type(
     {
         delete type;
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::get_primitive_type(

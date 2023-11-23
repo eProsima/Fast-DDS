@@ -274,7 +274,7 @@ void TestSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
     SampleInfo info;
-    if (!!reader->take_next_sample(mParent->m_Data, &info))
+    if (RETCODE_OK == reader->take_next_sample(mParent->m_Data, &info))
     {
         if (info.valid_data)
         {
@@ -369,7 +369,7 @@ bool TestSubscriber::register_discovered_type()
     TypeSupport type(disc_type_);
     type->auto_fill_type_object(true);
     type->auto_fill_type_information(true);
-    return type.register_type(mp_participant, disc_type_->get_name()) == ReturnCode_t::RETCODE_OK;
+    return type.register_type(mp_participant, disc_type_->get_name()) == RETCODE_OK;
 }
 
 void TestSubscriber::run()

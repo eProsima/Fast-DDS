@@ -83,12 +83,12 @@ ReturnCode_t DynamicType::apply_annotation(
         pNewDescriptor->copy_from(&descriptor);
         descriptor_->annotation_.push_back(pNewDescriptor);
         is_key_defined_ = key_annotation();
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -111,7 +111,7 @@ ReturnCode_t DynamicType::apply_annotation(
         descriptor_->annotation_.push_back(pNewDescriptor);
         is_key_defined_ = key_annotation();
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DynamicType::apply_annotation_to_member(
@@ -124,18 +124,18 @@ ReturnCode_t DynamicType::apply_annotation_to_member(
         if (it != member_by_id_.end())
         {
             it->second->apply_annotation(descriptor);
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            return RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -149,12 +149,12 @@ ReturnCode_t DynamicType::apply_annotation_to_member(
     if (it != member_by_id_.end())
     {
         it->second->apply_annotation(annotation_name, key, value);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -196,12 +196,12 @@ ReturnCode_t DynamicType::copy_from_builder(
             member_by_name_.insert(std::make_pair(newMember->get_name(), newMember));
         }
 
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying DynamicType, invalid input type");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -224,12 +224,12 @@ ReturnCode_t DynamicType::get_descriptor(
     if (descriptor != nullptr)
     {
         descriptor->copy_from(descriptor_);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting TypeDescriptor, invalid input descriptor");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -334,12 +334,12 @@ ReturnCode_t DynamicType::get_member_by_name(
     if (it != member_by_name_.end())
     {
         member = it->second;
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member by name, member not found.");
-        return ReturnCode_t::RETCODE_ERROR;
+        return RETCODE_ERROR;
     }
 }
 
@@ -347,7 +347,7 @@ ReturnCode_t DynamicType::get_all_members_by_name(
         std::map<std::string, DynamicTypeMember*>& members)
 {
     members = member_by_name_;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DynamicType::get_member(
@@ -358,12 +358,12 @@ ReturnCode_t DynamicType::get_member(
     if (it != member_by_id_.end())
     {
         member = it->second;
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member, member not found.");
-        return ReturnCode_t::RETCODE_ERROR;
+        return RETCODE_ERROR;
     }
 }
 
@@ -371,7 +371,7 @@ ReturnCode_t DynamicType::get_all_members(
         std::map<MemberId, DynamicTypeMember*>& members)
 {
     members = member_by_id_;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 uint32_t DynamicType::get_annotation_count()
@@ -386,12 +386,12 @@ ReturnCode_t DynamicType::get_annotation(
     if (idx < descriptor_->annotation_.size())
     {
         descriptor = *descriptor_->annotation_[idx];
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting annotation, annotation not found.");
-        return ReturnCode_t::RETCODE_ERROR;
+        return RETCODE_ERROR;
     }
 }
 
