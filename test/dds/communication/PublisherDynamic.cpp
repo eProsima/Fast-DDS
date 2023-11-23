@@ -242,7 +242,7 @@ int main(
     }
 
     types::DynamicTypeBuilder* dyn_type_builder = nullptr;
-    if (ReturnCode_t::RETCODE_OK !=
+    if (RETCODE_OK !=
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("TypeLookup",
             dyn_type_builder))
     {

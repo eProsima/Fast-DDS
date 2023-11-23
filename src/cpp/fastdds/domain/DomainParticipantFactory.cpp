@@ -120,7 +120,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
 #endif // ifdef FASTDDS_STATISTICS
         if (part->has_active_entities())
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
 
         VectorIt vit = participants_.find(part->get_domain_id());
@@ -147,10 +147,10 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
             {
                 participants_.erase(vit);
             }
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
         }
     }
-    return ReturnCode_t::RETCODE_ERROR;
+    return RETCODE_ERROR;
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant(
@@ -191,7 +191,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
         if (factory_qos_.entity_factory().autoenable_created_entities)
         {
-            if (ReturnCode_t::RETCODE_OK != dom_part->enable())
+            if (RETCODE_OK != dom_part->enable())
             {
                 delete_participant(dom_part);
                 return nullptr;
@@ -283,7 +283,7 @@ ReturnCode_t DomainParticipantFactory::get_default_participant_qos(
         DomainParticipantQos& qos) const
 {
     qos = default_participant_qos_;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 const DomainParticipantQos& DomainParticipantFactory::get_default_participant_qos() const
@@ -297,16 +297,16 @@ ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
     if (&qos == &PARTICIPANT_QOS_DEFAULT)
     {
         reset_default_participant_qos();
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t ret_val = DomainParticipantImpl::check_qos(qos);
-    if (!ret_val)
+    if (RETCODE_OK != ret_val)
     {
         return ret_val;
     }
     DomainParticipantImpl::set_qos(default_participant_qos_, qos, true);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantFactory::get_participant_qos_from_profile(
@@ -318,10 +318,10 @@ ReturnCode_t DomainParticipantFactory::get_participant_qos_from_profile(
     {
         qos = default_participant_qos_;
         utils::set_qos_from_attributes(qos, attr.rtps);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DomainParticipantFactory::load_profiles()
@@ -354,7 +354,7 @@ ReturnCode_t DomainParticipantFactory::load_profiles()
         RTPSDomain::set_filewatch_thread_config(factory_qos_.file_watch_threads(), factory_qos_.file_watch_threads());
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantFactory::load_XML_profiles_file(
@@ -363,9 +363,9 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_file(
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLFile(xml_profile_file))
     {
         EPROSIMA_LOG_ERROR(DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
-        return ReturnCode_t::RETCODE_ERROR;
+        return RETCODE_ERROR;
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
@@ -375,9 +375,9 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLString(data, length))
     {
         EPROSIMA_LOG_ERROR(DOMAIN, "Problem loading XML string");
-        return ReturnCode_t::RETCODE_ERROR;
+        return RETCODE_ERROR;
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantFactory::check_xml_static_discovery(
@@ -387,32 +387,32 @@ ReturnCode_t DomainParticipantFactory::check_xml_static_discovery(
     if (XMLP_ret::XML_OK != parser.loadXMLFile(xml_file))
     {
         EPROSIMA_LOG_ERROR(DOMAIN, "Error parsing xml file");
-        return ReturnCode_t::RETCODE_ERROR;
+        return RETCODE_ERROR;
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantFactory::get_qos(
         DomainParticipantFactoryQos& qos) const
 {
     qos = factory_qos_;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantFactory::set_qos(
         const DomainParticipantFactoryQos& qos)
 {
     ReturnCode_t ret_val = check_qos(qos);
-    if (!ret_val)
+    if (RETCODE_OK != ret_val)
     {
         return ret_val;
     }
     if (!can_qos_be_updated(factory_qos_, qos))
     {
-        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        return RETCODE_IMMUTABLE_POLICY;
     }
     set_qos(factory_qos_, qos, false);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void DomainParticipantFactory::reset_default_participant_qos()
@@ -444,7 +444,7 @@ ReturnCode_t DomainParticipantFactory::check_qos(
 {
     (void) qos;
     //There is no restriction by the moment with the contained Qos
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 bool DomainParticipantFactory::can_qos_be_updated(
@@ -486,7 +486,7 @@ ReturnCode_t DomainParticipantFactory::get_library_settings(
         LibrarySettings& library_settings) const
 {
     rtps_domain_->get_library_settings(library_settings);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantFactory::set_library_settings(
@@ -494,9 +494,9 @@ ReturnCode_t DomainParticipantFactory::set_library_settings(
 {
     if (rtps_domain_->set_library_settings(library_settings))
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    return RETCODE_PRECONDITION_NOT_MET;
 }
 
 ReturnCode_t DomainParticipantFactory::get_dynamic_type_builder_from_xml_by_name(
@@ -505,14 +505,14 @@ ReturnCode_t DomainParticipantFactory::get_dynamic_type_builder_from_xml_by_name
 {
     if (type_name.empty())
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
     type = XMLProfileManager::getDynamicTypeByName(type_name);
     if (nullptr == type)
     {
-        return ReturnCode_t::RETCODE_NO_DATA;
+        return RETCODE_NO_DATA;
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 } /* namespace dds */

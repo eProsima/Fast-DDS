@@ -59,7 +59,7 @@ public:
     virtual fastrtps::types::ReturnCode_t enable()
     {
         enable_ = true;
-        return fastrtps::types::ReturnCode_t::RETCODE_OK;
+        return fastrtps::types::RETCODE_OK;
     }
 
     /**

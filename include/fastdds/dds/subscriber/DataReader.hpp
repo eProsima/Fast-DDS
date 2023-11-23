@@ -135,7 +135,7 @@ public:
      * @brief Method to block the current thread until an unread message is available.
      *
      * @param[in] max_wait Max blocking time for this operation.
-     * @return RETCODE_OK if there is new unread message, ReturnCode_t::RETCODE_TIMEOUT if timeout
+     * @return RETCODE_OK if there is new unread message, RETCODE_TIMEOUT if timeout
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     FASTDDS_EXPORTED_API ReturnCode_t wait_for_historical_data(

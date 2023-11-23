@@ -356,7 +356,7 @@ int main(
             types::DynamicData_ptr sample(static_cast<types::DynamicData*>(pst.createData()));
             eprosima::fastdds::dds::SampleInfo info;
 
-            if (!!reader->take_next_sample(sample.get(), &info))
+            if (RETCODE_OK == reader->take_next_sample(sample.get(), &info))
             {
                 if (info.valid_data)
                 {
@@ -386,7 +386,7 @@ int main(
 
     if (participant != nullptr)
     {
-        if (!participant->delete_contained_entities() && !result)
+        if (RETCODE_OK != participant->delete_contained_entities() && !result)
         {
             std::cout << "ERROR: precondition not met on participant entities removal" << std::endl;
             result = 1;

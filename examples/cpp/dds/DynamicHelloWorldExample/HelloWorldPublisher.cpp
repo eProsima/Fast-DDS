@@ -38,7 +38,7 @@ HelloWorldPublisher::HelloWorldPublisher()
 
 bool HelloWorldPublisher::init()
 {
-    if (ReturnCode_t::RETCODE_OK !=
+    if (RETCODE_OK !=
             DomainParticipantFactory::get_instance()->load_XML_profiles_file("helloworld_example_type_profile.xml"))
     {
         std::cout <<
@@ -48,7 +48,7 @@ bool HelloWorldPublisher::init()
     }
 
     eprosima::fastrtps::types::DynamicTypeBuilder* type;
-    if (ReturnCode_t::RETCODE_OK !=
+    if (RETCODE_OK !=
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("HelloWorld", type))
     {
         std::cout <<

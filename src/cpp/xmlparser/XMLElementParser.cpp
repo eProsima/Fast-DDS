@@ -76,7 +76,7 @@ static std::string process_environment(
                     // Silently ignore ${_} since it might expose sensitive information (full path to executable).
                     EPROSIMA_LOG_WARNING(XMLPARSER, "Ignoring environment variable ${_}");
                 }
-                else if (ReturnCode_t::RETCODE_OK != SystemInfo::get_env(var_name, value))
+                else if (dds::RETCODE_OK != SystemInfo::get_env(var_name, value))
                 {
                     EPROSIMA_LOG_ERROR(XMLPARSER, "Could not find a value for environment variable " << var_name);
                 }

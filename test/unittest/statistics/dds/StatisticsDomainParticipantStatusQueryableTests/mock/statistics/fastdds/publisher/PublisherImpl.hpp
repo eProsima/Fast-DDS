@@ -131,7 +131,7 @@ public:
 
         writers_.clear();
 
-        return ReturnCode_t::RETCODE_OK;
+        return efd::RETCODE_OK;
     }
 
 private:

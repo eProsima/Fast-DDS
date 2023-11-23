@@ -97,9 +97,9 @@ ReturnCode_t DynamicTypeMember::get_annotation(
     if (idx < descriptor_.annotation_.size())
     {
         descriptor.copy_from(descriptor_.annotation_[idx]);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
 uint32_t DynamicTypeMember::get_annotation_count()
@@ -123,12 +123,12 @@ ReturnCode_t DynamicTypeMember::get_descriptor(
     if (descriptor != nullptr)
     {
         descriptor->copy_from(&descriptor_);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting MemberDescriptor, invalid input descriptor");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 

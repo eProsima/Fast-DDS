@@ -149,7 +149,7 @@ public:
             else if ( *it == pRC )
             {
                 // already there
-                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+                return RETCODE_PRECONDITION_NOT_MET;
             }
             else
             {
@@ -163,7 +163,7 @@ public:
         // associate
         pRC->impl_ = shared_from_this();
 
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     /**
@@ -191,7 +191,7 @@ public:
             {
                 conditions_.erase_after(pit);
 
-                return ReturnCode_t::RETCODE_OK;
+                return RETCODE_OK;
             }
             else
             {
@@ -199,7 +199,7 @@ public:
             }
         }
 
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     void set_trigger_value(

@@ -552,8 +552,8 @@ TEST_F(UserThreadNonBlockedTest, read_sample_besteffort)
             auto returned_value = future.get();
             // If main mutex cannot be taken, the write fails.
             // But for the rest the information is stored and it is as if the samples was sent.
-            ASSERT_EQ(count == 0 ? eprosima::fastrtps::types::ReturnCode_t::RETCODE_NO_DATA :
-                    eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK, returned_value.first);
+            ASSERT_EQ(count == 0 ? eprosima::fastrtps::types::RETCODE_NO_DATA :
+                    eprosima::fastrtps::types::RETCODE_OK, returned_value.first);
             std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datareader_qos_.reliability().max_blocking_time));
             ASSERT_GE(returned_value.second, max_w);
@@ -622,7 +622,7 @@ TEST_F(UserThreadNonBlockedTest, read_sample_reliable)
             // If main mutex cannot be taken, the write fails.
             // But for the rest the information is stored and it is as if the samples was sent.
             ASSERT_EQ(
-                count == 0 ? eprosima::fastrtps::types::ReturnCode_t::RETCODE_NO_DATA : eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK,
+                count == 0 ? eprosima::fastrtps::types::RETCODE_NO_DATA : eprosima::fastrtps::types::RETCODE_OK,
                 returned_value.first);
             std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datareader_qos_.reliability().max_blocking_time));
@@ -692,7 +692,7 @@ TEST_F(UserThreadNonBlockedTest, take_sample_besteffort)
             // If main mutex cannot be taken, the write fails.
             // But for the rest the information is stored and it is as if the samples was sent.
             ASSERT_EQ(
-                count == 0 ? eprosima::fastrtps::types::ReturnCode_t::RETCODE_NO_DATA : eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK,
+                count == 0 ? eprosima::fastrtps::types::RETCODE_NO_DATA : eprosima::fastrtps::types::RETCODE_OK,
                 returned_value.first);
             std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datareader_qos_.reliability().max_blocking_time));
@@ -762,7 +762,7 @@ TEST_F(UserThreadNonBlockedTest, take_sample_reliable)
             // If main mutex cannot be taken, the write fails.
             // But for the rest the information is stored and it is as if the samples was sent.
             ASSERT_EQ(
-                count == 0 ? eprosima::fastrtps::types::ReturnCode_t::RETCODE_NO_DATA : eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK,
+                count == 0 ? eprosima::fastrtps::types::RETCODE_NO_DATA : eprosima::fastrtps::types::RETCODE_OK,
                 returned_value.first);
             std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datareader_qos_.reliability().max_blocking_time));

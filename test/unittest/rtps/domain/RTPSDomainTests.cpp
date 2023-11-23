@@ -85,7 +85,7 @@ TEST(RTPSDomainTests, get_topic_attributes_from_profile_test)
 </profiles>)";
 
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_string(xml.c_str(),
-            xml.length()), ReturnCode_t::RETCODE_OK);
+            xml.length()), eprosima::fastdds::dds::RETCODE_OK);
     EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::get_topic_attributes_from_profile(profile_name, topic_att));
     EXPECT_EQ(topic_att.topicName, "Test");
     EXPECT_EQ(topic_att.topicDataType, "DataTest");
