@@ -95,10 +95,10 @@ for idl_file in "${idl_files[@]}"; do
 done
 
 # Move source files to src/cpp
-mv ./include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobjectCdrAux.ipp ./src/cpp/fastdds/xtypes/type_representation/dds-xtypes_typeobjectCdrAux.ipp
-mv ./include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobjectPubSubTypes.cxx ./src/cpp/fastdds/xtypes/type_representation/dds-xtypes_typeobjectPubSubTypes.cxx
+mv ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.ipp ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.ipp
+mv ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.cxx ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
 
-sed -i 's+"dds-xtypes_typeobjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobjectCdrAux.hpp>+' ./src/cpp/fastdds/xtypes/type_representation/dds-xtypes_typeobjectCdrAux.ipp
-sed -i 's+"dds-xtypes_typeobjectPubSubTypes.h"+<fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobjectPubSubTypes.h>+' ./src/cpp/fastdds/xtypes/type_representation/dds-xtypes_typeobjectPubSubTypes.cxx
+sed -i 's+"dds_xtypes_typeobjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.ipp
+sed -i 's+"dds_xtypes_typeobjectPubSubTypes.h"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.h>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
 
 exit $ret_value
