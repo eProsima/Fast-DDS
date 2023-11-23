@@ -221,21 +221,21 @@ TEST(SubscriberTests, ChangeSubscriberQos)
     ASSERT_NE(subscriber, nullptr);
 
     SubscriberQos qos;
-    ASSERT_EQ(subscriber->get_qos(qos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->get_qos(qos), RETCODE_OK);
 
     ASSERT_EQ(qos, SUBSCRIBER_QOS_DEFAULT);
 
     qos.entity_factory().autoenable_created_entities = false;
 
-    ASSERT_EQ(subscriber->set_qos(qos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->set_qos(qos), RETCODE_OK);
     SubscriberQos pqos;
-    ASSERT_EQ(subscriber->get_qos(pqos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->get_qos(pqos), RETCODE_OK);
 
     ASSERT_TRUE(qos == pqos);
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 
-    ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_subscriber(subscriber) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 
 }
 
@@ -365,7 +365,7 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     // .data_sharing
     qos.data_sharing().on("/");
 
-    ASSERT_TRUE(subscriber->set_default_datareader_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(subscriber->set_default_datareader_qos(qos) == RETCODE_OK);
 
     DataReaderQos wqos;
     subscriber->get_default_datareader_qos(wqos);
@@ -497,8 +497,8 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
 
     EXPECT_EQ(qos, wqos);
 
-    ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_subscriber(subscriber) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(SubscriberTests, ChangePSMDefaultDataReaderQos)
@@ -529,8 +529,8 @@ TEST(SubscriberTests, GetSubscriberParticipant)
 
     ASSERT_EQ(subscriber->get_participant(), participant);
 
-    ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_subscriber(subscriber) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(SubscriberTests, GetPSMSubscriberParticipant)
@@ -559,10 +559,10 @@ TEST(SubscriberTests, CreateDataReader)
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(data_reader, nullptr);
 
-    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 void check_datareader_with_profile (
@@ -635,17 +635,17 @@ TEST(SubscriberTests, CreateDataReaderWithProfile)
     DataReader* default_datareader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(default_datareader, nullptr);
     check_datareader_with_profile(default_datareader, "test_default_subscriber_profile");
-    ASSERT_TRUE(subscriber->delete_datareader(default_datareader) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(subscriber->delete_datareader(default_datareader) == RETCODE_OK);
 
     //participant using non-default profile
     DataReader* datareader = subscriber->create_datareader_with_profile(topic, "test_subscriber_profile");
     ASSERT_NE(datareader, nullptr);
     check_datareader_with_profile(datareader, "test_subscriber_profile");
-    ASSERT_TRUE(subscriber->delete_datareader(datareader) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(subscriber->delete_datareader(datareader) == RETCODE_OK);
 
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 TEST(SubscriberTests, GetDataReaderProfileQos)
@@ -665,7 +665,7 @@ TEST(SubscriberTests, GetDataReaderProfileQos)
     DataReaderQos qos;
     EXPECT_EQ(
         subscriber->get_datareader_qos_from_profile("test_subscriber_profile", qos),
-        ReturnCode_t::RETCODE_OK);
+        RETCODE_OK);
 
     //DataReader using the extracted qos
     DataReader* datareader = subscriber->create_datareader(topic, qos);
@@ -676,13 +676,13 @@ TEST(SubscriberTests, GetDataReaderProfileQos)
     // Test return when a non-existent profile is used
     EXPECT_EQ(
         subscriber->get_datareader_qos_from_profile("incorrect_profile_name", qos),
-        ReturnCode_t::RETCODE_BAD_PARAMETER);
+        RETCODE_BAD_PARAMETER);
 
     // Clean up
-    ASSERT_EQ(subscriber->delete_datareader(datareader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->delete_datareader(datareader), RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 TEST(SubscriberTests, DeleteSubscriberWithReaders)
@@ -703,13 +703,13 @@ TEST(SubscriberTests, DeleteSubscriberWithReaders)
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(data_reader, nullptr);
 
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_PRECONDITION_NOT_MET);
 
-    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
 
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 //TODO: [ILG] Activate the test once PSM API for DataReader is in place
@@ -743,7 +743,7 @@ void set_listener_test (
         SubscriberListener* listener,
         StatusMask mask)
 {
-    ASSERT_EQ(subscriber->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->set_listener(listener, mask), RETCODE_OK);
     ASSERT_EQ(subscriber->get_status_mask(), mask);
 }
 
@@ -795,13 +795,13 @@ TEST(SubscriberTests, SetListener)
                 std::get<2>(testing_case));
     }
 
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
  * This test checks that the Subscriber methods defined in the standard not yet implemented in FastDDS return
- * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
+ * RETCODE_UNSUPPORTED. The following methods are checked:
  * 1. copy_from_topic_qos
  * 2. begin_access
  * 3. end_access
@@ -822,17 +822,17 @@ TEST(SubscriberTests, UnsupportedPublisherMethods)
 
     fastdds::dds::DataReaderQos reader_qos;
     fastdds::dds::TopicQos topic_qos;
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->copy_from_topic_qos(reader_qos, topic_qos));
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->begin_access());
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->end_access());
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->get_datareaders(
+    EXPECT_EQ(RETCODE_UNSUPPORTED, subscriber->copy_from_topic_qos(reader_qos, topic_qos));
+    EXPECT_EQ(RETCODE_UNSUPPORTED, subscriber->begin_access());
+    EXPECT_EQ(RETCODE_UNSUPPORTED, subscriber->end_access());
+    EXPECT_EQ(RETCODE_UNSUPPORTED, subscriber->get_datareaders(
                 readers,
                 sample_states,
                 view_states,
                 instance_states));
 
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /**
@@ -940,7 +940,7 @@ TEST(SubscriberTests, DeleteContainedEntities)
     BarType data;
     data.index(1);
     type.get_key(&data, &handle_nil);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_foo->write(&data, HANDLE_NIL));
+    EXPECT_EQ(RETCODE_OK, data_writer_foo->write(&data, HANDLE_NIL));
 
     // Wait for data to arrive and check OK should be returned
     Duration_t wait_time(1, 0);
@@ -949,11 +949,11 @@ TEST(SubscriberTests, DeleteContainedEntities)
     LoanableSequence<BarType> mock_coll;
     SampleInfoSeq mock_seq;
 
-    ASSERT_EQ(data_reader_foo->take(mock_coll, mock_seq), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(data_reader_foo->take(mock_coll, mock_seq), RETCODE_OK);
 
-    ASSERT_EQ(subscriber->delete_contained_entities(), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(subscriber->delete_contained_entities(), RETCODE_PRECONDITION_NOT_MET);
 
-    ASSERT_EQ(data_reader_foo->return_loan(mock_coll, mock_seq), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(data_reader_foo->return_loan(mock_coll, mock_seq), RETCODE_OK);
 
     SampleStateMask mock_sample_state_kind = ANY_SAMPLE_STATE;
     ViewStateMask mock_view_state_kind = ANY_VIEW_STATE;
@@ -977,7 +977,7 @@ TEST(SubscriberTests, DeleteContainedEntities)
     ASSERT_TRUE(data_reader_list.size() == 2);
 
     data_reader_list.clear();
-    ASSERT_EQ(subscriber->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->delete_contained_entities(), RETCODE_OK);
 
     subscriber->get_datareaders(data_reader_list);
     ASSERT_TRUE(data_reader_list.size() == 0);

@@ -97,7 +97,7 @@ void ReqRepHelloWorldReplier::init()
 
     // Register type
     type_.reset(new HelloWorldPubSubType());
-    ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant_->register_type(type_), eprosima::fastdds::dds::RETCODE_OK);
 
     configDatareader("Request");
     request_topic_ = participant_->create_topic(datareader_topicname_,
@@ -193,7 +193,7 @@ void ReqRepHelloWorldReplier::ReplyListener::on_data_available(
     HelloWorld hello;
     eprosima::fastdds::dds::SampleInfo info;
 
-    if (ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&hello, &info))
+    if (eprosima::fastdds::dds::RETCODE_OK == datareader->take_next_sample((void*)&hello, &info))
     {
         if (info.valid_data)
         {

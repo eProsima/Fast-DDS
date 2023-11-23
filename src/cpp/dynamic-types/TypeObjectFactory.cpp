@@ -62,9 +62,9 @@ ReturnCode_t TypeObjectFactory::delete_instance()
     {
         delete g_instance;
         g_instance = nullptr;
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_ERROR;
+    return RETCODE_ERROR;
 }
 
 TypeObjectFactory::TypeObjectFactory()

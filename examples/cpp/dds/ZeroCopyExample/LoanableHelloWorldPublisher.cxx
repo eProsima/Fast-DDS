@@ -144,7 +144,7 @@ void LoanableHelloWorldPublisher::run()
         if (ch == 'y')
         {
             void* sample = nullptr;
-            if (ReturnCode_t::RETCODE_OK == writer_->loan_sample(sample))
+            if (RETCODE_OK == writer_->loan_sample(sample))
             {
                 std::cout << "Preparing sample at address " << sample << std::endl;
                 LoanableHelloWorld* data = static_cast<LoanableHelloWorld*>(sample);

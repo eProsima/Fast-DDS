@@ -98,7 +98,7 @@ ReturnCode_t DynamicTypeBuilder::add_empty_member(
         if (index >= descriptor_->get_bounds(0))
         {
             EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, out of bounds.");
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            return RETCODE_BAD_PARAMETER;
         }
         descriptor.annotation_set_position(static_cast<uint16_t>(descriptor.get_index()));
     }
@@ -148,25 +148,25 @@ ReturnCode_t DynamicTypeBuilder::add_member(
                         delete newMember;
                     }
                     ++current_member_id_;
-                    return ReturnCode_t::RETCODE_OK;
+                    return RETCODE_OK;
                 }
                 else
                 {
                     EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, invalid union parameters.");
-                    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+                    return RETCODE_BAD_PARAMETER;
                 }
             }
             else
             {
                 EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, there is other member with the same name.");
-                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+                return RETCODE_BAD_PARAMETER;
             }
         }
         else
         {
             EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, the current type " << descriptor_->get_kind()
                                                                                      << " doesn't support members.");
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
     }
     else
@@ -179,7 +179,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
         {
             EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, The input descriptor isn't consistent.");
         }
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -338,7 +338,7 @@ ReturnCode_t DynamicTypeBuilder::copy_from(
         clear();
 
         ReturnCode_t res = copy_from_builder(other);
-        if (res == ReturnCode_t::RETCODE_OK)
+        if (res == RETCODE_OK)
         {
             current_member_id_ = other->current_member_id_;
         }
@@ -347,7 +347,7 @@ ReturnCode_t DynamicTypeBuilder::copy_from(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying DynamicTypeBuilder. Invalid input parameter.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -369,12 +369,12 @@ ReturnCode_t DynamicTypeBuilder::copy_from_builder(
             member_by_name_.insert(std::make_pair(newMember->get_name(), newMember));
         }
 
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying DynamicType, invalid input type");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -414,7 +414,7 @@ ReturnCode_t DynamicTypeBuilder::get_all_members(
         std::map<MemberId, DynamicTypeMember*>& members)
 {
     members = member_by_id_;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 std::string DynamicTypeBuilder::get_name() const
@@ -456,7 +456,7 @@ ReturnCode_t DynamicTypeBuilder::set_name(
         descriptor_->set_name(name);
     }
     name_ = name;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
@@ -469,18 +469,18 @@ ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
         if (it != member_by_id_.end())
         {
             it->second->apply_annotation(descriptor);
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            return RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -494,12 +494,12 @@ ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
     if (it != member_by_id_.end())
     {
         it->second->apply_annotation(annotation_name, key, value);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 

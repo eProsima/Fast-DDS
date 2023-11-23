@@ -165,7 +165,7 @@ public:
 
     const DataWriterQos& get_default_datawriter_qos() const;
 
-    const ReturnCode_t get_datawriter_qos_from_profile(
+    ReturnCode_t get_datawriter_qos_from_profile(
             const std::string& profile_name,
             DataWriterQos& qos) const;
 

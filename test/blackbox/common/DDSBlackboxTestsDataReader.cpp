@@ -195,7 +195,7 @@ TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
     eprosima::fastdds::dds::DataReader& reader = pubsub_reader.get_native_reader();
     eprosima::fastdds::dds::SampleInfo info;
 
-    EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA, reader.get_first_untaken_info(&info));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_NO_DATA, reader.get_first_untaken_info(&info));
 
     // Wait for discovery.
     pubsub_reader.wait_discovery();
@@ -216,7 +216,7 @@ TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
     //! Checks whether total_unread_ is consistent with
     //! the number of unread changes in history
     //! This API call should NOT modify the history
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader.get_first_untaken_info(&info));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, reader.get_first_untaken_info(&info));
 
     HelloWorld msg;
     eprosima::fastdds::dds::SampleInfo sinfo;
@@ -225,7 +225,7 @@ TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
     auto result = reader.take_next_sample((void*)&msg, &sinfo);
 
     //! Assert last operation
-    ASSERT_EQ(result, ReturnCode_t::RETCODE_OK) << "Reader's unread count is: " << reader.get_unread_count();
+    ASSERT_EQ(result, eprosima::fastdds::dds::RETCODE_OK) << "Reader's unread count is: " << reader.get_unread_count();
 }
 
 //! Regression test for Issues #3822 Github #3875
@@ -246,7 +246,7 @@ TEST(DDSDataReader, ConsistentReliabilityWhenIntraprocess)
         eprosima::fastdds::dds::StatusMask::none());
 
     eprosima::fastdds::dds::TypeSupport t_type{ new HelloWorldPubSubType() };
-    ASSERT_TRUE(t_type.register_type( participant ) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(t_type.register_type( participant ) == eprosima::fastdds::dds::RETCODE_OK);
 
     auto topic = participant->create_topic( TEST_TOPIC_NAME, t_type.get_type_name(),
                     participant->get_default_topic_qos());

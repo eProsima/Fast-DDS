@@ -151,7 +151,7 @@ void safest()
 
     //Read the contents of both histories:
     std::cout << "The Reliable Subscriber holds: " << std::endl;
-    while (myReader->read_next_sample(&my_sample, &sample_info) == ReturnCode_t::RETCODE_OK)
+    while (myReader->read_next_sample(&my_sample, &sample_info) == RETCODE_OK)
     {
         std::cout << std::to_string(my_sample.index()) << " (key " << static_cast<int>(my_sample.key_value()) << ")" <<
             std::endl;

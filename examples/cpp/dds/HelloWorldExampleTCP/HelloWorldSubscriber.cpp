@@ -179,7 +179,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
+    if (reader->take_next_sample(&hello_, &info) == RETCODE_OK)
     {
         if (info.valid_data)
         {

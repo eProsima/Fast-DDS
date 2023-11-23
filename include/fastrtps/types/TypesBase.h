@@ -24,6 +24,7 @@
 #include <type_traits>
 #include <vector>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/rtps/common/Types.h>
 
 namespace eprosima {
@@ -182,93 +183,20 @@ typedef std::array<uint8_t, 4> NameHash;
 // Selects  T1, T2, O, M, K, D
 const uint16_t MemberFlagMinimalMask = 0x003f;
 
-/*!
- * @brief This class represents the enumeration ReturnCode_t.
- */
-
-class RTPS_DllAPI ReturnCode_t
-{
-    uint32_t value_;
-
-public:
-
-    enum ReturnCodeValue
-    {
-        RETCODE_OK = 0,
-        RETCODE_ERROR = 1,
-        RETCODE_UNSUPPORTED = 2,
-        RETCODE_BAD_PARAMETER = 3,
-        RETCODE_PRECONDITION_NOT_MET = 4,
-        RETCODE_OUT_OF_RESOURCES = 5,
-        RETCODE_NOT_ENABLED = 6,
-        RETCODE_IMMUTABLE_POLICY = 7,
-        RETCODE_INCONSISTENT_POLICY = 8,
-        RETCODE_ALREADY_DELETED = 9,
-        RETCODE_TIMEOUT = 10,
-        RETCODE_NO_DATA = 11,
-        RETCODE_ILLEGAL_OPERATION = 12,
-        RETCODE_NOT_ALLOWED_BY_SECURITY = 13
-    };
-
-    ReturnCode_t()
-        : value_(RETCODE_OK)
-    {
-    }
-
-    ReturnCode_t(
-            uint32_t e)
-    {
-        value_ = e;
-    }
-
-    bool operator ==(
-            const ReturnCode_t& c) const
-    {
-        return value_ == c.value_;
-    }
-
-    bool operator !=(
-            const ReturnCode_t& c) const
-    {
-        return value_ != c.value_;
-    }
-
-    explicit operator bool() = delete;
-
-    uint32_t operator ()() const
-    {
-        return value_;
-    }
-
-    bool operator !() const
-    {
-        return value_ != 0;
-    }
-
-};
-
-template<class T>
-typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
-operator ==(
-        T a,
-        const ReturnCode_t& b)
-{
-    return b.operator ==(
-        a);
-}
-
-template<class T>
-typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
-operator !=(
-        T a,
-        const ReturnCode_t& b)
-{
-    return b.operator !=(
-        a);
-}
-
-// TODO Remove this alias when Fast-RTPS reaches version 2
-using ResponseCode = ReturnCode_t;
+using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
+const ReturnCode_t RETCODE_OK =  eprosima::fastdds::dds::RETCODE_OK;
+const ReturnCode_t RETCODE_ERROR =  eprosima::fastdds::dds::RETCODE_ERROR;
+const ReturnCode_t RETCODE_UNSUPPORTED =  eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
+const ReturnCode_t RETCODE_BAD_PARAMETER =  eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+const ReturnCode_t RETCODE_PRECONDITION_NOT_MET = eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
+const ReturnCode_t RETCODE_OUT_OF_RESOURCES =  eprosima::fastdds::dds::RETCODE_OUT_OF_RESOURCES;
+const ReturnCode_t RETCODE_NOT_ENABLED =  eprosima::fastdds::dds::RETCODE_NOT_ENABLED;
+const ReturnCode_t RETCODE_IMMUTABLE_POLICY =  eprosima::fastdds::dds::RETCODE_IMMUTABLE_POLICY;
+const ReturnCode_t RETCODE_INCONSISTENT_POLICY =  eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY;
+const ReturnCode_t RETCODE_ALREADY_DELETED =  eprosima::fastdds::dds::RETCODE_ALREADY_DELETED;
+const ReturnCode_t RETCODE_TIMEOUT =  eprosima::fastdds::dds::RETCODE_TIMEOUT;
+const ReturnCode_t RETCODE_NO_DATA =  eprosima::fastdds::dds::RETCODE_NO_DATA;
+const ReturnCode_t RETCODE_ILLEGAL_OPERATION = eprosima::fastdds::dds::RETCODE_ILLEGAL_OPERATION;
 
 typedef uint32_t MemberId;
 constexpr uint32_t MEMBER_ID_INVALID {0X0FFFFFFF};

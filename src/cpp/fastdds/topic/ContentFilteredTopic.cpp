@@ -72,7 +72,7 @@ ReturnCode_t ContentFilteredTopic::get_expression_parameters(
     {
         expression_parameters.emplace_back(param.c_str());
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t ContentFilteredTopic::set_expression_parameters(
