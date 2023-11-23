@@ -478,7 +478,7 @@ public:
         {
             return set_bool_value(value, id);
         }
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     RTPS_DllAPI ReturnCode_t get_string_value(
@@ -519,9 +519,9 @@ public:
     RTPS_DllAPI uint64_t get_bitmask_value() const
     {
         uint64_t value;
-        if (get_bitmask_value(value) != ReturnCode_t::RETCODE_OK)
+        if (get_bitmask_value(value) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -545,9 +545,9 @@ public:
             MemberId id) const
     {
         int32_t value;
-        if (get_int32_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_int32_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -556,9 +556,9 @@ public:
             MemberId id) const
     {
         uint32_t value;
-        if (get_uint32_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_uint32_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -567,9 +567,9 @@ public:
             MemberId id) const
     {
         int16_t value;
-        if (get_int16_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_int16_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -578,9 +578,9 @@ public:
             MemberId id) const
     {
         uint16_t value;
-        if (get_uint16_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_uint16_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -589,9 +589,9 @@ public:
             MemberId id) const
     {
         int64_t value;
-        if (get_int64_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_int64_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -600,9 +600,9 @@ public:
             MemberId id) const
     {
         uint64_t value;
-        if (get_uint64_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_uint64_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -611,9 +611,9 @@ public:
             MemberId id) const
     {
         float value;
-        if (get_float32_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_float32_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -622,9 +622,9 @@ public:
             MemberId id) const
     {
         double value;
-        if (get_float64_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_float64_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -633,9 +633,9 @@ public:
             MemberId id) const
     {
         long double value;
-        if (get_float128_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_float128_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -644,9 +644,9 @@ public:
             MemberId id) const
     {
         char value;
-        if (get_char8_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_char8_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -655,9 +655,9 @@ public:
             MemberId id) const
     {
         wchar_t value;
-        if (get_char16_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_char16_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -666,9 +666,9 @@ public:
             MemberId id) const
     {
         octet value;
-        if (get_byte_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_byte_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -677,9 +677,9 @@ public:
             MemberId id) const
     {
         int8_t value;
-        if (get_int8_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_int8_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -688,9 +688,9 @@ public:
             MemberId id) const
     {
         uint8_t value;
-        if (get_uint8_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_uint8_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -699,9 +699,9 @@ public:
             MemberId id) const
     {
         bool value;
-        if (get_bool_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_bool_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -711,9 +711,9 @@ public:
     {
         MemberId id = get_member_id_by_name(name);
         bool value;
-        if (get_bool_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_bool_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -722,9 +722,9 @@ public:
             MemberId id) const
     {
         std::string value;
-        if (get_string_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_string_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -733,9 +733,9 @@ public:
             MemberId id) const
     {
         std::wstring value;
-        if (get_wstring_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_wstring_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -744,9 +744,9 @@ public:
             MemberId id) const
     {
         std::string value;
-        if (get_enum_value(value, id) != ReturnCode_t::RETCODE_OK)
+        if (get_enum_value(value, id) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }
@@ -754,9 +754,9 @@ public:
     RTPS_DllAPI uint64_t get_union_label() const
     {
         uint64_t value;
-        if (get_union_label(value) != ReturnCode_t::RETCODE_OK)
+        if (get_union_label(value) != RETCODE_OK)
         {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
+            throw RETCODE_BAD_PARAMETER;
         }
         return value;
     }

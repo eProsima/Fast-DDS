@@ -1,0 +1,25 @@
+// The content of this file, related to the DDS's return code values, was extracted from the omg idl
+// https://www.omg.org/spec/DDS/20140501/dds_dcps.idl
+
+module DDS {
+
+    typedef long ReturnCode_t;
+
+    // ----------------------------------------------------------------------
+    // Return codes
+    // ----------------------------------------------------------------------
+    const ReturnCode_t RETCODE_OK                    = 0;
+    const ReturnCode_t RETCODE_ERROR                 = 1;
+    const ReturnCode_t RETCODE_UNSUPPORTED           = 2;
+    const ReturnCode_t RETCODE_BAD_PARAMETER         = 3;
+    const ReturnCode_t RETCODE_PRECONDITION_NOT_MET  = 4;
+    const ReturnCode_t RETCODE_OUT_OF_RESOURCES      = 5;
+    const ReturnCode_t RETCODE_NOT_ENABLED           = 6;
+    const ReturnCode_t RETCODE_IMMUTABLE_POLICY      = 7;
+    const ReturnCode_t RETCODE_INCONSISTENT_POLICY   = 8;
+    const ReturnCode_t RETCODE_ALREADY_DELETED       = 9;
+    const ReturnCode_t RETCODE_TIMEOUT               = 10;
+    const ReturnCode_t RETCODE_NO_DATA               = 11;
+    const ReturnCode_t RETCODE_ILLEGAL_OPERATION     = 12;
+
+};

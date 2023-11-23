@@ -65,15 +65,15 @@ void Subscriber::qos(
         const qos::SubscriberQos& pqos)
 {
     ReturnCode_t result = delegate()->set_qos(pqos);
-    if (result == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
+    if (result == eprosima::fastdds::dds::RETCODE_IMMUTABLE_POLICY)
     {
         throw dds::core::ImmutablePolicyError("Immutable Qos");
     }
-    else if (result == ReturnCode_t::RETCODE_UNSUPPORTED)
+    else if (result == eprosima::fastdds::dds::RETCODE_UNSUPPORTED)
     {
         throw dds::core::UnsupportedError("Unsupported Qos");
     }
-    else if (result == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    else if (result == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
     }
@@ -97,11 +97,11 @@ Subscriber& Subscriber::default_datareader_qos(
         const qos::DataReaderQos& drqos)
 {
     ReturnCode_t result = delegate()->set_default_datareader_qos(drqos);
-    if ( result == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    if ( result == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
     }
-    if ( result == ReturnCode_t::RETCODE_UNSUPPORTED)
+    if ( result == eprosima::fastdds::dds::RETCODE_UNSUPPORTED)
     {
         throw dds::core::UnsupportedError("Unsupported Qos");
     }

@@ -261,7 +261,7 @@ void SubscriberModule::on_data_available(
         LoanableSequence<FixedSized> l_sample;
         LoanableSequence<SampleInfo> l_info;
 
-        if (ReturnCode_t::RETCODE_OK == reader->take_next_instance(l_sample, l_info))
+        if (RETCODE_OK == reader->take_next_instance(l_sample, l_info))
         {
             SampleInfo info = l_info[0];
 
@@ -288,7 +288,7 @@ void SubscriberModule::on_data_available(
         if (fixed_type_)
         {
             FixedSized sample;
-            if (reader->take_next_sample((void*)&sample, &info) == ReturnCode_t::RETCODE_OK)
+            if (reader->take_next_sample((void*)&sample, &info) == RETCODE_OK)
             {
                 if (info.instance_state == ALIVE_INSTANCE_STATE)
                 {
@@ -305,7 +305,7 @@ void SubscriberModule::on_data_available(
         else
         {
             HelloWorld sample;
-            if (reader->take_next_sample((void*)&sample, &info) == ReturnCode_t::RETCODE_OK)
+            if (reader->take_next_sample((void*)&sample, &info) == RETCODE_OK)
             {
                 if (info.instance_state == ALIVE_INSTANCE_STATE)
                 {

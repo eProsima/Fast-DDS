@@ -55,15 +55,15 @@ ReturnCode_t AnnotationDescriptor::copy_from(
         }
         catch (std::exception& /*e*/)
         {
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying AnnotationDescriptor, invalid input descriptor");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 bool AnnotationDescriptor::equals(
@@ -112,16 +112,16 @@ ReturnCode_t AnnotationDescriptor::get_value(
     if (it != value_.end())
     {
         value = it->second;
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t AnnotationDescriptor::get_all_value(
         std::map<std::string, std::string>& value) const
 {
     value = value_;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 bool AnnotationDescriptor::is_consistent() const
@@ -146,7 +146,7 @@ ReturnCode_t AnnotationDescriptor::set_value(
         const std::string& value)
 {
     value_[key] = value;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 } // namespace types

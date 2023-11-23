@@ -130,7 +130,7 @@ void LifespanSubscriber::SubListener::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    if (reader->read_next_sample(&hello, &info) == ReturnCode_t::RETCODE_OK)
+    if (reader->read_next_sample(&hello, &info) == RETCODE_OK)
     {
         if (info.valid_data)
         {
@@ -160,7 +160,7 @@ void LifespanSubscriber::run(
 
     for ( uint32_t i = 0; i < listener.n_samples; i++ )
     {
-        if (reader_->take_next_sample((void*) &data, &info) == ReturnCode_t::RETCODE_OK)
+        if (reader_->take_next_sample((void*) &data, &info) == RETCODE_OK)
         {
             std::cout << "Message " << data.message() << " " << data.index() << " read from history" << std::endl;
         }

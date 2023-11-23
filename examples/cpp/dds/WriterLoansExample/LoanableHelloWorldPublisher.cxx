@@ -140,7 +140,7 @@ void LoanableHelloWorldPublisher::run()
         if (ch == 'y')
         {
             void* sample = nullptr;
-            if (ReturnCode_t::RETCODE_OK == writer_->loan_sample(sample))
+            if (RETCODE_OK == writer_->loan_sample(sample))
             {
                 LoanableHelloWorld* data = static_cast<LoanableHelloWorld*>(sample);
                 data->index() = msgsent + 1;

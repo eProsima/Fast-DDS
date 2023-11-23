@@ -61,7 +61,7 @@ ReturnCode_t StatusConditionImpl::set_enabled_statuses(
     {
         notifier_->notify();
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 const StatusMask& StatusConditionImpl::get_enabled_statuses() const

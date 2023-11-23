@@ -69,12 +69,12 @@ public:
     {
         if (nullptr != writer_)
         {
-            return ReturnCode_t::RETCODE_OK;
+            return efd::RETCODE_OK;
         }
 
         ReturnCode_t ret = BaseType::enable();
 
-        if (ReturnCode_t::RETCODE_OK == ret && statistics_listener_)
+        if (efd::RETCODE_OK == ret && statistics_listener_)
         {
             writer_->add_statistics_listener(statistics_listener_);
         }

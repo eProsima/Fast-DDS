@@ -54,8 +54,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
-
 /**
  * This test checks whether it is safe to delete not enabled DDS entities *
  */
@@ -68,7 +66,7 @@ TEST(DDSBasic, DeleteDisabledEntities)
     ASSERT_NE(nullptr, factory);
     factory->set_qos(factory_qos);
     DomainParticipantFactoryQos factory_qos_check;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, factory->get_qos(factory_qos_check));
+    ASSERT_EQ(RETCODE_OK, factory->get_qos(factory_qos_check));
     ASSERT_EQ(false, factory_qos_check.entity_factory().autoenable_created_entities);
 
     // Create a disabled DomainParticipant, setting it to in turn create disable entities
@@ -77,7 +75,7 @@ TEST(DDSBasic, DeleteDisabledEntities)
     DomainParticipant* participant = factory->create_participant((uint32_t)GET_PID() % 230, participant_qos);
     ASSERT_NE(nullptr, participant);
     DomainParticipantQos participant_qos_check;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->get_qos(participant_qos_check));
+    ASSERT_EQ(RETCODE_OK, participant->get_qos(participant_qos_check));
     ASSERT_EQ(false, participant_qos_check.entity_factory().autoenable_created_entities);
 
     // Create a disabled Publisher, setting it to in turn create disable entities
@@ -86,7 +84,7 @@ TEST(DDSBasic, DeleteDisabledEntities)
     Publisher* publisher = participant->create_publisher(publisher_qos);
     ASSERT_NE(nullptr, publisher);
     PublisherQos publisher_qos_check;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, publisher->get_qos(publisher_qos_check));
+    ASSERT_EQ(RETCODE_OK, publisher->get_qos(publisher_qos_check));
     ASSERT_EQ(false, publisher_qos_check.entity_factory().autoenable_created_entities);
 
     // Create a disabled Subscriber, setting it to in turn create disable entities
@@ -95,7 +93,7 @@ TEST(DDSBasic, DeleteDisabledEntities)
     Subscriber* subscriber = participant->create_subscriber(subscriber_qos);
     ASSERT_NE(nullptr, subscriber);
     SubscriberQos subscriber_qos_check;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, subscriber->get_qos(subscriber_qos_check));
+    ASSERT_EQ(RETCODE_OK, subscriber->get_qos(subscriber_qos_check));
     ASSERT_EQ(false, subscriber_qos_check.entity_factory().autoenable_created_entities);
 
     // Register type
@@ -167,7 +165,7 @@ TEST(DDSBasic, MultithreadedPublisherCreation)
                 }
 
                 /* Delete publisher */
-                ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_publisher(publisher));
+                ASSERT_EQ(RETCODE_OK, participant->delete_publisher(publisher));
             };
 
     {
@@ -193,7 +191,7 @@ TEST(DDSBasic, MultithreadedPublisherCreation)
     }
 
     /* Clean up */
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(participant));
+    ASSERT_EQ(RETCODE_OK, factory->delete_participant(participant));
 }
 
 TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
@@ -254,7 +252,7 @@ TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
                             return should_finish;
                         });
 
-                ASSERT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(reader));
+                ASSERT_EQ(RETCODE_OK, subscriber->delete_datareader(reader));
             };
 
     {
@@ -276,11 +274,11 @@ TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
         }
     }
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, publisher->delete_datawriter(writer));
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_publisher(publisher));
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_topic(topic));
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(participant));
+    ASSERT_EQ(RETCODE_OK, publisher->delete_datawriter(writer));
+    ASSERT_EQ(RETCODE_OK, participant->delete_publisher(publisher));
+    ASSERT_EQ(RETCODE_OK, participant->delete_subscriber(subscriber));
+    ASSERT_EQ(RETCODE_OK, participant->delete_topic(topic));
+    ASSERT_EQ(RETCODE_OK, factory->delete_participant(participant));
 }
 
 /**
@@ -457,7 +455,7 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     {
     }
 
-    ASSERT_EQ(eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK,
+    ASSERT_EQ(eprosima::fastrtps::types::RETCODE_OK,
             native_reader.take_next_sample((void*)&read_data, &info));
 
     ASSERT_TRUE(exists_pid_related_sample_identity);

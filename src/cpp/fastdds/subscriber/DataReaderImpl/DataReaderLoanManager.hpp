@@ -84,7 +84,7 @@ struct DataReaderLoanManager
             result = used_loans_.push_back(tmp);
             if (nullptr == result)
             {
-                return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+                return RETCODE_OUT_OF_RESOURCES;
             }
 
             result->data_values = new LoanableCollection::element_type[max_samples_];
@@ -100,7 +100,7 @@ struct DataReaderLoanManager
 
         data_values.loan(result->data_values, max_samples_, 0);
         sample_infos.loan(result->sample_infos, max_samples_, 0);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t return_loan(
@@ -113,13 +113,13 @@ struct DataReaderLoanManager
 
         if (!used_loans_.remove(tmp))
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
 
         OutstandingLoanItem* result = free_loans_.push_back(tmp);
         static_cast<void>(result);
         assert(result != nullptr);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
 private:

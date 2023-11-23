@@ -89,7 +89,7 @@ static std::string process_environment(
         {
             std::string var_name = match[1];
             std::string value;
-            if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(var_name, value))
+            if (dds::RETCODE_OK == SystemInfo::get_env(var_name, value))
             {
                 ret_val = match.prefix().str() + value + match.suffix().str();
             }
