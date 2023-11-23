@@ -1042,8 +1042,8 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::read_content_from_cdr_message(
 }
 
 template<>
-inline uint32_t QosPoliciesSerializer<xtypes::TypeInformation>::cdr_serialized_size(
-        const xtypes::TypeInformation& qos_policy)
+inline uint32_t QosPoliciesSerializer<xtypes::TypeInformationParameter>::cdr_serialized_size(
+        const xtypes::TypeInformationParameter& qos_policy)
 {
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     size_t current_alignment {0};
@@ -1052,8 +1052,8 @@ inline uint32_t QosPoliciesSerializer<xtypes::TypeInformation>::cdr_serialized_s
 }
 
 template<>
-inline bool QosPoliciesSerializer<xtypes::TypeInformation>::add_to_cdr_message(
-        const xtypes::TypeInformation& qos_policy,
+inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_message(
+        const xtypes::TypeInformationParameter& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
@@ -1092,8 +1092,8 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::add_to_cdr_message(
 }
 
 template<>
-inline bool QosPoliciesSerializer<xtypes::TypeInformation>::read_content_from_cdr_message(
-        xtypes::TypeInformation& qos_policy,
+inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::read_content_from_cdr_message(
+        xtypes::TypeInformationParameter& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {

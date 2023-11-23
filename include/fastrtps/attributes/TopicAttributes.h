@@ -110,7 +110,7 @@ public:
         //!Type Object XTYPES 1.1
         TypeObjectV1 type;
         //!XTYPES 1.2
-        xtypes::TypeInformation type_information;
+        xtypes::TypeInformationParameter type_information;
         //!Tries to complete type identifier and type object (TypeObjectV1)
         bool auto_fill_type_object;
         //!Tries to complete type information (TypeObjectV2)
