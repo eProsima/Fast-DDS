@@ -36,6 +36,7 @@ target_link_libraries(
     ${CMAKE_DL_LIBS})
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 gtest_discover_tests(${THREAD_SETTINGS_TESTS_EXEC})
 =======
 add_gtest(
@@ -49,3 +50,6 @@ if(ANDROID)
         PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
 endif()
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+gtest_discover_tests(${THREAD_SETTINGS_TESTS_EXEC})
+>>>>>>> ef281a863 (Usage of gtest_discover_tests (#3971))

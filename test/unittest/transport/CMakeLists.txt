@@ -286,6 +286,7 @@ if(MSVC OR MSVC_IDE)
     target_link_libraries(UDPv4Tests ${PRIVACY} iphlpapi Shlwapi )
 endif()
 <<<<<<< HEAD
+<<<<<<< HEAD
 gtest_discover_tests(UDPv4Tests)
 
 add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
@@ -393,6 +394,9 @@ endif()
 =======
 add_gtest(UDPv4Tests SOURCES ${UDPV4TESTS_SOURCE})
 set(TRANSPORT_XFAIL_LIST XFAIL_UDP4)
+=======
+gtest_discover_tests(UDPv4Tests)
+>>>>>>> ef281a863 (Usage of gtest_discover_tests (#3971))
 
 add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
 target_compile_definitions(test_UDPv4Tests PRIVATE
@@ -420,9 +424,10 @@ if(QNX)
 endif()
 if(MSVC OR MSVC_IDE)
     target_link_libraries(test_UDPv4Tests ${PRIVACY} iphlpapi Shlwapi)
+else()
+    target_link_libraries(test_UDPv4Tests ${PRIVACY})
 endif()
-add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
-set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TEST_UDP4)
+gtest_discover_tests(test_UDPv4Tests)
 
 ##########################
 # IPv6 tests
@@ -457,8 +462,7 @@ if(NOT DISABLE_UDPV6_TESTS)
     if(MSVC OR MSVC_IDE)
         target_link_libraries(UDPv6Tests ${PRIVACY} iphlpapi Shlwapi )
     endif()
-    add_gtest(UDPv6Tests SOURCES ${UDPV6TESTS_SOURCE})
-    set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_UDP6)
+    gtest_discover_tests(UDPv6Tests)
 
     ##########################
     # TCPv6 tests
@@ -493,8 +497,7 @@ if(NOT DISABLE_UDPV6_TESTS)
     else()
         target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr)
     endif()
-    add_gtest(TCPv6Tests SOURCES ${TCPV6TESTS_SOURCE})
-    set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TCP6)
+    gtest_discover_tests(TCPv6Tests)
 endif()
 
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
@@ -580,6 +583,7 @@ endif()
 set_property(DIRECTORY APPEND PROPERTY
     TEST_INCLUDE_FILES ${CMAKE_CURRENT_LIST_DIR}/xfail_tests.cmake
     )
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 =======
@@ -591,6 +595,8 @@ if(ANDROID)
     set_property(TARGET SharedMemTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
     set_property(TARGET test_UDPv4Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
 endif()
+=======
+>>>>>>> ef281a863 (Usage of gtest_discover_tests (#3971))
 
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
 #####################################
@@ -621,9 +627,13 @@ target_link_libraries(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
     ${MOCKS})
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 gtest_discover_tests(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET})
 =======
 add_gtest(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
     SOURCES
     ${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_SOURCES})
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+gtest_discover_tests(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET})
+>>>>>>> ef281a863 (Usage of gtest_discover_tests (#3971))
