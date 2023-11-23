@@ -89,6 +89,8 @@ const uint8_t TK_UINT64 = 0x08;
 const uint8_t TK_FLOAT32 = 0x09;
 const uint8_t TK_FLOAT64 = 0x0A;
 const uint8_t TK_FLOAT128 = 0x0B;
+const uint8_t TK_INT8 = 0x0C;
+const uint8_t TK_UINT8 = 0x0D;
 const uint8_t TK_CHAR8 = 0x10;
 const uint8_t TK_CHAR16 = 0x11;
 const uint8_t TK_STRING8 = 0x20;
@@ -4390,6 +4392,16 @@ public:
                 break;
 
 
+            case TK_INT8:
+                m_int8_value = x.m_int8_value;
+                break;
+
+
+            case TK_UINT8:
+                m_uint8_value = x.m_uint8_value;
+                break;
+
+
             case TK_INT16:
                 m_int16_value = x.m_int16_value;
                 break;
@@ -4485,6 +4497,16 @@ public:
 
             case TK_BYTE:
                 m_byte_value = x.m_byte_value;
+                break;
+
+
+            case TK_INT8:
+                m_int8_value = x.m_int8_value;
+                break;
+
+
+            case TK_UINT8:
+                m_uint8_value = x.m_uint8_value;
                 break;
 
 
@@ -4588,6 +4610,16 @@ public:
                 break;
 
 
+            case TK_INT8:
+                m_int8_value = x.m_int8_value;
+                break;
+
+
+            case TK_UINT8:
+                m_uint8_value = x.m_uint8_value;
+                break;
+
+
             case TK_INT16:
                 m_int16_value = x.m_int16_value;
                 break;
@@ -4685,6 +4717,16 @@ public:
 
             case TK_BYTE:
                 m_byte_value = x.m_byte_value;
+                break;
+
+
+            case TK_INT8:
+                m_int8_value = x.m_int8_value;
+                break;
+
+
+            case TK_UINT8:
+                m_uint8_value = x.m_uint8_value;
                 break;
 
 
@@ -4790,6 +4832,16 @@ public:
 
             case TK_BYTE:
                 return (m_byte_value == x.m_byte_value);
+                break;
+
+
+            case TK_INT8:
+                return (m_int8_value == x.m_int8_value);
+                break;
+
+
+            case TK_UINT8:
+                return (m_uint8_value == x.m_uint8_value);
                 break;
 
 
@@ -4909,6 +4961,30 @@ public:
                 switch (__d)
                 {
                     case TK_BYTE:
+                        b = true;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+
+
+            case TK_INT8:
+                switch (__d)
+                {
+                    case TK_INT8:
+                        b = true;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+
+
+            case TK_UINT8:
+                switch (__d)
+                {
+                    case TK_UINT8:
                         b = true;
                         break;
                     default:
@@ -5091,6 +5167,8 @@ public:
                 {
                     case TK_BOOLEAN:
                     case TK_BYTE:
+                    case TK_INT8:
+                    case TK_UINT8:
                     case TK_INT16:
                     case TK_UINT16:
                     case TK_INT32:
@@ -5267,6 +5345,136 @@ public:
         }
 
         return m_byte_value;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member int8_value
+     * @param _int8_value New value for member int8_value
+     */
+    eProsima_user_DllExport void int8_value(
+            int8_t _int8_value)
+    {
+        m_int8_value = _int8_value;
+        m__d = TK_INT8;
+
+    }
+
+    /*!
+     * @brief This function returns the value of member int8_value
+     * @return Value of member int8_value
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport int8_t int8_value() const
+    {
+        bool b = false;
+
+        switch (m__d)
+        {
+            case TK_INT8:
+                b = true;
+                break;
+            default:
+                break;
+        }
+
+        if (!b)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_int8_value;
+    }
+
+    /*!
+     * @brief This function returns a reference to member int8_value
+     * @return Reference to member int8_value
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport int8_t& int8_value()
+    {
+        bool b = false;
+
+        switch (m__d)
+        {
+            case TK_INT8:
+                b = true;
+                break;
+            default:
+                break;
+        }
+
+        if (!b)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_int8_value;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member uint8_value
+     * @param _uint8_value New value for member uint8_value
+     */
+    eProsima_user_DllExport void uint8_value(
+            uint8_t _uint8_value)
+    {
+        m_uint8_value = _uint8_value;
+        m__d = TK_UINT8;
+
+    }
+
+    /*!
+     * @brief This function returns the value of member uint8_value
+     * @return Value of member uint8_value
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport uint8_t uint8_value() const
+    {
+        bool b = false;
+
+        switch (m__d)
+        {
+            case TK_UINT8:
+                b = true;
+                break;
+            default:
+                break;
+        }
+
+        if (!b)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_uint8_value;
+    }
+
+    /*!
+     * @brief This function returns a reference to member uint8_value
+     * @return Reference to member uint8_value
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport uint8_t& uint8_value()
+    {
+        bool b = false;
+
+        switch (m__d)
+        {
+            case TK_UINT8:
+                b = true;
+                break;
+            default:
+                break;
+        }
+
+        if (!b)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_uint8_value;
     }
 
 
@@ -6241,6 +6449,8 @@ public:
         {
             case TK_BOOLEAN:
             case TK_BYTE:
+            case TK_INT8:
+            case TK_UINT8:
             case TK_INT16:
             case TK_UINT16:
             case TK_INT32:
@@ -6281,6 +6491,8 @@ public:
         {
             case TK_BOOLEAN:
             case TK_BYTE:
+            case TK_INT8:
+            case TK_UINT8:
             case TK_INT16:
             case TK_UINT16:
             case TK_INT32:
@@ -6316,6 +6528,8 @@ private:
 
     bool m_boolean_value{false};
     uint8_t m_byte_value{0};
+    int8_t m_int8_value{0};
+    uint8_t m_uint8_value{0};
     int16_t m_int16_value{0};
     uint16_t m_uint_16_value{0};
     int32_t m_int32_value{0};

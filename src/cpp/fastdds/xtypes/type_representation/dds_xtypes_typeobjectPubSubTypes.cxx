@@ -150,6 +150,8 @@ namespace xtypes {
 
 
 
+
+
 StringSTypeDefnPubSubType::StringSTypeDefnPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::StringSTypeDefn");
