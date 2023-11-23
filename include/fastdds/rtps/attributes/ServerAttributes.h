@@ -178,6 +178,13 @@ const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.4
  */
 const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
 
+/* Environment variable to transform a SIMPLE participant in a SUPER CLIENT.
+ * If the participant is not SIMPLE, the variable doesn't have any effects.
+ * The variable can assume the following values:
+ *    - FALSE, false, False, 0
+ *    - TRUE, true, True, 1
+ * If the variable is not set, the program will behave like the variable is set to false.
+ */
 const char* const ROS_SUPER_CLIENT = "ROS_SUPER_CLIENT";
 
 /**
@@ -213,6 +220,10 @@ RTPS_DllAPI bool load_environment_server_info(
  */
 RTPS_DllAPI const std::string& ros_discovery_server_env();
 
+/**
+ * Get the value of environment variable ROS_SUPER_CLIENT
+ * @return The value of environment variable ROS_SUPER_CLIENT. False if the variable is not defined.
+ */
 RTPS_DllAPI bool ros_super_client_env();
 
 /**
