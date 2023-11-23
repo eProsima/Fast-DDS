@@ -94,7 +94,7 @@ static BuiltinTransports get_builtin_transports_from_env_var()
 
     BuiltinTransports ret_val = BuiltinTransports::DEFAULT;
     std::string env_value;
-    if (SystemInfo::get_env(env_var_name, env_value) == ReturnCode_t::RETCODE_OK)
+    if (SystemInfo::get_env(env_var_name, env_value) == fastdds::dds::RETCODE_OK)
     {
         if (!get_element_enum_value(env_value.c_str(), ret_val,
                 "NONE", BuiltinTransports::NONE,

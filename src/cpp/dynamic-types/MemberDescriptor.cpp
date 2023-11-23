@@ -159,17 +159,17 @@ ReturnCode_t MemberDescriptor::copy_from(
             index_ = other->index_;
             default_label_ = other->default_label_;
             labels_ = other->labels_;
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
         }
         catch (std::exception& /*e*/)
         {
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying MemberDescriptor, invalid input descriptor");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -448,7 +448,7 @@ bool MemberDescriptor::annotation_is_optional() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -471,7 +471,7 @@ bool MemberDescriptor::annotation_get_key() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -485,7 +485,7 @@ bool MemberDescriptor::annotation_is_must_understand() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -499,7 +499,7 @@ bool MemberDescriptor::annotation_is_non_serialized() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -529,7 +529,7 @@ std::string MemberDescriptor::annotation_get_value() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return value;
         }
@@ -543,7 +543,7 @@ std::string MemberDescriptor::annotation_get_default() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return value;
         }
@@ -557,7 +557,7 @@ uint16_t MemberDescriptor::annotation_get_position() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }
@@ -699,7 +699,7 @@ uint16_t MemberDescriptor::annotation_get_bit_bound() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
+        if (ann->get_value(value) == RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }
@@ -730,12 +730,12 @@ ReturnCode_t MemberDescriptor::apply_annotation(
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
         pNewDescriptor->copy_from(&descriptor);
         annotation_.push_back(pNewDescriptor);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -757,7 +757,7 @@ ReturnCode_t MemberDescriptor::apply_annotation(
         pNewDescriptor->set_value(key, value);
         annotation_.push_back(pNewDescriptor);
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 AnnotationDescriptor* MemberDescriptor::get_annotation(

@@ -39,7 +39,6 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::types;
 
 // *******************************************************************************************
 // ********************************* DATA WRITER LISTENER ************************************
@@ -155,7 +154,7 @@ bool ThroughputPublisher::init(
     // Load XML configuration
     if (xml_config_file_.length() > 0)
     {
-        if ( ReturnCode_t::RETCODE_OK !=
+        if ( RETCODE_OK !=
                 DomainParticipantFactory::get_instance()->
                         get_participant_qos_from_profile(
                     participant_profile_name,
@@ -212,7 +211,7 @@ bool ThroughputPublisher::init(
     throughput_command_type_.reset(new ThroughputCommandDataType());
 
     // Register the command data type
-    if (ReturnCode_t::RETCODE_OK
+    if (RETCODE_OK
             != throughput_command_type_.register_type(participant_))
     {
         EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER, "ERROR registering command type");
@@ -239,7 +238,7 @@ bool ThroughputPublisher::init(
     std::string profile_name = "publisher_profile";
 
     if (xml_config_file_.length() > 0
-            && ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(profile_name, dw_qos_))
+            && RETCODE_OK != publisher_->get_datawriter_qos_from_profile(profile_name, dw_qos_))
     {
         EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER, "ERROR unable to retrieve the " << profile_name);
         return false;
@@ -547,18 +546,19 @@ void ThroughputPublisher::run(
         {
             assert(nullptr == dynamic_data_);
             // Create the data sample
-            MemberId id;
-            dynamic_data_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
+            eprosima::fastrtps::types::MemberId id;
+            dynamic_data_ = static_cast<eprosima::fastrtps::types::DynamicData*>(dynamic_pub_sub_type_->createData());
 
             if (nullptr == dynamic_data_)
             {
-                EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER, "Iteration failed: Failed to create Dynamic Data");
+                EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER,
+                        "Iteration failed: Failed to create eprosima::fastrtps::types::Dynamic Data");
                 return;
             }
 
             // Modify the data Sample
             dynamic_data_->set_uint32_value(0, 0);
-            DynamicData* member_data = dynamic_data_->loan_value(
+            eprosima::fastrtps::types::DynamicData* member_data = dynamic_data_->loan_value(
                 dynamic_data_->get_member_id_at_index(1));
 
             for (int i = 0; i < msg_size; ++i)
@@ -641,7 +641,7 @@ void ThroughputPublisher::run(
         // Delete the Data Sample
         if (dynamic_types_)
         {
-            DynamicDataFactory::get_instance()->delete_data(dynamic_data_);
+            eprosima::fastrtps::types::DynamicDataFactory::get_instance()->delete_data(dynamic_data_);
             dynamic_data_ = nullptr;
         }
         else
@@ -683,7 +683,7 @@ void ThroughputPublisher::run(
         return;
     }
 
-    bool all_acked = command_writer_->wait_for_acknowledgments({20, 0}) == ReturnCode_t::RETCODE_OK;
+    bool all_acked = command_writer_->wait_for_acknowledgments({20, 0}) == RETCODE_OK;
     print_results(results_);
 
     if (!all_acked)
@@ -716,7 +716,7 @@ bool ThroughputPublisher::test(
 
     // If the subscriber does not acknowledge the TEST_STARTS in time, we consider something went wrong.
     std::chrono::steady_clock::time_point test_start_sent_tp = std::chrono::steady_clock::now();
-    if (ReturnCode_t::RETCODE_OK != command_writer_->wait_for_acknowledgments({20, 0}))
+    if (RETCODE_OK != command_writer_->wait_for_acknowledgments({20, 0}))
     {
         EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER,
                 "Something went wrong: The subscriber has not acknowledged the TEST_STARTS command.");
@@ -745,7 +745,7 @@ bool ThroughputPublisher::test(
             {
                 // Try loan a sample
                 void* data = nullptr;
-                if (ReturnCode_t::RETCODE_OK
+                if (RETCODE_OK
                         ==  data_writer_->loan_sample(
                             data,
                             DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION))
@@ -797,7 +797,7 @@ bool ThroughputPublisher::test(
     command_writer_->write(&command_sample);
 
     // If the subscriber does not acknowledge the TEST_ENDS in time, we consider something went wrong.
-    if (ReturnCode_t::RETCODE_OK
+    if (RETCODE_OK
             != command_writer_->wait_for_acknowledgments({20, 0}))
     {
         EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER,
@@ -811,7 +811,7 @@ bool ThroughputPublisher::test(
     while ( !results_error && num_results_received < subscribers_ )
     {
         if (command_reader_->wait_for_unread_message({20, 0})
-                && ReturnCode_t::RETCODE_OK == command_reader_->take_next_sample(&command_sample, &info)
+                && RETCODE_OK == command_reader_->take_next_sample(&command_sample, &info)
                 && info.valid_data)
         {
             if (command_sample.m_command == TEST_RESULTS)
@@ -1042,17 +1042,22 @@ bool ThroughputPublisher::init_dynamic_types()
 
     // Dummy type registration
     // Create basic builders
-    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
+    eprosima::fastrtps::types::DynamicTypeBuilder_ptr struct_type_builder(eprosima::fastrtps::types::
+                    DynamicTypeBuilderFactory::get_instance()->
+                    create_struct_builder());
 
     // Add members to the struct.
-    struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-    struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), BOUND_UNLIMITED));
+    struct_type_builder->add_member(0, "seqnum",
+            eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+    struct_type_builder->add_member(1, "data",
+            eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
+                eprosima::fastrtps::types::BOUND_UNLIMITED));
     struct_type_builder->set_name(ThroughputDataType::type_name_);
-    dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
+    dynamic_pub_sub_type_.reset(new eprosima::fastrtps::types::DynamicPubSubType(struct_type_builder->build()));
 
     // Register the data type
-    if (ReturnCode_t::RETCODE_OK
+    if (RETCODE_OK
             != dynamic_pub_sub_type_.register_type(participant_))
     {
         EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER, "ERROR registering the DYNAMIC DATA topic");
@@ -1082,7 +1087,7 @@ bool ThroughputPublisher::init_static_types(
     // Create the static type
     throughput_data_type_.reset(new ThroughputDataType(payload));
     // Register the static type
-    if (ReturnCode_t::RETCODE_OK
+    if (RETCODE_OK
             != throughput_data_type_.register_type(participant_))
     {
         return false;
@@ -1146,7 +1151,7 @@ bool ThroughputPublisher::destroy_data_endpoints()
 
     // Delete the endpoint
     if (nullptr == data_writer_
-            || ReturnCode_t::RETCODE_OK != publisher_->delete_datawriter(data_writer_))
+            || RETCODE_OK != publisher_->delete_datawriter(data_writer_))
     {
         EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER, "ERROR destroying the DataWriter");
         return false;
@@ -1156,7 +1161,7 @@ bool ThroughputPublisher::destroy_data_endpoints()
 
     // Delete the Topic
     if (nullptr == data_pub_topic_
-            || ReturnCode_t::RETCODE_OK != participant_->delete_topic(data_pub_topic_))
+            || RETCODE_OK != participant_->delete_topic(data_pub_topic_))
     {
         EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER, "ERROR destroying the DATA topic");
         return false;
@@ -1164,7 +1169,7 @@ bool ThroughputPublisher::destroy_data_endpoints()
     data_pub_topic_ = nullptr;
 
     // Delete the Type
-    if (ReturnCode_t::RETCODE_OK
+    if (RETCODE_OK
             != participant_->unregister_type(ThroughputDataType::type_name_))
     {
         EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER, "ERROR unregistering the DATA type");

@@ -47,7 +47,7 @@ ReturnCode_t GuardCondition::set_trigger_value(
         notifier_->notify();
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 }  // namespace dds

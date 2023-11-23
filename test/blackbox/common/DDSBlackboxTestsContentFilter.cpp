@@ -201,13 +201,13 @@ protected:
         {
             if (participant_ && subscriber_)
             {
-                EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber_->delete_contained_entities());
-                EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant_->delete_subscriber(subscriber_));
+                EXPECT_EQ(RETCODE_OK, subscriber_->delete_contained_entities());
+                EXPECT_EQ(RETCODE_OK, participant_->delete_subscriber(subscriber_));
             }
 
             if (participant_ && filtered_topic_)
             {
-                EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant_->delete_contentfilteredtopic(filtered_topic_));
+                EXPECT_EQ(RETCODE_OK, participant_->delete_contentfilteredtopic(filtered_topic_));
             }
         }
 
@@ -281,14 +281,14 @@ protected:
         void delete_reader(
                 DataReader* reader)
         {
-            EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber_->delete_datareader(reader));
+            EXPECT_EQ(RETCODE_OK, subscriber_->delete_datareader(reader));
         }
 
         void set_filter_expression(
                 const std::string& filter_expression,
                 const std::vector<std::string>& expression_parameters)
         {
-            EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+            EXPECT_EQ(RETCODE_OK,
                     filtered_topic_->set_filter_expression(filter_expression, expression_parameters));
             // Avoid discovery race condition
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
@@ -297,7 +297,7 @@ protected:
         void set_expression_parameters(
                 const std::vector<std::string>& expression_parameters)
         {
-            EXPECT_EQ(ReturnCode_t::RETCODE_OK, filtered_topic_->set_expression_parameters(expression_parameters));
+            EXPECT_EQ(RETCODE_OK, filtered_topic_->set_expression_parameters(expression_parameters));
             // Avoid discovery race condition
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
@@ -347,7 +347,7 @@ protected:
             SampleInfoSeq recv_info;
 
             ReturnCode_t expected_ret;
-            expected_ret = expected_samples == 0 ? ReturnCode_t::RETCODE_NO_DATA : ReturnCode_t::RETCODE_OK;
+            expected_ret = expected_samples == 0 ? RETCODE_NO_DATA : RETCODE_OK;
             EXPECT_EQ(expected_ret, reader->take(recv_data, recv_info));
             EXPECT_EQ(recv_data.length(), expected_samples);
             for (HelloWorldSeq::size_type i = 0;
@@ -358,7 +358,7 @@ protected:
             }
             if (expected_samples > 0)
             {
-                EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(recv_data, recv_info));
+                EXPECT_EQ(RETCODE_OK, reader->return_loan(recv_data, recv_info));
             }
 
             // Ensure writer ends in clean state
@@ -404,7 +404,7 @@ protected:
             HelloWorldSeq recv_data;
             SampleInfoSeq recv_info;
 
-            while (ReturnCode_t::RETCODE_OK == reader.take(recv_data, recv_info))
+            while (RETCODE_OK == reader.take(recv_data, recv_info))
             {
                 reader.return_loan(recv_data, recv_info);
             }
@@ -589,7 +589,7 @@ TEST(DDSContentFilter, CorrectlyHandleAliasOtherHeader)
 
     auto ret = type.register_type(participant);
 
-    if (ret != ReturnCode_t::RETCODE_OK)
+    if (ret != RETCODE_OK)
     {
         throw std::runtime_error("Failed to register type");
     }

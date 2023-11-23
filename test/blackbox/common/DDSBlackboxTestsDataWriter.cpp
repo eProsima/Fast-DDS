@@ -162,40 +162,40 @@ TEST_P(DDSDataWriter, GetKeyValue)
     DataWriter* instance_datawriter = &keyed_writer.get_native_writer();
 
     // 1. Check nullptr on key_holder
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, datawriter->get_key_value(nullptr, wrong_handle));
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(nullptr, wrong_handle));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, datawriter->get_key_value(nullptr, wrong_handle));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(nullptr, wrong_handle));
 
     // 2. Check HANDLE_NIL
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, datawriter->get_key_value(&data, HANDLE_NIL));
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(&data, HANDLE_NIL));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, datawriter->get_key_value(&data, HANDLE_NIL));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(&data, HANDLE_NIL));
 
     // 3. Check type should have keys
-    EXPECT_EQ(ReturnCode_t::RETCODE_ILLEGAL_OPERATION, datawriter->get_key_value(&data, wrong_handle));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_ILLEGAL_OPERATION, datawriter->get_key_value(&data, wrong_handle));
 
-    // 4. Calling get_key_value with a key not yet registered returns RETCODE_BAD_PARAMETER
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(&data, wrong_handle));
+    // 4. Calling get_key_value with a key not yet registered returns eprosima::fastdds::dds::RETCODE_BAD_PARAMETER
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(&data, wrong_handle));
 
     // 5. Calling get_key_value on a registered instance should work.
     valid_handle = instance_datawriter->register_instance(&valid_data);
     EXPECT_NE(HANDLE_NIL, valid_handle);
     data.key(0);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->get_key_value(&data, valid_handle));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, instance_datawriter->get_key_value(&data, valid_handle));
     EXPECT_EQ(valid_data.key(), data.key());
 
-    // 6. Calling get_key_value on an unregistered instance should return RETCODE_BAD_PARAMETER.
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->unregister_instance(&valid_data, valid_handle));
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(&data, valid_handle));
+    // 6. Calling get_key_value on an unregistered instance should return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER.
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, instance_datawriter->unregister_instance(&valid_data, valid_handle));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, instance_datawriter->get_key_value(&data, valid_handle));
 
     // 7. Calling get_key_value with a valid instance should work
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write(&valid_data, HANDLE_NIL));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, instance_datawriter->write(&valid_data, HANDLE_NIL));
     data.key(0);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->get_key_value(&data, valid_handle));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, instance_datawriter->get_key_value(&data, valid_handle));
     EXPECT_EQ(valid_data.key(), data.key());
 
     // 8. Calling get_key_value on a disposed instance should work.
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->dispose(&valid_data, valid_handle));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, instance_datawriter->dispose(&valid_data, valid_handle));
     data.key(0);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->get_key_value(&data, valid_handle));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, instance_datawriter->get_key_value(&data, valid_handle));
     EXPECT_EQ(valid_data.key(), data.key());
 }
 
@@ -230,7 +230,7 @@ TEST_P(DDSDataWriter, WithTimestampOperations)
     DataWriter& datawriter = writer.get_native_writer();
     DataWriterQos qos = datawriter.get_qos();
     qos.writer_data_lifecycle().autodispose_unregistered_instances = false;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter.set_qos(qos));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, datawriter.set_qos(qos));
 
     // Wait discovery, since we are going to unregister an instance
     reader.wait_discovery();
@@ -245,16 +245,17 @@ TEST_P(DDSDataWriter, WithTimestampOperations)
     ts.nanosec--;
     // Write with custom timestamp
     ts.nanosec++;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter.write_w_timestamp(&valid_data, HANDLE_NIL, ts));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, datawriter.write_w_timestamp(&valid_data, HANDLE_NIL, ts));
     // Dispose with custom timestamp
     ts.nanosec++;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter.dispose_w_timestamp(&valid_data, HANDLE_NIL, ts));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, datawriter.dispose_w_timestamp(&valid_data, HANDLE_NIL, ts));
     // Write with custom timestamp
     ts.nanosec++;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter.write_w_timestamp(&valid_data, HANDLE_NIL, ts));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, datawriter.write_w_timestamp(&valid_data, HANDLE_NIL, ts));
     // Unregister with custom timestamp
     ts.nanosec++;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter.unregister_instance_w_timestamp(&valid_data, HANDLE_NIL, ts));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, datawriter.unregister_instance_w_timestamp(&valid_data, HANDLE_NIL,
+            ts));
 
     // Wait and take all data
     auto num_samples = ts.nanosec;
@@ -266,7 +267,7 @@ TEST_P(DDSDataWriter, WithTimestampOperations)
     FASTDDS_CONST_SEQUENCE(DataSeq, KeyedHelloWorld);
     SampleInfoSeq infos;
     DataSeq datas;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datareader.take(datas, infos));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, datareader.take(datas, infos));
 
     // Check received timestamps
     ts.seconds = 0;
@@ -278,7 +279,7 @@ TEST_P(DDSDataWriter, WithTimestampOperations)
         ts.nanosec++;
     }
 
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datareader.return_loan(datas, infos));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, datareader.return_loan(datas, infos));
 }
 
 /**

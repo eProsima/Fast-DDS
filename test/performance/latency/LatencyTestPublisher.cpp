@@ -43,7 +43,6 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::types;
 
 LatencyTestPublisher::LatencyTestPublisher()
     : latency_command_type_(new TestCommandDataType())
@@ -168,7 +167,7 @@ bool LatencyTestPublisher::init(
     // Load XML configuration
     if (xml_config_file_.length() > 0)
     {
-        if ( ReturnCode_t::RETCODE_OK !=
+        if ( RETCODE_OK !=
                 DomainParticipantFactory::get_instance()->
                         get_participant_qos_from_profile(
                     participant_profile_name,
@@ -220,7 +219,7 @@ bool LatencyTestPublisher::init(
     }
 
     // Register the command type
-    if (ReturnCode_t::RETCODE_OK != latency_command_type_.register_type(participant_))
+    if (RETCODE_OK != latency_command_type_.register_type(participant_))
     {
         EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR registering the COMMAND type");
         return false;
@@ -250,14 +249,14 @@ bool LatencyTestPublisher::init(
             std::string pub_profile_name = "pub_publisher_profile";
             std::string sub_profile_name = "pub_subscriber_profile";
 
-            if (ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
+            if (RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
             {
                 EPROSIMA_LOG_ERROR(LATENCYPUBLISHER,
                         "ERROR unable to retrive the " << pub_profile_name << "from XML file");
                 return false;
             }
 
-            if (ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(sub_profile_name, dr_qos_))
+            if (RETCODE_OK != subscriber_->get_datareader_qos_from_profile(sub_profile_name, dr_qos_))
             {
                 EPROSIMA_LOG_ERROR(LATENCYPUBLISHER,
                         "ERROR unable to retrive the " << sub_profile_name << "from XML file");
@@ -508,7 +507,7 @@ void LatencyTestPublisher::CommandReaderListener::on_data_available(
     SampleInfo info;
 
     if (reader->take_next_sample(
-                &command, &info) == ReturnCode_t::RETCODE_OK
+                &command, &info) == RETCODE_OK
             && info.valid_data)
     {
         if (command.m_command == BEGIN
@@ -537,7 +536,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
 
     if (pub->data_loans_)
     {
-        if (ReturnCode_t::RETCODE_OK != reader->take(data_seq, infos, 1))
+        if (RETCODE_OK != reader->take(data_seq, infos, 1))
         {
             EPROSIMA_LOG_ERROR(LatencyTest, "Problem reading Subscriber echoed loaned test data");
             return;
@@ -552,7 +551,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
 
         // Retrieved echoed data
         if (reader->take_next_sample(
-                    data, &info) != ReturnCode_t::RETCODE_OK
+                    data, &info) != RETCODE_OK
                 || !info.valid_data)
         {
             EPROSIMA_LOG_ERROR(LatencyTest, "Problem reading Subscriber echoed test data");
@@ -632,7 +631,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
 
     // release the loan if any
     if (pub->data_loans_
-            && ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
+            && RETCODE_OK != reader->return_loan(data_seq, infos))
     {
         EPROSIMA_LOG_ERROR(LatencyTest, "Problem returning loaned test data");
     }
@@ -703,26 +702,28 @@ bool LatencyTestPublisher::test(
 
     if (dynamic_types_)
     {
-        dynamic_data_in_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
-        dynamic_data_out_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
+        dynamic_data_in_ = static_cast<eprosima::fastrtps::types::DynamicData*>(dynamic_pub_sub_type_->createData());
+        dynamic_data_out_ = static_cast<eprosima::fastrtps::types::DynamicData*>(dynamic_pub_sub_type_->createData());
 
         if (nullptr == dynamic_data_in_)
         {
-            EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "Iteration failed: Failed to create Dynamic Data In");
+            EPROSIMA_LOG_ERROR(LATENCYPUBLISHER,
+                    "Iteration failed: Failed to create eprosima::fastrtps::types::Dynamic Data In");
             return false;
         }
 
         if (nullptr == dynamic_data_out_)
         {
-            EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "Iteration failed: Failed to create Dynamic Data Out");
+            EPROSIMA_LOG_ERROR(LATENCYPUBLISHER,
+                    "Iteration failed: Failed to create eprosima::fastrtps::types::Dynamic Data Out");
             return false;
         }
 
-        MemberId id_in;
-        MemberId id_out;
-        DynamicData* data_in = dynamic_data_in_->loan_value(
+        eprosima::fastrtps::types::MemberId id_in;
+        eprosima::fastrtps::types::MemberId id_out;
+        eprosima::fastrtps::types::DynamicData* data_in = dynamic_data_in_->loan_value(
             dynamic_data_in_->get_member_id_at_index(1));
-        DynamicData* data_out = dynamic_data_out_->loan_value(
+        eprosima::fastrtps::types::DynamicData* data_out = dynamic_data_out_->loan_value(
             dynamic_data_out_->get_member_id_at_index(1));
 
         // fill until complete the desired payload size
@@ -808,7 +809,7 @@ bool LatencyTestPublisher::test(
 
                 while (trials-- != 0 && !loaned)
                 {
-                    loaned = (ReturnCode_t::RETCODE_OK
+                    loaned = (RETCODE_OK
                             ==  data_writer_->loan_sample(
                                 data,
                                 DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION));
@@ -892,8 +893,8 @@ bool LatencyTestPublisher::test(
     // Delete Data Sample
     if (dynamic_types_)
     {
-        DynamicDataFactory::get_instance()->delete_data(dynamic_data_in_);
-        DynamicDataFactory::get_instance()->delete_data(dynamic_data_out_);
+        eprosima::fastrtps::types::DynamicDataFactory::get_instance()->delete_data(dynamic_data_in_);
+        eprosima::fastrtps::types::DynamicDataFactory::get_instance()->delete_data(dynamic_data_out_);
     }
     else
     {
@@ -1067,17 +1068,22 @@ bool LatencyTestPublisher::init_dynamic_types()
 
     // Dummy type registration
     // Create basic builders
-    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
+    eprosima::fastrtps::types::DynamicTypeBuilder_ptr struct_type_builder(eprosima::fastrtps::types::
+                    DynamicTypeBuilderFactory::get_instance()->
+                    create_struct_builder());
 
     // Add members to the struct.
-    struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-    struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), BOUND_UNLIMITED));
+    struct_type_builder->add_member(0, "seqnum",
+            eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+    struct_type_builder->add_member(1, "data",
+            eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
+                eprosima::fastrtps::types::BOUND_UNLIMITED));
     struct_type_builder->set_name(LatencyDataType::type_name_);
-    dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
+    dynamic_pub_sub_type_.reset(new eprosima::fastrtps::types::DynamicPubSubType(struct_type_builder->build()));
 
     // Register the data type
-    if (ReturnCode_t::RETCODE_OK != dynamic_pub_sub_type_.register_type(participant_))
+    if (RETCODE_OK != dynamic_pub_sub_type_.register_type(participant_))
     {
         EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR registering the DYNAMIC DATA type");
         return false;
@@ -1109,7 +1115,7 @@ bool LatencyTestPublisher::init_static_types(
     // Create the static type
     latency_data_type_.reset(new LatencyDataType(padding));
     // Register the static type
-    if (ReturnCode_t::RETCODE_OK != latency_data_type_.register_type(participant_))
+    if (RETCODE_OK != latency_data_type_.register_type(participant_))
     {
         EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR registering the STATIC DATA type");
         return false;
@@ -1218,7 +1224,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
 
     // Delete the endpoints
     if (nullptr == data_writer_
-            || ReturnCode_t::RETCODE_OK != publisher_->delete_datawriter(data_writer_))
+            || RETCODE_OK != publisher_->delete_datawriter(data_writer_))
     {
         EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR destroying the DataWriter");
         return false;
@@ -1227,7 +1233,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
     data_writer_listener_.reset();
 
     if (nullptr == data_reader_
-            || ReturnCode_t::RETCODE_OK != subscriber_->delete_datareader(data_reader_))
+            || RETCODE_OK != subscriber_->delete_datareader(data_reader_))
     {
         EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR destroying the DataReader");
         return false;
@@ -1237,7 +1243,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
 
     // Delete the Topics
     if (nullptr == latency_data_pub_topic_
-            || ReturnCode_t::RETCODE_OK != participant_->delete_topic(latency_data_pub_topic_))
+            || RETCODE_OK != participant_->delete_topic(latency_data_pub_topic_))
     {
         EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR destroying the DATA PUB topic");
         return false;
@@ -1245,7 +1251,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
     latency_data_pub_topic_ = nullptr;
 
     if (nullptr == latency_data_sub_topic_
-            || ReturnCode_t::RETCODE_OK != participant_->delete_topic(latency_data_sub_topic_))
+            || RETCODE_OK != participant_->delete_topic(latency_data_sub_topic_))
     {
         EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR destroying the DATA SUB topic");
         return false;
@@ -1253,7 +1259,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
     latency_data_sub_topic_ = nullptr;
 
     // Delete the Type
-    if (ReturnCode_t::RETCODE_OK != participant_->unregister_type(LatencyDataType::type_name_))
+    if (RETCODE_OK != participant_->unregister_type(LatencyDataType::type_name_))
     {
         EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR unregistering the DATA type");
         return false;
@@ -1261,7 +1267,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
 
     latency_data_type_.reset();
     dynamic_pub_sub_type_.reset();
-    DynamicTypeBuilderFactory::delete_instance();
+    eprosima::fastrtps::types::DynamicTypeBuilderFactory::delete_instance();
 
     return true;
 }

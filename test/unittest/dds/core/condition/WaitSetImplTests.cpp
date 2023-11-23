@@ -58,40 +58,40 @@ TEST(WaitSetImplTests, condition_management)
     EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
 
     // WaitSetImpl should be created without conditions
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
+    EXPECT_EQ(RETCODE_OK, wait_set.get_conditions(conditions));
     EXPECT_TRUE(conditions.empty());
 
     // Trying to detach without having attached
-    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, wait_set.detach_condition(condition));
+    EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, wait_set.detach_condition(condition));
 
     // Adding the same condition several times should always succeed and keep the list with a single condition
     for (int i = 0; i < 2; ++i)
     {
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.attach_condition(condition));
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
+        EXPECT_EQ(RETCODE_OK, wait_set.attach_condition(condition));
+        EXPECT_EQ(RETCODE_OK, wait_set.get_conditions(conditions));
         EXPECT_EQ(1u, conditions.size());
         EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
     }
 
     // Detaching the condition once should succeed
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.detach_condition(condition));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
+    EXPECT_EQ(RETCODE_OK, wait_set.detach_condition(condition));
+    EXPECT_EQ(RETCODE_OK, wait_set.get_conditions(conditions));
     EXPECT_TRUE(conditions.empty());
 
     // Detaching a second time should fail
-    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, wait_set.detach_condition(condition));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
+    EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, wait_set.detach_condition(condition));
+    EXPECT_EQ(RETCODE_OK, wait_set.get_conditions(conditions));
     EXPECT_TRUE(conditions.empty());
 
     // Attach the condition again
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.attach_condition(condition));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
+    EXPECT_EQ(RETCODE_OK, wait_set.attach_condition(condition));
+    EXPECT_EQ(RETCODE_OK, wait_set.get_conditions(conditions));
     EXPECT_EQ(1u, conditions.size());
     EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
 
     // Calling will_be_deleted should detach the condition
     wait_set.will_be_deleted(condition);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
+    EXPECT_EQ(RETCODE_OK, wait_set.get_conditions(conditions));
     EXPECT_TRUE(conditions.empty());
 }
 
@@ -111,19 +111,19 @@ TEST(WaitSetImplTests, wait)
         EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
 
         // Waiting on empty wait set should timeout
-        EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
+        EXPECT_EQ(RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
         EXPECT_TRUE(conditions.empty());
 
         // Attach condition
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.attach_condition(condition));
+        EXPECT_EQ(RETCODE_OK, wait_set.attach_condition(condition));
 
         // Waiting on untriggered condition should timeout
-        EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
+        EXPECT_EQ(RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
         EXPECT_TRUE(conditions.empty());
 
         // Waiting on already triggered condition should inmediately return condition
         condition.trigger_value = true;
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, timeout));
+        EXPECT_EQ(RETCODE_OK, wait_set.wait(conditions, timeout));
         EXPECT_EQ(1u, conditions.size());
         EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
 
@@ -135,7 +135,7 @@ TEST(WaitSetImplTests, wait)
                         std::this_thread::sleep_for(std::chrono::milliseconds(200));
                         wait_set.wake_up();
                     });
-            EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
+            EXPECT_EQ(RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
             EXPECT_TRUE(conditions.empty());
             notify_without_trigger.join();
         }
@@ -148,7 +148,7 @@ TEST(WaitSetImplTests, wait)
                         condition.trigger_value = true;
                         wait_set.wake_up();
                     });
-            EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, timeout));
+            EXPECT_EQ(RETCODE_OK, wait_set.wait(conditions, timeout));
             EXPECT_EQ(1u, conditions.size());
             EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
             trigger_and_notify.join();
@@ -160,12 +160,12 @@ TEST(WaitSetImplTests, wait)
                     {
                         std::this_thread::sleep_for(std::chrono::milliseconds(200));
                         ConditionSeq conds;
-                        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, wait_set.wait(conds, timeout));
+                        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, wait_set.wait(conds, timeout));
                         EXPECT_TRUE(conds.empty());
                     });
 
             condition.trigger_value = false;
-            EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
+            EXPECT_EQ(RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
             EXPECT_TRUE(conditions.empty());
             second_wait_thread.join();
         }
@@ -186,7 +186,7 @@ TEST(WaitSetImplTests, wait)
                         wait_set.attach_condition(triggered_condition);
                     });
 
-            EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite));
+            EXPECT_EQ(RETCODE_OK, wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite));
             EXPECT_EQ(1u, conditions.size());
             EXPECT_EQ(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
             EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &triggered_condition));
@@ -237,7 +237,7 @@ TEST(WaitSetImplTests, fix_wait_notification_lost)
 
         std::promise<void> promise;
         std::future<void> future = promise.get_future();
-        ReturnCode_t ret = ReturnCode_t::RETCODE_ERROR;
+        ReturnCode_t ret = RETCODE_ERROR;
         std::thread wait_conditions([&]()
                 {
                     // Not to use `WaitSetImpl::wait` with a timeout value, because the
@@ -253,7 +253,7 @@ TEST(WaitSetImplTests, fix_wait_notification_lost)
 
         // Expecting get notification after wake_up, otherwise output error within 5 seconds.
         future.wait_for(std::chrono::seconds(5));
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret);
+        EXPECT_EQ(RETCODE_OK, ret);
         EXPECT_EQ(1u, conditions.size());
         EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &triggered_condition));
 
