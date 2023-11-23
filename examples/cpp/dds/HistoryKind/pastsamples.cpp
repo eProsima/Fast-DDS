@@ -193,14 +193,14 @@ void pastsamples()
 
     //Read the contents of both histories:
     std::cout << "The Keep All Subscriber holds: " << std::endl;
-    while (myReader1->read_next_sample(&my_sample, &sample_info) == ReturnCode_t::RETCODE_OK)
+    while (myReader1->read_next_sample(&my_sample, &sample_info) == RETCODE_OK)
     {
         std::cout << std::to_string(my_sample.index()) << " ";
     }
     std::cout << std::endl;
 
     std::cout << "The Keep Last (Depth 10) Subscriber holds: " << std::endl;
-    while (myReader2->read_next_sample(&my_sample, &sample_info) == ReturnCode_t::RETCODE_OK)
+    while (myReader2->read_next_sample(&my_sample, &sample_info) == RETCODE_OK)
     {
         std::cout << std::to_string(my_sample.index()) << " ";
     }

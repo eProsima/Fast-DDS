@@ -33,8 +33,8 @@ DomainParticipant::DomainParticipant(
         uint32_t did)
     : dds::core::Reference<detail::DomainParticipant>(
         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->create_participant(
-                did,
-                eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT))
+            did,
+            eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT))
 {
 }
 
@@ -77,15 +77,15 @@ void DomainParticipant::qos(
         const dds::domain::qos::DomainParticipantQos& qos)
 {
     ReturnCode_t code = this->delegate()->set_qos(qos);
-    if (code == ReturnCode_t::RETCODE_IMMUTABLE_POLICY)
+    if (code == eprosima::fastdds::dds::RETCODE_IMMUTABLE_POLICY)
     {
         throw dds::core::ImmutablePolicyError("Immutable Qos");
     }
-    else if ( code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    else if ( code == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
     }
-    else if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    else if (code == eprosima::fastdds::dds::RETCODE_UNSUPPORTED)
     {
         throw dds::core::UnsupportedError("Unsupported values on DomainParticipantQos");
     }
@@ -126,11 +126,11 @@ void DomainParticipant::default_participant_qos(
 {
     ReturnCode_t code = eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_default_participant_qos(
         qos);
-    if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    if (code == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
     }
-    else if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    else if (code == eprosima::fastdds::dds::RETCODE_UNSUPPORTED)
     {
         throw dds::core::UnsupportedError("Unsupported values on DomainParticipantQos");
     }
@@ -145,11 +145,11 @@ DomainParticipant& DomainParticipant::default_publisher_qos(
         const ::dds::pub::qos::PublisherQos& qos)
 {
     ReturnCode_t code = this->delegate()->set_default_publisher_qos(qos);
-    if (code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    if (code == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
     }
-    else if (code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    else if (code == eprosima::fastdds::dds::RETCODE_UNSUPPORTED)
     {
         throw dds::core::UnsupportedError("Unsupported values on PublisherQos");
     }
@@ -165,11 +165,11 @@ DomainParticipant& DomainParticipant::default_subscriber_qos(
         const ::dds::sub::qos::SubscriberQos& qos)
 {
     ReturnCode_t result = delegate()->set_default_subscriber_qos(qos);
-    if (result == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    if (result == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
     }
-    if (result == ReturnCode_t::RETCODE_UNSUPPORTED)
+    if (result == eprosima::fastdds::dds::RETCODE_UNSUPPORTED)
     {
         throw dds::core::UnsupportedError("Unsupported Qos");
     }
@@ -185,11 +185,11 @@ DomainParticipant& DomainParticipant::default_topic_qos(
         const dds::topic::qos::TopicQos& qos)
 {
     ReturnCode_t ret_code = this->delegate()->set_default_topic_qos(qos);
-    if (ret_code == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+    if (ret_code == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
     }
-    else if (ret_code == ReturnCode_t::RETCODE_UNSUPPORTED)
+    else if (ret_code == eprosima::fastdds::dds::RETCODE_UNSUPPORTED)
     {
         throw dds::core::UnsupportedError("Unsupported values on TopicQos");
     }

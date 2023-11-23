@@ -139,21 +139,21 @@ TEST(TopicTests, ChangeTopicQos)
     ASSERT_NE(topic, nullptr);
 
     TopicQos qos;
-    ASSERT_EQ(topic->get_qos(qos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(topic->get_qos(qos), RETCODE_OK);
 
     ASSERT_EQ(qos, TOPIC_QOS_DEFAULT);
 
     qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    ASSERT_EQ(topic->set_qos(qos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(topic->set_qos(qos), RETCODE_OK);
     TopicQos tqos;
-    ASSERT_EQ(topic->get_qos(tqos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(topic->get_qos(tqos), RETCODE_OK);
 
     ASSERT_TRUE(qos == tqos);
     ASSERT_EQ(tqos.reliability().kind, RELIABLE_RELIABILITY_QOS);
 
-    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 
 }
 
@@ -171,8 +171,8 @@ TEST(TopicTests, GetTopicParticipant)
 
     ASSERT_EQ(topic->get_participant(), participant);
 
-    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 void set_listener_test (
@@ -180,7 +180,7 @@ void set_listener_test (
         TopicListener* listener,
         StatusMask mask)
 {
-    ASSERT_EQ(topic->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(topic->set_listener(listener, mask), RETCODE_OK);
     ASSERT_EQ(topic->get_status_mask(), mask);
 }
 
@@ -221,8 +221,8 @@ TEST(TopicTests, SetListener)
                 std::get<2>(testing_case));
     }
 
-    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 /*
@@ -294,47 +294,47 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyNotKeyed)
     ASSERT_NE(topic5, nullptr);
 
     // Next QoS config checks the default qos configuration,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // set_qos() should return RETCODE_OK = 0
     TopicQos qos2 = TOPIC_QOS_DEFAULT;
     Topic* default_topic1 = participant->create_topic("footopic6", type.get_type_name(), qos2);
     ASSERT_NE(default_topic1, nullptr);
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_topic1->set_qos(qos2));
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
     // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_instances = -1;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_topic1->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // set_qos() should return RETCODE_OK = 0
     // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_samples = 4999;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_topic1->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // set_qos() should return RETCODE_OK = 0
     // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_samples = 5001;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_topic1->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples infinite
     // and ( max_instances * max_samples_per_instance ) finite,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0
+    // set_qos() should return RETCODE_OK = 0
     // By not using instances, instance allocation consistency is not checked.
     qos2.resource_limits().max_samples = 0;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_topic1->set_qos(qos2));
 }
 
 /*
@@ -417,19 +417,19 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyKeyed)
     ASSERT_NE(topic6, nullptr);
 
     // Next QoS config checks the default qos configuration,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    // set_qos() should return RETCODE_OK = 0.
     TopicQos qos2 = TOPIC_QOS_DEFAULT;
     Topic* default_topic1 = participant->create_topic("footopic7", type.get_type_name(), qos2);
     ASSERT_NE(default_topic1, nullptr);
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_topic1->set_qos(qos2));
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
     qos2.resource_limits().max_samples = 0;
     qos2.resource_limits().max_instances = -1;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_topic1->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples < ( max_instances * max_samples_per_instance ) ,
     // set_qos() should return a value != 0 (not OK)
@@ -437,32 +437,32 @@ TEST(TopicTests, InstancePolicyAllocationConsistencyKeyed)
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_NE(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+    ASSERT_NE(RETCODE_OK, default_topic1->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples > ( max_instances * max_samples_per_instance ) ,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    // set_qos() should return RETCODE_OK = 0.
     qos2.resource_limits().max_samples = 5001;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_topic1->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples = ( max_instances * max_samples_per_instance ) ,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    // set_qos() should return RETCODE_OK = 0.
     qos2.resource_limits().max_samples = 5000;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_topic1->set_qos(qos2));
 
     // Next QoS config checks that if user sets max_samples infinite
     // and ( max_instances * max_samples_per_instance ) finite,
-    // set_qos() should return ReturnCode_t::RETCODE_OK = 0.
+    // set_qos() should return RETCODE_OK = 0.
     qos2.resource_limits().max_samples = 0;
     qos2.resource_limits().max_instances = 10;
     qos2.resource_limits().max_samples_per_instance = 500;
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_topic1->set_qos(qos2));
+    ASSERT_EQ(RETCODE_OK, default_topic1->set_qos(qos2));
 }
 
 } // namespace dds

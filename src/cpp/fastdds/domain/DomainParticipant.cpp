@@ -91,7 +91,7 @@ ReturnCode_t DomainParticipant::set_listener(
         const std::chrono::seconds timeout)
 {
     ReturnCode_t ret_val = impl_->set_listener(listener, timeout);
-    if (ret_val == ReturnCode_t::RETCODE_OK)
+    if (ret_val == RETCODE_OK)
     {
         status_mask_ = mask;
     }
@@ -103,12 +103,12 @@ ReturnCode_t DomainParticipant::enable()
 {
     if (enable_)
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     enable_ = true;
     ReturnCode_t ret_code = impl_->enable();
-    enable_ = !!ret_code;
+    enable_ = RETCODE_OK == ret_code;
     return ret_code;
 }
 
@@ -227,7 +227,7 @@ ReturnCode_t DomainParticipant::delete_multitopic(
         const MultiTopic* a_multitopic)
 {
     static_cast<void> (a_multitopic);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DomainParticipant::register_content_filter_factory(
@@ -278,21 +278,21 @@ ReturnCode_t DomainParticipant::ignore_topic(
         const InstanceHandle_t& handle)
 {
     static_cast<void> (handle);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DomainParticipant::ignore_publication(
         const InstanceHandle_t& handle)
 {
     static_cast<void> (handle);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DomainParticipant::ignore_subscription(
         const InstanceHandle_t& handle)
 {
     static_cast<void> (handle);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
 }
 
 DomainId_t DomainParticipant::get_domain_id() const
@@ -325,7 +325,7 @@ ReturnCode_t DomainParticipant::get_default_publisher_qos(
         PublisherQos& qos) const
 {
     qos = impl_->get_default_publisher_qos();
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipant::get_publisher_qos_from_profile(
@@ -350,7 +350,7 @@ ReturnCode_t DomainParticipant::get_default_subscriber_qos(
         SubscriberQos& qos) const
 {
     qos = impl_->get_default_subscriber_qos();
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipant::get_subscriber_qos_from_profile(
@@ -375,7 +375,7 @@ ReturnCode_t DomainParticipant::get_default_topic_qos(
         TopicQos& qos) const
 {
     qos = impl_->get_default_topic_qos();
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipant::get_topic_qos_from_profile(
@@ -389,7 +389,7 @@ ReturnCode_t DomainParticipant::get_discovered_participants(
         std::vector<InstanceHandle_t>& participant_handles) const
 {
     static_cast<void> (participant_handles);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DomainParticipant::get_discovered_participant_data(
@@ -398,14 +398,14 @@ ReturnCode_t DomainParticipant::get_discovered_participant_data(
 {
     static_cast<void> (participant_data);
     static_cast<void> (participant_handle);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DomainParticipant::get_discovered_topics(
         std::vector<InstanceHandle_t>& topic_handles) const
 {
     static_cast<void> (topic_handles);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DomainParticipant::get_discovered_topic_data(
@@ -414,7 +414,7 @@ ReturnCode_t DomainParticipant::get_discovered_topic_data(
 {
     static_cast<void> (topic_data);
     static_cast<void> (topic_handle);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
 }
 
 bool DomainParticipant::contains_entity(

@@ -66,7 +66,7 @@ bool TypeLookupSubscriber::init()
     {
         return false;
     }
-    if (mp_participant->enable() != ReturnCode_t::RETCODE_OK)
+    if (mp_participant->enable() != RETCODE_OK)
     {
         DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
         return false;
@@ -147,7 +147,7 @@ void TypeLookupSubscriber::SubListener::on_data_available(
     {
         types::DynamicData_ptr data = dit->second;
         SampleInfo info;
-        if (reader->take_next_sample(data.get(), &info) == ReturnCode_t::RETCODE_OK)
+        if (reader->take_next_sample(data.get(), &info) == RETCODE_OK)
         {
             if (info.valid_data)
             {

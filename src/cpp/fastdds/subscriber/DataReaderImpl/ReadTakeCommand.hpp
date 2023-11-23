@@ -90,7 +90,7 @@ struct ReadTakeCommand
 
     ~ReadTakeCommand()
     {
-        if (!data_values_.has_ownership() && ReturnCode_t::RETCODE_NO_DATA == return_value_)
+        if (!data_values_.has_ownership() && RETCODE_NO_DATA == return_value_)
         {
             loan_manager_.return_loan(data_values_, sample_infos_);
             data_values_.unloan();
@@ -274,7 +274,7 @@ private:
     bool loop_for_data_;
 
     bool finished_ = false;
-    ReturnCode_t return_value_ = ReturnCode_t::RETCODE_NO_DATA;
+    ReturnCode_t return_value_ = RETCODE_NO_DATA;
 
     LoanableCollection::size_type current_slot_ = 0;
 
@@ -345,7 +345,7 @@ private:
             }
 
             // Mark that some data is available
-            return_value_ = ReturnCode_t::RETCODE_OK;
+            return_value_ = RETCODE_OK;
             ++current_slot_;
             --remaining_samples_;
             ret_val = true;

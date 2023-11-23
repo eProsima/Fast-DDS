@@ -197,7 +197,7 @@ ReturnCode_t DataReaderImpl::enable()
 
     bool is_datasharing_compatible = false;
     ReturnCode_t ret_code = check_datasharing_compatible(att, is_datasharing_compatible);
-    if (ret_code != ReturnCode_t::RETCODE_OK)
+    if (ret_code != RETCODE_OK)
     {
         return ret_code;
     }
@@ -229,7 +229,7 @@ ReturnCode_t DataReaderImpl::enable()
     {
         release_payload_pool();
         EPROSIMA_LOG_ERROR(DATA_READER, "Problem creating associated Reader");
-        return ReturnCode_t::RETCODE_ERROR;
+        return RETCODE_ERROR;
     }
 
     auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_->get_impl());
@@ -285,10 +285,10 @@ ReturnCode_t DataReaderImpl::enable()
         reader_->setListener(nullptr);
         stop();
 
-        return ReturnCode_t::RETCODE_ERROR;
+        return RETCODE_ERROR;
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void DataReaderImpl::disable()
@@ -384,7 +384,7 @@ ReturnCode_t DataReaderImpl::check_collection_preconditions_and_calc_max_samples
     // Properties should be the same on both collections
     if (!collections_have_same_properties(data_values, sample_infos))
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     // Check if a loan is required
@@ -393,7 +393,7 @@ ReturnCode_t DataReaderImpl::check_collection_preconditions_and_calc_max_samples
         // Loan not required, input collections should not be already loaned
         if (false == data_values.has_ownership())
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
 
         int32_t collection_max = data_values.maximum();
@@ -408,7 +408,7 @@ ReturnCode_t DataReaderImpl::check_collection_preconditions_and_calc_max_samples
         {
             if (max_samples > collection_max)
             {
-                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+                return RETCODE_PRECONDITION_NOT_MET;
             }
         }
     }
@@ -419,7 +419,7 @@ ReturnCode_t DataReaderImpl::check_collection_preconditions_and_calc_max_samples
         max_samples = qos_.reader_resource_limits().max_samples_per_read;
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DataReaderImpl::prepare_loan(
@@ -430,7 +430,7 @@ ReturnCode_t DataReaderImpl::prepare_loan(
     if (0 < data_values.maximum())
     {
         // A loan was not requested
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     if (max_samples > 0)
@@ -439,7 +439,7 @@ ReturnCode_t DataReaderImpl::prepare_loan(
         size_t num_infos = sample_info_pool_.num_allocated();
         if (num_infos == qos_.reader_resource_limits().sample_infos_allocation.maximum)
         {
-            return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+            return RETCODE_OUT_OF_RESOURCES;
         }
 
         // Limit max_samples to available sample_infos
@@ -462,7 +462,7 @@ ReturnCode_t DataReaderImpl::prepare_loan(
         }
         if (num_samples == max_resource_samples)
         {
-            return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+            return RETCODE_OUT_OF_RESOURCES;
         }
 
         // Limit max_samples to available samples
@@ -476,12 +476,12 @@ ReturnCode_t DataReaderImpl::prepare_loan(
 
     // Check if there are enough loans
     ReturnCode_t code = loan_manager_.get_loan(data_values, sample_infos);
-    if (!code)
+    if (RETCODE_OK != code)
     {
         return code;
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DataReaderImpl::read_or_take(
@@ -498,11 +498,11 @@ ReturnCode_t DataReaderImpl::read_or_take(
 {
     if (reader_ == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     ReturnCode_t code = check_collection_preconditions_and_calc_max_samples(data_values, sample_infos, max_samples);
-    if (!code)
+    if (RETCODE_OK != code)
     {
         return code;
     }
@@ -514,7 +514,7 @@ ReturnCode_t DataReaderImpl::read_or_take(
 
     if (!lock.try_lock_until(max_blocking_time))
     {
-        return ReturnCode_t::RETCODE_TIMEOUT;
+        return RETCODE_TIMEOUT;
     }
 #else
     std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
@@ -527,16 +527,16 @@ ReturnCode_t DataReaderImpl::read_or_take(
     {
         if (exact_instance && !history_.is_instance_present(handle))
         {
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            return RETCODE_BAD_PARAMETER;
         }
         else
         {
-            return ReturnCode_t::RETCODE_NO_DATA;
+            return RETCODE_NO_DATA;
         }
     }
 
     code = prepare_loan(data_values, sample_infos, max_samples);
-    if (!code)
+    if (RETCODE_OK != code)
     {
         return code;
     }
@@ -647,26 +647,26 @@ ReturnCode_t DataReaderImpl::return_loan(
 
     if (reader_ == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     // Properties should be the same on both collections
     if (!collections_have_same_properties(data_values, sample_infos))
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     // They should have a loan
     if (data_values.has_ownership() == true)
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
 
     // Check if they were loaned by this reader
     ReturnCode_t code = loan_manager_.return_loan(data_values, sample_infos);
-    if (!code)
+    if (RETCODE_OK != code)
     {
         return code;
     }
@@ -687,7 +687,7 @@ ReturnCode_t DataReaderImpl::return_loan(
     data_values.unloan();
     sample_infos.unloan();
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DataReaderImpl::read_or_take_next_sample(
@@ -697,12 +697,12 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
 {
     if (reader_ == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     if (history_.getHistorySize() == 0)
     {
-        return ReturnCode_t::RETCODE_NO_DATA;
+        return RETCODE_NO_DATA;
     }
 
 #if HAVE_STRICT_REALTIME
@@ -712,7 +712,7 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
 
     if (!lock.try_lock_until(max_blocking_time))
     {
-        return ReturnCode_t::RETCODE_TIMEOUT;
+        return RETCODE_TIMEOUT;
     }
 
 #else
@@ -724,7 +724,7 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
     auto it = history_.lookup_available_instance(HANDLE_NIL, false);
     if (!it.first)
     {
-        return ReturnCode_t::RETCODE_NO_DATA;
+        return RETCODE_NO_DATA;
     }
 
     StackAllocatedSequence<void*, 1> data_values;
@@ -739,7 +739,7 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
     }
 
     ReturnCode_t code = cmd.return_value();
-    if (ReturnCode_t::RETCODE_OK == code)
+    if (RETCODE_OK == code)
     {
         *info = sample_infos[0];
     }
@@ -768,14 +768,14 @@ ReturnCode_t DataReaderImpl::get_first_untaken_info(
 {
     if (reader_ == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     if (history_.get_first_untaken_info(*info))
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_NO_DATA;
+    return RETCODE_NO_DATA;
 }
 
 uint64_t DataReaderImpl::get_unread_count(
@@ -834,11 +834,11 @@ ReturnCode_t DataReaderImpl::set_qos(
                 subscriber_->get_participant()->get_qos().allocation().data_limits.max_user_data <
                 qos_to_set.user_data().getValue().size())
         {
-            return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+            return RETCODE_INCONSISTENT_POLICY;
         }
 
         ReturnCode_t check_result = check_qos_including_resource_limits(qos_to_set, type_);
-        if (!check_result)
+        if (RETCODE_OK != check_result)
         {
             return check_result;
         }
@@ -846,7 +846,7 @@ ReturnCode_t DataReaderImpl::set_qos(
 
     if (enabled && !can_qos_be_updated(qos_, qos_to_set))
     {
-        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        return RETCODE_IMMUTABLE_POLICY;
     }
 
     set_qos(qos_, qos_to_set, !enabled);
@@ -880,7 +880,7 @@ ReturnCode_t DataReaderImpl::set_qos(
         }
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 const DataReaderQos& DataReaderImpl::get_qos() const
@@ -933,7 +933,7 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
     if (listener != nullptr)
     {
         SubscriptionMatchedStatus callback_status;
-        if (ReturnCode_t::RETCODE_OK == data_reader_->get_subscription_matched_status(callback_status))
+        if (RETCODE_OK == data_reader_->get_subscription_matched_status(callback_status))
         {
             listener->on_subscription_matched(data_reader_->user_datareader_, callback_status);
         }
@@ -951,7 +951,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
     if (listener != nullptr)
     {
         LivelinessChangedStatus callback_status;
-        if (data_reader_->get_liveliness_changed_status(callback_status) == ReturnCode_t::RETCODE_OK)
+        if (data_reader_->get_liveliness_changed_status(callback_status) == RETCODE_OK)
         {
             listener->on_liveliness_changed(data_reader_->user_datareader_, callback_status);
         }
@@ -974,7 +974,7 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
     if (listener != nullptr)
     {
         RequestedIncompatibleQosStatus callback_status;
-        if (data_reader_->get_requested_incompatible_qos_status(callback_status) == ReturnCode_t::RETCODE_OK)
+        if (data_reader_->get_requested_incompatible_qos_status(callback_status) == RETCODE_OK)
         {
             listener->on_requested_incompatible_qos(data_reader_->user_datareader_, callback_status);
         }
@@ -997,7 +997,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_lost(
     if (listener != nullptr)
     {
         SampleLostStatus callback_status;
-        if (data_reader_->get_sample_lost_status(callback_status) == ReturnCode_t::RETCODE_OK)
+        if (data_reader_->get_sample_lost_status(callback_status) == RETCODE_OK)
         {
             listener->on_sample_lost(data_reader_->user_datareader_, callback_status);
         }
@@ -1021,7 +1021,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
     if (listener != nullptr)
     {
         SampleRejectedStatus callback_status;
-        if (data_reader_->get_sample_rejected_status(callback_status) == ReturnCode_t::RETCODE_OK)
+        if (data_reader_->get_sample_rejected_status(callback_status) == RETCODE_OK)
         {
             listener->on_sample_rejected(data_reader_->user_datareader_, callback_status);
         }
@@ -1165,7 +1165,7 @@ ReturnCode_t DataReaderImpl::get_subscription_matched_status(
 {
     if (reader_ == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     {
@@ -1177,7 +1177,7 @@ ReturnCode_t DataReaderImpl::get_subscription_matched_status(
     }
 
     user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::subscription_matched(), false);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 bool DataReaderImpl::deadline_timer_reschedule()
@@ -1236,7 +1236,7 @@ ReturnCode_t DataReaderImpl::get_requested_deadline_missed_status(
 {
     if (reader_ == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     {
@@ -1247,7 +1247,7 @@ ReturnCode_t DataReaderImpl::get_requested_deadline_missed_status(
     }
 
     user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::requested_deadline_missed(), false);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 bool DataReaderImpl::lifespan_expired()
@@ -1299,7 +1299,7 @@ ReturnCode_t DataReaderImpl::set_listener(
 {
     std::lock_guard<std::mutex> _(listener_mutex_);
     listener_ = listener;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 const DataReaderListener* DataReaderImpl::get_listener() const
@@ -1325,7 +1325,7 @@ ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
 {
     if (reader_ == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     {
@@ -1337,7 +1337,7 @@ ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
     }
 
     user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::liveliness_changed(), false);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
@@ -1345,7 +1345,7 @@ ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
 {
     if (reader_ == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     {
@@ -1356,7 +1356,7 @@ ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
     }
 
     user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::requested_incompatible_qos(), false);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DataReaderImpl::get_sample_lost_status(
@@ -1364,7 +1364,7 @@ ReturnCode_t DataReaderImpl::get_sample_lost_status(
 {
     if (reader_ == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     {
@@ -1375,7 +1375,7 @@ ReturnCode_t DataReaderImpl::get_sample_lost_status(
     }
 
     user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::sample_lost(), false);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DataReaderImpl::get_sample_rejected_status(
@@ -1383,7 +1383,7 @@ ReturnCode_t DataReaderImpl::get_sample_rejected_status(
 {
     if (reader_ == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     {
@@ -1394,7 +1394,7 @@ ReturnCode_t DataReaderImpl::get_sample_rejected_status(
     }
 
     user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::sample_rejected(), false);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 const Subscriber* DataReaderImpl::get_subscriber() const
@@ -1470,7 +1470,7 @@ ReturnCode_t DataReaderImpl::check_qos_including_resource_limits(
         const TypeSupport& type)
 {
     ReturnCode_t check_qos_return = check_qos(qos);
-    if (ReturnCode_t::RETCODE_OK == check_qos_return &&
+    if (RETCODE_OK == check_qos_return &&
             type->m_isGetKeyDefined)
     {
         check_qos_return = check_allocation_consistency(qos);
@@ -1484,24 +1484,24 @@ ReturnCode_t DataReaderImpl::check_qos(
     if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
-        return ReturnCode_t::RETCODE_UNSUPPORTED;
+        return RETCODE_UNSUPPORTED;
     }
     if (qos.destination_order().kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
-        return ReturnCode_t::RETCODE_UNSUPPORTED;
+        return RETCODE_UNSUPPORTED;
     }
     if (qos.reader_resource_limits().max_samples_per_read <= 0)
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "max_samples_per_read should be strictly possitive");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        return RETCODE_INCONSISTENT_POLICY;
     }
     if (qos_has_unique_network_request(qos) && qos_has_specific_locators(qos))
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "unique_network_request cannot be set along specific locators");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        return RETCODE_INCONSISTENT_POLICY;
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DataReaderImpl::check_allocation_consistency(
@@ -1513,16 +1513,16 @@ ReturnCode_t DataReaderImpl::check_allocation_consistency(
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
                 "max_samples should be greater than max_instances * max_samples_per_instance");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        return RETCODE_INCONSISTENT_POLICY;
     }
     if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
             (qos.resource_limits().max_samples > 0))
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
                 "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        return RETCODE_INCONSISTENT_POLICY;
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 bool DataReaderImpl::can_qos_be_updated(
@@ -1826,58 +1826,58 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
     switch (qos_.data_sharing().kind())
     {
         case DataSharingKind::OFF:
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
             break;
         case DataSharingKind::ON:
 #if HAVE_SECURITY
             if (has_security_enabled)
             {
                 EPROSIMA_LOG_ERROR(DATA_READER, "Data sharing cannot be used with security protection.");
-                return ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY;
+                return RETCODE_NOT_ALLOWED_BY_SECURITY;
             }
 #endif // if HAVE_SECURITY
             if (!type_.is_bounded())
             {
                 EPROSIMA_LOG_INFO(DATA_READER, "Data sharing cannot be used with unbounded data types");
-                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+                return RETCODE_BAD_PARAMETER;
             }
 
             if (has_key)
             {
                 EPROSIMA_LOG_ERROR(DATA_READER, "Data sharing cannot be used with keyed data types");
-                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+                return RETCODE_BAD_PARAMETER;
             }
 
             is_datasharing_compatible = true;
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
             break;
         case DataSharingKind::AUTO:
 #if HAVE_SECURITY
             if (has_security_enabled)
             {
                 EPROSIMA_LOG_INFO(DATA_READER, "Data sharing disabled due to security configuration.");
-                return ReturnCode_t::RETCODE_OK;
+                return RETCODE_OK;
             }
 #endif // if HAVE_SECURITY
 
             if (!type_.is_bounded())
             {
                 EPROSIMA_LOG_INFO(DATA_READER, "Data sharing disabled because data type is not bounded");
-                return ReturnCode_t::RETCODE_OK;
+                return RETCODE_OK;
             }
 
             if (has_key)
             {
                 EPROSIMA_LOG_INFO(DATA_READER, "Data sharing disabled because data type is keyed");
-                return ReturnCode_t::RETCODE_OK;
+                return RETCODE_OK;
             }
 
             is_datasharing_compatible = true;
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
             break;
         default:
             EPROSIMA_LOG_ERROR(DATA_WRITER, "Unknown data sharing kind.");
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            return RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -1893,12 +1893,12 @@ ReturnCode_t DataReaderImpl::get_listening_locators(
 {
     if (nullptr == reader_)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     locators.assign(reader_->getAttributes().unicastLocatorList);
     locators.push_back(reader_->getAttributes().multicastLocatorList);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DataReaderImpl::delete_contained_entities()
@@ -1918,7 +1918,7 @@ ReturnCode_t DataReaderImpl::delete_contained_entities()
     // release the colection
     read_conditions_.clear();
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void DataReaderImpl::filter_has_been_updated()
@@ -2042,7 +2042,7 @@ ReadCondition* DataReaderImpl::create_readcondition(
     auto ret_code = impl->attach_condition(cond);
 
     // attach cannot fail in this scenario
-    assert(!!ret_code);
+    assert(RETCODE_OK == ret_code);
     (void)ret_code;
 
     return cond;
@@ -2053,14 +2053,14 @@ ReturnCode_t DataReaderImpl::delete_readcondition(
 {
     if ( nullptr == a_condition )
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     detail::ReadConditionImpl* impl = a_condition->get_impl();
 
     if ( nullptr == impl )
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     std::lock_guard<std::recursive_mutex> _(get_conditions_mutex());
@@ -2071,7 +2071,7 @@ ReturnCode_t DataReaderImpl::delete_readcondition(
     if ( it == read_conditions_.end())
     {
         // The ReadCondition is unknown to this DataReader
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
 #   ifdef __cpp_lib_enable_shared_from_this
@@ -2084,7 +2084,7 @@ ReturnCode_t DataReaderImpl::delete_readcondition(
     // Detach from the implementation object
     auto ret_code = impl->detach_condition(a_condition);
 
-    if (!!ret_code)
+    if (RETCODE_OK == ret_code)
     {
         // delete the condition
         delete a_condition;

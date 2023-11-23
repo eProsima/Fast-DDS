@@ -357,7 +357,7 @@ TEST(ParticipantTests, ChangeDomainParticipantFactoryQos)
     entity_factory.autoenable_created_entities = false;
     qos.entity_factory(entity_factory);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_qos(qos) == RETCODE_OK);
     DomainParticipantFactoryQos fqos;
     DomainParticipantFactory::get_instance()->get_qos(fqos);
 
@@ -367,7 +367,7 @@ TEST(ParticipantTests, ChangeDomainParticipantFactoryQos)
     entity_factory.autoenable_created_entities = true;
     qos.entity_factory(entity_factory);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_qos(qos) == RETCODE_OK);
     DomainParticipantFactory::get_instance()->get_qos(fqos);
 
     ASSERT_EQ(qos, fqos);
@@ -383,7 +383,7 @@ TEST(ParticipantTests, CreateDomainParticipant)
     ASSERT_NE(participant, nullptr);
     EXPECT_EQ(participant->get_listener(), nullptr);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 
 }
 
@@ -501,7 +501,7 @@ TEST(ParticipantTests, CreateDomainParticipantWithProfile)
     ASSERT_EQ(default_participant->get_domain_id(), domain_id); //Keep the DID given to the method, not the one on the profile
     check_participant_with_profile(default_participant, "test_default_participant_profile");
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
-                default_participant) == ReturnCode_t::RETCODE_OK);
+                default_participant) == RETCODE_OK);
 
     //participant using non-default profile
     DomainParticipant* participant =
@@ -510,7 +510,7 @@ TEST(ParticipantTests, CreateDomainParticipantWithProfile)
     ASSERT_NE(participant, nullptr);
     ASSERT_EQ(participant->get_domain_id(), domain_id); //Keep the DID given to the method, not the one on the profile
     check_participant_with_profile(participant, "test_participant_profile");
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, GetParticipantProfileQos)
@@ -519,7 +519,7 @@ TEST(ParticipantTests, GetParticipantProfileQos)
     DomainParticipantQos qos;
     EXPECT_EQ(
         DomainParticipantFactory::get_instance()->get_participant_qos_from_profile("test_participant_profile", qos),
-        ReturnCode_t::RETCODE_OK);
+        RETCODE_OK);
 
     // Extract ParticipantQos from profile
     DomainParticipant* participant =
@@ -532,10 +532,10 @@ TEST(ParticipantTests, GetParticipantProfileQos)
     // Test return when a non-existent profile is used
     EXPECT_EQ(
         DomainParticipantFactory::get_instance()->get_participant_qos_from_profile("incorrect_profile_name", qos),
-        ReturnCode_t::RETCODE_BAD_PARAMETER);
+        RETCODE_BAD_PARAMETER);
 
     // Clean up
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 
@@ -553,7 +553,7 @@ TEST(ParticipantTests, DeleteDomainParticipant)
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
@@ -566,9 +566,9 @@ TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
     ASSERT_NE(subscriber, nullptr);
 
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
-                participant), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+                participant), RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 
     participant = DomainParticipantFactory::get_instance()->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
 
@@ -576,9 +576,9 @@ TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
     ASSERT_NE(publisher, nullptr);
 
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
-                participant), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+                participant), RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 
     participant = DomainParticipantFactory::get_instance()->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
 
@@ -589,9 +589,9 @@ TEST(ParticipantTests, DeleteDomainParticipantWithEntities)
     ASSERT_NE(topic, nullptr);
 
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
-                participant), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+                participant), RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 TEST(ParticipantTests, ChangeDefaultParticipantQos)
@@ -605,7 +605,7 @@ TEST(ParticipantTests, ChangeDefaultParticipantQos)
     entity_factory.autoenable_created_entities = false;
     qos.entity_factory(entity_factory);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_default_participant_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_default_participant_qos(qos) == RETCODE_OK);
     DomainParticipantQos pqos;
     DomainParticipantFactory::get_instance()->get_default_participant_qos(pqos);
 
@@ -613,7 +613,7 @@ TEST(ParticipantTests, ChangeDefaultParticipantQos)
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->set_default_participant_qos(
-                PARTICIPANT_QOS_DEFAULT) == ReturnCode_t::RETCODE_OK);
+                PARTICIPANT_QOS_DEFAULT) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, ChangePSMDefaultParticipantQos)
@@ -648,7 +648,7 @@ TEST(ParticipantTests, ChangeDomainParticipantQos)
     check_equivalent_qos(qos, PARTICIPANT_QOS_DEFAULT);
 
     qos.entity_factory().autoenable_created_entities = false;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_OK);
     DomainParticipantQos pqos;
     participant->get_qos(pqos);
 
@@ -656,7 +656,7 @@ TEST(ParticipantTests, ChangeDomainParticipantQos)
     ASSERT_EQ(qos, pqos);
     ASSERT_EQ(qos.entity_factory().autoenable_created_entities, false);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 
 }
 
@@ -904,9 +904,9 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfiguration)
 
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers, qos_output);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
 
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
 
@@ -1047,7 +1047,7 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfigurationDNS)
             };
     EXPECT_TRUE(udpv6_check(attributes));
 
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
 /**
@@ -1098,8 +1098,8 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 #endif // APPLE
     DomainParticipantQos result_qos = participant->get_qos();
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
     std::remove(filename.c_str());
 }
 
@@ -1123,8 +1123,8 @@ TEST(ParticipantTests, ClientParticipantRemoteServerListConfiguration)
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
     DomainParticipantQos result_qos = participant->get_qos();
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
 /**
@@ -1152,8 +1152,8 @@ TEST(ParticipantTests, ServerParticipantEnvironmentConfiguration)
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SERVER);
     EXPECT_TRUE(attributes.builtin.discovery_config.m_DiscoveryServers.empty());
     DomainParticipantQos result_qos = participant->get_qos();
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
 /**
@@ -1182,8 +1182,8 @@ TEST(ParticipantTests, ServerParticipantRemoteServerListConfiguration)
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SERVER);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
     DomainParticipantQos result_qos = participant->get_qos();
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
 /**
@@ -1235,8 +1235,8 @@ TEST(ParticipantTests, ServerParticipantInconsistentRemoteServerListConfiguratio
     helper_wait_for_at_least_entries(mockConsumer, 1);
 #endif // APPLE
     DomainParticipantQos result_qos = participant->get_qos();
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
     std::remove(filename.c_str());
 }
 
@@ -1285,8 +1285,8 @@ TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConf
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 #endif // APPLE
     DomainParticipantQos result_qos = participant->get_qos();
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
     std::remove(filename.c_str());
 }
 
@@ -1311,7 +1311,7 @@ TEST(ParticipantTests, RepeatEnvironmentFileConfiguration)
     set_and_check_with_environment_file(participant,
             {"172.17.0.5:64863", "192.168.1.133:4321", "192.168.5.15:1234"}, filename);
 #endif // APPLE
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
     std::remove(filename.c_str());
 }
 
@@ -1379,11 +1379,11 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
     result_qos = participant->get_qos();
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
     // Add new server using API
     result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
     // RTPS layer issues a Warning because a server has been removed. However, DDS layer returns OK
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
     server.clear();
     fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
     locator.port = 64863;
@@ -1396,14 +1396,14 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     server.metatrafficUnicastLocatorList.push_back(locator);
     get_server_client_default_guidPrefix(3, server.guidPrefix);
     result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
     output.push_back(server);
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 #endif // APPLE
     result_qos = participant->get_qos();
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
     std::remove(filename.c_str());
 }
 
@@ -1440,35 +1440,35 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     server_2.metatrafficUnicastLocatorList.push_back(locator_2);
     qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server_2);
 
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_OK);
     DomainParticipantQos set_qos;
     participant->get_qos(set_qos);
     ASSERT_EQ(set_qos, qos);
 
     // Check that removing one server is NOT OK
     qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.pop_front();
-    ASSERT_FALSE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(participant->set_qos(qos) == RETCODE_OK);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check that removing all servers is NOT OK
     fastdds::rtps::RemoteServerList_t servers;
     qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = servers;
-    ASSERT_FALSE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(participant->set_qos(qos) == RETCODE_OK);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().prefix is NOT OK
     participant->get_qos(qos);
     std::istringstream("44.53.00.5f.45.50.52.4f.53.49.4d.41") >> qos.wire_protocol().prefix;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().participant_id is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().participant_id = 7;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
@@ -1476,7 +1476,7 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     participant->get_qos(qos);
     fastrtps::rtps::ThroughputControllerDescriptor controller{300000, 1000};
     qos.wire_protocol().throughput_controller = controller;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
@@ -1486,56 +1486,56 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     fastrtps::rtps::IPLocator::setIPv4(loc, "192.0.0.0");
     loc.port = static_cast<uint16_t>(12);
     qos.wire_protocol().default_unicast_locator_list.push_back(loc);
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().default_multicast_locator_list is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().default_multicast_locator_list.push_back(loc);
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.use_WriterLivelinessProtocol is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.use_WriterLivelinessProtocol ^= true;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.typelookup_config.use_client is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.typelookup_config.use_client ^= true;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.typelookup_config.use_server is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.typelookup_config.use_server ^= true;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.metatrafficUnicastLocatorList is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(loc);
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.metatrafficMulticastLocatorList is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.metatrafficMulticastLocatorList.push_back(loc);
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.initialPeersList is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.initialPeersList.push_back(loc);
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
@@ -1543,14 +1543,14 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     participant->get_qos(qos);
     qos.wire_protocol().builtin.readerHistoryMemoryPolicy =
             fastrtps::rtps::MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.readerPayloadSize is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.readerPayloadSize = 27;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
@@ -1558,70 +1558,70 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     participant->get_qos(qos);
     qos.wire_protocol().builtin.writerHistoryMemoryPolicy =
             fastrtps::rtps::MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.writerPayloadSize is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.writerPayloadSize = 27;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.mutation_tries is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.mutation_tries = 27;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.avoid_builtin_multicast is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.avoid_builtin_multicast ^= true;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.discovery_config.discoveryProtocol is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol_t::NONE;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol ^= true;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol ^= true;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.discovery_config.discoveryServer_client_syncperiod is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.discovery_config.discoveryServer_client_syncperiod = { 27, 27};
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.discovery_config.leaseDuration is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.discovery_config.leaseDuration = { 27, 27};
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = { 27, 27};
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
@@ -1629,7 +1629,7 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     participant->get_qos(qos);
     qos.wire_protocol().builtin.discovery_config.initial_announcements.count = 27;
     qos.wire_protocol().builtin.discovery_config.initial_announcements.period = {27, 27};
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
@@ -1643,7 +1643,7 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     qos.wire_protocol().builtin.discovery_config.m_simpleEDP.
             enable_builtin_secure_subscriptions_writer_and_publications_reader ^= true;
 #endif // if HAVE_SECURITY
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
@@ -1662,7 +1662,7 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
             "</participant>" \
             "</staticdiscovery>";
     qos.wire_protocol().builtin.discovery_config.static_edp_xml_config(static_xml.c_str());
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
@@ -1670,11 +1670,11 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     participant->get_qos(qos);
     qos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
             fastrtps::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_HOST;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, EntityFactoryBehavior)
@@ -1685,7 +1685,7 @@ TEST(ParticipantTests, EntityFactoryBehavior)
         DomainParticipantFactoryQos qos;
         qos.entity_factory().autoenable_created_entities = false;
 
-        ASSERT_TRUE(factory->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(factory->set_qos(qos) == RETCODE_OK);
     }
 
     // Ensure that participant is created disabled.
@@ -1697,7 +1697,7 @@ TEST(ParticipantTests, EntityFactoryBehavior)
     // Participant is disabled. This means we can change an inmutable qos.
     DomainParticipantQos qos = PARTICIPANT_QOS_DEFAULT;
     qos.wire_protocol().builtin.avoid_builtin_multicast = !qos.wire_protocol().builtin.avoid_builtin_multicast;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(qos));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(qos));
 
     // Creating lower entities should create them disabled
     Publisher* pub = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
@@ -1715,13 +1715,13 @@ TEST(ParticipantTests, EntityFactoryBehavior)
     EXPECT_FALSE(topic->is_enabled());
 
     // Enabling should fail on lower entities until participant is enabled
-    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, pub->enable());
-    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, sub->enable());
+    EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, pub->enable());
+    EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, sub->enable());
 
     // Enable participant and check idempotency of enable
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_EQ(RETCODE_OK, participant->enable());
     EXPECT_TRUE(participant->is_enabled());
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_EQ(RETCODE_OK, participant->enable());
 
     // As the participant was created with the default value for ENTITY_FACTORY,
     // lower entities should have been automatically enabled.
@@ -1729,7 +1729,7 @@ TEST(ParticipantTests, EntityFactoryBehavior)
     EXPECT_TRUE(sub->is_enabled());
 
     // Now that participant is enabled, we should not be able change an inmutable qos.
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, participant->set_qos(PARTICIPANT_QOS_DEFAULT));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, participant->set_qos(PARTICIPANT_QOS_DEFAULT));
 
     // Created entities should now be automatically enabled
     Subscriber* sub2 = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -1738,7 +1738,7 @@ TEST(ParticipantTests, EntityFactoryBehavior)
 
     // We can change ENTITY_FACTORY on the participant
     qos.entity_factory().autoenable_created_entities = false;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(qos));
+    ASSERT_EQ(RETCODE_OK, participant->set_qos(qos));
 
     // Lower entities should now be created disabled
     Publisher* pub2 = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
@@ -1746,22 +1746,22 @@ TEST(ParticipantTests, EntityFactoryBehavior)
     EXPECT_FALSE(pub2->is_enabled());
 
     // But could be enabled afterwards
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, pub2->enable());
+    EXPECT_EQ(RETCODE_OK, pub2->enable());
     EXPECT_TRUE(pub2->is_enabled());
 
     // Check idempotency of enable on entities
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, pub->enable());
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, pub2->enable());
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, sub->enable());
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, sub2->enable());
+    EXPECT_EQ(RETCODE_OK, pub->enable());
+    EXPECT_EQ(RETCODE_OK, pub2->enable());
+    EXPECT_EQ(RETCODE_OK, sub->enable());
+    EXPECT_EQ(RETCODE_OK, sub2->enable());
 
     // Delete lower entities
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(sub2));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_publisher(pub2));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(sub));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_publisher(pub));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_topic(topic));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(RETCODE_OK, participant->delete_subscriber(sub2));
+    EXPECT_EQ(RETCODE_OK, participant->delete_publisher(pub2));
+    EXPECT_EQ(RETCODE_OK, participant->delete_subscriber(sub));
+    EXPECT_EQ(RETCODE_OK, participant->delete_publisher(pub));
+    EXPECT_EQ(RETCODE_OK, participant->delete_topic(topic));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
 TEST(ParticipantTests, CreatePublisher)
@@ -1773,8 +1773,8 @@ TEST(ParticipantTests, CreatePublisher)
 
     ASSERT_NE(publisher, nullptr);
 
-    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 void check_publisher_with_profile (
@@ -1807,15 +1807,15 @@ TEST(ParticipantTests, CreatePublisherWithProfile)
     Publisher* default_publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(default_publisher, nullptr);
     check_publisher_with_profile(default_publisher, "test_default_publisher_profile");
-    ASSERT_TRUE(participant->delete_publisher(default_publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(default_publisher) == RETCODE_OK);
 
     //participant using non-default profile
     Publisher* publisher = participant->create_publisher_with_profile("test_publisher_profile");
     ASSERT_NE(publisher, nullptr);
     check_publisher_with_profile(publisher, "test_publisher_profile");
-    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, CreatePSMPublisher)
@@ -1833,24 +1833,24 @@ TEST(ParticipantTests, ChangeDefaultPublisherQos)
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
 
-    ASSERT_TRUE(participant->set_default_publisher_qos(PUBLISHER_QOS_DEFAULT) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->set_default_publisher_qos(PUBLISHER_QOS_DEFAULT) == RETCODE_OK);
 
     PublisherQos qos;
-    ASSERT_TRUE(participant->get_default_publisher_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->get_default_publisher_qos(qos) == RETCODE_OK);
 
     ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
 
     qos.entity_factory().autoenable_created_entities = false;
 
-    ASSERT_TRUE(participant->set_default_publisher_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->set_default_publisher_qos(qos) == RETCODE_OK);
 
     PublisherQos pqos;
-    ASSERT_TRUE(participant->get_default_publisher_qos(pqos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->get_default_publisher_qos(pqos) == RETCODE_OK);
 
     ASSERT_TRUE(qos == pqos);
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, ChangePSMDefaultPublisherQos)
@@ -1878,8 +1878,8 @@ TEST(ParticipantTests, CreateSubscriber)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
-    ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_subscriber(subscriber) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 void check_subscriber_with_profile (
@@ -1913,7 +1913,7 @@ TEST(ParticipantTests, GetSubscriberProfileQos)
     SubscriberQos qos;
     EXPECT_EQ(
         participant->get_subscriber_qos_from_profile("test_subscriber_profile", qos),
-        ReturnCode_t::RETCODE_OK);
+        RETCODE_OK);
 
     Subscriber* subscriber = participant->create_subscriber(qos);
     ASSERT_NE(subscriber, nullptr);
@@ -1923,11 +1923,11 @@ TEST(ParticipantTests, GetSubscriberProfileQos)
     // Test return when a non-existent profile is used
     EXPECT_EQ(
         participant->get_subscriber_qos_from_profile("incorrect_profile_name", qos),
-        ReturnCode_t::RETCODE_BAD_PARAMETER);
+        RETCODE_BAD_PARAMETER);
 
     // Clean up
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 TEST(ParticipantTests, CreateSubscriberWithProfile)
@@ -1941,15 +1941,15 @@ TEST(ParticipantTests, CreateSubscriberWithProfile)
     Subscriber* default_subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(default_subscriber, nullptr);
     check_subscriber_with_profile(default_subscriber, "test_default_subscriber_profile");
-    ASSERT_TRUE(participant->delete_subscriber(default_subscriber) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_subscriber(default_subscriber) == RETCODE_OK);
 
     //participant using non-default profile
     Subscriber* subscriber = participant->create_subscriber_with_profile("test_subscriber_profile");
     ASSERT_NE(subscriber, nullptr);
     check_subscriber_with_profile(subscriber, "test_subscriber_profile");
-    ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_subscriber(subscriber) == RETCODE_OK);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, GetPublisherProfileQos)
@@ -1964,7 +1964,7 @@ TEST(ParticipantTests, GetPublisherProfileQos)
     PublisherQos qos;
     EXPECT_EQ(
         participant->get_publisher_qos_from_profile("test_publisher_profile", qos),
-        ReturnCode_t::RETCODE_OK);
+        RETCODE_OK);
 
     Publisher* publisher = participant->create_publisher(qos);
     ASSERT_NE(publisher, nullptr);
@@ -1974,11 +1974,11 @@ TEST(ParticipantTests, GetPublisherProfileQos)
     // Test return when a non-existent profile is used
     EXPECT_EQ(
         participant->get_publisher_qos_from_profile("incorrect_profile_name", qos),
-        ReturnCode_t::RETCODE_BAD_PARAMETER);
+        RETCODE_BAD_PARAMETER);
 
     // Clean up
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 
@@ -2001,8 +2001,8 @@ TEST(ParticipantTests, DeletePublisher)
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
 
-    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, DeleteSubscriber)
@@ -2014,8 +2014,8 @@ TEST(ParticipantTests, DeleteSubscriber)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
-    ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_subscriber(subscriber) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, ChangeDefaultSubscriberQos)
@@ -2024,24 +2024,24 @@ TEST(ParticipantTests, ChangeDefaultSubscriberQos)
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
 
-    ASSERT_EQ(participant->set_default_subscriber_qos(SUBSCRIBER_QOS_DEFAULT), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->set_default_subscriber_qos(SUBSCRIBER_QOS_DEFAULT), RETCODE_OK);
 
     SubscriberQos qos;
-    ASSERT_EQ(participant->get_default_subscriber_qos(qos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->get_default_subscriber_qos(qos), RETCODE_OK);
 
     ASSERT_EQ(qos, SUBSCRIBER_QOS_DEFAULT);
 
     qos.entity_factory().autoenable_created_entities = false;
 
-    ASSERT_EQ(participant->set_default_subscriber_qos(qos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->set_default_subscriber_qos(qos), RETCODE_OK);
 
     SubscriberQos pqos;
-    ASSERT_EQ(participant->get_default_subscriber_qos(pqos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->get_default_subscriber_qos(pqos), RETCODE_OK);
 
     ASSERT_TRUE(pqos == qos);
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, ChangePSMDefaultSubscriberQos)
@@ -2066,7 +2066,7 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
 
-    ASSERT_TRUE(participant->set_default_topic_qos(TOPIC_QOS_DEFAULT) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->set_default_topic_qos(TOPIC_QOS_DEFAULT) == RETCODE_OK);
 
     TopicQos qos;
     participant->get_default_topic_qos(qos);
@@ -2075,7 +2075,7 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
 
     qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
 
-    ASSERT_TRUE(participant->set_default_topic_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->set_default_topic_qos(qos) == RETCODE_OK);
 
     TopicQos tqos;
     participant->get_default_topic_qos(tqos);
@@ -2084,9 +2084,9 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
     ASSERT_EQ(tqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
 
     qos.durability().kind = PERSISTENT_DURABILITY_QOS;
-    ASSERT_FALSE(participant->set_default_topic_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(participant->set_default_topic_qos(qos) == RETCODE_OK);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, ChangePSMDefaultTopicQos)
@@ -2134,7 +2134,7 @@ TEST(ParticipantTests, GetTopicProfileQos)
     TopicQos qos;
     EXPECT_EQ(
         participant->get_topic_qos_from_profile("test_topic_profile", qos),
-        ReturnCode_t::RETCODE_OK);
+        RETCODE_OK);
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), qos);
     ASSERT_NE(topic, nullptr);
@@ -2145,11 +2145,11 @@ TEST(ParticipantTests, GetTopicProfileQos)
     // Test return when a non-existent profile is used
     EXPECT_EQ(
         participant->get_topic_qos_from_profile("incorrect_profile_name", qos),
-        ReturnCode_t::RETCODE_BAD_PARAMETER);
+        RETCODE_BAD_PARAMETER);
 
     // Clean up
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 TEST(ParticipantTests, CreateTopic)
@@ -2170,15 +2170,15 @@ TEST(ParticipantTests, CreateTopic)
     Topic* topic_duplicated = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
     ASSERT_EQ(topic_duplicated, nullptr);
 
-    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
 
     // Topic using non-default profile
     Topic* topic_profile = participant->create_topic_with_profile("footopic", "footype", "test_topic_profile");
     ASSERT_NE(topic_profile, nullptr);
     check_topic_with_profile(topic_profile, "test_topic_profile");
-    ASSERT_TRUE(participant->delete_topic(topic_profile) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic_profile) == RETCODE_OK);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 // Test that creating a Topic with a Data Type name different from the Type Support is possible as long
@@ -2201,7 +2201,7 @@ TEST(ParticipantTests, CreateTopicWithDifferentTypeName)
     Topic* topic_duplicated = participant->create_topic("footopic", type_name, TOPIC_QOS_DEFAULT);
     ASSERT_EQ(topic_duplicated, nullptr);
 
-    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
 }
 
 // Test that creating a Topic with a Data Type name different from the data type is not possible
@@ -2262,11 +2262,11 @@ TEST(ParticipantTests, DeleteTopic)
 
     Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
 
-    ASSERT_TRUE(participant->delete_topic(nullptr) == ReturnCode_t::RETCODE_BAD_PARAMETER);
-    ASSERT_TRUE(participant2->delete_topic(topic) == ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant2) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(nullptr) == RETCODE_BAD_PARAMETER);
+    ASSERT_TRUE(participant2->delete_topic(topic) == RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant2) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, LookupTopicDescription)
@@ -2290,10 +2290,10 @@ TEST(ParticipantTests, LookupTopicDescription)
     ASSERT_EQ(participant->lookup_topicdescription(topic_name), topic);
 
     // After topic deletion, should return nil
-    EXPECT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    EXPECT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
     ASSERT_EQ(participant->lookup_topicdescription(topic_name), nullptr);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, DeleteTopicInUse)
@@ -2317,13 +2317,13 @@ TEST(ParticipantTests, DeleteTopicInUse)
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(data_reader, nullptr);
 
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_PRECONDITION_NOT_MET);
 
-    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_EQ(participant->delete_contentfilteredtopic(content_filtered_topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->delete_contentfilteredtopic(content_filtered_topic), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
 
     topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
 
@@ -2333,13 +2333,13 @@ TEST(ParticipantTests, DeleteTopicInUse)
     DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(data_writer, nullptr);
 
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_PRECONDITION_NOT_MET);
 
-    ASSERT_EQ(publisher->delete_datawriter(data_writer), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher->delete_datawriter(data_writer), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
 
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 // Check that the constraints on maximum expression parameter size are honored
@@ -2374,10 +2374,10 @@ TEST(ParticipantTests, ExpressionParameterLimits)
     ASSERT_NE(content_filtered_topic_default_valid_parameters, nullptr);
 
     ASSERT_EQ(participant_default_max_parameters->delete_contentfilteredtopic(
-                content_filtered_topic_default_valid_parameters), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant_default_max_parameters->delete_topic(topic_default_max_parameters), ReturnCode_t::RETCODE_OK);
+                content_filtered_topic_default_valid_parameters), RETCODE_OK);
+    ASSERT_EQ(participant_default_max_parameters->delete_topic(topic_default_max_parameters), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
-                participant_default_max_parameters), ReturnCode_t::RETCODE_OK);
+                participant_default_max_parameters), RETCODE_OK);
 
     // Test user defined limits
     pqos.allocation().content_filter.expression_parameters.maximum = 1;
@@ -2397,14 +2397,14 @@ TEST(ParticipantTests, ExpressionParameterLimits)
                     topic, "", {"Parameter1"});
     ASSERT_NE(content_filtered_topic, nullptr);
 
-    ASSERT_EQ(fastrtps::types::ReturnCode_t::RETCODE_BAD_PARAMETER, content_filtered_topic->set_expression_parameters(
+    ASSERT_EQ(fastrtps::types::RETCODE_BAD_PARAMETER, content_filtered_topic->set_expression_parameters(
                 {"Parameter1",
                  "Parameter2"}));
 
-    ASSERT_EQ(participant->delete_contentfilteredtopic(content_filtered_topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_contentfilteredtopic(content_filtered_topic), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
 
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 
@@ -2413,7 +2413,7 @@ void set_listener_test (
         DomainParticipantListener* listener,
         StatusMask mask)
 {
-    ASSERT_EQ(participant->set_listener(listener, mask), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->set_listener(listener, mask), RETCODE_OK);
     ASSERT_EQ(participant->get_status_mask(), mask);
 }
 
@@ -2472,7 +2472,7 @@ TEST(ParticipantTests, SetListener)
                 std::get<2>(testing_case));
     }
 
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 class CustomListener2 : public DomainParticipantListener
@@ -2526,10 +2526,10 @@ TEST(ParticipantTests, FailingSetListener)
     // Wait for callback trigger
     listener.get_future().wait();
 
-    ASSERT_EQ(participant->set_listener(nullptr, std::chrono::seconds(1)), ReturnCode_t::RETCODE_ERROR);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->set_listener(nullptr, std::chrono::seconds(1)), RETCODE_ERROR);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
-                participant_to_discover), ReturnCode_t::RETCODE_OK);
+                participant_to_discover), RETCODE_OK);
 }
 
 /*
@@ -2549,7 +2549,7 @@ TEST(ParticipantTests, CheckDomainParticipantQos)
         DomainParticipantFactoryQos qos;
         qos.entity_factory().autoenable_created_entities = false;
 
-        ASSERT_TRUE(factory->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(factory->set_qos(qos) == RETCODE_OK);
     }
 
     // Create the participant
@@ -2559,25 +2559,25 @@ TEST(ParticipantTests, CheckDomainParticipantQos)
 
     // Get the participant qos
     DomainParticipantQos qos;
-    ASSERT_TRUE(participant->get_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->get_qos(qos) == RETCODE_OK);
 
     // Change the user data
     qos.user_data().set_max_size(5);
     std::vector<eprosima::fastrtps::rtps::octet> my_data {0, 1, 2, 3, 4};
     qos.user_data().setValue(my_data);
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_OK);
 
     // Change the ParticipantResourceLimitsQos to a maximum user data value less than the current user data size
     // This should return an Inconsistent Policy error code
     qos.allocation().data_limits.max_user_data = 1;
     ASSERT_EQ(qos.allocation().data_limits.max_user_data, 1ul);
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_INCONSISTENT_POLICY);
 
     // Enable the participant
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_EQ(RETCODE_OK, participant->enable());
 
     // Remove the participant
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 /*
@@ -2590,7 +2590,7 @@ TEST(ParticipantTests, ChangeAllocationDomainParticipantQos)
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
     DomainParticipantFactoryQos pfqos;
     pfqos.entity_factory().autoenable_created_entities = false;
-    ASSERT_EQ(factory->set_qos(pfqos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(factory->set_qos(pfqos), RETCODE_OK);
 
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
@@ -2602,7 +2602,7 @@ TEST(ParticipantTests, ChangeAllocationDomainParticipantQos)
     check_equivalent_qos(qos, PARTICIPANT_QOS_DEFAULT);
 
     qos.allocation().data_limits.max_properties = 10;
-    ASSERT_EQ(participant->set_qos(qos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->set_qos(qos), RETCODE_OK);
     DomainParticipantQos pqos;
     participant->get_qos(pqos);
 
@@ -2614,9 +2614,9 @@ TEST(ParticipantTests, ChangeAllocationDomainParticipantQos)
     ASSERT_TRUE(participant->is_enabled());
     participant->get_qos(pqos);
     pqos.allocation().data_limits.max_properties = 20;
-    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_EQ(participant->set_qos(pqos), RETCODE_IMMUTABLE_POLICY);
 
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -2629,7 +2629,7 @@ TEST(ParticipantTests, ChangeDomainParcipantName)
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
     DomainParticipantFactoryQos pfqos;
     pfqos.entity_factory().autoenable_created_entities = false;
-    ASSERT_EQ(factory->set_qos(pfqos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(factory->set_qos(pfqos), RETCODE_OK);
 
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
@@ -2641,7 +2641,7 @@ TEST(ParticipantTests, ChangeDomainParcipantName)
     check_equivalent_qos(qos, PARTICIPANT_QOS_DEFAULT);
 
     qos.name() = "part1";
-    ASSERT_EQ(participant->set_qos(qos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->set_qos(qos), RETCODE_OK);
     DomainParticipantQos pqos;
     participant->get_qos(pqos);
 
@@ -2653,9 +2653,9 @@ TEST(ParticipantTests, ChangeDomainParcipantName)
     ASSERT_TRUE(participant->is_enabled());
     participant->get_qos(pqos);
     pqos.name() = "new_part1";
-    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_EQ(participant->set_qos(pqos), RETCODE_IMMUTABLE_POLICY);
 
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -2675,20 +2675,20 @@ TEST(ParticipantTests, DeleteEntitiesNegativeClauses)
     ASSERT_NE(subscriber_1, nullptr);
     // Try to delete this subscriber using the second partipant. This should return a RETCODE_PRECONDITION_NOT_MET
     // error code as this subscriber does not belong to the second participant
-    ASSERT_EQ(participant_2->delete_subscriber(subscriber_1), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_EQ(participant_1->delete_subscriber(subscriber_1), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant_2->delete_subscriber(subscriber_1), RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant_1->delete_subscriber(subscriber_1), RETCODE_OK);
 
     // Create a publisher in the first participant
     Publisher* publisher_1 = participant_1->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher_1, nullptr);
     // Try to delete this publisher using the second partipant. This should return a RETCODE_PRECONDITION_NOT_MET
     // error code as this publisher does not belong to the second participant
-    ASSERT_EQ(participant_2->delete_publisher(publisher_1), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_EQ(participant_1->delete_publisher(publisher_1), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant_2->delete_publisher(publisher_1), RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant_1->delete_publisher(publisher_1), RETCODE_OK);
 
     // Remove both participants
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_1), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_2), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_1), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_2), RETCODE_OK);
 }
 
 /*
@@ -2714,7 +2714,7 @@ TEST(ParticipantTests, CreateEntitiesWithProfileNegativeClauses)
     ASSERT_EQ(topic, nullptr);
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -2734,10 +2734,10 @@ TEST(ParticipantTests, RegisterTypeNegativeClauses)
     // Create the TypeSupport with the TopicDataType with an empty name
     TypeSupport type(data_type);
     // Register the type shoul return a RETCODE_BAD_PARAMETER return code
-    EXPECT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_BAD_PARAMETER);
+    EXPECT_EQ(type.register_type(participant), RETCODE_BAD_PARAMETER);
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -2752,7 +2752,7 @@ TEST(ParticipantTests, AssertLivelinesNegativeClauses)
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
     DomainParticipantFactoryQos qos;
     qos.entity_factory().autoenable_created_entities = false;
-    ASSERT_EQ(factory->set_qos(qos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(factory->set_qos(qos), RETCODE_OK);
 
     // Create a disabled participant
     DomainParticipant* participant =
@@ -2762,23 +2762,23 @@ TEST(ParticipantTests, AssertLivelinesNegativeClauses)
     ASSERT_FALSE(participant->is_enabled());
 
     // Assert liveliness from a disabled participant should return a RETCODE_NOT_ENABLED return code.
-    ASSERT_EQ(participant->assert_liveliness(), ReturnCode_t::RETCODE_NOT_ENABLED);
+    ASSERT_EQ(participant->assert_liveliness(), RETCODE_NOT_ENABLED);
 
     // Change the participant QoS to disable the Writer Liveliness Protocol
     DomainParticipantQos pqos;
-    ASSERT_EQ(participant->get_qos(pqos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->get_qos(pqos), RETCODE_OK);
     pqos.wire_protocol().builtin.use_WriterLivelinessProtocol = false;
-    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->set_qos(pqos), RETCODE_OK);
 
     // Enable the participant
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_EQ(RETCODE_OK, participant->enable());
     EXPECT_TRUE(participant->is_enabled());
     // Check that an error is given at trying to assert the livelines from a participant with a disabled
     // Writer Liveliness Protocol (WLP writer is not defined).
-    ASSERT_EQ(participant->assert_liveliness(), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(participant->assert_liveliness(), RETCODE_ERROR);
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -2791,8 +2791,8 @@ TEST(ParticipantTests, GetCurrentTime)
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
 
     eprosima::fastrtps::Time_t now;
-    ASSERT_EQ(participant->get_current_time(now), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->get_current_time(now), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -2817,8 +2817,8 @@ TEST(ParticipantTests, GetParticipantConst)
     ASSERT_EQ(participant_pub->guid(), participant->guid());
 
     // Remove the publisher and the participant
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 
@@ -2833,7 +2833,7 @@ TEST(ParticipantTests, GetParticipantNames)
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
     DomainParticipantFactoryQos qos;
     qos.entity_factory().autoenable_created_entities = false;
-    ASSERT_EQ(factory->set_qos(qos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(factory->set_qos(qos), RETCODE_OK);
 
     // Create a disabled participant
     DomainParticipant* participant =
@@ -2847,7 +2847,7 @@ TEST(ParticipantTests, GetParticipantNames)
     ASSERT_TRUE(participant_names.empty());
 
     // Enable the participant
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_EQ(RETCODE_OK, participant->enable());
     EXPECT_TRUE(participant->is_enabled());
 
     // Check that the participant name is filled when the participant is enabled
@@ -2855,7 +2855,7 @@ TEST(ParticipantTests, GetParticipantNames)
     ASSERT_FALSE(participant_names.empty());
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -2887,7 +2887,7 @@ TEST(ParticipantTests, CreateTopicNegativeClauses)
     ASSERT_EQ(topic, nullptr);
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -2945,16 +2945,16 @@ TEST(ParticipantTests, ContainsEntity)
     ASSERT_TRUE(participant->contains_entity(data_reader_ihandle, true));
 
     // Remove data_writer, data_reader, publisher, subscriber and topic entities.
-    ASSERT_EQ(publisher->delete_datawriter(data_writer), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher->delete_datawriter(data_writer), RETCODE_OK);
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
 
     // Check that the participant does not contains a removed publisher
     ASSERT_FALSE(participant->contains_entity(pub_ihandle, false));
 
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -2972,10 +2972,10 @@ TEST(ParticipantTests, UnregisterType)
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
 
     // Check that an error is given at trying to unregister a type with an empty name
-    ASSERT_EQ(participant->unregister_type(""), ReturnCode_t::RETCODE_BAD_PARAMETER);
+    ASSERT_EQ(participant->unregister_type(""), RETCODE_BAD_PARAMETER);
 
     // Check that no error is given at trying to unregister a non registered type
-    ASSERT_EQ(participant->unregister_type("missing_type"), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->unregister_type("missing_type"), RETCODE_OK);
 
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
@@ -2989,10 +2989,10 @@ TEST(ParticipantTests, UnregisterType)
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(data_reader, nullptr);
     // Check that an error is given at trying to unregister a type that is been used by a data_reader
-    ASSERT_EQ(participant->unregister_type(type.get_type_name()), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->unregister_type(type.get_type_name()), RETCODE_PRECONDITION_NOT_MET);
 
-    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
 
     // Create the publisher and a data_writer that use the above topic
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
@@ -3000,19 +3000,19 @@ TEST(ParticipantTests, UnregisterType)
     DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(data_writer, nullptr);
     // Check that an error is given at trying to unregister a type that is been used by a data_writer
-    ASSERT_EQ(participant->unregister_type(type.get_type_name()), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant->unregister_type(type.get_type_name()), RETCODE_PRECONDITION_NOT_MET);
 
-    ASSERT_EQ(publisher->delete_datawriter(data_writer), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher->delete_datawriter(data_writer), RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
 
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
 
     // At this point, the type is not been used by any entity.
     // Check that no errors result when an unused topic is unregistered
-    ASSERT_EQ(participant->unregister_type(type.get_type_name()), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->unregister_type(type.get_type_name()), RETCODE_OK);
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -3030,7 +3030,7 @@ TEST(ParticipantTests, NewRemoteEndpointDiscovered)
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
     DomainParticipantFactoryQos qos;
     qos.entity_factory().autoenable_created_entities = false;
-    ASSERT_TRUE(factory->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(factory->set_qos(qos) == RETCODE_OK);
 
     // Create a disabled participant
     DomainParticipant* participant =
@@ -3047,7 +3047,7 @@ TEST(ParticipantTests, NewRemoteEndpointDiscovered)
                 remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::WRITER));
 
     // Enable the participant
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    ASSERT_EQ(RETCODE_OK, participant->enable());
     ASSERT_TRUE(participant->is_enabled());
 
     // Check that a WRITER remote endpoint is not registered in an enabled participant
@@ -3058,7 +3058,7 @@ TEST(ParticipantTests, NewRemoteEndpointDiscovered)
                 remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::READER));
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -3073,7 +3073,7 @@ TEST(ParticipantTests, SetDomainParticipantQos)
     // Change in the DomainParticipantQos object the listening socket buffer size setting of the transport qos
     pqos.transport().listen_socket_buffer_size = 262144;
     // Set the modified participant qos as the default qos
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->set_default_participant_qos(pqos), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->set_default_participant_qos(pqos), RETCODE_OK);
 
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
@@ -3098,7 +3098,7 @@ TEST(ParticipantTests, SetDomainParticipantQos)
     ASSERT_EQ(qos.transport().listen_socket_buffer_size, pqos.transport().listen_socket_buffer_size);
 
     // Remove the participant
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 /*
@@ -3116,35 +3116,35 @@ TEST(ParticipantTests, UpdatableDomainParticipantQos)
     // Check that the PropertyPolicyQos can not be changed in an enabled participant
     participant->get_qos(pqos);
     pqos.properties().properties().emplace_back("dds.persistence.guid", "72.61.75.6c.5f.73.61.6e.63.68.65.7a");
-    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_EQ(participant->set_qos(pqos), RETCODE_IMMUTABLE_POLICY);
 
     // Check that the TransportConfigQos can not be changed in an enabled participant
     participant->get_qos(pqos);
     pqos.transport().listen_socket_buffer_size = 262144;
-    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_EQ(participant->set_qos(pqos), RETCODE_IMMUTABLE_POLICY);
 
     // Check that the builtin_controllers_sender_thread can not be changed in an enabled participant
     participant->get_qos(pqos);
     pqos.builtin_controllers_sender_thread().affinity = 1;
-    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_EQ(participant->set_qos(pqos), RETCODE_IMMUTABLE_POLICY);
 
     // Check that the timed_events_thread can not be changed in an enabled participant
     participant->get_qos(pqos);
     pqos.timed_events_thread().affinity = 1;
-    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_EQ(participant->set_qos(pqos), RETCODE_IMMUTABLE_POLICY);
 
     // Check that the discovery_server_thread can not be changed in an enabled participant
     participant->get_qos(pqos);
     pqos.discovery_server_thread().affinity = 1;
-    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_EQ(participant->set_qos(pqos), RETCODE_IMMUTABLE_POLICY);
 
 #if HAVE_SECURITY
     // Check that the security_log_thread can not be changed in an enabled participant
     participant->get_qos(pqos);
     pqos.security_log_thread().affinity = 1;
-    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    ASSERT_EQ(participant->set_qos(pqos), RETCODE_IMMUTABLE_POLICY);
 
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 #endif // if HAVE_SECURITY
 
 }
@@ -3178,10 +3178,10 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactories)
     // add the type dynamic type factories
     type->auto_fill_type_information(true);
     type->auto_fill_type_object(true);
-    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(type.register_type(participant), RETCODE_OK);
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -3214,10 +3214,10 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotFillTypeInfo)
     TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
     type->auto_fill_type_information(false);
     type->auto_fill_type_object(true);
-    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(type.register_type(participant), RETCODE_OK);
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 // Mocked DynamicType for DynamicType creation tests
@@ -3282,7 +3282,7 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
     delete myDescriptor;
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -3325,7 +3325,7 @@ TEST(ParticipantTests, GetTypes)
     ASSERT_EQ(participant->guid().guidPrefix, participant->get_types(types).writer_guid().guidPrefix);
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -3368,7 +3368,7 @@ TEST(ParticipantTests, GetTypeDependencies)
     ASSERT_EQ(participant->guid().guidPrefix, participant->get_type_dependencies(types).writer_guid().guidPrefix);
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -3390,7 +3390,7 @@ TEST(ParticipantTests, RegisterRemoteTypeComplete)
     // Create the remote participant and enable it
     DomainParticipant* remote_participant =
             DomainParticipantFactory::get_instance()->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, remote_participant->enable());
+    EXPECT_EQ(RETCODE_OK, remote_participant->enable());
     EXPECT_TRUE(remote_participant->is_enabled());
 
     // Create the local participant
@@ -3433,21 +3433,21 @@ TEST(ParticipantTests, RegisterRemoteTypeComplete)
 
     // Register the remote type in the disabled local participant. This should return a RETCODE_NOT_ENABLED return code
     ASSERT_EQ(participant->register_remote_type(*type_information, type.get_type_name(), callback),
-            ReturnCode_t::RETCODE_NOT_ENABLED);
+            RETCODE_NOT_ENABLED);
 
     // Enable the local participant
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_EQ(RETCODE_OK, participant->enable());
     EXPECT_TRUE(participant->is_enabled());
 
     // Register the remote type in the disabled local participant
     ASSERT_EQ(participant->register_remote_type(*type_information, type_name, callback),
-            ReturnCode_t::RETCODE_OK);
+            RETCODE_OK);
 
     // Remove the topic and both participants
-    ASSERT_EQ(remote_participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(remote_participant->delete_topic(topic), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
-            ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+            RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -3469,7 +3469,7 @@ TEST(ParticipantTests, RegisterRemoteTypeMinimal)
     // Create the remote participant and enable it
     DomainParticipant* remote_participant =
             DomainParticipantFactory::get_instance()->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, remote_participant->enable());
+    EXPECT_EQ(RETCODE_OK, remote_participant->enable());
     EXPECT_TRUE(remote_participant->is_enabled());
 
     // Create the local participant
@@ -3510,21 +3510,21 @@ TEST(ParticipantTests, RegisterRemoteTypeMinimal)
 
     // Register the remote type in the disabled local participant. This should return a RETCODE_NOT_ENABLED return code
     ASSERT_EQ(participant->register_remote_type(*type_information, type.get_type_name(), callback),
-            ReturnCode_t::RETCODE_NOT_ENABLED);
+            RETCODE_NOT_ENABLED);
 
     // Enable the local participant
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_EQ(RETCODE_OK, participant->enable());
     EXPECT_TRUE(participant->is_enabled());
 
     // Register the remote type in the disabled local participant
     ASSERT_EQ(participant->register_remote_type(*type_information, type_name, callback),
-            ReturnCode_t::RETCODE_OK);
+            RETCODE_OK);
 
     // Remove the topic and both participants
-    ASSERT_EQ(remote_participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(remote_participant->delete_topic(topic), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
-            ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+            RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -3571,13 +3571,13 @@ TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
     fastrtps::types::TypeInformation info = fastrtps::types::TypeInformation();
     // Check that register_remote_type() returns RETCODE_PRECONDITION_NOT_MET if the TypeInformation is empty
     ASSERT_EQ(participant->register_remote_type(info, type.get_type_name(), callback),
-            ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+            RETCODE_PRECONDITION_NOT_MET);
 
     // Remove the topic and both participants
-    ASSERT_EQ(remote_participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(remote_participant->delete_topic(topic), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
-            ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+            RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 // Delete contained entities test
@@ -3657,7 +3657,7 @@ TEST(ParticipantTests, DeleteContainedEntities)
     // Setup done, start the actual testing
 
     void* loan_data;
-    ASSERT_EQ(data_writer_foo->loan_sample(loan_data), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(data_writer_foo->loan_sample(loan_data), RETCODE_OK);
 
     // Writer with active loans. Fail and keep everything as is
 
@@ -3668,7 +3668,7 @@ TEST(ParticipantTests, DeleteContainedEntities)
     EXPECT_EQ(data_writer_list.size(), 2u);
     subscriber->get_datareaders(data_reader_list);
     EXPECT_EQ(data_reader_list.size(), 1u);
-    ASSERT_EQ(retcode, ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(retcode, RETCODE_PRECONDITION_NOT_MET);
 
     data_writer_list.clear();
     data_reader_list.clear();
@@ -3677,11 +3677,11 @@ TEST(ParticipantTests, DeleteContainedEntities)
 
     // Reader with active loans. Fail and keep everything as is
 
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_bar->write(&data, HANDLE_NIL));
+    EXPECT_EQ(RETCODE_OK, data_writer_bar->write(&data, HANDLE_NIL));
     Duration_t wait_time(1, 0);
     EXPECT_TRUE(data_reader_bar->wait_for_unread_message(wait_time));
 
-    ASSERT_EQ(data_reader_bar->take(mock_coll, mock_seq), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(data_reader_bar->take(mock_coll, mock_seq), RETCODE_OK);
 
     retcode = participant->delete_contained_entities();
 
@@ -3691,12 +3691,12 @@ TEST(ParticipantTests, DeleteContainedEntities)
     subscriber->get_datareaders(data_reader_list);
     EXPECT_EQ(data_reader_list.size(), 1u);
 
-    ASSERT_EQ(retcode, ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(retcode, RETCODE_PRECONDITION_NOT_MET);
 
     data_writer_list.clear();
     data_reader_list.clear();
 
-    ASSERT_EQ(data_reader_bar->return_loan(mock_coll, mock_seq), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(data_reader_bar->return_loan(mock_coll, mock_seq), RETCODE_OK);
 
     QueryCondition* query_condition = data_reader_bar->create_querycondition(
         mock_sample_state_kind,
@@ -3718,7 +3718,7 @@ TEST(ParticipantTests, DeleteContainedEntities)
     // ContentFilteredTopic is not considered an entity
     EXPECT_EQ(participant->lookup_topicdescription("contentfilteredtopic"), nullptr);
 
-    ASSERT_EQ(retcode, ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(retcode, RETCODE_OK);
 
 }
 
@@ -3759,11 +3759,11 @@ TEST(ParticipantTests, ContentFilterInterfaces)
                 if (filter_parameters.length() == std::count(s.begin(), s.end(), '%'))
                 {
                     filter_instance = this;
-                    return ReturnCode_t::RETCODE_OK;
+                    return RETCODE_OK;
                 }
             }
 
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            return RETCODE_BAD_PARAMETER;
         }
 
         virtual ReturnCode_t delete_content_filter(
@@ -3772,10 +3772,10 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         {
             if (this == filter_instance)
             {
-                return ReturnCode_t::RETCODE_OK;
+                return RETCODE_OK;
             }
 
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            return RETCODE_BAD_PARAMETER;
         }
 
     };
@@ -3794,8 +3794,8 @@ TEST(ParticipantTests, ContentFilterInterfaces)
 
     // Create a type and a topics
     TypeSupport type(new TopicDataTypeMock());
-    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(type.register_type(participant2), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(type.register_type(participant), RETCODE_OK);
+    ASSERT_EQ(type.register_type(participant2), RETCODE_OK);
 
     Topic* topic = participant->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -3819,18 +3819,18 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         EXPECT_EQ(nullptr,
                 participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {}, nullptr));
 
-        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, participant->delete_contentfilteredtopic(nullptr));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, participant->delete_contentfilteredtopic(nullptr));
     }
 
     // Negative tests for register_content_filter_factory
     {
-        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+        EXPECT_EQ(RETCODE_BAD_PARAMETER,
                 participant->register_content_filter_factory(nullptr, &test_filter));
-        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+        EXPECT_EQ(RETCODE_BAD_PARAMETER,
                 participant->register_content_filter_factory(very_long_name.c_str(), &test_filter));
-        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+        EXPECT_EQ(RETCODE_BAD_PARAMETER,
                 participant->register_content_filter_factory(TEST_FILTER_CLASS, nullptr));
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET,
                 participant->register_content_filter_factory(FASTDDS_SQLFILTER_NAME, &test_filter));
     }
 
@@ -3843,32 +3843,32 @@ TEST(ParticipantTests, ContentFilterInterfaces)
 
     // Negative tests for unregister_content_filter_factory
     {
-        EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, participant->unregister_content_filter_factory(nullptr));
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, participant->unregister_content_filter_factory(nullptr));
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET,
                 participant->unregister_content_filter_factory(FASTDDS_SQLFILTER_NAME));
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET,
                 participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
     }
 
     // Custom filter factory registration
     {
         // Register filter factory
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        EXPECT_EQ(RETCODE_OK,
                 participant->register_content_filter_factory(TEST_FILTER_CLASS, &test_filter));
         // Lookup should return same pointer as the one registered
         EXPECT_EQ(&test_filter, participant->lookup_content_filter_factory(TEST_FILTER_CLASS));
         // But not for other filter class name
         EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(OTHER_FILTER_CLASS));
         // Should not be able to register twice
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET,
                 participant->register_content_filter_factory(TEST_FILTER_CLASS, &test_filter));
         // Unregister filter factory
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        EXPECT_EQ(RETCODE_OK,
                 participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
         // Lookup should now return nullptr
         EXPECT_EQ(nullptr, participant->lookup_content_filter_factory(TEST_FILTER_CLASS));
         // Unregister twice should fail
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET,
                 participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
     }
 
@@ -3878,9 +3878,9 @@ TEST(ParticipantTests, ContentFilterInterfaces)
                 participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {}, TEST_FILTER_CLASS));
 
         // Register two filter factories to ensure traversal of collections
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        EXPECT_EQ(RETCODE_OK,
                 participant->register_content_filter_factory(TEST_FILTER_CLASS, &test_filter));
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        EXPECT_EQ(RETCODE_OK,
                 participant->register_content_filter_factory(OTHER_FILTER_CLASS, &test_filter));
 
         // Negative tests for custom filtered topic creation
@@ -3912,12 +3912,12 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         EXPECT_EQ(filtered_topic2, participant->lookup_topicdescription("contentfilteredtopic2"));
 
         // Should not be able to delete topic, since it is referenced by filtered_topic
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant->delete_topic(topic));
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, participant->delete_topic(topic));
 
         // Should not be able to unregister filter factory, since it is referenced by filtered_topic
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET,
                 participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET,
                 participant->unregister_content_filter_factory(OTHER_FILTER_CLASS));
 
         // Reference filtered_topic by creating a DataReader
@@ -3927,31 +3927,31 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         ASSERT_NE(nullptr, data_reader);
 
         // Should not be able to delete filtered_topic, since it is referenced by data_reader
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant->delete_contentfilteredtopic(filtered_topic));
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, participant->delete_contentfilteredtopic(filtered_topic));
         EXPECT_EQ(filtered_topic, participant->lookup_topicdescription("contentfilteredtopic"));
 
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(data_reader));
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
+        EXPECT_EQ(RETCODE_OK, subscriber->delete_datareader(data_reader));
+        EXPECT_EQ(RETCODE_OK, participant->delete_subscriber(subscriber));
 
         // Should be able to delete filtered_topic, but only on correct participant
-        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+        EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET,
                 participant2->delete_contentfilteredtopic(filtered_topic));
         EXPECT_EQ(filtered_topic, participant->lookup_topicdescription("contentfilteredtopic"));
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
+        EXPECT_EQ(RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
         EXPECT_EQ(nullptr, participant->lookup_topicdescription("contentfilteredtopic"));
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic2));
+        EXPECT_EQ(RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic2));
 
         // Unregister filter factories
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        EXPECT_EQ(RETCODE_OK,
                 participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+        EXPECT_EQ(RETCODE_OK,
                 participant->unregister_content_filter_factory(OTHER_FILTER_CLASS));
     }
 
-    ASSERT_EQ(participant2->delete_topic(topic2), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant2), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant2->delete_topic(topic2), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant2), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -3978,7 +3978,7 @@ TEST(ParticipantTests, UnsupportedMethods)
 
     // Create a type and a topic
     TypeSupport type(new TopicDataTypeMock());
-    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(type.register_type(participant), RETCODE_OK);
 
     Topic* topic = participant->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -3992,29 +3992,29 @@ TEST(ParticipantTests, UnsupportedMethods)
         nullptr);
 
     // nullptr use as there are not such a class
-    ASSERT_EQ(participant->delete_multitopic(nullptr), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->delete_multitopic(nullptr), RETCODE_UNSUPPORTED);
 
     ASSERT_EQ(participant->get_builtin_subscriber(), nullptr);
 
-    ASSERT_EQ(participant->ignore_topic(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
-    ASSERT_EQ(participant->ignore_publication(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
-    ASSERT_EQ(participant->ignore_subscription(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_topic(InstanceHandle_t()), RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_publication(InstanceHandle_t()), RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_subscription(InstanceHandle_t()), RETCODE_UNSUPPORTED);
 
     // Discovery methods
     std::vector<InstanceHandle_t> handle_vector({InstanceHandle_t()});
     builtin::ParticipantBuiltinTopicData pbtd;
     builtin::TopicBuiltinTopicData tbtd;
 
-    ASSERT_EQ(participant->get_discovered_participants(handle_vector), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->get_discovered_participants(handle_vector), RETCODE_UNSUPPORTED);
     ASSERT_EQ(
-        participant->get_discovered_participant_data(pbtd, InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+        participant->get_discovered_participant_data(pbtd, InstanceHandle_t()), RETCODE_UNSUPPORTED);
 
-    ASSERT_EQ(participant->get_discovered_topics(handle_vector), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->get_discovered_topics(handle_vector), RETCODE_UNSUPPORTED);
     ASSERT_EQ(
-        participant->get_discovered_topic_data(tbtd, InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+        participant->get_discovered_topic_data(tbtd, InstanceHandle_t()), RETCODE_UNSUPPORTED);
 
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 /*
@@ -4040,15 +4040,15 @@ TEST(ParticipantTests, TwoParticipantWithSameFixedId)
         ASSERT_EQ(participant2, nullptr);
 
         // Destroy the first participant
-        ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant1), ReturnCode_t::RETCODE_OK);
+        ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant1), RETCODE_OK);
     }
 
     // Test participants disabled from beginning
     {
         DomainParticipantFactoryQos factory_qos;
-        ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->get_qos(factory_qos));
+        ASSERT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->get_qos(factory_qos));
         factory_qos.entity_factory().autoenable_created_entities = false;
-        ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->set_qos(factory_qos));
+        ASSERT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->set_qos(factory_qos));
 
         DomainParticipantQos participant_qos;
         participant_qos.wire_protocol().participant_id = 1;
@@ -4063,13 +4063,13 @@ TEST(ParticipantTests, TwoParticipantWithSameFixedId)
                 DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
         ASSERT_EQ(participant2, nullptr);
 
-        ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant1->enable());
+        ASSERT_EQ(RETCODE_OK, participant1->enable());
 
         // Destroy the first participant
-        ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant1), ReturnCode_t::RETCODE_OK);
+        ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant1), RETCODE_OK);
 
         factory_qos.entity_factory().autoenable_created_entities = true;
-        ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->set_qos(factory_qos));
+        ASSERT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->set_qos(factory_qos));
     }
 }
 

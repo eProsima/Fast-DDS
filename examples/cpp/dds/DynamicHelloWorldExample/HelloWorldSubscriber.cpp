@@ -33,7 +33,6 @@
 #include <fastrtps/types/DynamicDataHelper.hpp>
 
 using namespace eprosima::fastdds::dds;
-using eprosima::fastrtps::types::ReturnCode_t;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : mp_participant(nullptr)
@@ -58,7 +57,7 @@ bool HelloWorldSubscriber::init()
     {
         return false;
     }
-    if (mp_participant->enable() != ReturnCode_t::RETCODE_OK)
+    if (mp_participant->enable() != RETCODE_OK)
     {
         DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
         return false;
@@ -119,7 +118,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
     {
         eprosima::fastrtps::types::DynamicData_ptr data = dit->second;
         SampleInfo info;
-        if (reader->take_next_sample(data.get(), &info) == ReturnCode_t::RETCODE_OK)
+        if (reader->take_next_sample(data.get(), &info) == RETCODE_OK)
         {
             if (info.instance_state == ALIVE_INSTANCE_STATE)
             {

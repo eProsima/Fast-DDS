@@ -144,7 +144,7 @@ void PublisherModule::run(
     {
         if (zero_copy_)
         {
-            if (ReturnCode_t::RETCODE_OK == writer_->loan_sample(sample))
+            if (RETCODE_OK == writer_->loan_sample(sample))
             {
                 FixedSized* data = static_cast<FixedSized*>(sample);
                 data->index(index);

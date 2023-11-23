@@ -55,7 +55,7 @@ bool ContentFilteredTopicExampleSubscriber::init(
     if (custom_filter)
     {
         // Register the filter factory
-        if (ReturnCode_t::RETCODE_OK !=
+        if (eprosima::fastdds::dds::RETCODE_OK !=
                 participant_->register_content_filter_factory("MY_CUSTOM_FILTER", &filter_factory))
         {
             return false;
@@ -159,7 +159,7 @@ void ContentFilteredTopicExampleSubscriber::on_data_available(
 {
     SampleInfo info;
     // Take next sample from DataReader's history
-    if (ReturnCode_t::RETCODE_OK == reader->take_next_sample(&hello_, &info))
+    if (eprosima::fastdds::dds::RETCODE_OK == reader->take_next_sample(&hello_, &info))
     {
         // Some samples only update the instance state. Only if it is a valid sample (with data)
         if (ALIVE_INSTANCE_STATE == info.instance_state)
