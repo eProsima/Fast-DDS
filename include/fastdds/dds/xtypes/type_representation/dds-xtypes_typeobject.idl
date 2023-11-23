@@ -1038,7 +1038,7 @@ module DDS { module XTypes {
 
     @extensibility(APPENDABLE) @nested
     struct TypeIdentfierWithSize {
-        DDS::Xtypes::TypeIdentifier  type_id;
+        DDS::XTypes::TypeIdentifier  type_id;
         unsigned long                typeobject_serialized_size;
     };
     typedef sequence<TypeIdentfierWithSize> TypeIdentfierWithSizeSeq;
