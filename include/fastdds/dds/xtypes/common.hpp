@@ -69,21 +69,21 @@ enum PlacementKindValue
 };
 
 // Primitive type names
-constexpr const char* boolean_type_name = "_boolean";
+constexpr const char* boolean_type_name = "_bool";
 constexpr const char* byte_type_name = "_byte";
-constexpr const char* int16_type_name = "_int16";
-constexpr const char* int32_type_name = "_int32";
-constexpr const char* int64_type_name = "_int64";
-constexpr const char* uint16_type_name = "_uint16";
-constexpr const char* uint32_type_name = "_uint32";
-constexpr const char* uint64_type_name = "_uint64";
-constexpr const char* float32_type_name = "_float32";
-constexpr const char* float64_type_name = "_float64";
-constexpr const char* float128_type_name = "_float128";
-constexpr const char* int8_type_name = "_int8";
-constexpr const char* uint8_type_name = "_uint8";
-constexpr const char* char8_type_name = "_char8";
-constexpr const char* char16_type_name = "_char16";
+constexpr const char* int16_type_name = "_int16_t";
+constexpr const char* int32_type_name = "_int32_t";
+constexpr const char* int64_type_name = "_int64_t";
+constexpr const char* uint16_type_name = "_uint16_t";
+constexpr const char* uint32_type_name = "_uint32_t";
+constexpr const char* uint64_type_name = "_uint64_t";
+constexpr const char* float32_type_name = "_float";
+constexpr const char* float64_type_name = "_double";
+constexpr const char* float128_type_name = "_long double";
+constexpr const char* int8_type_name = "_int8_t";
+constexpr const char* uint8_type_name = "_uint8_t";
+constexpr const char* char8_type_name = "_char";
+constexpr const char* char16_type_name = "_wchar_t";
 
 // Builtin annotation names
 constexpr const char* id_annotation_name = "_id";
