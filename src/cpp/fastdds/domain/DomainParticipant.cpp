@@ -108,7 +108,7 @@ ReturnCode_t DomainParticipant::enable()
 
     enable_ = true;
     ReturnCode_t ret_code = impl_->enable();
-    enable_ = !!ret_code;
+    enable_ = RETCODE_OK == ret_code;
     return ret_code;
 }
 

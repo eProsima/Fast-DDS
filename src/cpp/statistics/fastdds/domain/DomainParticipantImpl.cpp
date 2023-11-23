@@ -122,7 +122,7 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
         return efd::RETCODE_BAD_PARAMETER;
     }
 
-    if (!efd::DataWriterImpl::check_qos(dwqos))
+    if (efd::RETCODE_OK != efd::DataWriterImpl::check_qos(dwqos))
     {
         return efd::RETCODE_INCONSISTENT_POLICY;
     }

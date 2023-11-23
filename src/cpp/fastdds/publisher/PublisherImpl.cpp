@@ -133,7 +133,7 @@ ReturnCode_t PublisherImpl::set_qos(
     if (&qos != &PUBLISHER_QOS_DEFAULT)
     {
         ReturnCode_t ret_val = check_qos(qos_to_set);
-        if (!ret_val)
+        if (RETCODE_OK != ret_val)
         {
             return ret_val;
         }
@@ -231,7 +231,7 @@ DataWriter* PublisherImpl::create_datawriter(
         return nullptr;
     }
 
-    if (!DataWriterImpl::check_qos_including_resource_limits(qos, type_support))
+    if (RETCODE_OK != DataWriterImpl::check_qos_including_resource_limits(qos, type_support))
     {
         return nullptr;
     }
@@ -303,7 +303,7 @@ ReturnCode_t PublisherImpl::delete_datawriter(
             //First extract the writer from the maps to free the mutex
             DataWriterImpl* writer_impl = *dw_it;
             ReturnCode_t ret_code = writer_impl->check_delete_preconditions();
-            if (!ret_code)
+            if (RETCODE_OK != ret_code)
             {
                 return ret_code;
             }
@@ -420,7 +420,7 @@ ReturnCode_t PublisherImpl::set_default_datawriter_qos(
     }
 
     ReturnCode_t ret_val = DataWriterImpl::check_qos(qos);
-    if (!ret_val)
+    if (RETCODE_OK != ret_val)
     {
         return ret_val;
     }
@@ -478,7 +478,7 @@ ReturnCode_t PublisherImpl::wait_for_acknowledgments(
         for (DataWriterImpl* dw : vit.second)
         {
             participant_->get_current_time(begin);
-            if (!dw->wait_for_acknowledgments(current))
+            if (RETCODE_OK != dw->wait_for_acknowledgments(current))
             {
                 return RETCODE_ERROR;
             }
@@ -532,7 +532,7 @@ ReturnCode_t PublisherImpl::delete_contained_entities()
         auto it = writer_iterator->second.begin();
         DataWriterImpl* writer_impl = *it;
         ReturnCode_t ret_code = writer_impl->check_delete_preconditions();
-        if (!ret_code)
+        if (RETCODE_OK != ret_code)
         {
             return RETCODE_ERROR;
         }

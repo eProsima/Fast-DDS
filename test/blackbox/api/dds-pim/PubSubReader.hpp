@@ -1778,7 +1778,7 @@ private:
                 datareader->take(datas, infos) :
                 datareader->read(datas, infos);
 
-        if (!success)
+        if (eprosima::fastdds::dds::RETCODE_OK != success)
         {
             returnedValue = false;
             return;

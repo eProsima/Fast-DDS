@@ -274,7 +274,7 @@ void TestSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
     SampleInfo info;
-    if (!!reader->take_next_sample(mParent->m_Data, &info))
+    if (RETCODE_OK == reader->take_next_sample(mParent->m_Data, &info))
     {
         if (info.valid_data)
         {

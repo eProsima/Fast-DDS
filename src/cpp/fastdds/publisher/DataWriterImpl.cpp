@@ -1039,7 +1039,7 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
         WriteParams& wparams)
 {
     ReturnCode_t ret_code = check_new_change_preconditions(changeKind, data);
-    if (!ret_code)
+    if (RETCODE_OK != ret_code)
     {
         return ret_code;
     }
@@ -1064,7 +1064,7 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
         const InstanceHandle_t& handle)
 {
     ReturnCode_t ret_code = check_new_change_preconditions(changeKind, data);
-    if (!ret_code)
+    if (RETCODE_OK != ret_code)
     {
         return ret_code;
     }
@@ -1126,7 +1126,7 @@ ReturnCode_t DataWriterImpl::set_qos(
     if (&qos != &DATAWRITER_QOS_DEFAULT)
     {
         ReturnCode_t ret_val = check_qos_including_resource_limits(qos_to_set, type_);
-        if (!ret_val)
+        if (RETCODE_OK != ret_val)
         {
             return ret_val;
         }

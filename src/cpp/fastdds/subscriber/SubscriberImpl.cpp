@@ -132,7 +132,7 @@ ReturnCode_t SubscriberImpl::set_qos(
     if (&qos != &SUBSCRIBER_QOS_DEFAULT)
     {
         ReturnCode_t check_result = check_qos(qos_to_set);
-        if (!check_result)
+        if (RETCODE_OK != check_result)
         {
             return check_result;
         }
@@ -200,7 +200,7 @@ DataReader* SubscriberImpl::create_datareader(
         return nullptr;
     }
 
-    if (!DataReaderImpl::check_qos_including_resource_limits(qos, type_support))
+    if (RETCODE_OK != DataReaderImpl::check_qos_including_resource_limits(qos, type_support))
     {
         return nullptr;
     }
@@ -357,7 +357,7 @@ ReturnCode_t SubscriberImpl::set_default_datareader_qos(
     }
 
     ReturnCode_t check_result = DataReaderImpl::check_qos(qos);
-    if (!check_result)
+    if (RETCODE_OK != check_result)
     {
         return check_result;
     }

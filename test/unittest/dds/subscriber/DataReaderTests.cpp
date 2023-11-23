@@ -2152,7 +2152,7 @@ TEST_F(DataReaderTests, check_read_take_iteration)
             1,
             handle);
 
-        if (!!ret)
+        if (RETCODE_OK == ret)
         {
             received += data.length();
             handle = infos[0].instance_handle;
@@ -2179,7 +2179,7 @@ TEST_F(DataReaderTests, check_read_take_iteration)
             1,
             handle);
 
-        if (!!ret)
+        if (RETCODE_OK == ret)
         {
             received += data.length();
             handle = infos[0].instance_handle;

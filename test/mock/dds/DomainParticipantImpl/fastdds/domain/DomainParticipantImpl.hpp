@@ -271,7 +271,7 @@ public:
         {
             return nullptr;
         }
-        if (!TopicImpl::check_qos(qos))
+        if (RETCODE_OK != TopicImpl::check_qos(qos))
         {
             return nullptr;
         }
@@ -651,7 +651,7 @@ public:
         for (auto& subscriber : subscribers_)
         {
             ret_code = subscriber.first->delete_contained_entities();
-            if (!ret_code)
+            if (RETCODE_OK != ret_code)
             {
                 return RETCODE_ERROR;
             }
@@ -668,7 +668,7 @@ public:
         for (auto& publisher : publishers_)
         {
             ret_code = publisher.first->delete_contained_entities();
-            if (!ret_code)
+            if (RETCODE_OK != ret_code)
             {
                 return RETCODE_ERROR;
             }

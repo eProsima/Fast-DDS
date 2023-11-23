@@ -355,7 +355,7 @@ ReturnCode_t DomainParticipantImpl::set_qos(
         if (&qos != &PARTICIPANT_QOS_DEFAULT)
         {
             ReturnCode_t ret_val = check_qos(qos_to_set);
-            if (!ret_val)
+            if (RETCODE_OK != ret_val)
             {
                 return ret_val;
             }
@@ -777,7 +777,7 @@ Publisher* DomainParticipantImpl::create_publisher(
         PublisherListener* listener,
         const StatusMask& mask)
 {
-    if (!PublisherImpl::check_qos(qos))
+    if (RETCODE_OK != PublisherImpl::check_qos(qos))
     {
         // The PublisherImpl::check_qos() function is not yet implemented and always returns RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
@@ -922,7 +922,7 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
     for (auto& subscriber : subscribers_)
     {
         ret_code = subscriber.first->delete_contained_entities();
-        if (!ret_code)
+        if (RETCODE_OK != ret_code)
         {
             return RETCODE_ERROR;
         }
@@ -940,7 +940,7 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
     for (auto& publisher : publishers_)
     {
         ret_code = publisher.first->delete_contained_entities();
-        if (!ret_code)
+        if (RETCODE_OK != ret_code)
         {
             return RETCODE_ERROR;
         }
@@ -1002,7 +1002,7 @@ ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
     }
 
     ReturnCode_t ret_val = PublisherImpl::check_qos(qos);
-    if (!ret_val)
+    if (RETCODE_OK != ret_val)
     {
         // The PublisherImpl::check_qos() function is not yet implemented and always returns RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
@@ -1050,7 +1050,7 @@ ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
         return RETCODE_OK;
     }
     ReturnCode_t check_result = SubscriberImpl::check_qos(qos);
-    if (!check_result)
+    if (RETCODE_OK != check_result)
     {
         // The SubscriberImpl::check_qos() function is not yet implemented and always returns RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
@@ -1099,7 +1099,7 @@ ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
     }
 
     ReturnCode_t ret_val = TopicImpl::check_qos(qos);
-    if (!ret_val)
+    if (RETCODE_OK != ret_val)
     {
         return ret_val;
     }
@@ -1247,7 +1247,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
         SubscriberListener* listener,
         const StatusMask& mask)
 {
-    if (!SubscriberImpl::check_qos(qos))
+    if (RETCODE_OK != SubscriberImpl::check_qos(qos))
     {
         // The SubscriberImpl::check_qos() function is not yet implemented and always returns RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
@@ -1324,7 +1324,7 @@ Topic* DomainParticipantImpl::create_topic(
         return nullptr;
     }
 
-    if (!TopicImpl::check_qos_including_resource_limits(qos, type_support))
+    if (RETCODE_OK != TopicImpl::check_qos_including_resource_limits(qos, type_support))
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "TopicQos inconsistent or not supported");
         return nullptr;

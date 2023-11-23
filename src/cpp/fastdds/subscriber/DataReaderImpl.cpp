@@ -471,7 +471,7 @@ ReturnCode_t DataReaderImpl::prepare_loan(
 
     // Check if there are enough loans
     ReturnCode_t code = loan_manager_.get_loan(data_values, sample_infos);
-    if (!code)
+    if (RETCODE_OK != code)
     {
         return code;
     }
@@ -497,7 +497,7 @@ ReturnCode_t DataReaderImpl::read_or_take(
     }
 
     ReturnCode_t code = check_collection_preconditions_and_calc_max_samples(data_values, sample_infos, max_samples);
-    if (!code)
+    if (RETCODE_OK != code)
     {
         return code;
     }
@@ -531,7 +531,7 @@ ReturnCode_t DataReaderImpl::read_or_take(
     }
 
     code = prepare_loan(data_values, sample_infos, max_samples);
-    if (!code)
+    if (RETCODE_OK != code)
     {
         return code;
     }
@@ -661,7 +661,7 @@ ReturnCode_t DataReaderImpl::return_loan(
 
     // Check if they were loaned by this reader
     ReturnCode_t code = loan_manager_.return_loan(data_values, sample_infos);
-    if (!code)
+    if (RETCODE_OK != code)
     {
         return code;
     }
@@ -833,7 +833,7 @@ ReturnCode_t DataReaderImpl::set_qos(
         }
 
         ReturnCode_t check_result = check_qos_including_resource_limits(qos_to_set, type_);
-        if (!check_result)
+        if (RETCODE_OK != check_result)
         {
             return check_result;
         }
@@ -2000,7 +2000,7 @@ ReadCondition* DataReaderImpl::create_readcondition(
     auto ret_code = impl->attach_condition(cond);
 
     // attach cannot fail in this scenario
-    assert(!!ret_code);
+    assert(RETCODE_OK == ret_code);
     (void)ret_code;
 
     return cond;
@@ -2042,7 +2042,7 @@ ReturnCode_t DataReaderImpl::delete_readcondition(
     // Detach from the implementation object
     auto ret_code = impl->detach_condition(a_condition);
 
-    if (!!ret_code)
+    if (RETCODE_OK == ret_code)
     {
         // delete the condition
         delete a_condition;

@@ -300,7 +300,7 @@ ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
     }
 
     ReturnCode_t ret_val = DomainParticipantImpl::check_qos(qos);
-    if (!ret_val)
+    if (RETCODE_OK != ret_val)
     {
         return ret_val;
     }
@@ -402,7 +402,7 @@ ReturnCode_t DomainParticipantFactory::set_qos(
         const DomainParticipantFactoryQos& qos)
 {
     ReturnCode_t ret_val = check_qos(qos);
-    if (!ret_val)
+    if (RETCODE_OK != ret_val)
     {
         return ret_val;
     }
