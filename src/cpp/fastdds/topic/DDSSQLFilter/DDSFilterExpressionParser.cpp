@@ -15,25 +15,21 @@
 /**
  * @file DDSFilterExpressionParser.cpp
  */
-
 #include "DDSFilterExpressionParser.hpp"
 
 #include <memory>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
-
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypeObject.h>
-#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 
 #include "pegtl.hpp"
 #include "pegtl/contrib/parse_tree.hpp"
 
+#include "DDSFilterField.hpp"
 #include "DDSFilterGrammar.hpp"
 #include "DDSFilterParseNode.hpp"
-
 #include "DDSFilterValue.hpp"
-#include "DDSFilterField.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -42,7 +38,7 @@ namespace DDSSQLFilter {
 namespace parser {
 
 using namespace tao::TAO_PEGTL_NAMESPACE;
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastdds::dds::xtypes;
 
 #include "DDSFilterExpressionParserImpl/rearrange.hpp"
 #include "DDSFilterExpressionParserImpl/literal_values.hpp"
@@ -97,12 +93,12 @@ using selector = parse_tree::selector <
 
 std::unique_ptr<ParseNode> parse_filter_expression(
         const char* expression,
-        const TypeObject* type_object)
+        const std::shared_ptr<TypeObject>& type_object)
 {
     memory_input<> in(expression, "");
     try
     {
-        CurrentIdentifierState identifier_state { type_object, nullptr, {} };
+        CurrentIdentifierState identifier_state { type_object, {}, {} };
         return parse_tree::parse< FilterExpressionGrammar, ParseNode, selector >(in, identifier_state);
     }
     catch (const parse_error& e)

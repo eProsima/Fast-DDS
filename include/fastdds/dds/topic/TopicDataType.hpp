@@ -118,6 +118,7 @@ public:
      * @param[in] data Pointer to data.
      * @return Functor which calculates the serialized size of the data.
      */
+    // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
     FASTDDS_EXPORTED_API virtual std::function<uint32_t()> getSerializedSizeProvider(
             void* data) = 0;
 
@@ -178,27 +179,6 @@ public:
     FASTDDS_EXPORTED_API inline const char* getName() const
     {
         return m_topicDataTypeName.c_str();
-    }
-
-    /**
-     * Get the type object auto-fill configuration
-     *
-     * @return true if the type object should be auto-filled
-     */
-    FASTDDS_EXPORTED_API inline bool auto_fill_type_object() const
-    {
-        return auto_fill_type_object_;
-    }
-
-    /**
-     * Set the type object auto-fill configuration
-     *
-     * @param auto_fill_type_object new value to set
-     */
-    FASTDDS_EXPORTED_API inline void auto_fill_type_object(
-            bool auto_fill_type_object)
-    {
-        auto_fill_type_object_ = auto_fill_type_object;
     }
 
     /**
@@ -289,9 +269,9 @@ public:
     /**
      * Get the type information
      *
-     * @return TypeInformation
+     * @return TypeInformationParameter
      */
-    FASTDDS_EXPORTED_API inline const std::shared_ptr<xtypes::TypeInformation> type_information() const
+    FASTDDS_EXPORTED_API inline const std::shared_ptr<xtypes::TypeInformationParameter> type_information() const
     {
         return type_information_;
     }
@@ -299,21 +279,21 @@ public:
     /**
      * Set type information
      *
-     * @param info new value for TypeInformation
+     * @param info new value for TypeInformationParameter
      */
     FASTDDS_EXPORTED_API inline void type_information(
-            const xtypes::TypeInformation& info)
+            const xtypes::TypeInformationParameter& info)
     {
-        type_information_ = std::make_shared<xtypes::TypeInformation>(info);
+        type_information_ = std::make_shared<xtypes::TypeInformationParameter>(info);
     }
 
     /**
      * Set type information
      *
-     * @param info shared pointer to TypeInformation
+     * @param info shared pointer to TypeInformationParameter
      */
     FASTDDS_EXPORTED_API inline void type_information(
-            std::shared_ptr<xtypes::TypeInformation> info)
+            std::shared_ptr<xtypes::TypeInformationParameter> info)
     {
         type_information_ = std::move(info);
     }
@@ -357,6 +337,13 @@ public:
         return false;
     }
 
+    /**
+     * @brief Register TypeObject type representation
+     */
+    FASTDDS_EXPORTED_API virtual inline void register_type_object_representation() const
+    {
+    }
+
     //! Maximum serialized size of the type in bytes.
     //! If the type has unbounded fields, and therefore cannot have a maximum size, use 0.
     uint32_t m_typeSize;
@@ -371,14 +358,13 @@ protected:
     //!Type Object XTYPES 1.1
     std::shared_ptr<TypeObjectV1> type_object_;
     //!XTYPES 1.2
-    std::shared_ptr<xtypes::TypeInformation> type_information_;
+    std::shared_ptr<xtypes::TypeInformationParameter> type_information_;
 
 private:
 
     //! Data Type Name.
     std::string m_topicDataTypeName;
-
-    bool auto_fill_type_object_;
+    //TODO(XTypes)
     bool auto_fill_type_information_;
 
     friend class fastdds::dds::TypeSupport;

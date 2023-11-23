@@ -31,15 +31,7 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/TypeDescriptor.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include "LatencyTestTypes.hpp"
 
 #include "../optionarg.hpp"
@@ -225,8 +217,8 @@ private:
     eprosima::fastdds::dds::TypeSupport latency_command_type_;
 
     /* Dynamic Types */
-    eprosima::fastrtps::types::DynamicData* dynamic_data_in_ = nullptr;
-    eprosima::fastrtps::types::DynamicData* dynamic_data_out_ = nullptr;
+    eprosima::fastdds::dds::DynamicData::_ref_type* dynamic_data_in_ {nullptr};
+    eprosima::fastdds::dds::DynamicData::_ref_type* dynamic_data_out_ {nullptr};
     eprosima::fastdds::dds::TypeSupport dynamic_pub_sub_type_;
 
     std::vector<uint32_t> data_size_pub_;

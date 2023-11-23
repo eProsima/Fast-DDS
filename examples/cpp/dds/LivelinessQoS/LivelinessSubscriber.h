@@ -20,6 +20,9 @@
 #ifndef LIVELINESSSUBSCRIBER_H_
 #define LIVELINESSSUBSCRIBER_H_
 
+#include "TopicPubSubTypes.h"
+#include "Topic.hpp"
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
@@ -27,9 +30,6 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
-
-#include "TopicPubSubTypes.h"
-#include "Topic.h"
 
 class LivelinessSubscriber
 {

@@ -17,21 +17,20 @@
  *
  */
 
-#ifndef _FASTDDS_DOMAINPARTICIPANT_HPP_
-#define _FASTDDS_DOMAINPARTICIPANT_HPP_
+#ifndef _FASTDDS_DDS_DOMAIN_DOMAINPARTICIPANT_FACTORY_HPP_
+#define _FASTDDS_DDS_DOMAIN_DOMAINPARTICIPANT_FACTORY_HPP_
 
 #include <map>
 #include <memory>
 #include <mutex>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/TypesBase.h>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 
@@ -311,7 +310,7 @@ public:
             const LibrarySettings& library_settings);
 
     /**
-     * @brief Get the DynamicTypeBuilder defined in XML file.
+     * @brief Get the @ref DynamicType defined in XML file.
      *        The XML file shall be previously loaded.
      *
      * @param type_name Dynamic type name.
@@ -322,7 +321,14 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_dynamic_type_builder_from_xml_by_name(
             const std::string& type_name,
-            fastrtps::types::DynamicTypeBuilder*& type);
+            DynamicType::_ref_type& type);
+
+    /**
+     * @brief Return the TypeObjectRegistry member to access the public API.
+     *
+     * @return const xtypes::TypeObjectRegistry reference.
+     */
+    FASTDDS_EXPORTED_API xtypes::ITypeObjectRegistry& type_object_registry();
 
 protected:
 
@@ -385,4 +391,4 @@ protected:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif /* _FASTDDS_DOMAINPARTICIPANT_HPP_*/
+#endif /* _FASTDDS_DDS_DOMAIN_DOMAINPARTICIPANT_FACTORY_HPP_*/

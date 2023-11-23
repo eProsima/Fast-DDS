@@ -62,31 +62,22 @@ message(STATUS "BLACKBOX_HIGH_LEVEL_IGNORED_TESTS set to '${BLACKBOX_HIGH_LEVEL_
 
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
-    types/Data1mb.cxx
-    types/Data1mbPubSubTypes.cxx
-    types/Data1mbv1.cxx
-    types/Data64kb.cxx
-    types/Data64kbPubSubTypes.cxx
-    types/Data64kbv1.cxx
-    types/FixedSized.cxx
-    types/FixedSizedPubSubTypes.cxx
-    types/FixedSizedv1.cxx
-    types/HelloWorld.cxx
     types/HelloWorldPubSubTypes.cxx
-    types/HelloWorldTypeObject.cxx
-    types/HelloWorldv1.cxx
-    types/KeyedData1mb.cxx
-    types/KeyedData1mbPubSubTypes.cxx
-    types/KeyedData1mbv1.cxx
-    types/KeyedHelloWorld.cxx
+    types/HelloWorldTypeObjectSupport.cxx
     types/KeyedHelloWorldPubSubTypes.cxx
-    types/KeyedHelloWorldv1.cxx
-    types/StringTest.cxx
+    types/KeyedHelloWorldTypeObjectSupport.cxx
     types/StringTestPubSubTypes.cxx
-    types/StringTestv1.cxx
-    types/UnboundedHelloWorld.cxx
+    types/StringTestTypeObjectSupport.cxx
+    types/Data64kbPubSubTypes.cxx
+    types/Data64kbTypeObjectSupport.cxx
+    types/Data1mbPubSubTypes.cxx
+    types/Data1mbTypeObjectSupport.cxx
+    types/KeyedData1mbPubSubTypes.cxx
+    types/KeyedData1mbTypeObjectSupport.cxx
+    types/FixedSizedPubSubTypes.cxx
+    types/FixedSizedTypeObjectSupport.cxx
     types/UnboundedHelloWorldPubSubTypes.cxx
-    types/UnboundedHelloWorldv1.cxx
+    types/UnboundedHelloWorldTypeObjectSupport.cxx
 
     utils/data_generators.cpp
     utils/lambda_functions.cpp
@@ -112,38 +103,25 @@ gtest_discover_tests(BlackboxTests_RTPS
 
 file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
 set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
-    types/Data1mb.cxx
-    types/Data1mbPubSubTypes.cxx
-    types/Data1mbv1.cxx
-    types/Data64kb.cxx
-    types/Data64kbPubSubTypes.cxx
-    types/Data64kbv1.cxx
-    types/FixedSized.cxx
-    types/FixedSizedPubSubTypes.cxx
-    types/FixedSizedv1.cxx
-    types/HelloWorld.cxx
     types/HelloWorldPubSubTypes.cxx
-    types/HelloWorldTypeObject.cxx
-    types/HelloWorldv1.cxx
-    types/KeyedData1mb.cxx
-    types/KeyedData1mbPubSubTypes.cxx
-    types/KeyedData1mbv1.cxx
-    types/KeyedHelloWorld.cxx
+    types/HelloWorldTypeObjectSupport.cxx
     types/KeyedHelloWorldPubSubTypes.cxx
-    types/KeyedHelloWorldv1.cxx
-    types/StringTest.cxx
+    types/KeyedHelloWorldTypeObjectSupport.cxx
     types/StringTestPubSubTypes.cxx
-    types/StringTestv1.cxx
-    types/TestIncludeRegression3361.cxx
-    types/TestIncludeRegression3361TypeObject.cxx
-    types/TestIncludeRegression3361v1.cxx
-    types/TestRegression3361.cxx
+    types/StringTestTypeObjectSupport.cxx
+    types/Data64kbPubSubTypes.cxx
+    types/Data64kbTypeObjectSupport.cxx
+    types/Data1mbPubSubTypes.cxx
+    types/Data1mbTypeObjectSupport.cxx
+    types/KeyedData1mbPubSubTypes.cxx
+    types/KeyedData1mbTypeObjectSupport.cxx
+    types/FixedSizedPubSubTypes.cxx
+    types/FixedSizedTypeObjectSupport.cxx
+    types/TestIncludeRegression3361TypeObjectSupport.cxx
     types/TestRegression3361PubSubTypes.cxx
-    types/TestRegression3361TypeObject.cxx
-    types/TestRegression3361v1.cxx
-    types/UnboundedHelloWorld.cxx
+    types/TestRegression3361TypeObjectSupport.cxx
     types/UnboundedHelloWorldPubSubTypes.cxx
-    types/UnboundedHelloWorldv1.cxx
+    types/UnboundedHelloWorldTypeObjectSupport.cxx
 
     utils/data_generators.cpp
     utils/lambda_functions.cpp
@@ -206,12 +184,10 @@ if(FASTDDS_PIM_API_TESTS)
     if (FASTDDS_STATISTICS)
 
         set(statistics_sources
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesv1.cxx
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesv1.cxx
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesTypeObjectSupport.cxx
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
             )
 
         list(APPEND BLACKBOXTESTS_FASTDDS_PIM_SOURCE ${statistics_sources})

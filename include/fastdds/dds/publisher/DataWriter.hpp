@@ -21,6 +21,7 @@
 
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
@@ -30,9 +31,6 @@
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/fastdds_dll.hpp>
-#include <fastrtps/types/TypesBase.h>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastrtps {
@@ -227,7 +225,7 @@ public:
      * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
      * @param[in] handle Instance's key to be unregistered.
      * @return Returns the operation's result.
-     * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
+     * If the operation finishes successfully, RETCODE_OK is returned.
      */
     FASTDDS_EXPORTED_API ReturnCode_t unregister_instance(
             void* instance,
@@ -530,10 +528,10 @@ public:
      * @param [out] sample          Pointer to the sample on the internal pool.
      * @param [in]  initialization  How to initialize the loaned sample.
      *
-     * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the data type does not support loans.
-     * @return ReturnCode_t::RETCODE_NOT_ENABLED if the writer has not been enabled.
-     * @return ReturnCode_t::RETCODE_OUT_OF_RESOURCES if the pool has been exhausted.
-     * @return ReturnCode_t::RETCODE_OK if a pointer to a sample is successfully obtained.
+     * @return RETCODE_ILLEGAL_OPERATION when the data type does not support loans.
+     * @return RETCODE_NOT_ENABLED if the writer has not been enabled.
+     * @return RETCODE_OUT_OF_RESOURCES if the pool has been exhausted.
+     * @return RETCODE_OK if a pointer to a sample is successfully obtained.
      */
     FASTDDS_EXPORTED_API ReturnCode_t loan_sample(
             void*& sample,
@@ -546,10 +544,10 @@ public:
      *
      * @param [in,out] sample  Pointer to the previously loaned sample.
      *
-     * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the data type does not support loans.
-     * @return ReturnCode_t::RETCODE_NOT_ENABLED if the writer has not been enabled.
-     * @return ReturnCode_t::RETCODE_BAD_PARAMETER if the pointer does not correspond to a loaned sample.
-     * @return ReturnCode_t::RETCODE_OK if the loan is successfully discarded.
+     * @return RETCODE_ILLEGAL_OPERATION when the data type does not support loans.
+     * @return RETCODE_NOT_ENABLED if the writer has not been enabled.
+     * @return RETCODE_BAD_PARAMETER if the pointer does not correspond to a loaned sample.
+     * @return RETCODE_OK if the loan is successfully discarded.
      */
     FASTDDS_EXPORTED_API ReturnCode_t discard_loan(
             void*& sample);

@@ -24,6 +24,10 @@ Forthcoming
   * TimeConversion
   * DBQueue
 * Added create participant methods that use environment XML profile for participant configuration.
+* XML Parser API no longer public.
+* New TypeObjectRegistry class to register/query TypeObjects/TypeIdentifiers.
+* New TypeObjectUtils class providing API to build and register TypeObjects/TypeIdentifiers.
+* Added `non_blocking_send` to TCP Transport.
 
 Version 2.14.0
 --------------

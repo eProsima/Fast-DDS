@@ -21,12 +21,12 @@
 
 #include <algorithm>
 
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/utils/IPFinder.h>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/endpoint/EDPStatic.h>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
@@ -46,7 +46,7 @@ BuiltinProtocols::BuiltinProtocols()
     : mp_participantImpl(nullptr)
     , mp_PDP(nullptr)
     , mp_WLP(nullptr)
-    , tlm_(nullptr)
+    , typelookup_manager_(nullptr)
 {
 }
 
@@ -60,9 +60,8 @@ BuiltinProtocols::~BuiltinProtocols()
 
     // TODO Auto-generated destructor stub
     delete mp_WLP;
-    delete tlm_;
     delete mp_PDP;
-
+    delete typelookup_manager_;
 }
 
 bool BuiltinProtocols::initBuiltinProtocols(
@@ -138,11 +137,8 @@ bool BuiltinProtocols::initBuiltinProtocols(
     }
 
     // TypeLookupManager
-    if (m_att.typelookup_config.use_client || m_att.typelookup_config.use_server)
-    {
-        tlm_ = new fastdds::dds::builtin::TypeLookupManager(this);
-        tlm_->init_typelookup_service(mp_participantImpl);
-    }
+    typelookup_manager_ = new fastdds::dds::builtin::TypeLookupManager();
+    typelookup_manager_->init(this);
 
     return true;
 }

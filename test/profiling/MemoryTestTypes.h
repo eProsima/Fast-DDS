@@ -20,7 +20,11 @@
 #ifndef MEMORYTESTTYPES_H_
 #define MEMORYTESTTYPES_H_
 
-#include "fastrtps/fastrtps_all.h"
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+
+#include <fastdds/dds/topic/TopicDataType.hpp>
 
 class MemoryType
 {

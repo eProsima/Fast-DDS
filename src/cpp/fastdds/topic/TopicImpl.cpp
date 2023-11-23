@@ -55,7 +55,7 @@ ReturnCode_t TopicImpl::check_qos_including_resource_limits(
         const TypeSupport& type)
 {
     ReturnCode_t check_qos_return = check_qos(qos);
-    if (ReturnCode_t::RETCODE_OK == check_qos_return &&
+    if (RETCODE_OK == check_qos_return &&
             type->m_isGetKeyDefined)
     {
         check_qos_return = check_allocation_consistency(qos);
@@ -69,12 +69,12 @@ ReturnCode_t TopicImpl::check_qos(
     if (PERSISTENT_DURABILITY_QOS == qos.durability().kind)
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
-        return ReturnCode_t::RETCODE_UNSUPPORTED;
+        return RETCODE_UNSUPPORTED;
     }
     if (BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS == qos.destination_order().kind)
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
-        return ReturnCode_t::RETCODE_UNSUPPORTED;
+        return RETCODE_UNSUPPORTED;
     }
     if (AUTOMATIC_LIVELINESS_QOS == qos.liveliness().kind ||
             MANUAL_BY_PARTICIPANT_LIVELINESS_QOS == qos.liveliness().kind)
@@ -83,10 +83,10 @@ ReturnCode_t TopicImpl::check_qos(
                 qos.liveliness().lease_duration <= qos.liveliness().announcement_period)
         {
             EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "lease_duration <= announcement period.");
-            return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+            return RETCODE_INCONSISTENT_POLICY;
         }
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t TopicImpl::check_allocation_consistency(
@@ -98,16 +98,16 @@ ReturnCode_t TopicImpl::check_allocation_consistency(
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
                 "max_samples should be greater than max_instances * max_samples_per_instance");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        return RETCODE_INCONSISTENT_POLICY;
     }
     if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
             (qos.resource_limits().max_samples > 0))
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
                 "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        return RETCODE_INCONSISTENT_POLICY;
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void TopicImpl::set_qos(
@@ -144,26 +144,26 @@ ReturnCode_t TopicImpl::set_qos(
         const TopicQos& default_qos = participant_->get_default_topic_qos();
         if (!can_qos_be_updated(qos_, default_qos))
         {
-            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+            return RETCODE_IMMUTABLE_POLICY;
         }
 
         set_qos(qos_, default_qos, false);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t ret_val = check_qos_including_resource_limits(qos, type_support_);
-    if (!ret_val)
+    if (RETCODE_OK != ret_val)
     {
         return ret_val;
     }
 
     if (!can_qos_be_updated(qos_, qos))
     {
-        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+        return RETCODE_IMMUTABLE_POLICY;
     }
 
     set_qos(qos_, qos, false);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 const TopicListener* TopicImpl::get_listener() const

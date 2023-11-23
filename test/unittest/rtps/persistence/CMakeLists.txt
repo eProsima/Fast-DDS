@@ -18,10 +18,6 @@ if(SQLITE3_SUPPORT)
 
     set(PERSISTENCETESTS_SOURCE
         PersistenceTests.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -54,8 +50,9 @@ if(SQLITE3_SUPPORT)
         )
     target_link_libraries(PersistenceTests
         fastcdr
+        fastdds::log
         foonathan_memory
-            GTest::gmock
+        GTest::gmock
         ${CMAKE_DL_LIBS}
         )
     if(MSVC OR MSVC_IDE)

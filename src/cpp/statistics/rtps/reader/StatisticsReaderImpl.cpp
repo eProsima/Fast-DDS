@@ -19,7 +19,7 @@
 #include <statistics/rtps/StatisticsBase.hpp>
 
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <statistics/types/types.h>
+#include <statistics/types/types.hpp>
 
 using eprosima::fastrtps::RecursiveTimedMutex;
 using eprosima::fastrtps::rtps::RTPSReader;

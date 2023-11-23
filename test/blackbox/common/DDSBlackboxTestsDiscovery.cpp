@@ -713,18 +713,18 @@ TEST(DDSDiscovery, WriterAndReaderMatchUsingDynamicReusableMemoryMode)
 
 /**
  * This test checks the missing file case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckMissingFileXmlStaticDiscoveryFile)
 {
     std::string file = "MissingFile.xml";
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the correct data case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_OK
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_OK
  */
 TEST(DDSDiscovery, CheckCorrectXmlStaticDiscoveryFile)
 {
@@ -757,12 +757,12 @@ TEST(DDSDiscovery, CheckCorrectXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_OK);
 }
 
 /**
  * This test checks the incorrect <staticdiscovery> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectStaticdiscoveryXmlStaticDiscoveryFile)
 {
@@ -795,12 +795,12 @@ TEST(DDSDiscovery, CheckIncorrectStaticdiscoveryXmlStaticDiscoveryFile)
             "</staticdiscoveryBROKEN>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect <participant> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectParticipantXmlStaticDiscoveryFile)
 {
@@ -833,12 +833,12 @@ TEST(DDSDiscovery, CheckIncorrectParticipantXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect <reader> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderXmlStaticDiscoveryFile)
 {
@@ -871,12 +871,12 @@ TEST(DDSDiscovery, CheckIncorrectReaderXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect reader <userId> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderUserIDXmlStaticDiscoveryFile)
 {
@@ -909,11 +909,11 @@ TEST(DDSDiscovery, CheckIncorrectReaderUserIDXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 /**
  * This test checks the incorrect reader <entityID> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderEntityIDXmlStaticDiscoveryFile)
 {
@@ -946,12 +946,12 @@ TEST(DDSDiscovery, CheckIncorrectReaderEntityIDXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect reader <topicName> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderTopicNameXmlStaticDiscoveryFile)
 {
@@ -984,12 +984,12 @@ TEST(DDSDiscovery, CheckIncorrectReaderTopicNameXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect data case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderTopicDataTypeXmlStaticDiscoveryFile)
 {
@@ -1022,12 +1022,12 @@ TEST(DDSDiscovery, CheckIncorrectReaderTopicDataTypeXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect reader <topicKind> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderTopicKindXmlStaticDiscoveryFile)
 {
@@ -1060,12 +1060,12 @@ TEST(DDSDiscovery, CheckIncorrectReaderTopicKindXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect reader <partitionQos> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderPartitionQosXmlStaticDiscoveryFile)
 {
@@ -1098,12 +1098,12 @@ TEST(DDSDiscovery, CheckIncorrectReaderPartitionQosXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect reader <reliabilityQos> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderReliabilityQosXmlStaticDiscoveryFile)
 {
@@ -1136,12 +1136,12 @@ TEST(DDSDiscovery, CheckIncorrectReaderReliabilityQosXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect reader <durabilityQos> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderDurabilityQosXmlStaticDiscoveryFile)
 {
@@ -1174,12 +1174,12 @@ TEST(DDSDiscovery, CheckIncorrectReaderDurabilityQosXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect reader <multicastLocator> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectReaderMulticastLocatorXmlStaticDiscoveryFile)
 {
@@ -1212,12 +1212,12 @@ TEST(DDSDiscovery, CheckIncorrectReaderMulticastLocatorXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect <writer> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterXmlStaticDiscoveryFile)
 {
@@ -1250,12 +1250,12 @@ TEST(DDSDiscovery, CheckIncorrectWriterXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect writer <userId> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterUserIDXmlStaticDiscoveryFile)
 {
@@ -1288,12 +1288,12 @@ TEST(DDSDiscovery, CheckIncorrectWriterUserIDXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect writer <entityID> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterEntityIDXmlStaticDiscoveryFile)
 {
@@ -1326,12 +1326,12 @@ TEST(DDSDiscovery, CheckIncorrectWriterEntityIDXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect writer <topicName> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterTopicNameXmlStaticDiscoveryFile)
 {
@@ -1364,12 +1364,12 @@ TEST(DDSDiscovery, CheckIncorrectWriterTopicNameXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect writer <topicDataType> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterTopicDataTypeXmlStaticDiscoveryFile)
 {
@@ -1402,12 +1402,12 @@ TEST(DDSDiscovery, CheckIncorrectWriterTopicDataTypeXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect writer <topicKind> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterTopicKindXmlStaticDiscoveryFile)
 {
@@ -1440,12 +1440,12 @@ TEST(DDSDiscovery, CheckIncorrectWriterTopicKindXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect writer <partitionQos> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterPartitionQosXmlStaticDiscoveryFile)
 {
@@ -1478,12 +1478,12 @@ TEST(DDSDiscovery, CheckIncorrectWriterPartitionQosXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect writer <reliabilityQos> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterReliabilityQosXmlStaticDiscoveryFile)
 {
@@ -1516,12 +1516,12 @@ TEST(DDSDiscovery, CheckIncorrectWriterReliabilityQosXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
  * This test checks the incorrect writer <durabilityQos> case of DomainParticipantFactory->check_xml_static_discovery
- * method and checks it returns RETCODE_ERROR
+ * method and checks it returns eprosima::fastdds::dds::RETCODE_ERROR
  */
 TEST(DDSDiscovery, CheckIncorrectWriterDurabilityQosXmlStaticDiscoveryFile)
 {
@@ -1554,7 +1554,7 @@ TEST(DDSDiscovery, CheckIncorrectWriterDurabilityQosXmlStaticDiscoveryFile)
             "</staticdiscovery>";
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_EQ(factory->check_xml_static_discovery(file), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(factory->check_xml_static_discovery(file), eprosima::fastdds::dds::RETCODE_ERROR);
 }
 
 /**
@@ -1581,7 +1581,7 @@ static void test_DDSDiscovery_WaitSetMatchedStatus(
     ASSERT_NE(participant, nullptr);
 
     fastdds::dds::TypeSupport type(new HelloWorldPubSubType());
-    EXPECT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(type.register_type(participant), eprosima::fastdds::dds::RETCODE_OK);
 
     auto topic = participant->create_topic(TEST_TOPIC_NAME, type->getName(), fastdds::dds::TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -1605,7 +1605,7 @@ static void test_DDSDiscovery_WaitSetMatchedStatus(
                 while (1 > matched_status.current_count)
                 {
                     ReturnCode_t ret_code = wait_set.wait(triggered_conditions, fastrtps::c_TimeInfinite);
-                    if (ReturnCode_t::RETCODE_OK != ret_code)
+                    if (eprosima::fastdds::dds::RETCODE_OK != ret_code)
                     {
                         continue;
                     }

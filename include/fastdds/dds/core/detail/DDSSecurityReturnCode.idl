@@ -1,0 +1,10 @@
+// The content of this file, related to the DDS Security's return code values, was extracted from the omg idl
+// https://www.omg.org/spec/DDS-SECURITY/20170901/dds_security_plugins_spis.idl
+#include "DDSReturnCode.idl"
+
+module DDS {
+
+    // DDSSEC11-24
+    const ReturnCode_t RETCODE_NOT_ALLOWED_BY_SECURITY = 1000;
+
+};

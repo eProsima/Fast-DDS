@@ -15,7 +15,6 @@
 /**
  * @file DDSFilterExpression.cpp
  */
-
 #include "DDSFilterExpression.hpp"
 
 #include <map>
@@ -23,17 +22,15 @@
 #include <string>
 #include <vector>
 
-#include <fastdds/dds/topic/IContentFilter.hpp>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypePtr.h>
-
 #include <fastcdr/Cdr.h>
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/exceptions/Exception.h>
 
-#include "DDSFilterCondition.hpp"
+#include <fastdds/dds/topic/IContentFilter.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 
+#include "DDSFilterConditionState.hpp"
 #include "DDSFilterField.hpp"
 #include "DDSFilterParameter.hpp"
 
@@ -50,7 +47,7 @@ bool DDSFilterExpression::evaluate(
     static_cast<void>(sample_info);
     static_cast<void>(reader_guid);
 
-    using namespace eprosima::fastrtps::types;
+    using namespace eprosima::fastdds::dds::xtypes;
     using namespace eprosima::fastcdr;
 
     dyn_data_->clear_all_values();
@@ -64,7 +61,7 @@ bool DDSFilterExpression::evaluate(
 #endif // FASTCDR_VERSION_MAJOR == 1
                 );
         deser.read_encapsulation();
-        dyn_data_->deserialize(deser);
+        traits<DynamicData>::narrow<DynamicDataImpl>(dyn_data_)->deserialize(deser);
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -76,7 +73,7 @@ bool DDSFilterExpression::evaluate(
             it != fields.end() && DDSFilterConditionState::UNDECIDED == root->get_state();
             ++it)
     {
-        if (!it->second->set_value(*dyn_data_))
+        if (!it->second->set_value(dyn_data_))
         {
             return false;
         }
@@ -87,21 +84,21 @@ bool DDSFilterExpression::evaluate(
 
 void DDSFilterExpression::clear()
 {
-    dyn_data_.reset();
-    dyn_type_.reset();
+    DynamicDataFactory::get_instance()->delete_data(dyn_data_);
+    DynamicTypeBuilderFactory::get_instance()->delete_type(dyn_type_);
     parameters.clear();
     fields.clear();
     root.reset();
 }
 
 void DDSFilterExpression::set_type(
-        const eprosima::fastrtps::types::DynamicType_ptr& type)
+        DynamicType::_ref_type type)
 {
     dyn_type_ = type;
-    dyn_data_.reset(eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(type));
+    dyn_data_ = traits<DynamicData>::narrow<DynamicDataImpl>(DynamicDataFactory::get_instance()->create_data(type));
 }
 
-}  // namespace DDSSQLFilter
-}  // namespace dds
-}  // namespace fastdds
-}  // namespace eprosima
+} // namespace DDSSQLFilter
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima

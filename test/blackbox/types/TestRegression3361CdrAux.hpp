@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_TESTREGRESSION3361CDRAUX_HPP_
 #define _FAST_DDS_GENERATED_TESTREGRESSION3361CDRAUX_HPP_
 
-#include "TestRegression3361.h"
+#include "TestRegression3361.hpp"
 
 constexpr uint32_t TestRegression3361_max_cdr_typesize {264UL};
 constexpr uint32_t TestRegression3361_max_key_cdr_typesize {0UL};
@@ -34,8 +34,6 @@ namespace fastcdr {
 
 class Cdr;
 class CdrSizeCalculator;
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,

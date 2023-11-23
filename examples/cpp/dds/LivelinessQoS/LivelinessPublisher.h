@@ -22,14 +22,14 @@
 
 #include <mutex>
 
+#include "TopicPubSubTypes.h"
+#include "Topic.hpp"
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
-
-#include "Topic.h"
-#include "TopicPubSubTypes.h"
 
 class LivelinessPublisher
 {

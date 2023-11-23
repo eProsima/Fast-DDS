@@ -65,9 +65,9 @@ public:
     {
     }
 
-    ReturnCode_t enable() override
+    efd::ReturnCode_t enable() override
     {
-        return fastrtps::types::ReturnCode_t::RETCODE_OK;
+        return efd::RETCODE_OK;
     }
 
     void disable() override

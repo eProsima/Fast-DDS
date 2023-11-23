@@ -53,11 +53,11 @@
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/utils/IPLocator.h>
 
-using DomainParticipantFactory = eprosima::fastdds::dds::DomainParticipantFactory;
-using eprosima::fastrtps::rtps::IPLocator;
+using eprosima::fastdds::dds::DomainParticipantFactory;
 using eprosima::fastdds::rtps::UDPTransportDescriptor;
 using eprosima::fastdds::rtps::UDPv4TransportDescriptor;
 using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
+using eprosima::fastrtps::rtps::IPLocator;
 
 template<class TypeSupport>
 class PubSubWriter
@@ -385,7 +385,7 @@ public:
             type_.reset(new type_support());
 
             // Register type
-            ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
+            ASSERT_EQ(participant_->register_type(type_), eprosima::fastdds::dds::RETCODE_OK);
 
             // Create topic
             topic_ = participant_->create_topic(topic_name_, type_->getName(),
@@ -523,14 +523,14 @@ public:
             type& msg,
             const eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle)
     {
-        return ReturnCode_t::RETCODE_OK == datawriter_->unregister_instance((void*)&msg, instance_handle);
+        return eprosima::fastdds::dds::RETCODE_OK == datawriter_->unregister_instance((void*)&msg, instance_handle);
     }
 
     bool dispose(
             type& msg,
             const eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle)
     {
-        return ReturnCode_t::RETCODE_OK == datawriter_->dispose((void*)&msg, instance_handle);
+        return eprosima::fastdds::dds::RETCODE_OK == datawriter_->dispose((void*)&msg, instance_handle);
     }
 
     bool send_sample(
@@ -756,7 +756,7 @@ public:
         nsecs -= secs;
         eprosima::fastrtps::Duration_t timeout {static_cast<int32_t>(secs.count()),
                                                 static_cast<uint32_t>(nsecs.count())};
-        return (ReturnCode_t::RETCODE_OK ==
+        return (eprosima::fastdds::dds::RETCODE_OK ==
                datawriter_->wait_for_acknowledgments(timeout));
     }
 
@@ -773,7 +773,7 @@ public:
         nsecs -= secs;
         eprosima::fastrtps::Duration_t timeout {static_cast<int32_t>(secs.count()),
                                                 static_cast<uint32_t>(nsecs.count())};
-        return (ReturnCode_t::RETCODE_OK ==
+        return (eprosima::fastdds::dds::RETCODE_OK ==
                datawriter_->wait_for_acknowledgments(data, instance_handle, timeout));
     }
 
@@ -1562,18 +1562,18 @@ public:
     {
         publisher_qos_.partition().clear();
         publisher_qos_.partition().push_back(partition.c_str());
-        return (ReturnCode_t::RETCODE_OK == publisher_->set_qos(publisher_qos_));
+        return (eprosima::fastdds::dds::RETCODE_OK == publisher_->set_qos(publisher_qos_));
     }
 
     bool set_qos()
     {
-        return (ReturnCode_t::RETCODE_OK == datawriter_->set_qos(datawriter_qos_));
+        return (eprosima::fastdds::dds::RETCODE_OK == datawriter_->set_qos(datawriter_qos_));
     }
 
     bool set_qos(
             const eprosima::fastdds::dds::DataWriterQos& att)
     {
-        return (ReturnCode_t::RETCODE_OK == datawriter_->set_qos(att));
+        return (eprosima::fastdds::dds::RETCODE_OK == datawriter_->set_qos(att));
     }
 
     eprosima::fastdds::dds::DataWriterQos get_qos()
@@ -1584,7 +1584,7 @@ public:
     bool remove_all_changes(
             size_t* number_of_changes_removed)
     {
-        return (ReturnCode_t::RETCODE_OK == datawriter_->clear_history(number_of_changes_removed));
+        return (eprosima::fastdds::dds::RETCODE_OK == datawriter_->clear_history(number_of_changes_removed));
     }
 
     bool is_matched() const
@@ -2068,7 +2068,7 @@ protected:
             {
                 lock.unlock();
                 auto wait_result = waitset_.wait(active_conditions_, timeout_);
-                if (wait_result == ReturnCode_t::RETCODE_TIMEOUT)
+                if (wait_result == eprosima::fastdds::dds::RETCODE_TIMEOUT)
                 {
                     writer_.on_waitset_timeout();
                 }
