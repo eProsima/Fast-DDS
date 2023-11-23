@@ -41,8 +41,6 @@
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/TypeIdentifier.h>
-
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace dds {
@@ -868,7 +866,7 @@ public:
      * @return RETCODE_PRECONDITION_NOT_MET if the DomainParticipant type lookup service is disabled.
      */
     RTPS_DllAPI ReturnCode_t register_remote_type(
-            const fastrtps::types::TypeInformation& type_information,
+            const xtypes1_3::TypeInformation& type_information,
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 

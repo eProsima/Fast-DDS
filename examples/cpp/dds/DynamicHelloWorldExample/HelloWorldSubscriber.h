@@ -27,8 +27,7 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/rtps/common/Types.h>
 
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypeObject.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
 

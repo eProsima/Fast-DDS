@@ -22,9 +22,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypeObject.h>
-#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 
 #include "pegtl.hpp"
 #include "pegtl/contrib/parse_tree.hpp"
@@ -97,7 +95,7 @@ using selector = parse_tree::selector <
 
 std::unique_ptr<ParseNode> parse_filter_expression(
         const char* expression,
-        const TypeObject* type_object)
+        const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_object)
 {
     memory_input<> in(expression, "");
     try

@@ -62,6 +62,12 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+class DomainParticipantImpl;
+
+namespace builtin {
+    class TypeLookupManager;
+}     
+
 namespace xtypes1_3 {
 
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
@@ -93,6 +99,8 @@ class TypeObjectRegistry
 {
 
     friend class TypeObjectUtils;
+    friend class eprosima::fastdds::dds::builtin::TypeLookupManager;
+    friend class eprosima::fastdds::dds::DomainParticipantImpl;
 
 public:
 

@@ -32,7 +32,6 @@
 #include <fastdds/utils/QosConverters.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLEndpointParser.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -81,7 +80,6 @@ DomainParticipantFactory::~DomainParticipantFactory()
     // Deletes DynamicTypes and TypeObject factories
     fastrtps::types::DynamicTypeBuilderFactory::delete_instance();
     fastrtps::types::DynamicDataFactory::delete_instance();
-    fastrtps::types::TypeObjectFactory::delete_instance();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     eprosima::fastdds::dds::Log::KillThread();

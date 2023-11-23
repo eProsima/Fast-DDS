@@ -30,7 +30,6 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <condition_variable>
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/rtps/common/Types.h>
 #include <string>
 
@@ -47,9 +46,9 @@ public:
             const std::string& topicName,
             int domain,
             eprosima::fastdds::dds::TypeSupport type,
-            const eprosima::fastrtps::types::TypeObject* type_object,
-            const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
-            const eprosima::fastrtps::types::TypeInformation* type_info,
+            const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_object,
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_identifier,
+            const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_info,
             const std::string& name,
             const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
             bool use_typelookup = false);
@@ -161,15 +160,15 @@ public:
                 eprosima::fastdds::dds::DomainParticipant* participant,
                 const eprosima::fastrtps::rtps::SampleIdentity& request_sample_id,
                 const eprosima::fastrtps::string_255& topic,
-                const xtypes1_3::TypeIdentifier* identifier,
-                const xtypes1_3::TypeObject* object,
+                const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* identifier,
+                const eprosima::fastdds::dds::xtypes1_3::TypeObject* object,
                 eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
 
         void on_type_information_received(
                 eprosima::fastdds::dds::DomainParticipant* participant,
                 const eprosima::fastrtps::string_255 topic_name,
                 const eprosima::fastrtps::string_255 type_name,
-                const eprosima::fastrtps::types::TypeInformation& type_information) override;
+                const eprosima::fastdds::dds::xtypes1_3::TypeInformation& type_information) override;
 
         TestPublisher* parent_;
         std::atomic<bool> discovered_;

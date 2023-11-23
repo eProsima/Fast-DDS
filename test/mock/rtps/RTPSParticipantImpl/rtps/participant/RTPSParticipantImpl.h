@@ -310,6 +310,19 @@ public:
 
     MOCK_METHOD(bool, should_match_local_endpoints, ());
 
+    void assert_remote_participant_liveliness(
+            const GuidPrefix_t& remote_guid)
+    {
+        (void) remote_guid;
+    }
+
+    bool is_participant_ignored(
+            const GuidPrefix_t& participant_guid)
+    {
+        (void) participant_guid;
+        return true;
+    }
+
 private:
 
     MockParticipantListener listener_;

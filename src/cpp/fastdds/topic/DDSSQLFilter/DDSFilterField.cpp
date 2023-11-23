@@ -24,7 +24,7 @@
 
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/TypeIdentifier.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastrtps/types/TypesBase.h>
 
 #include "DDSFilterPredicate.hpp"
@@ -107,7 +107,7 @@ bool DDSFilterField::set_value(
         const eprosima::fastrtps::types::DynamicData* data,
         eprosima::fastrtps::types::MemberId member_id)
 {
-    using namespace eprosima::fastrtps::types;
+    using namespace xtypes1_3;
 
     bool ret = true;
     try

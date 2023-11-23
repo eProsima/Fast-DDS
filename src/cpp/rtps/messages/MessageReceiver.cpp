@@ -35,6 +35,8 @@
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
+#include <fastdds/rtps/Endpoint.h>
+
 #define INFO_SRC_SUBMSG_LENGTH 20
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<

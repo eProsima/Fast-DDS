@@ -207,7 +207,7 @@ void TypeLookupManager::remove_remote_endpoints(
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote writer from the local Builtin Request Reader");
         tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
-        builtin_request_reader_->matched_writer_remove(tmp_guid);
+        builtin_request_reader_->matched_writer_remove(tmp_guid, false);
     }
 
     auxendp = endp;
@@ -217,7 +217,7 @@ void TypeLookupManager::remove_remote_endpoints(
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote writer from the local Builtin Reply Reader");
         tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
-        builtin_reply_reader_->matched_writer_remove(tmp_guid);
+        builtin_reply_reader_->matched_writer_remove(tmp_guid, false);
     }
 
     auxendp = endp;
@@ -252,9 +252,9 @@ fastrtps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies(
         for (const xtypes1_3::TypeIdentifier& type_id : id_seq)
         {
             // Check if type_id._d is direct HASH
-            if (!(type_id._d() == EK_MINIMAL ||
-                type_id._d() == EK_COMPLETE ||
-                type_id._d() == TI_STRONGLY_CONNECTED_COMPONENT))
+            if (!(type_id._d() == xtypes1_3::EK_MINIMAL ||
+                type_id._d() == xtypes1_3::EK_COMPLETE ||
+                type_id._d() == xtypes1_3::TI_STRONGLY_CONNECTED_COMPONENT))
             {
                 return id;
             }
@@ -297,9 +297,9 @@ fastrtps::rtps::SampleIdentity TypeLookupManager::get_types(
         for (const xtypes1_3::TypeIdentifier& type_id : id_seq)
         {
             // Check if type_id._d is direct HASH
-            if (!(type_id._d() == EK_MINIMAL ||
-                type_id._d() == EK_COMPLETE ||
-                type_id._d() == TI_STRONGLY_CONNECTED_COMPONENT))
+            if (!(type_id._d() == xtypes1_3::EK_MINIMAL ||
+                type_id._d() == xtypes1_3::EK_COMPLETE ||
+                type_id._d() == xtypes1_3::TI_STRONGLY_CONNECTED_COMPONENT))
             {
                 return id;
             }
@@ -745,42 +745,6 @@ void TypeLookupManager::advance_sequence_number() const
     {
         ++request_seq_number_.high();
     }
-}
-
-GUID_t TypeLookupManager::get_guid_from_rtps(const fastrtps::rtps::GUID_t& rtps_guid) const
-{
-    GUID_t guid;
-    std::memcpy(guid.guidPrefix().data(), rtps_guid.guidPrefix.value, 12);
-    for (size_t i = 0; i < 3; i++)
-    {
-        guid.entityId().entityKey()[i] = rtps_guid.entityId.value[i + 1];
-    }
-    guid.entityId().entityKind() = rtps_guid.entityId.value[0];
-
-    return guid;
-}
-
-fastrtps::rtps::GUID_t TypeLookupManager::get_rtps_guid(const GUID_t& guid) const
-{
-    fastrtps::rtps::GUID_t rtps_guid;
-    std::memcpy(rtps_guid.guidPrefix.value, guid.guidPrefix().data(), 12);
-    for (size_t i = 0; i < 3; i++)
-    {
-         rtps_guid.entityId.value[i + 1] = guid.entityId().entityKey()[i];
-    }
-    rtps_guid.entityId.value[0] = guid.entityId().entityKind();
-
-    return rtps_guid;
-}
-
-fastrtps::rtps::SampleIdentity TypeLookupManager::get_rtps_sample_identity(const SampleIdentity& sampleid) const
-{
-    fastrtps::rtps::SampleIdentity rtps_sampleid;
-    rtps_sampleid.writer_guid(get_rtps_guid(sampleid.writer_guid()));
-    rtps_sampleid.sequence_number().high = sampleid.sequence_number().high();
-    rtps_sampleid.sequence_number().low = sampleid.sequence_number().low();
-
-    return rtps_sampleid;
 }
 
 std::string TypeLookupManager::get_instanceName() const

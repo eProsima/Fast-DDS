@@ -12,13 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set(DDSSQLFILTERTEST_SOURCES DDSSQLFilterTests.cpp)
+set(DDSSQLFILTERTEST_SOURCES
+    DDSSQLFilterTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObject.cxx
+    )
 file(GLOB DDSSQLFILTER_TYPE_SOURCES data_types/*.cxx)
 
 file(GLOB DDSSQLFILTER_SOURCES
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/*.cpp
     )
-
+    
 file(GLOB DDSSQLFILTER_LIB_SOURCES
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp

@@ -36,8 +36,6 @@
 
 #include <fastrtps/utils/StringMatching.h>
 
-#include <fastrtps/types/TypeObjectFactory.h>
-
 #include <fastdds/core/policy/ParameterList.hpp>
 
 #include <foonathan/memory/container.hpp>
@@ -201,7 +199,7 @@ bool EDP::newLocalReaderProxyData(
                         // const types::TypeIdentifier* type_id =
                         //         types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
                         //     rpd->typeName().c_str());
-                        //TODO Adrian
+                        //TODO adelcampo
                         const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_id;
                         if (type_id != nullptr)
                         {
@@ -213,11 +211,11 @@ bool EDP::newLocalReaderProxyData(
                     if (att.type.m_type_object._d() == static_cast<uint8_t>(0x00))
                     {
                         bool type_is_complete = has_type_id &&
-                                rpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
+                                rpd->type_id().m_type_identifier._d() == eprosima::fastdds::dds::xtypes1_3::EK_COMPLETE;
                         // const types::TypeObject* type_obj =
                         //         types::TypeObjectFactory::get_instance()->get_type_object(
                         //     rpd->typeName().c_str(), type_is_complete);
-                        //TODO Adrian
+                        //TODO adelcampo
                         const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_obj;
                         if (type_obj != nullptr)
                         {
@@ -324,7 +322,7 @@ bool EDP::newLocalWriterProxyData(
                     {
                         //const types::TypeInformation* type_info =
                         //        types::TypeObjectFactory::get_instance()->get_type_information(wpd->typeName().c_str());
-                        //TODO Adrian
+                        //TODO adelcampo
                         const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_info;
                         if (type_info != nullptr)
                         {
@@ -342,7 +340,7 @@ bool EDP::newLocalWriterProxyData(
                         // const types::TypeIdentifier* type_id =
                         //         types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
                         //     wpd->typeName().c_str());
-                        //TODO Adrian
+                        //TODO adelcampo
                         const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_id;
                         if (type_id != nullptr)
                         {
@@ -354,11 +352,11 @@ bool EDP::newLocalWriterProxyData(
                     if (att.type.m_type_object._d() == static_cast<uint8_t>(0x00))
                     {
                         bool type_is_complete = has_type_id &&
-                                wpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
+                                wpd->type_id().m_type_identifier._d() == eprosima::fastdds::dds::xtypes1_3::EK_COMPLETE;
                         // const types::TypeObject* type_obj =
                         //         types::TypeObjectFactory::get_instance()->get_type_object(
                         //     wpd->typeName().c_str(), type_is_complete);
-                        //TODO Adrian
+                        //TODO adelcampo
                         const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_obj;
                         if (type_obj != nullptr)
                         {
@@ -445,7 +443,7 @@ bool EDP::updatedLocalReader(
                     {
                         // const types::TypeInformation* type_info =
                         //         types::TypeObjectFactory::get_instance()->get_type_information(rdata->typeName().c_str());
-                        //TODO Adrian
+                        //TODO adelcampo
                         const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_info;
                         if (type_info != nullptr)
                         {
@@ -462,7 +460,7 @@ bool EDP::updatedLocalReader(
                         // const types::TypeIdentifier* type_id =
                         //         types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
                         //     rdata->typeName().c_str());
-                        //TODO Adrian
+                        //TODO adelcampo
                         const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_id;
                         if (type_id != nullptr)
                         {
@@ -474,8 +472,8 @@ bool EDP::updatedLocalReader(
                     {
                         // const types::TypeObject* type_obj =
                         //         types::TypeObjectFactory::get_instance()->get_type_object(
-                        //     rdata->typeName().c_str(), rdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
-                        //TODO Adrian
+                        //     rdata->typeName().c_str(), rdata->type_id().m_type_identifier._d() == eprosima::fastdds::dds::xtypes1_3::EK_COMPLETE);
+                        //TODO adelcampo
                         const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_obj;
                         if (type_obj != nullptr)
                         {
@@ -536,7 +534,7 @@ bool EDP::updatedLocalWriter(
                     {
                         // const types::TypeInformation* type_info =
                         //         types::TypeObjectFactory::get_instance()->get_type_information(wdata->typeName().c_str());
-                        //TODO Adrian
+                        //TODO adelcampo
                         const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_info;
                         if (type_info != nullptr)
                         {
@@ -553,7 +551,7 @@ bool EDP::updatedLocalWriter(
                         // const types::TypeIdentifier* type_id =
                         //         types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
                         //     wdata->typeName().c_str());
-                        //TODO Adrian
+                        //TODO adelcampo
                         const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_id;
                         if (type_id != nullptr)
                         {
@@ -565,8 +563,8 @@ bool EDP::updatedLocalWriter(
                     {
                         // const types::TypeObject* type_obj =
                         //         types::TypeObjectFactory::get_instance()->get_type_object(
-                        //     wdata->typeName().c_str(), wdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
-                        //TODO Adrian
+                        //     wdata->typeName().c_str(), wdata->type_id().m_type_identifier._d() == eprosima::fastdds::dds::xtypes1_3::EK_COMPLETE);
+                        //TODO adelcampo
                         const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_obj;
                         if (type_obj != nullptr)
                         {
@@ -1712,7 +1710,7 @@ bool EDP::checkTypeIdentifier(
         //    wdata->type_id().m_type_identifier.consistent(
         // //rdata->type_id().m_type_identifier, rdata->m_qos.type_consistency);
         // rdata->type_id().m_type_identifier, coercion);
-        //TODO Adrian
+        //TODO adelcampo
 }
 
 bool EDP::hasTypeIdentifier(
@@ -1770,7 +1768,7 @@ bool EDP::checkTypeObject(
             coercion.m_ignore_sequence_bounds = false;
             //return wtype->consistent(*rtype, rdata->m_qos.type_consistency);
             //return wtype->consistent(*rtype, coercion);
-            //TODO Adrian
+            //TODO adelcampo
             return true;
         }
 
@@ -1798,7 +1796,7 @@ bool EDP::checkTypeObject(
         coercion.m_ignore_sequence_bounds = false;
         //return wdata->type().m_type_object.consistent(rdata->type().m_type_object, rdata->m_qos.type_consistency);
         //return wdata->type().m_type_object.consistent(rdata->type().m_type_object, coercion);
-        //TODO Adrian
+        //TODO adelcampo
         return true;
     }
 

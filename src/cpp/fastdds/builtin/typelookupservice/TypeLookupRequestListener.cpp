@@ -42,7 +42,6 @@ using eprosima::fastdds::dds::xtypes1_3::TypeObjectRegistry;
 using eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize;
 using eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq;
 
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -74,7 +73,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
     TypeLookup_Request request;
     if (tlm_->request_reception(*change, request))
     {
-        if (tlm_->get_rtps_guid(request.header().requestId().writer_guid()) == tlm_->builtin_request_writer_->getGuid())
+        if (get_rtps_guid(request.header().requestId().writer_guid()) == tlm_->builtin_request_writer_->getGuid())
         {
             // Message from ourselves.
             return;

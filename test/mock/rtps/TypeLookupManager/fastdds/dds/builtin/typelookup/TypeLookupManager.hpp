@@ -66,10 +66,10 @@ public:
     }
 
     MOCK_CONST_METHOD1(get_type_dependencies, fastrtps::rtps::SampleIdentity(
-                const fastrtps::types::TypeIdentifierSeq&));
+                const xtypes1_3::TypeIdentifierSeq&));
 
     MOCK_CONST_METHOD1(get_types, fastrtps::rtps::SampleIdentity(
-                const fastrtps::types::TypeIdentifierSeq&));
+                const xtypes1_3::TypeIdentifierSeq&));
 
 };
 

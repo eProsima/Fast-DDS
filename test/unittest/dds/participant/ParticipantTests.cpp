@@ -45,6 +45,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
@@ -56,7 +57,6 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -3191,11 +3191,13 @@ TEST(ParticipantTests, GetTypes)
     type_string.register_type(participant);
 
     // Create the sequence of TypeIdentifiers
-    const fastrtps::types::TypeIdentifier* indentifier_string =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-        type_string.get_type_name());
+    // const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* indentifier_string =
+    //         fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+    //     type_string.get_type_name());
+    //TODO adelcampo
+    const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* indentifier_string;
 
-    fastrtps::types::TypeIdentifierSeq types;
+    eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq types;
     types.push_back(*indentifier_string);
 
     // Checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant guid prefix
@@ -3234,11 +3236,13 @@ TEST(ParticipantTests, GetTypeDependencies)
     type_string.register_type(participant);
 
     // Create the sequence of TypeIdentifiers
-    const fastrtps::types::TypeIdentifier* indentifier_string =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-        type_string.get_type_name());
+    // const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* indentifier_string =
+    //         fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+    //     type_string.get_type_name());
+    //TODO adelcampo
+    const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* indentifier_string;
 
-    fastrtps::types::TypeIdentifierSeq types;
+    eprosima::fastdds::dds::xtypes1_3::TypeIdentifierSeq types;
     types.push_back(*indentifier_string);
 
     // Checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant guid prefix
@@ -3288,14 +3292,19 @@ TEST(ParticipantTests, RegisterRemoteTypeComplete)
     type.register_type(remote_participant);
 
     // Retrieve the Typeidentifier, the type name and the TypeInformation from the TypeObjectFactory
-    const fastrtps::types::TypeIdentifier* identifier =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-        type.get_type_name());
+    // const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* identifier =
+    //         fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+    //     type.get_type_name());
 
-    std::string type_name = fastrtps::types::TypeObjectFactory::get_instance()->get_type_name(identifier);
+    // std::string type_name = fastrtps::types::TypeObjectFactory::get_instance()->get_type_name(identifier);
 
-    const fastrtps::types::TypeInformation* type_information =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_information(type_name);
+    // const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_information =
+    //         fastrtps::types::TypeObjectFactory::get_instance()->get_type_information(type_name);
+    //TODO adelcampo
+    const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* identifier;
+    std::string type_name;
+    const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_information;
+
 
     Topic* topic = remote_participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -3365,14 +3374,19 @@ TEST(ParticipantTests, RegisterRemoteTypeMinimal)
     type.register_type(remote_participant);
 
     // Retrieve the Typeidentifier, the type name and the TypeInformation from the TypeObjectFactory
-    const fastrtps::types::TypeIdentifier* identifier =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-        type.get_type_name());
+    // const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* identifier =
+    //         fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+    //     type.get_type_name());
 
-    std::string type_name = fastrtps::types::TypeObjectFactory::get_instance()->get_type_name(identifier);
+    // std::string type_name = fastrtps::types::TypeObjectFactory::get_instance()->get_type_name(identifier);
 
-    const fastrtps::types::TypeInformation* type_information =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_information(type_name);
+    // const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_information =
+    //         fastrtps::types::TypeObjectFactory::get_instance()->get_type_information(type_name);
+    //TODO adelcampo
+    const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* identifier;
+    std::string type_name;
+    const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_information;
+
 
     Topic* topic = remote_participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -3445,7 +3459,7 @@ TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
             };
 
     // Create an empty TypeInformation
-    fastrtps::types::TypeInformation info = fastrtps::types::TypeInformation();
+    eprosima::fastdds::dds::xtypes1_3::TypeInformation info = eprosima::fastdds::dds::xtypes1_3::TypeInformation();
     // Check that register_remote_type() returns RETCODE_PRECONDITION_NOT_MET if the TypeInformation is empty
     ASSERT_EQ(participant->register_remote_type(info, type.get_type_name(), callback),
             ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);

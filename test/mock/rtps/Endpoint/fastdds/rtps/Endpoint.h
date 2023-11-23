@@ -34,6 +34,11 @@ public:
 
     virtual ~Endpoint() = default;
 
+    inline const GUID_t& getGuid() const
+    {
+        return m_guid;
+    }
+
     inline RecursiveTimedMutex& getMutex()
     {
         return mp_mutex;
@@ -48,6 +53,7 @@ public:
     bool supports_rtps_protection_;
 #endif // HAVE_SECURITY
 
+    const GUID_t m_guid;
     mutable RecursiveTimedMutex mp_mutex;
     EndpointAttributes m_att;
     RTPSParticipantImpl* mp_RTPSParticipant;

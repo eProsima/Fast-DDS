@@ -78,7 +78,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     TypeLookup_Reply reply;
     if (tlm_->reply_reception(*change, reply))
     {
-        if (tlm_->get_rtps_guid(reply.header().relatedRequestId().writer_guid()) != tlm_->builtin_request_writer_->getGuid())
+        if (get_rtps_guid(reply.header().relatedRequestId().writer_guid()) != tlm_->builtin_request_writer_->getGuid())
         {
             // This message isn't for us.
             return;
@@ -100,7 +100,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
 
                     tlm_->participant_->getListener()->on_type_discovery(
                         tlm_->participant_->getUserRTPSParticipant(),
-                        tlm_->get_rtps_sample_identity(reply.header().relatedRequestId()),
+                        get_rtps_sample_identity(reply.header().relatedRequestId()),
                         "",
                         &pair.type_identifier(),
                         &pair.type_object(),
@@ -116,7 +116,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                 //     reply.return_value().getTypeDependencies().result().dependent_typeids);
                 tlm_->get_RTPS_participant()->getListener()->on_type_dependencies_reply(
                     tlm_->builtin_protocols_->mp_participantImpl->getUserRTPSParticipant(),
-                    tlm_->get_rtps_sample_identity(reply.header().relatedRequestId()),
+                    get_rtps_sample_identity(reply.header().relatedRequestId()),
                     reply.return_value().getTypeDependencies().result().dependent_typeids());
                 break;
             }

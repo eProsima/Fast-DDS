@@ -19,10 +19,11 @@
  * DDSFilterExpressionParser.hpp file of the parent folder.
  */
 
+
 struct CurrentIdentifierState
 {
-    const TypeObject* type_object;
-    const TypeIdentifier* current_type;
+    const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_object;
+    const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* current_type;
     std::vector<DDSFilterField::FieldAccessor> access_path;
 };
 
@@ -49,31 +50,31 @@ struct identifier_processor
     }
 
     static bool type_should_be_indexed(
-            const TypeIdentifier& ti,
-            const TypeIdentifier*& out_type,
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& ti,
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier*& out_type,
             size_t& max_size)
     {
         max_size = 0;
 
         switch (ti._d())
         {
-            case TI_PLAIN_ARRAY_SMALL:
-                out_type = ti.array_sdefn().element_identifier();
+            case eprosima::fastdds::dds::xtypes1_3::TI_PLAIN_ARRAY_SMALL:
+                out_type = ti.array_sdefn().element_identifier().get();
                 max_size = process_bounds(ti.array_sdefn().array_bound_seq());
                 return true;
 
-            case TI_PLAIN_ARRAY_LARGE:
-                out_type = ti.array_ldefn().element_identifier();
+            case eprosima::fastdds::dds::xtypes1_3::TI_PLAIN_ARRAY_LARGE:
+                out_type = ti.array_ldefn().element_identifier().get();
                 max_size = process_bounds(ti.array_ldefn().array_bound_seq());
                 return true;
 
-            case TI_PLAIN_SEQUENCE_SMALL:
-                out_type = ti.seq_sdefn().element_identifier();
+            case eprosima::fastdds::dds::xtypes1_3::TI_PLAIN_SEQUENCE_SMALL:
+                out_type = ti.seq_sdefn().element_identifier().get();
                 max_size = process_bound(ti.seq_sdefn().bound());
                 return true;
 
-            case TI_PLAIN_SEQUENCE_LARGE:
-                out_type = ti.seq_ldefn().element_identifier();
+            case eprosima::fastdds::dds::xtypes1_3::TI_PLAIN_SEQUENCE_LARGE:
+                out_type = ti.seq_ldefn().element_identifier().get();
                 max_size = process_bound(ti.seq_ldefn().bound());
                 return true;
         }
@@ -85,9 +86,9 @@ struct identifier_processor
     static void add_member_access(
             std::unique_ptr< ParseNode >& n,
             CurrentIdentifierState& identifier_state,
-            const CompleteTypeObject& complete)
+            const eprosima::fastdds::dds::xtypes1_3::CompleteTypeObject& complete)
     {
-        if (TK_STRUCTURE != complete._d())
+        if (eprosima::fastdds::dds::xtypes1_3::TK_STRUCTURE != complete._d())
         {
             throw parse_error("trying to access field on a non-struct type", n->begin());
         }
@@ -95,7 +96,7 @@ struct identifier_processor
         const ParseNode& name_node = n->left();
         std::string name = name_node.content();
         size_t member_index;
-        const CompleteStructMemberSeq& members = complete.struct_type().member_seq();
+        const eprosima::fastdds::dds::xtypes1_3::CompleteStructMemberSeq& members = complete.struct_type().member_seq();
         for (member_index = 0; member_index < members.size(); ++member_index)
         {
             if (members[member_index].detail().name() == name)
@@ -109,7 +110,7 @@ struct identifier_processor
             throw parse_error("field not found", name_node.begin());
         }
 
-        const TypeIdentifier& ti = members[member_index].common().member_type_id();
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier ti = members[member_index].common().member_type_id();
         bool has_index = n->children.size() > 1;
         size_t max_size = 0;
         size_t array_index = std::numeric_limits<size_t>::max();
@@ -138,51 +139,53 @@ struct identifier_processor
     }
 
     static DDSFilterValue::ValueKind get_value_kind(
-            const TypeIdentifier& ti,
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& ti,
             const position& pos)
     {
         switch (ti._d())
         {
-            case TK_BOOLEAN:
+            case eprosima::fastdds::dds::xtypes1_3::TK_BOOLEAN:
                 return DDSFilterValue::ValueKind::BOOLEAN;
 
-            case TK_CHAR8:
+            case eprosima::fastdds::dds::xtypes1_3::TK_CHAR8:
                 return DDSFilterValue::ValueKind::CHAR;
 
-            case TK_STRING8:
-            case TI_STRING8_SMALL:
-            case TI_STRING8_LARGE:
+            case eprosima::fastdds::dds::xtypes1_3::TK_STRING8:
+            case eprosima::fastdds::dds::xtypes1_3::TI_STRING8_SMALL:
+            case eprosima::fastdds::dds::xtypes1_3::TI_STRING8_LARGE:
                 return DDSFilterValue::ValueKind::STRING;
 
-            case TK_INT16:
-            case TK_INT32:
-            case TK_INT64:
+            case eprosima::fastdds::dds::xtypes1_3::TK_INT16:
+            case eprosima::fastdds::dds::xtypes1_3::TK_INT32:
+            case eprosima::fastdds::dds::xtypes1_3::TK_INT64:
                 return DDSFilterValue::ValueKind::SIGNED_INTEGER;
 
-            case TK_BYTE:
-            case TK_UINT16:
-            case TK_UINT32:
-            case TK_UINT64:
+            case eprosima::fastdds::dds::xtypes1_3::TK_BYTE:
+            case eprosima::fastdds::dds::xtypes1_3::TK_UINT16:
+            case eprosima::fastdds::dds::xtypes1_3::TK_UINT32:
+            case eprosima::fastdds::dds::xtypes1_3::TK_UINT64:
                 return DDSFilterValue::ValueKind::UNSIGNED_INTEGER;
 
-            case TK_FLOAT32:
+            case eprosima::fastdds::dds::xtypes1_3::TK_FLOAT32:
                 return DDSFilterValue::ValueKind::FLOAT_FIELD;
 
-            case TK_FLOAT64:
+            case eprosima::fastdds::dds::xtypes1_3::TK_FLOAT64:
                 return DDSFilterValue::ValueKind::DOUBLE_FIELD;
 
-            case TK_FLOAT128:
+            case eprosima::fastdds::dds::xtypes1_3::TK_FLOAT128:
                 return DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD;
 
-            case EK_COMPLETE:
-                const TypeObject* type_object = TypeObjectFactory::get_instance()->get_type_object(&ti);
+            case eprosima::fastdds::dds::xtypes1_3::EK_COMPLETE:
+                //const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_object = TypeObjectFactory::get_instance()->get_type_object(&ti);
+                const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_object;
+                //TODO adelcampo
                 if (TK_ENUM == type_object->complete()._d())
                 {
                     return DDSFilterValue::ValueKind::ENUM;
                 }
                 if (TK_ALIAS == type_object->complete()._d())
                 {
-                    const TypeIdentifier& aliasedId =
+                    const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier aliasedId =
                             type_object->complete().alias_type().body().common().related_type();
                     return get_value_kind(aliasedId, pos);
                 }
@@ -218,12 +221,13 @@ struct identifier_processor
             }
             else
             {
-                if (EK_COMPLETE != state.current_type->_d())
+                if (eprosima::fastdds::dds::xtypes1_3::EK_COMPLETE != state.current_type->_d())
                 {
                     throw parse_error("trying to access field on a non-complete type", n->begin());
                 }
-
-                const TypeObject* type_object = TypeObjectFactory::get_instance()->get_type_object(state.current_type);
+                // const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_object = TypeObjectFactory::get_instance()->get_type_object(state.current_type);
+                const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_object;
+                //TODO adelcampo
                 if (nullptr == type_object)
                 {
                     throw parse_error("could not find type object definition", n->begin());

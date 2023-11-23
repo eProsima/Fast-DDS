@@ -24,7 +24,7 @@
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
-#include <fastrtps/types/TypeObject.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/utils/md5.h>
 #include <fastrtps/utils/string_convert.hpp>

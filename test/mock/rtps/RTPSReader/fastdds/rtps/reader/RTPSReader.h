@@ -232,6 +232,8 @@ public:
     ReaderListener* listener_;
 
     GUID_t m_guid;
+
+    bool m_acceptMessagesToUnknownReaders;
 };
 
 } // namespace rtps

@@ -53,7 +53,6 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeMember.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <fastdds/publisher/DataWriterImpl.hpp>
@@ -1457,44 +1456,45 @@ ReturnCode_t DomainParticipantImpl::register_type(
 bool DomainParticipantImpl::register_dynamic_type_to_factories(
         const TypeSupport& type) const
 {
-    using namespace  eprosima::fastrtps::types;
-    DynamicPubSubType* dpst = dynamic_cast<DynamicPubSubType*>(type.get());
-    if (dpst != nullptr) // Registering a dynamic type.
-    {
-        TypeObjectFactory* objectFactory = TypeObjectFactory::get_instance();
-        DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
-        const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(dpst->getName());
-        if (id == nullptr)
-        {
-            std::map<MemberId, DynamicTypeMember*> membersMap;
-            dpst->GetDynamicType()->get_all_members(membersMap);
-            std::vector<const MemberDescriptor*> members;
-            for (auto it : membersMap)
-            {
-                members.push_back(it.second->get_descriptor());
-            }
-            TypeObject typeObj;
-            dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members);
-            // Minimal too
-            dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members, false);
-            const TypeIdentifier* type_id2 = objectFactory->get_type_identifier(dpst->getName());
-            const TypeObject* type_obj = objectFactory->get_type_object(dpst->getName());
-            if (type_id2 == nullptr)
-            {
-                EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Cannot register dynamic type " << dpst->getName());
-            }
-            else
-            {
-                objectFactory->add_type_object(dpst->getName(), type_id2, type_obj);
+    //TODOO Adrian
+    // using namespace  eprosima::fastrtps::types;
+    // DynamicPubSubType* dpst = dynamic_cast<DynamicPubSubType*>(type.get());
+    // if (dpst != nullptr) // Registering a dynamic type.
+    // {
+    //     TypeObjectFactory* objectFactory = TypeObjectFactory::get_instance();
+    //     DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
+    //     const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(dpst->getName());
+    //     if (id == nullptr)
+    //     {
+    //         std::map<MemberId, DynamicTypeMember*> membersMap;
+    //         dpst->GetDynamicType()->get_all_members(membersMap);
+    //         std::vector<const MemberDescriptor*> members;
+    //         for (auto it : membersMap)
+    //         {
+    //             members.push_back(it.second->get_descriptor());
+    //         }
+    //         TypeObject typeObj;
+    //         dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members);
+    //         // Minimal too
+    //         dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members, false);
+    //         const TypeIdentifier* type_id2 = objectFactory->get_type_identifier(dpst->getName());
+    //         const TypeObject* type_obj = objectFactory->get_type_object(dpst->getName());
+    //         if (type_id2 == nullptr)
+    //         {
+    //             EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Cannot register dynamic type " << dpst->getName());
+    //         }
+    //         else
+    //         {
+    //             objectFactory->add_type_object(dpst->getName(), type_id2, type_obj);
 
-                // Complete, just to make sure it is generated
-                const TypeIdentifier* type_id_complete = objectFactory->get_type_identifier(dpst->getName(), true);
-                const TypeObject* type_obj_complete = objectFactory->get_type_object(dpst->getName(), true);
-                objectFactory->add_type_object(dpst->getName(), type_id_complete, type_obj_complete); // Add complete
-                return true;
-            }
-        }
-    }
+    //             // Complete, just to make sure it is generated
+    //             const TypeIdentifier* type_id_complete = objectFactory->get_type_identifier(dpst->getName(), true);
+    //             const TypeObject* type_obj_complete = objectFactory->get_type_object(dpst->getName(), true);
+    //             objectFactory->add_type_object(dpst->getName(), type_id_complete, type_obj_complete); // Add complete
+    //             return true;
+    //         }
+    //     }
+    // }
 
     return false; // Isn't a registered dynamic type.
 }
@@ -1702,105 +1702,106 @@ fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_types(
 }
 
 ReturnCode_t DomainParticipantImpl::register_remote_type(
-        const fastrtps::types::TypeInformation& type_information,
+        const eprosima::fastdds::dds::xtypes1_3::TypeInformation& type_information,
         const std::string& type_name,
         std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback)
 {
-    using namespace fastrtps::types;
+    // using namespace fastrtps::types;
 
-    if (get_rtps_participant() == nullptr)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
+    // if (get_rtps_participant() == nullptr)
+    // {
+    //     return ReturnCode_t::RETCODE_NOT_ENABLED;
+    // }
 
-    TypeObjectFactory* factory = TypeObjectFactory::get_instance();
-    // Check if plain
-    if (type_information.complete().typeid_with_size().type_id()._d() < EK_MINIMAL)
-    {
-        DynamicType_ptr dyn = factory->build_dynamic_type(
-            type_name,
-            &type_information.minimal().typeid_with_size().type_id());
+    // TypeObjectFactory* factory = TypeObjectFactory::get_instance();
+    // // Check if plain
+    // if (type_information.complete().typeid_with_size().type_id()._d() < EK_MINIMAL)
+    // {
+    //     DynamicType_ptr dyn = factory->build_dynamic_type(
+    //         type_name,
+    //         &type_information.minimal().typeid_with_size().type_id());
 
-        if (nullptr != dyn)
-        {
-            //callback(type_name, dyn); // For plain types, don't call the callback
-            return register_dynamic_type(dyn);
-        }
-        // If cannot create the dynamic type, probably is because it depend on unknown types.
-        // We must continue.
-    }
+    //     if (nullptr != dyn)
+    //     {
+    //         //callback(type_name, dyn); // For plain types, don't call the callback
+    //         return register_dynamic_type(dyn);
+    //     }
+    //     // If cannot create the dynamic type, probably is because it depend on unknown types.
+    //     // We must continue.
+    // }
 
-    // Check if already available
-    TypeObject obj;
-    factory->typelookup_get_type(
-        type_information.complete().typeid_with_size().type_id(),
-        obj);
+    // // Check if already available
+    // TypeObject obj;
+    // factory->typelookup_get_type(
+    //     type_information.complete().typeid_with_size().type_id(),
+    //     obj);
 
-    if (obj._d() != 0)
-    {
-        DynamicType_ptr dyn = factory->build_dynamic_type(
-            type_name,
-            &type_information.complete().typeid_with_size().type_id(),
-            &obj);
+    // if (obj._d() != 0)
+    // {
+    //     DynamicType_ptr dyn = factory->build_dynamic_type(
+    //         type_name,
+    //         &type_information.complete().typeid_with_size().type_id(),
+    //         &obj);
 
-        if (nullptr != dyn)
-        {
-            //callback(type_name, dyn); // If the type is already registered, don't call the callback.
-            return register_dynamic_type(dyn);
-        }
-    }
-    else if (get_rtps_participant()->typelookup_manager() != nullptr)
-    {
-        xtypes1_3::TypeIdentifierSeq dependencies;
-        xtypes1_3::TypeIdentifierSeq retrieve_objects;
+    //     if (nullptr != dyn)
+    //     {
+    //         //callback(type_name, dyn); // If the type is already registered, don't call the callback.
+    //         return register_dynamic_type(dyn);
+    //     }
+    // }
+    // else if (get_rtps_participant()->typelookup_manager() != nullptr)
+    // {
+    //     xtypes1_3::TypeIdentifierSeq dependencies;
+    //     xtypes1_3::TypeIdentifierSeq retrieve_objects;
 
-        //fill_pending_dependencies(type_information.complete().dependent_typeids(), dependencies, retrieve_objects);?????
+    //     //fill_pending_dependencies(type_information.complete().dependent_typeids(), dependencies, retrieve_objects);?????
 
-        fastrtps::rtps::SampleIdentity request_dependencies;
-        fastrtps::rtps::SampleIdentity request_objects;
+    //     fastrtps::rtps::SampleIdentity request_dependencies;
+    //     fastrtps::rtps::SampleIdentity request_objects;
 
-        // Lock now, we don't want to process the reply before we add the requests' ID to the maps.
-        std::lock_guard<std::mutex> lock(mtx_request_cb_);
+    //     // Lock now, we don't want to process the reply before we add the requests' ID to the maps.
+    //     std::lock_guard<std::mutex> lock(mtx_request_cb_);
 
-        // If any pending dependency exists, retrieve it.
-        if (!dependencies.empty())
-        {
-            request_dependencies = get_type_dependencies(dependencies);
-        }
+    //     // If any pending dependency exists, retrieve it.
+    //     if (!dependencies.empty())
+    //     {
+    //         request_dependencies = get_type_dependencies(dependencies);
+    //     }
 
-        // If any pending TypeObject exists, retrieve it
-        if (!retrieve_objects.empty())
-        {
-            request_objects = get_types(retrieve_objects);
-        }
+    //     // If any pending TypeObject exists, retrieve it
+    //     if (!retrieve_objects.empty())
+    //     {
+    //         request_objects = get_types(retrieve_objects);
+    //     }
 
-        // If no more dependencies but failed to create, probably we only need the TypeObject
-        dependencies.clear(); // Reuse the same vector.
-        //dependencies.push_back(type_information.complete().typeid_with_size().type_id());?????
-        fastrtps::rtps::SampleIdentity requestId = get_types(dependencies);
+    //     // If no more dependencies but failed to create, probably we only need the TypeObject
+    //     dependencies.clear(); // Reuse the same vector.
+    //     //dependencies.push_back(type_information.complete().typeid_with_size().type_id());?????
+    //     fastrtps::rtps::SampleIdentity requestId = get_types(dependencies);
 
-        // Add everything to maps
-        register_callbacks_.emplace(std::make_pair(requestId, std::make_pair(type_name, callback)));
-        std::vector<fastrtps::rtps::SampleIdentity> vector;
-        vector.push_back(requestId); // Add itself
+    //     // Add everything to maps
+    //     register_callbacks_.emplace(std::make_pair(requestId, std::make_pair(type_name, callback)));
+    //     std::vector<fastrtps::rtps::SampleIdentity> vector;
+    //     vector.push_back(requestId); // Add itself
 
-        if (builtin::INVALID_SAMPLE_IDENTITY != request_dependencies)
-        {
-            vector.push_back(request_dependencies);
-            child_requests_.emplace(std::make_pair(request_dependencies, requestId));
-        }
+    //     if (builtin::INVALID_SAMPLE_IDENTITY != request_dependencies)
+    //     {
+    //         vector.push_back(request_dependencies);
+    //         child_requests_.emplace(std::make_pair(request_dependencies, requestId));
+    //     }
 
-        if (builtin::INVALID_SAMPLE_IDENTITY != request_objects)
-        {
-            vector.push_back(request_objects);
-            child_requests_.emplace(std::make_pair(request_objects, requestId));
-        }
+    //     if (builtin::INVALID_SAMPLE_IDENTITY != request_objects)
+    //     {
+    //         vector.push_back(request_objects);
+    //         child_requests_.emplace(std::make_pair(request_objects, requestId));
+    //     }
 
-        // Move the filled vector to the map
-        parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
+    //     // Move the filled vector to the map
+    //     parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
 
-        return ReturnCode_t::RETCODE_NO_DATA;
-    }
+    //     return ReturnCode_t::RETCODE_NO_DATA;
+    // }
+    //TODO adelcampo
     return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 

@@ -68,9 +68,9 @@ bool TestPublisher::init(
         const std::string& topicName,
         int domain,
         eprosima::fastdds::dds::TypeSupport type,
-        const eprosima::fastrtps::types::TypeObject* type_object,
-        const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
-        const eprosima::fastrtps::types::TypeInformation* type_info,
+        const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_object,
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_identifier,
+        const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_info,
         const std::string& name,
         const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
         bool use_typelookup)
@@ -255,8 +255,8 @@ void TestPublisher::PartListener::on_type_discovery(
         eprosima::fastdds::dds::DomainParticipant*,
         const rtps::SampleIdentity&,
         const eprosima::fastrtps::string_255& topic,
-        const xtypes1_3::TypeIdentifier*,
-        const xtypes1_3::TypeObject*,
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier*,
+        const eprosima::fastdds::dds::xtypes1_3::TypeObject*,
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
 {
     if (!parent_->using_typelookup_ || parent_->tls_callback_called_)
@@ -273,7 +273,7 @@ void TestPublisher::PartListener::on_type_information_received(
         eprosima::fastdds::dds::DomainParticipant*,
         const eprosima::fastrtps::string_255 topic_name,
         const eprosima::fastrtps::string_255 type_name,
-        const eprosima::fastrtps::types::TypeInformation& type_information)
+        const eprosima::fastdds::dds::xtypes1_3::TypeInformation& type_information)
 {
     std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
             [this, topic_name](const std::string&, const types::DynamicType_ptr type)

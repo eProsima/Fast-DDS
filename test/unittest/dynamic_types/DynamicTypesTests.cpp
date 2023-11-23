@@ -25,7 +25,6 @@
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include "idl/BasicPubSubTypes.h"
@@ -4981,7 +4980,6 @@ TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
     TypeIdentifier unionUnion1 = *GetUnionUnionIdentifier(false);
     TypeIdentifier wCharUnion1 = *GetWCharUnionIdentifier(false);
     TypeIdentifier unionUnionStruct1 = *GetUnionUnionUnionStructIdentifier(false);
-    TypeObjectFactory::get_instance()->delete_instance(); // Force new instances instead reusing them
     registerBasicTypes(); // Register them again
     TypeIdentifier enum2 = *GetMyEnumIdentifier(false);
     TypeIdentifier aliasEnum2 = *GetMyAliasEnumIdentifier(false);

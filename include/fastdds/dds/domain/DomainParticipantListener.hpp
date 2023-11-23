@@ -27,8 +27,7 @@
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
 
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypeObject.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima {
@@ -194,8 +193,8 @@ public:
             DomainParticipant* participant,
             const fastrtps::rtps::SampleIdentity& request_sample_id,
             const fastrtps::string_255& topic,
-            const xtypes1_3::TypeIdentifier* identifier,
-            const xtypes1_3::TypeObject* object,
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* identifier,
+            const eprosima::fastdds::dds::xtypes1_3::TypeObject* object,
             fastrtps::types::DynamicType_ptr dyn_type)
     {
         static_cast<void>(participant);
@@ -214,7 +213,7 @@ public:
     virtual void on_type_dependencies_reply(
             DomainParticipant* participant,
             const fastrtps::rtps::SampleIdentity& request_sample_id,
-            const xtypes1_3::TypeIdentfierWithSizeSeq& dependencies)
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSizeSeq& dependencies)
     {
         static_cast<void>(participant);
         static_cast<void>(request_sample_id);
@@ -228,7 +227,7 @@ public:
             DomainParticipant* participant,
             const fastrtps::string_255 topic_name,
             const fastrtps::string_255 type_name,
-            const xtypes1_3::TypeInformation& type_information)
+            const eprosima::fastdds::dds::xtypes1_3::TypeInformation& type_information)
     {
         static_cast<void>(participant);
         static_cast<void>(topic_name);

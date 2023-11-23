@@ -15,7 +15,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastrtps/qos/QosPolicies.h>
-#include <fastrtps/types/TypeObject.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
 #include "TypeObjectCdrAux.ipp"

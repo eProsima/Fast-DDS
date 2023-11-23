@@ -63,9 +63,9 @@ bool TestSubscriber::init(
         const std::string& topicName,
         int domain,
         eprosima::fastdds::dds::TypeSupport type,
-        const eprosima::fastrtps::types::TypeObject* type_object,
-        const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
-        const eprosima::fastrtps::types::TypeInformation* type_info,
+        const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_object,
+        const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_identifier,
+        const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_info,
         const std::string& name,
         const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
         const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos,
@@ -307,7 +307,7 @@ void TestSubscriber::PartListener::on_type_information_received(
         eprosima::fastdds::dds::DomainParticipant*,
         const eprosima::fastrtps::string_255 topic_name,
         const eprosima::fastrtps::string_255 type_name,
-        const eprosima::fastrtps::types::TypeInformation& type_information)
+        const eprosima::fastdds::dds::xtypes1_3::TypeInformation& type_information)
 {
     std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
             [this, topic_name](const std::string&, const types::DynamicType_ptr type)

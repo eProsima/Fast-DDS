@@ -33,7 +33,6 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastrtps/types/TypeObject.h>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 

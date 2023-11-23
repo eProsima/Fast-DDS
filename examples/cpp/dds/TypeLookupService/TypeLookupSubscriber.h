@@ -98,7 +98,7 @@ public:
                 eprosima::fastdds::dds::DomainParticipant* participant,
                 const eprosima::fastrtps::string_255 topic_name,
                 const eprosima::fastrtps::string_255 type_name,
-                const eprosima::fastrtps::types::TypeInformation& type_information) override;
+                const eprosima::fastdds::dds::xtypes1_3::TypeInformation& type_information) override;
 
         int n_matched;
 

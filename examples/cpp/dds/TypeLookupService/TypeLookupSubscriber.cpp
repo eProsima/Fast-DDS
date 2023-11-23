@@ -30,8 +30,7 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicDataHelper.hpp>
-#include <fastrtps/types/TypeObjectFactory.h>
-
+#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -164,7 +163,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
         eprosima::fastdds::dds::DomainParticipant*,
         const eprosima::fastrtps::string_255 topic_name,
         const eprosima::fastrtps::string_255 type_name,
-        const eprosima::fastrtps::types::TypeInformation& type_information)
+        const eprosima::fastdds::dds::xtypes1_3::TypeInformation& type_information)
 {
     std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
             [this, topic_name](const std::string& name, const types::DynamicType_ptr type)
@@ -207,16 +206,19 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
 
                 if (type == nullptr)
                 {
-                    const types::TypeIdentifier* ident =
-                            types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
-
+                    //TODO adelcampo
+                    const xtypes1_3::TypeIdentifier* ident
+                    onst xtypes1_3::TypeObject* obj;
+                    types::DynamicType_ptr dyn_type;
+                    // const types::TypeIdentifier* ident =
+                    //         types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
                     if (nullptr != ident)
                     {
-                        const types::TypeObject* obj =
-                                types::TypeObjectFactory::get_instance()->get_type_object(ident);
+                        // const types::TypeObject* obj =
+                        //         types::TypeObjectFactory::get_instance()->get_type_object(ident);
 
-                        types::DynamicType_ptr dyn_type =
-                                types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
+                        // types::DynamicType_ptr dyn_type =
+                        //         types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
 
                         if (nullptr != dyn_type)
                         {

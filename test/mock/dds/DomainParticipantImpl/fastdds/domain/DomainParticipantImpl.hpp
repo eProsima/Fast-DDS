@@ -579,19 +579,19 @@ public:
     }
 
     fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const fastrtps::types::TypeIdentifierSeq& in) const
+            const xtypes1_3::TypeIdentifierSeq& in) const
     {
         return rtps_participant_->typelookup_manager()->get_type_dependencies(in);
     }
 
     fastrtps::rtps::SampleIdentity get_types(
-            const fastrtps::types::TypeIdentifierSeq& in) const
+            const xtypes1_3::TypeIdentifierSeq& in) const
     {
         return rtps_participant_->typelookup_manager()->get_types(in);
     }
 
     ReturnCode_t register_remote_type(
-            const fastrtps::types::TypeInformation& /*type_information*/,
+            const xtypes1_3::TypeInformation& /*type_information*/,
             const std::string& /*type_name*/,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& /*callback*/)
     {

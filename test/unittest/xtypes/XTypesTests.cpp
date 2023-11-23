@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastdds/dds/log/Log.hpp>
 #include "idl/TypesTypeObject.h"
 #include "idl/WideEnumTypeObject.h"
 #include <gtest/gtest.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
 
 using namespace eprosima::fastrtps;
@@ -35,7 +36,6 @@ public:
 
     ~XTypesTests()
     {
-        TypeObjectFactory::delete_instance();
         eprosima::fastdds::dds::Log::KillThread();
     }
 
@@ -182,6 +182,7 @@ TEST_F(XTypesTests, BasicStructMinimalCoercion)
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+
 
     // Check results
     ASSERT_TRUE(basic_struct->consistent(*basic_names_struct, consistencyQos));

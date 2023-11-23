@@ -36,7 +36,6 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
@@ -86,7 +85,7 @@ public:
             eprosima::fastdds::dds::DomainParticipant* participant,
             const eprosima::fastrtps::string_255 topic_name,
             const eprosima::fastrtps::string_255 type_name,
-            const eprosima::fastrtps::types::TypeInformation& type_information) override
+            const eprosima::fastdds::dds::xtypes1_3::TypeInformation& type_information) override
     {
         using callback_type = std::function<void (const std::string& name,
                         const eprosima::fastrtps::types::DynamicType_ptr type)>;
@@ -308,26 +307,27 @@ int main(
         types::DynamicType_ptr type;
 
         {
-            const types::TypeIdentifier* ident =
-                    types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(type_name);
+            // const types::TypeIdentifier* ident =
+            //         types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(type_name);
 
-            if (ident == nullptr)
-            {
-                std::cout << "ERROR: TypeIdentifier cannot be retrieved for type: "
-                          << type_name << std::endl;
-                throw 1;
-            }
+            // if (ident == nullptr)
+            // {
+            //     std::cout << "ERROR: TypeIdentifier cannot be retrieved for type: "
+            //               << type_name << std::endl;
+            //     throw 1;
+            // }
 
-            const types::TypeObject* obj =
-                    types::TypeObjectFactory::get_instance()->get_type_object(ident);
+            // const types::TypeObject* obj =
+            //         types::TypeObjectFactory::get_instance()->get_type_object(ident);
 
-            type = types::TypeObjectFactory::get_instance()->build_dynamic_type(type_name, ident, obj);
+            // type = types::TypeObjectFactory::get_instance()->build_dynamic_type(type_name, ident, obj);
 
-            if (type == nullptr)
-            {
-                std::cout << "ERROR: DynamicType cannot be created for type: " << type_name << std::endl;
-                throw 1;
-            }
+            // if (type == nullptr)
+            // {
+            //     std::cout << "ERROR: DynamicType cannot be created for type: " << type_name << std::endl;
+            //     throw 1;
+            // }
+            //TODO adelcampo
         }
 
         // Create the Topic & DataReader

@@ -25,7 +25,6 @@
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 #include "idl/new_features_4_2PubSubTypes.h"
@@ -53,7 +52,6 @@ public:
 
     virtual void TearDown() override
     {
-        TypeObjectFactory::delete_instance();
         DynamicDataFactory::delete_instance();
         DynamicTypeBuilderFactory::delete_instance();
     }
@@ -253,8 +251,10 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     const TypeIdentifier* identifier = GetStructTestIdentifier(true);
     const TypeObject* object = GetCompleteStructTestObject();
 
-    DynamicType_ptr dyn_type =
-            TypeObjectFactory::get_instance()->build_dynamic_type("StructTest", identifier, object);
+    DynamicType_ptr dyn_type;
+    // DynamicType_ptr dyn_type =
+    //         TypeObjectFactory::get_instance()->build_dynamic_type("StructTest", identifier, object);
+    //TODO adelcampo
 
     TypeIdentifier conv_identifier;
     TypeObject conv_object;

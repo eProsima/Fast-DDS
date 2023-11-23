@@ -60,11 +60,11 @@ RTPSParticipant* RTPSDomain::participant_ = nullptr;
 namespace fastdds {
 namespace dds {
 
-namespace builtin {
+// namespace builtin {
 
-const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
+// const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
 
-} // namespace builtin
+// } // namespace builtin
 
 class RTPSParticipantMock : public eprosima::fastrtps::rtps::RTPSParticipant
 {

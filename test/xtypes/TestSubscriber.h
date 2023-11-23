@@ -29,7 +29,6 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/rtps/common/Types.h>
 
 #include <condition_variable>
@@ -48,9 +47,9 @@ public:
             const std::string& topicName,
             int domain,
             eprosima::fastdds::dds::TypeSupport type,
-            const eprosima::fastrtps::types::TypeObject* type_object,
-            const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
-            const eprosima::fastrtps::types::TypeInformation* type_info,
+            const eprosima::fastdds::dds::xtypes1_3::TypeObject* type_object,
+            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier* type_identifier,
+            const eprosima::fastdds::dds::xtypes1_3::TypeInformation* type_info,
             const std::string& name,
             const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
             const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos,
@@ -149,7 +148,7 @@ public:
                 eprosima::fastdds::dds::DomainParticipant* participant,
                 const eprosima::fastrtps::string_255 topic_name,
                 const eprosima::fastrtps::string_255 type_name,
-                const eprosima::fastrtps::types::TypeInformation& type_information) override;
+                const eprosima::fastdds::dds::xtypes1_3::TypeInformation& type_information) override;
 
         TestSubscriber* parent_;
         std::atomic<bool> discovered_;

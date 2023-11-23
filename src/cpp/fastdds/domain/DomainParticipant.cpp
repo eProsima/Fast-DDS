@@ -496,7 +496,7 @@ fastrtps::rtps::SampleIdentity DomainParticipant::get_types(
 }
 
 ReturnCode_t DomainParticipant::register_remote_type(
-        const fastrtps::types::TypeInformation& type_information,
+        const xtypes1_3::TypeInformation& type_information,
         const std::string& type_name,
         std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback)
 {

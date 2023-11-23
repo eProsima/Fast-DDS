@@ -73,7 +73,43 @@ namespace fastdds {
 namespace dds {
 namespace builtin {
 
-extern const eprosima::fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
+const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
+
+inline GUID_t get_guid_from_rtps(const fastrtps::rtps::GUID_t& rtps_guid)
+{
+    GUID_t guid;
+    std::memcpy(guid.guidPrefix().data(), rtps_guid.guidPrefix.value, 12);
+    for (size_t i = 0; i < 3; i++)
+    {
+        guid.entityId().entityKey()[i] = rtps_guid.entityId.value[i + 1];
+    }
+    guid.entityId().entityKind() = rtps_guid.entityId.value[0];
+
+    return guid;
+}
+
+inline fastrtps::rtps::GUID_t get_rtps_guid(const GUID_t& guid)
+{
+    fastrtps::rtps::GUID_t rtps_guid;
+    std::memcpy(rtps_guid.guidPrefix.value, guid.guidPrefix().data(), 12);
+    for (size_t i = 0; i < 3; i++)
+    {
+         rtps_guid.entityId.value[i + 1] = guid.entityId().entityKey()[i];
+    }
+    rtps_guid.entityId.value[0] = guid.entityId().entityKind();
+
+    return rtps_guid;
+}
+
+inline fastrtps::rtps::SampleIdentity get_rtps_sample_identity(const SampleIdentity& sampleid)
+{
+    fastrtps::rtps::SampleIdentity rtps_sampleid;
+    rtps_sampleid.writer_guid(get_rtps_guid(sampleid.writer_guid()));
+    rtps_sampleid.sequence_number().high = sampleid.sequence_number().high();
+    rtps_sampleid.sequence_number().low = sampleid.sequence_number().low();
+
+    return rtps_sampleid;
+}
 
 class TypeLookupManager
 {
@@ -108,6 +144,18 @@ public:
     fastrtps::rtps::SampleIdentity get_types(
             const xtypes1_3::TypeIdentifierSeq& in) const;
 
+    std::string get_instanceName() const;
+    fastrtps::rtps::RTPSParticipantImpl* get_RTPS_participant();
+    fastrtps::rtps::BuiltinProtocols* get_builtin_protocols();
+    fastrtps::rtps::StatefulWriter* get_builtin_request_writer();
+    fastrtps::rtps::StatefulWriter* get_builtin_reply_writer();
+    fastrtps::rtps::StatefulReader* get_builtin_request_reader();
+    fastrtps::rtps::StatefulReader* get_builtin_reply_reader();
+    fastrtps::rtps::WriterHistory* get_builtin_request_writer_history();
+    fastrtps::rtps::WriterHistory* get_builtin_reply_writer_history();
+    fastrtps::rtps::ReaderHistory* get_builtin_request_reader_history();
+    fastrtps::rtps::ReaderHistory* get_builtin_reply_reader_history();
+
 private:
     bool create_endpoints();
 
@@ -135,21 +183,6 @@ private:
 
     size_t continuation_point_size(const std::vector<uint8_t>& continuation_point) const;
     void advance_sequence_number() const;
-    GUID_t get_guid_from_rtps(const fastrtps::rtps::GUID_t& rtps_guid) const;
-    fastrtps::rtps::GUID_t get_rtps_guid(const GUID_t& guid) const;
-    fastrtps::rtps::SampleIdentity get_rtps_sample_identity(const SampleIdentity& sampleid) const;
-
-    std::string get_instanceName() const;
-    fastrtps::rtps::RTPSParticipantImpl* get_RTPS_participant();
-    fastrtps::rtps::BuiltinProtocols* get_builtin_protocols();
-    fastrtps::rtps::StatefulWriter* get_builtin_request_writer();
-    fastrtps::rtps::StatefulWriter* get_builtin_reply_writer();
-    fastrtps::rtps::StatefulReader* get_builtin_request_reader();
-    fastrtps::rtps::StatefulReader* get_builtin_reply_reader();
-    fastrtps::rtps::WriterHistory* get_builtin_request_writer_history();
-    fastrtps::rtps::WriterHistory* get_builtin_reply_writer_history();
-    fastrtps::rtps::ReaderHistory* get_builtin_request_reader_history();
-    fastrtps::rtps::ReaderHistory* get_builtin_reply_reader_history();
 
     std::string instance_name_;//As defined in 7.6.3.3.4 of the XTypes 1.3 document
     fastrtps::rtps::RTPSParticipantImpl* participant_;
