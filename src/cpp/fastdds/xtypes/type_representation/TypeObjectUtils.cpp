@@ -1639,7 +1639,7 @@ void TypeObjectUtils::add_complete_bitfield(
         size_t bitfield_elem_end = bitfield_elem_init + bitfield_elem.common().bitcount() - 1;
         size_t bitfield_init = bitfield.common().position();
         size_t bitfield_end = bitfield_init + bitfield.common().bitcount() - 1;
-        if (bitfield_elem.detail().name() == bitfield.detail().name())
+        if (bitfield.detail().name().size() != 0 && bitfield_elem.detail().name() == bitfield.detail().name())
         {
             throw InvalidArgumentError("Sequence has another bitfield with the same name");
         }
@@ -2184,6 +2184,12 @@ void TypeObjectUtils::map_ldefn_consistency(
     map_key_type_identifier_consistency(*plain_map.key_identifier());
 }
 
+void TypeObjectUtils::direct_hash_type_identifier_consistency(
+            const TypeIdentifier& type_id)
+{
+    // TODO(jlbueno): implement in PR#3996 (TypeObjectRegistry implementation) due to API changes.
+}
+
 void TypeObjectUtils::type_identifier_consistency(
         const TypeIdentifier& type_identifier)
 {
@@ -2227,13 +2233,15 @@ void TypeObjectUtils::type_identifier_consistency(
             break;
 
         case TI_STRONGLY_CONNECTED_COMPONENT:
-            // No inconsistency rule apply.
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "StronglyConnectedComponents not yet supported.");
             break;
 
-        // Primitive TypeIdentifiers/ExtendedTypeDefn/EquivalenceHash: no inconsistency rule apply.
         case EK_COMPLETE:
         case EK_MINIMAL:
+            direct_hash_type_identifier_consistency(type_identifier);
+            break;
+
+        // Primitive TypeIdentifiers/ExtendedTypeDefn: no inconsistency rule apply.
         default:
             break;
     }
@@ -3071,7 +3079,7 @@ void TypeObjectUtils::complete_bitfield_seq_consistency(
     std::set<uint16_t> positions;
     for (const CompleteBitfield& bitfield : complete_bitfield_seq)
     {
-        if (!bitfield_names.insert(bitfield.detail().name()).second)
+        if (bitfield.detail().name().size() != 0 && !bitfield_names.insert(bitfield.detail().name()).second)
         {
             throw InvalidArgumentError("Repeated bitfield name");
         }
