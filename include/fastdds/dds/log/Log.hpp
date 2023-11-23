@@ -255,7 +255,7 @@ protected:
         Log::QueueLog(fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); \
     } while (0)
 
-#elif (_INTERNALDEBUG)
+#elif (__INTERNALDEBUG || _INTERNALDEBUG)
 
 #define EPROSIMA_LOG_ERROR_IMPL_(cat, msg)                          \
     do {                                                        \
@@ -289,7 +289,7 @@ protected:
         }                                                                                                           \
     } while (0)
 
-#elif (_INTERNALDEBUG)
+#elif (__INTERNALDEBUG || _INTERNALDEBUG)
 
 #define EPROSIMA_LOG_WARNING_IMPL_(cat, msg)                        \
     do {                                                        \
@@ -328,7 +328,7 @@ protected:
         }                                                                                               \
     } while (0)
 
-#elif (_INTERNALDEBUG)
+#elif (__INTERNALDEBUG || _INTERNALDEBUG)
 
 #define EPROSIMA_LOG_INFO_IMPL_(cat, msg)                       \
     do {                                                    \
