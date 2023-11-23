@@ -282,7 +282,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    while ((reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK) && !is_stopped())
+    while ((reader->take_next_sample(&hello_, &info) == RETCODE_OK) && !is_stopped())
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {

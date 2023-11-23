@@ -50,9 +50,9 @@ ReturnCode_t DynamicDataFactory::delete_instance()
     {
         delete s_instance;
         s_instance = nullptr;
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_ERROR;
+    return RETCODE_ERROR;
 }
 
 DynamicDataFactory::DynamicDataFactory()
@@ -189,9 +189,9 @@ ReturnCode_t DynamicDataFactory::create_members(
         {
             create_members(pData, pType->get_base_type());
         }
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicDataFactory::delete_data(
@@ -209,12 +209,12 @@ ReturnCode_t DynamicDataFactory::delete_data(
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error deleting DynamicData. It isn't registered in the factory");
-            return ReturnCode_t::RETCODE_ALREADY_DELETED;
+            return RETCODE_ALREADY_DELETED;
         }
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
         delete pData;
     }
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 bool DynamicDataFactory::is_empty() const

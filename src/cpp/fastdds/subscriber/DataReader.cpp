@@ -59,16 +59,16 @@ ReturnCode_t DataReader::enable()
 {
     if (enable_)
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     if (false == impl_->get_subscriber()->is_enabled())
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     ReturnCode_t ret_code = impl_->enable();
-    enable_ = ReturnCode_t::RETCODE_OK == ret_code;
+    enable_ = RETCODE_OK == ret_code;
     return ret_code;
 }
 
@@ -97,7 +97,7 @@ ReturnCode_t DataReader::read_w_condition(
 {
     if ( nullptr == a_condition )
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     return read(
@@ -144,7 +144,7 @@ ReturnCode_t DataReader::read_next_instance_w_condition(
 {
     if ( nullptr == a_condition )
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     return read_next_instance(
@@ -176,7 +176,7 @@ ReturnCode_t DataReader::take_w_condition(
 {
     if ( nullptr == a_condition )
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     return take(
@@ -223,7 +223,7 @@ ReturnCode_t DataReader::take_next_instance_w_condition(
 {
     if ( nullptr == a_condition )
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     return take_next_instance(
@@ -249,7 +249,7 @@ ReturnCode_t DataReader::get_key_value(
 {
     static_cast<void> (key_holder);
     static_cast<void> (handle);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
 }
 
 InstanceHandle_t DataReader::lookup_instance(
@@ -319,7 +319,7 @@ ReturnCode_t DataReader::get_qos(
         DataReaderQos& qos) const
 {
     qos = impl_->get_qos();
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DataReader::get_requested_deadline_missed_status(
@@ -345,7 +345,7 @@ ReturnCode_t DataReader::set_listener(
         const StatusMask& mask)
 {
     ReturnCode_t ret_val = impl_->set_listener(listener);
-    if (ret_val == ReturnCode_t::RETCODE_OK)
+    if (ret_val == RETCODE_OK)
     {
         status_mask_ = mask;
     }
@@ -397,7 +397,7 @@ ReturnCode_t DataReader::get_matched_publication_data(
 {
     static_cast<void> (publication_data);
     static_cast<void> (publication_handle);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
     /*
        return impl_->get_matched_publication_data(publication_data, publication_handle);
      */
@@ -407,7 +407,7 @@ ReturnCode_t DataReader::get_matched_publications(
         std::vector<InstanceHandle_t>& publication_handles) const
 {
     static_cast<void> (publication_handles);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
     /*
        return impl_->get_matched_publication_data(publication_handles);
      */
@@ -460,7 +460,7 @@ ReturnCode_t DataReader::wait_for_historical_data(
         const Duration_t& max_wait) const
 {
     static_cast<void> (max_wait);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
     /*
        return impl_->wait_for_historical_data(a_condition);
      */

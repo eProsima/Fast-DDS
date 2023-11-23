@@ -389,7 +389,7 @@ public:
         type_.reset(new type_support());
 
         // Register type
-        ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
+        ASSERT_EQ(participant_->register_type(type_), eprosima::fastdds::dds::RETCODE_OK);
 
         //Create publisher
         publisher_ = participant_->create_publisher(eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT);
@@ -525,7 +525,7 @@ public:
                 topic_ = nullptr;
             }
             ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
-                        participant_), ReturnCode_t::RETCODE_OK);
+                        participant_), eprosima::fastdds::dds::RETCODE_OK);
             participant_ = nullptr;
         }
 
@@ -906,7 +906,7 @@ private:
         type data;
         eprosima::fastdds::dds::SampleInfo info;
 
-        if ((ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&data, &info)))
+        if ((eprosima::fastdds::dds::RETCODE_OK == datareader->take_next_sample((void*)&data, &info)))
         {
             returnedValue = true;
 

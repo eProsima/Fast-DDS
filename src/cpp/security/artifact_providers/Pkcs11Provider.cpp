@@ -100,7 +100,7 @@ Pkcs11Provider::Pkcs11Provider()
 
     // Load the PIN from the environment
     std::string pin;
-    if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(FASTDDS_PKCS11_PIN, pin))
+    if (fastdds::dds::RETCODE_OK == SystemInfo::get_env(FASTDDS_PKCS11_PIN, pin))
     {
         if (!ENGINE_ctrl_cmd_string( pkcs11_, "PIN", pin.c_str(), 0))
         {

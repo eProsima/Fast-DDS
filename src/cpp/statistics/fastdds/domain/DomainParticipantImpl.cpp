@@ -119,12 +119,12 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
     EventKind event_kind;
     if (!transform_and_check_topic_name(topic_name, use_topic_name, event_kind))
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return efd::RETCODE_BAD_PARAMETER;
     }
 
-    if (!efd::DataWriterImpl::check_qos(dwqos))
+    if (efd::RETCODE_OK != efd::DataWriterImpl::check_qos(dwqos))
     {
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        return efd::RETCODE_INCONSISTENT_POLICY;
     }
 
     // Register type and topic
@@ -146,7 +146,7 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
                 // Remove topic and type
                 delete_topic_and_type(use_topic_name);
                 EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " DataWriter creation has failed");
-                return ReturnCode_t::RETCODE_ERROR;
+                return efd::RETCODE_ERROR;
             }
 
             if (PHYSICAL_DATA_TOPIC == use_topic_name)
@@ -155,7 +155,7 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
                 notification.participant_guid(*reinterpret_cast<const detail::GUID_s*>(&guid()));
                 notification.host(asio::ip::host_name() + ":" + std::to_string(efd::utils::default_domain_id()));
                 std::string username;
-                if (ReturnCode_t::RETCODE_OK == SystemInfo::get_username(username))
+                if (efd::RETCODE_OK == SystemInfo::get_username(username))
                 {
                     notification.user(username);
                 }
@@ -172,9 +172,9 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
                 rtps_participant_->set_enabled_statistics_writers_mask(statistics_listener_->enabled_writers_mask());
             }
         }
-        return ReturnCode_t::RETCODE_OK;
+        return efd::RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_ERROR;
+    return efd::RETCODE_ERROR;
 }
 
 ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter_with_profile(
@@ -188,17 +188,17 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter_with_profile(
         efd::utils::set_qos_from_attributes(datawriter_qos, attr);
 
         ReturnCode_t ret = enable_statistics_datawriter(topic_name, datawriter_qos);
-        // case RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
-        // case RETCODE_INCONSISTENT_POLICY could happen if profile defined in XML is inconsistent.
-        // case RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
+        // case efd::RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
+        // case efd::RETCODE_INCONSISTENT_POLICY could happen if profile defined in XML is inconsistent.
+        // case efd::RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
         // CMake option is enabled
-        if (ret == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+        if (ret == efd::RETCODE_INCONSISTENT_POLICY)
         {
             EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT,
                     "Statistics DataWriter QoS from profile name " << profile_name << " are not consistent/compatible");
         }
-        assert(ret != ReturnCode_t::RETCODE_UNSUPPORTED);
-        if (ret == ReturnCode_t::RETCODE_BAD_PARAMETER)
+        assert(ret != efd::RETCODE_UNSUPPORTED);
+        if (ret == efd::RETCODE_BAD_PARAMETER)
         {
             EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT,
                     "Profile name " << profile_name << " is not a valid statistics topic name/alias");
@@ -207,18 +207,18 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter_with_profile(
     }
     EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT,
             "Profile name " << profile_name << " has not been found");
-    return ReturnCode_t::RETCODE_ERROR;
+    return efd::RETCODE_ERROR;
 }
 
 ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
         const std::string& topic_name)
 {
-    ReturnCode_t ret = ReturnCode_t::RETCODE_OK;
+    ReturnCode_t ret = efd::RETCODE_OK;
     std::string use_topic_name;
     EventKind event_kind;
     if (!transform_and_check_topic_name(topic_name, use_topic_name, event_kind))
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return efd::RETCODE_BAD_PARAMETER;
     }
 
     // Delete statistics DataWriter
@@ -231,18 +231,18 @@ ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
         rtps_participant_->set_enabled_statistics_writers_mask(statistics_listener_->enabled_writers_mask());
 
         // Delete the DataWriter
-        if (ReturnCode_t::RETCODE_OK != builtin_publisher_->delete_datawriter(writer))
+        if (efd::RETCODE_OK != builtin_publisher_->delete_datawriter(writer))
         {
             // Restore writer on listener before returning the error
             statistics_listener_->set_datawriter(event_kind, writer);
             rtps_participant_->set_enabled_statistics_writers_mask(statistics_listener_->enabled_writers_mask());
-            ret = ReturnCode_t::RETCODE_ERROR;
+            ret = efd::RETCODE_ERROR;
         }
 
         // Deregister type and delete topic
         if (!delete_topic_and_type(use_topic_name))
         {
-            ret = ReturnCode_t::RETCODE_ERROR;
+            ret = efd::RETCODE_ERROR;
         }
     }
     return ret;
@@ -252,7 +252,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 {
     ReturnCode_t ret = efd::DomainParticipantImpl::enable();
 
-    if (ReturnCode_t::RETCODE_OK == ret)
+    if (efd::RETCODE_OK == ret)
     {
         rtps_participant_->add_statistics_listener(statistics_listener_, participant_statistics_mask);
         create_statistics_builtin_entities();
@@ -274,7 +274,7 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
 {
     ReturnCode_t ret = efd::DomainParticipantImpl::delete_contained_entities();
 
-    if (ret == ReturnCode_t::RETCODE_OK)
+    if (ret == efd::RETCODE_OK)
     {
         builtin_publisher_impl_ = nullptr;
         builtin_publisher_ = nullptr;
@@ -348,17 +348,17 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
         }
 
         ReturnCode_t ret = enable_statistics_datawriter(topic, datawriter_qos);
-        // case RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
-        // case RETCODE_INCONSISTENT_POLICY could happen if profile defined in XML is inconsistent.
-        // case RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
+        // case efd::RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
+        // case efd::RETCODE_INCONSISTENT_POLICY could happen if profile defined in XML is inconsistent.
+        // case efd::RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
         // CMake option is enabled
-        if (ret == ReturnCode_t::RETCODE_INCONSISTENT_POLICY)
+        if (ret == efd::RETCODE_INCONSISTENT_POLICY)
         {
             EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT,
                     "Statistics DataWriter QoS from topic " << topic << " are not consistent/compatible");
         }
-        assert(ret != ReturnCode_t::RETCODE_UNSUPPORTED);
-        if (ret == ReturnCode_t::RETCODE_BAD_PARAMETER)
+        assert(ret != efd::RETCODE_UNSUPPORTED);
+        if (ret == efd::RETCODE_BAD_PARAMETER)
         {
             EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT,
                     "Topic " << topic << " is not a valid statistics topic name/alias");
@@ -492,7 +492,7 @@ bool DomainParticipantImpl::find_or_create_topic_and_type(
     }
     else
     {
-        if (ReturnCode_t::RETCODE_PRECONDITION_NOT_MET == register_type(type, type->getName()))
+        if (efd::RETCODE_PRECONDITION_NOT_MET == register_type(type, type->getName()))
         {
             // No log because it is already logged within register_type
             return false;
@@ -514,7 +514,7 @@ bool DomainParticipantImpl::delete_topic_and_type(
     std::string type_name = topic->get_type_name();
     // delete_topic can fail if the topic is referenced by any other entity. This case could happen even if
     // it should not. It also fails if topic is a nullptr (dynamic_cast failure).
-    if (ReturnCode_t::RETCODE_OK != delete_topic(topic))
+    if (efd::RETCODE_OK != delete_topic(topic))
     {
         return false;
     }
