@@ -1921,7 +1921,8 @@ protected:
     /**
      * @brief Check if a given TypeIdentifier is direct hash.
      *        XTypes v1.3 Clause 7.3.4.6.3
-     *        These are HASH TypeIdentifiers with discriminator EK_MINIMAL, EK_COMPLETE or TI_STRONG_COMPONENT.
+     *        These are HASH TypeIdentifiers with discriminator EK_MINIMAL, EK_COMPLETE or
+     *        TI_STRONGLY_CONNECTED_COMPONENT.
      *
      * @param[in] type_identifier TypeIdentifier to check.
      * @return true if the given TypeIdentifier is direct hash. false otherwise.
@@ -2220,6 +2221,16 @@ protected:
      */
     static void map_ldefn_consistency(
             const PlainMapLTypeDefn& plain_map);
+
+    /**
+     * @brief Check direct hash TypeIdentifier consistency.
+     *
+     * @param[in] equivalence_hash Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given TypeIdentifier is
+     *            not consistent.
+     */
+    static void direct_hash_type_identifier_consistency(
+            const TypeIdentifier& type_id);
 
     /**
      * @brief Check TypeIdentifier consistency.
