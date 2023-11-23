@@ -414,7 +414,7 @@ ReturnCode_t DomainParticipantFactory::set_qos(
         return RETCODE_IMMUTABLE_POLICY;
     }
     set_qos(factory_qos_, qos, false);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 xtypes::TypeObjectRegistry& DomainParticipantFactory::type_object_registry()

@@ -3570,15 +3570,20 @@ TEST_F(DataReaderTests, UpdateInmutableQos)
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.resource_limits().max_samples = reader_qos.resource_limits().max_samples - 1;
 <<<<<<< HEAD
+<<<<<<< HEAD
     ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 =======
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
 
     // History
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
 <<<<<<< HEAD
+<<<<<<< HEAD
     ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     reader_qos = DATAREADER_QOS_DEFAULT;
@@ -3591,20 +3596,32 @@ TEST_F(DataReaderTests, UpdateInmutableQos)
     reader_qos.history().depth = reader_qos.history().depth + 1;
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.history().depth = reader_qos.history().depth + 1;
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
 
     // Durability
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 <<<<<<< HEAD
+<<<<<<< HEAD
     ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 =======
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
 
     // Liveliness
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.liveliness().kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
 <<<<<<< HEAD
+<<<<<<< HEAD
     ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     reader_qos = DATAREADER_QOS_DEFAULT;
@@ -3616,57 +3633,81 @@ TEST_F(DataReaderTests, UpdateInmutableQos)
     ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 =======
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+=======
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
 
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.liveliness().lease_duration = Duration_t{123, 123};
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.liveliness().announcement_period = Duration_t{123, 123};
+<<<<<<< HEAD
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
 
     // Relibility
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 <<<<<<< HEAD
+<<<<<<< HEAD
     ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 =======
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
 
     // Ownsership
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
 <<<<<<< HEAD
+<<<<<<< HEAD
     ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 =======
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
 
     // Destination order (currently reports unsupported)
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
 <<<<<<< HEAD
+<<<<<<< HEAD
     ASSERT_EQ(RETCODE_UNSUPPORTED, data_reader->set_qos(reader_qos));
 =======
     ASSERT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->set_qos(reader_qos));
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+    ASSERT_EQ(RETCODE_UNSUPPORTED, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
 
     // Reader resource limits
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.reader_resource_limits().matched_publisher_allocation.maximum =
             reader_qos.reader_resource_limits().matched_publisher_allocation.maximum - 1;
 <<<<<<< HEAD
+<<<<<<< HEAD
     ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 =======
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
 
     // Datasharing
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.data_sharing().off();
 <<<<<<< HEAD
+<<<<<<< HEAD
     ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     reader_qos = DATAREADER_QOS_DEFAULT;
@@ -3678,33 +3719,48 @@ TEST_F(DataReaderTests, UpdateInmutableQos)
     ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 =======
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+=======
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
 
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.data_sharing().automatic(".");
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.data_sharing().add_domain_id(static_cast<uint16_t>(12));
+<<<<<<< HEAD
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
 
     reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.data_sharing().data_sharing_listener_thread().priority =
             reader_qos.data_sharing().data_sharing_listener_thread().priority + 1;
 <<<<<<< HEAD
-    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
-=======
-    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
->>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
-
-    // Unique network flows
-    reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.properties().properties().push_back({"fastdds.unique_network_flows", "true"});
 <<<<<<< HEAD
     ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 =======
     ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
 >>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
+
+    // Unique network flows
+    reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.properties().properties().push_back({"fastdds.unique_network_flows", "true"});
+<<<<<<< HEAD
+<<<<<<< HEAD
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+=======
+    ASSERT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 25914aa8d (Enable configuration of thread setting for all threads (#4013))
+=======
+    ASSERT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader->set_qos(reader_qos));
+>>>>>>> 4cd8ac4a9 (DDS ReturnCode_t generated from IDL file (#4041))
 
     /* Cleanup */
     participant->delete_contained_entities();
