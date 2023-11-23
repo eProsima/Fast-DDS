@@ -46,6 +46,7 @@ struct IStatusQueryable
      * of and entity identified by its guid.
      *
      * @param[in] guid The GUID_t identifying the target entity
+     * @param[in] status_kind The monitor service status kind that has changed
      * @param[out] status The requested entity status
      * @return Whether the operation succeeded or not
      */

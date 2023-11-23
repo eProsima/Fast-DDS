@@ -35,7 +35,7 @@ struct IProxyObserver
      * new matches, unpairs,...)
      *
      * @param guid The GUID_t identifying the target entity
-     * @param guid Whether this entity is alive
+     * @param is_alive Whether this entity is alive
      * @return Whether the implementor has been properly notified
      */
     virtual bool on_local_entity_change(

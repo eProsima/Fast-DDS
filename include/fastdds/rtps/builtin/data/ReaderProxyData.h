@@ -430,6 +430,7 @@ public:
      * @param msg Pointer to the message.
      * @param network Reference to network factory for locator validation and transformation
      * @param is_shm_transport_available Indicates whether the Reader is reachable by SHM.
+     * @param should_filter_locators Whether to retrieve the locators before the external locators filtering
      * @return true on success
      */
     bool readFromCDRMessage(
