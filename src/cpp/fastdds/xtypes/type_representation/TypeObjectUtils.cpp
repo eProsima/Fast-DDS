@@ -480,7 +480,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_scc_type_identifier(
     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "StronglyConnectedComponents not yet supported.");
     static_cast<void>(scc);
     static_cast<void>(type_name);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
 const ExtendedAnnotationParameterValue TypeObjectUtils::build_extended_annotation_parameter_value()
@@ -2089,7 +2089,7 @@ void TypeObjectUtils::map_key_type_identifier_consistency(
     if (is_direct_hash_type_identifier(key_identifier))
     {
         TypeObjectPair type_objects;
-        if (ReturnCode_t::RETCODE_OK ==
+        if (eprosima::fastdds::dds::RETCODE_OK ==
                 DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(key_identifier,
                 type_objects))
         {
@@ -2270,14 +2270,14 @@ void TypeObjectUtils::applied_annotation_type_identifier_consistency(
     TypeObjectPair type_objects;
     ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
         annotation_type_id, type_objects);
-    if (ReturnCode_t::RETCODE_OK == ret_code)
+    if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
     {
         if (type_objects.complete_type_object._d() != TK_ANNOTATION)
         {
             throw InvalidArgumentError("Applied Annotation TypeIdentifier does not correspond with an Annotation type");
         }
     }
-    else if (ReturnCode_t::RETCODE_NO_DATA == ret_code)
+    else if (eprosima::fastdds::dds::RETCODE_NO_DATA == ret_code)
     {
         throw InvalidArgumentError("Applied Annotation TypeIdentifier unknown to TypeObjectRegistry");
     }
@@ -2452,7 +2452,7 @@ void TypeObjectUtils::structure_base_type_consistency(
     TypeObjectPair type_objects;
     ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(base_type,
                     type_objects);
-    if (ret_code != ReturnCode_t::RETCODE_OK || type_objects.complete_type_object._d() != TK_STRUCTURE)
+    if (ret_code != eprosima::fastdds::dds::RETCODE_OK || type_objects.complete_type_object._d() != TK_STRUCTURE)
     {
         throw InvalidArgumentError("Inconsistent base TypeIdentifier: must be related to a structure TypeObject");
     }
@@ -2593,7 +2593,7 @@ void TypeObjectUtils::common_discriminator_member_type_identifier_consistency(
     TypeObjectPair type_objects;
     if (is_direct_hash_type_identifier(type_id))
     {
-        if (ReturnCode_t::RETCODE_OK ==
+        if (eprosima::fastdds::dds::RETCODE_OK ==
                 DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_objects))
         {
             if (type_objects.complete_type_object._d() == TK_ALIAS)
@@ -2675,7 +2675,7 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
     {
         if (value._d() == TK_ENUM)
         {
-            if (ReturnCode_t::RETCODE_OK ==
+            if (eprosima::fastdds::dds::RETCODE_OK ==
                     DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id,
                     type_objects))
             {

@@ -27,7 +27,6 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/types/TypesBase.h>
 
 namespace std {
 template<>
@@ -65,7 +64,7 @@ namespace xtypes1_3 {
 
 class TypeObjectUtils;
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
 // TypeObject information
 struct TypeRegistryEntry

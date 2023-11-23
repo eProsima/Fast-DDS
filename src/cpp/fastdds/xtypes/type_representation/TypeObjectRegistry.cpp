@@ -25,7 +25,7 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
 {
     static_cast<void>(type_name);
     static_cast<void>(complete_type_object);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t TypeObjectRegistry::register_type_identifier(
@@ -34,7 +34,7 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
 {
     static_cast<void>(type_name);
     static_cast<void>(type_identifier);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_objects(
@@ -43,7 +43,7 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
 {
     static_cast<void>(type_name);
     static_cast<void>(type_objects);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_identifiers(
@@ -52,7 +52,7 @@ ReturnCode_t TypeObjectRegistry::get_type_identifiers(
 {
     static_cast<void>(type_name);
     static_cast<void>(type_identifiers);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
@@ -61,7 +61,7 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
 {
     static_cast<void>(type_identifier);
     static_cast<void>(type_object);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_object(
@@ -70,7 +70,7 @@ ReturnCode_t TypeObjectRegistry::get_type_object(
 {
     static_cast<void>(type_identifier);
     static_cast<void>(type_objects);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_information(
@@ -79,7 +79,7 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
 {
     static_cast<void>(type_name);
     static_cast<void>(type_information);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t TypeObjectRegistry::are_types_compatible(
@@ -88,7 +88,7 @@ ReturnCode_t TypeObjectRegistry::are_types_compatible(
 {
     static_cast<void>(type_identifiers);
     static_cast<void>(type_consistency_qos);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_dependencies(
@@ -97,14 +97,14 @@ ReturnCode_t TypeObjectRegistry::get_type_dependencies(
 {
     static_cast<void>(type_identifiers);
     static_cast<void>(type_dependencies);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t TypeObjectRegistry::is_type_identifier_known(
         const TypeIdentifier& type_identifier)
 {
     static_cast<void>(type_identifier);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
 bool TypeObjectRegistry::is_builtin_annotation(
