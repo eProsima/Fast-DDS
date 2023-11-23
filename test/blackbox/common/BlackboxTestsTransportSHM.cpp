@@ -122,7 +122,7 @@ TEST(SHM, IgnoreNonExistentSegment)
     constexpr size_t num_parts = 10;
 #endif  // _WIN32
     std::vector<std::thread> threads;
-    for (size_t i = 0; i < 10; i++)
+    for (size_t i = 0; i < num_threads; i++)
     {
         threads.push_back(std::thread([num_parts]()
                 {
