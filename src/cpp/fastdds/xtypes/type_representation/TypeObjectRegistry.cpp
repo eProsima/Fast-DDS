@@ -17,7 +17,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-namespace xtypes1_3 {
+namespace xtypes {
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
         const std::string& type_name,

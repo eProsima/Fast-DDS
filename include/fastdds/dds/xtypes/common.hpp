@@ -23,7 +23,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-namespace xtypes1_3 {
+namespace xtypes {
 
 /**
  * @brief Extensibility kinds (@extensibility annotation)
@@ -118,7 +118,7 @@ constexpr const char* non_serialized_annotation_name = "_non_serialized";
 constexpr const char* data_representation_annotation_name = "_data_representation";
 constexpr const char* topic_annotation_name = "_topic";
 
-} // xtypes1_3
+} // xtypes
 } // dds
 } // fastdds
 } // eprosima
