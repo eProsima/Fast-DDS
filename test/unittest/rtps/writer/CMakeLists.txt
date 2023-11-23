@@ -61,7 +61,7 @@ target_link_libraries(ReaderProxyTests
     GTest::gmock
     ${CMAKE_DL_LIBS}
     ${THIRDPARTY_BOOST_LINK_LIBS})
-add_gtest(ReaderProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
+gtest_discover_tests(ReaderProxyTests)
 
 set(LIVELINESSMANAGERTESTS_SOURCE LivelinessManagerTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
@@ -91,7 +91,7 @@ target_include_directories(LivelinessManagerTests PRIVATE
     )
 target_link_libraries(LivelinessManagerTests PRIVATE
     GTest::gmock)
-add_gtest(LivelinessManagerTests SOURCES ${LIVELINESSMANAGERTESTS_SOURCE})
+gtest_discover_tests(LivelinessManagerTests)
 
 if(NOT QNX)
     set(RTPSWRITERTESTS_SOURCE RTPSWriterTests.cpp)
@@ -108,11 +108,5 @@ if(NOT QNX)
     target_link_libraries(RTPSWriterTests fastcdr fastrtps foonathan_memory
         GTest::gmock
         ${CMAKE_DL_LIBS})
-    add_gtest(RTPSWriterTests SOURCES ${RTPSWRITERTESTS_SOURCE})
-endif()
-
-if(ANDROID)
-    set_property(TARGET ReaderProxyTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET LivelinessManagerTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET RTPSWriterTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    gtest_discover_tests(RTPSWriterTests)
 endif()

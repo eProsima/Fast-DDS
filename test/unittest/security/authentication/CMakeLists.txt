@@ -75,7 +75,5 @@ target_link_libraries(BuiltinPKIDH
 if(QNX)
     target_link_libraries(BuiltinPKIDH socket)
 endif()
-add_gtest(BuiltinPKIDH
-    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/AuthenticationPluginTests.hpp
-    ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+gtest_discover_tests(BuiltinPKIDH
+    PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")

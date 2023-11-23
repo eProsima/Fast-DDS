@@ -1169,7 +1169,7 @@ TEST_P(Discovery, TwentyParticipantsSeveralEndpointsUnicast)
     discoverParticipantsSeveralEndpointsTest(true, 10, 10, 10, TEST_TOPIC_NAME);
 #else
     discoverParticipantsSeveralEndpointsTest(true, 20, 20, 20, TEST_TOPIC_NAME);
-#endif
+#endif // if defined(__APPLE__)
 }
 
 //! Regression test for support case 7552 (CRM #353)

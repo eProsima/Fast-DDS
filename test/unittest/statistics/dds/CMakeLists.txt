@@ -38,7 +38,7 @@ target_compile_definitions(StatisticsDomainParticipantTests PRIVATE
 target_include_directories(StatisticsDomainParticipantTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr GTest::gtest)
-add_gtest(StatisticsDomainParticipantTests SOURCES ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
+gtest_discover_tests(StatisticsDomainParticipantTests)
 
 ## StatisticsQosTests
 set(STATISTICS_QOS_TESTS_SOURCE
@@ -62,7 +62,7 @@ target_compile_definitions(StatisticsQosTests PRIVATE BOOST_ASIO_STANDALONE ASIO
 target_include_directories(StatisticsQosTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${THIRDPARTY_BOOST_INCLUDE_DIR})
 target_link_libraries(StatisticsQosTests fastrtps fastcdr ${TINYXML2_LIBRARY} foonathan_memory GTest::gtest)
-add_gtest(StatisticsQosTests SOURCES ${STATISTICS_QOS_TESTS_SOURCE})
+gtest_discover_tests(StatisticsQosTests)
 
 ## StatisticsDomainParticipantListenerTests
 if (FASTDDS_STATISTICS)
@@ -89,8 +89,7 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp)
     target_link_libraries(DomainParticipantStatisticsListenerTests
         ${TINYXML2_LIBRARY} fastcdr GTest::gmock )
-    add_gtest(DomainParticipantStatisticsListenerTests
-        SOURCES ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
+    gtest_discover_tests(DomainParticipantStatisticsListenerTests)
 endif()
 
 ## StatisticsDomainParticipantMockTests
@@ -382,12 +381,5 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
             iphlpapi Shlwapi
             )
     endif()
-    add_gtest(StatisticsDomainParticipantMockTests SOURCES ${STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE})
+    gtest_discover_tests(StatisticsDomainParticipantMockTests)
 endif (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
-
-if(ANDROID)
-    set_property(TARGET StatisticsQosTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET StatisticsDomainParticipantMockTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET StatisticsDomainParticipantTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET DomainParticipantStatisticsListenerTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

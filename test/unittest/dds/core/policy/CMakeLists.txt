@@ -30,5 +30,5 @@ target_include_directories(ParameterPropertyListTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
 )
 target_link_libraries(ParameterPropertyListTests GTest::gtest fastcdr fastrtps)
-add_gtest(ParameterPropertyListTests SOURCES ${PARAMETER_PROPERTY_LIST_TESTS})
-    
+gtest_discover_tests(ParameterPropertyListTests)
+

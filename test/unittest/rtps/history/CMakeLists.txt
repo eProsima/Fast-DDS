@@ -79,7 +79,7 @@ target_include_directories(ReaderHistoryTests PRIVATE
 target_link_libraries(ReaderHistoryTests
     GTest::gmock
     ${CMAKE_DL_LIBS})
-add_gtest(ReaderHistoryTests SOURCES ${READERHISTORYTESTS_SOURCE})
+gtest_discover_tests(ReaderHistoryTests)
 
 add_executable(BasicPoolsTests ${BASICPOOLSTESTS_SOURCE})
 target_compile_definitions(BasicPoolsTests PRIVATE
@@ -92,7 +92,7 @@ target_include_directories(BasicPoolsTests PRIVATE
 target_link_libraries(BasicPoolsTests
     GTest::gtest
     ${CMAKE_DL_LIBS})
-add_gtest(BasicPoolsTests SOURCES ${BASICPOOLSTESTS_SOURCE})
+gtest_discover_tests(BasicPoolsTests)
 
 add_executable(CacheChangePoolTests ${CACHECHANGEPOOLTESTS_SOURCE})
 target_compile_definitions(CacheChangePoolTests PRIVATE
@@ -105,7 +105,7 @@ target_include_directories(CacheChangePoolTests PRIVATE
 target_link_libraries(CacheChangePoolTests
     GTest::gtest
     ${CMAKE_DL_LIBS})
-add_gtest(CacheChangePoolTests SOURCES ${CACHECHANGEPOOLTESTS_SOURCE})
+gtest_discover_tests(CacheChangePoolTests)
 
 add_executable(TopicPayloadPoolTests ${TOPICPAYLOADPOOLTESTS_SOURCE})
 target_compile_definitions(TopicPayloadPoolTests PRIVATE
@@ -119,11 +119,4 @@ target_include_directories(TopicPayloadPoolTests PRIVATE
 target_link_libraries(TopicPayloadPoolTests
     GTest::gtest
     ${CMAKE_DL_LIBS})
-add_gtest(TopicPayloadPoolTests SOURCES ${TOPICPAYLOADPOOLTESTS_SOURCE})
-
-if(ANDROID)
-    set_property(TARGET ReaderHistoryTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET BasicPoolsTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET CacheChangePoolTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET CacheChangeTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
+gtest_discover_tests(TopicPayloadPoolTests)

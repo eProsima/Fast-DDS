@@ -48,7 +48,7 @@ target_include_directories(LogTests PRIVATE
 target_link_libraries(LogTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
-add_gtest(LogTests SOURCES ${LOGTESTS_TEST_SOURCE})
+gtest_discover_tests(LogTests)
 
 # LOG FILE TEST
 set(LOGFILETESTS_TEST_SOURCE LogFileTests.cpp)
@@ -83,9 +83,4 @@ target_link_libraries(LogFileTests GTest::gtest ${MOCKS}
     ${TINYXML2_LIBRARY}
     fastcdr
     )
-add_gtest(LogFileTests SOURCES ${LOGFILETESTS_TEST_SOURCE})
-
-if(ANDROID)
-    set_property(TARGET LogTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET LogFileTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
+gtest_discover_tests(LogFileTests)

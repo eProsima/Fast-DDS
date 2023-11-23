@@ -56,7 +56,7 @@ target_compile_definitions(CacheChangeTests PRIVATE
 target_include_directories(CacheChangeTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(CacheChangeTests GTest::gtest)
-add_gtest(CacheChangeTests SOURCES ${CACHECHANGETESTS_SOURCE})
+gtest_discover_tests(CacheChangeTests)
 
 add_executable(GuidUtilsTests ${GUID_UTILS_TESTS_SOURCE})
 target_compile_definitions(GuidUtilsTests PRIVATE
@@ -77,7 +77,7 @@ endif()
 if(MSVC OR MSVC_IDE)
     target_link_libraries(GuidUtilsTests ws2_32)
 endif()
-add_gtest(GuidUtilsTests SOURCES ${GUID_UTILS_TESTS_SOURCE})
+gtest_discover_tests(GuidUtilsTests)
 
 add_executable(SequenceNumberTests ${SEQUENCENUMBERTESTS_SOURCE})
 target_compile_definitions(SequenceNumberTests PRIVATE
@@ -87,7 +87,7 @@ target_compile_definitions(SequenceNumberTests PRIVATE
 target_include_directories(SequenceNumberTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(SequenceNumberTests GTest::gtest)
-add_gtest(SequenceNumberTests SOURCES ${SEQUENCENUMBERTESTS_SOURCE})
+gtest_discover_tests(SequenceNumberTests)
 
 add_executable(PortParametersTests ${PORTPARAMETERSTESTS_SOURCE})
 target_compile_definitions(PortParametersTests PRIVATE
@@ -98,7 +98,7 @@ target_include_directories(PortParametersTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(PortParametersTests GTest::gtest)
-add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE} LABELS "NoMemoryCheck")
+gtest_discover_tests(PortParametersTests PROPERTIES LABELS "NoMemoryCheck")
 
 ###################
 # GuifPrefix test #
@@ -115,7 +115,7 @@ target_include_directories(GuidPrefixTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(GuidPrefixTests GTest::gtest)
-add_gtest(GuidPrefixTests SOURCES ${GUIDPREFIXTESTS_SOURCE} LABELS "NoMemoryCheck")
+gtest_discover_tests(GuidPrefixTests PROPERTIES LABELS "NoMemoryCheck")
 
 #################
 # EntityId test #
@@ -132,7 +132,7 @@ target_include_directories(EntityIdTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(EntityIdTests GTest::gtest)
-add_gtest(EntityIdTests SOURCES ${ENTITYIDTESTS_SOURCE} LABELS "NoMemoryCheck")
+gtest_discover_tests(EntityIdTests PROPERTIES LABELS "NoMemoryCheck")
 
 #############
 # Guid test #
@@ -149,17 +149,7 @@ target_include_directories(GuidTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(GuidTests GTest::gtest)
-add_gtest(GuidTests SOURCES ${GUIDTESTS_SOURCE} LABELS "NoMemoryCheck")
-
-if(ANDROID)
-    set_property(TARGET CacheChangeTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET EntityIdTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET GuidTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET GuidPrefixTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET GuidUtilsTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET PortParametersTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET SequenceNumberTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
+gtest_discover_tests(GuidTests PROPERTIES LABELS "NoMemoryCheck")
 
 #############
 # Time test #
@@ -173,4 +163,4 @@ target_compile_definitions(TimeTests PRIVATE
 target_include_directories(TimeTests PRIVATE ${GTEST_INCLUDE_DIRS}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(TimeTests GTest::gtest)
-add_gtest(TimeTests SOURCES ${TIMETESTS_SOURCE} LABELS "NoMemoryCheck")
+gtest_discover_tests(TimeTests PROPERTIES LABELS "NoMemoryCheck")

@@ -51,8 +51,4 @@ target_include_directories(TimedEventTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(TimedEventTests GTest::gtest ${CMAKE_DL_LIBS})
-add_gtest(TimedEventTests SOURCES ${TIMEDEVENTTESTS_SOURCE})
-
-if(ANDROID)
-    set_property(TARGET TimedEventTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
+gtest_discover_tests(TimedEventTests)

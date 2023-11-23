@@ -181,13 +181,6 @@ protected:
 
 };
 
-class SHMRingBufferMultiThread
-    :   public SHMRingBuffer,
-    public testing::WithParamInterface<std::tuple<uint32_t, uint32_t, uint32_t>>
-{
-
-};
-
 TEST_F(SHMRingBuffer, test_read_write_bounds)
 {
     auto listener = ring_buffer_->register_listener();
@@ -362,110 +355,6 @@ TEST_F(SHMRingBuffer, listeners_register_unregister)
 
     ASSERT_EQ(listener2->head()->data().counter, 4u);
     listener2->pop();
-}
-
-TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
-{
-    const uint32_t elements_to_push = buffer_size_ * std::get<1>(GetParam());
-    std::vector<std::thread> threads;
-    std::atomic<uint32_t> ready_listeners;
-    ready_listeners.store(0);
-
-    uint32_t num_listeners_writters = std::get<0>(GetParam());
-    uint32_t num_register_unregister = std::get<2>(GetParam());
-
-    for (uint32_t i = 0; i < num_listeners_writters; i++)
-    {
-        // Listeners
-        threads.emplace_back(
-            std::thread(
-                [&]()
-                {
-                    std::vector<uint32_t> read_counters(num_listeners_writters, (std::numeric_limits<uint32_t>::max)());
-                    MultiProducerConsumerRingBuffer<MyData>::Cell* cell;
-
-                    auto listener = ring_buffer_->register_listener();
-                    ready_listeners.fetch_add(1);
-
-                    do
-                    {
-                        // poll until there's data
-                        while (nullptr == (cell = listener->head()))
-                        {
-                        }
-
-                        ASSERT_EQ(++read_counters[cell->data().thread_number], cell->data().counter);
-
-                        listener->pop();
-
-                    } while (cell->data().counter != elements_to_push - 1);
-
-                }));
-    }
-
-    // Wait until all listeners ready
-    while (ready_listeners.load(std::memory_order_relaxed) != num_listeners_writters)
-    {
-        std::this_thread::yield();
-    }
-
-    for (uint32_t i = 0; i < num_listeners_writters; i++)
-    {
-        // Writers
-        threads.emplace_back(
-            std::thread(
-                [&](uint32_t thread_number)
-                {
-                    for (uint32_t c = 0; c < elements_to_push; c++)
-                    {
-                        bool success = false;
-                        while (!success)
-                        {
-                            try
-                            {
-                                ring_buffer_->push({thread_number, c});
-                                success = true;
-                            }
-                            catch (const std::exception&)
-                            {
-                            }
-                        }
-                    }
-                }, i));
-    }
-
-    for (uint32_t i = 0; i < num_register_unregister; i++)
-    {
-        // Register-Unregister
-        threads.emplace_back(
-            std::thread(
-                [&]()
-                {
-                    auto listener = ring_buffer_->register_listener();
-
-                    // Reads two times the size values
-                    for (uint32_t i = 0; i < buffer_size_ * 2; i++)
-                    {
-                        // poll until there's data
-                        while (!listener->head())
-                        {
-                        }
-                        listener->pop();
-                    }
-
-                    // Unregister
-                    listener.reset();
-
-                }));
-    }
-
-    for (auto& thread : threads)
-    {
-        if (thread.joinable())
-        {
-            thread.join();
-        }
-    }
 }
 
 TEST_F(SHMCondition, wait_notify)
@@ -2107,28 +1996,6 @@ TEST_F(SHMTransportTests, remote_segments_free)
             , std::chrono::duration_cast<std::chrono::nanoseconds>(t1-t0).count() / (num_samples_per_batch*1000.0));
     }
    }*/
-
-/*
- #ifdef INSTANTIATE_TEST_SUITE_P
- #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z) INSTANTIATE_TEST_SUITE_P(x, y, z)
- #else
- #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z) INSTANTIATE_TEST_CASE_P(x, y, z, )
- #endif // ifdef INSTANTIATE_TEST_SUITE_P
-
-   GTEST_INSTANTIATE_TEST_MACRO(
-    SHMTransportTests,
-    SHMRingBufferMultiThread,
-    testing::Values(
-        std::make_tuple(
-            (std::max)((unsigned int)1, std::thread::hardware_concurrency()/2), 100000, 0),
-        std::make_tuple(
-            (std::max)((unsigned int)1, std::thread::hardware_concurrency())*2, 100,0),
-        std::make_tuple(
-            (std::max)((unsigned int)1, std::thread::hardware_concurrency()/2), 100000, std::thread::hardware_concurrency()/2),
-        std::make_tuple(
-            (std::max)((unsigned int)1, std::thread::hardware_concurrency())*2, 100,std::thread::hardware_concurrency())
-    )
-   );*/
 
 TEST_F(SHMTransportTests, dump_file)
 {

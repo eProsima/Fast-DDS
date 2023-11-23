@@ -43,10 +43,4 @@ target_include_directories(BuiltinLogging PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(BuiltinLogging fastcdr GTest::gtest ${OPENSSL_LIBRARIES})
-add_gtest(BuiltinLogging SOURCES ${COMMON_SOURCES_LOGGING_PLUGIN_TEST_SOURCE}
-    ${CMAKE_CURRENT_SOURCE_DIR}/LoggingPluginTests.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinLogTopicTests.cpp)
-
-if(ANDROID)
-    set_property(TARGET BuiltinLogging PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
+gtest_discover_tests(BuiltinLogging)

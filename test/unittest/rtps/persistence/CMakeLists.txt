@@ -51,10 +51,6 @@ if(SQLITE3_SUPPORT)
             iphlpapi Shlwapi
             )
     endif()
-    add_gtest(PersistenceTests SOURCES ${PERSISTENCETESTS_SOURCE})
+    gtest_discover_tests(PersistenceTests)
 
-    if(ANDROID)
-        set_property(TARGET PersistenceTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    endif()
 endif(SQLITE3_SUPPORT)
-

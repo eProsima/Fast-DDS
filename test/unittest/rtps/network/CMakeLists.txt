@@ -161,10 +161,5 @@ if(WIN32)
     target_link_libraries(ExternalLocatorsProcessorTests IPHLPAPI shlwapi) # Later so mocks have precedence
 endif()
 
-add_gtest(NetworkFactoryTests SOURCES ${NETWORKFACTORYTESTS_SOURCE})
-add_gtest(ExternalLocatorsProcessorTests SOURCES ExternalLocatorsProcessorTests.cpp)
-
-if(ANDROID)
-    set_property(TARGET NetworkFactoryTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET ExternalLocatorsProcessorTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
+gtest_discover_tests(NetworkFactoryTests)
+gtest_discover_tests(ExternalLocatorsProcessorTests)

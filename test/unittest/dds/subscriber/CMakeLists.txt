@@ -67,7 +67,7 @@ target_include_directories(SubscriberTests PRIVATE
 target_link_libraries(SubscriberTests fastrtps fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
-add_gtest(SubscriberTests SOURCES ${SUBSCRIBERTESTS_SOURCE})
+gtest_discover_tests(SubscriberTests)
 
 add_executable(DataReaderTests ${DATAREADERTESTS_SOURCE})
 target_compile_definitions(DataReaderTests PRIVATE
@@ -85,7 +85,7 @@ target_include_directories(DataReaderTests PRIVATE
 target_link_libraries(DataReaderTests fastrtps fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
-add_gtest(DataReaderTests SOURCES ${DATAREADERTESTS_SOURCE})
+gtest_discover_tests(DataReaderTests)
 
 add_executable(DataReaderInstanceTests ${DATAREADERINSTANCETESTS_SOURCE})
 target_compile_definitions(DataReaderInstanceTests PRIVATE
@@ -99,7 +99,7 @@ target_include_directories(DataReaderInstanceTests PRIVATE
 target_link_libraries(DataReaderInstanceTests foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
-add_gtest(DataReaderInstanceTests SOURCES ${DATAREADERINSTANCETESTS_SOURCE})
+gtest_discover_tests(DataReaderInstanceTests)
 
 add_executable(DataReaderHistoryTests ${DATAREADERHISTORYTESTS_SOURCE})
 target_compile_definitions(DataReaderHistoryTests PRIVATE
@@ -121,10 +121,4 @@ target_include_directories(DataReaderHistoryTests PRIVATE
 target_link_libraries(DataReaderHistoryTests fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
-add_gtest(DataReaderHistoryTests SOURCES ${DATAREADERHISTORYTESTS_SOURCE})
-if(ANDROID)
-    set_property(TARGET SubscriberTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET DataReaderTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET DataReaderHistoryTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET DataReaderInstanceTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
+gtest_discover_tests(DataReaderHistoryTests)

@@ -42,7 +42,7 @@ target_include_directories(LogMacrosAllActiveTests PRIVATE
 target_link_libraries(LogMacrosAllActiveTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
-add_gtest(LogMacrosAllActiveTests SOURCES ${LOGMACROS_ALL_TEST_SOURCE})
+gtest_discover_tests(LogMacrosAllActiveTests)
 
 
 # MACROS LOG TEST NO INFO
@@ -63,7 +63,7 @@ target_include_directories(LogMacrosNoInfoTests PRIVATE
 target_link_libraries(LogMacrosNoInfoTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
-add_gtest(LogMacrosNoInfoTests SOURCES ${LOGMACROS_NOINFO_TEST_SOURCE})
+gtest_discover_tests(LogMacrosNoInfoTests)
 
 
 # MACROS LOG TEST NO WARNING
@@ -84,7 +84,7 @@ target_include_directories(LogMacrosNoWarningTests PRIVATE
 target_link_libraries(LogMacrosNoWarningTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
-add_gtest(LogMacrosNoWarningTests SOURCES ${LOGMACROS_NOWARNING_TEST_SOURCE})
+gtest_discover_tests(LogMacrosNoWarningTests)
 
 
 # MACROS LOG TEST NO ERROR
@@ -105,7 +105,7 @@ target_include_directories(LogMacrosNoErrorTests PRIVATE
 target_link_libraries(LogMacrosNoErrorTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
-add_gtest(LogMacrosNoErrorTests SOURCES ${LOGMACROS_NOERROR_TEST_SOURCE})
+gtest_discover_tests(LogMacrosNoErrorTests)
 
 
 # MACROS LOG TEST NO DEFAULT
@@ -126,7 +126,7 @@ target_include_directories(LogMacrosDefaultTests PRIVATE
 target_link_libraries(LogMacrosDefaultTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
-add_gtest(LogMacrosDefaultTests SOURCES ${LOGMACROS_DEFAULT_TEST_SOURCE})
+gtest_discover_tests(LogMacrosDefaultTests)
 
 
 # MACROS LOG TEST INTERNALDEBUG
@@ -149,7 +149,7 @@ target_include_directories(LogMacrosInternalDebugOffTests PRIVATE
 target_link_libraries(LogMacrosInternalDebugOffTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
-add_gtest(LogMacrosInternalDebugOffTests SOURCES ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
+gtest_discover_tests(LogMacrosInternalDebugOffTests)
 
 # MACROS OLD LOG TEST ALL
 set(LOGMACROS_ALL_TEST_SOURCE OldLogMacrosTests.cpp)
@@ -169,7 +169,7 @@ target_include_directories(OldLogMacrosTests PRIVATE
 target_link_libraries(OldLogMacrosTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
-add_gtest(OldLogMacrosTests SOURCES ${LOGMACROS_ALL_TEST_SOURCE})
+gtest_discover_tests(OldLogMacrosTests)
 
 
 # MACROS OLD DISABLE LOG TEST ALL
@@ -190,16 +190,4 @@ target_include_directories(OldLogMacrosDisableTests PRIVATE
 target_link_libraries(OldLogMacrosDisableTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
-add_gtest(OldLogMacrosDisableTests SOURCES ${LOGMACROS_ALL_TEST_SOURCE})
-
-# SET PROPERTIES TO TESTS
-if(ANDROID)
-    set_property(TARGET LogMacrosAllActiveTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET LogMacrosDefaultTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET LogMacrosInternalDebugOffTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET LogMacrosNoErrorTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET LogMacrosNoInfoTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET LogMacrosNoWarningTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET OldLogMacrosTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET OldLogMacrosDisableTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
+gtest_discover_tests(OldLogMacrosDisableTests)

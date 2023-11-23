@@ -54,12 +54,7 @@ target_include_directories(WriterProxyTests PRIVATE
 target_link_libraries(WriterProxyTests foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
-add_gtest(WriterProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
-
-if(ANDROID)
-    set_property(TARGET WriterProxyTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
-
+gtest_discover_tests(WriterProxyTests)
 
 ###########################################################################
 # WriterProxyStopTest
@@ -104,11 +99,7 @@ target_include_directories(WriterProxyStopTest PRIVATE
 target_link_libraries(WriterProxyStopTest foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
-add_gtest(WriterProxyStopTest SOURCES ${WRITERPROXYSTOPTEST_SOURCE})
-
-if(ANDROID)
-    set_property(TARGET WriterProxyStopTest PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
+gtest_discover_tests(WriterProxyStopTest)
 
 ###########################################################################
 # WriterProxyAcknackTests
@@ -152,9 +143,4 @@ target_include_directories(WriterProxyAcknackTests PRIVATE
 target_link_libraries(WriterProxyAcknackTests foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
-add_gtest(WriterProxyAcknackTests SOURCES ${WRITERPROXYACKNACKTESTS_SOURCE})
-
-if(ANDROID)
-    set_property(TARGET WriterProxyAcknackTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
-
+gtest_discover_tests(WriterProxyAcknackTests)

@@ -92,12 +92,4 @@ target_link_libraries(SecurityAuthentication fastcdr
     GTest::gmock
     ${OPENSSL_LIBRARIES}
     )
-add_gtest(SecurityAuthentication
-    SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/SecurityInitializationTests.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/SecurityValidationRemoteTests.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/SecurityHandshakeProcessTests.cpp)
-
-if(ANDROID)
-    set_property(TARGET SecurityAuthentication PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
+gtest_discover_tests(SecurityAuthentication)

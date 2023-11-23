@@ -108,13 +108,8 @@ if(MSVC OR MSVC_IDE)
 endif()
 
 
-add_gtest(AccessControlTests
-    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/AccessControlTests.cpp
-    ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-
-if(ANDROID)
-    set_property(TARGET AccessControlTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
+gtest_discover_tests(AccessControlTests
+    PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
 
 ####################################################################################################
 ####################################################################################################
@@ -161,8 +156,4 @@ target_link_libraries(
     GTest::gtest
 )
 
-add_gtest(
-    ${DISTINGUISHEDNAME_TEST_NAME}
-    SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/DistinguishedNameTests.cpp
-)
+gtest_discover_tests( ${DISTINGUISHEDNAME_TEST_NAME})

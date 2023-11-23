@@ -69,7 +69,7 @@ if(MSVC OR MSVC_IDE)
     target_link_libraries(StringMatchingTests ${PRIVACY} iphlpapi Shlwapi
         )
 endif()
-add_gtest(StringMatchingTests SOURCES ${STRINGMATCHINGTESTS_SOURCE})
+gtest_discover_tests(StringMatchingTests)
 
 
 add_executable(FixedSizeStringTests ${FIXEDSIZESTRINGTESTS_SOURCE})
@@ -80,7 +80,7 @@ target_compile_definitions(FixedSizeStringTests PRIVATE
 target_include_directories(FixedSizeStringTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(FixedSizeStringTests GTest::gtest ${MOCKS})
-add_gtest(FixedSizeStringTests SOURCES ${FIXEDSIZESTRINGTESTS_SOURCE})
+gtest_discover_tests(FixedSizeStringTests)
 
 
 add_executable(BitmapRangeTests ${BITMAPRANGETESTS_SOURCE})
@@ -91,7 +91,7 @@ target_compile_definitions(BitmapRangeTests PRIVATE
 target_include_directories(BitmapRangeTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(BitmapRangeTests GTest::gtest ${MOCKS})
-add_gtest(BitmapRangeTests SOURCES ${BITMAPRANGETESTS_SOURCE})
+gtest_discover_tests(BitmapRangeTests)
 
 
 add_executable(ResourceLimitedVectorTests ${RESOURCELIMITEDVECTORTESTS_SOURCE})
@@ -102,7 +102,7 @@ target_compile_definitions(ResourceLimitedVectorTests PRIVATE
 target_include_directories(ResourceLimitedVectorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(ResourceLimitedVectorTests GTest::gtest ${MOCKS})
-add_gtest(ResourceLimitedVectorTests SOURCES ${RESOURCELIMITEDVECTORTESTS_SOURCE})
+gtest_discover_tests(ResourceLimitedVectorTests)
 
 add_executable(LocatorTests ${LOCATORTESTS_SOURCE})
 target_compile_definitions(LocatorTests PRIVATE
@@ -121,7 +121,7 @@ endif()
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
     set(IGNORE_COMMAND LocatorDNSTests)
 endif()
-add_gtest(LocatorTests SOURCES ${LOCATORTESTS_SOURCE} IGNORE ${IGNORE_COMMAND})
+gtest_discover_tests(LocatorTests TEST_FILTER ${IGNORE_COMMAND})
 unset(IGNORE_COMMAND)
 # Skip DNS related tests when not running on our CI
 if(NOT(EPROSIMA_BUILD))
@@ -136,19 +136,19 @@ add_executable(FixedSizeQueueTests ${FIXEDSIZEQUEUETESTS_SOURCE})
 target_include_directories(FixedSizeQueueTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(FixedSizeQueueTests GTest::gtest ${MOCKS})
-add_gtest(FixedSizeQueueTests SOURCES ${FIXEDSIZEQUEUETESTS_SOURCE})
+gtest_discover_tests(FixedSizeQueueTests)
 
 add_executable(SystemInfoTests ${SYSTEMINFOTESTS_SOURCE})
 target_include_directories(SystemInfoTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(SystemInfoTests GTest::gtest)
-add_gtest(SystemInfoTests SOURCES ${SYSTEMINFOTESTS_SOURCE})
+gtest_discover_tests(SystemInfoTests)
 
 add_executable(SharedMutexTests shared_mutex_tests.cpp)
 target_compile_definitions(SharedMutexTests PUBLIC USE_THIRDPARTY_SHARED_MUTEX=1)
 target_include_directories(SharedMutexTests PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(SharedMutexTests PUBLIC GTest::gtest)
-add_gtest(SharedMutexTests SOURCES shared_mutex_tests.cpp)
+gtest_discover_tests(SharedMutexTests)
 
 ###############################################################################
 # Necessary files
@@ -157,13 +157,3 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/environment_test_file.json
     ${CMAKE_CURRENT_BINARY_DIR}/environment_test_file.json COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/empty_environment_test_file.json
     ${CMAKE_CURRENT_BINARY_DIR}/empty_environment_test_file.json COPYONLY)
-
-if(ANDROID)
-    set_property(TARGET StringMatchingTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET FixedSizeQueueTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET BitmapRangeTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET ResourceLimitedVectorTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET LocatorTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET FixedSizeStringTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET SystemInfoTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()

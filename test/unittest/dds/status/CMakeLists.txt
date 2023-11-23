@@ -205,8 +205,4 @@ if(MSVC OR MSVC_IDE)
     target_link_libraries(ListenerTests iphlpapi Shlwapi ws2_32)
 endif()
 
-add_gtest(ListenerTests SOURCES ${LISTENERTESTS_SOURCE})
-
-if(ANDROID)
-    set_property(TARGET ListenerTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
+gtest_discover_tests(ListenerTests)
