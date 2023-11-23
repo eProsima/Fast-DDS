@@ -30,14 +30,13 @@
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.h>
 #include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace xtypes1_3 {
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
 class TypeObjectUtils
 {
