@@ -24,6 +24,7 @@ files_needing_case_sensitive=(
 
 files_needing_output_dir=(
     './include/fastdds/statistics/types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
+    './include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.idl|./detail'
     )
 
 
@@ -76,14 +77,14 @@ for idl_file in "${idl_files[@]}"; do
             od_entry_split=(${od_entry//\|/ })
             for od_entry_split_element in ${od_entry_split[@]:1}; do
                 od_arg="-d ${od_entry_split_element}"
-                fastddsgen -replace $to_arg $cs_arg $od_arg "$file_from_gen"
+                fastddsgen -replace -genapi $to_arg $cs_arg $od_arg "$file_from_gen"
             done
             break
         fi
     done
 
     if $not_processed ; then
-        fastddsgen -replace $to_arg $cs_arg "$file_from_gen"
+        fastddsgen -replace -genapi $to_arg $cs_arg "$file_from_gen"
     fi
 
     if [[ $? != 0 ]]; then
@@ -94,12 +95,10 @@ for idl_file in "${idl_files[@]}"; do
 done
 
 # Move source files to src/cpp
-mv ./include/fastdds/dds/xtypes/type_representation/TypeObject.cxx ./src/cpp/fastdds/xtypes/type_representation/TypeObject.cxx
-mv ./include/fastdds/dds/xtypes/type_representation/TypeObjectCdrAux.ipp ./src/cpp/fastdds/xtypes/type_representation/TypeObjectCdrAux.ipp
-mv ./include/fastdds/dds/xtypes/type_representation/TypeObjectPubSubTypes.cxx ./src/cpp/fastdds/xtypes/type_representation/TypeObjectPubSubTypes.cxx
+mv ./include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobjectCdrAux.ipp ./src/cpp/fastdds/xtypes/type_representation/dds-xtypes_typeobjectCdrAux.ipp
+mv ./include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobjectPubSubTypes.cxx ./src/cpp/fastdds/xtypes/type_representation/dds-xtypes_typeobjectPubSubTypes.cxx
 
-sed -i 's+"TypeObject.h"+<fastdds/dds/xtypes/type_representation/TypeObject.h>+' ./src/cpp/fastdds/xtypes/type_representation/TypeObject.cxx
-sed -i 's+"TypeObjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representation/TypeObjectCdrAux.hpp>+' ./src/cpp/fastdds/xtypes/type_representation/TypeObjectCdrAux.ipp
-sed -i 's+"TypeObjectPubSubTypes.h"+<fastdds/dds/xtypes/type_representation/TypeObjectPubSubTypes.h>+' ./src/cpp/fastdds/xtypes/type_representation/TypeObjectPubSubTypes.cxx
+sed -i 's+"dds-xtypes_typeobjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobjectCdrAux.hpp>+' ./src/cpp/fastdds/xtypes/type_representation/dds-xtypes_typeobjectCdrAux.ipp
+sed -i 's+"dds-xtypes_typeobjectPubSubTypes.h"+<fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobjectPubSubTypes.h>+' ./src/cpp/fastdds/xtypes/type_representation/dds-xtypes_typeobjectPubSubTypes.cxx
 
 exit $ret_value
