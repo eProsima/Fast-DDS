@@ -20,7 +20,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-namespace xtypes1_3 {
+namespace xtypes {
 
 InvalidArgumentError::InvalidArgumentError(
         const std::string& msg)
@@ -45,7 +45,7 @@ const char* InvalidArgumentError::what() const throw()
     return this->std::invalid_argument::what();
 }
 
-} // xtypes1_3
+} // xtypes
 } // dds
 } // fastdds
 } // eprosima

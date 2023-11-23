@@ -30,10 +30,10 @@
 
 namespace std {
 template<>
-struct hash<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>
+struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifier>
 {
     std::size_t operator ()(
-            const eprosima::fastdds::dds::xtypes1_3::TypeIdentifier& k) const
+            const eprosima::fastdds::dds::xtypes::TypeIdentifier& k) const
     {
         // The collection only has direct hash TypeIdentifiers so the EquivalenceHash can be used.
         return (static_cast<size_t>(k.equivalence_hash()[0]) << 16) |
@@ -44,10 +44,10 @@ struct hash<eprosima::fastdds::dds::xtypes1_3::TypeIdentifier>
 };
 
 template<>
-struct hash<eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize>
+struct hash<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>
 {
     std::size_t operator ()(
-            const eprosima::fastdds::dds::xtypes1_3::TypeIdentfierWithSize& k) const
+            const eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& k) const
     {
         return static_cast<size_t>(k.typeobject_serialized_size());
     }
@@ -60,7 +60,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-namespace xtypes1_3 {
+namespace xtypes {
 
 class TypeObjectUtils;
 

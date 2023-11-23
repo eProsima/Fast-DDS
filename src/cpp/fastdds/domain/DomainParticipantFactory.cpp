@@ -416,7 +416,7 @@ ReturnCode_t DomainParticipantFactory::set_qos(
     return RETCODE_OK;
 }
 
-xtypes1_3::TypeObjectRegistry& DomainParticipantFactory::type_object_registry()
+xtypes::TypeObjectRegistry& DomainParticipantFactory::type_object_registry()
 {
     return type_object_registry_;
 }

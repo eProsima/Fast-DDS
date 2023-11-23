@@ -31,7 +31,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-namespace xtypes1_3 {
+namespace xtypes {
 
 constexpr const char* begin_declaration_file = "begin-declaration-file";
 constexpr const char* before_declaration = "before-declaration";
@@ -3109,7 +3109,7 @@ void TypeObjectUtils::complete_bitset_type_consistency(
     complete_bitfield_seq_consistency(complete_bitset_type.field_seq());
 }
 
-} // xtypes1_3
+} // xtypes
 } // dds
 } // fastdds
 } // eprosima

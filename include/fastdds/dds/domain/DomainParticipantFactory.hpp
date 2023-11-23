@@ -268,9 +268,9 @@ public:
     /**
      * @brief Return the TypeObjectRegistry member to access the API.
      *
-     * @return const xtypes1_3::TypeObjectRegistry reference.
+     * @return const xtypes::TypeObjectRegistry reference.
      */
-    RTPS_DllAPI xtypes1_3::TypeObjectRegistry& type_object_registry();
+    RTPS_DllAPI xtypes::TypeObjectRegistry& type_object_registry();
 
 protected:
 
@@ -319,7 +319,7 @@ protected:
 
     std::shared_ptr<detail::LogResources> log_resources_;
 
-    xtypes1_3::TypeObjectRegistry type_object_registry_;
+    xtypes::TypeObjectRegistry type_object_registry_;
 
     /**
      * This mutex guards the access to load the profiles.

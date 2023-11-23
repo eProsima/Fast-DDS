@@ -30,7 +30,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-namespace xtypes1_3 {
+namespace xtypes {
 
 // Build TypeObjectHashId object with wrong discriminator.
 TEST(TypeObjectUtilsTests, build_type_object_hash_id_wrong_discriminator)
@@ -2495,7 +2495,7 @@ TEST(TypeObjectUtilsTests, add_to_complete_bitfield_seq)
     EXPECT_EQ(third_bitfield, bitfield_seq[2]);
 }
 
-} // xtypes1_3
+} // xtypes
 } // dds
 } // fastdds
 } // eprosima

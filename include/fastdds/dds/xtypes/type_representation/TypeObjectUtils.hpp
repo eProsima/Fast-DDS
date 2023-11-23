@@ -34,7 +34,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-namespace xtypes1_3 {
+namespace xtypes {
 
 using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
@@ -1956,7 +1956,7 @@ protected:
      *
      * @tparam Either SBound or LBound.
      * @param[in] bound Bound to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given bound is not
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given bound is not
      *            consistent.
      */
     template<typename T>
@@ -1973,7 +1973,7 @@ protected:
      * @brief Check LBound consistency: must be greater than 255.
      *
      * @param[in] bound LBound to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given LBound is not
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given LBound is not
      *            consistent.
      */
     static void l_bound_consistency(
@@ -1984,7 +1984,7 @@ protected:
      *
      * @tparam T Either SBoundSeq or LBoundSeq
      * @param[in] array Sequence to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given array is not
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given array is not
      *            consistent.
      */
     template<typename T>
@@ -2005,7 +2005,7 @@ protected:
      * @brief Check LBoundSeq consistency.
      *
      * @param[in] bound_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given LBoundSeq is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given LBoundSeq is
      *            not consistent.
      */
     static void l_bound_seq_consistency(
@@ -2016,7 +2016,7 @@ protected:
      *        be set.
      *
      * @param[in] member_flags MemberFlag to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given MemberFlag is not
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given MemberFlag is not
      *            consistent.
      */
     static void member_flag_consistency(
@@ -2026,7 +2026,7 @@ protected:
      * @brief Check CollectionElementFlag consistency.
      *
      * @param[in] collection_element_flag CollectionElementFlag to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CollectionElementFlag
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CollectionElementFlag
      *            is not consistent.
      */
     static void collection_element_flag_consistency(
@@ -2038,7 +2038,7 @@ protected:
      *        "must understand" attribute set to true.
      *
      * @param[in] member_flags MemberFlag to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given StructMemberFlag is not
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given StructMemberFlag is not
      *            consistent.
      */
     static void struct_member_flag_consistency(
@@ -2048,7 +2048,7 @@ protected:
      * @brief Check UnionMemberFlag consistency.
      *
      * @param[in] union_member_flag UnionMemberFlag to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given UnionMemberFlag
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given UnionMemberFlag
      *            is not consistent.
      */
     static void union_member_flag_consistency(
@@ -2058,7 +2058,7 @@ protected:
      * @brief Check UnionDiscriminatorFlag consistency.
      *
      * @param[in] union_discriminator_flag UnionDiscriminatorFlag to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given UnionDiscriminatorFlag
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given UnionDiscriminatorFlag
      *            is not consistent.
      */
     static void union_discriminator_flag_consistency(
@@ -2068,7 +2068,7 @@ protected:
      * @brief Check EnumeratedLiteralFlag consistency: any flag different from default are not set.
      *
      * @param[in] enumerated_literal_flag Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given EnumeratedLiteralFlag
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given EnumeratedLiteralFlag
      *            is not consistent.
      */
     static void enumerated_literal_flag_consistency(
@@ -2078,7 +2078,7 @@ protected:
      * @brief Check TypeFlag consistency: exactly one extensibility flag is set.
      *
      * @param[in] type_flag Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given TypeFlag
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeFlag
      *            is not consistent.
      */
     static void type_flag_consistency(
@@ -2089,7 +2089,7 @@ protected:
      *
      * @tparam T Either MemberFlag or TypeFlag.
      * @param[in] flags Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            flags are not consistent: empty (0).
      */
     template<typename T>
@@ -2108,7 +2108,7 @@ protected:
      *          - Consistent EquivalenceKind
      *
      * @param[in] header PlainCollectionHeader to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainCollectionHeader
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainCollectionHeader
      *            is not consistent.
      */
     static void plain_collection_header_consistency(
@@ -2121,7 +2121,7 @@ protected:
      *
      * @param[in] header PlainCollectionHeader to be checked.
      * @param[in] element_identifier TypeIdentifier to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given parameters are not
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given parameters are not
      *            consistent.
      */
     static void plain_collection_type_identifier_header_consistency(
@@ -2135,7 +2135,7 @@ protected:
      *        In Debug build mode, this method also checks that the string/wstring bound is consistent.
      *
      * @param[in] key_identifier TypeIdentifier to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given TypeIdentifier is not
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeIdentifier is not
      *            consistent.
      */
     static void map_key_type_identifier_consistency(
@@ -2145,7 +2145,7 @@ protected:
      * @brief Check StringSTypeDefn consistency.
      *
      * @param[in] string Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given StringSTypeDefn is not
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given StringSTypeDefn is not
      *            consistent.
      */
     static void string_sdefn_consistency(
@@ -2155,7 +2155,7 @@ protected:
      * @brief Check StringLTypeDefn consistency.
      *
      * @param[in] string Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given StringLTypeDefn is not
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given StringLTypeDefn is not
      *            consistent.
      */
     static void string_ldefn_consistency(
@@ -2165,7 +2165,7 @@ protected:
      * @brief Check PlainSequenceSElemDefn consistency.
      *
      * @param[in] plain_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainSequenceSElemDefn
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainSequenceSElemDefn
      *            is not consistent.
      */
     static void seq_sdefn_consistency(
@@ -2175,7 +2175,7 @@ protected:
      * @brief Check PlainSequenceLElemDefn consistency.
      *
      * @param[in] plain_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainSequenceLElemDefn
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainSequenceLElemDefn
      *            is not consistent.
      */
     static void seq_ldefn_consistency(
@@ -2185,7 +2185,7 @@ protected:
      * @brief Check PlainArraySElemDefn consistency.
      *
      * @param[in] plain_array Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainArraySElemDefn is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainArraySElemDefn is
      *            not consistent.
      */
     static void array_sdefn_consistency(
@@ -2195,7 +2195,7 @@ protected:
      * @brief Check PlainArrayLElemDefn consistency.
      *
      * @param[in] plain_array Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainArrayLElemDefn is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainArrayLElemDefn is
      *            not consistent.
      */
     static void array_ldefn_consistency(
@@ -2205,7 +2205,7 @@ protected:
      * @brief Check PlainMapSTypeDefn consistency.
      *
      * @param[in] plain_map Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainMapSTypeDefn is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainMapSTypeDefn is
      *            not consistent.
      */
     static void map_sdefn_consistency(
@@ -2215,7 +2215,7 @@ protected:
      * @brief Check PlainMapLTypeDefn consistency.
      *
      * @param[in] plain_map Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given PlainMapLTypeDefn is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainMapLTypeDefn is
      *            not consistent.
      */
     static void map_ldefn_consistency(
@@ -2225,7 +2225,7 @@ protected:
      * @brief Check direct hash TypeIdentifier consistency.
      *
      * @param[in] equivalence_hash Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given TypeIdentifier is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeIdentifier is
      *            not consistent.
      */
     static void direct_hash_type_identifier_consistency(
@@ -2235,7 +2235,7 @@ protected:
      * @brief Check TypeIdentifier consistency.
      *
      * @param[in] plain_map Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given TypeIdentifier is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeIdentifier is
      *            not consistent.
      */
     static void type_identifier_consistency(
@@ -2245,7 +2245,7 @@ protected:
      * @brief Check AppliedAnnotationParameterSeq consistency.
      *
      * @param[in] applied_annotation_parameter_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            AppliedAnnotationParameterSeq is not consistent.
      */
     static void applied_annotation_parameter_seq_consistency(
@@ -2255,7 +2255,7 @@ protected:
      * @brief Check AppliedAnnotation TypeIdentifier consistency.
      *
      * @param[in] annotation_type_id Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            AppliedAnnotation TypeIdentifier is not consistent.
      */
     static void applied_annotation_type_identifier_consistency(
@@ -2265,7 +2265,7 @@ protected:
      * @brief Check AppliedAnnotation consistency.
      *
      * @param[in] applied_annotation Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given AppliedAnnotation is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given AppliedAnnotation is
      *            not consistent.
      */
     static void applied_annotation_consistency(
@@ -2275,7 +2275,7 @@ protected:
      * @brief Check AppliedAnnotationSeq consistency.
      *
      * @param[in] applied_annotation_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given AppliedAnnotationSeq is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given AppliedAnnotationSeq is
      *            not consistent.
      */
     static void applied_annotation_seq_consistency(
@@ -2285,7 +2285,7 @@ protected:
      * @brief Check AppliedVerbatimAnnotation consistency.
      *
      * @param[in] applied_verbatim_annotation Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      * AppliedVerbatimAnnotation is not consistent.
      */
     static void applied_verbatim_annotation_consistency(
@@ -2295,7 +2295,7 @@ protected:
      * @brief Check CommonStructMember consistency.
      *
      * @param[in] common_struct_member Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CommonStructMember is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CommonStructMember is
      *            not consistent.
      */
     static void common_struct_member_consistency(
@@ -2305,7 +2305,7 @@ protected:
      * @brief Check CompleteMemberDetail consistency.
      *
      * @param[in] complete_member_detail Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CompleteMemberDetail is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteMemberDetail is
      *            not consistent.
      */
     static void complete_member_detail_consistency(
@@ -2316,7 +2316,7 @@ protected:
      *
      * @param[in] common_struct_member CommonStructMember to be checked.
      * @param[in] complete_member_detail CompleteMemberDetail to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the @hashid builtin applied
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the @hashid builtin applied
      *            annotation is set and inconsistent with the member id.
      */
     static void common_struct_member_and_complete_member_detail_consistency(
@@ -2328,7 +2328,7 @@ protected:
      *
      * @param[in] member_id MemberId to be checked.
      * @param[in] string_value String provided with either @hashid annotation or the member name.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given data is inconsistent.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given data is inconsistent.
      */
     static void string_member_id_consistency(
             MemberId member_id,
@@ -2338,7 +2338,7 @@ protected:
      * @brief Check CompleteStructMember consistency.
      *
      * @param[in] complete_struct_member Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CompleteStructMember is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteStructMember is
      *            not consistent.
      */
     static void complete_struct_member_consistency(
@@ -2348,7 +2348,7 @@ protected:
      * @brief Check CompleteStructMemberSeq consistency.
      *
      * @param[in] complete_struct_member_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CompleteStructMemberSeq
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteStructMemberSeq
      *            is not consistent.
      */
     static void complete_struct_member_seq_consistency(
@@ -2358,7 +2358,7 @@ protected:
      * @brief Check AppliedBuiltinTypeAnnotations consistency.
      *
      * @param[in] applied_builtin_type_annotations Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            AppliedBuiltinTypeAnnotations is not consistent.
      */
     static void applied_builtin_type_annotations_consistency(
@@ -2368,7 +2368,7 @@ protected:
      * @brief Check CompleteTypeDetail consistency.
      *
      * @param[in] complete_type_detail Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CompleteTypeDetail is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteTypeDetail is
      *            not consistent.
      */
     static void complete_type_detail_consistency(
@@ -2378,7 +2378,7 @@ protected:
      * @brief Check CompleteStructHeader base_type TypeIdentifier consistency.
      *
      * @param[in] base_type Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given TypeIdentifier is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeIdentifier is
      *            not consistent.
      */
     static void structure_base_type_consistency(
@@ -2388,7 +2388,7 @@ protected:
      * @brief Check CompleteStructHeader consistency.
      *
      * @param[in] complete_struct_header Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CompleteStructHeader
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteStructHeader
      *            is not consistent.
      */
     static void complete_struct_header_consistency(
@@ -2398,7 +2398,7 @@ protected:
      * @brief Check CompleteStructType consistency.
      *
      * @param[in] complete_struct_type Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CompleteStructType
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteStructType
      *            is not consistent.
      */
     static void complete_struct_type_consistency(
@@ -2408,7 +2408,7 @@ protected:
      * @brief Check UnionCaseLabelSeq consistency.
      *
      * @param[in] union_case_label_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given UnionCaseLabelSeq
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given UnionCaseLabelSeq
      *            is not consistent.
      */
     static void union_case_label_seq_consistency(
@@ -2418,7 +2418,7 @@ protected:
      * @brief Check CommonUnionMember consistency.
      *
      * @param[in] common_union_member Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CommonUnionMember
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CommonUnionMember
      *            is not consistent.
      */
     static void common_union_member_consistency(
@@ -2429,7 +2429,7 @@ protected:
      *
      * @param[in] common_struct_member CommonStructMember to be checked.
      * @param[in] complete_member_detail CompleteMemberDetail to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the @hashid builtin annotation is
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the @hashid builtin annotation is
      *            set and the member id is not consistent.
      */
     static void common_union_member_complete_member_detail_consistency(
@@ -2440,7 +2440,7 @@ protected:
      * @brief Check CompleteUnionMember consistency.
      *
      * @param[in] complete_union_member Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CompleteUnionMember
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteUnionMember
      *            is not consistent.
      */
     static void complete_union_member_consistency(
@@ -2450,7 +2450,7 @@ protected:
      * @brief Check CompleteUnionMemberSeq consistency.
      *
      * @param[in] complete_union_member_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given CompleteUnionMemberSeq
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteUnionMemberSeq
      *            is not consistent.
      */
     static void complete_union_member_seq_consistency(
@@ -2460,7 +2460,7 @@ protected:
      * @brief Check discriminator TypeIdentifier consistency.
      *
      * @param[in] type_id Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given TypeIdentifier
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeIdentifier
      *            is not consistent.
      */
     static void common_discriminator_member_type_identifier_consistency(
@@ -2470,7 +2470,7 @@ protected:
      * @brief Check CommonDiscriminatorMember consistency.
      *
      * @param[in] common_discriminator_member Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonDiscriminatorMember is not consistent.
      */
     static void common_discriminator_member_consistency(
@@ -2480,7 +2480,7 @@ protected:
      * @brief Check CompleteDiscriminatorMember consistency.
      *
      * @param[in] complete_discriminator_member Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteDiscriminatorMember is not consistent.
      */
     static void complete_discriminator_member_consistency(
@@ -2490,7 +2490,7 @@ protected:
      * @brief Check CompleteUnionHeader consistency.
      *
      * @param[in] complete_union_header Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteUnionHeader is not consistent.
      */
     static void complete_union_header_consistency(
@@ -2500,7 +2500,7 @@ protected:
      * @brief Check CompleteUnionType consistency.
      *
      * @param[in] complete_union_type Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteUnionType is not consistent.
      */
     static void complete_union_type_consistency(
@@ -2511,7 +2511,7 @@ protected:
      *
      * @param type_id TypeIdentifier.
      * @param value AnnotationParameterValue.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given TypeIdentifier is not
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeIdentifier is not
      *            consistent with the given value.
      */
     static void common_annotation_parameter_type_identifier_default_value_consistency(
@@ -2522,7 +2522,7 @@ protected:
      * @brief Check CommonAnnotationParameter consistency.
      *
      * @param[in] common_annotation_parameter Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonAnnotationParameter is not consistent.
      */
     static void common_annotation_parameter_consistency(
@@ -2532,7 +2532,7 @@ protected:
      * @brief Check CompleteAnnotationParameter consistency.
      *
      * @param[in] complete_annotation_parameter Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAnnotationParameter is not consistent.
      */
     static void complete_annotation_parameter_consistency(
@@ -2542,7 +2542,7 @@ protected:
      * @brief Check CompleteAnnotationParameterSeq consistency.
      *
      * @param[in] complete_annotation_parameter_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAnnotationParameterSeq is not consistent.
      */
     static void complete_annotation_parameter_seq_consistency(
@@ -2552,7 +2552,7 @@ protected:
      * @brief Check CompleteAnnotationHeader consistency.
      *
      * @param[in] complete_annotation_header Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAnnotationHeader is not consistent.
      */
     static void complete_annotation_header_consistency(
@@ -2562,7 +2562,7 @@ protected:
      * @brief Check CompleteAnnotationType consistency.
      *
      * @param[in] complete_annotation_type Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAnnotationType is not consistent.
      */
     static void complete_annotation_type_consistency(
@@ -2572,7 +2572,7 @@ protected:
      * @brief Check CommonAliasBody consistency.
      *
      * @param[in] common_alias_body Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonAliasBody is not consistent.
      */
     static void common_alias_body_consistency(
@@ -2582,7 +2582,7 @@ protected:
      * @brief Check that @hashid builtin annotation has not been set.
      *
      * @param[in] ann_builtin Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            AppliedBuiltinMemberAnnotations is not consistent.
      */
     static void hashid_builtin_annotation_not_applied_consistency(
@@ -2592,7 +2592,7 @@ protected:
      * @brief Check CompleteAliasBody consistency.
      *
      * @param[in] complete_alias_body Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAliasBody is not consistent.
      */
     static void complete_alias_body_consistency(
@@ -2602,7 +2602,7 @@ protected:
      * @brief Check CompleteAliasHeader consistency.
      *
      * @param[in] complete_alias_header Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAliasHeader is not consistent.
      */
     static void complete_alias_header_consistency(
@@ -2612,7 +2612,7 @@ protected:
      * @brief Check CompleteAliasType consistency.
      *
      * @param[in] complete_alias_type Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAliasType is not consistent.
      */
     static void complete_alias_type_consistency(
@@ -2622,7 +2622,7 @@ protected:
      * @brief Check CompleteElementDetail consistency.
      *
      * @param[in] complete_element_detail Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteElementDetail is not consistent.
      */
     static void complete_element_detail_consistency(
@@ -2632,7 +2632,7 @@ protected:
      * @brief Check CommonCollectionElement consistency.
      *
      * @param[in] common_collection_element Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonCollectionElement is not consistent.
      */
     static void common_collection_element_consistency(
@@ -2642,7 +2642,7 @@ protected:
      * @brief Check CompleteCollectionElement consistency.
      *
      * @param[in] complete_collection_element Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteCollectionElement is not consistent.
      */
     static void complete_collection_element_consistency(
@@ -2652,7 +2652,7 @@ protected:
      * @brief Check CommonCollectionHeader consistency.
      *
      * @param[in] common_collection_header Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonCollectionHeader is not consistent.
      */
     static void common_collection_header_consistency(
@@ -2662,7 +2662,7 @@ protected:
      * @brief Check CompleteCollectionHeader consistency.
      *
      * @param[in] complete_collection_header Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteCollectionHeader is not consistent.
      */
     static void complete_collection_header_consistency(
@@ -2672,7 +2672,7 @@ protected:
      * @brief Check CompleteSequenceType consistency.
      *
      * @param[in] complete_sequence_type Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteSequenceType is not consistent.
      */
     static void complete_sequence_type_consistency(
@@ -2682,7 +2682,7 @@ protected:
      * @brief Check CommonArrayHeader consistency.
      *
      * @param[in] common_array_header Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonArrayHeader is not consistent.
      */
     static void common_array_header_consistency(
@@ -2692,7 +2692,7 @@ protected:
      * @brief Check CompleteArrayHeader consistency.
      *
      * @param[in] complete_array_header Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteArrayHeader is not consistent.
      */
     static void complete_array_header_consistency(
@@ -2702,7 +2702,7 @@ protected:
      * @brief Check CompleteArrayType consistency.
      *
      * @param[in] complete_array_type Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteArrayType is not consistent.
      */
     static void complete_array_type_consistency(
@@ -2712,7 +2712,7 @@ protected:
      * @brief Check CompleteMapType consistency.
      *
      * @param[in] complete_map_type Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteMapType is not consistent.
      */
     static void complete_map_type_consistency(
@@ -2722,7 +2722,7 @@ protected:
      * @brief Check CommonEnumeratedLiteral consistency.
      *
      * @param[in] common_enumerated_literal Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonEnumeratedLiteral is not consistent.
      */
     static void common_enumerated_literal_consistency(
@@ -2732,7 +2732,7 @@ protected:
      * @brief Check CompleteEnumeratedLiteral consistency.
      *
      * @param[in] complete_enumerated_literal Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteEnumeratedLiteral is not consistent.
      */
     static void complete_enumerated_literal_consistency(
@@ -2742,7 +2742,7 @@ protected:
      * @brief Check CompleteEnumeratedLiteralSeq consistency.
      *
      * @param[in] complete_enumerated_literal_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteEnumeratedLiteralSeq is not consistent.
      */
     static void complete_enumerated_literal_seq_consistency(
@@ -2752,7 +2752,7 @@ protected:
      * @brief Check enumeration BitBound consistency.
      *
      * @param[in] bit_bound Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            BitBound is not consistent.
      */
     static void enum_bit_bound_consistency(
@@ -2762,7 +2762,7 @@ protected:
      * @brief Check bitmask BitBound consistency.
      *
      * @param[in] bit_bound Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            BitBound is not consistent.
      */
     static void bitmask_bit_bound_consistency(
@@ -2773,7 +2773,7 @@ protected:
      *
      * @param[in] common_enumerated_header Instance to be checked.
      * @param[in] bitmask flag in case that the header corresponds to a Bitmask. By default is false.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonEnumeratedHeader is not consistent.
      */
     static void common_enumerated_header_consistency(
@@ -2785,7 +2785,7 @@ protected:
      *
      * @param[in] complete_enumerated_header Instance to be checked.
      * @param[in] bitmask Flag in case that the header corresponds to a Bitmask. By default is false.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteEnumeratedHeader is not consistent.
      */
     static void complete_enumerated_header_consistency(
@@ -2796,7 +2796,7 @@ protected:
      * @brief Check CompleteEnumeratedType consistency.
      *
      * @param[in] complete_enumerated_type Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteEnumeratedType is not consistent.
      */
     static void complete_enumerated_type_consistency(
@@ -2806,7 +2806,7 @@ protected:
      * @brief Check bitflag position consistency.
      *
      * @param[in] position Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            bitflag position is not consistent.
      */
     static void bit_position_consistency(
@@ -2816,7 +2816,7 @@ protected:
      * @brief Check CommonBitflag consistency.
      *
      * @param[in] common_bitflag Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonBitflag is not consistent.
      */
     static void common_bitflag_consistency(
@@ -2826,7 +2826,7 @@ protected:
      * @brief Check CompleteBitflag consistency.
      *
      * @param[in] complete_bitflag Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitflag is not consistent.
      */
     static void complete_bitflag_consistency(
@@ -2836,7 +2836,7 @@ protected:
      * @brief Check CompleteBitflagSeq consistency.
      *
      * @param[in] complete_bitflag_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitflagSeq is not consistent.
      */
     static void complete_bitflag_seq_consistency(
@@ -2846,7 +2846,7 @@ protected:
      * @brief Check CompleteBitmaskType consistency.
      *
      * @param[in] complete_bitmask_type Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitmaskType is not consistent.
      */
     static void complete_bitmask_type_consistency(
@@ -2857,7 +2857,7 @@ protected:
      *
      * @param[in] holder_type TypeKind of the bitfield holder type.
      * @param[in] bitcount Bitfield number of bits.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given data is inconsistent.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given data is inconsistent.
      */
     static void bitfield_holder_type_consistency(
             TypeKind holder_type,
@@ -2867,7 +2867,7 @@ protected:
      * @brief Check CommonBitfield consistency.
      *
      * @param[in] common_bitfield Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonBitfield is not consistent.
      */
     static void common_bitfield_consistency(
@@ -2877,7 +2877,7 @@ protected:
      * @brief Check CompleteBitfield consistency.
      *
      * @param[in] complete_bitfield Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitfield is not consistent.
      */
     static void complete_bitfield_consistency(
@@ -2887,7 +2887,7 @@ protected:
      * @brief Check CompleteBitfieldSeq consistency.
      *
      * @param[in] complete_bitfield_seq Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitfieldSeq is not consistent.
      */
     static void complete_bitfield_seq_consistency(
@@ -2897,7 +2897,7 @@ protected:
      * @brief Check CompleteBitsetHeader consistency.
      *
      * @param[in] complete_bitset_header Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitsetHeader is not consistent.
      */
     static void complete_bitset_header_consistency(
@@ -2907,7 +2907,7 @@ protected:
      * @brief Check CompleteBitsetType consistency.
      *
      * @param[in] complete_bitset_type Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes1_3::InvalidArgumentError exception if the given
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitsetType is not consistent.
      */
     static void complete_bitset_type_consistency(
@@ -2915,7 +2915,7 @@ protected:
 
 };
 
-} // xtypes1_3
+} // xtypes
 } // dds
 } // fastdds
 } // eprosima

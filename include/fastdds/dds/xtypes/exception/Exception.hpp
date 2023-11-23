@@ -28,7 +28,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-namespace xtypes1_3 {
+namespace xtypes {
 
 /**
  * @brief Exception: base class for specified DDS Exceptions.
@@ -71,7 +71,7 @@ public:
 
 };
 
-} // xtypes1_3
+} // xtypes
 } // dds
 } // fastdds
 } // eprosima
