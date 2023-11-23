@@ -1314,15 +1314,8 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                    static_cast<void>(dcdr);
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
+                static_cast<void>(dcdr);
+                return false;
             });
 }
 
@@ -1632,15 +1625,8 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                    static_cast<void>(dcdr);
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
+                static_cast<void>(dcdr);
+                return false;
             });
 }
 
@@ -3011,15 +2997,8 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                    static_cast<void>(dcdr);
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
+                static_cast<void>(dcdr);
+                return false;
             });
 }
 
@@ -4948,15 +4927,8 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                    static_cast<void>(dcdr);
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
+                static_cast<void>(dcdr);
+                return false;
             });
 }
 
@@ -5597,15 +5569,8 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                    static_cast<void>(dcdr);
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
+                static_cast<void>(dcdr);
+                return false;
             });
 }
 
@@ -9132,15 +9097,8 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                    static_cast<void>(dcdr);
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
+                static_cast<void>(dcdr);
+                return false;
             });
 }
 
@@ -9413,15 +9371,8 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                    static_cast<void>(dcdr);
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
+                static_cast<void>(dcdr);
+                return false;
             });
 }
 
@@ -9716,15 +9667,8 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                    static_cast<void>(dcdr);
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
+                static_cast<void>(dcdr);
+                return false;
             });
 }
 

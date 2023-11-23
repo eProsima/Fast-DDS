@@ -2187,6 +2187,7 @@ void TypeObjectUtils::map_ldefn_consistency(
 void TypeObjectUtils::direct_hash_type_identifier_consistency(
             const TypeIdentifier& type_id)
 {
+    static_cast<void>(type_id);
     // TODO(jlbueno): implement in PR#3996 (TypeObjectRegistry implementation) due to API changes.
 }
 
