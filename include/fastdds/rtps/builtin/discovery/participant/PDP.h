@@ -556,7 +556,7 @@ private:
             const string_255& type_name,
             const types::TypeIdentifier* type_id,
             const types::TypeObject* type_obj,
-            const xtypes::TypeInformation* type_info) const;
+            const xtypes::TypeInformationParameter* type_info) const;
 
     /**
      * Calculates the next announcement interval
