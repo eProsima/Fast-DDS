@@ -22,7 +22,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/xtypes/common.hpp>
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
-#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 
 #include <fastdds/xtypes/type_representation/BuiltinAnnotations.h>

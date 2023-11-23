@@ -25,7 +25,7 @@
 #include <unordered_set>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/dds/xtypes/type_representation/TypeObject.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastrtps/fastrtps_dll.h>
 
 namespace std {
