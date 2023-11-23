@@ -18,13 +18,17 @@
  */
 
 #include "AllocTestPublisher.h"
-#include "AllocTestCommon.h"
-#include <fastrtps/participant/Participant.h>
+
+#include <thread>
+
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/Domain.h>
+#include <fastrtps/participant/Participant.h>
+#include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "AllocTestCommon.h"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

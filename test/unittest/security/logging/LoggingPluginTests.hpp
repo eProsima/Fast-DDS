@@ -15,10 +15,13 @@
 #ifndef _UNITTEST_SECURITY_LOGGING_LOGGINGPLUGINTESTS_HPP_
 #define _UNITTEST_SECURITY_LOGGING_LOGGINGPLUGINTESTS_HPP_
 
-#include <security/logging/LogTopic.h>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <thread>
 
 #include <gtest/gtest.h>
+
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+
+#include <security/logging/LogTopic.h>
 
 class LoggingPluginTest : public ::testing::Test
 {

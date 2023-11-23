@@ -18,15 +18,16 @@
  */
 
 #include "MemoryTestPublisher.h"
-#include <fastdds/dds/log/Log.hpp>
-#include "fastrtps/log/Colors.h"
+
+#include <cmath>
+#include <cstdint>
+#include <fstream>
+#include <numeric>
+#include <thread>
 
 #include <dds/core/LengthUnlimited.hpp>
-
-#include <numeric>
-#include <cmath>
-#include <fstream>
-#include <inttypes.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/log/Colors.h>
 
 #ifndef _WIN32
 #define localtime_s(X, Y) localtime_r(Y, X)

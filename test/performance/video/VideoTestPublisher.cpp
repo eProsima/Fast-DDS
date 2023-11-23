@@ -18,12 +18,14 @@
  */
 
 #include "VideoTestPublisher.hpp"
-#include <fastdds/dds/log/Log.hpp>
-#include "fastrtps/log/Colors.h"
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <cstdint>
 #include <fstream>
-#include <inttypes.h>
+#include <thread>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/log/Colors.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #define TIME_LIMIT_US 10000
 

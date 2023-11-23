@@ -18,10 +18,12 @@
  */
 
 #include "MemoryTestSubscriber.h"
-#include <fastdds/dds/log/Log.hpp>
-#include "fastrtps/log/Colors.h"
+
+#include <thread>
 
 #include <dds/core/LengthUnlimited.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/log/Colors.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
