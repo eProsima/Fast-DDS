@@ -26,6 +26,8 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 
 #include "DiscoveryServerServer.h"
@@ -134,6 +136,38 @@ bool DiscoveryServer::init(
             eprosima::fastrtps::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
             connection_locator.kind = LOCATOR_KIND_UDPv6;
             eprosima::fastrtps::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
+            break;
+        }
+
+        case TransportKind::TCPv4:
+        {
+            auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+            // descriptor_tmp->interfaceWhiteList.push_back(ip_listening_address);
+            descriptor_tmp->add_listener_port(server_port);
+            descriptor = descriptor_tmp;
+
+            listening_locator.kind = LOCATOR_KIND_TCPv4;
+            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(listening_locator, server_port);
+            eprosima::fastrtps::rtps::IPLocator::setIPv4(listening_locator, ip_listening_address);
+            connection_locator.kind = LOCATOR_KIND_TCPv4;
+            eprosima::fastrtps::rtps::IPLocator::setIPv4(connection_locator, ip_connection_address);
+            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(connection_locator, connection_server_port);
+            break;
+        }
+
+        case TransportKind::TCPv6:
+        {
+            auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
+            // descriptor_tmp->interfaceWhiteList.push_back(ip_listening_address);
+            descriptor_tmp->add_listener_port(server_port);
+            descriptor = descriptor_tmp;
+
+            listening_locator.kind = LOCATOR_KIND_TCPv6;
+            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(listening_locator, server_port);
+            eprosima::fastrtps::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
+            connection_locator.kind = LOCATOR_KIND_TCPv6;
+            eprosima::fastrtps::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
+            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(connection_locator, connection_server_port);
             break;
         }
 

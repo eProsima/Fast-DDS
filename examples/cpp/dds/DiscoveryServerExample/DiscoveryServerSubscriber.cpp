@@ -29,6 +29,8 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -41,6 +43,8 @@ using namespace eprosima::fastdds::rtps;
 std::atomic<bool> HelloWorldSubscriber::stop_(false);
 std::mutex HelloWorldSubscriber::terminate_cv_mtx_;
 std::condition_variable HelloWorldSubscriber::terminate_cv_;
+
+const uint16_t sub_tcp_port = 21200;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
@@ -118,6 +122,34 @@ bool HelloWorldSubscriber::init(
 
             server_locator.kind = LOCATOR_KIND_UDPv6;
             eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
+            break;
+        }
+
+        case TransportKind::TCPv4:
+        {
+            auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+            // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
+            // One listening port must be added either in the pub or the sub
+            descriptor_tmp->add_listener_port(sub_tcp_port);
+            descriptor = descriptor_tmp;
+
+            server_locator.kind = LOCATOR_KIND_TCPv4;
+            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
+            eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
+            break;
+        }
+
+        case TransportKind::TCPv6:
+        {
+            auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
+            // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
+            // One listening port must be added either in the pub or the sub
+            descriptor_tmp->add_listener_port(sub_tcp_port);
+            descriptor = descriptor_tmp;
+
+            server_locator.kind = LOCATOR_KIND_TCPv6;
+            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
+            eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
             break;
         }
 
