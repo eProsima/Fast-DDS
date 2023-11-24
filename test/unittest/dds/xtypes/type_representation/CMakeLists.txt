@@ -30,4 +30,4 @@ target_include_directories(TypeObjectUtilsTests PRIVATE
 target_link_libraries(TypeObjectUtilsTests fastrtps
     GTest::gtest
     ${CMAKE_DL_LIBS})
-add_gtest(TypeObjectUtilsTests SOURCES ${TYPEOBJECTUTILSTESTS_SOURCE})
+gtest_discover_tests(TypeObjectUtilsTests SOURCES ${TYPEOBJECTUTILSTESTS_SOURCE})

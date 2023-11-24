@@ -25,7 +25,7 @@
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 
-#include <fastdds/xtypes/type_representation/BuiltinAnnotations.h>
+#include <fastdds/xtypes/type_representation/BuiltinAnnotations.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -573,36 +573,44 @@ TEST(TypeObjectUtilsTests, build_plain_map_l_type_defn_inconsistencies)
 TEST(TypeObjectUtilsTests, register_s_string)
 {
     StringSTypeDefn string_defn = TypeObjectUtils::build_string_s_type_defn(32);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_string_type_identifier(string_defn,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_s_string_type_identifier(string_defn,
             "small_string"));
     // Registering twice the same TypeIdentifier should not fail
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_string_type_identifier(string_defn,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_s_string_type_identifier(string_defn,
             "small_string"));
     // Registering another TypeIdentifier with the same name should return RETCODE_BAD_PARAMETER
     StringSTypeDefn another_string_defn = TypeObjectUtils::build_string_s_type_defn(100);
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_string_type_identifier(
-                another_string_defn, "small_string"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_string_type_identifier(
+                another_string_defn,
+                "small_string"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_string_type_identifier(
-                another_string_defn, type_name));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_string_type_identifier(
+                another_string_defn,
+                type_name));
 }
 
 // Register large string/wstring. This test does not check member consistency (only checked in Debug build mode).
 TEST(TypeObjectUtilsTests, register_l_string)
 {
     StringLTypeDefn string_defn = TypeObjectUtils::build_string_l_type_defn(1000);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_string_type_identifier(string_defn,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_l_string_type_identifier(string_defn,
             "large_string"));
     // Registering twice the same TypeIdentifier should not fail
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_string_type_identifier(string_defn,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_l_string_type_identifier(string_defn,
             "large_string"));
     // Registering another TypeIdentifier with the same name should return RETCODE_BAD_PARAMETER
     StringLTypeDefn another_string_defn = TypeObjectUtils::build_string_l_type_defn(2000);
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_string_type_identifier(
-                another_string_defn, "large_string"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_string_type_identifier(
+                another_string_defn,
+                "large_string"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_string_type_identifier(
-                another_string_defn, type_name));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_string_type_identifier(
+                another_string_defn,
+                type_name));
 }
 
 // Register small sequence. This test does not check member consistency (only checked in Debug build mode).
@@ -617,15 +625,19 @@ TEST(TypeObjectUtilsTests, register_s_sequence)
     primitive_identifier->_d(TK_INT16);
     PlainSequenceSElemDefn another_plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
         header, 255, primitive_identifier);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_sequence_type_identifier(plain_seq,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_s_sequence_type_identifier(plain_seq,
             "small_sequence"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_sequence_type_identifier(plain_seq,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_s_sequence_type_identifier(plain_seq,
             "small_sequence"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_sequence_type_identifier(
-                another_plain_seq, "small_sequence"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_sequence_type_identifier(
+                another_plain_seq,
+                "small_sequence"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_sequence_type_identifier(
-                another_plain_seq, type_name));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_sequence_type_identifier(
+                another_plain_seq,
+                type_name));
 }
 
 // Register large sequence. This test does not check member consistency (only checked in Debug build mode).
@@ -640,15 +652,19 @@ TEST(TypeObjectUtilsTests, register_l_sequence)
     primitive_identifier->_d(TK_INT16);
     PlainSequenceLElemDefn another_plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
         header, 256, primitive_identifier);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_sequence_type_identifier(plain_seq,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_l_sequence_type_identifier(plain_seq,
             "large_sequence"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_sequence_type_identifier(plain_seq,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_l_sequence_type_identifier(plain_seq,
             "large_sequence"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_sequence_type_identifier(
-                another_plain_seq, "large_sequence"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_sequence_type_identifier(
+                another_plain_seq,
+                "large_sequence"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_sequence_type_identifier(
-                another_plain_seq, type_name));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_sequence_type_identifier(
+                another_plain_seq,
+                type_name));
 }
 
 // Register small array. This test does not check member consistency (only checked in Debug build mode).
@@ -662,18 +678,22 @@ TEST(TypeObjectUtilsTests, register_s_array)
     TypeObjectUtils::add_array_dimension(array_bounds, 26);
     PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(header, array_bounds,
                     primitive_identifier);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_array_type_identifier(plain_array,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_s_array_type_identifier(plain_array,
             "small_array"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_array_type_identifier(plain_array,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_s_array_type_identifier(plain_array,
             "small_array"));
     TypeObjectUtils::add_array_dimension(array_bounds, 100);
     PlainArraySElemDefn another_plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(header, array_bounds,
                     primitive_identifier);
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_array_type_identifier(
-                another_plain_array, "small_array"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_array_type_identifier(
+                another_plain_array,
+                "small_array"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_array_type_identifier(
-                another_plain_array, type_name));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_array_type_identifier(
+                another_plain_array,
+                type_name));
 }
 
 // Register large array. This test does not check member consistency (only checked in Debug build mode).
@@ -687,18 +707,22 @@ TEST(TypeObjectUtilsTests, register_l_array)
     TypeObjectUtils::add_array_dimension(array_bounds, 260);
     PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(header, array_bounds,
                     primitive_identifier);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_array_type_identifier(plain_array,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_l_array_type_identifier(plain_array,
             "large_array"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_array_type_identifier(plain_array,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_l_array_type_identifier(plain_array,
             "large_array"));
     TypeObjectUtils::add_array_dimension(array_bounds, 1000);
     PlainArrayLElemDefn another_plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(header, array_bounds,
                     primitive_identifier);
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_array_type_identifier(
-                another_plain_array, "large_array"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_array_type_identifier(
+                another_plain_array,
+                "large_array"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_array_type_identifier(
-                another_plain_array, type_name));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_array_type_identifier(
+                another_plain_array,
+                type_name));
 }
 
 // Register small map. This test does not check member consistency (only checked in Debug build mode).
@@ -714,14 +738,14 @@ TEST(TypeObjectUtilsTests, register_s_map)
     key_identifier->_d(TK_INT8);
     PlainMapSTypeDefn another_plain_map = TypeObjectUtils::build_plain_map_s_type_defn(header, 10, primitive_identifier,
                     flags, key_identifier);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_map_type_identifier(plain_map,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_s_map_type_identifier(plain_map,
             "small_map"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_s_map_type_identifier(plain_map,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_s_map_type_identifier(plain_map,
             "small_map"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_map_type_identifier(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_map_type_identifier(
                 another_plain_map, "small_map"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_map_type_identifier(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_map_type_identifier(
                 another_plain_map, type_name));
 }
 
@@ -738,14 +762,14 @@ TEST(TypeObjectUtilsTests, register_l_map)
     key_identifier->_d(TK_INT8);
     PlainMapLTypeDefn other_plain_map = TypeObjectUtils::build_plain_map_l_type_defn(header, 500, primitive_identifier,
                     flags, key_identifier);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_map_type_identifier(plain_map,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_l_map_type_identifier(plain_map,
             "large_map"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_l_map_type_identifier(plain_map,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_l_map_type_identifier(plain_map,
             "large_map"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_map_type_identifier(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_map_type_identifier(
                 other_plain_map, "large_map"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_map_type_identifier(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_map_type_identifier(
                 other_plain_map, type_name));
 }
 
@@ -759,10 +783,11 @@ TEST(TypeObjectUtilsTests, build_applied_annotation_invalid_type_identifier)
     CompleteAnnotationHeader annotation_header = TypeObjectUtils::build_complete_annotation_header("custom_annotation");
     CompleteAnnotationType custom_annotation = TypeObjectUtils::build_complete_annotation_type(0, annotation_header,
                     CompleteAnnotationParameterSeq());
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(custom_annotation,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_annotation_type_object(custom_annotation,
             "custom"));
     TypeIdentifierPair custom_annotation_ids;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK,
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("custom",
             custom_annotation_ids));
     EXPECT_NO_THROW(AppliedAnnotation annotation = TypeObjectUtils::build_applied_annotation(
@@ -1089,13 +1114,13 @@ TEST(TypeObjectUtilsTests, build_common_discriminator_member_inconsistent_type_i
             InvalidArgumentError);
     // Enum: use enumeration registered by builtin annotation
     TypeIdentifierPair try_construct_enum_type_identifiers;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("TryConstructFailAction", try_construct_enum_type_identifiers));
     EXPECT_NO_THROW(CommonDiscriminatorMember member = TypeObjectUtils::build_common_discriminator_member(flags,
             try_construct_enum_type_identifiers.type_identifier1()));
     // Bitmask: use bitmask registered by builtin annotation
     TypeIdentifierPair data_representation_bitmask_type_identifiers;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("DataRepresentationMask", data_representation_bitmask_type_identifiers));
     EXPECT_THROW(CommonDiscriminatorMember member = TypeObjectUtils::build_common_discriminator_member(flags,
             data_representation_bitmask_type_identifiers.type_identifier1()), InvalidArgumentError);
@@ -1105,11 +1130,11 @@ TEST(TypeObjectUtilsTests, build_common_discriminator_member_inconsistent_type_i
     TypeObjectUtils::build_and_register_alias_type_object(int16_alias, "alias_int16");
     TypeObjectUtils::build_and_register_alias_type_object(float_alias, "alias_float");
     TypeIdentifierPair alias_type_identifiers;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("alias_float", alias_type_identifiers));
     EXPECT_THROW(CommonDiscriminatorMember member = TypeObjectUtils::build_common_discriminator_member(flags,
             alias_type_identifiers.type_identifier1()), InvalidArgumentError);
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("alias_int16", alias_type_identifiers));
     EXPECT_NO_THROW(CommonDiscriminatorMember member = TypeObjectUtils::build_common_discriminator_member(flags,
             alias_type_identifiers.type_identifier1()));
@@ -1333,14 +1358,14 @@ TEST(TypeObjectUtilsTests, build_complete_annotation_parameter_inconsistent_data
     common = TypeObjectUtils::build_common_annotation_parameter(0, type_id);
     check_annotation_parameter_consistency(common, ann_param_seq, expected_results);
     TypeIdentifierPair try_construct_enum_type_identifiers;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("TryConstructFailAction", try_construct_enum_type_identifiers));
     common = TypeObjectUtils::build_common_annotation_parameter(0,
                     try_construct_enum_type_identifiers.type_identifier1());
     expected_results[15] = true;
     check_annotation_parameter_consistency(common, ann_param_seq, expected_results);
     TypeIdentifierPair data_representation_bitmask_type_identifiers;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("DataRepresentationMask", data_representation_bitmask_type_identifiers));
     common = TypeObjectUtils::build_common_annotation_parameter(0,
                     data_representation_bitmask_type_identifiers.type_identifier1());
@@ -1648,7 +1673,7 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element), InvalidArgumentError);
     TypeIdentifierPair try_construct_enum_type_identifiers;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("TryConstructFailAction", try_construct_enum_type_identifiers));
     common_key = TypeObjectUtils::build_common_collection_element(flags,
                     try_construct_enum_type_identifiers.type_identifier1());
@@ -1656,7 +1681,7 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element), InvalidArgumentError);
     TypeIdentifierPair data_representation_bitmask_type_identifiers;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("DataRepresentationMask", data_representation_bitmask_type_identifiers));
     common_key = TypeObjectUtils::build_common_collection_element(flags,
                     data_representation_bitmask_type_identifiers.type_identifier1());
@@ -1668,14 +1693,14 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     TypeObjectUtils::build_and_register_alias_type_object(int16_alias, "alias_int16");
     TypeObjectUtils::build_and_register_alias_type_object(float_alias, "alias_float");
     TypeIdentifierPair alias_type_identifiers;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("alias_float", alias_type_identifiers));
     common_key = TypeObjectUtils::build_common_collection_element(flags,
                     alias_type_identifiers.type_identifier1());
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element), InvalidArgumentError);
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
                     get_type_identifiers("alias_int16", alias_type_identifiers));
     common_key = TypeObjectUtils::build_common_collection_element(flags,
                     alias_type_identifiers.type_identifier1());
@@ -1902,18 +1927,22 @@ TEST(TypeObjectUtilsTests, register_alias_type_object)
         eprosima::fastcdr::optional<AppliedAnnotationSeq>(), "type_name");
     CompleteAliasHeader empty_header = TypeObjectUtils::build_complete_alias_header(empty_type_detail);
     CompleteAliasType alias = TypeObjectUtils::build_complete_alias_type(0, empty_header, body);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_alias_type_object(alias, "alias"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_alias_type_object(alias, "alias"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_alias_type_object(alias, "alias"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_alias_type_object(alias, "alias"));
     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
         eprosima::fastcdr::optional<AppliedAnnotationSeq>(),
         "alias_name");
     CompleteAliasHeader header = TypeObjectUtils::build_complete_alias_header(detail);
     CompleteAliasType other_alias = TypeObjectUtils::build_complete_alias_type(0, header, body);
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_alias_type_object(other_alias,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_alias_type_object(other_alias,
             "alias"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_alias_type_object(other_alias,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_alias_type_object(other_alias,
             type_name));
 }
 
@@ -1923,17 +1952,17 @@ TEST(TypeObjectUtilsTests, register_annotation_type_object)
     CompleteAnnotationHeader header = TypeObjectUtils::build_complete_annotation_header("annotation_name");
     CompleteAnnotationType annotation = TypeObjectUtils::build_complete_annotation_type(0, header,
                     CompleteAnnotationParameterSeq());
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(annotation,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(annotation,
             "annotation"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(annotation,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(annotation,
             "annotation"));
     CompleteAnnotationHeader other_header = TypeObjectUtils::build_complete_annotation_header("other_annotation_name");
     CompleteAnnotationType other_annotation = TypeObjectUtils::build_complete_annotation_type(0, other_header,
                     CompleteAnnotationParameterSeq());
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_annotation_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_annotation_type_object(
                 other_annotation, "annotation"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_annotation_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_annotation_type_object(
                 other_annotation, type_name));
 }
 
@@ -1947,17 +1976,17 @@ TEST(TypeObjectUtilsTests, register_structure_type_object)
     CompleteStructHeader header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), empty_type_detail);
     CompleteStructType structure = TypeObjectUtils::build_complete_struct_type(flags, header,
                     CompleteStructMemberSeq());
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_struct_type_object(structure,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_struct_type_object(structure,
             "structure"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_struct_type_object(structure,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_struct_type_object(structure,
             "structure"));
     StructTypeFlag other_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::FINAL, false, false);
     CompleteStructType other_structure = TypeObjectUtils::build_complete_struct_type(other_flags,
                     header, CompleteStructMemberSeq());
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_struct_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_struct_type_object(
                 other_structure, "structure"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_struct_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_struct_type_object(
                 other_structure, type_name));
 }
 
@@ -1992,15 +2021,17 @@ TEST(TypeObjectUtilsTests, register_union_type_object)
     CompleteUnionHeader header = TypeObjectUtils::build_complete_union_header(empty_type_detail);
     CompleteUnionType union_type = TypeObjectUtils::build_complete_union_type(flags, header,
                     discriminator, member_seq);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_union_type_object(union_type, "union"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_union_type_object(union_type, "union"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_union_type_object(union_type, "union"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_union_type_object(union_type, "union"));
     UnionTypeFlag other_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::MUTABLE, false, false);
     CompleteUnionType other_union_type = TypeObjectUtils::build_complete_union_type(other_flags, header,
                     discriminator, member_seq);
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_union_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_union_type_object(
                 other_union_type, "union"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_union_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_union_type_object(
                 other_union_type, type_name));
 }
 
@@ -2019,18 +2050,20 @@ TEST(TypeObjectUtilsTests, register_bitset_type_object)
         eprosima::fastcdr::optional<AppliedAnnotationSeq>(), "type_name");
     CompleteBitsetHeader header = TypeObjectUtils::build_complete_bitset_header(empty_type_detail);
     CompleteBitsetType bitset = TypeObjectUtils::build_complete_bitset_type(0, header, bitfield_seq);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitset_type_object(bitset, "bitset"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitset_type_object(bitset, "bitset"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_bitset_type_object(bitset, "bitset"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_bitset_type_object(bitset, "bitset"));
     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
         eprosima::fastcdr::optional<AppliedAnnotationSeq>(),
         "bitset");
     CompleteBitsetHeader other_header = TypeObjectUtils::build_complete_bitset_header(detail);
     CompleteBitsetType other_bitset = TypeObjectUtils::build_complete_bitset_type(0, other_header, bitfield_seq);
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_bitset_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_bitset_type_object(
                 other_bitset, "bitset"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_bitset_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_bitset_type_object(
                 other_bitset, type_name));
 }
 
@@ -2047,18 +2080,20 @@ TEST(TypeObjectUtilsTests, register_sequence_type_object)
     CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element,
                     CompleteElementDetail());
     CompleteSequenceType sequence = TypeObjectUtils::build_complete_sequence_type(0, header, element);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_sequence_type_object(sequence, "sequence"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_sequence_type_object(sequence, "sequence"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_sequence_type_object(sequence, "sequence"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_sequence_type_object(sequence, "sequence"));
     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
         eprosima::fastcdr::optional<AppliedAnnotationSeq>(),
         "sequence");
     CompleteCollectionHeader other_header = TypeObjectUtils::build_complete_collection_header(common_header, detail);
     CompleteSequenceType other_sequence = TypeObjectUtils::build_complete_sequence_type(0, other_header, element);
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_sequence_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_sequence_type_object(
                 other_sequence, "sequence"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_sequence_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_sequence_type_object(
                 other_sequence, type_name));
 }
 
@@ -2079,17 +2114,21 @@ TEST(TypeObjectUtilsTests, register_array_type_object)
     CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element,
                     CompleteElementDetail());
     CompleteArrayType array = TypeObjectUtils::build_complete_array_type(0, header, element);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_array_type_object(array, "array"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_array_type_object(array, "array"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_array_type_object(array, "array"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_array_type_object(array, "array"));
     type_id._d(TK_INT16);
     CommonCollectionElement other_common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
     CompleteCollectionElement other_element = TypeObjectUtils::build_complete_collection_element(other_common_element,
                     CompleteElementDetail());
     CompleteArrayType other_array = TypeObjectUtils::build_complete_array_type(0, header, other_element);
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_array_type_object(other_array,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_array_type_object(other_array,
             "array"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_array_type_object(other_array,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_array_type_object(other_array,
             type_name));
 }
 
@@ -2106,17 +2145,19 @@ TEST(TypeObjectUtilsTests, register_map_type_object)
     CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element,
                     CompleteElementDetail());
     CompleteMapType map = TypeObjectUtils::build_complete_map_type(0, header, element, element);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_map_type_object(map, "map"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_map_type_object(map, "map"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_map_type_object(map, "map"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_map_type_object(map, "map"));
     type_id._d(TK_INT32);
     CommonCollectionElement key_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
     CompleteCollectionElement key = TypeObjectUtils::build_complete_collection_element(key_element,
                     CompleteElementDetail());
     CompleteMapType other_map = TypeObjectUtils::build_complete_map_type(0, header, key, element);
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_map_type_object(other_map,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_map_type_object(other_map,
             "map"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_map_type_object(other_map,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_map_type_object(other_map,
             type_name));
 }
 
@@ -2138,9 +2179,11 @@ TEST(TypeObjectUtilsTests, register_enumerated_type_object)
     CompleteEnumeratedLiteralSeq literal_seq;
     TypeObjectUtils::add_complete_enumerated_literal(literal_seq, literal);
     CompleteEnumeratedType enumeration = TypeObjectUtils::build_complete_enumerated_type(0, header, literal_seq);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_enumerated_type_object(enumeration,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_enumerated_type_object(enumeration,
             "enum"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_enumerated_type_object(enumeration,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_enumerated_type_object(enumeration,
             "enum"));
     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
@@ -2149,10 +2192,12 @@ TEST(TypeObjectUtilsTests, register_enumerated_type_object)
     CompleteEnumeratedHeader other_header = TypeObjectUtils::build_complete_enumerated_header(common_header, detail);
     CompleteEnumeratedType other_enumeration = TypeObjectUtils::build_complete_enumerated_type(0, other_header,
                     literal_seq);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_enumerated_type_object(other_enumeration,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_enumerated_type_object(other_enumeration,
             "enum"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_enumerated_type_object(other_enumeration,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_enumerated_type_object(other_enumeration,
             type_name));
 }
 
@@ -2171,8 +2216,10 @@ TEST(TypeObjectUtilsTests, register_bitmask_type_object)
     CompleteBitflagSeq bitflag_seq;
     TypeObjectUtils::add_complete_bitflag(bitflag_seq, bitflag);
     CompleteBitmaskType bitmask = TypeObjectUtils::build_complete_bitmask_type(0, header, bitflag_seq);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitmask_type_object(bitmask, "bitmask"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitmask_type_object(bitmask, "bitmask"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_bitmask_type_object(bitmask, "bitmask"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+            TypeObjectUtils::build_and_register_bitmask_type_object(bitmask, "bitmask"));
     CommonBitflag common = TypeObjectUtils::build_common_bitflag(1, 0);
     CompleteMemberDetail other_member_detail = TypeObjectUtils::build_complete_member_detail("other_member_name",
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
@@ -2180,10 +2227,10 @@ TEST(TypeObjectUtilsTests, register_bitmask_type_object)
     CompleteBitflag other_bitflag = TypeObjectUtils::build_complete_bitflag(common, other_member_detail);
     TypeObjectUtils::add_complete_bitflag(bitflag_seq, other_bitflag);
     CompleteBitmaskType other_bitmask = TypeObjectUtils::build_complete_bitmask_type(0, header, bitflag_seq);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
             "bitmask"));
     std::string type_name;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_bitmask_type_object(other_bitmask,
             type_name));
 }
 
@@ -2227,22 +2274,22 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_seq)
                     CompleteAnnotationParameterSeq());
     CompleteAnnotationType third_custom_annotation = TypeObjectUtils::build_complete_annotation_type(0, third_ann,
                     CompleteAnnotationParameterSeq());
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
                 first_custom_annotation, "first_custom"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
                 second_custom_annotation, "second_custom"));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
                 third_custom_annotation, "third_custom"));
     TypeIdentifierPair first_custom_annotation_ids;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK,
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("first_custom",
             first_custom_annotation_ids));
     TypeIdentifierPair second_custom_annotation_ids;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK,
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("second_custom",
             second_custom_annotation_ids));
     TypeIdentifierPair third_custom_annotation_ids;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK,
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("third_custom",
             third_custom_annotation_ids));
     AppliedAnnotation first_annotation = TypeObjectUtils::build_applied_annotation(
