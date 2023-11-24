@@ -305,7 +305,8 @@ uint32_t WriterProxyData::get_serialized_size(
     if (m_type_information && m_type_information->assigned())
     {
         ret_val +=
-                fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::cdr_serialized_size(*m_type_information);
+                fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::cdr_serialized_size(
+            *m_type_information);
     }
 
     if (m_properties.size() > 0)
@@ -607,7 +608,8 @@ bool WriterProxyData::writeToCDRMessage(
 
     if (m_type_information && m_type_information->assigned())
     {
-        if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_message(*m_type_information, msg))
+        if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_message(*
+                m_type_information, msg))
         {
             return false;
         }
@@ -924,7 +926,8 @@ bool WriterProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_TYPE_INFORMATION:
                     {
-                        if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::read_from_cdr_message(
+                        if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::
+                                read_from_cdr_message(
                                     type_information(), msg, plength))
                         {
                             return false;
