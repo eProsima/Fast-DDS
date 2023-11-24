@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "TestRegression3361.h"
+#include "TestRegression3361.hpp"
 
 #include "TestIncludeRegression3361PubSubTypes.h"
 

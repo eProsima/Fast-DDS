@@ -223,10 +223,6 @@ bool StructTypePubSubType::getKey(
 
 
 
-
-
-
-
 ContentFilterTestTypePubSubType::ContentFilterTestTypePubSubType()
 {
     setName("ContentFilterTestType");
@@ -415,3 +411,6 @@ bool ContentFilterTestTypePubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "ContentFilterTestTypeCdrAux.ipp"

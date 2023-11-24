@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_CALCULATORCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_CALCULATORCDRAUX_HPP_
 
-#include "Calculator.h"
+#include "Calculator.hpp"
 
 constexpr uint32_t ReplyType_max_cdr_typesize {16UL};
 constexpr uint32_t ReplyType_max_key_cdr_typesize {0UL};

@@ -219,3 +219,6 @@ bool HelloMsgPubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "deadlinepayloadCdrAux.ipp"

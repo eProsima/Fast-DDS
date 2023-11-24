@@ -225,12 +225,6 @@ bool NewAliasesPubSubType::getKey(
 
 
 
-
-
-
-
-
-
 namespace bitmodule {
 
 
@@ -612,8 +606,7 @@ namespace bitmodule {
         return true;
     }
 
-
-} //End of namespace bitmodule
+} // namespace bitmodule
 
 
 
@@ -805,3 +798,6 @@ bool StructTestPubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "new_features_4_2CdrAux.ipp"

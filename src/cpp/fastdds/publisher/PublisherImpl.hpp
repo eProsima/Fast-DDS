@@ -35,8 +35,6 @@
 #include <mutex>
 #include <map>
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

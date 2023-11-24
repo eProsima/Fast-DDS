@@ -230,16 +230,10 @@ eProsima_user_DllExport const TypeObject* GetCompleteArrayArrayStructObject();
 
 
 
-
-
 eProsima_user_DllExport const TypeIdentifier* GetSequenceStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetSequenceStructObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalSequenceStructObject();
 eProsima_user_DllExport const TypeObject* GetCompleteSequenceStructObject();
-
-
-
-
 
 
 
@@ -256,7 +250,6 @@ eProsima_user_DllExport const TypeIdentifier* GetMapStructIdentifier(bool comple
 eProsima_user_DllExport const TypeObject* GetMapStructObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalMapStructObject();
 eProsima_user_DllExport const TypeObject* GetCompleteMapStructObject();
-
 
 
 

@@ -219,3 +219,6 @@ bool TestRegression3361PubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "TestRegression3361CdrAux.ipp"

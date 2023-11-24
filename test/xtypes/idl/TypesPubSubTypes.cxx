@@ -3263,8 +3263,6 @@ bool ArraySizeStructPubSubType::getKey(
 
 
 
-
-
 SequenceStructPubSubType::SequenceStructPubSubType()
 {
     setName("SequenceStruct");
@@ -3452,8 +3450,6 @@ bool SequenceStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 
 
@@ -3647,8 +3643,6 @@ bool SequenceStructEqualPubSubType::getKey(
 
 
 
-
-
 SequenceBadStructPubSubType::SequenceBadStructPubSubType()
 {
     setName("SequenceBadStruct");
@@ -3836,8 +3830,6 @@ bool SequenceBadStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 
 
@@ -4031,10 +4023,6 @@ bool SequenceBoundsStructPubSubType::getKey(
 
 
 
-
-
-
-
 SequenceSequenceStructPubSubType::SequenceSequenceStructPubSubType()
 {
     setName("SequenceSequenceStruct");
@@ -4222,10 +4210,6 @@ bool SequenceSequenceStructPubSubType::getKey(
     }
     return true;
 }
-
-
-
-
 
 
 
@@ -5382,7 +5366,6 @@ bool MapBoundsStructPubSubType::getKey(
 
 
 
-
 MapMapStructPubSubType::MapMapStructPubSubType()
 {
     setName("MapMapStruct");
@@ -5576,7 +5559,6 @@ bool MapMapStructPubSubType::getKey(
 
 
 
-
 MapMapBoundsStructPubSubType::MapMapBoundsStructPubSubType()
 {
     setName("MapMapBoundsStruct");
@@ -5764,16 +5746,6 @@ bool MapMapBoundsStructPubSubType::getKey(
     }
     return true;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -6925,3 +6897,6 @@ bool SimplBadDiscUnionStructPubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "TypesCdrAux.ipp"

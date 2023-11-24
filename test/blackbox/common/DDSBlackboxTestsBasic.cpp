@@ -46,7 +46,7 @@
 #include "../api/dds-pim/PubSubReader.hpp"
 #include "../api/dds-pim/PubSubWriter.hpp"
 #include "../api/dds-pim/PubSubWriterReader.hpp"
-#include "../types/FixedSized.h"
+#include "../types/FixedSized.hpp"
 #include "../types/FixedSizedPubSubTypes.h"
 #include "../types/HelloWorldPubSubTypes.h"
 

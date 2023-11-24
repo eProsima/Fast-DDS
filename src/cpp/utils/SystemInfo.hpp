@@ -36,7 +36,7 @@
 
 namespace eprosima {
 
-using ReturnCode_t = fastrtps::types::ReturnCode_t;
+using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 #if defined(_WIN32) || defined(__unix__)
 using FileWatchHandle = std::unique_ptr<filewatch::FileWatch<std::string>>;
 #else

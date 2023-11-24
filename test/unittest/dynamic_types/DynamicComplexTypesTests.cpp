@@ -31,7 +31,7 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
-#include "idl/Test.h"
+#include "idl/Test.hpp"
 #include "idl/TestPubSubTypes.h"
 #include "idl/TestTypeObject.h"
 

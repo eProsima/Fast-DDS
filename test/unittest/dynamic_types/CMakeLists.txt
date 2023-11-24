@@ -72,8 +72,6 @@ endif()
 
 set(DYNAMIC_TYPES_TEST_SOURCE
     DynamicTypesTests.cpp
-    idl/Basic.cxx
-    idl/Basicv1.cxx
     idl/BasicPubSubTypes.cxx
     idl/BasicTypeObject.cxx
     ${DYNAMIC_TYPES_SOURCE}
@@ -92,8 +90,6 @@ set(DYNAMIC_TYPES_TEST_SOURCE
 
 set(DYNAMIC_COMPLEX_TYPES_TEST_SOURCE
     DynamicComplexTypesTests.cpp
-    idl/Test.cxx
-    idl/Testv1.cxx
     idl/TestPubSubTypes.cxx
     idl/TestTypeObject.cxx
     ${DYNAMIC_TYPES_SOURCE}
@@ -101,8 +97,6 @@ set(DYNAMIC_COMPLEX_TYPES_TEST_SOURCE
 
 set(DYNAMIC_TYPES_4_2_TEST_SOURCE
     DynamicTypes_4_2_Tests.cpp
-    idl/new_features_4_2.cxx
-    idl/new_features_4_2v1.cxx
     idl/new_features_4_2PubSubTypes.cxx
     idl/new_features_4_2TypeObject.cxx
     ${DYNAMIC_TYPES_SOURCE}

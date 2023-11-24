@@ -20,7 +20,7 @@
 #include <fastdds/dds/publisher/DataWriter.hpp>
 
 #include <statistics/fastdds/domain/DomainParticipantStatisticsListener.hpp>
-#include <statistics/types/types.h>
+#include <statistics/types/types.hpp>
 
 namespace eprosima {
 namespace fastdds {

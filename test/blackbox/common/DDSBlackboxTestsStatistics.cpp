@@ -51,11 +51,10 @@
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
-#include <fastrtps/types/TypesBase.h>
 
-#include "../types/HelloWorld.h"
+#include "../types/HelloWorld.hpp"
 #include "../types/HelloWorldPubSubTypes.h"
-#include "../types/statistics/types.h"
+#include "../types/statistics/types.hpp"
 #include "../types/statistics/typesPubSubTypes.h"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
@@ -78,7 +77,7 @@ static DataReader* enable_statistics(
 {
     auto qos = statistics::dds::STATISTICS_DATAWRITER_QOS;
     qos.history().depth = 10;
-    EXPECT_EQ(RETCODE_OK, participant->enable_statistics_datawriter(
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, participant->enable_statistics_datawriter(
                 topic_name, qos));
 
     auto topic_desc = participant->lookup_topicdescription(topic_name);
@@ -93,8 +92,8 @@ static void disable_statistics(
         DataReader* reader,
         const std::string& topic_name)
 {
-    EXPECT_EQ(RETCODE_OK, subscriber->delete_datareader(reader));
-    EXPECT_EQ(RETCODE_OK, participant->disable_statistics_datawriter(topic_name));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, subscriber->delete_datareader(reader));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, participant->disable_statistics_datawriter(topic_name));
 }
 
 static void wait_statistics(
@@ -119,7 +118,7 @@ static void wait_statistics(
         LoanableSequence<GenericType> data_seq;
         SampleInfoSeq info_seq;
 
-        if (RETCODE_OK == reader->take(data_seq, info_seq))
+        if (eprosima::fastdds::dds::RETCODE_OK == reader->take(data_seq, info_seq))
         {
             total_samples += info_seq.length();
             reader->return_loan(data_seq, info_seq);
@@ -225,7 +224,7 @@ void test_discovery_topic_physical_data(
     ASSERT_NE(nullptr, statistics_p1);
     Publisher* publisher_p1 = p1->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(nullptr, publisher_p1);
-    EXPECT_EQ(RETCODE_OK,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             statistics_p1->enable_statistics_datawriter(statistics::DISCOVERY_TOPIC,
             statistics::dds::STATISTICS_DATAWRITER_QOS));
 
@@ -300,7 +299,7 @@ void test_discovery_topic_physical_data(
     /* Create waitset for the DataReader */
     WaitSet waitset;
     StatusCondition& condition = discovery_data_reader->get_statuscondition();
-    ASSERT_EQ(RETCODE_OK, condition.set_enabled_statuses(StatusMask::data_available()));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, condition.set_enabled_statuses(StatusMask::data_available()));
     ASSERT_EQ(false, condition.get_trigger_value());
     waitset.attach_condition(condition);
 
@@ -330,7 +329,7 @@ void test_discovery_topic_physical_data(
     LoanableSequence<statistics::DiscoveryTime> discovery_time_seq;
     SampleInfoSeq info_seq;
 
-    while (RETCODE_OK == discovery_data_reader->take(discovery_time_seq, info_seq))
+    while (eprosima::fastdds::dds::RETCODE_OK == discovery_data_reader->take(discovery_time_seq, info_seq))
     {
         for (LoanableSequence<statistics::DiscoveryTime>::size_type n = 0; n < info_seq.length(); n++)
         {
@@ -611,8 +610,8 @@ TEST(DDSStatistics, statistics_with_partition_on_user)
     auto user_pub_1 = p1->create_publisher(pub_qos);
 
     // We enable the participants
-    ASSERT_EQ(RETCODE_OK, p1->enable());
-    ASSERT_EQ(RETCODE_OK, p2->enable());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, p1->enable());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, p2->enable());
 
     auto statistics_p1 = statistics::dds::DomainParticipant::narrow(p1);
     auto statistics_p2 = statistics::dds::DomainParticipant::narrow(p2);

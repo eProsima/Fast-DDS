@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_DEADLINEPAYLOADCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_DEADLINEPAYLOADCDRAUX_HPP_
 
-#include "deadlinepayload.h"
+#include "deadlinepayload.hpp"
 
 constexpr uint32_t HelloMsg_max_cdr_typesize {269UL};
 constexpr uint32_t HelloMsg_max_key_cdr_typesize {2UL};

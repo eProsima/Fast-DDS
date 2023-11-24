@@ -30,8 +30,6 @@
 #include <memory>
 #include <mutex>
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 
 namespace fastrtps {

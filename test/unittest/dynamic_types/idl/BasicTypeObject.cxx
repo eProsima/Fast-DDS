@@ -24,7 +24,7 @@
 namespace { char dummy; }
 #endif
 
-#include "Basic.h"
+#include "Basic.hpp"
 #include "BasicTypeObject.h"
 #include <mutex>
 #include <utility>
@@ -4985,8 +4985,6 @@ const TypeObject* GetCompleteArrayArrayStructObject()
 
 
 
-
-
 const TypeIdentifier* GetSequenceStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SequenceStruct", complete);
@@ -5159,10 +5157,6 @@ const TypeObject* GetCompleteSequenceStructObject()
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", true);
 }
-
-
-
-
 
 
 
@@ -5515,7 +5509,6 @@ const TypeObject* GetCompleteMapStructObject()
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("MapStruct", true);
 }
-
 
 
 
