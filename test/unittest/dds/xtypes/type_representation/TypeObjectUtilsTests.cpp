@@ -128,7 +128,7 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_s_elem_defn_inconsistencies)
     EXPECT_NO_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
                 fully_descriptive_header, 10, test_identifier));
     // Change discriminator to EK_COMPLETE
-    EquivalenceHash hash;
+    EquivalenceHash hash = {0};
     test_identifier->equivalence_hash(hash);
     // TypeIdentifier consistent with complete header
     EXPECT_NO_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
@@ -196,7 +196,7 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_l_elem_defn_inconsistencies)
     EXPECT_NO_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
                 fully_descriptive_header, 256, test_identifier));
     // Change discriminator to EK_COMPLETE
-    EquivalenceHash hash;
+    EquivalenceHash hash = {0};
     test_identifier->equivalence_hash(hash);
     // TypeIdentifier consistent with complete header
     EXPECT_NO_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
@@ -280,7 +280,7 @@ TEST(TypeObjectUtilsTests, build_plain_array_s_elem_defn_inconsistencies)
     EXPECT_NO_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
                 fully_descriptive_header, bound_seq, test_identifier));
     // Change discriminator to EK_COMPLETE
-    EquivalenceHash hash;
+    EquivalenceHash hash = {0};
     test_identifier->equivalence_hash(hash);
     // TypeIdentifier consistent with complete header
     EXPECT_NO_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
@@ -360,7 +360,7 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 fully_descriptive_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
     // Change discriminator to EK_COMPLETE
-    EquivalenceHash hash;
+    EquivalenceHash hash = {0};
     test_identifier->equivalence_hash(hash);
     // TypeIdentifier consistent with complete header
     EXPECT_NO_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
@@ -451,7 +451,7 @@ TEST(TypeObjectUtilsTests, build_plain_map_s_type_defn_inconsistencies)
     EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
                 fully_descriptive_header, 10, test_identifier, flags, key_identifier));
     // Change discriminator to EK_COMPLETE
-    EquivalenceHash hash;
+    EquivalenceHash hash = {0};
     test_identifier->equivalence_hash(hash);
     // TypeIdentifier consistent with complete header
     EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
@@ -545,7 +545,7 @@ TEST(TypeObjectUtilsTests, build_plain_map_l_type_defn_inconsistencies)
     EXPECT_NO_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
                 fully_descriptive_header, 1000, test_identifier, flags, key_identifier));
     // Change discriminator to EK_COMPLETE
-    EquivalenceHash hash;
+    EquivalenceHash hash = {0};
     test_identifier->equivalence_hash(hash);
     // TypeIdentifier consistent with complete header
     EXPECT_NO_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
