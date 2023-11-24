@@ -60,11 +60,6 @@
 #define BUILTINANNOTATIONS_DllAPI
 #endif // _WIN32
 
-namespace id {
-
-
-
-} // namespace id
 namespace autoid {
     /*!
      * @brief This class represents the enumeration AutoidKind defined by the user in the IDL file.
@@ -79,16 +74,9 @@ namespace autoid {
 
 
 } // namespace autoid
-namespace optional {
 
 
 
-} // namespace optional
-namespace position {
-
-
-
-} // namespace position
 namespace extensibility {
     /*!
      * @brief This class represents the enumeration ExtensibilityKind defined by the user in the IDL file.
@@ -104,56 +92,17 @@ namespace extensibility {
 
 
 } // namespace extensibility
-namespace final {
 
 
 
-} // namespace final
-namespace appendable {
 
 
 
-} // namespace appendable
-namespace mutable {
 
 
 
-} // namespace mutable
-namespace key {
 
 
-
-} // namespace key
-namespace must_understand {
-
-
-
-} // namespace must_understand
-namespace default_literal {
-
-
-
-} // namespace default_literal
-namespace unit {
-
-
-
-} // namespace unit
-namespace bit_bound {
-
-
-
-} // namespace bit_bound
-namespace external {
-
-
-
-} // namespace external
-namespace nested {
-
-
-
-} // namespace nested
 namespace verbatim {
     /*!
      * @brief This class represents the enumeration PlacementKind defined by the user in the IDL file.
@@ -172,36 +121,13 @@ namespace verbatim {
 
 
 } // namespace verbatim
-namespace service {
 
 
 
-} // namespace service
-namespace oneway {
 
 
 
-} // namespace oneway
-namespace ami {
 
-
-
-} // namespace ami
-namespace hashid {
-
-
-
-} // namespace hashid
-namespace default_nested {
-
-
-
-} // namespace default_nested
-namespace ignore_literal_names {
-
-
-
-} // namespace ignore_literal_names
 /*!
  * @brief This class represents the enumeration TryConstructFailAction defined by the user in the IDL file.
  * @ingroup BuiltinAnnotations
@@ -212,16 +138,8 @@ enum TryConstructFailAction : uint32_t
     USE_DEFAULT,
     TRIM
 };
-namespace try_construct {
 
 
-
-} // namespace try_construct
-namespace non_serialized {
-
-
-
-} // namespace non_serialized
 /*!
  * @brief This enumeration represents the DataRepresentationMask bitflags defined by the user in the IDL file.
  * @ingroup BuiltinAnnotations
@@ -233,16 +151,8 @@ enum DataRepresentationMaskBits : uint32_t
     XCDR2 = 0x01ull << 2
 };
 typedef uint32_t DataRepresentationMask;
-namespace data_representation {
 
 
-
-} // namespace data_representation
-namespace topic {
-
-
-
-} // namespace topic
 
 #endif // _FAST_DDS_GENERATED_BUILTINANNOTATIONS_HPP_
 
