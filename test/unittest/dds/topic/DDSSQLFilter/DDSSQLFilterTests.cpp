@@ -29,7 +29,7 @@
 #include "fastdds/dds/core/StackAllocatedSequence.hpp"
 #include "fastdds/dds/log/Log.hpp"
 
-#include "data_types/ContentFilterTestType.h"
+#include "data_types/ContentFilterTestType.hpp"
 #include "data_types/ContentFilterTestTypePubSubTypes.h"
 #include "data_types/ContentFilterTestTypeTypeObject.h"
 
@@ -120,7 +120,6 @@ static bool are_types_compatible(
 }
 
 using DDSFilterFactory = DDSSQLFilter::DDSFilterFactory;
-using ReturnCode_t = DDSFilterFactory::ReturnCode_t;
 
 static ReturnCode_t create_content_filter(
         DDSFilterFactory& factory,

@@ -1173,8 +1173,7 @@ namespace eprosima {
                     return true;
                 }
 
-
-            } //End of namespace detail
+            } // namespace detail
 
 
 
@@ -2699,14 +2698,12 @@ namespace eprosima {
 
 
 
+        } // namespace statistics
+
+    } // namespace fastdds
+
+} // namespace eprosima
 
 
-
-        } //End of namespace statistics
-
-
-    } //End of namespace fastdds
-
-
-} //End of namespace eprosima
-
+// Include auxiliary functions like for serializing/deserializing.
+#include "typesCdrAux.ipp"

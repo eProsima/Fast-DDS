@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_FILTERINGEXAMPLECDRAUX_HPP_
 #define _FAST_DDS_GENERATED_FILTERINGEXAMPLECDRAUX_HPP_
 
-#include "FilteringExample.h"
+#include "FilteringExample.hpp"
 
 constexpr uint32_t FilteringExample_max_cdr_typesize {8UL};
 constexpr uint32_t FilteringExample_max_key_cdr_typesize {0UL};

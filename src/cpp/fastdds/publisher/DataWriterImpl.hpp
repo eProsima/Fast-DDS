@@ -45,8 +45,6 @@
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

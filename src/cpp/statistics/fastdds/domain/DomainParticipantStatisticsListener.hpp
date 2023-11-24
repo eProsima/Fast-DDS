@@ -31,7 +31,7 @@
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 
-#include <statistics/types/types.h>
+#include <statistics/types/types.hpp>
 
 namespace eprosima {
 namespace fastdds {

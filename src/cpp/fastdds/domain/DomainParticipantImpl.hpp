@@ -44,8 +44,6 @@
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/topic/TopicProxyFactory.hpp>
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 namespace fastrtps {
 

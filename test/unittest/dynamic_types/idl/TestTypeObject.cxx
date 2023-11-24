@@ -24,7 +24,7 @@
 namespace { char dummy; }
 #endif
 
-#include "Test.h"
+#include "Test.hpp"
 #include "TestTypeObject.h"
 #include <mutex>
 #include <utility>
@@ -2343,8 +2343,6 @@ const TypeObject* GetCompleteMyMiniArrayObject()
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("MyMiniArray", true);
 }
-
-
 
 const TypeIdentifier* GetMySequenceLongIdentifier(bool complete)
 {

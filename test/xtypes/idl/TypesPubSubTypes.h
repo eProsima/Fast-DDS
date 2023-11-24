@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "Types.h"
+#include "Types.hpp"
 
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)
@@ -1571,8 +1571,6 @@ public:
 
 
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type SequenceStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -1660,8 +1658,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 
 
@@ -1755,8 +1751,6 @@ public:
 
 
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type SequenceBadStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -1844,8 +1838,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 
 
@@ -1939,10 +1931,6 @@ public:
 
 
 
-
-
-
-
 /*!
  * @brief This class represents the TopicDataType of the type SequenceSequenceStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2030,10 +2018,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
-
-
 
 
 
@@ -2590,7 +2574,6 @@ public:
 
 
 
-
 /*!
  * @brief This class represents the TopicDataType of the type MapMapStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2684,7 +2667,6 @@ public:
 
 
 
-
 /*!
  * @brief This class represents the TopicDataType of the type MapMapBoundsStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2772,16 +2754,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
-
-
-
-
-
-
-
-
 
 
 

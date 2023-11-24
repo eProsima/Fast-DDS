@@ -44,8 +44,6 @@
 
 #include <fastrtps/types/TypesBase.h>
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace dds {
 namespace sub {
 

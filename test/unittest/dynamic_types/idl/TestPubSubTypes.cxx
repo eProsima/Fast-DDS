@@ -237,8 +237,6 @@ bool BasicStructPubSubType::getKey(
 
 
 
-
-
 ComplexStructPubSubType::ComplexStructPubSubType()
 {
     setName("ComplexStruct");
@@ -426,10 +424,6 @@ bool ComplexStructPubSubType::getKey(
     }
     return true;
 }
-
-
-
-
 
 
 
@@ -815,3 +809,6 @@ bool KeyedStructPubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "TestCdrAux.ipp"

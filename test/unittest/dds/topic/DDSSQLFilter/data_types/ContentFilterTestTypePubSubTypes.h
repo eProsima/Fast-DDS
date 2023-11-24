@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "ContentFilterTestType.h"
+#include "ContentFilterTestType.hpp"
 
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)
@@ -127,10 +127,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
-
-
 
 
 

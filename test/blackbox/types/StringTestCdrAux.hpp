@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_STRINGTESTCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_STRINGTESTCDRAUX_HPP_
 
-#include "StringTest.h"
+#include "StringTest.hpp"
 
 constexpr uint32_t StringTest_max_cdr_typesize {10009UL};
 constexpr uint32_t StringTest_max_key_cdr_typesize {0UL};

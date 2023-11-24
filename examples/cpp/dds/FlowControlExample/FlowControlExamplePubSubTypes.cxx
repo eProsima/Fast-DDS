@@ -219,3 +219,6 @@ bool FlowControlExamplePubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "FlowControlExampleCdrAux.ipp"

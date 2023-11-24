@@ -32,8 +32,6 @@
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/TypesBase.h>
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

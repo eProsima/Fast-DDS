@@ -409,3 +409,6 @@ bool ReplyTypePubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "CalculatorCdrAux.ipp"

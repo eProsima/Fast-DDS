@@ -48,8 +48,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/transport/test_UDPv4Transport.h>
 #include <statistics/types/monitorservice_types.h>
-#include <statistics/types/types.h>
-#include <statistics/types/types.h>
+#include <statistics/types/types.hpp>
 #include <utils/SystemInfo.hpp>
 
 namespace eprosima {

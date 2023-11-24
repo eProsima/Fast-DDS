@@ -24,7 +24,7 @@
 namespace { char dummy; }
 #endif
 
-#include "WideEnum.h"
+#include "WideEnum.hpp"
 #include "WideEnumTypeObject.h"
 #include <mutex>
 #include <utility>

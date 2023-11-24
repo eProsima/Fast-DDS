@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_BASICCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_BASICCDRAUX_HPP_
 
-#include "Basic.h"
+#include "Basic.hpp"
 
 constexpr uint32_t ArraytStruct_max_cdr_typesize {36UL};
 constexpr uint32_t ArraytStruct_max_key_cdr_typesize {0UL};
@@ -275,15 +275,9 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceStruct& data);
-
-
-
-
 
 
 
@@ -298,7 +292,6 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStruct& data);
-
 
 
 
@@ -327,12 +320,6 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructStructStruct& data);
-
-
-
-
-
-
 
 
 

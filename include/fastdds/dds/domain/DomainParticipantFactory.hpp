@@ -27,9 +27,6 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastrtps/types/TypesBase.h>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 
