@@ -191,6 +191,3 @@ private:
 #endif // _FAST_DDS_GENERATED_FIXEDSIZED_HPP_
 
 
-
-
-#endif // FASTCDR_VERSION_MAJOR > 1

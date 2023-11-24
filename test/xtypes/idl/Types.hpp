@@ -7397,8 +7397,9 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_TYPES_HPP_
+<<<<<<< HEAD
+
+=======
+>>>>>>> 9a0f9b783 (Regenerated IDL files with types header-only fastddsgen version (#4042))
 
 
-
-
-#endif // FASTCDR_VERSION_MAJOR > 1

@@ -77,14 +77,22 @@ for idl_file in "${idl_files[@]}"; do
             od_entry_split=(${od_entry//\|/ })
             for od_entry_split_element in ${od_entry_split[@]:1}; do
                 od_arg="-d ${od_entry_split_element}"
+<<<<<<< HEAD
                 fastddsgen -replace -genapi $to_arg $cs_arg $od_arg "$file_from_gen"
+=======
+                fastddsgen -replace $to_arg $cs_arg $od_arg "$file_from_gen"
+>>>>>>> 9a0f9b783 (Regenerated IDL files with types header-only fastddsgen version (#4042))
             done
             break
         fi
     done
 
     if $not_processed ; then
+<<<<<<< HEAD
         fastddsgen -replace -genapi $to_arg $cs_arg "$file_from_gen"
+=======
+        fastddsgen -replace $to_arg $cs_arg "$file_from_gen"
+>>>>>>> 9a0f9b783 (Regenerated IDL files with types header-only fastddsgen version (#4042))
     fi
 
     if [[ $? != 0 ]]; then

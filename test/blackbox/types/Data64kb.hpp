@@ -203,6 +203,3 @@ private:
 #endif // _FAST_DDS_GENERATED_DATA64KB_HPP_
 
 
-
-
-#endif // FASTCDR_VERSION_MAJOR > 1

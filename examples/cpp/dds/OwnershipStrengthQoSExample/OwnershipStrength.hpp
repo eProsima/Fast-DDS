@@ -275,6 +275,3 @@ private:
 #endif // _FAST_DDS_GENERATED_OWNERSHIPSTRENGTH_HPP_
 
 
-
-
-#endif // FASTCDR_VERSION_MAJOR > 1

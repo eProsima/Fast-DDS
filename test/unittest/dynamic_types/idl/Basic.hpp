@@ -3668,6 +3668,9 @@ public:
     }
 
 
+        base_diff += 30;
+        m_bitset = std::bitset<30>(str_value.substr(str_value.length() - base_diff, last_post));
+    }
 
 
 private:
@@ -5691,6 +5694,3 @@ private:
 #endif // _FAST_DDS_GENERATED_BASIC_HPP_
 
 
-
-
-#endif // FASTCDR_VERSION_MAJOR > 1

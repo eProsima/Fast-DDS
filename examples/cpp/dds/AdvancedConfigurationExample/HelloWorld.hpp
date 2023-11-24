@@ -238,6 +238,3 @@ private:
 #endif // _FAST_DDS_GENERATED_HELLOWORLD_HPP_
 
 
-
-
-#endif // FASTCDR_VERSION_MAJOR > 1

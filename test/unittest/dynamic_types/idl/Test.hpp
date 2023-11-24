@@ -667,8 +667,6 @@ typedef std::array<MyAliasEnum3, 42> MA3;
 
 typedef std::array<int32_t, 2> MyMiniArray;
 
-
-
 typedef std::vector<int32_t> MySequenceLong;
 
 
@@ -2927,8 +2925,9 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_TEST_HPP_
+<<<<<<< HEAD
+
+=======
+>>>>>>> 9a0f9b783 (Regenerated IDL files with types header-only fastddsgen version (#4042))
 
 
-
-
-#endif // FASTCDR_VERSION_MAJOR > 1

@@ -201,6 +201,3 @@ private:
 #endif // _FAST_DDS_GENERATED_STRINGTEST_HPP_
 
 
-
-
-#endif // FASTCDR_VERSION_MAJOR > 1
