@@ -40,49 +40,6 @@ enum communication_type
     DATASHARING
 };
 
-class DDSMonitorServiceTest : public testing::TestWithParam<communication_type>
-
-{
-public:
-
-    void SetUp() override
-    {
-        LibrarySettingsAttributes library_settings;
-        switch (GetParam())
-        {
-            case INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
-                break;
-            case DATASHARING:
-                enable_datasharing = true;
-                break;
-            case TRANSPORT:
-            default:
-                break;
-        }
-    }
-
-    void TearDown() override
-    {
-        LibrarySettingsAttributes library_settings;
-        switch (GetParam())
-        {
-            case INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
-                break;
-            case DATASHARING:
-                enable_datasharing = false;
-                break;
-            case TRANSPORT:
-            default:
-                break;
-        }
-    }
-
-};
-
 using MonitorServiceType = eprosima::fastdds::statistics::MonitorServiceStatusDataPubSubType;
 using GUIDList = std::vector<GUID_t>;
 using StatisticsGUIDList = std::vector<statistics::detail::GUID_s>;
@@ -2292,27 +2249,3 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
 #endif //FASTDDS_STATISTICS
 }
 
-#ifdef INSTANTIATE_TEST_SUITE_P
-#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
-#else
-#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
-#endif // ifdef INSTANTIATE_TEST_SUITE_P
-
-GTEST_INSTANTIATE_TEST_MACRO(DDSMonitorServiceTest,
-        DDSMonitorServiceTest,
-        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
-        [](const testing::TestParamInfo<DDSMonitorServiceTest::ParamType>& info)
-        {
-            switch (info.param)
-            {
-                case INTRAPROCESS:
-                    return "Intraprocess";
-                    break;
-                case DATASHARING:
-                    return "Datasharing";
-                    break;
-                case TRANSPORT:
-                default:
-                    return "Transport";
-            }
-        });
