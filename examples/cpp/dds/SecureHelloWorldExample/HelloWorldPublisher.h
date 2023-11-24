@@ -29,7 +29,7 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 
-#include "HelloWorld.h"
+#include "HelloWorld.hpp"
 
 class HelloWorldPublisher
 {

@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_TESTCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_TESTCDRAUX_HPP_
 
-#include "Test.h"
+#include "Test.hpp"
 
 constexpr uint32_t KeyedStruct_max_cdr_typesize {344UL};
 constexpr uint32_t KeyedStruct_max_key_cdr_typesize {1UL};
@@ -78,15 +78,9 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ComplexStruct& data);
-
-
-
-
 
 
 

@@ -24,7 +24,7 @@
 namespace { char dummy; }
 #endif
 
-#include "TestIncludeRegression3361.h"
+#include "TestIncludeRegression3361.hpp"
 #include "TestIncludeRegression3361TypeObject.h"
 #include <mutex>
 #include <utility>

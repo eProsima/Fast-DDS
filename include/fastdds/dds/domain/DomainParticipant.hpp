@@ -42,8 +42,6 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/TypeIdentifier.h>
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace dds {
 namespace domain {
 class DomainParticipant;

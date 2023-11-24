@@ -28,7 +28,7 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
-#include "HelloWorld.h"
+#include "HelloWorld.hpp"
 
 class HelloWorldPublisher
 {

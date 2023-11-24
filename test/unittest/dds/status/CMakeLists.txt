@@ -112,8 +112,6 @@ if (FASTDDS_STATISTICS)
     set(statistics_sources
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesv1.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
         )
 

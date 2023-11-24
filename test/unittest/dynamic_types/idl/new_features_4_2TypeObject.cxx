@@ -24,7 +24,7 @@
 namespace { char dummy; }
 #endif
 
-#include "new_features_4_2.h"
+#include "new_features_4_2.hpp"
 #include "new_features_4_2TypeObject.h"
 #include <mutex>
 #include <utility>

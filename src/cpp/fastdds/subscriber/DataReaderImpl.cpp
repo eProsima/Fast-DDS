@@ -67,8 +67,6 @@ using eprosima::fastrtps::c_TimeInfinite;
 using namespace eprosima::fastrtps::rtps;
 using namespace std::chrono;
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {

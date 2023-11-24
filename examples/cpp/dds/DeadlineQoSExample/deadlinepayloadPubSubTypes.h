@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "deadlinepayload.h"
+#include "deadlinepayload.hpp"
 
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)

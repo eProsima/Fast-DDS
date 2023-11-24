@@ -25,8 +25,6 @@
 
 #define FASTDDS_SQLFILTER_NAME eprosima::fastdds::dds::sqlfilter_name
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {

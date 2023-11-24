@@ -29,15 +29,13 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "KeyedData1mb.h"
+#include "KeyedData1mb.hpp"
 
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)
 #error \
     Generated KeyedData1mb is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
-
-
 
 
 

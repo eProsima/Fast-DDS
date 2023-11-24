@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_TOPICCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_TOPICCDRAUX_HPP_
 
-#include "Topic.h"
+#include "Topic.hpp"
 
 constexpr uint32_t Topic_max_cdr_typesize {268UL};
 constexpr uint32_t Topic_max_key_cdr_typesize {0UL};

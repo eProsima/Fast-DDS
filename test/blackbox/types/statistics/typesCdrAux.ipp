@@ -592,7 +592,6 @@ void serialize_key(
 
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -1690,9 +1689,6 @@ eProsima_user_DllExport void deserialize(
                 return ret_value;
             });
 }
-
-
-
 
 
 } // namespace fastcdr

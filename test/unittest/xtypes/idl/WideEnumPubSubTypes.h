@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "WideEnum.h"
+#include "WideEnum.hpp"
 
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)
@@ -127,8 +127,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 
 
