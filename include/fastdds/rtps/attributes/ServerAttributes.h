@@ -159,11 +159,11 @@ std::basic_ostream<charT>& operator <<(
     return output;
 }
 
-// port used if the ros environment variable doesn't specifies one
+// port used if the ros environment variable doesn't specify one
 constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
 // default server base guidPrefix
 const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.49.4d.41";
-// port used by default for tcp transport 
+// port used by default for tcp transport
 constexpr uint16_t DEFAULT_TCP_SERVER_PORT = 42100;
 
 /* Environment variable to specify a semicolon-separated list of UDPv4 locators (ip:port) that define remote server

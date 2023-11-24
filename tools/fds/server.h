@@ -132,7 +132,7 @@ const option::Descriptor usage[] = {
       "\t8.  Launch a server with id 0 (first on ROS_DISCOVERY_SERVER) reading\n"
       "\t    specific profile_name configuration from XML file.\n\n"
       "\t    $ " FAST_SERVER_BINARY " -i 0 -x profile_name@config.xml\n\n"
-      
+
       "\t9.  Launch a server with id 0 (first on ROS_DISCOVERY_SERVER) listening\n"
       "\t    on localhost with default TCP port 42100.\n\n"
       "\t    $ " FAST_SERVER_BINARY " -i 0 -t 127.0.0.1\n\n"

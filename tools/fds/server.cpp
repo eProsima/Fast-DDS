@@ -491,12 +491,6 @@ int fastdds_discovery_server(
                     .push_back( LOCATOR_KIND_TCPv4 == type ? locator_tcp_4 : locator_tcp_6 );
 
             // Create user transport
-<<<<<<< Updated upstream
-            auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
-            tcp_descriptor->add_listener_port(locator_tcp_4.port);
-            participantQos.transport().user_transports.push_back(tcp_descriptor);
-             
-=======
             if (type == LOCATOR_KIND_TCPv4)
             {
                 auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
@@ -509,7 +503,6 @@ int fastdds_discovery_server(
                 tcp_descriptor->add_listener_port(locator_tcp_6.port);
                 participantQos.transport().user_transports.push_back(tcp_descriptor);
             }
->>>>>>> Stashed changes
 
             pO_tcp = pO_tcp->next();
             if (pO_tcp_port)
@@ -522,7 +515,7 @@ int fastdds_discovery_server(
                 if (!default_port)
                 {
                     std::cout << "Error: the number of specified tcp ports doesn't match the ip addresses" << std::endl
-                          << "       provided. TCP transports cannot share their port number." << std::endl;
+                              << "       provided. TCP transports cannot share their port number." << std::endl;
                     return 1;
                 }
                 // One default port has already been used

@@ -44,8 +44,6 @@ std::atomic<bool> HelloWorldSubscriber::stop_(false);
 std::mutex HelloWorldSubscriber::terminate_cv_mtx_;
 std::condition_variable HelloWorldSubscriber::terminate_cv_;
 
-const uint16_t sub_tcp_port = 21200;
-
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
     , subscriber_(nullptr)
@@ -130,7 +128,7 @@ bool HelloWorldSubscriber::init(
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
             // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
             // One listening port must be added either in the pub or the sub
-            descriptor_tmp->add_listener_port(sub_tcp_port);
+            descriptor_tmp->add_listener_port(0);
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_TCPv4;
@@ -144,7 +142,7 @@ bool HelloWorldSubscriber::init(
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
             // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
             // One listening port must be added either in the pub or the sub
-            descriptor_tmp->add_listener_port(sub_tcp_port);
+            descriptor_tmp->add_listener_port(0);
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_TCPv6;

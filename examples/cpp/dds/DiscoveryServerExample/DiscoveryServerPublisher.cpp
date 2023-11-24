@@ -41,8 +41,6 @@ using namespace eprosima::fastdds::rtps;
 
 std::atomic<bool> HelloWorldPublisher::stop_(false);
 
-const uint16_t pub_tcp_port = 21100;
-
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
     , publisher_(nullptr)
@@ -127,7 +125,7 @@ bool HelloWorldPublisher::init(
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
             // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
             // One listening port must be added either in the pub or the sub
-            // descriptor_tmp->add_listener_port(pub_tcp_port);
+            descriptor_tmp->add_listener_port(0);
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_TCPv4;
@@ -141,7 +139,7 @@ bool HelloWorldPublisher::init(
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
             // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
             // One listening port must be added either in the pub or the sub
-            // descriptor_tmp->add_listener_port(pub_tcp_port);
+            descriptor_tmp->add_listener_port(0);
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_TCPv6;
