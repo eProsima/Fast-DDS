@@ -28,7 +28,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
-#include "HelloWorld.h"
+#include "HelloWorld.hpp"
 
 #include <vector>
 

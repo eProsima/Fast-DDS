@@ -26,8 +26,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 StatusCondition::StatusCondition(
         Entity* parent)
     : Condition()

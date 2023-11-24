@@ -266,10 +266,6 @@ if (FASTDDS_STATISTICS)
         statistics/rtps/StatisticsBase.cpp
         statistics/rtps/writer/StatisticsWriterImpl.cpp
         statistics/types/typesPubSubTypes.cxx
-        statistics/types/types.cxx
-        statistics/types/typesv1.cxx
-        statistics/types/monitorservice_types.cxx
-        statistics/types/monitorservice_typesv1.cxx
         statistics/types/monitorservice_typesPubSubTypes.cxx
         )
 

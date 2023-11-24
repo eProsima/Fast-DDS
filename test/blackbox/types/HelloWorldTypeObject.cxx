@@ -26,7 +26,7 @@ char dummy;
 } // namespace
 #endif // ifdef _WIN32
 
-#include "HelloWorld.h"
+#include "HelloWorld.hpp"
 #include "HelloWorldTypeObject.h"
 #include <mutex>
 #include <utility>

@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "Test.h"
+#include "Test.hpp"
 
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)
@@ -134,8 +134,6 @@ typedef std::array<uint8_t, 500> MyOctetArray500;
 typedef std::array<BasicStruct, 5> BSAlias5;
 typedef std::array<MyAliasEnum3, 42> MA3;
 typedef std::array<int32_t, 2> MyMiniArray;
-
-
 typedef std::vector<int32_t> MySequenceLong;
 
 
@@ -227,10 +225,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
-
-
 
 
 

@@ -27,8 +27,6 @@
 
 #include <fastdds/core/condition/ConditionNotifier.hpp>
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {

@@ -62,7 +62,7 @@ template<typename DELEGATE>
 void TAnyDataWriter<DELEGATE>::qos(
         const qos::DataWriterQos& qos)
 {
-    ReturnCode_t code = this->delegate()->set_qos(qos);
+    eprosima::fastdds::dds::ReturnCode_t code = this->delegate()->set_qos(qos);
     if (code == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");

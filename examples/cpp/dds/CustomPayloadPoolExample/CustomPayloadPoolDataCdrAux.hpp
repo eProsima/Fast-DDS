@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_CUSTOMPAYLOADPOOLDATACDRAUX_HPP_
 #define _FAST_DDS_GENERATED_CUSTOMPAYLOADPOOLDATACDRAUX_HPP_
 
-#include "CustomPayloadPoolData.h"
+#include "CustomPayloadPoolData.hpp"
 
 constexpr uint32_t CustomPayloadPoolData_max_cdr_typesize {268UL};
 constexpr uint32_t CustomPayloadPoolData_max_key_cdr_typesize {0UL};

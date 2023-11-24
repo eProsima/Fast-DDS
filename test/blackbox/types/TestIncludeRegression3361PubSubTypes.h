@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "TestIncludeRegression3361.h"
+#include "TestIncludeRegression3361.hpp"
 
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)
@@ -40,7 +40,7 @@
 namespace TestModule
 {
     typedef std::string MACHINEID;
-}
+} // namespace TestModule
 
 #endif // _FAST_DDS_GENERATED_TESTINCLUDEREGRESSION3361_PUBSUBTYPES_H_
 

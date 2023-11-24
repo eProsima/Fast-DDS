@@ -24,7 +24,7 @@
 namespace { char dummy; }
 #endif
 
-#include "HelloWorld.h"
+#include "HelloWorld.hpp"
 #include "HelloWorldTypeObject.h"
 #include <mutex>
 #include <utility>

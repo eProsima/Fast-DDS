@@ -76,14 +76,14 @@ for idl_file in "${idl_files[@]}"; do
             od_entry_split=(${od_entry//\|/ })
             for od_entry_split_element in ${od_entry_split[@]:1}; do
                 od_arg="-d ${od_entry_split_element}"
-                fastddsgen -cdr both -replace $to_arg $cs_arg $od_arg "$file_from_gen"
+                fastddsgen -replace $to_arg $cs_arg $od_arg "$file_from_gen"
             done
             break
         fi
     done
 
     if $not_processed ; then
-        fastddsgen -cdr both -replace $to_arg $cs_arg "$file_from_gen"
+        fastddsgen -replace $to_arg $cs_arg "$file_from_gen"
     fi
 
     if [[ $? != 0 ]]; then

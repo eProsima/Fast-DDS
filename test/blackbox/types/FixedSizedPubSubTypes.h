@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "FixedSized.h"
+#include "FixedSized.hpp"
 
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)

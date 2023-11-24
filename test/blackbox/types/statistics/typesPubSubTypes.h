@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "types.h"
+#include "types.hpp"
 
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)
@@ -585,7 +585,7 @@ namespace eprosima
                     unsigned char* m_keyBuffer;
 
                 };
-            }
+            } // namespace detail
 
 
 
@@ -1309,11 +1309,9 @@ namespace eprosima
 
 
 
-
-
-        }
-    }
-}
+        } // namespace statistics
+    } // namespace fastdds
+} // namespace eprosima
 
 #endif // _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_TYPES_PUBSUBTYPES_H_
 

@@ -31,8 +31,6 @@ using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 
 
-
-
 Data1mbPubSubType::Data1mbPubSubType()
 {
     setName("Data1mb");
@@ -221,3 +219,6 @@ bool Data1mbPubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "Data1mbCdrAux.ipp"
