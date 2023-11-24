@@ -1543,49 +1543,49 @@ class TypeInformation;
 
 namespace xtypes {
 
-class TypeInformation : public Parameter_t, public QosPolicy
+class TypeInformationParameter : public Parameter_t, public QosPolicy
 {
 public:
 
-    RTPS_DllAPI TypeInformation()
+    RTPS_DllAPI TypeInformationParameter()
         : Parameter_t(PID_TYPE_INFORMATION, 0)
         , QosPolicy(false)
     {
     }
 
-    RTPS_DllAPI TypeInformation(
-            const TypeInformation& type)
+    RTPS_DllAPI TypeInformationParameter(
+            const TypeInformationParameter& type)
         : Parameter_t(type.Pid, type.length)
         , QosPolicy(type.m_sendAlways)
     {
     }
 
-    RTPS_DllAPI TypeInformation(
-            TypeInformation&& type)
+    RTPS_DllAPI TypeInformationParameter(
+            TypeInformationParameter&& type)
         : Parameter_t(type.Pid, type.length)
         , QosPolicy(type.m_sendAlways)
     {
     }
 
-    RTPS_DllAPI TypeInformation& operator =(
-            const TypeInformation&)
+    RTPS_DllAPI TypeInformationParameter& operator =(
+            const TypeInformationParameter&)
     {
         return *this;
     }
 
-    RTPS_DllAPI TypeInformation& operator =(
-            TypeInformation&&)
+    RTPS_DllAPI TypeInformationParameter& operator =(
+            TypeInformationParameter&&)
     {
         return *this;
     }
 
-    virtual RTPS_DllAPI ~TypeInformation() override
+    virtual RTPS_DllAPI ~TypeInformationParameter() override
     {
     }
 
     inline void clear() override
     {
-        TypeInformation reset = TypeInformation();
+        TypeInformationParameter reset = TypeInformationParameter();
         std::swap(*this, reset);
     }
 
@@ -1594,7 +1594,7 @@ public:
         return true;
     }
 
-    RTPS_DllAPI TypeInformation& operator =(
+    RTPS_DllAPI TypeInformationParameter& operator =(
             const types::TypeInformation&)
     {
         return *this;
