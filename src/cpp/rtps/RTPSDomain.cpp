@@ -25,6 +25,7 @@
 #include <regex>
 #include <string>
 #include <thread>
+#include <random> // TODO: use TCP autofill feature
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -35,6 +36,8 @@
 #include <rtps/transport/UDPv4Transport.h>
 #include <rtps/transport/UDPv6Transport.h>
 #include <rtps/transport/test_UDPv4Transport.h>
+#include <rtps/transport/TCPv4Transport.h>
+#include <rtps/transport/TCPv6Transport.h>
 
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -565,6 +568,30 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         {
             // extend builtin transports with the UDPv6 transport
             auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
+            descriptor->sendBufferSize = client_att.sendSocketBufferSize;
+            descriptor->receiveBufferSize = client_att.listenSocketBufferSize;
+            client_att.userTransports.push_back(std::move(descriptor));
+            break;
+        }
+        if (server.requires_transport<LOCATOR_KIND_TCPv4>())
+        {
+            // extend builtin transports with the TCPv4 transport
+            auto descriptor = std::make_shared<fastdds::rtps::TCPv4TransportDescriptor>();
+            // TODO: use TCP autofill feature
+            srand(time(0));
+            descriptor->add_listener_port(30000 + rand() % 10000);
+            descriptor->sendBufferSize = client_att.sendSocketBufferSize;
+            descriptor->receiveBufferSize = client_att.listenSocketBufferSize;
+            client_att.userTransports.push_back(std::move(descriptor));
+            break;
+        }
+        if (server.requires_transport<LOCATOR_KIND_TCPv6>())
+        {
+            // extend builtin transports with the TCPv6 transport
+            auto descriptor = std::make_shared<fastdds::rtps::TCPv6TransportDescriptor>();
+            // TODO: use TCP autofill feature
+            srand(time(0));
+            descriptor->add_listener_port(30000 + rand() % 10000);
             descriptor->sendBufferSize = client_att.sendSocketBufferSize;
             descriptor->receiveBufferSize = client_att.listenSocketBufferSize;
             client_att.userTransports.push_back(std::move(descriptor));
