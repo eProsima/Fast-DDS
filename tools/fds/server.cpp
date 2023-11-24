@@ -252,7 +252,7 @@ int fastdds_discovery_server(
     Locator locator6(LOCATOR_KIND_UDPv6, rtps::DEFAULT_ROS2_SERVER_PORT);
 
     // Retrieve first UDP port
-    option::Option* pO_port = options[PORT];
+    option::Option* pO_port = options[UDP_PORT];
     if (nullptr != pO_port)
     {
         // if (eprosima::fastdds::dds::check_udp_port(*pO_port, true) != option::ARG_OK)
@@ -389,6 +389,35 @@ int fastdds_discovery_server(
     // Add TCP default locators addresses
     Locator locator_tcp_4(4, rtps::DEFAULT_TCP_SERVER_PORT);
     Locator locator_tcp_6(8, rtps::DEFAULT_TCP_SERVER_PORT);
+    bool default_port = true;
+
+    // Retrieve first TCP port
+    option::Option* pO_tcp_port = options[TCP_PORT];
+    if (nullptr != pO_tcp_port)
+    {
+        std::stringstream is;
+        is << pO_tcp_port->arg;
+        uint16_t id;
+        default_port = false;
+
+        if (!(is >> id
+                && is.eof()
+                && IPLocator::setPhysicalPort(locator_tcp_4, id)
+                && IPLocator::setLogicalPort(locator_tcp_4, id)
+                && IPLocator::setPhysicalPort(locator_tcp_6, id)
+                && IPLocator::setLogicalPort(locator_tcp_6, id)))
+        {
+            std::cout << "Invalid listening locator port specified:" << id << std::endl;
+            return 1;
+        }
+    }
+    else
+    {
+        IPLocator::setPhysicalPort(locator_tcp_4, rtps::DEFAULT_TCP_SERVER_PORT);
+        IPLocator::setLogicalPort(locator_tcp_4, rtps::DEFAULT_TCP_SERVER_PORT);
+        IPLocator::setPhysicalPort(locator_tcp_6, rtps::DEFAULT_TCP_SERVER_PORT);
+        IPLocator::setLogicalPort(locator_tcp_6, rtps::DEFAULT_TCP_SERVER_PORT);
+    }
 
     if (nullptr != pO_tcp)
     {
@@ -439,11 +468,11 @@ int fastdds_discovery_server(
             }
 
             // Update TCP port
-            uint16_t id;
-            if (nullptr != pO_port)
+            if (nullptr != pO_tcp_port)
             {
                 std::stringstream is;
-                is << pO_port->arg;
+                is << pO_tcp_port->arg;
+                uint16_t id;
 
                 if (!(is >> id
                         && is.eof()
@@ -456,11 +485,6 @@ int fastdds_discovery_server(
                     return 1;
                 }
             }
-            else
-            {
-                std::cout << "Listening port must be specified for TCP address: " << address << std::endl;
-                return 1;
-            }
 
             // Add the locator
             participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList
@@ -469,7 +493,7 @@ int fastdds_discovery_server(
             // Create user transport
 <<<<<<< Updated upstream
             auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
-            tcp_descriptor->add_listener_port(id);
+            tcp_descriptor->add_listener_port(locator_tcp_4.port);
             participantQos.transport().user_transports.push_back(tcp_descriptor);
              
 =======
@@ -488,14 +512,21 @@ int fastdds_discovery_server(
 >>>>>>> Stashed changes
 
             pO_tcp = pO_tcp->next();
-            if (pO_port)
+            if (pO_tcp_port)
             {
-                pO_port = pO_port->next();
+                pO_tcp_port = pO_tcp_port->next();
+                default_port = false;
             }
             else
             {
-                std::cout << "Warning: the number of specified ports doesn't match the ip" << std::endl
-                          << "         addresses provided. Locators share its port number." << std::endl;
+                if (!default_port)
+                {
+                    std::cout << "Error: the number of specified tcp ports doesn't match the ip addresses" << std::endl
+                          << "       provided. TCP transports cannot share their port number." << std::endl;
+                    return 1;
+                }
+                // One default port has already been used
+                default_port = false;
             }
         }
     }
@@ -647,6 +678,36 @@ option::ArgStatus Arg::check_udp_port(
     {
         std::cout << "Option '" << option.name
                   << "' value should be an UDP port between 1025 and 65535." << std::endl;
+    }
+
+    return option::ARG_ILLEGAL;
+}
+
+option::ArgStatus Arg::check_tcp_port(
+        const option::Option& option,
+        bool msg)
+{
+    // The argument is required
+    if (nullptr != option.arg)
+    {
+        // It must be in an ephemeral port range
+        std::stringstream is;
+        is << option.arg;
+        int id;
+
+        if (is >> id
+                && is.eof()
+                && id > 1024
+                && id < 65536)
+        {
+            return option::ARG_OK;
+        }
+    }
+
+    if (msg)
+    {
+        std::cout << "Option '" << option.name
+                  << "' value should be an TCP port between 1025 and 65535." << std::endl;
     }
 
     return option::ARG_ILLEGAL;
