@@ -31,8 +31,6 @@ using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 
 
-
-
 AdvancedConfigurationPubSubType::AdvancedConfigurationPubSubType()
 {
     setName("AdvancedConfiguration");
@@ -221,3 +219,6 @@ bool AdvancedConfigurationPubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "AdvancedConfigurationCdrAux.ipp"

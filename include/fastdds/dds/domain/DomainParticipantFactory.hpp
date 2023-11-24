@@ -29,9 +29,6 @@
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/TypesBase.h>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 

@@ -227,7 +227,7 @@ public:
     {
         if (!writers_.empty())
         {
-            return (RETCODE_OK == publisher_->delete_datawriter(writers_.back()));
+            return (eprosima::fastdds::dds::RETCODE_OK == publisher_->delete_datawriter(writers_.back()));
         }
 
         return false;
@@ -237,7 +237,7 @@ public:
     {
         if (!readers_.empty())
         {
-            return (RETCODE_OK == subscriber_->delete_datareader(readers_.back()));
+            return (eprosima::fastdds::dds::RETCODE_OK == subscriber_->delete_datareader(readers_.back()));
         }
 
         return false;
@@ -285,8 +285,8 @@ public:
 
     void reset()
     {
-        ASSERT_EQ(RETCODE_OK, statistics_part_->delete_contained_entities());
-        ASSERT_EQ(RETCODE_OK,
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, statistics_part_->delete_contained_entities());
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
                 DomainParticipantFactory::get_instance()->delete_participant(statistics_part_));
         statistics_part_ = nullptr;
     }
@@ -604,7 +604,7 @@ protected:
 
         ReturnCode_t success = datareader->take_next_sample((void*)&data, &info);
 
-        if (RETCODE_OK == success)
+        if (eprosima::fastdds::dds::RETCODE_OK == success)
         {
             returnedValue = true;
 
@@ -676,7 +676,9 @@ struct ProxySampleValidator : public SampleValidator
                     RTPSParticipantAllocationAttributes att;
                     ParticipantProxyData pdata(att);
 
-                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata, data), RETCODE_OK);
+                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata,
+                            data),
+                            eprosima::fastdds::dds::RETCODE_OK);
 
                     auto part_names = participant->get_participant_names();
                     auto it_names =
@@ -687,14 +689,18 @@ struct ProxySampleValidator : public SampleValidator
                 {
                     ReaderProxyData rdata(4, 4);
 
-                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(rdata, data), RETCODE_OK);
+                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(rdata,
+                            data),
+                            eprosima::fastdds::dds::RETCODE_OK);
 
                 }
                 else if (guid.entityId.is_writer())
                 {
                     WriterProxyData wdata(4, 4);
 
-                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(wdata, data), RETCODE_OK);
+                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(wdata,
+                            data),
+                            eprosima::fastdds::dds::RETCODE_OK);
                 }
                 else
                 {
@@ -1127,10 +1133,10 @@ TEST(DDSMonitorServiceTest, monitor_service_enable_disable_api)
     MSP.setup();
 
     //! Assertions
-    ASSERT_EQ(RETCODE_NOT_ENABLED, MSP.disable_monitor_service());
-    ASSERT_EQ(RETCODE_OK, MSP.enable_monitor_service());
-    ASSERT_EQ(RETCODE_OK, MSP.disable_monitor_service());
-    ASSERT_EQ(RETCODE_NOT_ENABLED, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_NOT_ENABLED, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.enable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_NOT_ENABLED, MSP.disable_monitor_service());
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1151,13 +1157,13 @@ TEST(DDSMonitorServiceTest, monitor_service_property)
 
     //! Procedure
     MSP.setup(xml_file, participant_profile_names.first);
-    ASSERT_EQ(RETCODE_OK, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.disable_monitor_service());
 
     MSP.reset();
     MSP.setup(xml_file, participant_profile_names.second);
 
     //! Assertions
-    ASSERT_EQ(RETCODE_OK, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.disable_monitor_service());
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1187,7 +1193,7 @@ TEST(DDSMonitorServiceTest, monitor_service_environment_variable)
     MSP.setup();
 
     //! Assertions
-    ASSERT_EQ(RETCODE_OK, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.disable_monitor_service());
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1209,7 +1215,7 @@ TEST(DDSMonitorServiceTest, monitor_service_properties_cpp_api)
     MSP.setup(pqos);
 
     //! Assertions
-    ASSERT_EQ(RETCODE_OK, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.disable_monitor_service());
 #endif //FASTDDS_STATISTICS
 }
 

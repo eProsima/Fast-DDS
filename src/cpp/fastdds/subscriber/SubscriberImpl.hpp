@@ -31,8 +31,6 @@
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusQueryable.hpp>
 #include <fastrtps/types/TypesBase.h>
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

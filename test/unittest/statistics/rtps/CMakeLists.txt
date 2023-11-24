@@ -18,10 +18,6 @@ endif()
 
 set(STATISTICS_RTPS_TESTS_SOURCE
     RTPSStatisticsTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesv1.cxx
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesv1.cxx
     )
 
 add_executable(RTPSStatisticsTests ${STATISTICS_RTPS_TESTS_SOURCE})
@@ -124,8 +120,7 @@ set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesv1.cxx
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesv1.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
     ${TCPTransportInterface_SOURCE}
     )
 
@@ -168,7 +163,7 @@ target_link_libraries(MonitorServiceTests
     GTest::gtest
     GTest::gmock
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
-    
+
 gtest_discover_tests(MonitorServiceTests)
 
 if(QNX)

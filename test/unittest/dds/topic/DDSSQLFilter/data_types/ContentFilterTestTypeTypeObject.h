@@ -75,10 +75,6 @@ eProsima_user_DllExport const TypeObject* GetCompleteStructTypeObject();
 
 
 
-
-
-
-
 eProsima_user_DllExport const TypeIdentifier* GetContentFilterTestTypeIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetContentFilterTestTypeObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalContentFilterTestTypeObject();

@@ -219,3 +219,6 @@ bool StringTestPubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "StringTestCdrAux.ipp"

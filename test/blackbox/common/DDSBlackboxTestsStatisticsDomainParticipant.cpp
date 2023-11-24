@@ -23,7 +23,7 @@
 #include <fastrtps/types/TypesBase.h>
 #include <gtest/gtest.h>
 
-#include "../types/statistics/types.h"
+#include "../types/statistics/types.hpp"
 #include "../types/statistics/typesPubSubTypes.h"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"

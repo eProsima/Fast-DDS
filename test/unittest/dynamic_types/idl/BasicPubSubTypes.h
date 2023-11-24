@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "Basic.h"
+#include "Basic.hpp"
 
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)
@@ -2023,8 +2023,6 @@ public:
 
 
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type SequenceStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2112,10 +2110,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
-
-
 
 
 
@@ -2298,7 +2292,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
 
 
 
@@ -2663,12 +2656,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
-
-
-
-
 
 
 

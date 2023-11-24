@@ -27,8 +27,6 @@
 #include <fastrtps/types/TypesBase.h>
 #include <utils/collections/unordered_vector.hpp>
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {

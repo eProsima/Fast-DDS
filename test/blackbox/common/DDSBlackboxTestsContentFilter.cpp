@@ -34,7 +34,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
 struct ContentFilterInfoCounter
 {

@@ -24,7 +24,7 @@
 namespace { char dummy; }
 #endif
 
-#include "Types.h"
+#include "Types.hpp"
 #include "TypesTypeObject.h"
 #include <mutex>
 #include <utility>
@@ -4425,8 +4425,6 @@ const TypeObject* GetCompleteArraySizeStructObject()
 
 
 
-
-
 const TypeIdentifier* GetSequenceStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SequenceStruct", complete);
@@ -4599,8 +4597,6 @@ const TypeObject* GetCompleteSequenceStructObject()
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", true);
 }
-
-
 
 
 
@@ -4779,8 +4775,6 @@ const TypeObject* GetCompleteSequenceStructEqualObject()
 
 
 
-
-
 const TypeIdentifier* GetSequenceBadStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SequenceBadStruct", complete);
@@ -4953,8 +4947,6 @@ const TypeObject* GetCompleteSequenceBadStructObject()
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("SequenceBadStruct", true);
 }
-
-
 
 
 
@@ -5133,10 +5125,6 @@ const TypeObject* GetCompleteSequenceBoundsStructObject()
 
 
 
-
-
-
-
 const TypeIdentifier* GetSequenceSequenceStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SequenceSequenceStruct", complete);
@@ -5309,10 +5297,6 @@ const TypeObject* GetCompleteSequenceSequenceStructObject()
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("SequenceSequenceStruct", true);
 }
-
-
-
-
 
 
 
@@ -6379,7 +6363,6 @@ const TypeObject* GetCompleteMapBoundsStructObject()
 
 
 
-
 const TypeIdentifier* GetMapMapStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MapMapStruct", complete);
@@ -6552,7 +6535,6 @@ const TypeObject* GetCompleteMapMapStructObject()
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("MapMapStruct", true);
 }
-
 
 
 

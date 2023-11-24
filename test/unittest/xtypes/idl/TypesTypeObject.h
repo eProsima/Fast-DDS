@@ -190,14 +190,10 @@ eProsima_user_DllExport const TypeObject* GetCompleteArraySizeStructObject();
 
 
 
-
-
 eProsima_user_DllExport const TypeIdentifier* GetSequenceStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetSequenceStructObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalSequenceStructObject();
 eProsima_user_DllExport const TypeObject* GetCompleteSequenceStructObject();
-
-
 
 
 
@@ -208,14 +204,10 @@ eProsima_user_DllExport const TypeObject* GetCompleteSequenceStructEqualObject()
 
 
 
-
-
 eProsima_user_DllExport const TypeIdentifier* GetSequenceBadStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetSequenceBadStructObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalSequenceBadStructObject();
 eProsima_user_DllExport const TypeObject* GetCompleteSequenceBadStructObject();
-
-
 
 
 
@@ -226,18 +218,10 @@ eProsima_user_DllExport const TypeObject* GetCompleteSequenceBoundsStructObject(
 
 
 
-
-
-
-
 eProsima_user_DllExport const TypeIdentifier* GetSequenceSequenceStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetSequenceSequenceStructObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalSequenceSequenceStructObject();
 eProsima_user_DllExport const TypeObject* GetCompleteSequenceSequenceStructObject();
-
-
-
-
 
 
 
@@ -296,12 +280,10 @@ eProsima_user_DllExport const TypeObject* GetCompleteMapBoundsStructObject();
 
 
 
-
 eProsima_user_DllExport const TypeIdentifier* GetMapMapStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMapMapStructObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalMapMapStructObject();
 eProsima_user_DllExport const TypeObject* GetCompleteMapMapStructObject();
-
 
 
 

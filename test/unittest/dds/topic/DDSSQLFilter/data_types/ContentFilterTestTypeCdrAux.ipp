@@ -228,10 +228,6 @@ void serialize_key(
 
 
 
-
-
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,

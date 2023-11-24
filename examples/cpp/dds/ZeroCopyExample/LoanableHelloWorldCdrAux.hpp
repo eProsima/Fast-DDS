@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_LOANABLEHELLOWORLDCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_LOANABLEHELLOWORLDCDRAUX_HPP_
 
-#include "LoanableHelloWorld.h"
+#include "LoanableHelloWorld.hpp"
 
 constexpr uint32_t LoanableHelloWorld_max_cdr_typesize {260UL};
 constexpr uint32_t LoanableHelloWorld_max_key_cdr_typesize {0UL};
