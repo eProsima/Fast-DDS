@@ -427,6 +427,9 @@ TEST_P(NetworkConfig, PubSubAsymmetricInterfaceWhitelistAllInterfaces)
 // Only loopback interface case.
 TEST_P(NetworkConfig, PubSubAsymmetricInterfaceWhitelistLocalhostOnly)
 {
+    #ifdef _WIN32
+    GTEST_SKIP() << "This test is skipped on Windows";
+    #endif // _WIN32
     std::vector<IPFinder::info_IP> no_interfaces;
 
     std::vector<IPFinder::info_IP> locahost_interface_only;
