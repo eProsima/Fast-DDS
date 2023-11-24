@@ -33,7 +33,7 @@
 #include <fastrtps/qos/ParameterTypes.h>
 #include <statistics/rtps/GuidUtils.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
-#include <statistics/types/types.h>
+#include <statistics/types/types.hpp>
 
 
 namespace eprosima {

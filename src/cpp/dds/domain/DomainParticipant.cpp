@@ -76,7 +76,7 @@ const dds::domain::qos::DomainParticipantQos& DomainParticipant::qos() const
 void DomainParticipant::qos(
         const dds::domain::qos::DomainParticipantQos& qos)
 {
-    ReturnCode_t code = this->delegate()->set_qos(qos);
+    eprosima::fastdds::dds::ReturnCode_t code = this->delegate()->set_qos(qos);
     if (code == eprosima::fastdds::dds::RETCODE_IMMUTABLE_POLICY)
     {
         throw dds::core::ImmutablePolicyError("Immutable Qos");
@@ -124,7 +124,8 @@ dds::domain::qos::DomainParticipantQos DomainParticipant::default_participant_qo
 void DomainParticipant::default_participant_qos(
         const ::dds::domain::qos::DomainParticipantQos& qos)
 {
-    ReturnCode_t code = eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_default_participant_qos(
+    eprosima::fastdds::dds::ReturnCode_t code =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_default_participant_qos(
         qos);
     if (code == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
@@ -144,7 +145,7 @@ dds::pub::qos::PublisherQos DomainParticipant::default_publisher_qos() const
 DomainParticipant& DomainParticipant::default_publisher_qos(
         const ::dds::pub::qos::PublisherQos& qos)
 {
-    ReturnCode_t code = this->delegate()->set_default_publisher_qos(qos);
+    eprosima::fastdds::dds::ReturnCode_t code = this->delegate()->set_default_publisher_qos(qos);
     if (code == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
@@ -164,7 +165,7 @@ dds::sub::qos::SubscriberQos DomainParticipant::default_subscriber_qos() const
 DomainParticipant& DomainParticipant::default_subscriber_qos(
         const ::dds::sub::qos::SubscriberQos& qos)
 {
-    ReturnCode_t result = delegate()->set_default_subscriber_qos(qos);
+    eprosima::fastdds::dds::ReturnCode_t result = delegate()->set_default_subscriber_qos(qos);
     if (result == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");
@@ -184,7 +185,7 @@ dds::topic::qos::TopicQos DomainParticipant::default_topic_qos() const
 DomainParticipant& DomainParticipant::default_topic_qos(
         const dds::topic::qos::TopicQos& qos)
 {
-    ReturnCode_t ret_code = this->delegate()->set_default_topic_qos(qos);
+    eprosima::fastdds::dds::ReturnCode_t ret_code = this->delegate()->set_default_topic_qos(qos);
     if (ret_code == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");

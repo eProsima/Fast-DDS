@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_OWNERSHIPSTRENGTHCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_OWNERSHIPSTRENGTHCDRAUX_HPP_
 
-#include "OwnershipStrength.h"
+#include "OwnershipStrength.hpp"
 
 constexpr uint32_t ExampleMessage_max_cdr_typesize {272UL};
 constexpr uint32_t ExampleMessage_max_key_cdr_typesize {0UL};

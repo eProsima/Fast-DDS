@@ -47,7 +47,7 @@
 #include "../api/dds-pim/PubSubWriter.hpp"
 #include "../api/dds-pim/ReqRepAsReliableHelloWorldRequester.hpp"
 #include "../api/dds-pim/ReqRepAsReliableHelloWorldReplier.hpp"
-#include "../types/FixedSized.h"
+#include "../types/FixedSized.hpp"
 #include "../types/FixedSizedPubSubTypes.h"
 #include "../types/HelloWorldPubSubTypes.h"
 

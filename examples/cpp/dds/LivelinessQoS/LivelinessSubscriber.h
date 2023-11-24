@@ -21,7 +21,7 @@
 #define LIVELINESSSUBSCRIBER_H_
 
 #include "TopicPubSubTypes.h"
-#include "Topic.h"
+#include "Topic.hpp"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>

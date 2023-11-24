@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_HELLOWORLDCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_HELLOWORLDCDRAUX_HPP_
 
-#include "HelloWorld.h"
+#include "HelloWorld.hpp"
 
 constexpr uint32_t HelloWorld_max_cdr_typesize {268UL};
 constexpr uint32_t HelloWorld_max_key_cdr_typesize {0UL};

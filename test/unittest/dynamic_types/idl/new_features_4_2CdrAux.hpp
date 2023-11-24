@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_NEW_FEATURES_4_2CDRAUX_HPP_
 #define _FAST_DDS_GENERATED_NEW_FEATURES_4_2CDRAUX_HPP_
 
-#include "new_features_4_2.h"
+#include "new_features_4_2.hpp"
 
 constexpr uint32_t bitmodule_BM2_max_cdr_typesize {24UL};
 constexpr uint32_t bitmodule_BM2_max_key_cdr_typesize {0UL};
@@ -61,12 +61,6 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
-
-
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const bitmodule::BitsetBitmask& data);
@@ -76,7 +70,6 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const bitmodule::BM2& data);
-
 
 
 

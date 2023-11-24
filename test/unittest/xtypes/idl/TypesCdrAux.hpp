@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_TYPESCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_TYPESCDRAUX_HPP_
 
-#include "Types.h"
+#include "Types.hpp"
 
 constexpr uint32_t SimpleUnionStruct_max_cdr_typesize {24UL};
 constexpr uint32_t SimpleUnionStruct_max_key_cdr_typesize {0UL};
@@ -253,13 +253,9 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceStruct& data);
-
-
 
 
 
@@ -269,13 +265,9 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceBadStruct& data);
-
-
 
 
 
@@ -285,17 +277,9 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceSequenceStruct& data);
-
-
-
-
 
 
 
@@ -348,7 +332,6 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapMapStruct& data);
@@ -358,20 +341,9 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapMapBoundsStruct& data);
-
-
-
-
-
-
-
-
-
-
 
 
 

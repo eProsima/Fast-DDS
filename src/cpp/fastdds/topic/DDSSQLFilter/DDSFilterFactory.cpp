@@ -49,7 +49,7 @@ namespace fastdds {
 namespace dds {
 namespace DDSSQLFilter {
 
-static IContentFilterFactory::ReturnCode_t transform_enum(
+static ReturnCode_t transform_enum(
         std::shared_ptr<DDSFilterValue>& value,
         const eprosima::fastrtps::types::TypeIdentifier* type,
         const eprosima::fastrtps::string_255& string_value)
@@ -69,7 +69,7 @@ static IContentFilterFactory::ReturnCode_t transform_enum(
     return RETCODE_BAD_PARAMETER;
 }
 
-static IContentFilterFactory::ReturnCode_t transform_enums(
+static ReturnCode_t transform_enums(
         std::shared_ptr<DDSFilterValue>& left_value,
         const eprosima::fastrtps::types::TypeIdentifier* left_type,
         std::shared_ptr<DDSFilterValue>& right_value,
@@ -201,14 +201,14 @@ struct ExpressionParsingState
 };
 
 template<>
-IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterCondition>(
+ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterCondition>(
         ExpressionParsingState& state,
         std::unique_ptr<DDSFilterCondition>& condition,
         const parser::ParseNode& node);
 
 
 template<>
-IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterValue>(
+ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterValue>(
         ExpressionParsingState& state,
         std::shared_ptr<DDSFilterValue>& value,
         const parser::ParseNode& node)
@@ -259,7 +259,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterValu
 }
 
 template<>
-IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPredicate>(
+ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPredicate>(
         ExpressionParsingState& state,
         std::unique_ptr<DDSFilterCondition>& condition,
         const parser::ParseNode& node)
@@ -309,7 +309,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterPred
 }
 
 template<>
-IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<between_op>(
+ReturnCode_t DDSFilterFactory::convert_tree<between_op>(
         ExpressionParsingState& state,
         std::unique_ptr<DDSFilterCondition>& condition,
         const parser::ParseNode& node)
@@ -375,7 +375,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<between_op>(
 }
 
 template<>
-IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterCompoundCondition>(
+ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterCompoundCondition>(
         ExpressionParsingState& state,
         std::unique_ptr<DDSFilterCondition>& condition,
         const parser::ParseNode& node)
@@ -422,7 +422,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterComp
 }
 
 template<>
-IContentFilterFactory::ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterCondition>(
+ReturnCode_t DDSFilterFactory::convert_tree<DDSFilterCondition>(
         ExpressionParsingState& state,
         std::unique_ptr<DDSFilterCondition>& condition,
         const parser::ParseNode& node)
@@ -449,7 +449,7 @@ DDSFilterFactory::~DDSFilterFactory()
     pool.clear();
 }
 
-IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
+ReturnCode_t DDSFilterFactory::create_content_filter(
         const char* filter_class_name,
         const char* type_name,
         const TopicDataType* data_type,
@@ -560,7 +560,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
     return ret;
 }
 
-IContentFilterFactory::ReturnCode_t DDSFilterFactory::delete_content_filter(
+ReturnCode_t DDSFilterFactory::delete_content_filter(
         const char* filter_class_name,
         IContentFilter* filter_instance)
 {

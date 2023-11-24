@@ -64,7 +64,7 @@ const qos::SubscriberQos& Subscriber::qos() const
 void Subscriber::qos(
         const qos::SubscriberQos& pqos)
 {
-    ReturnCode_t result = delegate()->set_qos(pqos);
+    eprosima::fastdds::dds::ReturnCode_t result = delegate()->set_qos(pqos);
     if (result == eprosima::fastdds::dds::RETCODE_IMMUTABLE_POLICY)
     {
         throw dds::core::ImmutablePolicyError("Immutable Qos");
@@ -96,7 +96,7 @@ Subscriber& Subscriber::operator >>(
 Subscriber& Subscriber::default_datareader_qos(
         const qos::DataReaderQos& drqos)
 {
-    ReturnCode_t result = delegate()->set_default_datareader_qos(drqos);
+    eprosima::fastdds::dds::ReturnCode_t result = delegate()->set_default_datareader_qos(drqos);
     if ( result == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");

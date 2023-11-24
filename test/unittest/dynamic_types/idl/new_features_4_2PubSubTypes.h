@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "new_features_4_2.h"
+#include "new_features_4_2.hpp"
 
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)
@@ -127,12 +127,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
-
-
-
-
 
 
 
@@ -321,7 +315,7 @@ namespace bitmodule
         unsigned char* m_keyBuffer;
 
     };
-}
+} // namespace bitmodule
 
 
 

@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_SAMPLECDRAUX_HPP_
 #define _FAST_DDS_GENERATED_SAMPLECDRAUX_HPP_
 
-#include "sample.h"
+#include "sample.hpp"
 
 constexpr uint32_t sample_max_cdr_typesize {6UL};
 constexpr uint32_t sample_max_key_cdr_typesize {1UL};

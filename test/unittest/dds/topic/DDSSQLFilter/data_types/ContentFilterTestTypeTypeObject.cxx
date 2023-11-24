@@ -24,7 +24,7 @@
 namespace { char dummy; }
 #endif
 
-#include "ContentFilterTestType.h"
+#include "ContentFilterTestType.hpp"
 #include "ContentFilterTestTypeTypeObject.h"
 #include <mutex>
 #include <utility>
@@ -1324,10 +1324,6 @@ const TypeObject* GetCompleteStructTypeObject()
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("StructType", true);
 }
-
-
-
-
 
 
 

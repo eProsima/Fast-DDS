@@ -39,8 +39,6 @@
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusQueryable.hpp>
 #endif // ifdef FASTDDS_STATISTICS
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_ADVANCEDCONFIGURATIONCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_ADVANCEDCONFIGURATIONCDRAUX_HPP_
 
-#include "AdvancedConfiguration.h"
+#include "HelloWorld.hpp"
 
 constexpr uint32_t AdvancedConfiguration_max_cdr_typesize {132UL};
 constexpr uint32_t AdvancedConfiguration_max_key_cdr_typesize {0UL};

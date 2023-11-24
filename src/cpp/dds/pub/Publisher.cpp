@@ -64,7 +64,7 @@ const qos::PublisherQos& Publisher::qos() const
 void Publisher::qos(
         const qos::PublisherQos& pqos)
 {
-    ReturnCode_t code = this->delegate()->set_qos(pqos);
+    eprosima::fastdds::dds::ReturnCode_t code = this->delegate()->set_qos(pqos);
     if (code == eprosima::fastdds::dds::RETCODE_IMMUTABLE_POLICY)
     {
         throw dds::core::ImmutablePolicyError("Immutable Qos");
@@ -96,7 +96,7 @@ Publisher& Publisher::operator >>(
 Publisher& Publisher::default_datawriter_qos(
         const qos::DataWriterQos& dwqos)
 {
-    ReturnCode_t code = this->delegate()->set_default_datawriter_qos(dwqos);
+    eprosima::fastdds::dds::ReturnCode_t code = this->delegate()->set_default_datawriter_qos(dwqos);
     if (code == eprosima::fastdds::dds::RETCODE_INCONSISTENT_POLICY)
     {
         throw dds::core::InconsistentPolicyError("Inconsistent Qos");

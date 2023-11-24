@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_ALLOCTESTTYPECDRAUX_HPP_
 #define _FAST_DDS_GENERATED_ALLOCTESTTYPECDRAUX_HPP_
 
-#include "AllocTestType.h"
+#include "AllocTestType.hpp"
 
 constexpr uint32_t AllocTestType_max_cdr_typesize {8UL};
 constexpr uint32_t AllocTestType_max_key_cdr_typesize {0UL};

@@ -219,3 +219,6 @@ bool KeyedHelloWorldPubSubType::getKey(
     return true;
 }
 
+
+// Include auxiliary functions like for serializing/deserializing.
+#include "KeyedHelloWorldCdrAux.ipp"
