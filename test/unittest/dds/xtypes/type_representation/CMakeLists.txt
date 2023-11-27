@@ -27,7 +27,7 @@ target_include_directories(TypeObjectUtilsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(TypeObjectUtilsTests fastrtps
+target_link_libraries(TypeObjectUtilsTests fastrtps fastcdr
     GTest::gtest
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(TypeObjectUtilsTests SOURCES ${TYPEOBJECTUTILSTESTS_SOURCE})
