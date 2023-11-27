@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/attributes/ThreadSettings.hpp>
-
 #include "FlowControllerPublishModesTests.hpp"
+
+#include <thread>
+
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
 using namespace eprosima::fastdds::rtps;
 using namespace testing;

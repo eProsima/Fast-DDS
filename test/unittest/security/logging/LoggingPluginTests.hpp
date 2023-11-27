@@ -15,10 +15,13 @@
 #ifndef _UNITTEST_SECURITY_LOGGING_LOGGINGPLUGINTESTS_HPP_
 #define _UNITTEST_SECURITY_LOGGING_LOGGINGPLUGINTESTS_HPP_
 
-#include <security/logging/LogTopic.h>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <thread>
 
 #include <gtest/gtest.h>
+
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+
+#include <security/logging/LogTopic.h>
 
 class LoggingPluginTest : public ::testing::Test
 {
@@ -89,82 +92,85 @@ TEST_F(LoggingPluginTest, DefaultBehavior)
 
 TEST_F(LoggingPluginTest, AsyncFileLogging)
 {
-  // First remove previous executions file
-  std::remove(security_log_filename.c_str());
+    // First remove previous executions file
+    std::remove(security_log_filename.c_str());
 
-  eprosima::fastrtps::rtps::security::LogOptions log_options;
+    eprosima::fastrtps::rtps::security::LogOptions log_options;
 
-  log_options.distribute = false;
-  log_options.log_file = security_log_filename;
-  log_options.log_level = eprosima::fastrtps::rtps::security::LoggingLevel::DEBUG_LEVEL;
+    log_options.distribute = false;
+    log_options.log_file = security_log_filename;
+    log_options.log_level = eprosima::fastrtps::rtps::security::LoggingLevel::DEBUG_LEVEL;
 
-  eprosima::fastrtps::rtps::security::SecurityException exception;
+    eprosima::fastrtps::rtps::security::SecurityException exception;
 
-//  plugin->set_domain_id();
-//  plugin->set_guid();
+    //  plugin->set_domain_id();
+    //  plugin->set_guid();
 
-  EXPECT_TRUE(plugin->set_log_options(log_options, exception));
-  EXPECT_TRUE(plugin->options_set());
-  EXPECT_TRUE(plugin->enable_logging(exception)) << exception.what();
-  EXPECT_TRUE(plugin->enabled());
+    EXPECT_TRUE(plugin->set_log_options(log_options, exception));
+    EXPECT_TRUE(plugin->options_set());
+    EXPECT_TRUE(plugin->enable_logging(exception)) << exception.what();
+    EXPECT_TRUE(plugin->enabled());
 
-  std::vector<std::unique_ptr<std::thread>> threads;
-  for (long i = 0; i < NUM_LOG_LEVELS; ++i) {
-      threads.emplace_back(new std::thread([this, i, &exception]{
-          plugin->log(
-                static_cast<eprosima::fastrtps::rtps::security::LoggingLevel>(i),
-                std::string("Report from thread ") + std::to_string(i),
-                "Logging,fileloggingtest",
-                exception);
-      }));
-  }
+    std::vector<std::unique_ptr<std::thread>> threads;
+    for (long i = 0; i < NUM_LOG_LEVELS; ++i)
+    {
+        threads.emplace_back(new std::thread([this, i, &exception]
+                {
+                    plugin->log(
+                        static_cast<eprosima::fastrtps::rtps::security::LoggingLevel>(i),
+                        std::string("Report from thread ") + std::to_string(i),
+                        "Logging,fileloggingtest",
+                        exception);
+                }));
+    }
 
-  for (auto& thread: threads) {
-      thread->join();
-  }
+    for (auto& thread: threads)
+    {
+        thread->join();
+    }
 
-  // give a chance to the logger to log all messages
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // give a chance to the logger to log all messages
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-  std::ifstream ifs(security_log_filename);
+    std::ifstream ifs(security_log_filename);
 
-  if (!ifs.is_open())
-  {
-      GTEST_FAIL();
-  }
+    if (!ifs.is_open())
+    {
+        GTEST_FAIL();
+    }
 
 
-  std::string line;
-  long count = 0;
+    std::string line;
+    long count = 0;
 
-  // log format is:
-  // [<stamp>] [<severity>] <guid> <domain_id> <plugin_class::plugin_method> message
-  while (std::getline(ifs, line))
-  {
-      // check stamp
-      std::regex regex("\\[[0-9]+.[0-9]+\\]");
-      EXPECT_TRUE(std::regex_search(line, regex)) << line;
+    // log format is:
+    // [<stamp>] [<severity>] <guid> <domain_id> <plugin_class::plugin_method> message
+    while (std::getline(ifs, line))
+    {
+        // check stamp
+        std::regex regex("\\[[0-9]+.[0-9]+\\]");
+        EXPECT_TRUE(std::regex_search(line, regex)) << line;
 
-      // check verbosity
-      regex = std::regex("[EMERGENCY|ALERT|CRITICAL|ERROR|WARNING|NOTICE|INFORMATIONAL|DEBUG]");
-      EXPECT_TRUE(std::regex_search(line, regex)) << line;
+        // check verbosity
+        regex = std::regex("[EMERGENCY|ALERT|CRITICAL|ERROR|WARNING|NOTICE|INFORMATIONAL|DEBUG]");
+        EXPECT_TRUE(std::regex_search(line, regex)) << line;
 
-      //@TODO(artivis) check guid
+        //@TODO(artivis) check guid
 
-      //@TODO(artivis) check domain_id
+        //@TODO(artivis) check domain_id
 
-      // check call site
-      regex = std::regex("Logging::fileloggingtest : ");
-      EXPECT_TRUE(std::regex_search(line, regex)) << line;
+        // check call site
+        regex = std::regex("Logging::fileloggingtest : ");
+        EXPECT_TRUE(std::regex_search(line, regex)) << line;
 
-      // check message
-      regex = std::regex("Report from thread [0-9]{1}");
-      EXPECT_TRUE(std::regex_search(line, regex)) << line;
+        // check message
+        regex = std::regex("Report from thread [0-9]{1}");
+        EXPECT_TRUE(std::regex_search(line, regex)) << line;
 
-      ++count;
-  }
+        ++count;
+    }
 
-  EXPECT_EQ(NUM_LOG_LEVELS, count);
+    EXPECT_EQ(NUM_LOG_LEVELS, count);
 }
 
 #endif // _UNITTEST_SECURITY_LOGGING_LOGGINGPLUGINTESTS_HPP_

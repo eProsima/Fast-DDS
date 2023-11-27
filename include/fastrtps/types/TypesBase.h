@@ -247,20 +247,32 @@ public:
 
 };
 
-template<class T>
-typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
-operator ==(
-        T a,
+RTPS_DllAPI inline bool operator ==(
+        ReturnCode_t::ReturnCodeValue a,
         const ReturnCode_t& b)
 {
     return b.operator ==(
         a);
 }
 
-template<class T>
-typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
-operator !=(
-        T a,
+RTPS_DllAPI inline bool operator !=(
+        ReturnCode_t::ReturnCodeValue a,
+        const ReturnCode_t& b)
+{
+    return b.operator !=(
+        a);
+}
+
+RTPS_DllAPI inline bool operator ==(
+        uint32_t a,
+        const ReturnCode_t& b)
+{
+    return b.operator ==(
+        a);
+}
+
+RTPS_DllAPI inline bool operator !=(
+        uint32_t a,
         const ReturnCode_t& b)
 {
     return b.operator !=(
