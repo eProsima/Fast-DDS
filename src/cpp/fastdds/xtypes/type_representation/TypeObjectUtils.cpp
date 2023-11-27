@@ -1387,13 +1387,20 @@ const CompleteMapType TypeObjectUtils::build_complete_map_type(
         const CompleteCollectionElement& key,
         const CompleteCollectionElement& element)
 {
-    empty_flags_consistency(collection_flag);
+    try
+    {
+        empty_flags_consistency(collection_flag);
 #if !defined(NDEBUG)
-    complete_collection_header_consistency(header);
-    complete_collection_element_consistency(key);
-    complete_collection_element_consistency(element);
+        complete_collection_header_consistency(header);
+        complete_collection_element_consistency(key);
+        complete_collection_element_consistency(element);
 #endif // !defined(NDEBUG)
-    map_key_type_identifier_consistency(key.common().type());
+        map_key_type_identifier_consistency(key.common().type());
+    }
+    catch (const InvalidArgumentError& e)
+    {
+        throw InvalidArgumentError(e.what());
+    }
     CompleteMapType complete_map_type;
     complete_map_type.collection_flag(collection_flag);
     complete_map_type.header(header);
@@ -2866,11 +2873,18 @@ void TypeObjectUtils::complete_array_type_consistency(
 void TypeObjectUtils::complete_map_type_consistency(
         const CompleteMapType& complete_map_type)
 {
-    empty_flags_consistency(complete_map_type.collection_flag());
-    complete_collection_header_consistency(complete_map_type.header());
-    map_key_type_identifier_consistency(complete_map_type.key().common().type());
-    complete_collection_element_consistency(complete_map_type.key());
-    complete_collection_element_consistency(complete_map_type.element());
+    try
+    {
+        empty_flags_consistency(complete_map_type.collection_flag());
+        complete_collection_header_consistency(complete_map_type.header());
+        map_key_type_identifier_consistency(complete_map_type.key().common().type());
+        complete_collection_element_consistency(complete_map_type.key());
+        complete_collection_element_consistency(complete_map_type.element());
+    }
+    catch (const InvalidArgumentError& e)
+    {
+        throw InvalidArgumentError(e.what());
+    }
 }
 
 void TypeObjectUtils::common_enumerated_literal_consistency(
