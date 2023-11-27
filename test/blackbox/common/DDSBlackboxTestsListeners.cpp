@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <set>
+#include <thread>
 #include <vector>
 
 #include <fastdds/dds/core/condition/GuardCondition.hpp>

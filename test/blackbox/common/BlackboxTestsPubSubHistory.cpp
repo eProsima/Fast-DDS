@@ -13,16 +13,17 @@
 // limitations under the License.
 
 #include <atomic>
+#include <thread>
 #include <tuple>
 
-#include "BlackboxTests.hpp"
-
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
+#include <gtest/gtest.h>
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "BlackboxTests.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 #include <rtps/transport/test_UDPv4Transport.h>
-#include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastdds::rtps;

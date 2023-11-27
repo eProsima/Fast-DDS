@@ -12,9 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <condition_variable>
+#include <mutex>
+#include <thread>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <dds/domain/DomainParticipant.hpp>
+#include <dds/pub/AnyDataWriter.hpp>
+#include <dds/pub/Publisher.hpp>
+#include <dds/pub/qos/DataWriterQos.hpp>
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -24,20 +32,27 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+<<<<<<< HEAD
+=======
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/publisher/DataWriterImpl.hpp>
+>>>>>>> 6390715a1 (Add missing thread include (#4045))
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/pub/AnyDataWriter.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/pub/qos/DataWriterQos.hpp>
-
 #include "../../logging/mock/MockConsumer.h"
 
+<<<<<<< HEAD
 #include <fastdds/publisher/DataWriterImpl.hpp>
 
 #include <mutex>
 #include <condition_variable>
+=======
+#include "../../common/CustomPayloadPool.hpp"
+>>>>>>> 6390715a1 (Add missing thread include (#4045))
 
 namespace eprosima {
 namespace fastdds {
