@@ -12,22 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "MemoryTestPublisher.h"
-#include "MemoryTestSubscriber.h"
-
-#include <optionparser.hpp>
-
-#include <stdio.h>
-#include <string>
-#include <iostream>
-#include <iomanip>
 #include <bitset>
 #include <cstdint>
+#include <cstdio>
+#include <iomanip>
+#include <iostream>
+#include <string>
+#include <thread>
+
+#include <optionparser.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/Domain.h>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "MemoryTestPublisher.h"
+#include "MemoryTestSubscriber.h"
 
 #if defined(_MSC_VER)
 #pragma warning (push)

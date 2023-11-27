@@ -13,6 +13,15 @@
 // limitations under the License.
 
 #include <map>
+<<<<<<< HEAD
+=======
+#include <thread>
+#if defined(_WIN32)
+#include <process.h>
+#else
+#include <unistd.h>
+#endif // if defined(_WIN32)
+>>>>>>> 6390715a1 (Add missing thread include (#4045))
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -20,16 +29,16 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
-#include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
@@ -40,9 +49,8 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <statistics/types/types.h>
-
 #include <rtps/transport/test_UDPv4Transport.h>
+#include <statistics/types/types.h>
 #include <utils/SystemInfo.hpp>
 
 namespace eprosima {
