@@ -247,7 +247,7 @@ public:
      * @param[in] dimension_bound Dimension bound to be added into the sequence.
      */
     template<typename array, typename element>
-    RTPS_DllAPI static void add_array_dimension(
+    static void add_array_dimension(
             array& array_bound_seq,
             element dimension_bound)
     {
