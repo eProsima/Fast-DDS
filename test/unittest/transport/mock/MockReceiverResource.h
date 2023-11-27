@@ -31,7 +31,8 @@ class MockReceiverResource : public ReceiverResource
 {
 public:
 
-    bool is_valid() const {
+    bool is_valid() const
+    {
         return mValid;
     }
 
