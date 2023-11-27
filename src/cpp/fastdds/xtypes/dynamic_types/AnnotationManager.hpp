@@ -152,10 +152,10 @@ public:
     // Annotations getters
 
     //! gets annotation value key
-    std::string annotation_get_value() const;
+    ObjectName annotation_get_value() const;
 
     //! gets default value from annotation
-    std::string annotation_get_default() const;
+    ObjectName annotation_get_default() const;
 
     //! gets position from annotation
     uint16_t annotation_get_position() const;
@@ -164,10 +164,10 @@ public:
     uint16_t annotation_get_bit_bound() const;
 
     //! gets extensibility from annotation
-    std::string annotation_get_extensibility() const;
+    ObjectName annotation_get_extensibility() const;
 
     //! gets type name externally referenced
-    std::string annotation_get_external_typename() const;
+    ObjectName annotation_get_external_typename() const;
 
     // Annotations setters
 
@@ -189,11 +189,11 @@ public:
 
     //! sets value annotation
     void annotation_set_value(
-            const std::string& value);
+            const ObjectName& value);
 
     //! sets default annotation
     void annotation_set_default(
-            const std::string& default_value);
+            const ObjectName& default_value);
 
     //! sets default-literal annotation
     void annotation_set_default_literal();
@@ -208,7 +208,7 @@ public:
 
     //! sets extensibility annotation
     void annotation_set_extensibility(
-            const std::string& extensibility);
+            const ObjectName& extensibility);
 
     //! sets mutable annotation
     void annotation_set_mutable();
@@ -225,7 +225,7 @@ public:
 
     //! sets external annotation referencing a specific type name
     void annotation_set_external(
-            const std::string& type_name);
+            const ObjectName& type_name);
 
     /**
      * Apply the given annotation to this type (see [standard] section 7.5.2.9.5)
@@ -248,8 +248,8 @@ public:
      */
     ReturnCode_t apply_annotation(
             const std::string& annotation_name,
-            const std::string& key,
-            const std::string& value);
+            const ObjectName& key,
+            const ObjectName& value);
 
     //! retrieve a specific annotation by name
     std::pair<annotation_iterator, bool> get_annotation(

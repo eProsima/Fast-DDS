@@ -152,8 +152,8 @@ target_include_directories(
         ${PROJECT_SOURCE_DIR}/src/cpp
 )
 
-target_link_libraries(
-    ${DISTINGUISHEDNAME_TEST_NAME}
+target_link_libraries(${DISTINGUISHEDNAME_TEST_NAME}
+    fastcdr
     GTest::gtest
 )
 

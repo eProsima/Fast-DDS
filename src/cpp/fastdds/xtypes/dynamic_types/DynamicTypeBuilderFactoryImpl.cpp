@@ -689,12 +689,12 @@ void DynamicTypeBuilderFactoryImpl::build_type_identifier(
             {
                 if (descriptor.bound_[0] < 256)
                 {
-                    identifier._d(TI_STRING8_SMALL);
+                    identifier._d(fastrtps::types::TI_STRING8_SMALL);
                     identifier.string_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                 }
                 else
                 {
-                    identifier._d(TI_STRING8_LARGE);
+                    identifier._d(fastrtps::types::TI_STRING8_LARGE);
                     identifier.string_ldefn().bound(descriptor.bound_[0]);
                 }
             }
@@ -703,12 +703,12 @@ void DynamicTypeBuilderFactoryImpl::build_type_identifier(
             {
                 if (descriptor.bound_[0] < 256)
                 {
-                    identifier._d(TI_STRING16_SMALL);
+                    identifier._d(fastrtps::types::TI_STRING16_SMALL);
                     identifier.string_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                 }
                 else
                 {
-                    identifier._d(TI_STRING16_LARGE);
+                    identifier._d(fastrtps::types::TI_STRING16_LARGE);
                     identifier.string_ldefn().bound(descriptor.bound_[0]);
                 }
             }
@@ -718,7 +718,7 @@ void DynamicTypeBuilderFactoryImpl::build_type_identifier(
             {
                 if (descriptor.bound_[0] < 256)
                 {
-                    identifier._d(TI_PLAIN_SEQUENCE_SMALL);
+                    identifier._d(fastrtps::types::TI_PLAIN_SEQUENCE_SMALL);
                     identifier.seq_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                     fastrtps::types::TypeIdentifier elem_id;
                     build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
@@ -726,7 +726,7 @@ void DynamicTypeBuilderFactoryImpl::build_type_identifier(
                 }
                 else
                 {
-                    identifier._d(TI_PLAIN_SEQUENCE_LARGE);
+                    identifier._d(fastrtps::types::TI_PLAIN_SEQUENCE_LARGE);
                     identifier.seq_ldefn().bound(descriptor.bound_[0]);
                     fastrtps::types::TypeIdentifier elem_id;
                     build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
@@ -744,7 +744,7 @@ void DynamicTypeBuilderFactoryImpl::build_type_identifier(
 
                 if (size < 256)
                 {
-                    identifier._d(TI_PLAIN_ARRAY_SMALL);
+                    identifier._d(fastrtps::types::TI_PLAIN_ARRAY_SMALL);
                     for (uint32_t b : descriptor.bound_)
                     {
                         identifier.array_sdefn().array_bound_seq().emplace_back(static_cast<SBound>(b));
@@ -755,7 +755,7 @@ void DynamicTypeBuilderFactoryImpl::build_type_identifier(
                 }
                 else
                 {
-                    identifier._d(TI_PLAIN_ARRAY_LARGE);
+                    identifier._d(fastrtps::types::TI_PLAIN_ARRAY_LARGE);
                     identifier.array_ldefn().array_bound_seq(descriptor.bound_);
                     fastrtps::types::TypeIdentifier elem_id;
                     build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
@@ -767,7 +767,7 @@ void DynamicTypeBuilderFactoryImpl::build_type_identifier(
             {
                 if (descriptor.bound_[0] < 256)
                 {
-                    identifier._d(TI_PLAIN_MAP_SMALL);
+                    identifier._d(fastrtps::types::TI_PLAIN_MAP_SMALL);
                     identifier.map_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                     fastrtps::types::TypeIdentifier elem_id;
                     build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
@@ -778,7 +778,7 @@ void DynamicTypeBuilderFactoryImpl::build_type_identifier(
                 }
                 else
                 {
-                    identifier._d(TI_PLAIN_MAP_LARGE);
+                    identifier._d(fastrtps::types::TI_PLAIN_MAP_LARGE);
                     identifier.map_ldefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                     fastrtps::types::TypeIdentifier elem_id;
                     build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
@@ -801,25 +801,25 @@ void DynamicTypeBuilderFactoryImpl::build_type_identifier(
             case TK_BITSET:
             {
                 // Need to be registered as fastrtps::types::TypeObject first
-                // and return them as EK_MINIMAL or EK_COMPLETE
+                // and return them as fastrtps::types::EK_MINIMAL or fastrtps::types::EK_COMPLETE
                 EPROSIMA_LOG_INFO(DYN_TYPE_FACTORY, "Complex types must be built from CompleteTypeObjects.");
             }
             break;
             // TODO:BARRO handle this specific cases
-            case TI_STRING8_SMALL:
-            case TI_STRING8_LARGE:
-            case TI_STRING16_SMALL:
-            case TI_STRING16_LARGE:
-            case TI_PLAIN_SEQUENCE_LARGE:
-            case TI_PLAIN_SEQUENCE_SMALL:
-            case TI_PLAIN_ARRAY_SMALL:
-            case TI_PLAIN_ARRAY_LARGE:
-            case TI_PLAIN_MAP_SMALL:
-            case TI_PLAIN_MAP_LARGE:
-            case TI_STRONGLY_CONNECTED_COMPONENT:
-            case EK_MINIMAL:
-            case EK_COMPLETE:
-            case EK_BOTH:
+            case fastrtps::types::TI_STRING8_SMALL:
+            case fastrtps::types::TI_STRING8_LARGE:
+            case fastrtps::types::TI_STRING16_SMALL:
+            case fastrtps::types::TI_STRING16_LARGE:
+            case fastrtps::types::TI_PLAIN_SEQUENCE_LARGE:
+            case fastrtps::types::TI_PLAIN_SEQUENCE_SMALL:
+            case fastrtps::types::TI_PLAIN_ARRAY_SMALL:
+            case fastrtps::types::TI_PLAIN_ARRAY_LARGE:
+            case fastrtps::types::TI_PLAIN_MAP_SMALL:
+            case fastrtps::types::TI_PLAIN_MAP_LARGE:
+            case fastrtps::types::TI_STRONGLY_CONNECTED_COMPONENT:
+            case fastrtps::types::EK_MINIMAL:
+            case fastrtps::types::EK_COMPLETE:
+            case fastrtps::types::EK_BOTH:
                 assert(0);
         }
 
@@ -931,20 +931,20 @@ void DynamicTypeBuilderFactoryImpl::build_type_object(
         }
         break;
         // TODO:BARRO handle this specific cases
-        case TI_STRING8_SMALL:
-        case TI_STRING8_LARGE:
-        case TI_STRING16_SMALL:
-        case TI_STRING16_LARGE:
-        case TI_PLAIN_SEQUENCE_LARGE:
-        case TI_PLAIN_SEQUENCE_SMALL:
-        case TI_PLAIN_ARRAY_LARGE:
-        case TI_PLAIN_ARRAY_SMALL:
-        case TI_PLAIN_MAP_SMALL:
-        case TI_PLAIN_MAP_LARGE:
-        case TI_STRONGLY_CONNECTED_COMPONENT:
-        case EK_MINIMAL:
-        case EK_COMPLETE:
-        case EK_BOTH:
+        case fastrtps::types::TI_STRING8_SMALL:
+        case fastrtps::types::TI_STRING8_LARGE:
+        case fastrtps::types::TI_STRING16_SMALL:
+        case fastrtps::types::TI_STRING16_LARGE:
+        case fastrtps::types::TI_PLAIN_SEQUENCE_LARGE:
+        case fastrtps::types::TI_PLAIN_SEQUENCE_SMALL:
+        case fastrtps::types::TI_PLAIN_ARRAY_LARGE:
+        case fastrtps::types::TI_PLAIN_ARRAY_SMALL:
+        case fastrtps::types::TI_PLAIN_MAP_SMALL:
+        case fastrtps::types::TI_PLAIN_MAP_LARGE:
+        case fastrtps::types::TI_STRONGLY_CONNECTED_COMPONENT:
+        case fastrtps::types::EK_MINIMAL:
+        case fastrtps::types::EK_COMPLETE:
+        case fastrtps::types::EK_BOTH:
             assert(0);
     }
 }
@@ -978,7 +978,7 @@ void DynamicTypeBuilderFactoryImpl::build_sequence_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.complete()._d(TK_SEQUENCE);
         object.complete().sequence_type().collection_flag().IS_FINAL(false);
         object.complete().sequence_type().collection_flag().IS_APPENDABLE(false);
@@ -1019,7 +1019,7 @@ void DynamicTypeBuilderFactoryImpl::build_sequence_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
+        object._d(fastrtps::types::EK_MINIMAL);
         object.minimal()._d(TK_SEQUENCE);
         object.minimal().sequence_type().collection_flag().IS_FINAL(false);
         object.minimal().sequence_type().collection_flag().IS_APPENDABLE(false);
@@ -1064,7 +1064,7 @@ void DynamicTypeBuilderFactoryImpl::build_array_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.complete()._d(TK_ARRAY);
         object.complete().array_type().collection_flag().IS_FINAL(false);
         object.complete().array_type().collection_flag().IS_APPENDABLE(false);
@@ -1108,7 +1108,7 @@ void DynamicTypeBuilderFactoryImpl::build_array_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
+        object._d(fastrtps::types::EK_MINIMAL);
         object.minimal()._d(TK_ARRAY);
         object.minimal().array_type().collection_flag().IS_FINAL(false);
         object.minimal().array_type().collection_flag().IS_APPENDABLE(false);
@@ -1156,7 +1156,7 @@ void DynamicTypeBuilderFactoryImpl::build_map_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.complete()._d(TK_MAP);
         object.complete().map_type().collection_flag().IS_FINAL(false);
         object.complete().map_type().collection_flag().IS_APPENDABLE(false);
@@ -1211,7 +1211,7 @@ void DynamicTypeBuilderFactoryImpl::build_map_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
+        object._d(fastrtps::types::EK_MINIMAL);
         object.minimal()._d(TK_MAP);
         object.minimal().map_type().collection_flag().IS_FINAL(false);
         object.minimal().map_type().collection_flag().IS_APPENDABLE(false);
@@ -1263,7 +1263,7 @@ void DynamicTypeBuilderFactoryImpl::build_alias_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.complete()._d(TK_ALIAS);
         object.complete().alias_type().alias_flags().IS_FINAL(false);
         object.complete().alias_type().alias_flags().IS_APPENDABLE(false);
@@ -1294,7 +1294,7 @@ void DynamicTypeBuilderFactoryImpl::build_alias_type_code(
         object.complete().alias_type().body().common().related_type(ident);
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(fastrtps::types::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::CompleteAliasType::getCdrSerializedSize(object.complete().alias_type()) + 4));
@@ -1324,7 +1324,7 @@ void DynamicTypeBuilderFactoryImpl::build_alias_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
+        object._d(fastrtps::types::EK_MINIMAL);
         object.minimal()._d(TK_ALIAS);
         object.minimal().alias_type().alias_flags().IS_FINAL(false);
         object.minimal().alias_type().alias_flags().IS_APPENDABLE(false);
@@ -1351,7 +1351,7 @@ void DynamicTypeBuilderFactoryImpl::build_alias_type_code(
         object.minimal().alias_type().body().common().related_type(ident);
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(fastrtps::types::EK_MINIMAL);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::MinimalAliasType::getCdrSerializedSize(object.minimal().alias_type()) + 4));
@@ -1388,7 +1388,7 @@ void DynamicTypeBuilderFactoryImpl::build_enum_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.complete()._d(TK_ENUM);
         object.complete().enumerated_type().header().common().bit_bound(descriptor.annotation_get_bit_bound());
         object.complete().enumerated_type().header().detail().type_name(descriptor.get_name());
@@ -1412,7 +1412,7 @@ void DynamicTypeBuilderFactoryImpl::build_enum_type_code(
         }
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(fastrtps::types::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::CompleteEnumeratedType::getCdrSerializedSize(object.complete().enumerated_type()) +
@@ -1439,7 +1439,7 @@ void DynamicTypeBuilderFactoryImpl::build_enum_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
+        object._d(fastrtps::types::EK_MINIMAL);
         object.minimal()._d(TK_ENUM);
         object.minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
 
@@ -1459,7 +1459,7 @@ void DynamicTypeBuilderFactoryImpl::build_enum_type_code(
         }
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(fastrtps::types::EK_MINIMAL);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::MinimalEnumeratedType::getCdrSerializedSize(object.minimal().enumerated_type()) +
@@ -1493,7 +1493,7 @@ void DynamicTypeBuilderFactoryImpl::build_struct_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.complete()._d(TK_STRUCTURE);
 
         object.complete().struct_type().struct_flags().IS_FINAL(descriptor.annotation_is_final());
@@ -1565,7 +1565,7 @@ void DynamicTypeBuilderFactoryImpl::build_struct_type_code(
         //object.complete().struct_type().header().base_type().equivalence_hash()[0..13];
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(fastrtps::types::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::CompleteStructType::getCdrSerializedSize(object.complete().struct_type()) + 4));
@@ -1595,7 +1595,7 @@ void DynamicTypeBuilderFactoryImpl::build_struct_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
+        object._d(fastrtps::types::EK_MINIMAL);
         object.minimal()._d(TK_STRUCTURE);
 
         object.minimal().struct_type().struct_flags().IS_FINAL(descriptor.annotation_is_final());
@@ -1653,7 +1653,7 @@ void DynamicTypeBuilderFactoryImpl::build_struct_type_code(
         }
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(fastrtps::types::EK_MINIMAL);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::MinimalStructType::getCdrSerializedSize(object.minimal().struct_type()) + 4));
@@ -1690,7 +1690,7 @@ void DynamicTypeBuilderFactoryImpl::build_union_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.complete()._d(TK_UNION);
 
         object.complete().union_type().union_flags().IS_FINAL(descriptor.annotation_is_final());
@@ -1764,7 +1764,7 @@ void DynamicTypeBuilderFactoryImpl::build_union_type_code(
         object.complete().union_type().header().detail().type_name(descriptor.get_name());
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(fastrtps::types::EK_MINIMAL);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::CompleteUnionType::getCdrSerializedSize(object.complete().union_type()) + 4));
@@ -1790,7 +1790,7 @@ void DynamicTypeBuilderFactoryImpl::build_union_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
+        object._d(fastrtps::types::EK_MINIMAL);
         object.minimal()._d(TK_UNION);
 
         object.minimal().union_type().union_flags().IS_FINAL(descriptor.annotation_is_final());
@@ -1863,7 +1863,7 @@ void DynamicTypeBuilderFactoryImpl::build_union_type_code(
         }
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(fastrtps::types::EK_MINIMAL);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::MinimalUnionType::getCdrSerializedSize(object.minimal().union_type()) + 4));
@@ -1896,7 +1896,7 @@ void DynamicTypeBuilderFactoryImpl::build_bitset_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.complete()._d(TK_BITSET);
 
         object.complete().bitset_type().bitset_flags().IS_FINAL(false);
@@ -1939,7 +1939,7 @@ void DynamicTypeBuilderFactoryImpl::build_bitset_type_code(
         //object.complete().bitset_type().header().base_type().equivalence_hash()[0..13];
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(fastrtps::types::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::CompleteBitsetType::getCdrSerializedSize(object.complete().bitset_type()) + 4));
@@ -1969,7 +1969,7 @@ void DynamicTypeBuilderFactoryImpl::build_bitset_type_code(
     }
     else
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.minimal()._d(TK_BITSET);
 
         object.minimal().bitset_type().bitset_flags().IS_FINAL(false);
@@ -2008,7 +2008,7 @@ void DynamicTypeBuilderFactoryImpl::build_bitset_type_code(
         //object.minimal().bitset_type().header().base_type().equivalence_hash()[0..13];
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(fastrtps::types::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::MinimalBitsetType::getCdrSerializedSize(object.minimal().bitset_type()) + 4));
@@ -2045,7 +2045,7 @@ void DynamicTypeBuilderFactoryImpl::build_bitmask_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.complete()._d(TK_BITMASK);
 
         object.complete().bitmask_type().bitmask_flags().IS_FINAL(false);
@@ -2075,7 +2075,7 @@ void DynamicTypeBuilderFactoryImpl::build_bitmask_type_code(
         object.complete().bitmask_type().header().detail().type_name(descriptor.get_name());
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(fastrtps::types::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::CompleteBitmaskType::getCdrSerializedSize(object.complete().bitmask_type()) + 4));
@@ -2105,7 +2105,7 @@ void DynamicTypeBuilderFactoryImpl::build_bitmask_type_code(
     }
     else
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.minimal()._d(TK_BITMASK);
 
         object.minimal().bitmask_type().bitmask_flags().IS_FINAL(false);
@@ -2130,7 +2130,7 @@ void DynamicTypeBuilderFactoryImpl::build_bitmask_type_code(
         }
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(fastrtps::types::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::MinimalBitmaskType::getCdrSerializedSize(object.minimal().bitmask_type()) + 4));
@@ -2167,7 +2167,7 @@ void DynamicTypeBuilderFactoryImpl::build_annotation_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.complete()._d(TK_ANNOTATION);
 
         for (auto pm : descriptor.get_all_members())
@@ -2207,7 +2207,7 @@ void DynamicTypeBuilderFactoryImpl::build_annotation_type_code(
         object.complete().annotation_type().header().annotation_name(descriptor.get_name());
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(fastrtps::types::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::CompleteAnnotationType::getCdrSerializedSize(object.complete().annotation_type()) +
@@ -2238,7 +2238,7 @@ void DynamicTypeBuilderFactoryImpl::build_annotation_type_code(
     }
     else
     {
-        object._d(EK_COMPLETE);
+        object._d(fastrtps::types::EK_COMPLETE);
         object.minimal()._d(TK_ANNOTATION);
 
         for (auto pm : descriptor.get_all_members())
@@ -2276,7 +2276,7 @@ void DynamicTypeBuilderFactoryImpl::build_annotation_type_code(
         }
 
         fastrtps::types::TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(fastrtps::types::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     fastrtps::types::MinimalAnnotationType::getCdrSerializedSize(object.minimal().annotation_type()) +
@@ -2539,19 +2539,19 @@ void DynamicTypeBuilderFactoryImpl::apply_type_annotations(
         ann.annotation_typeid(
             *fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(annotation.type()->
                     get_name()));
-        std::map<std::string, std::string> values;
+        Parameters values;
         annotation.get_all_value(values);
         for (auto it : values)
         {
             fastrtps::types::AppliedAnnotationParameter ann_param;
-            MD5 message_hash(it.first);
+            MD5 message_hash(it.first.c_str());
             for (int i = 0; i < 4; ++i)
             {
                 ann_param.paramname_hash()[i] = message_hash.digest[i];
             }
             fastrtps::types::AnnotationParameterValue param_value;
             param_value._d(annotation.type()->get_kind());
-            param_value.from_string(it.second);
+            param_value.from_string(std::string(it.second.c_str()));
             ann_param.value(param_value);
             ann.param_seq().push_back(ann_param);
         }
@@ -2593,17 +2593,6 @@ XTYPENAME(TK_BITSET)
 XTYPENAME(TK_SEQUENCE)
 XTYPENAME(TK_ARRAY)
 XTYPENAME(TK_MAP)
-XTYPENAME(TI_STRING8_SMALL)
-XTYPENAME(TI_STRING8_LARGE)
-XTYPENAME(TI_STRING16_SMALL)
-XTYPENAME(TI_STRING16_LARGE)
-XTYPENAME(TI_PLAIN_SEQUENCE_SMALL)
-XTYPENAME(TI_PLAIN_SEQUENCE_LARGE)
-XTYPENAME(TI_PLAIN_ARRAY_SMALL)
-XTYPENAME(TI_PLAIN_ARRAY_LARGE)
-XTYPENAME(TI_PLAIN_MAP_SMALL)
-XTYPENAME(TI_PLAIN_MAP_LARGE)
-XTYPENAME(TI_STRONGLY_CONNECTED_COMPONENT)
 
 #undef XTYPENAME
 

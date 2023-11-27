@@ -72,10 +72,10 @@ DynamicDataImpl::DynamicDataImpl(
                         pm->get_kind() != TK_ARRAY &&
                         pm->get_kind() != TK_MAP)
                 {
-                    std::string def_value = pm->annotation_get_default();
-                    if (!def_value.empty())
+                    ObjectName def_value = pm->annotation_get_default();
+                    if (0 == def_value.size())
                     {
-                        data->set_value(def_value);
+                        data->set_value(std::string(def_value.c_str()));
                     }
                 }
 #ifdef DYNAMIC_TYPES_CHECKING

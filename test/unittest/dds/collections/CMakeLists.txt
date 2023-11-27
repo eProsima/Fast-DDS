@@ -32,5 +32,8 @@ target_compile_definitions(LoanableSequenceTests PRIVATE
 target_include_directories(LoanableSequenceTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LoanableSequenceTests GTest::gtest)
+target_link_libraries(LoanableSequenceTests
+    fastcdr
+    GTest::gtest
+    )
 gtest_discover_tests(LoanableSequenceTests)

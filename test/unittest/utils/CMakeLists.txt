@@ -61,7 +61,11 @@ target_compile_definitions(StringMatchingTests PRIVATE
 target_include_directories(StringMatchingTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(StringMatchingTests GTest::gtest ${MOCKS})
+target_link_libraries(StringMatchingTests
+    fastcdr
+    GTest::gtest
+    ${MOCKS}
+    )
 if(MSVC OR MSVC_IDE)
     target_link_libraries(StringMatchingTests ${PRIVACY} iphlpapi Shlwapi
         )
@@ -100,7 +104,11 @@ target_compile_definitions(LocatorTests PRIVATE
 target_include_directories(LocatorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LocatorTests GTest::gtest ${MOCKS})
+target_link_libraries(LocatorTests
+    fastcdr
+    GTest::gtest
+    ${MOCKS}
+    )
 if(QNX)
     target_link_libraries(LocatorTests socket)
 endif()
@@ -127,7 +135,10 @@ gtest_discover_tests(FixedSizeQueueTests)
 add_executable(SystemInfoTests ${SYSTEMINFOTESTS_SOURCE})
 target_include_directories(SystemInfoTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
-target_link_libraries(SystemInfoTests GTest::gtest)
+target_link_libraries(SystemInfoTests
+    fastcdr
+    GTest::gtest
+    )
 gtest_discover_tests(SystemInfoTests)
 
 add_executable(SharedMutexTests shared_mutex_tests.cpp)

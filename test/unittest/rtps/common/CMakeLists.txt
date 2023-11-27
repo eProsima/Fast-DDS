@@ -72,7 +72,7 @@ target_include_directories(GuidUtilsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${Asio_INCLUDE_DIR}
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>)
-target_link_libraries(GuidUtilsTests GTest::gtest)
+target_link_libraries(GuidUtilsTests GTest::gtest fastcdr)
 if(QNX)
     target_link_libraries(GuidUtilsTests socket)
 endif()
@@ -99,7 +99,7 @@ target_compile_definitions(PortParametersTests PRIVATE
 target_include_directories(PortParametersTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(PortParametersTests GTest::gtest)
+target_link_libraries(PortParametersTests GTest::gtest fastcdr)
 gtest_discover_tests(PortParametersTests PROPERTIES LABELS "NoMemoryCheck")
 
 ###################

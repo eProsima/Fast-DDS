@@ -21,137 +21,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-Parameters::Parameters()
-    : map_(new mapping)
-{
-}
-
-Parameters::~Parameters()
-{
-    delete map_;
-}
-
-Parameters::Parameters(
-        const Parameters& type) noexcept
-    : map_(new mapping(*type.map_))
-{
-}
-
-Parameters::Parameters(
-        Parameters&& type) noexcept
-    : map_(type.map_)
-{
-}
-
-Parameters& Parameters::operator =(
-        const Parameters& type) noexcept
-{
-    map_ = new mapping(*type.map_);
-    return *this;
-}
-
-Parameters& Parameters::operator =(
-        Parameters&& type) noexcept
-{
-    map_ = type.map_;
-    return *this;
-}
-
-bool Parameters::operator ==(
-        const Parameters& other) const noexcept
-{
-    return map_ == other.map_
-           || (map_ != nullptr && other.map_ != nullptr && *map_ == *other.map_);
-}
-
-bool Parameters::operator !=(
-        const Parameters& other) const noexcept
-{
-    return !this->operator ==(other);
-}
-
-const char* Parameters::operator [](
-        const char* key) const noexcept
-{
-    if (nullptr != map_)
-    {
-        auto it = map_->find(key);
-        if ( it != map_->cend())
-        {
-            return it->second.c_str();
-        }
-    }
-
-    return nullptr;
-}
-
-const char* Parameters::at(
-        const char* key) const noexcept
-{
-    return this->operator [](key);
-}
-
-ReturnCode_t Parameters::set_value(
-        const char* key,
-        const char* value) noexcept
-{
-    if (nullptr == key || nullptr == value )
-    {
-        return RETCODE_PRECONDITION_NOT_MET;
-    }
-
-    if (nullptr == map_)
-    {
-        map_ = new(std::nothrow) mapping;
-
-        if (nullptr == map_)
-        {
-            return RETCODE_OUT_OF_RESOURCES;
-        }
-    }
-
-    (*map_)[key] = value;
-
-    return RETCODE_OK;
-}
-
-uint64_t Parameters::size() const noexcept
-{
-    return map_ != nullptr ? map_->size() : 0u;
-}
-
-bool Parameters::empty() const noexcept
-{
-    return map_ != nullptr ? map_->empty() : true;
-}
-
-const char* Parameters::next_key(
-        const char* key /*= nullptr*/) const noexcept
-{
-    if (nullptr == map_)
-    {
-        return nullptr;
-    }
-
-    mapping::const_iterator it;
-
-    if (nullptr == key)
-    {
-        it = map_->cbegin();
-    }
-    else
-    {
-        it = map_->find(key);
-    }
-
-    if (it != map_->cend())
-    {
-        return it->second.c_str();
-    }
-
-    return nullptr;
-}
-
 AnnotationDescriptor::AnnotationDescriptor(
         const AnnotationDescriptor& type) noexcept
     : type_(type.get_type())
@@ -226,32 +95,35 @@ void AnnotationDescriptor::reset_type() noexcept
     type_ = nullptr;
 }
 
-const char* AnnotationDescriptor::get_value(
-        const char* key,
-        ReturnCode_t* error /*= nullptr*/) const noexcept
+ReturnCode_t AnnotationDescriptor::get_value(
+        ObjectName& value,
+        const ObjectName& key) const noexcept
 {
-    const char* res = map_[key];
+    ReturnCode_t ret_code = RETCODE_BAD_PARAMETER;
+    auto value_it =  map_.find(key);
 
-    if (error != nullptr)
+    if (map_.end() != value_it)
     {
-        *error = res != nullptr ? RETCODE_OK : RETCODE_BAD_PARAMETER;
+        value = value_it->second;
+        ret_code = RETCODE_OK;
     }
 
-    return res;
+    return ret_code;
 }
 
 ReturnCode_t AnnotationDescriptor::set_value(
-        const char* key,
-        const char* value) noexcept
+        const ObjectName& key,
+        const ObjectName& value) noexcept
 {
-    return map_.set_value(key, value);
+    map_[key] = value;
+    return RETCODE_OK;
 }
 
-const Parameters* AnnotationDescriptor::get_all_value(
-        ReturnCode_t* error /*= nullptr*/) const noexcept
+ReturnCode_t AnnotationDescriptor::get_all_value(
+        Parameters& value) const noexcept
 {
-    *error = RETCODE_OK;
-    return &map_;
+    value = map_;
+    return RETCODE_OK;
 }
 
 ReturnCode_t AnnotationDescriptor::copy_from(

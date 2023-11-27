@@ -80,7 +80,6 @@ using eprosima::fastdds::dds::TKNAME_SEQUENCE;
 using eprosima::fastdds::dds::TKNAME_ARRAY;
 using eprosima::fastdds::dds::TKNAME_MAP;
 
-
 using eprosima::fastdds::dds::MAX_BITMASK_LENGTH;
 using eprosima::fastdds::dds::MAX_ELEMENTS_COUNT;
 using eprosima::fastdds::dds::MAX_STRING_LENGTH;

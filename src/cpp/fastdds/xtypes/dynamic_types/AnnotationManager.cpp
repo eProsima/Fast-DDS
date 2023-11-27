@@ -70,7 +70,7 @@ bool AnnotationManager::annotation_is_optional() const
     std::tie(it, found) = get_annotation(ANNOTATION_OPTIONAL_ID);
     if (found)
     {
-        std::string value;
+        ObjectName value;
         if (it->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
@@ -91,7 +91,7 @@ bool AnnotationManager::annotation_is_key() const
     }
     if (found)
     {
-        std::string value;
+        ObjectName value;
         if (it->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
@@ -108,7 +108,7 @@ bool AnnotationManager::annotation_is_must_understand() const
     std::tie(it, found) = get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
     if (found)
     {
-        std::string value;
+        ObjectName value;
         if (it->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
@@ -125,7 +125,7 @@ bool AnnotationManager::annotation_is_non_serialized() const
     std::tie(it, found) = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
     if (found)
     {
-        std::string value;
+        ObjectName value;
         if (it->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
@@ -161,7 +161,7 @@ bool AnnotationManager::annotation_is_bit_bound() const
 
 // Annotations getters
 
-std::string AnnotationManager::annotation_get_value() const
+ObjectName AnnotationManager::annotation_get_value() const
 {
     annotation_iterator it;
     bool found;
@@ -169,7 +169,7 @@ std::string AnnotationManager::annotation_get_value() const
     std::tie(it, found) = get_annotation(ANNOTATION_VALUE_ID);
     if (found)
     {
-        std::string value;
+        ObjectName value;
         if (it->get_value(value) == RETCODE_OK)
         {
             return value;
@@ -178,7 +178,7 @@ std::string AnnotationManager::annotation_get_value() const
     return {};
 }
 
-std::string AnnotationManager::annotation_get_default() const
+ObjectName AnnotationManager::annotation_get_default() const
 {
     annotation_iterator it;
     bool found;
@@ -186,7 +186,7 @@ std::string AnnotationManager::annotation_get_default() const
     std::tie(it, found) = get_annotation(ANNOTATION_DEFAULT_ID);
     if (found)
     {
-        std::string value;
+        ObjectName value;
         if (it->get_value(value) == RETCODE_OK)
         {
             return value;
@@ -203,10 +203,10 @@ uint16_t AnnotationManager::annotation_get_position() const
     std::tie(it, found) = get_annotation(ANNOTATION_POSITION_ID);
     if (found)
     {
-        std::string value;
+        ObjectName value;
         if (it->get_value(value) == RETCODE_OK)
         {
-            return static_cast<uint16_t>(std::stoi(value));
+            return static_cast<uint16_t>(std::stoi(value.c_str()));
         }
     }
     return static_cast<uint16_t>(-1);
@@ -221,10 +221,10 @@ uint16_t AnnotationManager::annotation_get_bit_bound() const
 
     if (found)
     {
-        std::string value;
+        ObjectName value;
         if (it->get_value(value) == RETCODE_OK)
         {
-            return static_cast<uint16_t>(std::stoi(value));
+            return static_cast<uint16_t>(std::stoi(value.c_str()));
         }
     }
     return 32; // Default value
@@ -275,7 +275,7 @@ void AnnotationManager::annotation_set(
         id,
         [new_val](const AnnotationDescriptorImpl& d) -> bool
         {
-            std::string val;
+            ObjectName val;
             d.get_value(val, "value");
             return 0 != val.compare(new_val);
         },
@@ -319,13 +319,13 @@ void AnnotationManager::annotation_set_non_serialized(
 }
 
 void AnnotationManager::annotation_set_value(
-        const std::string& value)
+        const ObjectName& value)
 {
     annotation_set(ANNOTATION_VALUE_ID, value);
 }
 
 void AnnotationManager::annotation_set_default(
-        const std::string& default_value)
+        const ObjectName& default_value)
 {
     annotation_set(ANNOTATION_DEFAULT_ID, default_value);
 }
@@ -348,7 +348,7 @@ void AnnotationManager::annotation_set_bit_bound(
 }
 
 void AnnotationManager::annotation_set_extensibility(
-        const std::string& extensibility)
+        const ObjectName& extensibility)
 {
     annotation_set(ANNOTATION_EXTENSIBILITY_ID, extensibility);
 }
@@ -375,7 +375,7 @@ void AnnotationManager::annotation_set_nested(
 }
 
 void AnnotationManager::annotation_set_external(
-        const std::string& type_name)
+        const ObjectName& type_name)
 {
     annotation_set(ANNOTATION_EXTERNAL_ID, type_name);
 }
@@ -397,14 +397,14 @@ ReturnCode_t AnnotationManager::apply_annotation(
 
 ReturnCode_t AnnotationManager::apply_annotation(
         const std::string& annotation_name,
-        const std::string& key,
-        const std::string& value)
+        const ObjectName& key,
+        const ObjectName& value)
 {
     annotation_set(
         annotation_name,
         [&key, &value](const AnnotationDescriptorImpl& d) -> bool
         {
-            std::string val;
+            ObjectName val;
             d.get_value(val, key);
             return val != value;
         },
@@ -448,7 +448,7 @@ bool AnnotationManager::annotation_is_nested() const
 
     if (found)
     {
-        std::string value;
+        ObjectName value;
         if (it->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
@@ -459,7 +459,7 @@ bool AnnotationManager::annotation_is_nested() const
 }
 
 // Annotation getters
-std::string AnnotationManager::annotation_get_extensibility() const
+ObjectName AnnotationManager::annotation_get_extensibility() const
 {
     annotation_iterator it;
     bool found;
@@ -467,7 +467,7 @@ std::string AnnotationManager::annotation_get_extensibility() const
     std::tie(it, found) = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
     if (found)
     {
-        std::string value;
+        ObjectName value;
         if (it->get_value(value) == RETCODE_OK)
         {
             return value;
@@ -476,7 +476,7 @@ std::string AnnotationManager::annotation_get_extensibility() const
     return {};
 }
 
-std::string AnnotationManager::annotation_get_external_typename() const
+ObjectName AnnotationManager::annotation_get_external_typename() const
 {
     annotation_iterator it;
     bool found;
@@ -484,7 +484,7 @@ std::string AnnotationManager::annotation_get_external_typename() const
     std::tie(it, found) = get_annotation(ANNOTATION_EXTERNAL_ID);
     if (found)
     {
-        std::string value;
+        ObjectName value;
         if (it->get_value(value) == RETCODE_OK)
         {
             return value;

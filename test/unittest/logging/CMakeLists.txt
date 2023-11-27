@@ -45,7 +45,10 @@ target_compile_definitions(LogTests PRIVATE
 target_include_directories(LogTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LogTests GTest::gtest ${MOCKS}
+target_link_libraries(LogTests
+    fastcdr
+    GTest::gtest
+    ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 gtest_discover_tests(LogTests)
