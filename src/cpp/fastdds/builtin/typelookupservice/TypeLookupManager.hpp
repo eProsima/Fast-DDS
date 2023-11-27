@@ -24,9 +24,9 @@
 #include <vector>
 #include <mutex>
 
-#include <fastdds/dds/builtin/typelookup/TypeLookupRequestListener.hpp>
-#include <fastdds/dds/builtin/typelookup/TypeLookupReplyListener.hpp>
-#include <fastdds/dds/builtin/typelookup/common/TypeLookupTypes.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupRequestListener.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupReplyListener.hpp>
+#include <fastdds/builtin/typelookupservice/common/TypeLookupTypes.hpp>
 
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>

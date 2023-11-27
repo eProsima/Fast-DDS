@@ -17,11 +17,11 @@
  *
  */
 
-#ifndef REPLYHEADER_HPP
-#define REPLYHEADER_HPP
+#ifndef REQUESTHEADER_HPP
+#define REQUESTHEADER_HPP
 
 #include <fastrtps/rtps/common/SampleIdentity.h>
-#include <fastdds/dds/builtin/common/Types.hpp>
+#include <fastdds/builtin/typelookupservice/common/Types.hpp>
 
 namespace eprosima {
 
@@ -33,25 +33,25 @@ namespace fastdds {
 namespace dds {
 namespace rpc {
 
-struct ReplyHeader
+struct RequestHeader
 {
-    fastrtps::rtps::SampleIdentity relatedRequestId;
+    eprosima::fastrtps::rtps::SampleIdentity requestId;
 
-    RemoteExceptionCode_t remoteEx;
+    InstanceName instanceName;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::rpc::ReplyHeader::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::rpc::RequestHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
-            const ReplyHeader& data,
+            const RequestHeader& data,
             size_t current_alignment = 0);
 
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::rpc::ReplyHeader::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::rpc::RequestHeader::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::rpc::ReplyHeader::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::rpc::RequestHeader::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -69,4 +69,4 @@ struct ReplyHeader
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // REPLYHEADER_HPP
+#endif // REQUESTHEADER_HPP

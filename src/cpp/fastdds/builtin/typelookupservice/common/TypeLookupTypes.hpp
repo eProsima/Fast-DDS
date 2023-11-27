@@ -24,7 +24,7 @@
 #include <vector>
 
 #include <fastrtps/types/TypeObject.h>
-#include <fastdds/dds/builtin/common/RequestHeader.hpp>
+#include <fastdds/builtin/typelookupservice/common/RequestHeader.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 namespace eprosima {

@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/dds/builtin/typelookup/common/TypeLookupTypes.hpp>
+#include <fastdds/builtin/typelookupservice/common/TypeLookupTypes.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 

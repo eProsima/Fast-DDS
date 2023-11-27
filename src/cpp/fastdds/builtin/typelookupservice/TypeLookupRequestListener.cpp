@@ -17,9 +17,9 @@
  *
  */
 
-#include <fastdds/dds/builtin/typelookup/TypeLookupRequestListener.hpp>
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
-#include <fastdds/dds/builtin/typelookup/common/TypeLookupTypes.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupRequestListener.hpp>
+#include <fastdds/builtin/typelookupservice/TypeLookupManager.hpp>
+#include <fastdds/builtin/typelookupservice/common/TypeLookupTypes.hpp>
 
 #include <fastrtps/types/TypeObjectFactory.h>
 
