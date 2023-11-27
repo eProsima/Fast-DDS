@@ -18,12 +18,14 @@
  */
 
 #include "VideoTestPublisher.hpp"
-#include <fastdds/dds/log/Log.hpp>
-#include "fastrtps/log/Colors.h"
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <cstdint>
 #include <fstream>
-#include <inttypes.h>
+#include <thread>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/log/Colors.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #define TIME_LIMIT_US 10000
 
@@ -91,11 +93,23 @@ VideoTestPublisher::~VideoTestPublisher()
     Domain::removeParticipant(mp_participant);
 }
 
-
-bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
-        const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time,
-        int forced_domain, int videoWidth, int videoHeight, int videoFrameRate)
+bool VideoTestPublisher::init(
+        int n_sub,
+        int n_sam,
+        bool reliable,
+        uint32_t pid,
+        bool hostname,
+        const PropertyPolicy& part_property_policy,
+        const PropertyPolicy& property_policy,
+        bool large_data,
+        const std::string& sXMLConfigFile,
+        int test_time,
+        int drop_rate,
+        int max_sleep_time,
+        int forced_domain,
+        int videoWidth,
+        int videoHeight,
+        int videoFrameRate)
 {
     large_data = true;
     m_testTime = test_time;
@@ -127,13 +141,13 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     PParam.rtps.properties = part_property_policy;
     PParam.rtps.setName("video_test_publisher");
 
-    if(m_sXMLConfigFile.length() > 0)
+    if (m_sXMLConfigFile.length() > 0)
     {
         if (m_forcedDomain >= 0)
         {
             ParticipantAttributes participant_att;
             if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
+                    eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
                     participant_att))
             {
                 participant_att.domainId = m_forcedDomain;
@@ -150,7 +164,7 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
         mp_participant = Domain::createParticipant(PParam);
     }
 
-    if(mp_participant == nullptr)
+    if (mp_participant == nullptr)
     {
         return false;
     }
@@ -175,7 +189,7 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
         PubDataparam.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
     }
 
-    if(m_sXMLConfigFile.length() > 0)
+    if (m_sXMLConfigFile.length() > 0)
     {
         eprosima::fastrtps::xmlparser::XMLProfileManager::fillPublisherAttributes(profile_name, PubDataparam);
     }
@@ -246,16 +260,18 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     return true;
 }
 
-void VideoTestPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
+void VideoTestPublisher::DataPubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Data Pub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Data Pub Matched " << C_DEF << endl;
 
         n_matched++;
-        if(n_matched > mp_up->n_subscribers)
+        if (n_matched > mp_up->n_subscribers)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
             mp_up->m_status = -1;
@@ -272,16 +288,18 @@ void VideoTestPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*
     mp_up->disc_cond_.notify_one();
 }
 
-void VideoTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
+void VideoTestPublisher::CommandPubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Command Pub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Command Pub Matched " << C_DEF << endl;
 
         n_matched++;
-        if(n_matched > mp_up->n_subscribers)
+        if (n_matched > mp_up->n_subscribers)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
             mp_up->m_status = -1;
@@ -298,15 +316,17 @@ void VideoTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /*p
     mp_up->disc_cond_.notify_one();
 }
 
-void VideoTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void VideoTestPublisher::CommandSubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Command Sub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Command Sub Matched " << C_DEF << endl;
 
         n_matched++;
-        if(n_matched > mp_up->n_subscribers)
+        if (n_matched > mp_up->n_subscribers)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
             mp_up->m_status = -1;
@@ -323,17 +343,18 @@ void VideoTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /
     mp_up->disc_cond_.notify_one();
 }
 
-void VideoTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* subscriber)
+void VideoTestPublisher::CommandSubListener::onNewDataMessage(
+        Subscriber* subscriber)
 {
     TestCommandType command;
     SampleInfo_t info;
     //	cout << "COMMAND RECEIVED"<<endl;
-    if(subscriber->takeNextData((void*)&command,&info))
+    if (subscriber->takeNextData((void*)&command, &info))
     {
-        if(info.sampleKind == ALIVE)
+        if (info.sampleKind == ALIVE)
         {
             //cout << "ALIVE "<<command.m_command<<endl;
-            if(command.m_command == BEGIN)
+            if (command.m_command == BEGIN)
             {
                 //	cout << "POSTING"<<endl;
                 mp_up->mutex_.lock();
@@ -344,7 +365,9 @@ void VideoTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* subscr
         }
     }
     else
-        cout<< "Problem reading"<<endl;
+    {
+        cout << "Problem reading" << endl;
+    }
 }
 
 void VideoTestPublisher::run()
@@ -352,16 +375,19 @@ void VideoTestPublisher::run()
     //WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     //EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
     std::unique_lock<std::mutex> disc_lock(mutex_);
-    disc_cond_.wait(disc_lock, [&]() { return disc_count_ >= (n_subscribers * 3); });
+    disc_cond_.wait(disc_lock, [&]()
+            {
+                return disc_count_ >= (n_subscribers * 3);
+            });
     disc_lock.unlock();
 
-    cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
+    cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << endl;
 
     this->test(0);
 
-    cout << "REMOVING PUBLISHER"<<endl;
+    cout << "REMOVING PUBLISHER" << endl;
     Domain::removePublisher(this->mp_commandpub);
-    cout << "REMOVING SUBSCRIBER"<<endl;
+    cout << "REMOVING SUBSCRIBER" << endl;
     Domain::removeSubscriber(mp_commandsub);
 
     std::string str_reliable = "besteffort";
@@ -371,7 +397,8 @@ void VideoTestPublisher::run()
     }
 }
 
-bool VideoTestPublisher::test(uint32_t datasize)
+bool VideoTestPublisher::test(
+        uint32_t datasize)
 {
     m_status = 0;
     n_received = 0;
@@ -385,9 +412,10 @@ bool VideoTestPublisher::test(uint32_t datasize)
 
     std::unique_lock<std::mutex> lock(mutex_);
     // Wait for all the subscribers
-    comm_cond_.wait(lock, [&]() {
-        return comm_count_ >= n_subscribers;
-    });
+    comm_cond_.wait(lock, [&]()
+            {
+                return comm_count_ >= n_subscribers;
+            });
     --comm_count_;
 
     // BEGIN THE TEST
@@ -400,9 +428,10 @@ bool VideoTestPublisher::test(uint32_t datasize)
     // Get start time
     send_start_ = std::chrono::steady_clock::now();
     // Wait until timer returns "finished"
-    timer_cond_.wait(lock, [&]() {
-        return timer_on_;
-    });
+    timer_cond_.wait(lock, [&]()
+            {
+                return timer_on_;
+            });
 
     // Paused the sending
     gst_element_set_state(pipeline, GST_STATE_PAUSED);
@@ -412,13 +441,14 @@ bool VideoTestPublisher::test(uint32_t datasize)
     mp_commandpub->write(&command);
 
     // Wait until all subscribers unmatch
-    disc_cond_.wait(lock, [&]() {
-        return disc_count_ == 0;
-    });
+    disc_cond_.wait(lock, [&]()
+            {
+                return disc_count_ == 0;
+            });
 
-    if(m_status !=0)
+    if (m_status != 0)
     {
-        cout << "Error in test "<<endl;
+        cout << "Error in test " << endl;
         return false;
     }
     // --------------------------------------------------------------
@@ -460,9 +490,9 @@ void VideoTestPublisher::InitGStreamer()
                     g_signal_connect(sink, "new-sample", G_CALLBACK(new_sample), this);
 
                     /*std::string sFramerate = std::to_string(m_videoFrameRate) + "/1";*/
-                    GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
-                        "width", G_TYPE_INT, m_videoWidth, "height", G_TYPE_INT, m_videoHeight,
-                        "framerate", GST_TYPE_FRACTION, m_videoFrameRate, 1, NULL);
+                    GstCaps* caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
+                                    "width", G_TYPE_INT, m_videoWidth, "height", G_TYPE_INT, m_videoHeight,
+                                    "framerate", GST_TYPE_FRACTION, m_videoFrameRate, 1, NULL);
 
                     // Link the camera source and colorspace filter using capabilities specified
                     gst_bin_add_many(GST_BIN(pipeline), filesrc, videorate, sink, NULL);
@@ -477,7 +507,9 @@ void VideoTestPublisher::InitGStreamer()
 }
 
 /* The appsink has received a buffer */
-GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublisher *sub)
+GstFlowReturn VideoTestPublisher::new_sample(
+        GstElement* sink,
+        VideoTestPublisher* sub)
 {
     GstFlowReturn returned_value = GST_FLOW_ERROR;
     if (sub->mp_video_out != nullptr)
@@ -541,7 +573,7 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
 
     std::chrono::steady_clock::time_point send_end = std::chrono::steady_clock::now();
     std::unique_lock<std::mutex> lock(sub->mutex_);
-    if(std::chrono::duration<double, std::ratio<1, 1>>(send_end - sub->send_start_).count() >= sub->m_testTime)
+    if (std::chrono::duration<double, std::ratio<1, 1>>(send_end - sub->send_start_).count() >= sub->m_testTime)
     {
         sub->timer_on_ = true;
         sub->timer_cond_.notify_one();
