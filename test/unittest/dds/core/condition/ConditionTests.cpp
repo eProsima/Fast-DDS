@@ -12,19 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "../../../logging/mock/MockConsumer.h"
-#include <fastdds/dds/log/Log.hpp>
+#include <thread>
+
 #include <gtest/gtest.h>
 
-#include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/core/condition/StatusConditionImpl.hpp>
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
+#include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/types/TypesBase.h>
 
-#include <fastdds/core/condition/StatusConditionImpl.hpp>
+#include "../../../logging/mock/MockConsumer.h"
 
 using eprosima::fastrtps::types::ReturnCode_t;
 

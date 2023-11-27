@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
-
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
+#include <thread>
 
 #include <gtest/gtest.h>
 
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "BlackboxTests.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

@@ -12,23 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "VideoTestPublisher.hpp"
-#include "VideoTestSubscriber.hpp"
-
-#include <optionparser.hpp>
-
-#include <stdio.h>
-#include <string>
-#include <iostream>
-#include <iomanip>
 #include <bitset>
 #include <cstdint>
+#include <cstdio>
+#include <iomanip>
+#include <iostream>
+#include <string>
+#include <thread>
+
 #include <gstreamer-1.0/gst/gst.h>
+
+#include <optionparser.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/Domain.h>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "VideoTestPublisher.hpp"
+#include "VideoTestSubscriber.hpp"
 
 #if defined(_MSC_VER)
 #pragma warning (push)
