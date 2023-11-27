@@ -17,8 +17,8 @@
  *
  */
 
-#include <fastdds/builtin/typelookupservice/TypeLookupReplyListener.hpp>
-#include <fastdds/builtin/typelookupservice/TypeLookupManager.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 

@@ -24,12 +24,12 @@
 #include <vector>
 #include <mutex>
 
-#include <fastdds/builtin/typelookupservice/TypeLookupRequestListener.hpp>
-#include <fastdds/builtin/typelookupservice/TypeLookupReplyListener.hpp>
-#include <fastdds/builtin/typelookupservice/common/TypeLookupTypes.hpp>
-
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+
+#include <fastdds/builtin/type_lookup_service/common/TypeLookupTypes.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
 
 namespace eprosima {
 namespace fastrtps {

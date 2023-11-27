@@ -17,9 +17,6 @@
  *
  */
 
-#include <fastdds/builtin/typelookupservice/TypeLookupRequestListener.hpp>
-#include <fastdds/builtin/typelookupservice/TypeLookupManager.hpp>
-#include <fastdds/builtin/typelookupservice/common/TypeLookupTypes.hpp>
 
 #include <fastrtps/types/TypeObjectFactory.h>
 
@@ -28,6 +25,10 @@
 #include <fastdds/dds/log/Log.hpp>
 
 #include <utility>
+
+#include <fastdds/builtin/type_lookup_service/common/TypeLookupTypes.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 
 using eprosima::fastrtps::rtps::RTPSReader;
 using eprosima::fastrtps::rtps::CacheChange_t;

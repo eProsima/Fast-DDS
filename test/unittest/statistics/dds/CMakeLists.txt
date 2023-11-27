@@ -116,11 +116,11 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/common/RPCHeadersImpl.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/common/TypeLookupTypes.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/TypeLookupManager.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/TypeLookupReplyListener.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookupservice/TypeLookupRequestListener.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/common/RPCHeadersImpl.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/common/TypeLookupTypes.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/TypeLookupManager.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/TypeLookupReplyListener.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/TypeLookupRequestListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusCondition.cpp

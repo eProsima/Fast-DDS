@@ -17,8 +17,6 @@
  *
  */
 
-#include <fastdds/builtin/typelookupservice/TypeLookupManager.hpp>
-
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -40,6 +38,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <algorithm>

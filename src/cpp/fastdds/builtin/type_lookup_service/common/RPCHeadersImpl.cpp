@@ -17,10 +17,10 @@
  *
  */
 
-#include <fastdds/builtin/typelookupservice/common/ReplyHeader.hpp>
-#include <fastdds/builtin/typelookupservice/common/RequestHeader.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
+#include <fastdds/builtin/type_lookup_service/common/ReplyHeader.hpp>
+#include <fastdds/builtin/type_lookup_service/common/RequestHeader.hpp>
 #include "RPCHeadersImplCdrAux.ipp"
 
 namespace eprosima {
