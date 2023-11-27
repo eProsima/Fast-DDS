@@ -21,6 +21,7 @@
 #define REPLYHEADER_HPP
 
 #include <fastrtps/rtps/common/SampleIdentity.h>
+
 #include <fastdds/builtin/type_lookup_service/common/Types.hpp>
 
 namespace eprosima {

@@ -28,8 +28,9 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 
 #include <fastdds/builtin/type_lookup_service/common/TypeLookupTypes.hpp>
-#include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
+
 
 namespace eprosima {
 namespace fastrtps {
