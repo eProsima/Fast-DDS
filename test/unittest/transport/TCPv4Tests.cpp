@@ -472,7 +472,7 @@ static void GetIP4s(
     interfaces.erase(new_end, interfaces.end());
     std::for_each(interfaces.begin(), interfaces.end(), [](IPFinder::info_IP& loc)
             {
-                loc.locator.kind = LOCATOR_KIND_UDPv4;
+                loc.locator.kind = LOCATOR_KIND_TCPv4;
             });
 }
 
