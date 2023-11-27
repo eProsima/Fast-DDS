@@ -91,6 +91,7 @@ target_include_directories(BasicPoolsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(BasicPoolsTests
+    fastcdr
     GTest::gtest
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(BasicPoolsTests)
@@ -104,6 +105,7 @@ target_include_directories(CacheChangePoolTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(CacheChangePoolTests
+    fastcdr
     GTest::gtest
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(CacheChangePoolTests)
@@ -118,6 +120,7 @@ target_include_directories(TopicPayloadPoolTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(TopicPayloadPoolTests
+    fastcdr
     GTest::gtest
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(TopicPayloadPoolTests)

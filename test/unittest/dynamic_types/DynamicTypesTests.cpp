@@ -306,43 +306,43 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
 INSTANTIATE_TEST_SUITE_P(CheckingGetPrimitiveType,
         DynamicTypesPrimitiveTestsAPIs,
         testing::Values(
-            std::make_tuple(TK_INT32,
+            std::make_tuple(eprosima::fastdds::dds::TK_INT32,
             &DynamicTypeBuilderFactory::create_int32_type,
             &DynamicTypeBuilderFactory::get_int32_type),
-            std::make_tuple(TK_UINT32,
+            std::make_tuple(eprosima::fastdds::dds::TK_UINT32,
             &DynamicTypeBuilderFactory::create_uint32_type,
             &DynamicTypeBuilderFactory::get_uint32_type),
-            std::make_tuple(TK_INT16,
+            std::make_tuple(eprosima::fastdds::dds::TK_INT16,
             &DynamicTypeBuilderFactory::create_int16_type,
             &DynamicTypeBuilderFactory::get_int16_type),
-            std::make_tuple(TK_UINT16,
+            std::make_tuple(eprosima::fastdds::dds::TK_UINT16,
             &DynamicTypeBuilderFactory::create_uint16_type,
             &DynamicTypeBuilderFactory::get_uint16_type),
-            std::make_tuple(TK_INT64,
+            std::make_tuple(eprosima::fastdds::dds::TK_INT64,
             &DynamicTypeBuilderFactory::create_int64_type,
             &DynamicTypeBuilderFactory::get_int64_type),
-            std::make_tuple(TK_UINT64,
+            std::make_tuple(eprosima::fastdds::dds::TK_UINT64,
             &DynamicTypeBuilderFactory::create_uint64_type,
             &DynamicTypeBuilderFactory::get_uint64_type),
-            std::make_tuple(TK_FLOAT32,
+            std::make_tuple(eprosima::fastdds::dds::TK_FLOAT32,
             &DynamicTypeBuilderFactory::create_float32_type,
             &DynamicTypeBuilderFactory::get_float32_type),
-            std::make_tuple(TK_FLOAT64,
+            std::make_tuple(eprosima::fastdds::dds::TK_FLOAT64,
             &DynamicTypeBuilderFactory::create_float64_type,
             &DynamicTypeBuilderFactory::get_float64_type),
-            std::make_tuple(TK_FLOAT128,
+            std::make_tuple(eprosima::fastdds::dds::TK_FLOAT128,
             &DynamicTypeBuilderFactory::create_float128_type,
             &DynamicTypeBuilderFactory::get_float128_type),
-            std::make_tuple(TK_CHAR8,
+            std::make_tuple(eprosima::fastdds::dds::TK_CHAR8,
             &DynamicTypeBuilderFactory::create_char8_type,
             &DynamicTypeBuilderFactory::get_char8_type),
-            std::make_tuple(TK_CHAR16,
+            std::make_tuple(eprosima::fastdds::dds::TK_CHAR16,
             &DynamicTypeBuilderFactory::create_char16_type,
             &DynamicTypeBuilderFactory::get_char16_type),
-            std::make_tuple(TK_BOOLEAN,
+            std::make_tuple(eprosima::fastdds::dds::TK_BOOLEAN,
             &DynamicTypeBuilderFactory::create_bool_type,
             &DynamicTypeBuilderFactory::get_bool_type),
-            std::make_tuple(TK_BYTE,
+            std::make_tuple(eprosima::fastdds::dds::TK_BYTE,
             &DynamicTypeBuilderFactory::create_byte_type,
             &DynamicTypeBuilderFactory::get_byte_type)));
 
@@ -359,19 +359,19 @@ template<TypeKind> struct TypeKindType {};
     };
 
 // specializations
-GTEST_CONST2TYPE(TK_BOOLEAN)
-GTEST_CONST2TYPE(TK_BYTE)
-GTEST_CONST2TYPE(TK_INT16)
-GTEST_CONST2TYPE(TK_INT32)
-GTEST_CONST2TYPE(TK_INT64)
-GTEST_CONST2TYPE(TK_UINT16)
-GTEST_CONST2TYPE(TK_UINT32)
-GTEST_CONST2TYPE(TK_UINT64)
-GTEST_CONST2TYPE(TK_FLOAT32)
-GTEST_CONST2TYPE(TK_FLOAT64)
-GTEST_CONST2TYPE(TK_FLOAT128)
-GTEST_CONST2TYPE(TK_CHAR8)
-GTEST_CONST2TYPE(TK_CHAR16)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_BOOLEAN)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_BYTE)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT16)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT32)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT64)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_UINT16)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_UINT32)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_UINT64)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_FLOAT32)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_FLOAT64)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_FLOAT128)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_CHAR8)
+GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_CHAR16)
 
 template<class T>
 class StaticTypesPrimitiveTests
@@ -383,19 +383,19 @@ class StaticTypesPrimitiveTests
 #define GTEST_CONST2TYPE(type) TypeKindType<type>
 
 using TypeKindTypes = ::testing::Types<
-    GTEST_CONST2TYPE(TK_BOOLEAN),
-    GTEST_CONST2TYPE(TK_BYTE),
-    GTEST_CONST2TYPE(TK_INT16),
-    GTEST_CONST2TYPE(TK_INT32),
-    GTEST_CONST2TYPE(TK_INT64),
-    GTEST_CONST2TYPE(TK_UINT16),
-    GTEST_CONST2TYPE(TK_UINT32),
-    GTEST_CONST2TYPE(TK_UINT64),
-    GTEST_CONST2TYPE(TK_FLOAT32),
-    GTEST_CONST2TYPE(TK_FLOAT64),
-    GTEST_CONST2TYPE(TK_FLOAT128),
-    GTEST_CONST2TYPE(TK_CHAR8),
-    GTEST_CONST2TYPE(TK_CHAR16)>;
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_BOOLEAN),
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_BYTE),
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT16),
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT32),
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT64),
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_UINT16),
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_UINT32),
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_UINT64),
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_FLOAT32),
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_FLOAT64),
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_FLOAT128),
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_CHAR8),
+    GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_CHAR16)>;
 
 TYPED_TEST_SUITE(StaticTypesPrimitiveTests, TypeKindTypes, );
 
@@ -781,7 +781,7 @@ TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
     // Create a modifiable builder copy
     std::unique_ptr<DynamicTypeBuilder> builder {factory.create_type_copy(*primitive)};
     ASSERT_TRUE(builder);
-    EXPECT_EQ(builder->get_kind(), TK_INT32);
+    EXPECT_EQ(builder->get_kind(), eprosima::fastdds::dds::TK_INT32);
 
     // Use TypeDescriptor to capture the state
     TypeDescriptor state;
@@ -833,7 +833,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     std::unique_ptr<DynamicTypeBuilder> struct_type_builder { factory.create_struct_type()};
     ASSERT_TRUE(struct_type_builder);
     EXPECT_TRUE(struct_type_builder->is_consistent());
-    EXPECT_EQ(struct_type_builder->get_kind(), TK_STRUCTURE);
+    EXPECT_EQ(struct_type_builder->get_kind(), eprosima::fastdds::dds::TK_STRUCTURE);
     EXPECT_EQ(struct_type_builder->get_member_count(), 0u);
 
     // Add members to the struct.

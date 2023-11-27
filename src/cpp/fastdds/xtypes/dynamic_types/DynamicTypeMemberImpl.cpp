@@ -36,7 +36,7 @@ std::string DynamicTypeMemberImpl::get_default_value() const
 {
     // Fallback to annotation
     std::string res = MemberDescriptorImpl::get_default_value();
-    return res.empty() ? annotation_get_default() : res;
+    return res.empty() ? annotation_get_default().c_str() : res;
 }
 
 bool DynamicTypeMemberImpl::is_consistent(

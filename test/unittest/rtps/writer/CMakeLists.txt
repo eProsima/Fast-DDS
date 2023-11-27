@@ -91,7 +91,8 @@ target_include_directories(LivelinessManagerTests PRIVATE
     )
 target_link_libraries(LivelinessManagerTests PRIVATE
     fastcdr
-    GTest::gmock)
+    GTest::gmock
+    )
 gtest_discover_tests(LivelinessManagerTests)
 
 if(NOT QNX)

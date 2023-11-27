@@ -16,6 +16,7 @@
 #define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP
 
 #include <fastdds/dds/core/Types.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/rtps/common/Types.h>
 
 #include <array>
@@ -96,67 +97,6 @@ const char* const TKNAME_MAP = "map";
 
 } // namespace xtypes_names
 
-// TODO(richiware) Move to IDL
-using TypeKind = eprosima::fastrtps::rtps::octet;
-
-// invalid
-const TypeKind TK_NONE = 0x00;
-
-// Primitive TKs
-const TypeKind TK_BOOLEAN = 0x01;
-const TypeKind TK_BYTE = 0x02;
-const TypeKind TK_INT16 = 0x03;
-const TypeKind TK_INT32 = 0x04;
-const TypeKind TK_INT64 = 0x05;
-const TypeKind TK_UINT16 = 0x06;
-const TypeKind TK_UINT32 = 0x07;
-const TypeKind TK_UINT64 = 0x08;
-const TypeKind TK_FLOAT32 = 0x09;
-const TypeKind TK_FLOAT64 = 0x0A;
-const TypeKind TK_FLOAT128 = 0x0B;
-const TypeKind TK_CHAR8 = 0x10;
-const TypeKind TK_CHAR16 = 0x11;
-
-// String TKs
-const TypeKind TK_STRING8 = 0x20;
-const TypeKind TK_STRING16 = 0x21;
-
-// Constructed/Named types
-const TypeKind TK_ALIAS = 0x30;
-
-// Enumerated TKs
-const TypeKind TK_ENUM = 0x40;
-const TypeKind TK_BITMASK = 0x41;
-
-// Structured TKs
-const TypeKind TK_ANNOTATION = 0x50;
-const TypeKind TK_STRUCTURE = 0x51;
-const TypeKind TK_UNION = 0x52;
-const TypeKind TK_BITSET = 0x53;
-
-// Collection TKs
-const TypeKind TK_SEQUENCE = 0x60;
-const TypeKind TK_ARRAY = 0x61;
-const TypeKind TK_MAP = 0x62;
-
-// TypeIdentifiers
-const TypeKind TI_STRING8_SMALL = 0x70;
-const TypeKind TI_STRING8_LARGE = 0x71;
-const TypeKind TI_STRING16_SMALL = 0x72;
-const TypeKind TI_STRING16_LARGE = 0x73;
-const TypeKind TI_PLAIN_SEQUENCE_SMALL = 0x80;
-const TypeKind TI_PLAIN_SEQUENCE_LARGE = 0x81;
-const TypeKind TI_PLAIN_ARRAY_SMALL = 0x90;
-const TypeKind TI_PLAIN_ARRAY_LARGE = 0x91;
-const TypeKind TI_PLAIN_MAP_SMALL = 0xA0;
-const TypeKind TI_PLAIN_MAP_LARGE = 0xA1;
-const TypeKind TI_STRONGLY_CONNECTED_COMPONENT = 0xB0;
-
-// Equivalence Kinds
-const TypeKind EK_MINIMAL = 0xF1; // 0x1111 0001
-const TypeKind EK_COMPLETE = 0xF2; // 0x1111 0010
-const TypeKind EK_BOTH = 0xF3; // 0x1111 0011
-
 namespace typekind_detail {
 
 template<TypeKind kind, class CharT, class Traits>
@@ -200,17 +140,6 @@ XTYPENAME(TK_BITSET)
 XTYPENAME(TK_SEQUENCE)
 XTYPENAME(TK_ARRAY)
 XTYPENAME(TK_MAP)
-XTYPENAME(TI_STRING8_SMALL)
-XTYPENAME(TI_STRING8_LARGE)
-XTYPENAME(TI_STRING16_SMALL)
-XTYPENAME(TI_STRING16_LARGE)
-XTYPENAME(TI_PLAIN_SEQUENCE_SMALL)
-XTYPENAME(TI_PLAIN_SEQUENCE_LARGE)
-XTYPENAME(TI_PLAIN_ARRAY_SMALL)
-XTYPENAME(TI_PLAIN_ARRAY_LARGE)
-XTYPENAME(TI_PLAIN_MAP_SMALL)
-XTYPENAME(TI_PLAIN_MAP_LARGE)
-XTYPENAME(TI_STRONGLY_CONNECTED_COMPONENT)
 
 #undef XTYPENAME
 
@@ -255,17 +184,6 @@ operator <<(
         XTYPECASE(TK_SEQUENCE)
         XTYPECASE(TK_ARRAY)
         XTYPECASE(TK_MAP)
-        XTYPECASE(TI_STRING8_SMALL)
-        XTYPECASE(TI_STRING8_LARGE)
-        XTYPECASE(TI_STRING16_SMALL)
-        XTYPECASE(TI_STRING16_LARGE)
-        XTYPECASE(TI_PLAIN_SEQUENCE_SMALL)
-        XTYPECASE(TI_PLAIN_SEQUENCE_LARGE)
-        XTYPECASE(TI_PLAIN_ARRAY_SMALL)
-        XTYPECASE(TI_PLAIN_ARRAY_LARGE)
-        XTYPECASE(TI_PLAIN_MAP_SMALL)
-        XTYPECASE(TI_PLAIN_MAP_LARGE)
-        XTYPECASE(TI_STRONGLY_CONNECTED_COMPONENT)
         default:
             return os;
     }

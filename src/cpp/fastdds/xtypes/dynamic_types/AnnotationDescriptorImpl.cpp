@@ -38,14 +38,8 @@ AnnotationDescriptorImpl::AnnotationDescriptorImpl(
     }
 
     // copy contents
-    const Parameters& par = *d.get_all_value();
-    const char* key = par.next_key();
-
-    while (key != nullptr)
-    {
-        value_.emplace(key, par[key]);
-        key = par.next_key(key);
-    }
+    Parameters parameters;
+    d.get_all_value(value_);
 }
 
 bool AnnotationDescriptorImpl::operator ==(
@@ -83,14 +77,14 @@ bool AnnotationDescriptorImpl::key_annotation() const
 }
 
 ReturnCode_t AnnotationDescriptorImpl::get_value(
-        std::string& value) const
+        ObjectName& value) const
 {
     return get_value(value, "value");
 }
 
 ReturnCode_t AnnotationDescriptorImpl::get_value(
-        std::string& value,
-        const std::string& key) const
+        ObjectName& value,
+        const ObjectName& key) const
 {
     auto it = value_.find(key);
     if (it != value_.end())
@@ -102,7 +96,7 @@ ReturnCode_t AnnotationDescriptorImpl::get_value(
 }
 
 ReturnCode_t AnnotationDescriptorImpl::get_all_value(
-        std::map<std::string, std::string>& value) const
+        Parameters& value) const
 {
     value = value_;
     return RETCODE_OK;
@@ -120,8 +114,8 @@ bool AnnotationDescriptorImpl::is_consistent() const
 }
 
 ReturnCode_t AnnotationDescriptorImpl::set_value(
-        const std::string& key,
-        const std::string& value)
+        const ObjectName& key,
+        const ObjectName& value)
 {
     value_[key] = value;
     return RETCODE_OK;
