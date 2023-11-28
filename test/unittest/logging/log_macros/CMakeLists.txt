@@ -31,7 +31,7 @@ set(LOGMACROS_SOURCE
     ${LOGMACROS_ALL_TEST_SOURCE})
 
 add_executable(LogMacrosAllActiveTests ${LOGMACROS_SOURCE})
-target_compile_definitions(LogMacrosAllActiveTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(LogMacrosAllActiveTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -51,7 +51,7 @@ set(LOGMACROS_SOURCE
     ${LOGMACROS_NOINFO_TEST_SOURCE})
 
 add_executable(LogMacrosNoInfoTests ${LOGMACROS_SOURCE})
-target_compile_definitions(LogMacrosNoInfoTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(LogMacrosNoInfoTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -71,7 +71,7 @@ set(LOGMACROS_SOURCE
     ${LOGMACROS_NOWARNING_TEST_SOURCE})
 
 add_executable(LogMacrosNoWarningTests ${LOGMACROS_SOURCE})
-target_compile_definitions(LogMacrosNoWarningTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(LogMacrosNoWarningTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -91,7 +91,7 @@ set(LOGMACROS_SOURCE
     ${LOGMACROS_NOERROR_TEST_SOURCE})
 
 add_executable(LogMacrosNoErrorTests ${LOGMACROS_SOURCE})
-target_compile_definitions(LogMacrosNoErrorTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(LogMacrosNoErrorTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -111,7 +111,7 @@ set(LOGMACROS_SOURCE
     ${LOGMACROS_DEFAULT_TEST_SOURCE})
 
 add_executable(LogMacrosDefaultTests ${LOGMACROS_SOURCE})
-target_compile_definitions(LogMacrosDefaultTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(LogMacrosDefaultTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -133,7 +133,7 @@ set(LOGMACROS_SOURCE
     ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
 
 add_executable(LogMacrosInternalDebugOffTests ${LOGMACROS_SOURCE})
-target_compile_definitions(LogMacrosInternalDebugOffTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(LogMacrosInternalDebugOffTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )

@@ -63,7 +63,7 @@ set(XTYPES_TEST_SOURCE
 include_directories(mock/)
 
 add_executable(XTypesTests ${XTYPES_TEST_SOURCE})
-target_compile_definitions(XTypesTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(XTypesTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>

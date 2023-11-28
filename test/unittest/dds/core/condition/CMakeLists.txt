@@ -36,7 +36,7 @@ set(CONDITION_TESTS_SOURCE
     ConditionTests.cpp)
 
 add_executable(ConditionTests ${CONDITION_TESTS_SOURCE})
-target_compile_definitions(ConditionTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(ConditionTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -56,7 +56,7 @@ set(CONDITION_NOTIFIER_TESTS_SOURCE
     ConditionNotifierTests.cpp)
 
 add_executable(ConditionNotifierTests ${CONDITION_NOTIFIER_TESTS_SOURCE})
-target_compile_definitions(ConditionNotifierTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(ConditionNotifierTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -80,7 +80,7 @@ set(STATUS_CONDITION_IMPL_TESTS_SOURCE
     StatusConditionImplTests.cpp)
 
 add_executable(StatusConditionImplTests ${STATUS_CONDITION_IMPL_TESTS_SOURCE})
-target_compile_definitions(StatusConditionImplTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(StatusConditionImplTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -103,7 +103,7 @@ set(WAITSET_IMPL_TESTS_SOURCE
     WaitSetImplTests.cpp)
 
 add_executable(WaitSetImplTests ${WAITSET_IMPL_TESTS_SOURCE})
-target_compile_definitions(WaitSetImplTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(WaitSetImplTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )

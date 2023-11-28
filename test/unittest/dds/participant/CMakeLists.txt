@@ -24,7 +24,7 @@ if(WIN32)
 endif()
 
 add_executable(ParticipantTests ${PARTICIPANTTESTS_SOURCE})
-target_compile_definitions(ParticipantTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(ParticipantTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )

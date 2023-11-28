@@ -34,7 +34,7 @@ set(FLOWCONTROLLERFACTORYTESTS_SOURCE
     )
 
 add_executable(FlowControllerFactoryTests ${FLOWCONTROLLERFACTORYTESTS_SOURCE})
-target_compile_definitions(FlowControllerFactoryTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(FlowControllerFactoryTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -65,7 +65,7 @@ set(FLOWCONTROLLERPUBLISHMODESTESTS_SOURCE
     )
 
 add_executable(FlowControllerPublishModesTests ${FLOWCONTROLLERPUBLISHMODESTESTS_SOURCE})
-target_compile_definitions(FlowControllerPublishModesTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(FlowControllerPublishModesTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -92,7 +92,7 @@ set(FLOWCONTROLLERSCHEDULERSTESTS_SOURCE
     )
 
 add_executable(FlowControllerSchedulersTests ${FLOWCONTROLLERSCHEDULERSTESTS_SOURCE})
-target_compile_definitions(FlowControllerSchedulersTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(FlowControllerSchedulersTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )

@@ -69,7 +69,7 @@ add_executable(AccessControlTests ${COMMON_SOURCES_ACCESS_CONTROL_TEST_SOURCE}
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AccessControlTests.cpp)
 
-target_compile_definitions(AccessControlTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(AccessControlTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>

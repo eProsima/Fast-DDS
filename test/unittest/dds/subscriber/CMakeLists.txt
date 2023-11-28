@@ -24,7 +24,7 @@ if(WIN32)
 endif()
 
 add_executable(SubscriberTests ${SUBSCRIBERTESTS_SOURCE})
-target_compile_definitions(SubscriberTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(SubscriberTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -38,7 +38,10 @@ target_link_libraries(SubscriberTests fastrtps fastcdr foonathan_memory
 add_gtest(SubscriberTests SOURCES ${SUBSCRIBERTESTS_SOURCE})
 
 add_executable(DataReaderTests ${DATAREADERTESTS_SOURCE})
-target_compile_definitions(DataReaderTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(DataReaderTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    ASIO_DISABLE_VISIBILITY
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
