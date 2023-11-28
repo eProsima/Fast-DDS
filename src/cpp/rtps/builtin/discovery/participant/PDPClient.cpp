@@ -939,26 +939,18 @@ bool ros_super_client_env()
     SystemInfo::get_env(ROS_SUPER_CLIENT, super_client_str);
     if (super_client_str != "")
     {
-        try
+        if (find(true_vec.begin(), true_vec.end(), super_client_str) != true_vec.end())
         {
-            if (find(true_vec.begin(), true_vec.end(), super_client_str) != true_vec.end())
-            {
-                super_client = true;
-            }
-            else if (find(false_vec.begin(), false_vec.end(), super_client_str) != false_vec.end())
-            {
-                super_client = false;
-            }
-            else
-            {
-                std::stringstream ss;
-                ss << "Invalid ROS_SUPER_CLIENT argument " << super_client_str;
-                throw std::invalid_argument(ss.str());
-            }
+            super_client = true;
         }
-        catch (std::exception& e)
+        else if (find(false_vec.begin(), false_vec.end(), super_client_str) != false_vec.end())
         {
-            EPROSIMA_LOG_ERROR(SERVER_CLIENT_DISCOVERY, e.what());
+            super_client = false;
+        }
+        else
+        {
+            std::string ss = "Invalid ROS_SUPER_CLIENT argument";
+            EPROSIMA_LOG_ERROR(SERVER_CLIENT_DISCOVERY, ss);
         }
     }
     return super_client;
