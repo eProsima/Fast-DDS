@@ -51,7 +51,7 @@ if(NOT LibP11_FOUND)
 endif() # LibP11_FOUND
 
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
-    set(dns_filter "Discovery.ServerClientEnvironmentSetUpDNS")
+    set(dns_filter "-Discovery.ServerClientEnvironmentSetUpDNS")
 endif()
 
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
