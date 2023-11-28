@@ -1620,7 +1620,7 @@ TEST_F(TCPv4Tests, header_read_interrumption)
     thread.join();
 }
 
-// This test verifies that the autofill port feature correctly sets an automatic port when 
+// This test verifies that the autofill port feature correctly sets an automatic port when
 // the descriptors's port is set to 0.
 TEST_F(TCPv4Tests, autofill_port)
 {
@@ -1632,7 +1632,7 @@ TEST_F(TCPv4Tests, autofill_port)
 
     EXPECT_TRUE(transportUnderTest.configuration()->listening_ports[0] == g_default_port);
 
-    // Check default port assignation 
+    // Check default port assignation
     TCPv4TransportDescriptor test_descriptor_autofill;
     test_descriptor_autofill.add_listener_port(0);
     TCPv4Transport transportUnderTest_autofill(test_descriptor_autofill);
@@ -1652,7 +1652,9 @@ TEST_F(TCPv4Tests, autofill_port)
     EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports[0] != 0);
     EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports[1] == port);
     EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports[2] != 0);
-    EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports[0] != transportUnderTest_multiple_autofill.configuration()->listening_ports[2]);
+    EXPECT_TRUE(
+        transportUnderTest_multiple_autofill.configuration()->listening_ports[0] !=
+        transportUnderTest_multiple_autofill.configuration()->listening_ports[2]);
     EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports.size() == 3);
 }
 
