@@ -21,6 +21,7 @@
 
 #include <algorithm>
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
@@ -40,7 +41,6 @@
 //#include <fastdds/rtps/common/Guid.h>
 //#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
-#include <fastdds/dds/log/Log.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 

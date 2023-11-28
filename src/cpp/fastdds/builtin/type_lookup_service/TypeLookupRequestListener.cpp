@@ -21,11 +21,10 @@
 
 #include <utility>
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-
-#include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/builtin/type_lookup_service/common/TypeLookupTypes.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
