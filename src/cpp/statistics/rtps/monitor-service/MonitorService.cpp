@@ -505,6 +505,11 @@ bool MonitorService::create_endpoint()
     watts.endpoint.reliabilityKind = RELIABLE;
     watts.endpoint.topicKind = WITH_KEY;
 
+    Property property;
+    property.name("topic_name");
+    property.value(MONITOR_SERVICE_TOPIC);
+    watts.endpoint.properties.properties().push_back(std::move(property));
+
     HistoryAttributes hatt;
     hatt.payloadMaxSize = BUILTIN_DATA_MAX_SIZE;
     hatt.memoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
