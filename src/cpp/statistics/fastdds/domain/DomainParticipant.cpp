@@ -20,9 +20,9 @@
 
 #include <string>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <fastrtps/types/TypesBase.h>
 
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 
@@ -31,7 +31,7 @@ namespace fastdds {
 namespace statistics {
 namespace dds {
 
-ReturnCode_t DomainParticipant::enable_statistics_datawriter(
+fastdds::dds::ReturnCode_t DomainParticipant::enable_statistics_datawriter(
         const std::string& topic_name,
         const eprosima::fastdds::dds::DataWriterQos& dwqos)
 {
@@ -45,7 +45,7 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
 #endif // FASTDDS_STATISTICS
 }
 
-ReturnCode_t DomainParticipant::enable_statistics_datawriter_with_profile(
+fastdds::dds::ReturnCode_t DomainParticipant::enable_statistics_datawriter_with_profile(
         const std::string& profile_name,
         const std::string& topic_name)
 {
@@ -60,7 +60,7 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter_with_profile(
 #endif // FASTDDS_STATISTICS
 }
 
-ReturnCode_t DomainParticipant::disable_statistics_datawriter(
+fastdds::dds::ReturnCode_t DomainParticipant::disable_statistics_datawriter(
         const std::string& topic_name)
 {
 #ifndef FASTDDS_STATISTICS
