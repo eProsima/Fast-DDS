@@ -438,9 +438,9 @@ TEST_P(NetworkConfig, PubSubAsymmetricInterfaceWhitelistLocalhostOnly)
         GetIP4s(locahost_interface_only, true);
         auto new_end = remove_if(locahost_interface_only.begin(),
                         locahost_interface_only.end(),
-                        [](IPFinder::info_IP ip)
+                        [](IPFinder::info_IP info_ip_)
                         {
-                            return ip.type != IPFinder::IP4_LOCAL;
+                            return info_ip_.type != IPFinder::IP4_LOCAL;
                         });
         locahost_interface_only.erase(new_end, locahost_interface_only.end());
     }
@@ -449,9 +449,9 @@ TEST_P(NetworkConfig, PubSubAsymmetricInterfaceWhitelistLocalhostOnly)
         GetIP6s(locahost_interface_only, true);
         auto new_end = remove_if(locahost_interface_only.begin(),
                         locahost_interface_only.end(),
-                        [](IPFinder::info_IP ip)
+                        [](IPFinder::info_IP info_ip_)
                         {
-                            return ip.type != IPFinder::IP6_LOCAL;
+                            return info_ip_.type != IPFinder::IP6_LOCAL;
                         });
         locahost_interface_only.erase(new_end, locahost_interface_only.end());
     }
