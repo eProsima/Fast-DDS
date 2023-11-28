@@ -340,15 +340,6 @@ public:
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
             std::unique_lock<RecursiveTimedMutex>& lock) = 0;
 
-    /**
-     * @brief Get the connection list of this writer
-     *
-     * @param [out] connection_list of the writer
-     * @return True if could be retrieved
-     */
-    RTPS_DllAPI virtual bool get_connections(
-            fastdds::statistics::rtps::ConnectionList& connection_list) = 0;
-
 #ifdef FASTDDS_STATISTICS
 
     /**
@@ -374,6 +365,15 @@ public:
      */
     RTPS_DllAPI void set_enabled_statistics_writers_mask(
             uint32_t enabled_writers);
+
+    /**
+     * @brief Get the connection list of this writer
+     *
+     * @param [out] connection_list of the writer
+     * @return True if could be retrieved
+     */
+    RTPS_DllAPI virtual bool get_connections(
+            fastdds::statistics::rtps::ConnectionList& connection_list) = 0;
 
 #endif // FASTDDS_STATISTICS
 

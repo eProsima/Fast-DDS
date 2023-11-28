@@ -1241,10 +1241,11 @@ public:
     }
 
 #else
-    std::vector<fastdds::statistics::Connection> get_entity_connections(
-            const GUID_t&) override
+    bool get_entity_connections(
+            const GUID_t&,
+            fastdds::statistics::rtps::ConnectionList&) override
     {
-        return std::vector<fastdds::statistics::Connection>();
+        return false;
     }
 
 #endif // FASTDDS_STATISTICS
