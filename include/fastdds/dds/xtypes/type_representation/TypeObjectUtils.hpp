@@ -246,9 +246,9 @@ public:
      * @param[in out] array_bound_seq Sequence with the array bounds.
      * @param[in] dimension_bound Dimension bound to be added into the sequence.
      */
-    template<typename array, typename element>
+    template<typename element>
     static void add_array_dimension(
-            array& array_bound_seq,
+            std::vector<element>& array_bound_seq,
             element dimension_bound)
     {
         if (dimension_bound == INVALID_LBOUND)

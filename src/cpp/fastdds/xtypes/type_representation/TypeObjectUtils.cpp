@@ -1387,6 +1387,7 @@ const CompleteMapType TypeObjectUtils::build_complete_map_type(
         const CompleteCollectionElement& key,
         const CompleteCollectionElement& element)
 {
+    // TODO: included to remove warning in Windows v141. Remove when no longer supported.
     try
     {
         empty_flags_consistency(collection_flag);
@@ -2873,6 +2874,7 @@ void TypeObjectUtils::complete_array_type_consistency(
 void TypeObjectUtils::complete_map_type_consistency(
         const CompleteMapType& complete_map_type)
 {
+    // TODO: included to remove warning in Windows v141. Remove when no longer supported.
     try
     {
         empty_flags_consistency(complete_map_type.collection_flag());

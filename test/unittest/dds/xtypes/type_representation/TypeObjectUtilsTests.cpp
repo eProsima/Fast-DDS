@@ -237,7 +237,8 @@ TEST(TypeObjectUtilsTests, build_plain_array_s_elem_defn_inconsistencies)
     eprosima::fastcdr::external<TypeIdentifier> test_identifier{new TypeIdentifier()};
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::TRIM, false);
     SBoundSeq bound_seq;
-    TypeObjectUtils::add_array_dimension(bound_seq, 10);
+    SBound bound = 10;
+    TypeObjectUtils::add_array_dimension(bound_seq, bound);
     PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
         EquivalenceKindValue::COMPLETE, flags);
 #if !defined(NDEBUG)
@@ -259,8 +260,9 @@ TEST(TypeObjectUtilsTests, build_plain_array_s_elem_defn_inconsistencies)
     EXPECT_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
                 complete_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
     // Zero element
-    TypeObjectUtils::add_array_dimension(wrong_bound_seq, 10);
-    TypeObjectUtils::add_array_dimension(wrong_bound_seq, 0);
+    TypeObjectUtils::add_array_dimension(wrong_bound_seq, bound);
+    bound = 0;
+    TypeObjectUtils::add_array_dimension(wrong_bound_seq, bound);
     EXPECT_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
                 complete_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
 
@@ -310,7 +312,8 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
     eprosima::fastcdr::external<TypeIdentifier> test_identifier{new TypeIdentifier()};
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(TryConstructKind::TRIM, false);
     LBoundSeq bound_seq;
-    TypeObjectUtils::add_array_dimension(bound_seq, 256);
+    LBound bound = 256;
+    TypeObjectUtils::add_array_dimension(bound_seq, bound);
     PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
         EquivalenceKindValue::COMPLETE, flags);
 #if !defined(NDEBUG)
@@ -332,7 +335,8 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 complete_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
     // Non-large bound dimension
-    TypeObjectUtils::add_array_dimension(wrong_bound_seq, 10);
+    bound = 10;
+    TypeObjectUtils::add_array_dimension(wrong_bound_seq, bound);
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 complete_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
 
@@ -352,11 +356,13 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
     EXPECT_NO_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 fully_descriptive_header, bound_seq, test_identifier));
     // At least one dimension should be large
-    TypeObjectUtils::add_array_dimension(wrong_bound_seq, 256);
+    bound = 256;
+    TypeObjectUtils::add_array_dimension(wrong_bound_seq, bound);
     EXPECT_NO_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 fully_descriptive_header, wrong_bound_seq, test_identifier));
     // Zero element
-    TypeObjectUtils::add_array_dimension(wrong_bound_seq, 0);
+    bound = 0;
+    TypeObjectUtils::add_array_dimension(wrong_bound_seq, bound);
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 fully_descriptive_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
     // Change discriminator to EK_COMPLETE
@@ -675,7 +681,8 @@ TEST(TypeObjectUtilsTests, register_s_array)
     eprosima::fastcdr::external<TypeIdentifier> primitive_identifier{new TypeIdentifier()};
     primitive_identifier->_d(TK_FLOAT128);
     SBoundSeq array_bounds;
-    TypeObjectUtils::add_array_dimension(array_bounds, 26);
+    SBound bound = 26;
+    TypeObjectUtils::add_array_dimension(array_bounds, bound);
     PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(header, array_bounds,
                     primitive_identifier);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
@@ -684,7 +691,8 @@ TEST(TypeObjectUtilsTests, register_s_array)
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             TypeObjectUtils::build_and_register_s_array_type_identifier(plain_array,
             "small_array"));
-    TypeObjectUtils::add_array_dimension(array_bounds, 100);
+    bound = 100;
+    TypeObjectUtils::add_array_dimension(array_bounds, bound);
     PlainArraySElemDefn another_plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(header, array_bounds,
                     primitive_identifier);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_s_array_type_identifier(
@@ -704,7 +712,8 @@ TEST(TypeObjectUtilsTests, register_l_array)
     eprosima::fastcdr::external<TypeIdentifier> primitive_identifier{new TypeIdentifier()};
     primitive_identifier->_d(TK_FLOAT128);
     LBoundSeq array_bounds;
-    TypeObjectUtils::add_array_dimension(array_bounds, 260);
+    LBound bound = 260;
+    TypeObjectUtils::add_array_dimension(array_bounds, bound);
     PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(header, array_bounds,
                     primitive_identifier);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
@@ -713,7 +722,8 @@ TEST(TypeObjectUtilsTests, register_l_array)
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             TypeObjectUtils::build_and_register_l_array_type_identifier(plain_array,
             "large_array"));
-    TypeObjectUtils::add_array_dimension(array_bounds, 1000);
+    bound = 1000;
+    TypeObjectUtils::add_array_dimension(array_bounds, bound);
     PlainArrayLElemDefn another_plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(header, array_bounds,
                     primitive_identifier);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_l_array_type_identifier(
@@ -1520,9 +1530,11 @@ TEST(TypeObjectUtilsTests, build_common_array_header_invalid_bound)
     LBoundSeq array_bounds;
     EXPECT_THROW(CommonArrayHeader header = TypeObjectUtils::build_common_array_header(array_bounds),
             InvalidArgumentError);
-    TypeObjectUtils::add_array_dimension(array_bounds, 150);
+    LBound bound = 150;
+    TypeObjectUtils::add_array_dimension(array_bounds, bound);
     EXPECT_NO_THROW(CommonArrayHeader header = TypeObjectUtils::build_common_array_header(array_bounds));
-    TypeObjectUtils::add_array_dimension(array_bounds, 0);
+    bound = 0;
+    TypeObjectUtils::add_array_dimension(array_bounds, bound);
     EXPECT_THROW(CommonArrayHeader header = TypeObjectUtils::build_common_array_header(array_bounds),
             InvalidArgumentError);
 }
@@ -1533,7 +1545,8 @@ TEST(TypeObjectUtilsTests, build_complete_array_type_non_empty_flags)
     CollectionTypeFlag non_empty_flags = 1;
     CollectionTypeFlag empty_flags = 0;
     LBoundSeq array_bounds;
-    TypeObjectUtils::add_array_dimension(array_bounds, 356);
+    LBound bound = 356;
+    TypeObjectUtils::add_array_dimension(array_bounds, bound);
     CommonArrayHeader common_header = TypeObjectUtils::build_common_array_header(array_bounds);
     CompleteTypeDetail type_detail = TypeObjectUtils::build_complete_type_detail(
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
@@ -2101,7 +2114,8 @@ TEST(TypeObjectUtilsTests, register_sequence_type_object)
 TEST(TypeObjectUtilsTests, register_array_type_object)
 {
     LBoundSeq array_bounds;
-    TypeObjectUtils::add_array_dimension(array_bounds, 356);
+    LBound bound = 356;
+    TypeObjectUtils::add_array_dimension(array_bounds, bound);
     CommonArrayHeader common_header = TypeObjectUtils::build_common_array_header(array_bounds);
     CompleteTypeDetail empty_type_detail = TypeObjectUtils::build_complete_type_detail(
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
