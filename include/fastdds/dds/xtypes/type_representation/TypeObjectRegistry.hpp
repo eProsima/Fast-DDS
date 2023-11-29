@@ -499,7 +499,7 @@ protected:
      * @param[out] type_object_serialized_size
      * @return const TypeIdentifier related with the given TypeObject.
      */
-    const TypeIdentifier get_type_identifier(
+    const TypeIdentifier calculate_type_identifier(
             const TypeObject& type_object,
             uint32_t& type_object_serialized_size);
 

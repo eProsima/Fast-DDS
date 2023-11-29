@@ -62,9 +62,9 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     complete_entry.type_object_.complete(complete_type_object);
     minimal_entry.type_object_ = build_minimal_from_complete_type_object(complete_type_object);
     TypeIdentifierPair type_ids;
-    type_ids.type_identifier1(get_type_identifier(minimal_entry.type_object_,
+    type_ids.type_identifier1(calculate_type_identifier(minimal_entry.type_object_,
             minimal_entry.type_object_serialized_size_));
-    type_ids.type_identifier2(get_type_identifier(complete_entry.type_object_,
+    type_ids.type_identifier2(calculate_type_identifier(complete_entry.type_object_,
             complete_entry.type_object_serialized_size_));
 
     std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
@@ -202,7 +202,7 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     uint32_t type_object_serialized_size = 0;
     TypeObject minimal_type_object;
     if (type_identifier._d() != type_object._d() ||
-            type_identifier != get_type_identifier(type_object, type_object_serialized_size))
+            type_identifier != calculate_type_identifier(type_object, type_object_serialized_size))
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -210,7 +210,7 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     {
         TypeRegistryEntry entry;
         entry.type_object_ = build_minimal_from_complete_type_object(type_object.complete());
-        TypeIdentifier minimal_type_id = get_type_identifier(entry.type_object_, entry.type_object_serialized_size_);
+        TypeIdentifier minimal_type_id = calculate_type_identifier(entry.type_object_, entry.type_object_serialized_size_);
 
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_registry_entries_.insert({minimal_type_id, entry});
@@ -481,7 +481,7 @@ bool TypeObjectRegistry::is_builtin_annotation_name(
     return false;
 }
 
-const TypeIdentifier TypeObjectRegistry::get_type_identifier(
+const TypeIdentifier TypeObjectRegistry::calculate_type_identifier(
         const TypeObject& type_object,
         uint32_t& type_object_serialized_size)
 {
