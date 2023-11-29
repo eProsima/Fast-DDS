@@ -2200,8 +2200,19 @@ void TypeObjectUtils::map_ldefn_consistency(
 void TypeObjectUtils::direct_hash_type_identifier_consistency(
         const TypeIdentifier& type_id)
 {
-    static_cast<void>(type_id);
-    // TODO(jlbueno): implement in PR#3996 (TypeObjectRegistry implementation) due to API changes.
+    TypeObject type_object;
+    if (eprosima::fastdds::dds::RETCODE_OK !=
+            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
+    {
+        throw InvalidArgumentError("TypeIdentifier unknown to TypeObjectRegistry");
+    }
+    uint32_t dummy = 0;
+    if (type_id !=
+            DomainParticipantFactory::get_instance()->type_object_registry().calculate_type_identifier(type_object,
+            dummy))
+    {
+        throw InvalidArgumentError("Inconsistent TypeIdentifier with registered TypeObject");
+    }
 }
 
 void TypeObjectUtils::type_identifier_consistency(
