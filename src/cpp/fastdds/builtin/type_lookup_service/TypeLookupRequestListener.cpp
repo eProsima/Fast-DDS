@@ -17,17 +17,17 @@
  *
  */
 
-#include <fastdds/dds/builtin/typelookup/TypeLookupRequestListener.hpp>
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
-#include <fastdds/dds/builtin/typelookup/common/TypeLookupTypes.hpp>
-
-#include <fastrtps/types/TypeObjectFactory.h>
-
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
 
 #include <utility>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/types/TypeObjectFactory.h>
+
+#include <fastdds/builtin/type_lookup_service/common/TypeLookupTypes.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 
 using eprosima::fastrtps::rtps::RTPSReader;
 using eprosima::fastrtps::rtps::CacheChange_t;

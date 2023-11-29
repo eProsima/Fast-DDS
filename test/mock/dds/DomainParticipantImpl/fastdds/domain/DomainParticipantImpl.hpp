@@ -23,7 +23,7 @@
 #include <vector>
 
 #include <gmock/gmock.h>
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
