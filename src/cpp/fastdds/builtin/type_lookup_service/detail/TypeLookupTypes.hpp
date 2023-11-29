@@ -35,8 +35,8 @@
 #include <fastcdr/xcdr/optional.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 
-#include "../../../../../../include/fastdds/dds/core/detail/DDSReturnCode.hpp"
-#include "../../../../../../include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.hpp"
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -1246,7 +1246,7 @@ public:
      * @param _type_ids New value to be copied in member type_ids
      */
     eProsima_user_DllExport void type_ids(
-            const std::vector<DDS::XTypes::TypeIdentifier>& _type_ids)
+            const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier>& _type_ids)
     {
         m_type_ids = _type_ids;
     }
@@ -1256,7 +1256,7 @@ public:
      * @param _type_ids New value to be moved in member type_ids
      */
     eProsima_user_DllExport void type_ids(
-            std::vector<DDS::XTypes::TypeIdentifier>&& _type_ids)
+            std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier>&& _type_ids)
     {
         m_type_ids = std::move(_type_ids);
     }
@@ -1265,7 +1265,7 @@ public:
      * @brief This function returns a constant reference to member type_ids
      * @return Constant reference to member type_ids
      */
-    eProsima_user_DllExport const std::vector<DDS::XTypes::TypeIdentifier>& type_ids() const
+    eProsima_user_DllExport const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier>& type_ids() const
     {
         return m_type_ids;
     }
@@ -1274,7 +1274,7 @@ public:
      * @brief This function returns a reference to member type_ids
      * @return Reference to member type_ids
      */
-    eProsima_user_DllExport std::vector<DDS::XTypes::TypeIdentifier>& type_ids()
+    eProsima_user_DllExport std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier>& type_ids()
     {
         return m_type_ids;
     }
@@ -1283,7 +1283,7 @@ public:
 
 private:
 
-    std::vector<DDS::XTypes::TypeIdentifier> m_type_ids;
+    std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier> m_type_ids;
 
 };
 
@@ -1388,7 +1388,7 @@ public:
      * @param _types New value to be copied in member types
      */
     eProsima_user_DllExport void types(
-            const std::vector<DDS::XTypes::TypeIdentifierTypeObjectPair>& _types)
+            const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair>& _types)
     {
         m_types = _types;
     }
@@ -1398,7 +1398,7 @@ public:
      * @param _types New value to be moved in member types
      */
     eProsima_user_DllExport void types(
-            std::vector<DDS::XTypes::TypeIdentifierTypeObjectPair>&& _types)
+            std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair>&& _types)
     {
         m_types = std::move(_types);
     }
@@ -1407,7 +1407,7 @@ public:
      * @brief This function returns a constant reference to member types
      * @return Constant reference to member types
      */
-    eProsima_user_DllExport const std::vector<DDS::XTypes::TypeIdentifierTypeObjectPair>& types() const
+    eProsima_user_DllExport const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair>& types() const
     {
         return m_types;
     }
@@ -1416,7 +1416,7 @@ public:
      * @brief This function returns a reference to member types
      * @return Reference to member types
      */
-    eProsima_user_DllExport std::vector<DDS::XTypes::TypeIdentifierTypeObjectPair>& types()
+    eProsima_user_DllExport std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair>& types()
     {
         return m_types;
     }
@@ -1427,7 +1427,7 @@ public:
      * @param _complete_to_minimal New value to be copied in member complete_to_minimal
      */
     eProsima_user_DllExport void complete_to_minimal(
-            const std::vector<DDS::XTypes::TypeIdentifierPair>& _complete_to_minimal)
+            const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierPair>& _complete_to_minimal)
     {
         m_complete_to_minimal = _complete_to_minimal;
     }
@@ -1437,7 +1437,7 @@ public:
      * @param _complete_to_minimal New value to be moved in member complete_to_minimal
      */
     eProsima_user_DllExport void complete_to_minimal(
-            std::vector<DDS::XTypes::TypeIdentifierPair>&& _complete_to_minimal)
+            std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierPair>&& _complete_to_minimal)
     {
         m_complete_to_minimal = std::move(_complete_to_minimal);
     }
@@ -1446,7 +1446,7 @@ public:
      * @brief This function returns a constant reference to member complete_to_minimal
      * @return Constant reference to member complete_to_minimal
      */
-    eProsima_user_DllExport const std::vector<DDS::XTypes::TypeIdentifierPair>& complete_to_minimal() const
+    eProsima_user_DllExport const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierPair>& complete_to_minimal() const
     {
         return m_complete_to_minimal;
     }
@@ -1455,7 +1455,7 @@ public:
      * @brief This function returns a reference to member complete_to_minimal
      * @return Reference to member complete_to_minimal
      */
-    eProsima_user_DllExport std::vector<DDS::XTypes::TypeIdentifierPair>& complete_to_minimal()
+    eProsima_user_DllExport std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierPair>& complete_to_minimal()
     {
         return m_complete_to_minimal;
     }
@@ -1464,8 +1464,8 @@ public:
 
 private:
 
-    std::vector<DDS::XTypes::TypeIdentifierTypeObjectPair> m_types;
-    std::vector<DDS::XTypes::TypeIdentifierPair> m_complete_to_minimal;
+    std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair> m_types;
+    std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierPair> m_complete_to_minimal;
 
 };
 
@@ -1852,7 +1852,7 @@ public:
      * @param _type_ids New value to be copied in member type_ids
      */
     eProsima_user_DllExport void type_ids(
-            const std::vector<DDS::XTypes::TypeIdentifier>& _type_ids)
+            const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier>& _type_ids)
     {
         m_type_ids = _type_ids;
     }
@@ -1862,7 +1862,7 @@ public:
      * @param _type_ids New value to be moved in member type_ids
      */
     eProsima_user_DllExport void type_ids(
-            std::vector<DDS::XTypes::TypeIdentifier>&& _type_ids)
+            std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier>&& _type_ids)
     {
         m_type_ids = std::move(_type_ids);
     }
@@ -1871,7 +1871,7 @@ public:
      * @brief This function returns a constant reference to member type_ids
      * @return Constant reference to member type_ids
      */
-    eProsima_user_DllExport const std::vector<DDS::XTypes::TypeIdentifier>& type_ids() const
+    eProsima_user_DllExport const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier>& type_ids() const
     {
         return m_type_ids;
     }
@@ -1880,7 +1880,7 @@ public:
      * @brief This function returns a reference to member type_ids
      * @return Reference to member type_ids
      */
-    eProsima_user_DllExport std::vector<DDS::XTypes::TypeIdentifier>& type_ids()
+    eProsima_user_DllExport std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier>& type_ids()
     {
         return m_type_ids;
     }
@@ -1928,7 +1928,7 @@ public:
 
 private:
 
-    std::vector<DDS::XTypes::TypeIdentifier> m_type_ids;
+    std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier> m_type_ids;
     std::vector<uint8_t> m_continuation_point;
 
 };
@@ -2034,7 +2034,7 @@ public:
      * @param _dependent_typeids New value to be copied in member dependent_typeids
      */
     eProsima_user_DllExport void dependent_typeids(
-            const std::vector<DDS::XTypes::TypeIdentfierWithSize>& _dependent_typeids)
+            const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>& _dependent_typeids)
     {
         m_dependent_typeids = _dependent_typeids;
     }
@@ -2044,7 +2044,7 @@ public:
      * @param _dependent_typeids New value to be moved in member dependent_typeids
      */
     eProsima_user_DllExport void dependent_typeids(
-            std::vector<DDS::XTypes::TypeIdentfierWithSize>&& _dependent_typeids)
+            std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>&& _dependent_typeids)
     {
         m_dependent_typeids = std::move(_dependent_typeids);
     }
@@ -2053,7 +2053,7 @@ public:
      * @brief This function returns a constant reference to member dependent_typeids
      * @return Constant reference to member dependent_typeids
      */
-    eProsima_user_DllExport const std::vector<DDS::XTypes::TypeIdentfierWithSize>& dependent_typeids() const
+    eProsima_user_DllExport const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>& dependent_typeids() const
     {
         return m_dependent_typeids;
     }
@@ -2062,7 +2062,7 @@ public:
      * @brief This function returns a reference to member dependent_typeids
      * @return Reference to member dependent_typeids
      */
-    eProsima_user_DllExport std::vector<DDS::XTypes::TypeIdentfierWithSize>& dependent_typeids()
+    eProsima_user_DllExport std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>& dependent_typeids()
     {
         return m_dependent_typeids;
     }
@@ -2110,7 +2110,7 @@ public:
 
 private:
 
-    std::vector<DDS::XTypes::TypeIdentfierWithSize> m_dependent_typeids;
+    std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize> m_dependent_typeids;
     std::vector<uint8_t> m_continuation_point;
 
 };

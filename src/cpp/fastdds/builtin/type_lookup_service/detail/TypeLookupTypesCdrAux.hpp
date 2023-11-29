@@ -36,8 +36,16 @@ constexpr uint32_t eprosima_fastdds_dds_rpc_ReplyHeader_max_key_cdr_typesize {0U
 
 
 
+
+
+
+
 constexpr uint32_t eprosima_fastdds_dds_GUID_t_max_cdr_typesize {24UL};
 constexpr uint32_t eprosima_fastdds_dds_GUID_t_max_key_cdr_typesize {0UL};
+
+
+
+
 
 
 
@@ -96,8 +104,14 @@ constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_key_c
 
 
 
+
+
 constexpr uint32_t eprosima_fastdds_dds_EntityId_t_max_cdr_typesize {8UL};
 constexpr uint32_t eprosima_fastdds_dds_EntityId_t_max_key_cdr_typesize {0UL};
+
+
+
+
 
 
 
@@ -121,16 +135,16 @@ constexpr uint32_t eprosima_fastdds_dds_SampleIdentity_max_key_cdr_typesize {0UL
 
 
 
+
+
+
+
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_max_cdr_typesize {43248UL};
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_max_key_cdr_typesize {0UL};
 
 
-
-
 constexpr uint32_t eprosima_fastdds_dds_rpc_RequestHeader_max_cdr_typesize {304UL};
 constexpr uint32_t eprosima_fastdds_dds_rpc_RequestHeader_max_key_cdr_typesize {0UL};
-
-
 
 
 
@@ -146,11 +160,8 @@ constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_I
 
 
 
-
-
 constexpr uint32_t eprosima_fastdds_dds_SequenceNumber_t_max_cdr_typesize {12UL};
 constexpr uint32_t eprosima_fastdds_dds_SequenceNumber_t_max_key_cdr_typesize {0UL};
-
 
 
 
@@ -176,21 +187,8 @@ constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_key_
 
 
 
-
-
-
-
-
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Request_max_cdr_typesize {42764UL};
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Request_max_key_cdr_typesize {0UL};
-
-
-
-
-
-
-
-
 
 
 

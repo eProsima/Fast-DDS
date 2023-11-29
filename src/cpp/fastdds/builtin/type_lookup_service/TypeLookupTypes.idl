@@ -1,7 +1,7 @@
 /* TypeLookupTypes.idl */
 
-#include "../../../../../../include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.idl"
-#include "../../../../../../include/fastdds/dds/core/detail/DDSReturnCode.idl"
+#include "../../../../../include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.idl"
+#include "../../../../../include/fastdds/dds/core/detail/DDSReturnCode.idl"
 
 module eprosima {
 

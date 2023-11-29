@@ -31,8 +31,8 @@
 
 #include "TypeLookupTypes.hpp"
 
-#include "../../../../../../include/fastdds/dds/core/detail/DDSReturnCodePubSubTypes.h"
-#include "../../../../../../include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobjectPubSubTypes.h"
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)
 #error \

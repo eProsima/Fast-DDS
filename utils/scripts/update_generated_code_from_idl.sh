@@ -2,6 +2,8 @@
 
 files_to_exclude=(
     './include/fastrtps/types/*'
+    './include/fastdds/dds/xtypes/type_representation/*'
+    './include/fastdds/dds/core/detail/DDSReturnCode.idl'
     )
 
 files_needing_typeobject=(
@@ -24,7 +26,7 @@ files_needing_case_sensitive=(
 
 files_needing_output_dir=(
     './include/fastdds/statistics/types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
-    './include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.idl|./detail'
+    './src/cpp/fastdds/builtin/type_lookup_service/TypeLookupTypes.idl|./detail'
     )
 
 files_needing_no_typesupport=(
@@ -103,11 +105,26 @@ for idl_file in "${idl_files[@]}"; do
 done
 
 # Move source files to src/cpp
-mv ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.ipp ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.ipp
-mv ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.cxx ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
+mv ./src/include/fastdds/dds/core/detail/DDSReturnCode.hpp ./include/fastdds/dds/core/detail/DDSReturnCode.hpp
+
+mv ./src/include/fastdds/dds/xtypes/type_representation/dds_xtypes_typeobject.hpp ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp
+mv ./src/include/fastdds/dds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.hpp ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp
+mv ./src/include/fastdds/dds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.h ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.h
+mv ./src/include/fastdds/dds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.ipp ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.ipp
+mv ./src/include/fastdds/dds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
+
+rm ./include/fastdds/dds/core/detail/DDSReturnCodePubSubTypes.h
+rm ./include/fastdds/dds/core/detail/DDSSecurityReturnCodePubSubTypes.h
+rm ./src/include -r
 
 sed -i 's+"dds_xtypes_typeobjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.ipp
 sed -i 's+"dds_xtypes_typeobjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
 sed -i 's+"dds_xtypes_typeobjectPubSubTypes.h"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.h>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
+
+sed -i 's+"../../../../../include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.hpp"+<fastdds/dds/xtypes/type_representation/TypeObject.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp
+sed -i 's+"../../../../../include/fastdds/dds/core/detail/DDSReturnCode.hpp"+<fastdds/dds/core/ReturnCode.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp
+
+sed -i 's+"../../../../../include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobjectPubSubTypes.h"+<fastdds/dds/xtypes/type_representation/TypeObject.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h
+sed -i 's+"../../../../../include/fastdds/dds/core/detail/DDSReturnCodePubSubTypes.h"+<fastdds/dds/core/ReturnCode.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h
 
 exit $ret_value
