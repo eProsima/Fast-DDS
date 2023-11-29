@@ -949,8 +949,8 @@ bool ros_super_client_env()
         }
         else
         {
-            std::string ss = "Invalid ROS_SUPER_CLIENT argument";
-            EPROSIMA_LOG_ERROR(SERVER_CLIENT_DISCOVERY, ss);
+            EPROSIMA_LOG_ERROR(RTPS_PDP,
+                    "Invalid value for ROS_SUPER_CLIENT environment variable : " << super_client_str);
         }
     }
     return super_client;
