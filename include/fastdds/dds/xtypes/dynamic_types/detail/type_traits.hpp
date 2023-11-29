@@ -12,16 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*!
- * @file Types.hpp
- */
+#ifndef _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DETAIL_TYPE_TRAITS_HPP_
+#define _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DETAIL_TYPE_TRAITS_HPP_
 
-#ifndef _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP_
-#define _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP_
+#include <memory>
 
-#include "detail/dynamic_language_binding.hpp"
-#include "type_traits.hpp"
+template<typename T>
+struct type_traits
+{
+    typedef ::std::shared_ptr<T>  ref_type;
+    typedef ::std::weak_ptr<T>    weak_ref_type;
+};
 
-#endif // _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP_
-
+#endif // _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DETAIL_TYPE_TRAITS_HPP_
 

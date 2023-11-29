@@ -7,6 +7,9 @@ module DDS
     typedef sequence<string> IncludePathSeq;
     typedef string<256> ObjectName;
 
+    // Inserted by us because not defined in standard.
+    typedef sequence<unsigned long> BoundSeq;
+
     // ---------- TypeKinds (begin) -------------------
     typedef octet TypeKind;
 

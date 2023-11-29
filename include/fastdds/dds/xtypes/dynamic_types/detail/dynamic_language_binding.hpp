@@ -67,6 +67,8 @@ typedef std::vector<std::string> IncludePathSeq;
 
 typedef eprosima::fastcdr::fixed_string<256> ObjectName;
 
+typedef std::vector<uint32_t> BoundSeq;
+
 typedef uint8_t TypeKind;
 
 const TypeKind TK_NONE = 0x00;
@@ -105,7 +107,7 @@ typedef std::map<ObjectName, ObjectName> Parameters;
  * @brief This class represents the enumeration ExtensibilityKind defined by the user in the IDL file.
  * @ingroup dynamic_language_binding
  */
-enum ExtensibilityKind : uint32_t
+enum class ExtensibilityKind : uint32_t
 {
     FINAL,
     APPENDABLE,
@@ -115,7 +117,7 @@ enum ExtensibilityKind : uint32_t
  * @brief This class represents the enumeration TryConstructKind defined by the user in the IDL file.
  * @ingroup dynamic_language_binding
  */
-enum TryConstructKind : uint32_t
+enum class TryConstructKind : uint32_t
 {
     USE_DEFAULT,
     DISCARD,
