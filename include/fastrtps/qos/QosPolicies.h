@@ -103,7 +103,7 @@ using TypeIdV1 = fastdds::dds::TypeIdV1;
 using TypeObjectV1 = fastdds::dds::TypeObjectV1;
 
 namespace xtypes {
-using TypeInformation = fastdds::dds::xtypes::TypeInformation;
+using TypeInformationParameter = fastdds::dds::xtypes::TypeInformationParameter;
 } //namespace xtypes
 
 } // namespace fastrtps

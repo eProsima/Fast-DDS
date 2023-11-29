@@ -1,6 +1,9 @@
 Forthcoming
 -----------
 
+* New TypeObjectRegistry class to register/query TypeObjects/TypeIdentifiers.
+* New TypeObjectUtils class providing API to build and register TypeObjects/TypeIdentifiers.
+
 Version 2.13.0
 --------------
 
