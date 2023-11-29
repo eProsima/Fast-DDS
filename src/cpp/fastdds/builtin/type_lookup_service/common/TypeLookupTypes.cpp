@@ -17,12 +17,10 @@
  *
  */
 
-#include <fastdds/dds/builtin/typelookup/common/TypeLookupTypes.hpp>
-
-#include <fastdds/dds/builtin/common/ReplyHeader.hpp>
-#include <fastdds/dds/builtin/common/RequestHeader.hpp>
+#include <fastdds/builtin/type_lookup_service/common/TypeLookupTypes.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
+
 
 using namespace eprosima;
 using namespace eprosima::fastcdr;
@@ -33,7 +31,7 @@ using eprosima::fastrtps::types::TypeIdentifierWithSize;
 using eprosima::fastrtps::types::TypeIdentifierPair;
 using eprosima::fastrtps::types::TypeIdentifierTypeObjectPair;
 
-#include <fastdds/builtin/common/RPCHeadersImplCdrAux.ipp>
+#include <fastdds/builtin/type_lookup_service/common/RPCHeadersImplCdrAux.ipp>
 #include "TypeLookupTypesCdrAux.ipp"
 
 namespace eprosima {

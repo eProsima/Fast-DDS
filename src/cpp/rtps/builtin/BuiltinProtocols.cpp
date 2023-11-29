@@ -31,7 +31,7 @@
 
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 

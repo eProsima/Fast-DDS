@@ -20,8 +20,9 @@
 #ifndef REPLYHEADER_HPP
 #define REPLYHEADER_HPP
 
-#include <fastdds/dds/builtin/common/Types.hpp>
+#include <fastdds/builtin/type_lookup_service/common/Types.hpp>
 #include <fastdds/rtps/common/SampleIdentity.h>
+
 
 namespace eprosima {
 

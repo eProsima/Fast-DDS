@@ -59,10 +59,10 @@ set(${PROJECT_NAME}_source_files
     dynamic-types/TypeObjectFactory.cpp
     dynamic-types/TypeObjectHashId.cpp
     dynamic-types/TypesBase.cpp
-    fastdds/builtin/typelookup/common/TypeLookupTypes.cpp
-    fastdds/builtin/typelookup/TypeLookupManager.cpp
-    fastdds/builtin/typelookup/TypeLookupReplyListener.cpp
-    fastdds/builtin/typelookup/TypeLookupRequestListener.cpp
+    fastdds/builtin/type_lookup_service/common/TypeLookupTypes.cpp
+    fastdds/builtin/type_lookup_service/TypeLookupManager.cpp
+    fastdds/builtin/type_lookup_service/TypeLookupRequestListener.cpp
+    fastdds/builtin/type_lookup_service/TypeLookupReplyListener.cpp
     fastdds/core/condition/Condition.cpp
     fastdds/core/condition/ConditionNotifier.cpp
     fastdds/core/condition/GuardCondition.cpp
