@@ -20,6 +20,7 @@
 #ifndef _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTREGISTRY_HPP_
 #define _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTREGISTRY_HPP_
 
+#include <mutex>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -614,6 +615,9 @@ protected:
     // Collection of TypeObjects hashed by its TypeIdentifier.
     // Only direct hash TypeIdentifiers are included in this collection.
     std::unordered_map<TypeIdentifier, TypeRegistryEntry> type_registry_entries_;
+
+    // Mutex to protect concurrent access to collections contained in this class
+    std::mutex type_object_registry_mutex_;
 
 };
 

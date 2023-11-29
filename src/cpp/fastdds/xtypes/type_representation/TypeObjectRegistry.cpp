@@ -15,6 +15,7 @@
 #include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
 #include <exception>
+#include <mutex>
 #include <string>
 
 #include <fastcdr/Cdr.h>
@@ -65,6 +66,8 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
             minimal_entry.type_object_serialized_size_));
     type_ids.type_identifier2(get_type_identifier(complete_entry.type_object_,
             complete_entry.type_object_serialized_size_));
+
+    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     auto type_ids_result = local_type_identifiers_.insert({type_name, type_ids});
     auto min_entry_result = type_registry_entries_.insert({type_ids.type_identifier1(), minimal_entry});
     auto max_entry_result = type_registry_entries_.insert({type_ids.type_identifier2(), complete_entry});
@@ -114,6 +117,8 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifierPair type_identifiers;
     type_identifiers.type_identifier1(type_identifier);
+
+    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     auto result = local_type_identifiers_.insert({type_name, type_identifiers});
     if (!result.second)
     {
@@ -142,6 +147,8 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
         {
             return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
+
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         if (EK_MINIMAL == type_ids.type_identifier1()._d())
         {
             type_objects.minimal_type_object =
@@ -170,6 +177,7 @@ ReturnCode_t TypeObjectRegistry::get_type_identifiers(
     }
     try
     {
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_identifiers = local_type_identifiers_.at(type_name);
     }
     catch (std::exception& e)
@@ -203,11 +211,15 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
         TypeRegistryEntry entry;
         entry.type_object_ = build_minimal_from_complete_type_object(type_object.complete());
         TypeIdentifier minimal_type_id = get_type_identifier(entry.type_object_, entry.type_object_serialized_size_);
+
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_registry_entries_.insert({minimal_type_id, entry});
     }
     TypeRegistryEntry entry;
     entry.type_object_ = type_object;
     entry.type_object_serialized_size_ = type_object_serialized_size;
+
+    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     type_registry_entries_.insert({type_identifier, entry});
     return eprosima::fastdds::dds::RETCODE_OK;
 }
@@ -222,6 +234,7 @@ ReturnCode_t TypeObjectRegistry::get_type_object(
     }
     try
     {
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_object = type_registry_entries_.at(type_identifier).type_object_;
     }
     catch (std::exception& e)
@@ -247,24 +260,28 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
         if (EK_COMPLETE == type_ids.type_identifier1()._d())
         {
             type_information.complete().typeid_with_size().type_id(type_ids.type_identifier1());
-            type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                        type_ids.type_identifier1()).type_object_serialized_size_);
             type_information.complete().dependent_typeid_count(-1);
             type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier2());
+            type_information.minimal().dependent_typeid_count(-1);
+
+            std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+            type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                        type_ids.type_identifier1()).type_object_serialized_size_);
             type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
                         type_ids.type_identifier2()).type_object_serialized_size_);
-            type_information.minimal().dependent_typeid_count(-1);
         }
         else
         {
             type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier1());
-            type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                        type_ids.type_identifier1()).type_object_serialized_size_);
             type_information.minimal().dependent_typeid_count(-1);
             type_information.complete().typeid_with_size().type_id(type_ids.type_identifier2());
+            type_information.complete().dependent_typeid_count(-1);
+
+            std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+            type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                        type_ids.type_identifier1()).type_object_serialized_size_);
             type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
                         type_ids.type_identifier2()).type_object_serialized_size_);
-            type_information.complete().dependent_typeid_count(-1);
         }
     }
     return ret_code;
@@ -387,7 +404,10 @@ void TypeObjectRegistry::add_dependency(
 {
     TypeIdentfierWithSize type_id_size;
     type_id_size.type_id(type_id);
-    type_id_size.typeobject_serialized_size(type_registry_entries_.at(type_id).type_object_serialized_size_);
+    {
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        type_id_size.typeobject_serialized_size(type_registry_entries_.at(type_id).type_object_serialized_size_);
+    }
     type_dependencies.insert(type_id_size);
 }
 
@@ -398,6 +418,7 @@ bool TypeObjectRegistry::is_type_identifier_known(
     {
         try
         {
+            std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
             type_registry_entries_.at(type_identifier);
             return true;
         }
@@ -406,6 +427,8 @@ bool TypeObjectRegistry::is_type_identifier_known(
             return false;
         }
     }
+
+    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     for (const auto& it : local_type_identifiers_)
     {
         if (it.second.type_identifier1() == type_identifier || it.second.type_identifier2() == type_identifier)
@@ -423,6 +446,8 @@ bool TypeObjectRegistry::is_builtin_annotation(
     {
         return false;
     }
+
+    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     for (const auto& it : local_type_identifiers_)
     {
         if (it.second.type_identifier1() == type_identifier || it.second.type_identifier2() == type_identifier)
@@ -725,6 +750,7 @@ const MinimalBitmaskType TypeObjectRegistry::build_minimal_from_complete_bitmask
 
 void TypeObjectRegistry::register_primitive_type_identifiers()
 {
+    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     TypeIdentifierPair type_ids;
     type_ids.type_identifier1()._d(TK_BOOLEAN);
     local_type_identifiers_.insert({boolean_type_name, type_ids});
