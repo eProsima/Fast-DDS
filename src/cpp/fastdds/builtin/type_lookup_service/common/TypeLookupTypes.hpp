@@ -23,9 +23,11 @@
 #include <cstdint>
 #include <vector>
 
-#include <fastrtps/types/TypeObject.h>
-#include <fastdds/dds/builtin/common/RequestHeader.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastrtps/types/TypeObject.h>
+
+#include <fastdds/builtin/type_lookup_service/common/RequestHeader.hpp>
+#include <fastdds/builtin/type_lookup_service/common/ReplyHeader.hpp>
 
 namespace eprosima {
 

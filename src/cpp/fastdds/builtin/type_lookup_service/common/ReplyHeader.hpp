@@ -17,11 +17,12 @@
  *
  */
 
-#ifndef REQUESTHEADER_HPP
-#define REQUESTHEADER_HPP
+#ifndef REPLYHEADER_HPP
+#define REPLYHEADER_HPP
 
-#include <fastdds/dds/builtin/common/Types.hpp>
+#include <fastdds/builtin/type_lookup_service/common/Types.hpp>
 #include <fastdds/rtps/common/SampleIdentity.h>
+
 
 namespace eprosima {
 
@@ -33,11 +34,11 @@ namespace fastdds {
 namespace dds {
 namespace rpc {
 
-struct RequestHeader
+struct ReplyHeader
 {
-    eprosima::fastrtps::rtps::SampleIdentity requestId;
+    fastrtps::rtps::SampleIdentity relatedRequestId;
 
-    InstanceName instanceName;
+    RemoteExceptionCode_t remoteEx;
 
     FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
@@ -51,4 +52,4 @@ struct RequestHeader
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // REQUESTHEADER_HPP
+#endif // REPLYHEADER_HPP

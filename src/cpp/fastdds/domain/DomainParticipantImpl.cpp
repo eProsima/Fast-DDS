@@ -27,7 +27,7 @@
 #include "fastdds/rtps/common/Guid.h"
 #include "fastdds/rtps/common/GuidPrefix_t.hpp"
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
