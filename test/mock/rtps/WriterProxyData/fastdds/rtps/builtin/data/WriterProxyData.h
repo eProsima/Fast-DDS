@@ -242,17 +242,17 @@ public:
     }
 
     void type_information(
-            const xtypes::TypeInformation& other_type_info)
+            const xtypes::TypeInformationParameter& other_type_info)
     {
         type_info_ = other_type_info;
     }
 
-    const xtypes::TypeInformation& type_information() const
+    const xtypes::TypeInformationParameter& type_information() const
     {
         return type_info_;
     }
 
-    xtypes::TypeInformation& type_information()
+    xtypes::TypeInformationParameter& type_information()
     {
         return type_info_;
     }
@@ -362,7 +362,7 @@ private:
     bool is_alive_;
     TypeIdV1 type_id_;
     TypeObjectV1 type_;
-    xtypes::TypeInformation type_info_;
+    xtypes::TypeInformationParameter type_info_;
     uint32_t m_typeMaxSerialized;
     InstanceHandle_t m_key;
     InstanceHandle_t m_RTPSParticipantKey;

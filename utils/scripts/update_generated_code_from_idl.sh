@@ -25,6 +25,7 @@ files_needing_case_sensitive=(
 files_needing_output_dir=(
     './include/fastdds/statistics/types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
     './include/fastdds/statistics/monitorservice_types.idl|../../../src/cpp/statistics/types'
+    './include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.idl|./detail'
     )
 
 red='\E[1;31m'
@@ -76,14 +77,14 @@ for idl_file in "${idl_files[@]}"; do
             od_entry_split=(${od_entry//\|/ })
             for od_entry_split_element in ${od_entry_split[@]:1}; do
                 od_arg="-d ${od_entry_split_element}"
-                fastddsgen -replace $to_arg $cs_arg $od_arg "$file_from_gen"
+                fastddsgen -replace -genapi $to_arg $cs_arg $od_arg "$file_from_gen"
             done
             break
         fi
     done
 
     if $not_processed ; then
-        fastddsgen -replace $to_arg $cs_arg "$file_from_gen"
+        fastddsgen -replace -genapi $to_arg $cs_arg "$file_from_gen"
     fi
 
     if [[ $? != 0 ]]; then
@@ -92,5 +93,12 @@ for idl_file in "${idl_files[@]}"; do
 
     cd -
 done
+
+# Move source files to src/cpp
+mv ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.ipp ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.ipp
+mv ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.cxx ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
+
+sed -i 's+"dds_xtypes_typeobjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.ipp
+sed -i 's+"dds_xtypes_typeobjectPubSubTypes.h"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.h>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
 
 exit $ret_value

@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* New TypeObjectRegistry class to register/query TypeObjects/TypeIdentifiers.
+* New TypeObjectUtils class providing API to build and register TypeObjects/TypeIdentifiers.
 * Enable configuration of thread setting for all threads.
 * Added monitor service feature.
 * Added the possibility to define interfaces in the whitelist by interface name.

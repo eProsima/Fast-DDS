@@ -359,22 +359,22 @@ public:
     }
 
     RTPS_DllAPI void type_information(
-            const xtypes::TypeInformation& other_type_information)
+            const xtypes::TypeInformationParameter& other_type_information)
     {
         type_information() = other_type_information;
     }
 
-    RTPS_DllAPI const xtypes::TypeInformation& type_information() const
+    RTPS_DllAPI const xtypes::TypeInformationParameter& type_information() const
     {
         assert(m_type_information != nullptr);
         return *m_type_information;
     }
 
-    RTPS_DllAPI xtypes::TypeInformation& type_information()
+    RTPS_DllAPI xtypes::TypeInformationParameter& type_information()
     {
         if (m_type_information == nullptr)
         {
-            m_type_information = new xtypes::TypeInformation();
+            m_type_information = new xtypes::TypeInformationParameter();
         }
         return *m_type_information;
     }
@@ -506,7 +506,7 @@ private:
     //!Type Object
     TypeObjectV1* m_type;
     //!Type Information
-    xtypes::TypeInformation* m_type_information;
+    xtypes::TypeInformationParameter* m_type_information;
     //!
     ParameterPropertyList_t m_properties;
     //!Information on the content filter applied by the reader.

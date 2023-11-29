@@ -1388,7 +1388,7 @@ void PDP::check_and_notify_type_discovery(
         const string_255& type_name,
         const types::TypeIdentifier* type_id,
         const types::TypeObject* type_obj,
-        const xtypes::TypeInformation* type_info) const
+        const xtypes::TypeInformationParameter* type_info) const
 {
     // Notify about type_info
     if (type_info && type_info->assigned())
