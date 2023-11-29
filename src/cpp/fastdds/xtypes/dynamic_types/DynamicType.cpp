@@ -39,7 +39,7 @@ bool DynamicType::operator !=(
 ReturnCode_t DynamicType::get_descriptor(
         TypeDescriptor& td) const noexcept
 {
-    td = DynamicTypeImpl::get_implementation(*this).get_descriptor();
+    //td = DynamicTypeImpl::get_implementation(*this).get_descriptor();
     return RETCODE_OK;
 }
 

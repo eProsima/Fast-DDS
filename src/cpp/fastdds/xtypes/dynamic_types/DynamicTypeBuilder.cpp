@@ -35,7 +35,7 @@ bool DynamicTypeBuilder::operator !=(
 ReturnCode_t DynamicTypeBuilder::get_descriptor(
         TypeDescriptor& td) const noexcept
 {
-    td = DynamicTypeBuilderImpl::get_implementation(*this).get_descriptor();
+    //td = DynamicTypeBuilderImpl::get_implementation(*this).get_descriptor();
     return RETCODE_OK;
 }
 

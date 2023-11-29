@@ -89,84 +89,83 @@ TypeState::TypeState(
 TypeState::TypeState(
         const TypeDescriptor& descriptor)
 {
-    const char* tmp = descriptor.get_name();
+    name_ = descriptor.name();
 
-    if (tmp != nullptr)
-    {
-        name_ = tmp;
-    }
+    kind_ = descriptor.kind();
 
-    kind_ = descriptor.get_kind();
+    /*
+       const DynamicType* type = descriptor.base_type();
 
-    const DynamicType* type = descriptor.get_base_type();
-
-    if (type != nullptr)
-    {
+       if (type != nullptr)
+       {
         base_type_ = DynamicTypeImpl::get_implementation(*type).shared_from_this();
-    }
+       }
 
-    type = descriptor.get_discriminator_type();
+       type = descriptor.get_discriminator_type();
 
-    if (type != nullptr)
-    {
+       if (type != nullptr)
+       {
         discriminator_type_ = DynamicTypeImpl::get_implementation(*type).shared_from_this();
-    }
+       }
 
-    type = descriptor.get_element_type();
+       type = descriptor.get_element_type();
 
-    if (type != nullptr)
-    {
+       if (type != nullptr)
+       {
         element_type_ = DynamicTypeImpl::get_implementation(*type).shared_from_this();
-    }
+       }
 
-    type = descriptor.get_key_element_type();
-    if (type != nullptr)
-    {
+       type = descriptor.get_key_element_type();
+       if (type != nullptr)
+       {
         key_element_type_ = DynamicTypeImpl::get_implementation(*type).shared_from_this();
-    }
+       }
 
-    uint32_t dims;
-    const uint32_t* lenghts = descriptor.get_bounds(dims);
-    bound_.assign(lenghts, lenghts + dims);
+       uint32_t dims;
+       const uint32_t* lenghts = descriptor.get_bounds(dims);
+       bound_.assign(lenghts, lenghts + dims);
+     */
 }
 
-TypeDescriptor TypeState::get_descriptor() const noexcept
-{
-    TypeDescriptor res;
+/*
+   TypeDescriptor TypeState::get_descriptor() const noexcept
+   {
+   TypeDescriptorImpl res;
 
-    if (!name_.empty())
-    {
-        res.set_name(name_.c_str());
-    }
+   if (!name_.empty())
+   {
+    res.set_name(name_.c_str());
+   }
 
-    res.set_kind(kind_);
+   res.set_kind(kind_);
 
-    if (base_type_)
-    {
-        res.set_base_type(&base_type_->get_interface());
-    }
+   if (base_type_)
+   {
+    res.set_base_type(&base_type_->get_interface());
+   }
 
-    if (discriminator_type_)
-    {
-        res.set_discriminator_type(&discriminator_type_->get_interface());
-    }
+   if (discriminator_type_)
+   {
+    res.set_discriminator_type(&discriminator_type_->get_interface());
+   }
 
-    if (element_type_)
-    {
-        res.set_element_type(&element_type_->get_interface());
-    }
+   if (element_type_)
+   {
+    res.set_element_type(&element_type_->get_interface());
+   }
 
-    if (key_element_type_)
-    {
-        res.set_key_element_type(&key_element_type_->get_interface());
-    }
+   if (key_element_type_)
+   {
+    res.set_key_element_type(&key_element_type_->get_interface());
+   }
 
-    res.set_bounds(
-        bound_.data(),
-        static_cast<uint32_t>(bound_.size()));
+   res.set_bounds(
+    bound_.data(),
+    static_cast<uint32_t>(bound_.size()));
 
-    return res;
-}
+   return res;
+   }
+ */
 
 TypeState& TypeState::operator =(
         const TypeState& state) noexcept
