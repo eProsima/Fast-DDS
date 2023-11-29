@@ -387,7 +387,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     ret_code = get_sequence_array_dependencies(type_object.complete().array_type(), type_dependencies);
                     break;
                 case TK_MAP:
-                    ret_code = get_map_dependencies(type_object.minimal().map_type(), type_dependencies);
+                    ret_code = get_map_dependencies(type_object.complete().map_type(), type_dependencies);
                     break;
                 // No dependencies
                 case TK_BITSET:
@@ -418,15 +418,10 @@ bool TypeObjectRegistry::is_type_identifier_known(
 {
     if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier))
     {
-        try
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        if (type_registry_entries_.find(type_identifier) != type_registry_entries_.end())
         {
-            std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-            type_registry_entries_.at(type_identifier);
             return true;
-        }
-        catch (std::exception& e)
-        {
-            return false;
         }
     }
 
