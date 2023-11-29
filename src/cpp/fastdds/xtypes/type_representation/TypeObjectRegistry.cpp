@@ -31,6 +31,8 @@ namespace fastdds {
 namespace dds {
 namespace xtypes {
 
+constexpr const int32_t NO_DEPENDENCIES = -1;
+
 bool TypeRegistryEntry::operator !=(
         const TypeRegistryEntry& entry)
 {
@@ -260,9 +262,9 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
         if (EK_COMPLETE == type_ids.type_identifier1()._d())
         {
             type_information.complete().typeid_with_size().type_id(type_ids.type_identifier1());
-            type_information.complete().dependent_typeid_count(-1);
+            type_information.complete().dependent_typeid_count(NO_DEPENDENCIES);
             type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier2());
-            type_information.minimal().dependent_typeid_count(-1);
+            type_information.minimal().dependent_typeid_count(NO_DEPENDENCIES);
 
             std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
             type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
@@ -273,9 +275,9 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
         else
         {
             type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier1());
-            type_information.minimal().dependent_typeid_count(-1);
+            type_information.minimal().dependent_typeid_count(NO_DEPENDENCIES);
             type_information.complete().typeid_with_size().type_id(type_ids.type_identifier2());
-            type_information.complete().dependent_typeid_count(-1);
+            type_information.complete().dependent_typeid_count(NO_DEPENDENCIES);
 
             std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
             type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
