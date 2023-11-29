@@ -8,6 +8,9 @@ Migrate communication tests in `dds/communication` folder
 * Remove API marked as deprecated.
 * Removed deprecated FastRTPS API tests.
 * Removed no longer supported `FASTRTPS_API_TESTS` CMake options.
+* New TypeObjectRegistry class to register/query TypeObjects/TypeIdentifiers.
+* New TypeObjectUtils class providing API to build and register TypeObjects/TypeIdentifiers.
+* Added `non_blocking_send` to TCP Transport.
 
 Version 2.13.0
 --------------
