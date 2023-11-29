@@ -28,6 +28,8 @@
 
 using namespace eprosima::fastdds::dds;
 
+#if FASTCDR_VERSION_MAJOR > 1
+
 class MockHelloWorldPubSubType : public HelloWorldPubSubType
 {
 public:
@@ -148,3 +150,5 @@ INSTANTIATE_TEST_SUITE_P(
         std::make_tuple(XCDR2_VECTOR, XCDR2_VECTOR, true, XCDR2_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR2),
         std::make_tuple(XCDR2_VECTOR, BOTH_XCDR_VECTOR, true, XCDR2_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR2)
         ));
+
+#endif // FASTCDR_VERSION_MAJOR > 1
