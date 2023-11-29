@@ -24,6 +24,7 @@
 #include <sstream>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
@@ -61,6 +62,8 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
+#include <utils/SystemInfo.hpp>
+#include <utils/string_utilities.hpp>
 
 #ifdef FASTDDS_STATISTICS
 #include <statistics/types/monitorservice_types.h>
@@ -78,6 +81,35 @@ namespace rtps {
 using UDPv4TransportDescriptor = fastdds::rtps::UDPv4TransportDescriptor;
 using TCPTransportDescriptor = fastdds::rtps::TCPTransportDescriptor;
 using SharedMemTransportDescriptor = fastdds::rtps::SharedMemTransportDescriptor;
+using BuiltinTransports = fastdds::rtps::BuiltinTransports;
+
+/**
+ * Parse the environment variable specifying the transports to instantiate
+ */
+static BuiltinTransports get_builtin_transports_from_env_var()
+{
+    static constexpr const char* env_var_name = "FASTDDS_BUILTIN_TRANSPORTS";
+
+    BuiltinTransports ret_val = BuiltinTransports::DEFAULT;
+    std::string env_value;
+    if (SystemInfo::get_env(env_var_name, env_value) == ReturnCode_t::RETCODE_OK)
+    {
+        if (!get_element_enum_value(env_value.c_str(), ret_val,
+                "NONE", BuiltinTransports::NONE,
+                "DEFAULT", BuiltinTransports::DEFAULT,
+                "DEFAULTv6", BuiltinTransports::DEFAULTv6,
+                "SHM", BuiltinTransports::SHM,
+                "UDPv4", BuiltinTransports::UDPv4,
+                "UDPv6", BuiltinTransports::UDPv6,
+                "LARGE_DATA", BuiltinTransports::LARGE_DATA,
+                "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
+                    env_var_name << "'. Leaving as DEFAULT");
+        }
+    }
+    return ret_val;
+}
 
 static EntityId_t TrustedWriter(
         const EntityId_t& reader)

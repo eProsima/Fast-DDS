@@ -32,39 +32,7 @@
 
 #include <rtps/xmlparser/XMLParserUtils.hpp>
 #include <utils/SystemInfo.hpp>
-
-template<typename _Enum>
-static bool get_element_enum_value(
-        const char* input,
-        _Enum& output,
-        const char* name,
-        _Enum value)
-{
-    if (0 == strcmp(input, name))
-    {
-        output = value;
-        return true;
-    }
-
-    return false;
-}
-
-template<typename _Enum, typename ... Targs>
-static bool get_element_enum_value(
-        const char* input,
-        _Enum& output,
-        const char* name,
-        _Enum value,
-        Targs... args)
-{
-    if (0 == strcmp(input, name))
-    {
-        output = value;
-        return true;
-    }
-
-    return get_element_enum_value(input, output, args ...);
-}
+#include <utils/string_utilities.hpp>
 
 namespace eprosima {
 namespace fastdds {
