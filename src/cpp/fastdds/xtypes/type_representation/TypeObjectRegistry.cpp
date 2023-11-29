@@ -212,7 +212,8 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     {
         TypeRegistryEntry entry;
         entry.type_object_ = build_minimal_from_complete_type_object(type_object.complete());
-        TypeIdentifier minimal_type_id = calculate_type_identifier(entry.type_object_, entry.type_object_serialized_size_);
+        TypeIdentifier minimal_type_id = calculate_type_identifier(entry.type_object_,
+                        entry.type_object_serialized_size_);
 
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_registry_entries_.insert({minimal_type_id, entry});
