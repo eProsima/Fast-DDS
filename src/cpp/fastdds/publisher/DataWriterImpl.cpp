@@ -181,6 +181,11 @@ DataWriterImpl::DataWriterImpl(
         is_custom_payload_pool_ = true;
         payload_pool_ = payload_pool;
     }
+
+    // Set Datawriter's DataRepresentationId taking into account the QoS.
+    data_representation_ = qos_.representation().m_value.empty()
+            || XCDR_DATA_REPRESENTATION == qos_.representation().m_value.at(0)
+                    ? XCDR_DATA_REPRESENTATION : XCDR2_DATA_REPRESENTATION;
 }
 
 DataWriterImpl::DataWriterImpl(
@@ -959,9 +964,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         }
 
         if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload,
-                qos_.representation().m_value.empty()
-                || XCDR_DATA_REPRESENTATION == qos_.representation().m_value.at(0)
-                    ? XCDR_DATA_REPRESENTATION : XCDR2_DATA_REPRESENTATION))
+                data_representation_))
         {
             EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
             return_payload_to_pool(payload);

@@ -850,7 +850,8 @@ bool EDP::checkDataRepresentationQos(
 
     if (wdata->m_qos.representation.m_value.empty())
     {
-        compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR_DATA_REPRESENTATION) != rr.end() || rr.empty();
+        compatible |=  rr.empty() ||
+                std::find(rr.begin(), rr.end(), fastdds::dds::XCDR_DATA_REPRESENTATION) != rr.end();
     }
     else
     {
@@ -862,14 +863,13 @@ bool EDP::checkDataRepresentationQos(
         }
         else if (writerRepresentation == fastdds::dds::XCDR_DATA_REPRESENTATION)
         {
-            compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR_DATA_REPRESENTATION) != rr.end()
-                    || rr.empty();
+            compatible |= rr.empty() ||
+                    std::find(rr.begin(), rr.end(), fastdds::dds::XCDR_DATA_REPRESENTATION) != rr.end();
         }
         else // XML_DATA_REPRESENTATION
         {
             EPROSIMA_LOG_INFO(EDP, "DataRepresentationQosPolicy XML_DATA_REPRESENTATION isn't supported.");
         }
-
     }
 
     return compatible;

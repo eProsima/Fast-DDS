@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -75,7 +75,9 @@ using DataRepresentationQosVector = std::vector<DataRepresentationId_t>;
 class DataRepresentationQosCompatibility : public ::testing::TestWithParam<std::tuple<
                 DataRepresentationQosVector,
                 DataRepresentationQosVector,
-                bool
+                bool,
+                DataRepresentationId_t,
+                eprosima::fastcdr::EncodingAlgorithmFlag
                 >>
 {
 };
@@ -116,16 +118,8 @@ TEST_P(DataRepresentationQosCompatibility, check_compatibility)
                 dynamic_cast<MockHelloWorldPubSubType*>(writer.get_type_support().get());
         MockHelloWorldPubSubType* reader_type =
                 dynamic_cast<MockHelloWorldPubSubType*>(reader.get_type_support().get());
-        if (std::get<0>(GetParam()).empty() || XCDR_DATA_REPRESENTATION == std::get<0>(GetParam()).at(0))
-        {
-            ASSERT_EQ(XCDR_DATA_REPRESENTATION, writer_type->last_data_representation);
-            ASSERT_EQ(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR, reader_type->last_encoding);
-        }
-        else if (XCDR2_DATA_REPRESENTATION == std::get<0>(GetParam()).at(0))
-        {
-            ASSERT_EQ(XCDR2_DATA_REPRESENTATION, writer_type->last_data_representation);
-            ASSERT_EQ(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, reader_type->last_encoding);
-        }
+        ASSERT_EQ(std::get<3>(GetParam()), writer_type->last_data_representation);
+        ASSERT_EQ(std::get<4>(GetParam()), reader_type->last_encoding);
     }
     else
     {
@@ -141,16 +135,16 @@ INSTANTIATE_TEST_SUITE_P(
     DataRepresentationQos,
     DataRepresentationQosCompatibility,
     ::testing::Values(
-        std::make_tuple(EMPTY_VECTOR, EMPTY_VECTOR, true),
-        std::make_tuple(EMPTY_VECTOR, XCDR_VECTOR, true),
-        std::make_tuple(EMPTY_VECTOR, XCDR2_VECTOR, false),
-        std::make_tuple(EMPTY_VECTOR, BOTH_XCDR_VECTOR, true),
-        std::make_tuple(XCDR_VECTOR, EMPTY_VECTOR, true),
-        std::make_tuple(XCDR_VECTOR, XCDR_VECTOR, true),
-        std::make_tuple(XCDR_VECTOR, XCDR2_VECTOR, false),
-        std::make_tuple(XCDR_VECTOR, BOTH_XCDR_VECTOR, true),
-        std::make_tuple(XCDR2_VECTOR, EMPTY_VECTOR, false),
-        std::make_tuple(XCDR2_VECTOR, XCDR_VECTOR, false),
-        std::make_tuple(XCDR2_VECTOR, XCDR2_VECTOR, true),
-        std::make_tuple(XCDR2_VECTOR, BOTH_XCDR_VECTOR, true)
+        std::make_tuple(EMPTY_VECTOR, EMPTY_VECTOR, true, XCDR_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR),
+        std::make_tuple(EMPTY_VECTOR, XCDR_VECTOR, true, XCDR_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR),
+        std::make_tuple(EMPTY_VECTOR, XCDR2_VECTOR, false, XCDR_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR),
+        std::make_tuple(EMPTY_VECTOR, BOTH_XCDR_VECTOR, true, XCDR_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR),
+        std::make_tuple(XCDR_VECTOR, EMPTY_VECTOR, true, XCDR_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR),
+        std::make_tuple(XCDR_VECTOR, XCDR_VECTOR, true, XCDR_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR),
+        std::make_tuple(XCDR_VECTOR, XCDR2_VECTOR, false, XCDR_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR),
+        std::make_tuple(XCDR_VECTOR, BOTH_XCDR_VECTOR, true, XCDR_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR),
+        std::make_tuple(XCDR2_VECTOR, EMPTY_VECTOR, false, XCDR2_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR2),
+        std::make_tuple(XCDR2_VECTOR, XCDR_VECTOR, false, XCDR2_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR2),
+        std::make_tuple(XCDR2_VECTOR, XCDR2_VECTOR, true, XCDR2_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR2),
+        std::make_tuple(XCDR2_VECTOR, BOTH_XCDR_VECTOR, true, XCDR2_DATA_REPRESENTATION, eprosima::fastcdr::PLAIN_CDR2)
         ));
