@@ -303,7 +303,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
                         std::make_shared<TCPAcceptorSecure>(io_service_, this, locator);
                 acceptors_[acceptor->locator()] = acceptor;
                 acceptor->accept(this, ssl_context_);
-                final_port = acceptor->locator().port;
+                final_port = static_cast<uint16_t>(acceptor->locator().port);
             }
             else
 #endif // if TLS_FOUND
@@ -312,7 +312,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
                         std::make_shared<TCPAcceptorBasic>(io_service_, this, locator);
                 acceptors_[acceptor->locator()] = acceptor;
                 acceptor->accept(this);
-                final_port = acceptor->locator().port;
+                final_port = static_cast<uint16_t>(acceptor->locator().port);
             }
 
             EPROSIMA_LOG_INFO(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(
@@ -332,7 +332,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
                             std::make_shared<TCPAcceptorSecure>(io_service_, sInterface, locator);
                     acceptors_[acceptor->locator()] = acceptor;
                     acceptor->accept(this, ssl_context_);
-                    final_port = acceptor->locator().port;
+                    final_port = static_cast<uint16_t>(acceptor->locator().port);
                 }
                 else
 #endif // if TLS_FOUND
@@ -341,7 +341,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
                             std::make_shared<TCPAcceptorBasic>(io_service_, sInterface, locator);
                     acceptors_[acceptor->locator()] = acceptor;
                     acceptor->accept(this);
-                    final_port = acceptor->locator().port;
+                    final_port = static_cast<uint16_t>(acceptor->locator().port);
                 }
 
                 EPROSIMA_LOG_INFO(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(
