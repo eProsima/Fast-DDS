@@ -290,9 +290,9 @@ public:
     /**
      * Get the type information
      *
-     * @return TypeInformation
+     * @return TypeInformationParameter
      */
-    FASTDDS_EXPORTED_API inline const std::shared_ptr<xtypes::TypeInformation> type_information() const
+    FASTDDS_EXPORTED_API inline const std::shared_ptr<xtypes::TypeInformationParameter> type_information() const
     {
         return type_information_;
     }
@@ -300,21 +300,21 @@ public:
     /**
      * Set type information
      *
-     * @param info new value for TypeInformation
+     * @param info new value for TypeInformationParameter
      */
     FASTDDS_EXPORTED_API inline void type_information(
-            const xtypes::TypeInformation& info)
+            const xtypes::TypeInformationParameter& info)
     {
-        type_information_ = std::make_shared<xtypes::TypeInformation>(info);
+        type_information_ = std::make_shared<xtypes::TypeInformationParameter>(info);
     }
 
     /**
      * Set type information
      *
-     * @param info shared pointer to TypeInformation
+     * @param info shared pointer to TypeInformationParameter
      */
     FASTDDS_EXPORTED_API inline void type_information(
-            std::shared_ptr<xtypes::TypeInformation> info)
+            std::shared_ptr<xtypes::TypeInformationParameter> info)
     {
         type_information_ = std::move(info);
     }
@@ -372,7 +372,7 @@ protected:
     //!Type Object XTYPES 1.1
     std::shared_ptr<TypeObjectV1> type_object_;
     //!XTYPES 1.2
-    std::shared_ptr<xtypes::TypeInformation> type_information_;
+    std::shared_ptr<xtypes::TypeInformationParameter> type_information_;
 
 private:
 
