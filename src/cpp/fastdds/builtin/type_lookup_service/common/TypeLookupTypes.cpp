@@ -17,9 +17,10 @@
  *
  */
 
-#include <fastdds/dds/builtin/typelookup/common/TypeLookupTypes.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
+
+#include <fastdds/builtin/type_lookup_service/common/TypeLookupTypes.hpp>
 
 using namespace eprosima;
 using namespace eprosima::fastcdr;
