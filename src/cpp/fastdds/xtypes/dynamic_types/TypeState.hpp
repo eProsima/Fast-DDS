@@ -102,7 +102,7 @@ public:
      * Returns the TypeDescriptor object that partially describes the state
      * @return @ref TypeDescriptor object
      */
-    TypeDescriptor get_descriptor() const noexcept;
+    //TypeDescriptor get_descriptor() const noexcept;
 
     static bool is_type_name_consistent(
             const std::string& sName);
