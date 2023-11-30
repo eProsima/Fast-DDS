@@ -12,16 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*!
- * @file Types.hpp
- */
+#ifndef _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DETAIL_TYPE_TRAITS_HPP_
+#define _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DETAIL_TYPE_TRAITS_HPP_
 
-#ifndef _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP_
-#define _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP_
+#include <memory>
 
-#include "detail/dynamic_language_binding.hpp"
-#include "type_traits.hpp"
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
-#endif // _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP_
+template<typename T>
+struct traits
+{
+    typedef ::std::shared_ptr<T>  ref_type;
+    typedef ::std::weak_ptr<T>    weak_ref_type;
+};
 
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
+
+#endif // _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DETAIL_TYPE_TRAITS_HPP_
 
