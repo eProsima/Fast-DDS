@@ -26,6 +26,7 @@
 #include <fastcdr/xcdr/optional.hpp>
 
 #include <fastdds/dds/xtypes/common.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastrtps/fastrtps_dll.h>
@@ -64,7 +65,7 @@ public:
      * @return CollectionElementFlag instance.
      */
     RTPS_DllAPI static CollectionElementFlag build_collection_element_flag(
-            TryConstructKind try_construct_kind,
+            eprosima::fastdds::dds::TryConstructKind try_construct_kind,
             bool external);
 
     /**
@@ -80,7 +81,7 @@ public:
      * @return StructMemberFlag instance.
      */
     RTPS_DllAPI static StructMemberFlag build_struct_member_flag(
-            TryConstructKind try_construct_kind,
+            eprosima::fastdds::dds::TryConstructKind try_construct_kind,
             bool optional,
             bool must_understand,
             bool key,
@@ -95,7 +96,7 @@ public:
      * @return UnionMemberFlag instance.
      */
     RTPS_DllAPI static UnionMemberFlag build_union_member_flag(
-            TryConstructKind try_construct_kind,
+            eprosima::fastdds::dds::TryConstructKind try_construct_kind,
             bool default_member,
             bool external);
 
@@ -107,7 +108,7 @@ public:
      * @return UnionDiscriminatorFlag instance.
      */
     RTPS_DllAPI static UnionDiscriminatorFlag build_union_discriminator_flag(
-            TryConstructKind try_construct_kind,
+            eprosima::fastdds::dds::TryConstructKind try_construct_kind,
             bool key);
 
     /**
@@ -135,7 +136,7 @@ public:
      * @return StructTypeFlag instance.
      */
     RTPS_DllAPI static StructTypeFlag build_struct_type_flag(
-            ExtensibilityKind extensibility_kind,
+            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
             bool nested,
             bool autoid_hash);
 
@@ -148,7 +149,7 @@ public:
      * @return UnionTypeFlag instance.
      */
     RTPS_DllAPI static UnionTypeFlag build_union_type_flag(
-            ExtensibilityKind extensibility_kind,
+            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
             bool nested,
             bool autoid_hash);
 
@@ -1878,7 +1879,7 @@ protected:
      */
     static void set_try_construct_behavior(
             MemberFlag& member_flag,
-            TryConstructKind try_construct_kind);
+            eprosima::fastdds::dds::TryConstructKind try_construct_kind);
 
     /**
      * @brief Set the TypeFlag object.
@@ -1890,7 +1891,7 @@ protected:
      */
     static void set_type_flag(
             TypeFlag& type_flag,
-            ExtensibilityKind extensibility_kind,
+            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
             bool nested,
             bool autoid_hash);
 
@@ -1902,7 +1903,7 @@ protected:
      */
     static void set_extensibility_kind(
             TypeFlag& type_flag,
-            ExtensibilityKind extensibility_kind);
+            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind);
 
     /**
      * @brief Check if a given TypeIdentifier is fully-descriptive.
