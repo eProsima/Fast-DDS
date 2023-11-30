@@ -963,8 +963,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
         }
 
-        if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload,
-                data_representation_))
+        if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload, data_representation_))
         {
             EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
             return_payload_to_pool(payload);
