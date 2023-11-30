@@ -88,7 +88,7 @@ bool is_type_name_consistent(
 }
 
 ReturnCode_t TypeDescriptorImpl::copy_from(
-        type_traits<TypeDescriptor>::ref_type descriptor) noexcept
+        traits<TypeDescriptor>::ref_type descriptor) noexcept
 {
     if (!descriptor)
     {
@@ -109,7 +109,7 @@ ReturnCode_t TypeDescriptorImpl::copy_from(
 }
 
 bool TypeDescriptorImpl::equals(
-        type_traits<TypeDescriptor>::ref_type descriptor) const noexcept
+        traits<TypeDescriptor>::ref_type descriptor) noexcept
 {
     return kind_ == descriptor->kind() &&
            name_ == descriptor->name() &&
@@ -122,7 +122,7 @@ bool TypeDescriptorImpl::equals(
            is_nested_ == descriptor->is_nested();
 }
 
-bool TypeDescriptorImpl::is_consistent() const noexcept
+bool TypeDescriptorImpl::is_consistent() noexcept
 {
     // Alias Types need the base type to indicate what type has been aliased.
     if (TK_ALIAS == kind_ && !base_type_)
