@@ -29,6 +29,8 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/md5.h>
 
+#include <fastdds/xtypes/type_representation/TypeObjectRegistryObserver.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -674,7 +676,7 @@ const AppliedAnnotation TypeObjectUtils::build_applied_annotation(
     {
         applied_annotation_parameter_seq_consistency(param_seq.value());
     }
-    if (DomainParticipantFactory::get_instance()->type_object_registry().is_builtin_annotation(annotation_typeid))
+    if (TypeObjectRegistryObserver::is_builtin_annotation(annotation_typeid))
     {
         throw InvalidArgumentError("Found builtin annotation in custom annotation sequence");
     }
@@ -2099,8 +2101,7 @@ void TypeObjectUtils::map_key_type_identifier_consistency(
     {
         TypeObject type_object;
         if (eprosima::fastdds::dds::RETCODE_OK ==
-                DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(key_identifier,
-                type_object))
+                TypeObjectRegistryObserver::get_type_object(key_identifier, type_object))
         {
             if (EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
             {
@@ -2203,14 +2204,12 @@ void TypeObjectUtils::direct_hash_type_identifier_consistency(
 {
     TypeObject type_object;
     if (eprosima::fastdds::dds::RETCODE_OK !=
-            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
+            TypeObjectRegistryObserver::get_type_object(type_id, type_object))
     {
         throw InvalidArgumentError("TypeIdentifier unknown to TypeObjectRegistry");
     }
     uint32_t dummy = 0;
-    if (type_id !=
-            DomainParticipantFactory::get_instance()->type_object_registry().calculate_type_identifier(type_object,
-            dummy))
+    if (type_id != TypeObjectRegistryObserver::calculate_type_identifier(type_object, dummy))
     {
         throw InvalidArgumentError("Inconsistent TypeIdentifier with registered TypeObject");
     }
@@ -2294,8 +2293,7 @@ void TypeObjectUtils::applied_annotation_type_identifier_consistency(
         throw InvalidArgumentError("Applied Annotation TypeIdentifier is not direct HASH");
     }
     TypeObject type_object;
-    ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-        annotation_type_id, type_object);
+    ReturnCode_t ret_code = TypeObjectRegistryObserver::get_type_object(annotation_type_id, type_object);
     if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
     {
         if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ANNOTATION) ||
@@ -2318,7 +2316,7 @@ void TypeObjectUtils::applied_annotation_consistency(
     {
         applied_annotation_parameter_seq_consistency(applied_annotation.param_seq().value());
     }
-    if (DomainParticipantFactory::get_instance()->type_object_registry().is_builtin_annotation(
+    if (TypeObjectRegistryObserver::is_builtin_annotation(
                 applied_annotation.annotation_typeid()))
     {
         throw InvalidArgumentError("Builtin annotation cannot be defined as custom annotation");
@@ -2477,8 +2475,7 @@ void TypeObjectUtils::structure_base_type_consistency(
         throw InvalidArgumentError("Structure base_type TypeIdentifier is not direct HASH");
     }
     TypeObject type_object;
-    ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(base_type,
-                    type_object);
+    ReturnCode_t ret_code = TypeObjectRegistryObserver::get_type_object(base_type, type_object);
     if (ret_code == eprosima::fastdds::dds::RETCODE_OK &&
             EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
     {
@@ -2633,7 +2630,7 @@ void TypeObjectUtils::common_discriminator_member_type_identifier_consistency(
     if (is_direct_hash_type_identifier(type_id))
     {
         if (eprosima::fastdds::dds::RETCODE_OK ==
-                DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
+                TypeObjectRegistryObserver::get_type_object(type_id, type_object))
         {
             if (EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
             {
@@ -2721,8 +2718,7 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         if (value._d() == TK_ENUM)
         {
             if (eprosima::fastdds::dds::RETCODE_OK ==
-                    DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id,
-                    type_object))
+                    TypeObjectRegistryObserver::get_type_object(type_id, type_object))
             {
                 if (EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
                 {
