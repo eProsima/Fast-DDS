@@ -181,11 +181,6 @@ DataWriterImpl::DataWriterImpl(
         is_custom_payload_pool_ = true;
         payload_pool_ = payload_pool;
     }
-
-    // Set Datawriter's DataRepresentationId taking into account the QoS.
-    data_representation_ = qos_.representation().m_value.empty()
-            || XCDR_DATA_REPRESENTATION == qos_.representation().m_value.at(0)
-                    ? XCDR_DATA_REPRESENTATION : XCDR2_DATA_REPRESENTATION;
 }
 
 DataWriterImpl::DataWriterImpl(
@@ -310,6 +305,11 @@ ReturnCode_t DataWriterImpl::enable()
     {
         reader_filters_.reset(new ReaderFilterCollection(qos_.writer_resource_limits().reader_filters_allocation));
     }
+
+    // Set Datawriter's DataRepresentationId taking into account the QoS.
+    data_representation_ = qos_.representation().m_value.empty()
+            || XCDR_DATA_REPRESENTATION == qos_.representation().m_value.at(0)
+                    ? XCDR_DATA_REPRESENTATION : XCDR2_DATA_REPRESENTATION;
 
     auto change_pool = get_change_pool();
     if (!change_pool)
