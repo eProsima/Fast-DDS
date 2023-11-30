@@ -30,19 +30,19 @@ class TypeDescriptorImpl : public virtual TypeDescriptor
     ObjectName name_;
 
     //! SuperType of an structure or base type of an alias type.
-    type_traits<DynamicType>::ref_type base_type_;
+    traits<DynamicType>::ref_type base_type_;
 
-    //! Discrimination type for a union.
-    type_traits<DynamicType>::ref_type discriminator_type_;
+    //! Discriminator type for a union.
+    traits<DynamicType>::ref_type discriminator_type_;
 
     //! Length for strings, arrays, sequences, maps and bitmasks.
     BoundSeq bound_;
 
-    //! Value Type for arrays, sequences, maps, bitmasks.
-    type_traits<DynamicType>::ref_type element_type_;
+    //! Value Type for strings, arrays, sequences, maps and bitmasks.
+    traits<DynamicType>::ref_type element_type_;
 
     //! Key Type for maps.
-    type_traits<DynamicType>::ref_type key_element_type_;
+    traits<DynamicType>::ref_type key_element_type_;
 
     ExtensibilityKind extensibility_kind_ {ExtensibilityKind::APPENDABLE};
 
@@ -99,34 +99,34 @@ public:
         name_ = std::move(name);
     }
 
-    type_traits<DynamicType>::ref_type base_type() const noexcept override
+    traits<DynamicType>::ref_type base_type() const noexcept override
     {
         return base_type_;
     }
 
-    type_traits<DynamicType>::ref_type& base_type() noexcept override
+    traits<DynamicType>::ref_type& base_type() noexcept override
     {
         return base_type_;
     }
 
     void base_type(
-            type_traits<DynamicType>::ref_type type) noexcept override
+            traits<DynamicType>::ref_type type) noexcept override
     {
         base_type_ = type;
     }
 
-    type_traits<DynamicType>::ref_type discriminator_type() const noexcept override
+    traits<DynamicType>::ref_type discriminator_type() const noexcept override
     {
         return discriminator_type_;
     }
 
-    type_traits<DynamicType>::ref_type& discriminator_type() noexcept override
+    traits<DynamicType>::ref_type& discriminator_type() noexcept override
     {
         return discriminator_type_;
     }
 
     void discriminator_type(
-            type_traits<DynamicType>::ref_type type) noexcept override
+            traits<DynamicType>::ref_type type) noexcept override
     {
         discriminator_type_ = type;
     }
@@ -153,34 +153,34 @@ public:
         bound_ = std::move(bound);
     }
 
-    type_traits<DynamicType>::ref_type element_type() const noexcept override
+    traits<DynamicType>::ref_type element_type() const noexcept override
     {
         return element_type_;
     }
 
-    type_traits<DynamicType>::ref_type& element_type() noexcept override
+    traits<DynamicType>::ref_type& element_type() noexcept override
     {
         return element_type_;
     }
 
     void element_type(
-            type_traits<DynamicType>::ref_type type) noexcept override
+            traits<DynamicType>::ref_type type) noexcept override
     {
         element_type_ = type;
     }
 
-    type_traits<DynamicType>::ref_type key_element_type() const noexcept override
+    traits<DynamicType>::ref_type key_element_type() const noexcept override
     {
         return key_element_type_;
     }
 
-    type_traits<DynamicType>::ref_type& key_element_type() noexcept override
+    traits<DynamicType>::ref_type& key_element_type() noexcept override
     {
         return key_element_type_;
     }
 
     void key_element_type(
-            type_traits<DynamicType>::ref_type type) noexcept override
+            traits<DynamicType>::ref_type type) noexcept override
     {
         key_element_type_ = type;
     }
@@ -218,12 +218,12 @@ public:
     }
 
     ReturnCode_t copy_from(
-            type_traits<TypeDescriptor>::ref_type descriptor) noexcept override;
+            traits<TypeDescriptor>::ref_type descriptor) noexcept override;
 
     bool equals(
-            type_traits<TypeDescriptor>::ref_type descriptor) const noexcept override;
+            traits<TypeDescriptor>::ref_type descriptor) noexcept override;
 
-    bool is_consistent() const noexcept override;
+    bool is_consistent() noexcept override;
 };
 
 } // namespace dds

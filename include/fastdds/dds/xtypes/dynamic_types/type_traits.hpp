@@ -15,8 +15,16 @@
 #ifndef _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPE_TRAITS_HPP_
 #define _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPE_TRAITS_HPP_
 
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+
 template<typename T>
-struct type_traits;
+struct traits;
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
 #include "detail/type_traits.hpp"
 

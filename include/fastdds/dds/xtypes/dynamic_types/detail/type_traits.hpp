@@ -17,12 +17,20 @@
 
 #include <memory>
 
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+
 template<typename T>
-struct type_traits
+struct traits
 {
     typedef ::std::shared_ptr<T>  ref_type;
     typedef ::std::weak_ptr<T>    weak_ref_type;
 };
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DETAIL_TYPE_TRAITS_HPP_
 
