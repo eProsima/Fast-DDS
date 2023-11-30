@@ -2,10 +2,11 @@
 
 module DDS
 {
-    struct DynamicTypeMember; // Forward declaration included to making not fail fastddsgen.
-
     typedef sequence<string> IncludePathSeq;
     typedef string<256> ObjectName;
+
+    // Inserted until defined in standard.
+    typedef sequence<unsigned long> BoundSeq;
 
     // ---------- TypeKinds (begin) -------------------
     typedef octet TypeKind;
