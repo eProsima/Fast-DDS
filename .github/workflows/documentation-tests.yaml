@@ -9,7 +9,7 @@ on:
 
   push:
     branches:
-      - 'master'
+      - '2.11.x'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -17,7 +17,7 @@ on:
 
   pull_request:
     branches:
-      - 'master'
+      - '2.11.x'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -93,9 +93,14 @@ jobs:
           path: src/fastdds-docs
           ref: ${{ env.ACTION_BRANCH_NAME }}
 
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
       - name: Install required python packages
-        run: |
-          pip3 install -r src/fastdds-docs/docs/requirements.txt
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          upgrade: false
+          requirements_file_name: src/fastdds-docs/docs/requirements.txt
 
       - name: Build documentation
         run: |
