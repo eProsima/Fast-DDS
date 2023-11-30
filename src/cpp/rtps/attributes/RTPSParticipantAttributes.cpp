@@ -42,15 +42,6 @@ static void setup_transports_default(
         bool intraprocess_only)
 {
     auto descriptor = std::make_shared<fastdds::rtps::UDPv4TransportDescriptor>();
-    descriptor->sendBufferSize = att.sendSocketBufferSize;
-    descriptor->receiveBufferSize = att.listenSocketBufferSize;
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
-    if (intraprocess_only)
-    {
-        // Avoid multicast leaving the host for intraprocess-only participants
-        descriptor->TTL = 0;
-    }
-    att.userTransports.push_back(descriptor);
 
 #ifdef SHM_TRANSPORT_BUILTIN
     if (!intraprocess_only)
@@ -68,6 +59,16 @@ static void setup_transports_default(
         att.userTransports.push_back(shm_transport);
     }
 #endif // ifdef SHM_TRANSPORT_BUILTIN
+
+    descriptor->sendBufferSize = att.sendSocketBufferSize;
+    descriptor->receiveBufferSize = att.listenSocketBufferSize;
+    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
+    if (intraprocess_only)
+    {
+        // Avoid multicast leaving the host for intraprocess-only participants
+        descriptor->TTL = 0;
+    }
+    att.userTransports.push_back(descriptor);
 }
 
 static void setup_transports_defaultv6(
@@ -75,15 +76,6 @@ static void setup_transports_defaultv6(
         bool intraprocess_only)
 {
     auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
-    descriptor->sendBufferSize = att.sendSocketBufferSize;
-    descriptor->receiveBufferSize = att.listenSocketBufferSize;
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
-    if (intraprocess_only)
-    {
-        // Avoid multicast leaving the host for intraprocess-only participants
-        descriptor->TTL = 0;
-    }
-    att.userTransports.push_back(descriptor);
 
 #ifdef SHM_TRANSPORT_BUILTIN
     if (!intraprocess_only)
@@ -101,6 +93,16 @@ static void setup_transports_defaultv6(
         att.userTransports.push_back(shm_transport);
     }
 #endif // ifdef SHM_TRANSPORT_BUILTIN
+
+    descriptor->sendBufferSize = att.sendSocketBufferSize;
+    descriptor->receiveBufferSize = att.listenSocketBufferSize;
+    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
+    if (intraprocess_only)
+    {
+        // Avoid multicast leaving the host for intraprocess-only participants
+        descriptor->TTL = 0;
+    }
+    att.userTransports.push_back(descriptor);
 }
 
 void RTPSParticipantAttributes::setup_transports(
