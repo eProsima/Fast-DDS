@@ -64,6 +64,7 @@
 #include <fastdds/topic/TopicProxy.hpp>
 #include <fastdds/topic/TopicProxyFactory.hpp>
 #include <fastdds/utils/QosConverters.hpp>
+#include <fastdds/xtypes/type_representation/TypeObjectRegistryObserver.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
 

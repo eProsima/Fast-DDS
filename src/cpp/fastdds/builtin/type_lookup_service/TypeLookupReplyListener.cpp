@@ -25,7 +25,6 @@
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
@@ -47,7 +46,6 @@ namespace builtin {
 TypeLookupReplyListener::TypeLookupReplyListener(
         TypeLookupManager* manager)
     : tlm_(manager)
-    , factory_(TypeObjectFactory::get_instance())
 {
 }
 

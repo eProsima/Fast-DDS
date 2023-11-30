@@ -64,6 +64,9 @@ namespace dds {
 
 namespace xtypes {
 
+class TypeObjectRegistryObserver;
+class TypeObjectUtils;
+
 using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
 // TypeObject information
@@ -92,6 +95,7 @@ struct TypeObjectPair
 class TypeObjectRegistry
 {
 
+    friend class TypeObjectRegistryObserver;
     friend class TypeObjectUtils;
 
 public:
