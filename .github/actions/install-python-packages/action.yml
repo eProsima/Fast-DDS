@@ -6,6 +6,7 @@ runs:
     - id: install-python-packages
       run: |
         sudo pip3 install -U \
+          empy==3.3.4 \
           colcon-common-extensions \
           colcon-mixin \
           vcstool \
