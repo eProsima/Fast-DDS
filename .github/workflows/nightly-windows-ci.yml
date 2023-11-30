@@ -12,7 +12,7 @@ jobs:
       label: 'nightly-sec-windows-ci'
       cmake-args: "-DSECURITY=ON"
       ctest-args: "-LE xfail"
-      fastdds_branch: 'master'
+      fastdds_branch: '2.6.x'
 
   nightly-nosec-windows-ci:
     uses: ./.github/workflows/reusable-windows-ci.yml
@@ -20,4 +20,4 @@ jobs:
       label: 'nightly-nosec-windows-ci'
       cmake-args: "-DSECURITY=OFF"
       ctest-args: "-LE xfail"
-      fastdds_branch: 'master'
+      fastdds_branch: '2.6.x'

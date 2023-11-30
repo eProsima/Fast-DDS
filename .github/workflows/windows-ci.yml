@@ -26,9 +26,6 @@ on:
 
   push:
     branches:
-      - 'master'
-      - '2.11.x'
-      - '2.10.x'
       - '2.6.x'
     paths-ignore:
       - '**.md'
@@ -53,4 +50,4 @@ jobs:
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: ${{ inputs.cmake-args }}
       ctest-args: ${{ inputs.ctest-args }}
-      fastdds_branch: ${{ inputs.fastdds_branch || github.base_ref || github.ref || 'master' }}
+      fastdds_branch: ${{ inputs.fastdds_branch || github.base_ref || github.ref || '2.6.x' }}
