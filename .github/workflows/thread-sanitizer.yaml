@@ -54,15 +54,21 @@ jobs:
         CXX: g++-12
 
     steps:
-      - uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+      - name: Install wget
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
           packages: wget
 
-      - uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
-        with:
-          packages: vcstool
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
 
-      - uses: eProsima/eProsima-CI/ubuntu/get_file_from_repo@v0
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
+
+      - name: Get fastrtps.repos file
+        uses: eProsima/eProsima-CI/ubuntu/get_file_from_repo@v0
         with:
           source_repository: eProsima/Fast-DDS
           source_repository_branch: ${{ env.FASTDDS_BRANCH }}
@@ -82,9 +88,6 @@ jobs:
 
       - name: Install apt packages
         uses: ./src/fastrtps/.github/actions/install-apt-packages
-
-      - name: Install Python packages
-        uses: ./src/fastrtps/.github/actions/install-python-packages
 
       - name: Install GTest
         uses: eProsima/eProsima-CI/ubuntu/install_gtest@v0
