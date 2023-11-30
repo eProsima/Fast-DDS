@@ -730,6 +730,27 @@ TEST_F(UDPv6Tests, simple_throughput)
             , std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count() / (num_samples_per_batch * 1000.0));
 }
 
+// Regression test for redmine issue #19587
+TEST_F(UDPv6Tests, double_binding_fails)
+{
+    auto whitelist_descriptor = descriptor;
+    whitelist_descriptor.interfaceWhiteList.emplace_back("::1");
+
+    UDPv6Transport default_transport(descriptor);
+    UDPv6Transport whitelist_transport(whitelist_descriptor);
+
+    Locator_t locator;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "::1", g_default_port, locator);
+
+    MockReceiverResource whitelist_receiver(whitelist_transport, locator);
+    EXPECT_TRUE(whitelist_receiver.is_valid());
+    EXPECT_TRUE(whitelist_transport.IsInputChannelOpen(locator));
+
+    MockReceiverResource default_receiver(default_transport, locator);
+    EXPECT_FALSE(default_receiver.is_valid());
+    EXPECT_FALSE(default_transport.IsInputChannelOpen(locator));
+}
+
 void UDPv6Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.maxMessageSize = 5;

@@ -30,6 +30,11 @@ class MockReceiverResource : public ReceiverResource
 {
 public:
 
+    bool is_valid() const
+    {
+        return mValid;
+    }
+
     virtual void OnDataReceived(
             const octet*,
             const uint32_t,
