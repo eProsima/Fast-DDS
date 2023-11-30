@@ -440,6 +440,7 @@ jobs:
 
       - name: Build
         id: build
+        continue-on-error: false
         run: |
           # build type mixin names doesn't match cmake ones
           $translate = @{
