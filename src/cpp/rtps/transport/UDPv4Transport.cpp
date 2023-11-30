@@ -305,6 +305,13 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(
                     ASIO_OS_DEF(SOL_SOCKET), SO_REUSEPORT>(true));
 #endif // if defined(__QNX__)
     }
+    else
+    {
+#if defined(_WIN32)
+        getSocketPtr(socket)->set_option(asio::detail::socket_option::integer<
+                    ASIO_OS_DEF(SOL_SOCKET), SO_EXCLUSIVEADDRUSE>(1));
+#endif // if defined(_WIN32)
+    }
 
     getSocketPtr(socket)->bind(generate_endpoint(sIp, port));
     return socket;
