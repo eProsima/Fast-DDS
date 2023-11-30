@@ -28,6 +28,7 @@
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 
+#include <thread>
 #include <list>
 #include <condition_variable>
 #include <asio.hpp>
@@ -118,6 +119,44 @@ public:
     }
     reply_listener_;
 
+    class RequestBussyListener : public eprosima::fastrtps::PublisherListener
+    {
+    public:
+
+        RequestBussyListener(
+                TCPReqRepHelloWorldReplier& replier)
+            : replier_(replier)
+        {
+        }
+
+        ~RequestBussyListener()
+        {
+        }
+
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* /*pub*/,
+                eprosima::fastrtps::rtps::MatchingInfo& info)
+        {
+            if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
+            {
+                replier_.matched();
+            }
+            else if (info.status == eprosima::fastrtps::rtps::REMOVED_MATCHING)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            }
+        }
+
+    private:
+
+        RequestBussyListener& operator =(
+                const RequestBussyListener&) = delete;
+
+        TCPReqRepHelloWorldReplier& replier_;
+
+    }
+    reply_bussy_listener_;
+
     TCPReqRepHelloWorldReplier();
     virtual ~TCPReqRepHelloWorldReplier();
     void init(
@@ -125,7 +164,8 @@ public:
             int domainId,
             uint16_t listeningPort,
             uint32_t maxInitialPeer = 0,
-            const char* certs_path = nullptr);
+            const char* certs_path = nullptr,
+            bool use_bussy_listener = false);
     bool isInitialized() const
     {
         return initialized_;

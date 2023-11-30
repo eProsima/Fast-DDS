@@ -41,6 +41,7 @@ using namespace eprosima::fastrtps::rtps;
 TCPReqRepHelloWorldReplier::TCPReqRepHelloWorldReplier()
     : request_listener_(*this)
     , reply_listener_(*this)
+    , reply_bussy_listener_(*this)
     , participant_(nullptr)
     , request_subscriber_(nullptr)
     , reply_publisher_(nullptr)
@@ -65,7 +66,8 @@ void TCPReqRepHelloWorldReplier::init(
         int domainId,
         uint16_t listeningPort,
         uint32_t maxInitialPeer,
-        const char* certs_path)
+        const char* certs_path,
+        bool use_bussy_listener)
 {
     ParticipantAttributes pattr;
     pattr.domainId = domainId;
@@ -132,7 +134,14 @@ void TCPReqRepHelloWorldReplier::init(
     puattr.topic.topicDataType = type_.getName();
     puattr.topic.topicName = "HelloWorldTopicReply";
     configPublisher("Reply");
-    reply_publisher_ = Domain::createPublisher(participant_, puattr, &reply_listener_);
+    if(use_bussy_listener)
+    {
+        reply_publisher_ = Domain::createPublisher(participant_, puattr, &reply_bussy_listener_);
+    }
+    else
+    {
+        reply_publisher_ = Domain::createPublisher(participant_, puattr, &reply_listener_);
+    }
     ASSERT_NE(reply_publisher_, nullptr);
 
     initialized_ = true;
