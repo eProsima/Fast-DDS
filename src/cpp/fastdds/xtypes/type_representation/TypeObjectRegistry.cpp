@@ -182,7 +182,7 @@ ReturnCode_t TypeObjectRegistry::get_type_identifiers(
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_identifiers = local_type_identifiers_.at(type_name);
     }
-    catch (std::exception& e)
+    catch (std::exception&)
     {
         return eprosima::fastdds::dds::RETCODE_NO_DATA;
     }
@@ -240,7 +240,7 @@ ReturnCode_t TypeObjectRegistry::get_type_object(
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_object = type_registry_entries_.at(type_identifier).type_object_;
     }
-    catch (std::exception& e)
+    catch (std::exception&)
     {
         return eprosima::fastdds::dds::RETCODE_NO_DATA;
     }
