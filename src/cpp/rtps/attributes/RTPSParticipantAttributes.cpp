@@ -20,6 +20,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -69,6 +70,39 @@ static void setup_transports_default(
 #endif // ifdef SHM_TRANSPORT_BUILTIN
 }
 
+static void setup_transports_defaultv6(
+        RTPSParticipantAttributes& att,
+        bool intraprocess_only)
+{
+    auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
+    descriptor->sendBufferSize = att.sendSocketBufferSize;
+    descriptor->receiveBufferSize = att.listenSocketBufferSize;
+    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
+    if (intraprocess_only)
+    {
+        // Avoid multicast leaving the host for intraprocess-only participants
+        descriptor->TTL = 0;
+    }
+    att.userTransports.push_back(descriptor);
+
+#ifdef SHM_TRANSPORT_BUILTIN
+    if (!intraprocess_only)
+    {
+        auto shm_transport = std::make_shared<fastdds::rtps::SharedMemTransportDescriptor>();
+
+        // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
+        // the equivalent segment size in SHM would be socket buffer size x 2
+        auto segment_size_udp_equivalent =
+                std::max(att.sendSocketBufferSize, att.listenSocketBufferSize) * 2;
+        shm_transport->segment_size(segment_size_udp_equivalent);
+        // Use same default max_message_size on both UDP and SHM
+        shm_transport->max_message_size(descriptor->max_message_size());
+        shm_transport->default_reception_threads(att.builtin_transports_reception_threads);
+        att.userTransports.push_back(shm_transport);
+    }
+#endif // ifdef SHM_TRANSPORT_BUILTIN
+}
+
 void RTPSParticipantAttributes::setup_transports(
         fastdds::rtps::BuiltinTransports transports)
 {
@@ -81,6 +115,10 @@ void RTPSParticipantAttributes::setup_transports(
 
         case fastdds::rtps::BuiltinTransports::DEFAULT:
             setup_transports_default(*this, intraprocess_only);
+            break;
+
+        case fastdds::rtps::BuiltinTransports::DEFAULTv6:
+            setup_transports_defaultv6(*this, intraprocess_only);
             break;
 
         default:
