@@ -27,6 +27,7 @@ on:
   push:
     branches:
       - 'master'
+      - '2.12.x'
       - '2.11.x'
       - '2.10.x'
       - '2.6.x'
