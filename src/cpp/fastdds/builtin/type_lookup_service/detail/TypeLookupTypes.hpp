@@ -1483,7 +1483,7 @@ public:
      */
     eProsima_user_DllExport TypeLookup_getTypes_Result()
     {
-        m__d = dds::RETCODE_OK;
+        m__d = eprosima::fastdds::dds::RETCODE_OK;
     }
 
     /*!
@@ -1504,7 +1504,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 m_result = x.m_result;
                 break;
 
@@ -1524,7 +1524,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 m_result = std::move(x.m_result);
 
                 break;
@@ -1545,7 +1545,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 m_result = x.m_result;
                 break;
 
@@ -1567,7 +1567,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 m_result = std::move(x.m_result);
 
                 break;
@@ -1593,7 +1593,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 return (m_result == x.m_result);
                 break;
 
@@ -1625,10 +1625,10 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 switch (__d)
                 {
-                    case dds::RETCODE_OK:
+                    case eprosima::fastdds::dds::RETCODE_OK:
                         b = true;
                         break;
                     default:
@@ -1674,7 +1674,7 @@ public:
             const TypeLookup_getTypes_Out& _result)
     {
         m_result = _result;
-        m__d = dds::RETCODE_OK;
+        m__d = eprosima::fastdds::dds::RETCODE_OK;
 
     }
 
@@ -1686,7 +1686,7 @@ public:
             TypeLookup_getTypes_Out&& _result)
     {
         m_result = std::move(_result);
-        m__d = dds::RETCODE_OK;
+        m__d = eprosima::fastdds::dds::RETCODE_OK;
 
     }
 
@@ -1701,7 +1701,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 b = true;
                 break;
             default:
@@ -1727,7 +1727,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 b = true;
                 break;
             default:
@@ -2129,7 +2129,7 @@ public:
      */
     eProsima_user_DllExport TypeLookup_getTypeDependencies_Result()
     {
-        m__d = dds::RETCODE_OK;
+        m__d = eprosima::fastdds::dds::RETCODE_OK;
     }
 
     /*!
@@ -2150,7 +2150,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 m_result = x.m_result;
                 break;
 
@@ -2170,7 +2170,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 m_result = std::move(x.m_result);
 
                 break;
@@ -2191,7 +2191,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 m_result = x.m_result;
                 break;
 
@@ -2213,7 +2213,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 m_result = std::move(x.m_result);
 
                 break;
@@ -2239,7 +2239,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 return (m_result == x.m_result);
                 break;
 
@@ -2271,10 +2271,10 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 switch (__d)
                 {
-                    case dds::RETCODE_OK:
+                    case eprosima::fastdds::dds::RETCODE_OK:
                         b = true;
                         break;
                     default:
@@ -2320,7 +2320,7 @@ public:
             const TypeLookup_getTypeDependencies_Out& _result)
     {
         m_result = _result;
-        m__d = dds::RETCODE_OK;
+        m__d = eprosima::fastdds::dds::RETCODE_OK;
 
     }
 
@@ -2332,7 +2332,7 @@ public:
             TypeLookup_getTypeDependencies_Out&& _result)
     {
         m_result = std::move(_result);
-        m__d = dds::RETCODE_OK;
+        m__d = eprosima::fastdds::dds::RETCODE_OK;
 
     }
 
@@ -2347,7 +2347,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 b = true;
                 break;
             default:
@@ -2373,7 +2373,7 @@ public:
 
         switch (m__d)
         {
-            case dds::RETCODE_OK:
+            case eprosima::fastdds::dds::RETCODE_OK:
                 b = true;
                 break;
             default:

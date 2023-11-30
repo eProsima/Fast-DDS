@@ -813,7 +813,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case dds::RETCODE_OK:
+        case eprosima::fastdds::dds::RETCODE_OK:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
                                 data.result(), current_alignment);
                     break;
@@ -845,7 +845,7 @@ eProsima_user_DllExport void serialize(
 
     switch (data._d())
     {
-                case dds::RETCODE_OK:
+                case eprosima::fastdds::dds::RETCODE_OK:
                     scdr << eprosima::fastcdr::MemberId(0) << data.result();
                     break;
 
@@ -877,7 +877,7 @@ eProsima_user_DllExport void deserialize(
                     default:
                         switch (data._d())
                         {
-                                                        case dds::RETCODE_OK:
+                                                        case eprosima::fastdds::dds::RETCODE_OK:
                                                             dcdr >> data.result();
                                                             break;
 
@@ -1103,7 +1103,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case dds::RETCODE_OK:
+        case eprosima::fastdds::dds::RETCODE_OK:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
                                 data.result(), current_alignment);
                     break;
@@ -1135,7 +1135,7 @@ eProsima_user_DllExport void serialize(
 
     switch (data._d())
     {
-                case dds::RETCODE_OK:
+                case eprosima::fastdds::dds::RETCODE_OK:
                     scdr << eprosima::fastcdr::MemberId(0) << data.result();
                     break;
 
@@ -1167,7 +1167,7 @@ eProsima_user_DllExport void deserialize(
                     default:
                         switch (data._d())
                         {
-                                                        case dds::RETCODE_OK:
+                                                        case eprosima::fastdds::dds::RETCODE_OK:
                                                             dcdr >> data.result();
                                                             break;
 

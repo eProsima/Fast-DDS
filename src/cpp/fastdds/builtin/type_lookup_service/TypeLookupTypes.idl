@@ -88,7 +88,7 @@ module builtin {
     };
 
     union TypeLookup_getTypes_Result switch(long) {
-        case dds::RETCODE_OK:
+        case eprosima::fastdds::dds::RETCODE_OK:
             TypeLookup_getTypes_Out result;
     };
 
@@ -106,7 +106,7 @@ module builtin {
     };
 
     union TypeLookup_getTypeDependencies_Result switch(long){
-        case dds::RETCODE_OK:
+        case eprosima::fastdds::dds::RETCODE_OK:
             TypeLookup_getTypeDependencies_Out result;
     };
 
