@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_RTPS_ATTRIBUTES__BUILTINTRANSPORTS_HPP_
 #define _FASTDDS_RTPS_ATTRIBUTES__BUILTINTRANSPORTS_HPP_
 
+#include <ostream>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -37,6 +39,43 @@ enum class BuiltinTransports
     LARGE_DATA,    //< Instantiate SHM, UDPv4 and TCPv4 transports, but UDPv4 is only used for bootstrapping discovery
     LARGE_DATAv6   //< Instantiate SHM, UDPv6 and TCPv6 transports, but UDPv6 is only used for bootstrapping discovery
 };
+
+inline std::ostream& operator <<(
+        std::ostream& output,
+        BuiltinTransports transports)
+{
+    switch (transports)
+    {
+        case BuiltinTransports::NONE:
+            output << "NONE";
+            break;
+        case BuiltinTransports::DEFAULT:
+            output << "DEFAULT";
+            break;
+        case BuiltinTransports::DEFAULTv6:
+            output << "DEFAULTv6";
+            break;
+        case BuiltinTransports::SHM:
+            output << "SHM";
+            break;
+        case BuiltinTransports::UDPv4:
+            output << "UDPv4";
+            break;
+        case BuiltinTransports::UDPv6:
+            output << "UDPv6";
+            break;
+        case BuiltinTransports::LARGE_DATA:
+            output << "LARGE_DATA";
+            break;
+        case BuiltinTransports::LARGE_DATAv6:
+            output << "LARGE_DATAv6";
+            break;
+        default:
+            output << "UNKNOWN";
+            break;
+    }
+    return output;
+}
 
 }  // namespace rtps
 }  // namespace fastdds

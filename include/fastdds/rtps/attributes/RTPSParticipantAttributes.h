@@ -487,6 +487,14 @@ public:
     }
 
     /**
+     * Provides a way of easily configuring transport related configuration on certain pre-defined scenarios.
+     *
+     * @param transports Defines the transport configuration scenario to setup.
+     */
+    RTPS_DllAPI void setup_transports(
+            fastdds::rtps::BuiltinTransports transports);
+
+    /**
      * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
      * that it was defined with NO UnicastLocators. At least ONE locator should be included in this list.
      */
