@@ -10,11 +10,11 @@ on:
       fastdds_branch:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
-        default: 'master'
+        default: '2.6.x'
   pull_request:
   push:
     branches:
-      - master
+      - 2.6.x
   schedule:
     - cron: '0 1 * * *'
 
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
-        FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
+        FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || '2.6.x' }}
 
     steps:
       - name: Install wget
@@ -112,7 +112,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
-      FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
+      FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || '2.6.x' }}
       DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || 'v1.2.1' }}
 
     steps:
