@@ -26,26 +26,6 @@ namespace dds {
 namespace xtypes {
 
 /**
- * @brief Extensibility kinds (@extensibility annotation)
- */
-enum ExtensibilityKind
-{
-    FINAL,
-    APPENDABLE,
-    MUTABLE
-};
-
-/**
- * @brief Try construct kinds (@try_construct annotation)
- */
-enum TryConstructKind
-{
-    USE_DEFAULT,
-    DISCARD,
-    TRIM
-};
-
-/**
  * @brief EquivalenceKind values
  */
 enum EquivalenceKindValue
