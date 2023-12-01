@@ -22,19 +22,10 @@
 #ifndef _FAST_DDS_GENERATED_BUILTINANNOTATIONS_HPP_
 #define _FAST_DDS_GENERATED_BUILTINANNOTATIONS_HPP_
 
-#include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
 #include <string>
 #include <utility>
-#include <vector>
-
 #include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -65,7 +56,7 @@ namespace autoid {
      * @brief This class represents the enumeration AutoidKind defined by the user in the IDL file.
      * @ingroup BuiltinAnnotations
      */
-    enum AutoidKind : uint32_t
+    enum class AutoidKind : uint32_t
     {
         SEQUENTIAL,
         HASH
@@ -82,7 +73,7 @@ namespace extensibility {
      * @brief This class represents the enumeration ExtensibilityKind defined by the user in the IDL file.
      * @ingroup BuiltinAnnotations
      */
-    enum ExtensibilityKind : uint32_t
+    enum class ExtensibilityKind : uint32_t
     {
         FINAL,
         APPENDABLE,
@@ -108,7 +99,7 @@ namespace verbatim {
      * @brief This class represents the enumeration PlacementKind defined by the user in the IDL file.
      * @ingroup BuiltinAnnotations
      */
-    enum PlacementKind : uint32_t
+    enum class PlacementKind : uint32_t
     {
         BEGIN_FILE,
         BEFORE_DECLARATION,
@@ -132,7 +123,7 @@ namespace verbatim {
  * @brief This class represents the enumeration TryConstructFailAction defined by the user in the IDL file.
  * @ingroup BuiltinAnnotations
  */
-enum TryConstructFailAction : uint32_t
+enum class TryConstructFailAction : uint32_t
 {
     DISCARD,
     USE_DEFAULT,

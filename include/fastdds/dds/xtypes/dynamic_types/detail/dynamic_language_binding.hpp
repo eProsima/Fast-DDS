@@ -24,11 +24,11 @@
 
 #include <cstdint>
 #include <map>
+#include <string>
+#include <utility>
 #include <vector>
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)

@@ -22,17 +22,8 @@
 #ifndef _FAST_DDS_GENERATED_WIDEENUM_HPP_
 #define _FAST_DDS_GENERATED_WIDEENUM_HPP_
 
-#include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
-#include <string>
 #include <utility>
-#include <vector>
-
-#include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 
 
@@ -66,7 +57,7 @@
  * @brief This class represents the enumeration MyEnumWide defined by the user in the IDL file.
  * @ingroup WideEnum
  */
-enum MyEnumWide : uint32_t
+enum class MyEnumWide : uint32_t
 {
     A,
     B,
@@ -197,7 +188,7 @@ public:
 
 private:
 
-    MyEnumWide m_my_enum_wide{::A};
+    MyEnumWide m_my_enum_wide{MyEnumWide::A};
 
 };
 
@@ -215,7 +206,7 @@ public:
      */
     eProsima_user_DllExport SimpleWideUnion()
     {
-        m__d = A;
+        m__d = MyEnumWide::A;
     }
 
     /*!
@@ -236,17 +227,17 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case MyEnumWide::A:
                 m_first = x.m_first;
                 break;
 
 
-            case B:
+            case MyEnumWide::B:
                 m_second = x.m_second;
                 break;
 
 
-            case D:
+            case MyEnumWide::D:
                 m_third = x.m_third;
                 break;
 
@@ -266,17 +257,17 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case MyEnumWide::A:
                 m_first = x.m_first;
                 break;
 
 
-            case B:
+            case MyEnumWide::B:
                 m_second = x.m_second;
                 break;
 
 
-            case D:
+            case MyEnumWide::D:
                 m_third = x.m_third;
                 break;
 
@@ -296,17 +287,17 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case MyEnumWide::A:
                 m_first = x.m_first;
                 break;
 
 
-            case B:
+            case MyEnumWide::B:
                 m_second = x.m_second;
                 break;
 
 
-            case D:
+            case MyEnumWide::D:
                 m_third = x.m_third;
                 break;
 
@@ -328,17 +319,17 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case MyEnumWide::A:
                 m_first = x.m_first;
                 break;
 
 
-            case B:
+            case MyEnumWide::B:
                 m_second = x.m_second;
                 break;
 
 
-            case D:
+            case MyEnumWide::D:
                 m_third = x.m_third;
                 break;
 
@@ -363,17 +354,17 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case MyEnumWide::A:
                 return (m_first == x.m_first);
                 break;
 
 
-            case B:
+            case MyEnumWide::B:
                 return (m_second == x.m_second);
                 break;
 
 
-            case D:
+            case MyEnumWide::D:
                 return (m_third == x.m_third);
                 break;
 
@@ -399,16 +390,16 @@ public:
      * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
      */
     eProsima_user_DllExport void _d(
-            int32_t __d)
+            MyEnumWide __d)
     {
         bool b = false;
 
         switch (m__d)
         {
-            case A:
+            case MyEnumWide::A:
                 switch (__d)
                 {
-                    case A:
+                    case MyEnumWide::A:
                         b = true;
                         break;
                     default:
@@ -417,10 +408,10 @@ public:
                 break;
 
 
-            case B:
+            case MyEnumWide::B:
                 switch (__d)
                 {
-                    case B:
+                    case MyEnumWide::B:
                         b = true;
                         break;
                     default:
@@ -429,10 +420,10 @@ public:
                 break;
 
 
-            case D:
+            case MyEnumWide::D:
                 switch (__d)
                 {
-                    case D:
+                    case MyEnumWide::D:
                         b = true;
                         break;
                     default:
@@ -456,7 +447,7 @@ public:
      * @brief This function returns the value of the discriminator.
      * @return Value of the discriminator
      */
-    eProsima_user_DllExport int32_t _d() const
+    eProsima_user_DllExport MyEnumWide _d() const
     {
         return m__d;
     }
@@ -465,7 +456,7 @@ public:
      * @brief This function returns a reference to the discriminator.
      * @return Reference to the discriminator.
      */
-    eProsima_user_DllExport int32_t& _d()
+    eProsima_user_DllExport MyEnumWide& _d()
     {
         return m__d;
     }
@@ -478,7 +469,7 @@ public:
             int32_t _first)
     {
         m_first = _first;
-        m__d = A;
+        m__d = MyEnumWide::A;
 
     }
 
@@ -493,7 +484,7 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case MyEnumWide::A:
                 b = true;
                 break;
             default:
@@ -519,7 +510,7 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case MyEnumWide::A:
                 b = true;
                 break;
             default:
@@ -543,7 +534,7 @@ public:
             int64_t _second)
     {
         m_second = _second;
-        m__d = B;
+        m__d = MyEnumWide::B;
 
     }
 
@@ -558,7 +549,7 @@ public:
 
         switch (m__d)
         {
-            case B:
+            case MyEnumWide::B:
                 b = true;
                 break;
             default:
@@ -584,7 +575,7 @@ public:
 
         switch (m__d)
         {
-            case B:
+            case MyEnumWide::B:
                 b = true;
                 break;
             default:
@@ -608,7 +599,7 @@ public:
             uint8_t _third)
     {
         m_third = _third;
-        m__d = D;
+        m__d = MyEnumWide::D;
 
     }
 
@@ -623,7 +614,7 @@ public:
 
         switch (m__d)
         {
-            case D:
+            case MyEnumWide::D:
                 b = true;
                 break;
             default:
@@ -649,7 +640,7 @@ public:
 
         switch (m__d)
         {
-            case D:
+            case MyEnumWide::D:
                 b = true;
                 break;
             default:
@@ -668,7 +659,7 @@ public:
 
 private:
 
-    int32_t m__d;
+    MyEnumWide m__d;
 
     int32_t m_first{0};
     int64_t m_second{0};

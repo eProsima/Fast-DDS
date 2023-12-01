@@ -676,7 +676,7 @@ const TypeObject* GetMinimalWCharUnionObject()
     mst_case_zero.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
 
-    mst_case_zero.common().label_seq().emplace_back('a');
+    mst_case_zero.common().label_seq().emplace_back(static_cast<int32_t>('a'));
 
     MD5 case_zero_hash("case_zero");
     for(int i = 0; i < 4; ++i)
@@ -697,7 +697,7 @@ const TypeObject* GetMinimalWCharUnionObject()
     mst_case_one.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
 
-    mst_case_one.common().label_seq().emplace_back('b');
+    mst_case_one.common().label_seq().emplace_back(static_cast<int32_t>('b'));
 
     MD5 case_one_hash("case_one");
     for(int i = 0; i < 4; ++i)
@@ -784,7 +784,7 @@ const TypeObject* GetCompleteWCharUnionObject()
     cst_case_zero.common().member_flags().IS_DEFAULT(false);
     cst_case_zero.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
-    cst_case_zero.common().label_seq().emplace_back('a');
+    cst_case_zero.common().label_seq().emplace_back(static_cast<int32_t>('a'));
 
 
     cst_case_zero.detail().name("case_zero");
@@ -802,7 +802,7 @@ const TypeObject* GetCompleteWCharUnionObject()
     cst_case_one.common().member_flags().IS_DEFAULT(false);
     cst_case_one.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
-    cst_case_one.common().label_seq().emplace_back('b');
+    cst_case_one.common().label_seq().emplace_back(static_cast<int32_t>('b'));
 
 
     cst_case_one.detail().name("case_one");
@@ -917,7 +917,7 @@ const TypeObject* GetMinimalOctetUnionObject()
     mst_case_five.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
 
-    mst_case_five.common().label_seq().emplace_back(5);
+    mst_case_five.common().label_seq().emplace_back(static_cast<int32_t>(5));
 
     MD5 case_five_hash("case_five");
     for(int i = 0; i < 4; ++i)
@@ -938,7 +938,7 @@ const TypeObject* GetMinimalOctetUnionObject()
     mst_case_seven.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
 
-    mst_case_seven.common().label_seq().emplace_back(7);
+    mst_case_seven.common().label_seq().emplace_back(static_cast<int32_t>(7));
 
     MD5 case_seven_hash("case_seven");
     for(int i = 0; i < 4; ++i)
@@ -1025,7 +1025,7 @@ const TypeObject* GetCompleteOctetUnionObject()
     cst_case_five.common().member_flags().IS_DEFAULT(false);
     cst_case_five.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
-    cst_case_five.common().label_seq().emplace_back(5);
+    cst_case_five.common().label_seq().emplace_back(static_cast<int32_t>(5));
 
 
     cst_case_five.detail().name("case_five");
@@ -1043,7 +1043,7 @@ const TypeObject* GetCompleteOctetUnionObject()
     cst_case_seven.common().member_flags().IS_DEFAULT(false);
     cst_case_seven.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
-    cst_case_seven.common().label_seq().emplace_back(7);
+    cst_case_seven.common().label_seq().emplace_back(static_cast<int32_t>(7));
 
 
     cst_case_seven.detail().name("case_seven");
@@ -1158,7 +1158,7 @@ const TypeObject* GetMinimalInt8UnionObject()
     mst_case_three.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
 
-    mst_case_three.common().label_seq().emplace_back(3);
+    mst_case_three.common().label_seq().emplace_back(static_cast<int32_t>(3));
 
     MD5 case_three_hash("case_three");
     for(int i = 0; i < 4; ++i)
@@ -1179,7 +1179,7 @@ const TypeObject* GetMinimalInt8UnionObject()
     mst_case_six.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
 
-    mst_case_six.common().label_seq().emplace_back(6);
+    mst_case_six.common().label_seq().emplace_back(static_cast<int32_t>(6));
 
     MD5 case_six_hash("case_six");
     for(int i = 0; i < 4; ++i)
@@ -1266,7 +1266,7 @@ const TypeObject* GetCompleteInt8UnionObject()
     cst_case_three.common().member_flags().IS_DEFAULT(false);
     cst_case_three.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
-    cst_case_three.common().label_seq().emplace_back(3);
+    cst_case_three.common().label_seq().emplace_back(static_cast<int32_t>(3));
 
 
     cst_case_three.detail().name("case_three");
@@ -1284,7 +1284,7 @@ const TypeObject* GetCompleteInt8UnionObject()
     cst_case_six.common().member_flags().IS_DEFAULT(false);
     cst_case_six.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
-    cst_case_six.common().label_seq().emplace_back(6);
+    cst_case_six.common().label_seq().emplace_back(static_cast<int32_t>(6));
 
 
     cst_case_six.detail().name("case_six");

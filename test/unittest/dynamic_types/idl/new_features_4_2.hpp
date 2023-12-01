@@ -22,17 +22,11 @@
 #ifndef _FAST_DDS_GENERATED_NEW_FEATURES_4_2_HPP_
 #define _FAST_DDS_GENERATED_NEW_FEATURES_4_2_HPP_
 
-#include <array>
 #include <bitset>
 #include <cstdint>
-#include <map>
 #include <string>
 #include <utility>
-#include <vector>
-
 #include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 
 

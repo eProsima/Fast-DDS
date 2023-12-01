@@ -23,18 +23,10 @@
 #define _FAST_DDS_GENERATED_HELLOWORLD_HPP_
 
 #include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
 #include <string>
 #include <utility>
-#include <vector>
-
 #include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -276,7 +268,7 @@ private:
 
     uint32_t m_index{0};
     std::string m_message;
-    std::array<char, 1024*1024> m_data;
+    std::array<char, 1024*1024> m_data{0};
 
 };
 
