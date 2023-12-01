@@ -1314,7 +1314,9 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
+                static_cast<void>(data);
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -1625,7 +1627,9 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
+                static_cast<void>(data);
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -2997,7 +3001,9 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
+                static_cast<void>(data);
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -4927,7 +4933,9 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
+                static_cast<void>(data);
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -5569,7 +5577,9 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
+                static_cast<void>(data);
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -9097,7 +9107,9 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
+                static_cast<void>(data);
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -9371,7 +9383,9 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
+                static_cast<void>(data);
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
@@ -9667,7 +9681,9 @@ eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
+                static_cast<void>(data);
                 static_cast<void>(dcdr);
+                static_cast<void>(mid);
                 return false;
             });
 }
