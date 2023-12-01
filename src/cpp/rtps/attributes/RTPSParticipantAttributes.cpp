@@ -105,6 +105,25 @@ static void setup_transports_defaultv6(
     att.userTransports.push_back(descriptor);
 }
 
+static void setup_transports_shm(
+        RTPSParticipantAttributes& att)
+{
+#ifdef FASTDDS_SHM_TRANSPORT_DISABLED
+    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Trying to configure SHM transport only, " <<
+            "but Fast DDS was built without SHM transport support.");
+#else
+    auto shm_transport = std::make_shared<fastdds::rtps::SharedMemTransportDescriptor>();
+
+    // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
+    // the equivalent segment size in SHM would be socket buffer size x 2
+    auto segment_size_udp_equivalent =
+            std::max(att.sendSocketBufferSize, att.listenSocketBufferSize) * 2;
+    shm_transport->segment_size(segment_size_udp_equivalent);
+    shm_transport->default_reception_threads(att.builtin_transports_reception_threads);
+    att.userTransports.push_back(shm_transport);
+#endif  // FASTDDS_SHM_TRANSPORT_DISABLED
+}
+
 void RTPSParticipantAttributes::setup_transports(
         fastdds::rtps::BuiltinTransports transports)
 {
@@ -121,6 +140,10 @@ void RTPSParticipantAttributes::setup_transports(
 
         case fastdds::rtps::BuiltinTransports::DEFAULTv6:
             setup_transports_defaultv6(*this, intraprocess_only);
+            break;
+
+        case fastdds::rtps::BuiltinTransports::SHM:
+            setup_transports_shm(*this);
             break;
 
         default:
