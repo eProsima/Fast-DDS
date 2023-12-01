@@ -140,6 +140,22 @@ static void setup_transports_udpv4(
     att.userTransports.push_back(descriptor);
 }
 
+static void setup_transports_udpv6(
+        RTPSParticipantAttributes& att,
+        bool intraprocess_only)
+{
+    auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
+    descriptor->sendBufferSize = att.sendSocketBufferSize;
+    descriptor->receiveBufferSize = att.listenSocketBufferSize;
+    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
+    if (intraprocess_only)
+    {
+        // Avoid multicast leaving the host for intraprocess-only participants
+        descriptor->TTL = 0;
+    }
+    att.userTransports.push_back(descriptor);
+}
+
 void RTPSParticipantAttributes::setup_transports(
         fastdds::rtps::BuiltinTransports transports)
 {
@@ -164,6 +180,10 @@ void RTPSParticipantAttributes::setup_transports(
 
         case fastdds::rtps::BuiltinTransports::UDPv4:
             setup_transports_udpv4(*this, intraprocess_only);
+            break;
+
+        case fastdds::rtps::BuiltinTransports::UDPv6:
+            setup_transports_udpv6(*this, intraprocess_only);
             break;
 
         default:
