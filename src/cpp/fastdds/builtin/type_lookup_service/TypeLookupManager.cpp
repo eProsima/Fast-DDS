@@ -595,7 +595,7 @@ bool TypeLookupManager::send_reply(
             return static_cast<uint32_t>(calculator.calculate_serialized_size(rep, current_alignment) + 4);
         },
         ALIVE);
-    
+
     if (change != nullptr)
     {
         CDRMessage_t msg(change->serializedPayload);
