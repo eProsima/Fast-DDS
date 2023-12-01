@@ -17,13 +17,16 @@
  *
  */
 
-#include "VideoTestSubscriber.hpp"
-#include <fastdds/dds/log/Log.hpp>
-#include "fastrtps/log/Colors.h"
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <numeric>
 #include <cmath>
 #include <fstream>
+#include <numeric>
+#include <thread>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/log/Colors.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "VideoTestSubscriber.hpp"
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;
@@ -85,10 +88,21 @@ VideoTestSubscriber::~VideoTestSubscriber()
     thread_.join();
 }
 
-bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostname,
-        const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, bool export_csv, const std::string& export_prefix,
-        int forced_domain, int video_width, int video_height, int frame_rate)
+bool VideoTestSubscriber::init(
+        int nsam,
+        bool reliable,
+        uint32_t pid,
+        bool hostname,
+        const PropertyPolicy& part_property_policy,
+        const PropertyPolicy& property_policy,
+        bool large_data,
+        const std::string& sXMLConfigFile,
+        bool export_csv,
+        const std::string& export_prefix,
+        int forced_domain,
+        int video_width,
+        int video_height,
+        int frame_rate)
 {
     large_data = true;
     m_sXMLConfigFile = sXMLConfigFile;
@@ -124,7 +138,7 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
         {
             ParticipantAttributes participant_att;
             if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
+                    eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
                     participant_att))
             {
                 participant_att.domainId = m_forcedDomain;
@@ -231,12 +245,14 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     return true;
 }
 
-void VideoTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void VideoTestSubscriber::DataSubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        logInfo(VideoTest,"Data Sub Matched ");
+        logInfo(VideoTest, "Data Sub Matched ");
         std::cout << "Data Sub Matched " << std::endl;
         ++mp_up->disc_count_;
     }
@@ -251,11 +267,13 @@ void VideoTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*s
     mp_up->disc_cond_.notify_one();
 }
 
-void VideoTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void VideoTestSubscriber::CommandPubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         logInfo(VideoTest, "Command Pub Matched ");
         std::cout << "Command Pub Matched " << std::endl;
@@ -272,10 +290,12 @@ void VideoTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*
     mp_up->disc_cond_.notify_one();
 }
 
-void VideoTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void VideoTestSubscriber::CommandSubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         logInfo(VideoTest, "Command Sub Matched ");
         std::cout << "Command Sub Matched " << std::endl;
@@ -292,21 +312,22 @@ void VideoTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* 
     mp_up->disc_cond_.notify_one();
 }
 
-void VideoTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subscriber)
+void VideoTestSubscriber::CommandSubListener::onNewDataMessage(
+        Subscriber* subscriber)
 {
     TestCommandType command;
-    if(subscriber->takeNextData(&command,&mp_up->m_sampleinfo))
+    if (subscriber->takeNextData(&command, &mp_up->m_sampleinfo))
     {
         //cout << "RCOMMAND: "<< command.m_command << endl;
-        if(command.m_command == READY)
+        if (command.m_command == READY)
         {
-            cout << "Publisher has new test ready..."<<endl;
+            cout << "Publisher has new test ready..." << endl;
             mp_up->mutex_.lock();
             ++mp_up->comm_count_;
             mp_up->mutex_.unlock();
             mp_up->comm_cond_.notify_one();
         }
-        else if(command.m_command == STOP)
+        else if (command.m_command == STOP)
         {
             cout << "Publisher has stopped the test" << endl;
             mp_up->mutex_.lock();
@@ -315,7 +336,7 @@ void VideoTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subsc
             mp_up->comm_cond_.notify_one();
             mp_up->data_cond_.notify_one();
         }
-        else if(command.m_command == STOP_ERROR)
+        else if (command.m_command == STOP_ERROR)
         {
             cout << "Publisher has canceled the test" << endl;
             mp_up->m_status = -1;
@@ -325,14 +346,15 @@ void VideoTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subsc
             mp_up->comm_cond_.notify_one();
             mp_up->data_cond_.notify_one();
         }
-        else if(command.m_command == DEFAULT)
+        else if (command.m_command == DEFAULT)
         {
             std::cout << "Something is wrong" << std::endl;
         }
     }
 }
 
-void VideoTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
+void VideoTestSubscriber::DataSubListener::onNewDataMessage(
+        Subscriber* subscriber)
 {
     VideoType videoData;
     eprosima::fastrtps::SampleInfo_t info;
@@ -342,21 +364,24 @@ void VideoTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscrib
     }
 }
 
-
 void VideoTestSubscriber::run()
 {
     //WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     //EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
     std::unique_lock<std::mutex> disc_lock(mutex_);
-    disc_cond_.wait(disc_lock, [&]() { return disc_count_ >= 3; });
+    disc_cond_.wait(disc_lock, [&]()
+            {
+                return disc_count_ >= 3;
+            });
     disc_lock.unlock();
 
-    cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
+    cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << endl;
 
     this->test();
 }
 
-void VideoTestSubscriber::gst_run(VideoTestSubscriber* sub)
+void VideoTestSubscriber::gst_run(
+        VideoTestSubscriber* sub)
 {
     if (!sub)
     {
@@ -394,9 +419,9 @@ bool VideoTestSubscriber::test()
 
     lock.lock();
     data_cond_.wait(lock, [&]()
-    {
-        return data_count_ > 0;
-    });
+            {
+                return data_count_ > 0;
+            });
     --data_count_;
     lock.unlock();
 
@@ -416,8 +441,12 @@ bool VideoTestSubscriber::test()
     return true;
 }
 
-void VideoTestSubscriber::fps_stats_cb(GstElement* /*source*/, gdouble /*fps*/, gdouble /*droprate*/,
-    gdouble avgfps, VideoTestSubscriber* sub)
+void VideoTestSubscriber::fps_stats_cb(
+        GstElement* /*source*/,
+        gdouble /*fps*/,
+        gdouble /*droprate*/,
+        gdouble avgfps,
+        VideoTestSubscriber* sub)
 {
     std::unique_lock<std::mutex> lock(sub->stats_mutex_);
 
@@ -453,9 +482,9 @@ void VideoTestSubscriber::InitGStreamer()
             g_object_set(appsrc, "do-timestamp", TRUE, NULL);
             g_signal_connect(appsrc, "need-data", G_CALLBACK(start_feed_cb), this);
             g_signal_connect(appsrc, "enough-data", G_CALLBACK(stop_feed_cb), this);
-            GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
-                "width", G_TYPE_INT, m_videoWidth, "height", G_TYPE_INT, m_videoHeight,
-                "framerate", GST_TYPE_FRACTION, m_videoFrameRate, 1, NULL);
+            GstCaps* caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
+                            "width", G_TYPE_INT, m_videoWidth, "height", G_TYPE_INT, m_videoHeight,
+                            "framerate", GST_TYPE_FRACTION, m_videoFrameRate, 1, NULL);
             gst_app_src_set_caps(GST_APP_SRC(appsrc), caps);
             gst_caps_unref(caps);
 
@@ -492,7 +521,10 @@ void VideoTestSubscriber::InitGStreamer()
     }
 }
 
-void VideoTestSubscriber::start_feed_cb(GstElement* /*source*/, guint /*size*/, VideoTestSubscriber* sub)
+void VideoTestSubscriber::start_feed_cb(
+        GstElement* /*source*/,
+        guint /*size*/,
+        VideoTestSubscriber* sub)
 {
     if (sub->source_id_ == 0)
     {
@@ -500,7 +532,9 @@ void VideoTestSubscriber::start_feed_cb(GstElement* /*source*/, guint /*size*/, 
     }
 }
 
-void VideoTestSubscriber::stop_feed_cb(GstElement* /*source*/, VideoTestSubscriber* sub)
+void VideoTestSubscriber::stop_feed_cb(
+        GstElement* /*source*/,
+        VideoTestSubscriber* sub)
 {
     if (sub->source_id_ != 0)
     {
@@ -510,12 +544,13 @@ void VideoTestSubscriber::stop_feed_cb(GstElement* /*source*/, VideoTestSubscrib
 }
 
 #define WAIT_AFTER_LAST_FEED_MS 2000
-gboolean VideoTestSubscriber::push_data_cb(VideoTestSubscriber* sub)
+gboolean VideoTestSubscriber::push_data_cb(
+        VideoTestSubscriber* sub)
 {
     std::unique_lock<std::mutex> lock(sub->gst_mutex_);
     if (sub->m_bRunning)
     {
-        GstBuffer *buffer;
+        GstBuffer* buffer;
         GstFlowReturn ret;
         GstMapInfo map;
         //gint16 *raw;
@@ -574,7 +609,10 @@ void VideoTestSubscriber::stop()
     gst_element_set_state(pipeline, GST_STATE_NULL);
 }
 
-void VideoTestSubscriber::message_cb(GstBus* /*bus*/, GstMessage* message, gpointer /*user_data*/)
+void VideoTestSubscriber::message_cb(
+        GstBus* /*bus*/,
+        GstMessage* message,
+        gpointer /*user_data*/)
 {
     GError* err = nullptr;
     gchar* debug_info = nullptr;
@@ -584,7 +622,8 @@ void VideoTestSubscriber::message_cb(GstBus* /*bus*/, GstMessage* message, gpoin
         {
             gst_message_parse_error(message, &err, &debug_info);
 
-            printf("# GST INTERNAL # Error received from element: %s; message: %s\n", GST_OBJECT_NAME(message->src), err->message);
+            printf("# GST INTERNAL # Error received from element: %s; message: %s\n", GST_OBJECT_NAME(
+                        message->src), err->message);
             printf("# GST INTERNAL # Debugging information: %s\n", debug_info ? debug_info : "none");
 
             g_clear_error(&err);
@@ -604,7 +643,8 @@ void VideoTestSubscriber::message_cb(GstBus* /*bus*/, GstMessage* message, gpoin
         {
             gst_message_parse_warning(message, &err, &debug_info);
 
-            printf("# GST INTERNAL # Warning received from element: %s; message: %s\n", GST_OBJECT_NAME(message->src), err->message);
+            printf("# GST INTERNAL # Warning received from element: %s; message: %s\n", GST_OBJECT_NAME(
+                        message->src), err->message);
             printf("# GST INTERNAL # Debugging information: %s\n", debug_info ? debug_info : "none");
 
             g_clear_error(&err);
@@ -622,7 +662,8 @@ void VideoTestSubscriber::message_cb(GstBus* /*bus*/, GstMessage* message, gpoin
         {
             gst_message_parse_info(message, &err, &debug_info);
 
-            printf("# GST INTERNAL # Info received from element: %s; message: %s\n", GST_OBJECT_NAME(message->src), err->message);
+            printf("# GST INTERNAL # Info received from element: %s; message: %s\n", GST_OBJECT_NAME(
+                        message->src), err->message);
             printf("# GST INTERNAL # Debugging information: %s\n", debug_info ? debug_info : "none");
 
             g_clear_error(&err);
@@ -840,8 +881,8 @@ void VideoTestSubscriber::analyzeTimes()
     }
 }
 
-
-void VideoTestSubscriber::printStat(TimeStats& TS)
+void VideoTestSubscriber::printStat(
+        TimeStats& TS)
 {
     std::ofstream outFile;
     std::ofstream outMeanFile;
@@ -853,22 +894,29 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
         str_reliable = "reliable";
     }
 
-    output_file_csv << "Samples, Avg stdev, Avg Mean, min Avg, Avg 50 %%, Avg 90 %%, Avg 99 %%, \
+    output_file_csv <<
+        "Samples, Avg stdev, Avg Mean, min Avg, Avg 50 %%, Avg 90 %%, Avg 99 %%, \
         Avg 99.99%%, Avg max, Drop stdev, Drop Mean, min Drop, Drop 50 %%, Drop 90 %%, Drop 99 %%, \
         Drop 99.99%%, Drop max" << std::endl;
 
     output_mean_csv << "Avg Mean" << std::endl;
 
     printf("Statistics for video test \n");
-    printf("    Samples,  Avg stdev,   Avg Mean,    min Avg,    Avg 50%%,    Avg 90%%,    Avg 99%%,   Avg 99.99%%,    Avg max\n");
-    printf("-----------,-----------,-----------,-----------,-----------,-----------,-----------,-------------,-----------\n");
+    printf(
+        "    Samples,  Avg stdev,   Avg Mean,    min Avg,    Avg 50%%,    Avg 90%%,    Avg 99%%,   Avg 99.99%%,    Avg max\n");
+    printf(
+        "-----------,-----------,-----------,-----------,-----------,-----------,-----------,-------------,-----------\n");
     printf("%11u,%11.2f,%11.2f,%11.2f,%11.2f,%11.2f,%11.2f,%13.2f,%11.2f \n\n\n",
-        TS.received, TS.pAvgStdev, TS.pAvgMean, TS.m_minAvg, TS.pAvg50, TS.pAvg90, TS.pAvg99, TS.pAvg9999, TS.m_maxAvg);
+            TS.received, TS.pAvgStdev, TS.pAvgMean, TS.m_minAvg, TS.pAvg50, TS.pAvg90, TS.pAvg99, TS.pAvg9999,
+            TS.m_maxAvg);
 
-    printf("    Samples, FameDrop stdev, FameDrop Mean, min FameDrop,  FameDrop 50%%,  FameDrop 90%%,  FameDrop 99%%, FameDrop 99.99%%,  FameDrop max\n");
-    printf("-----------,---------------,--------------,-------------,--------------,--------------,--------------,----------------,--------------\n");
+    printf(
+        "    Samples, FameDrop stdev, FameDrop Mean, min FameDrop,  FameDrop 50%%,  FameDrop 90%%,  FameDrop 99%%, FameDrop 99.99%%,  FameDrop max\n");
+    printf(
+        "-----------,---------------,--------------,-------------,--------------,--------------,--------------,----------------,--------------\n");
     printf("%11u,%15.2f,%14.2f,%13.2f,%14.2f,%14.2f,%14.2f,%16.2f,%14.2f \n",
-        TS.received, TS.pDropStdev, TS.pDropMean, TS.m_minDrop, TS.pDrop50, TS.pDrop90, TS.pDrop99, TS.pDrop9999, TS.m_maxDrop);
+            TS.received, TS.pDropStdev, TS.pDropMean, TS.m_minDrop, TS.pDrop50, TS.pDrop90, TS.pDrop99, TS.pDrop9999,
+            TS.m_maxDrop);
 
     output_file_csv << TS.received << "," << TS.pAvgStdev << "," << TS.pAvgMean << "," << TS.m_minAvg << "," <<
         TS.pAvg50 << "," << TS.pAvg90 << "," << TS.pAvg99 << "," << TS.pAvg9999 << "," << TS.m_maxAvg << "," <<
