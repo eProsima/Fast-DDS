@@ -23,6 +23,7 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/xtypes/common.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -69,7 +70,7 @@ const TypeObjectHashId TypeObjectUtils::build_type_object_hash_id(
 }
 
 CollectionElementFlag TypeObjectUtils::build_collection_element_flag(
-        TryConstructKind try_construct_kind,
+        eprosima::fastdds::dds::TryConstructKind try_construct_kind,
         bool external)
 {
     CollectionElementFlag collection_element_flag = 0;
@@ -82,7 +83,7 @@ CollectionElementFlag TypeObjectUtils::build_collection_element_flag(
 }
 
 StructMemberFlag TypeObjectUtils::build_struct_member_flag(
-        TryConstructKind try_construct_kind,
+        eprosima::fastdds::dds::TryConstructKind try_construct_kind,
         bool optional,
         bool must_understand,
         bool key,
@@ -116,7 +117,7 @@ StructMemberFlag TypeObjectUtils::build_struct_member_flag(
 }
 
 UnionMemberFlag TypeObjectUtils::build_union_member_flag(
-        TryConstructKind try_construct_kind,
+        eprosima::fastdds::dds::TryConstructKind try_construct_kind,
         bool default_member,
         bool external)
 {
@@ -134,7 +135,7 @@ UnionMemberFlag TypeObjectUtils::build_union_member_flag(
 }
 
 UnionDiscriminatorFlag TypeObjectUtils::build_union_discriminator_flag(
-        TryConstructKind try_construct_kind,
+        eprosima::fastdds::dds::TryConstructKind try_construct_kind,
         bool key)
 {
     UnionDiscriminatorFlag union_discriminator_flag = 0;
@@ -158,7 +159,7 @@ EnumeratedLiteralFlag TypeObjectUtils::build_enumerated_literal_flag(
 }
 
 StructTypeFlag TypeObjectUtils::build_struct_type_flag(
-        ExtensibilityKind extensibility_kind,
+        eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
         bool nested,
         bool autoid_hash)
 {
@@ -168,7 +169,7 @@ StructTypeFlag TypeObjectUtils::build_struct_type_flag(
 }
 
 UnionTypeFlag TypeObjectUtils::build_union_type_flag(
-        ExtensibilityKind extensibility_kind,
+        eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
         bool nested,
         bool autoid_hash)
 {
@@ -1001,7 +1002,7 @@ void TypeObjectUtils::add_complete_union_member(
     {
         case_labels.insert(label);
     }
-    for (CompleteUnionMember union_member : complete_union_member_seq)
+    for (const CompleteUnionMember& union_member : complete_union_member_seq)
     {
         if (union_member.detail().name() == member.detail().name())
         {
@@ -1557,7 +1558,7 @@ void TypeObjectUtils::add_complete_bitflag(
 {
 #if !defined(NDEBUG)
     complete_bitflag_consistency(bitflag);
-    for (CompleteBitflag bitflag_elem : sequence)
+    for (const CompleteBitflag& bitflag_elem : sequence)
     {
         if (bitflag_elem.detail().name() == bitflag.detail().name())
         {
@@ -1641,7 +1642,7 @@ void TypeObjectUtils::add_complete_bitfield(
 {
 #if !defined(NDEBUG)
     complete_bitfield_consistency(bitfield);
-    for (CompleteBitfield bitfield_elem : sequence)
+    for (const CompleteBitfield& bitfield_elem : sequence)
     {
         size_t bitfield_elem_init = bitfield_elem.common().position();
         size_t bitfield_elem_end = bitfield_elem_init + bitfield_elem.common().bitcount() - 1;
@@ -1851,19 +1852,19 @@ const NameHash TypeObjectUtils::name_hash(
 
 void TypeObjectUtils::set_try_construct_behavior(
         MemberFlag& member_flag,
-        TryConstructKind try_construct_kind)
+        eprosima::fastdds::dds::TryConstructKind try_construct_kind)
 {
     switch (try_construct_kind)
     {
-        case TryConstructKind::USE_DEFAULT:
+        case eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT2;
             break;
 
-        case TryConstructKind::TRIM:
+        case eprosima::fastdds::dds::TryConstructKind::TRIM:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT1 | MemberFlagBits::TRY_CONSTRUCT2;
             break;
 
-        case TryConstructKind::DISCARD:
+        case eprosima::fastdds::dds::TryConstructKind::DISCARD:
         default:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT1;
             break;
@@ -1872,7 +1873,7 @@ void TypeObjectUtils::set_try_construct_behavior(
 
 void TypeObjectUtils::set_type_flag(
         TypeFlag& type_flag,
-        ExtensibilityKind extensibility_kind,
+        eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
         bool nested,
         bool autoid_hash)
 {
@@ -1889,19 +1890,19 @@ void TypeObjectUtils::set_type_flag(
 
 void TypeObjectUtils::set_extensibility_kind(
         TypeFlag& type_flag,
-        ExtensibilityKind extensibility_kind)
+        eprosima::fastdds::dds::ExtensibilityKind extensibility_kind)
 {
     switch (extensibility_kind)
     {
-        case ExtensibilityKind::FINAL:
+        case eprosima::fastdds::dds::ExtensibilityKind::FINAL:
             type_flag |= TypeFlagBits::IS_FINAL;
             break;
 
-        case ExtensibilityKind::MUTABLE:
+        case eprosima::fastdds::dds::ExtensibilityKind::MUTABLE:
             type_flag |= TypeFlagBits::IS_MUTABLE;
             break;
 
-        case ExtensibilityKind::APPENDABLE:
+        case eprosima::fastdds::dds::ExtensibilityKind::APPENDABLE:
         default:
             type_flag |= TypeFlagBits::IS_APPENDABLE;
             break;
@@ -1988,7 +1989,7 @@ void TypeObjectUtils::member_flag_consistency(
 {
     if (!(member_flags & MemberFlagBits::TRY_CONSTRUCT1 || member_flags & MemberFlagBits::TRY_CONSTRUCT2))
     {
-        throw InvalidArgumentError("Inconsistent MemberFlag: INVALID TryConstructKind");
+        throw InvalidArgumentError("Inconsistent MemberFlag: INVALID eprosima::fastdds::dds::TryConstructKind");
     }
 }
 
@@ -2096,15 +2097,20 @@ void TypeObjectUtils::map_key_type_identifier_consistency(
     }
     if (is_direct_hash_type_identifier(key_identifier))
     {
-        TypeObjectPair type_objects;
+        TypeObject type_object;
         if (eprosima::fastdds::dds::RETCODE_OK ==
                 DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(key_identifier,
-                type_objects))
+                type_object))
         {
-            if (type_objects.complete_type_object._d() == TK_ALIAS)
+            if (EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
             {
                 map_key_type_identifier_consistency(
-                    type_objects.complete_type_object.alias_type().body().common().related_type());
+                    type_object.complete().alias_type().body().common().related_type());
+            }
+            else if (EK_MINIMAL == type_object._d() && type_object.minimal()._d() == TK_ALIAS)
+            {
+                map_key_type_identifier_consistency(
+                    type_object.minimal().alias_type().body().common().related_type());
             }
             else
             {
@@ -2195,8 +2201,19 @@ void TypeObjectUtils::map_ldefn_consistency(
 void TypeObjectUtils::direct_hash_type_identifier_consistency(
         const TypeIdentifier& type_id)
 {
-    static_cast<void>(type_id);
-    // TODO(jlbueno): implement in PR#3996 (TypeObjectRegistry implementation) due to API changes.
+    TypeObject type_object;
+    if (eprosima::fastdds::dds::RETCODE_OK !=
+            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
+    {
+        throw InvalidArgumentError("TypeIdentifier unknown to TypeObjectRegistry");
+    }
+    uint32_t dummy = 0;
+    if (type_id !=
+            DomainParticipantFactory::get_instance()->type_object_registry().calculate_type_identifier(type_object,
+            dummy))
+    {
+        throw InvalidArgumentError("Inconsistent TypeIdentifier with registered TypeObject");
+    }
 }
 
 void TypeObjectUtils::type_identifier_consistency(
@@ -2276,12 +2293,13 @@ void TypeObjectUtils::applied_annotation_type_identifier_consistency(
     {
         throw InvalidArgumentError("Applied Annotation TypeIdentifier is not direct HASH");
     }
-    TypeObjectPair type_objects;
+    TypeObject type_object;
     ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-        annotation_type_id, type_objects);
+        annotation_type_id, type_object);
     if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
     {
-        if (type_objects.complete_type_object._d() != TK_ANNOTATION)
+        if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ANNOTATION) ||
+                (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ANNOTATION))
         {
             throw InvalidArgumentError("Applied Annotation TypeIdentifier does not correspond with an Annotation type");
         }
@@ -2458,10 +2476,22 @@ void TypeObjectUtils::structure_base_type_consistency(
     {
         throw InvalidArgumentError("Structure base_type TypeIdentifier is not direct HASH");
     }
-    TypeObjectPair type_objects;
+    TypeObject type_object;
     ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(base_type,
-                    type_objects);
-    if (ret_code != eprosima::fastdds::dds::RETCODE_OK || type_objects.complete_type_object._d() != TK_STRUCTURE)
+                    type_object);
+    if (ret_code == eprosima::fastdds::dds::RETCODE_OK &&
+            EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
+    {
+        structure_base_type_consistency(type_object.complete().alias_type().body().common().related_type());
+    }
+    else if (ret_code == eprosima::fastdds::dds::RETCODE_OK &&
+            EK_MINIMAL == type_object._d() && type_object.minimal()._d() == TK_ALIAS)
+    {
+        structure_base_type_consistency(type_object.minimal().alias_type().body().common().related_type());
+    }
+    else if (ret_code != eprosima::fastdds::dds::RETCODE_OK ||
+            (EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_STRUCTURE) ||
+            (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_STRUCTURE))
     {
         throw InvalidArgumentError("Inconsistent base TypeIdentifier: must be related to a structure TypeObject");
     }
@@ -2599,18 +2629,24 @@ void TypeObjectUtils::common_discriminator_member_type_identifier_consistency(
     {
         throw InvalidArgumentError("Inconsistent CommonDiscriminatorMember TypeIdentifier");
     }
-    TypeObjectPair type_objects;
+    TypeObject type_object;
     if (is_direct_hash_type_identifier(type_id))
     {
         if (eprosima::fastdds::dds::RETCODE_OK ==
-                DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_objects))
+                DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
         {
-            if (type_objects.complete_type_object._d() == TK_ALIAS)
+            if (EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
             {
                 common_discriminator_member_type_identifier_consistency(
-                    type_objects.complete_type_object.alias_type().body().common().related_type());
+                    type_object.complete().alias_type().body().common().related_type());
             }
-            else if (type_objects.complete_type_object._d() != TK_ENUM)
+            else if (EK_MINIMAL == type_object._d() && type_object.minimal()._d() == TK_ALIAS)
+            {
+                common_discriminator_member_type_identifier_consistency(
+                    type_object.minimal().alias_type().body().common().related_type());
+            }
+            else if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ENUM) ||
+                    (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
             {
                 throw InvalidArgumentError("Inconsistent CommonDiscriminatorMember TypeIdentifier");
             }
@@ -2662,7 +2698,7 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         const TypeIdentifier& type_id,
         const AnnotationParameterValue& value)
 {
-    TypeObjectPair type_objects;
+    TypeObject type_object;
     // Primitive types
     if (((type_id._d() > TK_NONE && type_id._d() <= TK_UINT8) ||
             (type_id._d() == TK_CHAR8 || type_id._d() == TK_CHAR16)) && (type_id._d() != value._d()))
@@ -2686,14 +2722,20 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         {
             if (eprosima::fastdds::dds::RETCODE_OK ==
                     DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id,
-                    type_objects))
+                    type_object))
             {
-                if (type_objects.complete_type_object._d() == TK_ALIAS)
+                if (EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
                 {
                     common_annotation_parameter_type_identifier_default_value_consistency(
-                        type_objects.complete_type_object.alias_type().body().common().related_type(), value);
+                        type_object.complete().alias_type().body().common().related_type(), value);
                 }
-                else if (type_objects.complete_type_object._d() != TK_ENUM)
+                else if (EK_MINIMAL == type_object._d() && type_object.minimal()._d() == TK_ALIAS)
+                {
+                    common_annotation_parameter_type_identifier_default_value_consistency(
+                        type_object.minimal().alias_type().body().common().related_type(), value);
+                }
+                else if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ENUM) ||
+                        (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
                 {
                     throw InvalidArgumentError(
                               "Given annotation parameter value is inconsistent with given TypeIdentifier");
@@ -3124,6 +3166,46 @@ void TypeObjectUtils::complete_bitset_type_consistency(
     empty_flags_consistency(complete_bitset_type.bitset_flags());
     complete_bitset_header_consistency(complete_bitset_type.header());
     complete_bitfield_seq_consistency(complete_bitset_type.field_seq());
+}
+
+void TypeObjectUtils::complete_type_object_consistency(
+        const CompleteTypeObject& complete_type_object)
+{
+    switch (complete_type_object._d())
+    {
+        case TK_ALIAS:
+            complete_alias_type_consistency(complete_type_object.alias_type());
+            break;
+        case TK_ANNOTATION:
+            complete_annotation_type_consistency(complete_type_object.annotation_type());
+            break;
+        case TK_STRUCTURE:
+            complete_struct_type_consistency(complete_type_object.struct_type());
+            break;
+        case TK_UNION:
+            complete_union_type_consistency(complete_type_object.union_type());
+            break;
+        case TK_BITSET:
+            complete_bitset_type_consistency(complete_type_object.bitset_type());
+            break;
+        case TK_SEQUENCE:
+            complete_sequence_type_consistency(complete_type_object.sequence_type());
+            break;
+        case TK_ARRAY:
+            complete_array_type_consistency(complete_type_object.array_type());
+            break;
+        case TK_MAP:
+            complete_map_type_consistency(complete_type_object.map_type());
+            break;
+        case TK_ENUM:
+            complete_enumerated_type_consistency(complete_type_object.enumerated_type());
+            break;
+        case TK_BITMASK:
+            complete_bitmask_type_consistency(complete_type_object.bitmask_type());
+            break;
+        default:
+            throw InvalidArgumentError("Inconsistent TypeObject");
+    }
 }
 
 } // xtypes
