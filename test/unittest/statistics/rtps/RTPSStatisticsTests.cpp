@@ -13,15 +13,7 @@
 // limitations under the License.
 
 #include <map>
-<<<<<<< HEAD
-=======
 #include <thread>
-#if defined(_WIN32)
-#include <process.h>
-#else
-#include <unistd.h>
-#endif // if defined(_WIN32)
->>>>>>> 6390715a1 (Add missing thread include (#4045))
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

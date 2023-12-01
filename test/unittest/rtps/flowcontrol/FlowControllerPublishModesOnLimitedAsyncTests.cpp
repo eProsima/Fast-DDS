@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 // Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
->>>>>>> 6390715a1 (Add missing thread include (#4045))
 #include "FlowControllerPublishModesTests.hpp"
 
 #include <thread>
-
-#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
 using namespace eprosima::fastdds::rtps;
 using namespace testing;

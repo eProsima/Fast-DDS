@@ -12,32 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-<<<<<<< HEAD
-=======
 #include <set>
 #include <thread>
 #include <vector>
 
+#include <gtest/gtest.h>
+
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
->>>>>>> 6390715a1 (Add missing thread include (#4045))
-#include "BlackboxTests.hpp"
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <fastdds/dds/core/condition/StatusCondition.hpp>
-#include <fastdds/dds/core/condition/GuardCondition.hpp>
-#include <fastdds/dds/core/condition/WaitSet.hpp>
-
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-
-#include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

@@ -12,18 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-<<<<<<< HEAD
-#include "BlackboxTests.hpp"
-
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
-=======
 #include <atomic>
 #include <thread>
 #include <tuple>
 
 #include <gtest/gtest.h>
->>>>>>> 6390715a1 (Add missing thread include (#4045))
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -31,11 +24,6 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 #include <rtps/transport/test_UDPv4Transport.h>
-<<<<<<< HEAD
-#include <gtest/gtest.h>
-#include <tuple>
-=======
->>>>>>> 6390715a1 (Add missing thread include (#4045))
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastdds::rtps;
