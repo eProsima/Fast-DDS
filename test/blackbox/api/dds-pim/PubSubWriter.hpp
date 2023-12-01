@@ -1365,6 +1365,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& guid_prefix(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& prefix)
+    {
+        participant_qos_.wire_protocol().prefix = prefix;
+        return *this;
+    }
+
     PubSubWriter& participant_id(
             int32_t participantId)
     {
