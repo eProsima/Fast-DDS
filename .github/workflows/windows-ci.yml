@@ -1,0 +1,53 @@
+name: Fast-DDS Windows CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: 'ID associated to the workflow. Must univocally identify artifacts.'
+        required: true
+        type: string
+      colcon-args:
+        description: 'Extra arguments for colcon cli'
+        required: false
+        type: string
+      cmake-args:
+        description: 'Extra arguments for cmake cli'
+        required: false
+        type: string
+      ctest-args:
+        description: 'Extra arguments for ctest cli'
+        required: false
+        type: string
+      fastdds_branch:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        type: string
+        required: true
+
+  push:
+    branches:
+      - '2.6.x'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-ci:
+    uses: ./.github/workflows/reusable-windows-ci.yml
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+    with:
+      label: ${{ inputs.label || 'windows-ci' }}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: ${{ inputs.cmake-args }}
+      ctest-args: ${{ inputs.ctest-args }}
+      fastdds_branch: ${{ inputs.fastdds_branch || github.base_ref || github.ref || '2.6.x' }}
