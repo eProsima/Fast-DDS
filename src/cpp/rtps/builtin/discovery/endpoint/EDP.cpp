@@ -36,7 +36,7 @@
 
 #include <fastrtps/utils/StringMatching.h>
 
-#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastdds/xtypes/type_representation/TypeObjectRegistryObserver.hpp>
 
 #include <fastdds/core/policy/ParameterList.hpp>
 
@@ -182,44 +182,46 @@ bool EDP::newLocalReaderProxyData(
                     // TypeInformation, TypeObject and TypeIdentifier
                     if (!att.type_information.assigned())
                     {
-                        const types::TypeInformation* type_info =
-                                types::TypeObjectFactory::get_instance()->get_type_information(rpd->typeName().c_str());
-                        if (type_info != nullptr)
+                        fastdds::dds::xtypes::TypeInformation type_info;
+                        if (eprosima::fastdds::dds::RETCODE_OK ==
+                                fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_information(
+                                    rpd->typeName().c_str(), type_info))
                         {
-                            rpd->type_information() = *type_info;
+                            // TODO Change to xtype
+                            // rpd->type_information() = type_info;
                         }
                     }
                 }
 
-                if (att.auto_fill_type_object)
-                {
-                    bool has_type_id = true;
-                    if (att.type_id.m_type_identifier._d() == static_cast<uint8_t>(0x00))
-                    {
-                        has_type_id = false;
-                        const types::TypeIdentifier* type_id =
-                                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                            rpd->typeName().c_str());
-                        if (type_id != nullptr)
-                        {
-                            has_type_id = true;
-                            rpd->type_id().m_type_identifier = *type_id;
-                        }
-                    }
+                // if (att.auto_fill_type_object)
+                // {
+                //     bool has_type_id = true;
+                //     if (att.type_id.m_type_identifier._d() == static_cast<uint8_t>(0x00))
+                //     {
+                //         has_type_id = false;
+                //         const types::TypeIdentifier* type_id =
+                //                 types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                //             rpd->typeName().c_str());
+                //         if (type_id != nullptr)
+                //         {
+                //             has_type_id = true;
+                //             rpd->type_id().m_type_identifier = *type_id;
+                //         }
+                //     }
 
-                    if (att.type.m_type_object._d() == static_cast<uint8_t>(0x00))
-                    {
-                        bool type_is_complete = has_type_id &&
-                                rpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
-                        const types::TypeObject* type_obj =
-                                types::TypeObjectFactory::get_instance()->get_type_object(
-                            rpd->typeName().c_str(), type_is_complete);
-                        if (type_obj != nullptr)
-                        {
-                            rpd->type().m_type_object = *type_obj;
-                        }
-                    }
-                }
+                //     if (att.type.m_type_object._d() == static_cast<uint8_t>(0x00))
+                //     {
+                //         bool type_is_complete = has_type_id &&
+                //                 rpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
+                //         const types::TypeObject* type_obj =
+                //                 types::TypeObjectFactory::get_instance()->get_type_object(
+                //             rpd->typeName().c_str(), type_is_complete);
+                //         if (type_obj != nullptr)
+                //         {
+                //             rpd->type().m_type_object = *type_obj;
+                //         }
+                //     }
+                // }
 
                 return true;
             };
@@ -317,44 +319,46 @@ bool EDP::newLocalWriterProxyData(
                     // TypeInformation, TypeObject and TypeIdentifier
                     if (!att.type_information.assigned())
                     {
-                        const types::TypeInformation* type_info =
-                                types::TypeObjectFactory::get_instance()->get_type_information(wpd->typeName().c_str());
-                        if (type_info != nullptr)
+                        fastdds::dds::xtypes::TypeInformation type_info;
+                        if (eprosima::fastdds::dds::RETCODE_OK ==
+                                fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_information(
+                                    wpd->typeName().c_str(), type_info))
                         {
-                            wpd->type_information() = *type_info;
+                            // TODO Change to xtype
+                            // wpd->type_information() = *type_info;
                         }
                     }
                 }
 
-                if (att.auto_fill_type_object)
-                {
-                    bool has_type_id = true;
-                    if (att.type_id.m_type_identifier._d() == static_cast<uint8_t>(0x00))
-                    {
-                        has_type_id = false;
-                        const types::TypeIdentifier* type_id =
-                                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                            wpd->typeName().c_str());
-                        if (type_id != nullptr)
-                        {
-                            has_type_id = true;
-                            wpd->type_id().m_type_identifier = *type_id;
-                        }
-                    }
+                // if (att.auto_fill_type_object)
+                // {
+                //     bool has_type_id = true;
+                //     if (att.type_id.m_type_identifier._d() == static_cast<uint8_t>(0x00))
+                //     {
+                //         has_type_id = false;
+                //         const types::TypeIdentifier* type_id =
+                //                 types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                //             wpd->typeName().c_str());
+                //         if (type_id != nullptr)
+                //         {
+                //             has_type_id = true;
+                //             wpd->type_id().m_type_identifier = *type_id;
+                //         }
+                //     }
 
-                    if (att.type.m_type_object._d() == static_cast<uint8_t>(0x00))
-                    {
-                        bool type_is_complete = has_type_id &&
-                                wpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
-                        const types::TypeObject* type_obj =
-                                types::TypeObjectFactory::get_instance()->get_type_object(
-                            wpd->typeName().c_str(), type_is_complete);
-                        if (type_obj != nullptr)
-                        {
-                            wpd->type().m_type_object = *type_obj;
-                        }
-                    }
-                }
+                //     if (att.type.m_type_object._d() == static_cast<uint8_t>(0x00))
+                //     {
+                //         bool type_is_complete = has_type_id &&
+                //                 wpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
+                //         const types::TypeObject* type_obj =
+                //                 types::TypeObjectFactory::get_instance()->get_type_object(
+                //             wpd->typeName().c_str(), type_is_complete);
+                //         if (type_obj != nullptr)
+                //         {
+                //             wpd->type().m_type_object = *type_obj;
+                //         }
+                //     }
+                // }
 
                 return true;
             };
@@ -432,40 +436,42 @@ bool EDP::updatedLocalReader(
                     // TypeInformation, TypeObject and TypeIdentifier
                     if (!rdata->type_information().assigned())
                     {
-                        const types::TypeInformation* type_info =
-                                types::TypeObjectFactory::get_instance()->get_type_information(rdata->typeName().c_str());
-                        if (type_info != nullptr)
+                        fastdds::dds::xtypes::TypeInformation type_info;
+                        if (eprosima::fastdds::dds::RETCODE_OK ==
+                                fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_information(
+                                    rdata->typeName().c_str(), type_info))
                         {
-                            rdata->type_information() = *type_info;
+                            // TODO Change to xtype
+                            // rdata->type_information() = *type_info;
                         }
                     }
                 }
 
-                if (att.auto_fill_type_object)
-                {
+                // if (att.auto_fill_type_object)
+                // {
 
-                    if (rdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
-                    {
-                        const types::TypeIdentifier* type_id =
-                                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                            rdata->typeName().c_str());
-                        if (type_id != nullptr)
-                        {
-                            rdata->type_id().m_type_identifier = *type_id;
-                        }
-                    }
+                //     if (rdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
+                //     {
+                //         const types::TypeIdentifier* type_id =
+                //                 types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                //             rdata->typeName().c_str());
+                //         if (type_id != nullptr)
+                //         {
+                //             rdata->type_id().m_type_identifier = *type_id;
+                //         }
+                //     }
 
-                    if (rdata->type().m_type_object._d() == static_cast<uint8_t>(0x00))
-                    {
-                        const types::TypeObject* type_obj =
-                                types::TypeObjectFactory::get_instance()->get_type_object(
-                            rdata->typeName().c_str(), rdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
-                        if (type_obj != nullptr)
-                        {
-                            rdata->type().m_type_object = *type_obj;
-                        }
-                    }
-                }
+                //     if (rdata->type().m_type_object._d() == static_cast<uint8_t>(0x00))
+                //     {
+                //         const types::TypeObject* type_obj =
+                //                 types::TypeObjectFactory::get_instance()->get_type_object(
+                //             rdata->typeName().c_str(), rdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
+                //         if (type_obj != nullptr)
+                //         {
+                //             rdata->type().m_type_object = *type_obj;
+                //         }
+                //     }
+                // }
 
                 return true;
             };
@@ -517,40 +523,42 @@ bool EDP::updatedLocalWriter(
                     // TypeInformation, TypeObject and TypeIdentifier
                     if (!wdata->type_information().assigned())
                     {
-                        const types::TypeInformation* type_info =
-                                types::TypeObjectFactory::get_instance()->get_type_information(wdata->typeName().c_str());
-                        if (type_info != nullptr)
+                        fastdds::dds::xtypes::TypeInformation type_info;
+                        if (eprosima::fastdds::dds::RETCODE_OK ==
+                                fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_information(
+                                    wdata->typeName().c_str(), type_info))
                         {
-                            wdata->type_information() = *type_info;
+                            // TODO Change to xtype
+                            // wdata->type_information() = *type_info;
                         }
                     }
                 }
 
-                if (att.auto_fill_type_object)
-                {
+                // if (att.auto_fill_type_object)
+                // {
 
-                    if (wdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
-                    {
-                        const types::TypeIdentifier* type_id =
-                                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                            wdata->typeName().c_str());
-                        if (type_id != nullptr)
-                        {
-                            wdata->type_id().m_type_identifier = *type_id;
-                        }
-                    }
+                //     if (wdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
+                //     {
+                //         const types::TypeIdentifier* type_id =
+                //                 types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                //             wdata->typeName().c_str());
+                //         if (type_id != nullptr)
+                //         {
+                //             wdata->type_id().m_type_identifier = *type_id;
+                //         }
+                //     }
 
-                    if (wdata->type().m_type_object._d() == static_cast<uint8_t>(0x00))
-                    {
-                        const types::TypeObject* type_obj =
-                                types::TypeObjectFactory::get_instance()->get_type_object(
-                            wdata->typeName().c_str(), wdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
-                        if (type_obj != nullptr)
-                        {
-                            wdata->type().m_type_object = *type_obj;
-                        }
-                    }
-                }
+                //     if (wdata->type().m_type_object._d() == static_cast<uint8_t>(0x00))
+                //     {
+                //         const types::TypeObject* type_obj =
+                //                 types::TypeObjectFactory::get_instance()->get_type_object(
+                //             wdata->typeName().c_str(), wdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
+                //         if (type_obj != nullptr)
+                //         {
+                //             wdata->type().m_type_object = *type_obj;
+                //         }
+                //     }
+                // }
 
                 return true;
             };

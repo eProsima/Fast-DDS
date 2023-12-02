@@ -93,7 +93,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                     xtypes::TypeObject obj;
                     // TODO Change to xtype with TypeObjectRegistry
                     // const TypeIdentifier* obj_ident = factory_->typelookup_get_type(type_id, obj);
-                    xtypes::TypeIdentifier* obj_ident;
+                    xtypes::TypeIdentifier* obj_ident = nullptr;
 
                     if (obj_ident != nullptr && obj._d() != 0)
                     {

@@ -23,13 +23,13 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace xtypes {
 
-class TypeObjectRegistryObserver {
+class TypeObjectRegistryObserver
+{
 
 public:
 
@@ -49,7 +49,27 @@ public:
             TypeObject& type_object)
     {
         return DomainParticipantFactory::get_instance()->type_object_registry().
-            get_type_object(type_identifier, type_object);
+                       get_type_object(type_identifier, type_object);
+    }
+
+    /**
+     * @brief Get the TypeInformation related to a specific type_name.
+     *
+     * @pre type_name must not be empty.
+     *
+     * @param[in] type_name Type which type information is queried.
+     * @param[out] type_information Related TypeInformation for the given type name.
+     * @return ReturnCode_t RETCODE_OK if the type_name is found within the registry.
+     *                      RETCODE_NO_DATA if the given type_name is not found.
+     *                      RETCODE_BAD_PARAMETER if the given type name corresponds to a indirect hash TypeIdentifier.
+     *                      RETCODE_PRECONDITION_NOT_MET if the type_name is empty.
+     */
+    static ReturnCode_t get_type_information(
+            const std::string& type_name,
+            TypeInformation& type_information)
+    {
+        return DomainParticipantFactory::get_instance()->type_object_registry().
+                       get_type_information(type_name, type_information);
     }
 
     /**
@@ -66,7 +86,7 @@ public:
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
     {
         return DomainParticipantFactory::get_instance()->type_object_registry().
-            get_type_dependencies(type_identifiers, type_dependencies);
+                       get_type_dependencies(type_identifiers, type_dependencies);
     }
 
     /**
@@ -79,7 +99,7 @@ public:
             const TypeIdentifier& type_identifier)
     {
         return DomainParticipantFactory::get_instance()->type_object_registry().
-            is_type_identifier_known(type_identifier);
+                       is_type_identifier_known(type_identifier);
     }
 
     /**
@@ -92,7 +112,7 @@ public:
             const TypeIdentifier& type_identifier)
     {
         return DomainParticipantFactory::get_instance()->type_object_registry().
-            is_builtin_annotation(type_identifier);
+                       is_builtin_annotation(type_identifier);
     }
 
     /**
@@ -107,11 +127,10 @@ public:
             uint32_t& type_object_serialized_size)
     {
         return DomainParticipantFactory::get_instance()->type_object_registry().
-            calculate_type_identifier(type_object, type_object_serialized_size);
+                       calculate_type_identifier(type_object, type_object_serialized_size);
     }
+
 };
-
-
 
 } // xtypes
 } // dds
