@@ -31,7 +31,7 @@ if(WIN32)
 endif()
 
 add_executable(WriterProxyTests ${WRITERPROXYTESTS_SOURCE})
-target_compile_definitions(WriterProxyTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(WriterProxyTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -83,7 +83,7 @@ if(WIN32)
 endif()
 
 add_executable(WriterProxyStopTest ${WRITERPROXYSTOPTEST_SOURCE})
-target_compile_definitions(WriterProxyStopTest PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(WriterProxyStopTest PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -130,7 +130,7 @@ if(WIN32)
 endif()
 
 add_executable(WriterProxyAcknackTests ${WRITERPROXYACKNACKTESTS_SOURCE})
-target_compile_definitions(WriterProxyAcknackTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(WriterProxyAcknackTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )

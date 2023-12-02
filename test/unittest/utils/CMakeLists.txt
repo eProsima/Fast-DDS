@@ -53,7 +53,7 @@ set(SYSTEMINFOTESTS_SOURCE
 include_directories(mock/)
 
 add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
-target_compile_definitions(StringMatchingTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(StringMatchingTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -69,7 +69,7 @@ add_gtest(StringMatchingTests SOURCES ${STRINGMATCHINGTESTS_SOURCE})
 
 
 add_executable(FixedSizeStringTests ${FIXEDSIZESTRINGTESTS_SOURCE})
-target_compile_definitions(FixedSizeStringTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(FixedSizeStringTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -80,7 +80,7 @@ add_gtest(FixedSizeStringTests SOURCES ${FIXEDSIZESTRINGTESTS_SOURCE})
 
 
 add_executable(BitmapRangeTests ${BITMAPRANGETESTS_SOURCE})
-target_compile_definitions(BitmapRangeTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(BitmapRangeTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -91,7 +91,7 @@ add_gtest(BitmapRangeTests SOURCES ${BITMAPRANGETESTS_SOURCE})
 
 
 add_executable(ResourceLimitedVectorTests ${RESOURCELIMITEDVECTORTESTS_SOURCE})
-target_compile_definitions(ResourceLimitedVectorTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(ResourceLimitedVectorTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -101,7 +101,7 @@ target_link_libraries(ResourceLimitedVectorTests GTest::gtest ${MOCKS})
 add_gtest(ResourceLimitedVectorTests SOURCES ${RESOURCELIMITEDVECTORTESTS_SOURCE})
 
 add_executable(LocatorTests ${LOCATORTESTS_SOURCE})
-target_compile_definitions(LocatorTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(LocatorTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -129,14 +129,12 @@ if(NOT(EPROSIMA_BUILD))
 endif()
 
 add_executable(FixedSizeQueueTests ${FIXEDSIZEQUEUETESTS_SOURCE})
-target_compile_definitions(FixedSizeQueueTests PRIVATE FASTRTPS_NO_LIB)
 target_include_directories(FixedSizeQueueTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(FixedSizeQueueTests GTest::gtest ${MOCKS})
 add_gtest(FixedSizeQueueTests SOURCES ${FIXEDSIZEQUEUETESTS_SOURCE})
 
 add_executable(SystemInfoTests ${SYSTEMINFOTESTS_SOURCE})
-target_compile_definitions(SystemInfoTests PRIVATE FASTRTPS_NO_LIB)
 target_include_directories(SystemInfoTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(SystemInfoTests GTest::gtest)
