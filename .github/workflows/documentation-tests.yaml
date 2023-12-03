@@ -9,7 +9,7 @@ on:
 
   push:
     branches:
-      - '2.6.x'
+      - '2.10.x'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -17,7 +17,7 @@ on:
 
   pull_request:
     branches:
-      - '2.6.x'
+      - '2.10.x'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -73,8 +73,8 @@ jobs:
               RESPONSE_CODE=$(git ls-remote --heads $DOC_REPO $TEMP_BRANCH | wc -l)
               if [[ ${RESPONSE_CODE} == "0" ]]
               then
-                echo "ACTION_BRANCH_NAME=master" >> $GITHUB_ENV
-                echo "base '${{ github.base_ref }}' branch DOES NOT exist, using 'MASTER'"
+                echo "ACTION_BRANCH_NAME=2.10.x" >> $GITHUB_ENV
+                echo "base '${{ github.base_ref }}' branch DOES NOT exist, using '2.10.x'"
               else
                 echo "ACTION_BRANCH_NAME=${{ github.base_ref }}" >> $GITHUB_ENV
               fi
