@@ -265,7 +265,7 @@ bool IPFinder::getAllMACAddress(
         if (aa->OperStatus == 1) //is ENABLED
         {
             info_MAC mac;
-            memcpy(mac.address, aa->PhysicalAddress, aa->PhysicalAddressLength);
+            memcpy(mac.address, aa->PhysicalAddress, (std::min)(6UL, aa->PhysicalAddressLength));
 
             if (std::find(macs->begin(), macs->end(), mac) == macs->end())
             {
