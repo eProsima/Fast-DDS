@@ -543,8 +543,8 @@ bool TypeLookupManager::send_request(
 {
     req.header().instanceName() = get_instanceName();
     req.header().requestId().writer_guid(get_guid_from_rtps(builtin_request_writer_->getGuid()));
-    req.header().requestId().sequence_number(request_seq_number_);
-    advance_sequence_number();
+    req.header().requestId().sequence_number(get_sequence_number_from_rtps(request_seq_number_));
+    request_seq_number_++;
 
     CacheChange_t* change = builtin_request_writer_->new_change(
         [&req]()
@@ -695,15 +695,6 @@ const fastrtps::rtps::GUID_t& TypeLookupManager::get_builtin_request_writer_guid
         return builtin_request_writer_->getGuid();
     }
     return c_Guid_Unknown;
-}
-
-void TypeLookupManager::advance_sequence_number() const
-{
-    ++request_seq_number_.low();
-    if (request_seq_number_.low() == 0)
-    {
-        ++request_seq_number_.high();
-    }
 }
 
 } // namespace builtin

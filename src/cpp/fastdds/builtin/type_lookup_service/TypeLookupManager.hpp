@@ -55,6 +55,15 @@ namespace builtin {
 
 extern const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
 
+inline SequenceNumber_t get_sequence_number_from_rtps(
+        fastrtps::rtps::SequenceNumber_t seq_number)
+{
+    SequenceNumber_t dds_seq_number;
+    dds_seq_number.low() = seq_number.low;
+    dds_seq_number.high() = seq_number.high;
+
+    return dds_seq_number;
+}
 
 inline GUID_t get_guid_from_rtps(
         const fastrtps::rtps::GUID_t& rtps_guid)
@@ -253,8 +262,6 @@ private:
 
     const fastrtps::rtps::GUID_t& get_builtin_request_writer_guid() const;
 
-    void advance_sequence_number() const;
-
     //!Pointer to the local RTPSParticipant.
     fastrtps::rtps::RTPSParticipantImpl* participant_;
 
@@ -295,7 +302,7 @@ private:
     fastrtps::rtps::ReaderProxyData temp_reader_proxy_data_;
     fastrtps::rtps::WriterProxyData temp_writer_proxy_data_;
 
-    mutable SequenceNumber_t request_seq_number_;
+    mutable fastrtps::rtps::SequenceNumber_t request_seq_number_;
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
 
