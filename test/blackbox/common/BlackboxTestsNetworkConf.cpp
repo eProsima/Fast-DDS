@@ -412,6 +412,37 @@ TEST_P(NetworkConfig, PubGetSendingLocatorsWhitelist)
     }
 }
 
+// Regression test for redmine issue #19587
+TEST_P(NetworkConfig, double_binding_fails)
+{
+    PubSubReader<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> p2(TEST_TOPIC_NAME);
+
+    // Create a participant without whitelist
+    p1.disable_builtin_transport().add_user_transport_to_pparams(descriptor_);
+    p1.init();
+    ASSERT_TRUE(p1.isInitialized());
+
+    // Add the announced addresses to the interface whitelist
+    LocatorList_t locators_p1;
+    p1.get_native_reader().get_listening_locators(locators_p1);
+    for (const auto& loc : locators_p1)
+    {
+        descriptor_->interfaceWhiteList.push_back(IPLocator::ip_to_string(loc));
+    }
+
+    // Try to listen on the same locators as the first participant
+    p2.disable_builtin_transport().add_user_transport_to_pparams(descriptor_);
+    p2.set_default_unicast_locators(locators_p1);
+    p2.init();
+    ASSERT_TRUE(p2.isInitialized());
+
+    // Should be listening on different locators
+    LocatorList_t locators_p2;
+    p2.get_native_reader().get_listening_locators(locators_p2);
+    EXPECT_FALSE(locators_p1 == locators_p2);
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
