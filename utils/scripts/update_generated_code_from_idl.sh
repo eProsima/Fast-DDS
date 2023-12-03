@@ -113,10 +113,10 @@ sed -i 's+"dds_xtypes_typeobjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representat
 sed -i 's+"dds_xtypes_typeobjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
 sed -i 's+"dds_xtypes_typeobjectPubSubTypes.h"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.h>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
 
-sed -i 's+"../../../../../../include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.hpp"+<fastdds/dds/xtypes/type_representation/TypeObject.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp
+sed -i 's+"../../../../../../include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.hpp"+<fastdds/dds/xtypes/type_representation/TypeObject.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp
 sed -i 's+"../../../../../../include/fastdds/dds/core/detail/DDSReturnCode.hpp"+<fastdds/dds/core/ReturnCode.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp
 
-sed -i 's+"../../../../../../include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobjectPubSubTypes.h"+<fastdds/dds/xtypes/type_representation/TypeObject.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h
+sed -i 's+"../../../../../../include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobjectPubSubTypes.h"+<fastdds/dds/xtypes/type_representation/TypeObject.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h
 sed -i 's+"../../../../../../include/fastdds/dds/core/detail/DDSReturnCodePubSubTypes.h"+<fastdds/dds/core/ReturnCode.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h
 
 exit $ret_value
