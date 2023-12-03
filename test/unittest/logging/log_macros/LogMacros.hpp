@@ -15,12 +15,16 @@
 #ifndef LOG_MACROS_HPP
 #define LOG_MACROS_HPP
 
+#include <thread>
+
+#include <gtest/gtest.h>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
+
 #include "../mock/MockConsumer.h"
-#include <gtest/gtest.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace std;

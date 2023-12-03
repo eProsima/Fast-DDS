@@ -18,19 +18,20 @@
  */
 
 #include "MemoryTestPublisher.h"
-#include <fastdds/dds/log/Log.hpp>
-#include "fastrtps/log/Colors.h"
+
+#include <cmath>
+#include <cstdint>
+#include <fstream>
+#include <numeric>
+#include <thread>
 
 #include <dds/core/LengthUnlimited.hpp>
-
-#include <numeric>
-#include <cmath>
-#include <fstream>
-#include <inttypes.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/log/Colors.h>
 
 #ifndef _WIN32
 #define localtime_s(X, Y) localtime_r(Y, X)
-#endif
+#endif // ifndef _WIN32
 
 #define TIME_LIMIT_US 10000
 
@@ -72,11 +73,19 @@ MemoryTestPublisher::~MemoryTestPublisher()
     Domain::removeParticipant(mp_participant);
 }
 
-
-bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
-        const std::string& export_prefix, const PropertyPolicy& part_property_policy,
-        const PropertyPolicy& property_policy, const std::string& sXMLConfigFile,
-        uint32_t data_size, bool dynamic_types)
+bool MemoryTestPublisher::init(
+        int n_sub,
+        int n_sam,
+        bool reliable,
+        uint32_t pid,
+        bool hostname,
+        bool export_csv,
+        const std::string& export_prefix,
+        const PropertyPolicy& part_property_policy,
+        const PropertyPolicy& property_policy,
+        const std::string& sXMLConfigFile,
+        uint32_t data_size,
+        bool dynamic_types)
 {
     m_sXMLConfigFile = sXMLConfigFile;
     n_samples = n_sam;
@@ -95,9 +104,9 @@ bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid
         // Add members to the struct.
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data",
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), ::dds::core::LENGTH_UNLIMITED
-            ));
+                DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), ::dds::core::LENGTH_UNLIMITED
+                    ));
         struct_type_builder->set_name("MemoryType");
 
         m_pDynType = struct_type_builder->build();
@@ -144,7 +153,9 @@ bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid
     std::ostringstream pt;
     pt << "MemoryTest_";
     if (hostname)
+    {
         pt << asio::ip::host_name() << "_";
+    }
     pt << pid << "_PUB2SUB";
     PubDataparam.topic.topicName = pt.str();
     if (!reliable)
@@ -160,11 +171,13 @@ bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_datapub = Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_datapublistener);
+        mp_datapub =
+                Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_datapublistener);
     }
     else
     {
-        mp_datapub = Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
+        mp_datapub =
+                Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
     }
 
     if (mp_datapub == nullptr)
@@ -180,7 +193,9 @@ bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid
     std::ostringstream pct;
     pct << "MemoryTest_Command_";
     if (hostname)
+    {
         pct << asio::ip::host_name() << "_";
+    }
     pct << pid << "_PUB2SUB";
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -201,7 +216,9 @@ bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid
     std::ostringstream sct;
     sct << "MemoryTest_Command_";
     if (hostname)
+    {
         sct << asio::ip::host_name() << "_";
+    }
     sct << pid << "_SUB2PUB";
     SubCommandParam.topic.topicName = sct.str();
     SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -226,16 +243,18 @@ bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid
     return true;
 }
 
-void MemoryTestPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
+void MemoryTestPublisher::DataPubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Data Pub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Data Pub Matched " << C_DEF << endl;
 
         n_matched++;
-        if(n_matched > mp_up->n_subscribers)
+        if (n_matched > mp_up->n_subscribers)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
             mp_up->m_status = -1;
@@ -245,7 +264,7 @@ void MemoryTestPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub
     }
     else
     {
-        cout << C_MAGENTA << "Data Pub Unmatched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Data Pub Unmatched " << C_DEF << endl;
         --mp_up->disc_count_;
     }
 
@@ -253,16 +272,18 @@ void MemoryTestPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub
     mp_up->disc_cond_.notify_one();
 }
 
-void MemoryTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
+void MemoryTestPublisher::CommandPubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Command Pub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Command Pub Matched " << C_DEF << endl;
 
         n_matched++;
-        if(n_matched > mp_up->n_subscribers)
+        if (n_matched > mp_up->n_subscribers)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
             mp_up->m_status = -1;
@@ -272,7 +293,7 @@ void MemoryTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /*
     }
     else
     {
-        cout << C_MAGENTA << "Command Pub unmatched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Command Pub unmatched " << C_DEF << endl;
         --mp_up->disc_count_;
     }
 
@@ -280,16 +301,18 @@ void MemoryTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /*
     mp_up->disc_cond_.notify_one();
 }
 
-void MemoryTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void MemoryTestPublisher::CommandSubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Command Sub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Command Sub Matched " << C_DEF << endl;
 
         n_matched++;
-        if(n_matched > mp_up->n_subscribers)
+        if (n_matched > mp_up->n_subscribers)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
             mp_up->m_status = -1;
@@ -299,7 +322,7 @@ void MemoryTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* 
     }
     else
     {
-        cout << C_MAGENTA << "Command Sub unmatched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Command Sub unmatched " << C_DEF << endl;
         --mp_up->disc_count_;
     }
 
@@ -307,17 +330,18 @@ void MemoryTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* 
     mp_up->disc_cond_.notify_one();
 }
 
-void MemoryTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* subscriber)
+void MemoryTestPublisher::CommandSubListener::onNewDataMessage(
+        Subscriber* subscriber)
 {
     TestCommandType command;
     SampleInfo_t info;
     //	cout << "COMMAND RECEIVED"<<endl;
-    if(subscriber->takeNextData((void*)&command,&info))
+    if (subscriber->takeNextData((void*)&command, &info))
     {
-        if(info.sampleKind == ALIVE)
+        if (info.sampleKind == ALIVE)
         {
             //cout << "ALIVE "<<command.m_command<<endl;
-            if(command.m_command == BEGIN)
+            if (command.m_command == BEGIN)
             {
                 //	cout << "POSTING"<<endl;
                 mp_up->mutex_.lock();
@@ -328,29 +352,35 @@ void MemoryTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* subsc
         }
     }
     else
-        cout<< "Problem reading"<<endl;
+    {
+        cout << "Problem reading" << endl;
+    }
 }
 
-void MemoryTestPublisher::run(uint32_t test_time)
+void MemoryTestPublisher::run(
+        uint32_t test_time)
 {
     //WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     //EACH SUBSCRIBER NEEDS 3 Matchings (Comm pub+sub and publisher or subscriber)
     std::unique_lock<std::mutex> disc_lock(mutex_);
-    disc_cond_.wait(disc_lock, [&](){
-        return disc_count_ >= (n_subscribers * 3);
-    });
+    disc_cond_.wait(disc_lock, [&]()
+            {
+                return disc_count_ >= (n_subscribers * 3);
+            });
     disc_lock.unlock();
 
     test(test_time, m_data_size);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    cout << "REMOVING PUBLISHER"<<endl;
+    cout << "REMOVING PUBLISHER" << endl;
     Domain::removePublisher(this->mp_commandpub);
-    cout << "REMOVING SUBSCRIBER"<<endl;
+    cout << "REMOVING SUBSCRIBER" << endl;
     Domain::removeSubscriber(mp_commandsub);
 }
 
-bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
+bool MemoryTestPublisher::test(
+        uint32_t test_time,
+        uint32_t datasize)
 {
     //cout << "Beginning test of size: "<<datasize+4 <<endl;
     m_status = 0;
@@ -364,9 +394,9 @@ bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
         // Add members to the struct.
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data",
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), datasize
-            ));
+                DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), datasize
+                    ));
         struct_type_builder->set_name("MemoryType");
 
         m_pDynType = struct_type_builder->build();
@@ -380,7 +410,7 @@ bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
         m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
 
         MemberId id;
-        DynamicData *my_data = m_DynData->loan_value(m_DynData->get_member_id_at_index(1));
+        DynamicData* my_data = m_DynData->loan_value(m_DynData->get_member_id_at_index(1));
         for (uint32_t i = 0; i < datasize; ++i)
         {
             my_data->insert_sequence_data(id);
@@ -397,11 +427,12 @@ bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
 
     // Finally Data matching
     std::unique_lock<std::mutex> disc_lock(mutex_);
-    disc_cond_.wait(disc_lock, [&](){
-        return disc_count_ >= (n_subscribers * 3);
-    });
+    disc_cond_.wait(disc_lock, [&]()
+            {
+                return disc_count_ >= (n_subscribers * 3);
+            });
     disc_lock.unlock();
-    cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
+    cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << endl;
 
     TestCommandType command;
     command.m_command = READY;
@@ -409,9 +440,10 @@ bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
 
     //cout << "WAITING FOR COMMAND RESPONSES "<<endl;;
     std::unique_lock<std::mutex> lock(mutex_);
-    comm_cond_.wait(lock, [&](){
-        return comm_count_ == n_subscribers;
-    });
+    comm_cond_.wait(lock, [&]()
+            {
+                return comm_count_ == n_subscribers;
+            });
     --comm_count_;
     lock.unlock();
     //cout << endl;
@@ -421,7 +453,7 @@ bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
 
     while (std::chrono::duration<double, std::micro>(t_end_ - t_start_) < test_time_us)
     {
-        for(unsigned int count = 1; count <= n_samples; ++count)
+        for (unsigned int count = 1; count <= n_samples; ++count)
         {
             if (dynamic_data)
             {
@@ -440,13 +472,13 @@ bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
     command.m_command = STOP;
     mp_commandpub->write(&command);
 
-    if(m_status !=0)
+    if (m_status != 0)
     {
-        cout << "Error in test "<<endl;
+        cout << "Error in test " << endl;
         return false;
     }
     //TEST FINISHED:
-    size_t removed=0;
+    size_t removed = 0;
     mp_datapub->removeAllChange(&removed);
     //cout << "   REMOVED: "<< removed<<endl;
 
