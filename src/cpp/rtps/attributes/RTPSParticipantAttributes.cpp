@@ -37,29 +37,25 @@ static bool is_intraprocess_only(
         (ParticipantFilteringFlags::FILTER_DIFFERENT_HOST | ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS);
 }
 
-static void setup_transports_default(
-        RTPSParticipantAttributes& att,
+static std::shared_ptr<fastdds::rtps::SharedMemTransportDescriptor> create_shm_transport(
+        const RTPSParticipantAttributes& att)
+{
+    auto descriptor = std::make_shared<fastdds::rtps::SharedMemTransportDescriptor>();
+
+    // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
+    // the equivalent segment size in SHM would be socket buffer size x 2
+    auto segment_size_udp_equivalent =
+            std::max(att.sendSocketBufferSize, att.listenSocketBufferSize) * 2;
+    descriptor->segment_size(segment_size_udp_equivalent);
+    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
+    return descriptor;
+}
+
+static std::shared_ptr<fastdds::rtps::UDPv4TransportDescriptor> create_udpv4_transport(
+        const RTPSParticipantAttributes& att,
         bool intraprocess_only)
 {
     auto descriptor = std::make_shared<fastdds::rtps::UDPv4TransportDescriptor>();
-
-#ifdef SHM_TRANSPORT_BUILTIN
-    if (!intraprocess_only)
-    {
-        auto shm_transport = std::make_shared<fastdds::rtps::SharedMemTransportDescriptor>();
-
-        // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
-        // the equivalent segment size in SHM would be socket buffer size x 2
-        auto segment_size_udp_equivalent =
-                std::max(att.sendSocketBufferSize, att.listenSocketBufferSize) * 2;
-        shm_transport->segment_size(segment_size_udp_equivalent);
-        // Use same default max_message_size on both UDP and SHM
-        shm_transport->max_message_size(descriptor->max_message_size());
-        shm_transport->default_reception_threads(att.builtin_transports_reception_threads);
-        att.userTransports.push_back(shm_transport);
-    }
-#endif // ifdef SHM_TRANSPORT_BUILTIN
-
     descriptor->sendBufferSize = att.sendSocketBufferSize;
     descriptor->receiveBufferSize = att.listenSocketBufferSize;
     descriptor->default_reception_threads(att.builtin_transports_reception_threads);
@@ -68,6 +64,41 @@ static void setup_transports_default(
         // Avoid multicast leaving the host for intraprocess-only participants
         descriptor->TTL = 0;
     }
+    return descriptor;
+}
+
+static std::shared_ptr<fastdds::rtps::UDPv6TransportDescriptor> create_udpv6_transport(
+        const RTPSParticipantAttributes& att,
+        bool intraprocess_only)
+{
+    auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
+    descriptor->sendBufferSize = att.sendSocketBufferSize;
+    descriptor->receiveBufferSize = att.listenSocketBufferSize;
+    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
+    if (intraprocess_only)
+    {
+        // Avoid multicast leaving the host for intraprocess-only participants
+        descriptor->TTL = 0;
+    }
+    return descriptor;
+}
+
+static void setup_transports_default(
+        RTPSParticipantAttributes& att,
+        bool intraprocess_only)
+{
+    auto descriptor = create_udpv4_transport(att, intraprocess_only);
+
+#ifdef SHM_TRANSPORT_BUILTIN
+    if (!intraprocess_only)
+    {
+        auto shm_transport = create_shm_transport(att);
+        // Use same default max_message_size on both UDP and SHM
+        shm_transport->max_message_size(descriptor->max_message_size());
+        att.userTransports.push_back(shm_transport);
+    }
+#endif // ifdef SHM_TRANSPORT_BUILTIN
+
     att.userTransports.push_back(descriptor);
 }
 
@@ -75,33 +106,18 @@ static void setup_transports_defaultv6(
         RTPSParticipantAttributes& att,
         bool intraprocess_only)
 {
-    auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
+    auto descriptor = create_udpv6_transport(att, intraprocess_only);
 
 #ifdef SHM_TRANSPORT_BUILTIN
     if (!intraprocess_only)
     {
-        auto shm_transport = std::make_shared<fastdds::rtps::SharedMemTransportDescriptor>();
-
-        // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
-        // the equivalent segment size in SHM would be socket buffer size x 2
-        auto segment_size_udp_equivalent =
-                std::max(att.sendSocketBufferSize, att.listenSocketBufferSize) * 2;
-        shm_transport->segment_size(segment_size_udp_equivalent);
+        auto shm_transport = create_shm_transport(att);
         // Use same default max_message_size on both UDP and SHM
         shm_transport->max_message_size(descriptor->max_message_size());
-        shm_transport->default_reception_threads(att.builtin_transports_reception_threads);
         att.userTransports.push_back(shm_transport);
     }
 #endif // ifdef SHM_TRANSPORT_BUILTIN
 
-    descriptor->sendBufferSize = att.sendSocketBufferSize;
-    descriptor->receiveBufferSize = att.listenSocketBufferSize;
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
-    if (intraprocess_only)
-    {
-        // Avoid multicast leaving the host for intraprocess-only participants
-        descriptor->TTL = 0;
-    }
     att.userTransports.push_back(descriptor);
 }
 
@@ -112,15 +128,8 @@ static void setup_transports_shm(
     EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Trying to configure SHM transport only, " <<
             "but Fast DDS was built without SHM transport support.");
 #else
-    auto shm_transport = std::make_shared<fastdds::rtps::SharedMemTransportDescriptor>();
-
-    // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
-    // the equivalent segment size in SHM would be socket buffer size x 2
-    auto segment_size_udp_equivalent =
-            std::max(att.sendSocketBufferSize, att.listenSocketBufferSize) * 2;
-    shm_transport->segment_size(segment_size_udp_equivalent);
-    shm_transport->default_reception_threads(att.builtin_transports_reception_threads);
-    att.userTransports.push_back(shm_transport);
+    auto descriptor = create_shm_transport(att);
+    att.userTransports.push_back(descriptor);
 #endif  // FASTDDS_SHM_TRANSPORT_DISABLED
 }
 
@@ -128,15 +137,7 @@ static void setup_transports_udpv4(
         RTPSParticipantAttributes& att,
         bool intraprocess_only)
 {
-    auto descriptor = std::make_shared<fastdds::rtps::UDPv4TransportDescriptor>();
-    descriptor->sendBufferSize = att.sendSocketBufferSize;
-    descriptor->receiveBufferSize = att.listenSocketBufferSize;
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
-    if (intraprocess_only)
-    {
-        // Avoid multicast leaving the host for intraprocess-only participants
-        descriptor->TTL = 0;
-    }
+    auto descriptor = create_udpv4_transport(att, intraprocess_only);
     att.userTransports.push_back(descriptor);
 }
 
@@ -144,15 +145,7 @@ static void setup_transports_udpv6(
         RTPSParticipantAttributes& att,
         bool intraprocess_only)
 {
-    auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
-    descriptor->sendBufferSize = att.sendSocketBufferSize;
-    descriptor->receiveBufferSize = att.listenSocketBufferSize;
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
-    if (intraprocess_only)
-    {
-        // Avoid multicast leaving the host for intraprocess-only participants
-        descriptor->TTL = 0;
-    }
+    auto descriptor = create_udpv6_transport(att, intraprocess_only);
     att.userTransports.push_back(descriptor);
 }
 
