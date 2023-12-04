@@ -163,10 +163,16 @@ jobs:
             exit 1
           }
 
-      - name: Install colcon and other python packages
-        run: |
-          pip3 install -U colcon-common-extensions vcstool colcon-mixin xmlschema
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/windows/install_colcon@v0
 
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/windows/install_python_packages@v0
+        with:
+          packages: vcstool xmlschema
+
+      - name: Patch colcon for issue with VS2022
+        run: |
           # patch colcon issue with visual studio 2022
           $patch = gci -Include build.py -Recurse `
                       -Path ((gcm colcon).source | Split-Path | Join-Path -ChildPath "..\Lib\site-packages\colcon_cmake\*")
@@ -434,6 +440,7 @@ jobs:
 
       - name: Build
         id: build
+        continue-on-error: false
         run: |
           # build type mixin names doesn't match cmake ones
           $translate = @{
