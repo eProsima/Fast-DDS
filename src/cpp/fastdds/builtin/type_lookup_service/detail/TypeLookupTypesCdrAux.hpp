@@ -24,61 +24,6 @@
 
 #include "TypeLookupTypes.hpp"
 
-constexpr uint32_t eprosima_fastdds_dds_rpc_ReplyHeader_max_cdr_typesize {48UL};
-constexpr uint32_t eprosima_fastdds_dds_rpc_ReplyHeader_max_key_cdr_typesize {0UL};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-constexpr uint32_t eprosima_fastdds_dds_GUID_t_max_cdr_typesize {24UL};
-constexpr uint32_t eprosima_fastdds_dds_GUID_t_max_key_cdr_typesize {0UL};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_cdr_typesize {116UL};
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_key_cdr_typesize {0UL};
 
@@ -106,8 +51,6 @@ constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_key_c
 
 
 
-constexpr uint32_t eprosima_fastdds_dds_EntityId_t_max_cdr_typesize {8UL};
-constexpr uint32_t eprosima_fastdds_dds_EntityId_t_max_key_cdr_typesize {0UL};
 
 
 
@@ -120,8 +63,6 @@ constexpr uint32_t eprosima_fastdds_dds_EntityId_t_max_key_cdr_typesize {0UL};
 
 
 
-constexpr uint32_t eprosima_fastdds_dds_SampleIdentity_max_cdr_typesize {40UL};
-constexpr uint32_t eprosima_fastdds_dds_SampleIdentity_max_key_cdr_typesize {0UL};
 
 
 
@@ -143,8 +84,6 @@ constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_O
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_max_key_cdr_typesize {0UL};
 
 
-constexpr uint32_t eprosima_fastdds_dds_rpc_RequestHeader_max_cdr_typesize {304UL};
-constexpr uint32_t eprosima_fastdds_dds_rpc_RequestHeader_max_key_cdr_typesize {0UL};
 
 
 
@@ -160,8 +99,6 @@ constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_I
 
 
 
-constexpr uint32_t eprosima_fastdds_dds_SequenceNumber_t_max_cdr_typesize {12UL};
-constexpr uint32_t eprosima_fastdds_dds_SequenceNumber_t_max_key_cdr_typesize {0UL};
 
 
 
@@ -233,53 +170,6 @@ namespace fastcdr {
 
 class Cdr;
 class CdrSizeCalculator;
-
-
-
-
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const eprosima::fastdds::dds::EntityId_t& data);
-
-
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const eprosima::fastdds::dds::GUID_t& data);
-
-
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const eprosima::fastdds::dds::SequenceNumber_t& data);
-
-
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const eprosima::fastdds::dds::SampleIdentity& data);
-
-
-
-
-
-
-
-
-
-
-
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const eprosima::fastdds::dds::rpc::RequestHeader& data);
-
-
-
-eProsima_user_DllExport void serialize_key(
-        eprosima::fastcdr::Cdr& scdr,
-        const eprosima::fastdds::dds::rpc::ReplyHeader& data);
 
 
 

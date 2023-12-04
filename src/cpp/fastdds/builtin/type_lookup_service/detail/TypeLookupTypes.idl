@@ -2,71 +2,12 @@
 
 #include "../../../../../../include/fastdds/dds/core/detail/DDSReturnCode.idl"
 #include "../../../../../../include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.idl"
+#include "rpc_types.idl"
 
 module eprosima {
-
 module fastdds {
+    
 module dds {
-
-typedef octet GuidPrefix_t[12];
-
-struct EntityId_t {
-    octet entityKey[3]; octet entityKind;
-};
-
-struct GUID_t {
-    GuidPrefix_t guidPrefix;
-    EntityId_t entityId;
-};
-
-struct SequenceNumber_t {
-    long high;
-    unsigned long low;
-};
-
-struct SampleIdentity {
-    GUID_t writer_guid;
-    SequenceNumber_t sequence_number;
-};
-
-
-module rpc {
-
-    typedef octet UnknownOperation;
-    typedef octet UnknownException;
-    typedef octet UnusedMember;
-
-    enum RemoteExceptionCode_t
-    {
-        REMOTE_EX_OK,
-        REMOTE_EX_UNSUPPORTED,
-        REMOTE_EX_INVALID_ARGUMENT,
-        REMOTE_EX_OUT_OF_RESOURCES,
-        REMOTE_EX_UNKNOWN_OPERATION,
-        REMOTE_EX_UNKNOWN_EXCEPTION
-    };
-
-    typedef string<255> InstanceName;
-
-    @nested
-    struct RequestHeader 
-    {
-        SampleIdentity requestId;
-        InstanceName instanceName;
-    };
-
-    @nested
-    struct ReplyHeader 
-    {
-        SampleIdentity relatedRequestId;
-        dds::rpc::RemoteExceptionCode_t remoteEx;
-    };
-
-}; // module rpc
-
-
-
-
 module builtin {
 
     // computed from @hashid("getTypes")

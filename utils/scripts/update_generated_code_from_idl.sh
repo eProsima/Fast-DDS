@@ -2,7 +2,6 @@
 
 files_to_exclude=(
     './include/fastrtps/types/*'
-    './include/fastdds/dds/xtypes/type_representation/detail/*'
     )
 
 files_needing_typeobject=(
