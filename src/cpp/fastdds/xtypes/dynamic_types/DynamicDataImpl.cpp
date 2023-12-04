@@ -63,32 +63,35 @@ DynamicDataImpl::DynamicDataImpl(
             {
                 assert(pm);
 
-                std::shared_ptr<DynamicDataImpl> data = DynamicDataFactoryImpl::get_instance().create_data(
-                    *pm->get_type());
-                if (pm->get_kind() != TK_BITSET &&
-                        pm->get_kind() != TK_STRUCTURE &&
-                        pm->get_kind() != TK_UNION &&
-                        pm->get_kind() != TK_SEQUENCE &&
-                        pm->get_kind() != TK_ARRAY &&
-                        pm->get_kind() != TK_MAP)
-                {
+                /*TODO(richiware)
+                   std::shared_ptr<DynamicDataImpl> data = DynamicDataFactoryImpl::get_instance().create_data(
+                    dynamic_cast<DynamicTypeImpl*>(pm->type().get()));
+                   if (pm->type()->get_kind() != TK_BITSET &&
+                        pm->type()->get_kind() != TK_STRUCTURE &&
+                        pm->type()->get_kind() != TK_UNION &&
+                        pm->type()->get_kind() != TK_SEQUENCE &&
+                        pm->type()->get_kind() != TK_ARRAY &&
+                        pm->type()->get_kind() != TK_MAP)
+                   {
                     ObjectName def_value = pm->annotation_get_default();
                     if (0 == def_value.size())
                     {
                         data->set_value(std::string(def_value.c_str()));
                     }
-                }
-#ifdef DYNAMIC_TYPES_CHECKING
-                complex_values_.emplace(pm->get_id(), data);
-#else
-                values_.emplace(pm->get_id(), data);
-#endif // ifdef DYNAMIC_TYPES_CHECKING
+                   }
+                 #ifdef DYNAMIC_TYPES_CHECKING
+                   complex_values_.emplace(pm->id(), data);
+                 #else
+                   values_.emplace(pm->get_id(), data);
+                 #endif // ifdef DYNAMIC_TYPES_CHECKING
+
+                 */
 
                 // Set the default value for unions.
                 if (type.get_kind() == TK_UNION &&
-                        pm->is_default_union_value())
+                        pm->is_default_label())
                 {
-                    set_union_id(pm->get_id());
+                    set_union_id(pm->id());
                 }
             }
         }
@@ -3948,7 +3951,7 @@ ReturnCode_t DynamicDataImpl::get_enum_value(
 
         try
         {
-            value = type_->get_member(MemberId{uint32_value_}).get_name().c_str();
+            value = type_->get_member(MemberId{uint32_value_}).name().c_str();
         }
         catch (const std::system_error& e)
         {
@@ -4978,7 +4981,7 @@ uint64_t DynamicDataImpl::get_union_label() const
     }
 
     // return label if available
-    auto& labels = type_->get_member(union_id_).get_union_labels();
+    auto& labels = type_->get_member(union_id_).label();
     auto it = labels.cbegin();
     if (it != labels.cend())
     {

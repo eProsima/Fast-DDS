@@ -103,7 +103,7 @@ const DynamicTypeMember* DynamicTypeBuilder::get_member(
 ReturnCode_t DynamicTypeBuilder::add_member(
         const MemberDescriptor& md) noexcept
 {
-    return DynamicTypeBuilderImpl::get_implementation(*this).add_member(md);
+    //TODO(richiware) return DynamicTypeBuilderImpl::get_implementation(*this).add_member(md);
 }
 
 DynamicTypeMembersById DynamicTypeBuilder::get_all_members(

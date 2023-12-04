@@ -29,14 +29,17 @@ bool DynamicTypeMember::operator ==(
 bool DynamicTypeMember::operator !=(
         const DynamicTypeMember& descriptor) const noexcept
 {
-    return DynamicTypeMemberImpl::get_implementation(*this)
+    /*TODO(richiware)
+       return DynamicTypeMemberImpl::get_implementation(*this)
            != DynamicTypeMemberImpl::get_implementation(descriptor);
+     */
+    return false;
 }
 
 ReturnCode_t DynamicTypeMember::get_descriptor(
         MemberDescriptor& md) const noexcept
 {
-    md = DynamicTypeMemberImpl::get_implementation(*this).get_descriptor();
+    //TODO(richiware) md = DynamicTypeMemberImpl::get_implementation(*this).get_descriptor();
     return RETCODE_OK;
 }
 
@@ -48,12 +51,12 @@ bool DynamicTypeMember::equals(
 
 const char* DynamicTypeMember::get_name() const noexcept
 {
-    return DynamicTypeMemberImpl::get_implementation(*this).get_name().c_str();
+    return DynamicTypeMemberImpl::get_implementation(*this).name().c_str();
 }
 
 MemberId DynamicTypeMember::get_id() const noexcept
 {
-    return DynamicTypeMemberImpl::get_implementation(*this).get_id();
+    return DynamicTypeMemberImpl::get_implementation(*this).id();
 }
 
 const Annotations* DynamicTypeMember::get_annotation() const noexcept

@@ -59,7 +59,6 @@ target_sources(xtypes INTERFACE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactoryImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeMember.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeMemberImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/MemberDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/MemberDescriptorImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/TypeDescriptorImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/TypeState.cpp

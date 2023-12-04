@@ -113,7 +113,7 @@ bool TypeDescriptorImpl::equals(
 {
     return kind_ == descriptor->kind() &&
            name_ == descriptor->name() &&
-           base_type_ == descriptor->base_type() &&
+           base_type_ == descriptor->base_type() && // TODO(richiware) change when dynamictype has equals.
            discriminator_type_ == descriptor->discriminator_type() &&
            bound_ == descriptor->bound() &&
            element_type_ == descriptor->element_type() &&
@@ -124,6 +124,7 @@ bool TypeDescriptorImpl::equals(
 
 bool TypeDescriptorImpl::is_consistent() noexcept
 {
+    //TODO(richiware) when dynamic_type has is_consisten.
     // Alias Types need the base type to indicate what type has been aliased.
     if (TK_ALIAS == kind_ && !base_type_)
     {

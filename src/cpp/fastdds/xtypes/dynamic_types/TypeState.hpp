@@ -44,7 +44,7 @@ struct TypeStateData
     std::vector<uint32_t> bound_;                         //!< Length for strings, arrays, sequences, maps and bitmasks.
     std::shared_ptr<const DynamicTypeImpl> element_type_;       //!< Value Type for arrays, sequences, maps, bitmasks.
     std::shared_ptr<const DynamicTypeImpl> key_element_type_;   //!< Key Type for maps.
-    std::list<DynamicTypeMemberImpl> members_;                //!< Member descriptors sequence
+    //TODO(richiware)std::list<DynamicTypeMemberImpl> members_;                //!< Member descriptors sequence
 };
 
 /**
@@ -123,7 +123,6 @@ protected:
     void clean();
 
     friend class DynamicTypeBuilderFactoryImpl;
-    friend class fastrtps::types::TypeObjectFactory;
 
     /**
      * Modifies the underlying type name by copy
@@ -203,7 +202,7 @@ public:
      * @return true if exists
      */
     bool exists_member_by_name(
-            const std::string& name) const;
+            const ObjectName& name) const;
 
     /**
      * Checks if there is a member with the given id.

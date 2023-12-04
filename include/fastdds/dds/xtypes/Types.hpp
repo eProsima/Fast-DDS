@@ -193,9 +193,6 @@ operator <<(
 
 #undef XTYPECASE
 
-using MemberId = uint32_t;
-const MemberId MEMBER_ID_INVALID = 0x0FFFFFFF;
-
 const int32_t MEMBER_NAME_MAX_LENGTH = 256;
 typedef std::string MemberName;
 
@@ -215,8 +212,6 @@ typedef std::array<uint8_t, 4> NameHash;
 // Mask used to remove the flags that do no affect assignability
 // Selects  T1, T2, O, M, K, D
 const uint16_t MemberFlagMinimalMask = 0x003f;
-
-#define INDEX_INVALID UINT32_MAX
 
 const int32_t MAX_BITMASK_LENGTH = 64;
 const int32_t MAX_ELEMENTS_COUNT = 100;

@@ -603,12 +603,13 @@ bool DynamicTypeImpl::deserialize(
                 res &= base_type_->deserialize(data, cdr);
             }
 
-            for (const DynamicTypeMemberImpl& m : members_)
-            {
+            /*TODO(richiware)
+               for (const DynamicTypeMemberImpl& m : members_)
+               {
                 if (!m.annotation_is_non_serialized())
                 {
                     std::shared_ptr<DynamicDataImpl> member_data;
-                    auto it = value_col.find(m.get_id());
+                    auto it = value_col.find(m.id());
 
                     if (it != value_col.end())
                     {
@@ -616,13 +617,14 @@ bool DynamicTypeImpl::deserialize(
                     }
                     else
                     {
-                        member_data = DynamicDataFactoryImpl::get_instance().create_data(*m.get_type());
+                        //TODO(richiware) member_data = DynamicDataFactoryImpl::get_instance().create_data(*m.get_type());
                         value_col.emplace(it->first, member_data);
                     }
 
-                    res &= member_data ? m.get_type()->deserialize(*member_data, cdr) : false;
+                    //TODO(richiware) res &= member_data ? m.type()->deserialize(*member_data, cdr) : false;
                 }
-            }
+               }
+             */
         }
         break;
         case TK_ARRAY:
@@ -857,8 +859,10 @@ size_t DynamicTypeImpl::getCdrSerializedSize(
                 auto it = std::static_pointer_cast<DynamicDataImpl>(data.values_.at(data.union_id_));
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 
-                current_alignment +=
+                /*TODO(richiware)
+                   current_alignment +=
                         get_member(data.union_id_).get_type()->getCdrSerializedSize(*it, current_alignment);
+                 */
             }
             break;
         }
@@ -878,20 +882,22 @@ size_t DynamicTypeImpl::getCdrSerializedSize(
                 current_alignment += base_type_->getCdrSerializedSize(data, current_alignment);
             }
 
-            for (const DynamicTypeMemberImpl& m : members_)
-            {
+            /*TODO(richiware)
+               for (const DynamicTypeMemberImpl& m : members_)
+               {
                 if (!m.annotation_is_non_serialized())
                 {
-                    auto it = value_col.find(m.get_id());
+                    auto it = value_col.find(m.id());
 
                     if (it != value_col.end())
                     {
                         auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
-                        current_alignment +=
+                           current_alignment +=
                                 m.get_type()->getCdrSerializedSize(*member_data, current_alignment);
                     }
                 }
-            }
+               }
+             */
             break;
         }
         case TK_ARRAY:
@@ -1064,14 +1070,16 @@ size_t DynamicTypeImpl::getEmptyCdrSerializedSize(
                 current_alignment += base_type_->getEmptyCdrSerializedSize(current_alignment);
             }
 
-            for (const DynamicTypeMemberImpl& m : members_)
-            {
+            /*TODO(richiware)
+               for (const DynamicTypeMemberImpl& m : members_)
+               {
                 if (!m.annotation_is_non_serialized())
                 {
-                    current_alignment +=
+                       current_alignment +=
                             m.get_type()->getEmptyCdrSerializedSize(current_alignment);
                 }
-            }
+               }
+             */
             break;
         }
         case TK_ARRAY:
@@ -1111,16 +1119,20 @@ size_t DynamicTypeImpl::getKeyMaxCdrSerializedSize(
         // calculate inheritance overhead
         if (base_type_)
         {
-            current_alignment += base_type_->getKeyMaxCdrSerializedSize(current_alignment);
+            /*TODO(richiware)
+               current_alignment += base_type_->getKeyMaxCdrSerializedSize(current_alignment);
+             */
         }
 
-        for (const DynamicTypeMemberImpl& m : members_)
-        {
-            if (m.key_annotation())
-            {
-                current_alignment += m.get_type()->getKeyMaxCdrSerializedSize(current_alignment);
-            }
-        }
+        /*TODO(richiware)
+           for (const DynamicTypeMemberImpl& m : members_)
+           {
+           if (m.key_annotation())
+           {
+               current_alignment += m.get_type()->getKeyMaxCdrSerializedSize(current_alignment);
+           }
+           }
+         */
     }
     else if (is_key_defined_)
     {
@@ -1204,14 +1216,16 @@ size_t DynamicTypeImpl::getMaxCdrSerializedSize(
             // Check the size of all members and take the size of the biggest one.
             size_t temp_size(0);
             size_t max_element_size(0);
-            for (const DynamicTypeMemberImpl& m : members_)
-            {
-                temp_size = m.get_type()->getMaxCdrSerializedSize(current_alignment);
+            /*TODO(richiware)
+               for (const DynamicTypeMemberImpl& m : members_)
+               {
+                   temp_size = m.get_type()->getMaxCdrSerializedSize(current_alignment);
                 if (temp_size > max_element_size)
                 {
                     max_element_size = temp_size;
                 }
-            }
+               }
+             */
             current_alignment += max_element_size;
             break;
         }
@@ -1224,13 +1238,15 @@ size_t DynamicTypeImpl::getMaxCdrSerializedSize(
                 current_alignment += base_type_->getMaxCdrSerializedSize(current_alignment);
             }
 
-            for (const DynamicTypeMemberImpl& m : members_)
-            {
+            /*TODO(richiware)
+               for (const DynamicTypeMemberImpl& m : members_)
+               {
                 if (!m.annotation_is_non_serialized())
                 {
-                    current_alignment += m.get_type()->getMaxCdrSerializedSize(current_alignment);
+                       current_alignment += m.get_type()->getMaxCdrSerializedSize(current_alignment);
                 }
-            }
+               }
+             */
             break;
         }
         case TK_ARRAY:
@@ -1286,7 +1302,7 @@ void DynamicTypeImpl::serialize_discriminator(
 
     try
     {
-        auto& lbls = get_member(data.union_id_).get_union_labels();
+        auto& lbls = get_member(data.union_id_).label();
         if (!lbls.empty())
         {
             label = *lbls.begin();
@@ -1648,19 +1664,21 @@ void DynamicTypeImpl::serialize(
                 base_type_->serialize(data, cdr);
             }
 
-            for (const DynamicTypeMemberImpl& m : members_)
-            {
+            /*TODO(richiware)
+               for (const DynamicTypeMemberImpl& m : members_)
+               {
                 if (!m.annotation_is_non_serialized())
                 {
-                    auto it = value_col.find(m.get_id());
+                    auto it = value_col.find(m.id());
 
                     if (it != value_col.end())
                     {
                         auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
-                        m.get_type()->serialize(*member_data, cdr);
+                        //TODO(richiware) m.get_type()->serialize(*member_data, cdr);
                     }
                 }
-            }
+               }
+             */
             break;
         }
         case TK_ARRAY:
@@ -1864,13 +1882,15 @@ void DynamicTypeImpl::serialize_empty_data(
                 base_type_->serialize_empty_data(cdr);
             }
 
-            for (const DynamicTypeMemberImpl& m : members_)
-            {
+            /*TODO(richiware)
+               for (const DynamicTypeMemberImpl& m : members_)
+               {
                 if (!m.annotation_is_non_serialized())
                 {
-                    m.get_type()->serialize_empty_data(cdr);
+                    //TODO(richiware) m.get_type()->serialize_empty_data(cdr);
                 }
-            }
+               }
+             */
             break;
         }
         case TK_ARRAY:
