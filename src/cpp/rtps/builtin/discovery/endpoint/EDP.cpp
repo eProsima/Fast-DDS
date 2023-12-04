@@ -136,11 +136,11 @@ bool EDP::newLocalReaderProxyData(
                 rpd->topicName(att.getTopicName());
                 rpd->typeName(att.getTopicDataType());
                 rpd->topicKind(att.getTopicKind());
-                if (att.type_id.m_type_identifier._d() != static_cast<uint8_t>(0x00))
+                if (att.type_id.m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE)
                 {
                     rpd->type_id(att.type_id);
                 }
-                if (att.type.m_type_object._d() != static_cast<uint8_t>(0x00))
+                if (att.type.m_type_object._d() != fastdds::dds::xtypes::TK_NONE)
                 {
                     rpd->type(att.type);
                 }
@@ -187,48 +187,64 @@ bool EDP::newLocalReaderProxyData(
                                 fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_information(
                                     rpd->typeName().c_str(), type_info))
                         {
-                            // TODO Change to xtype
+                            // TODO (adelcampo) Change to xtypes
                             // rpd->type_information() = type_info;
                         }
                     }
                 }
 
-                // if (att.auto_fill_type_object)
-                // {
-                //     bool has_type_id = true;
-                //     if (att.type_id.m_type_identifier._d() == static_cast<uint8_t>(0x00))
-                //     {
-                //         has_type_id = false;
-                //         const types::TypeIdentifier* type_id =
-                //                 types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                //             rpd->typeName().c_str());
-                //         if (type_id != nullptr)
-                //         {
-                //             has_type_id = true;
-                //             rpd->type_id().m_type_identifier = *type_id;
-                //         }
-                //     }
+                if (att.auto_fill_type_object)
+                {
+                    if (att.type_id.m_type_identifier._d() == fastdds::dds::xtypes::TK_NONE)
+                    {
+                        fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                        if (eprosima::fastdds::dds::RETCODE_OK ==
+                                fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
+                                        get_type_identifiers(rpd->typeName().c_str(), type_ids))
+                        {
+                            if (type_ids.type_identifier1()._d() == fastdds::dds::xtypes::EK_COMPLETE)
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //rpd->type_id().m_type_identifier = type_ids.type_identifier1();
+                            }
+                            else if (type_ids.type_identifier2()._d() == fastdds::dds::xtypes::EK_COMPLETE)
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //rpd->type_id().m_type_identifier = type_ids.type_identifier1();
+                            }
+                            else if (type_ids.type_identifier1()._d() == fastdds::dds::xtypes::EK_MINIMAL)
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //rpd->type_id().m_type_identifier = type_ids.type_identifier1();
+                            }
+                            else
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //rpd->type_id().m_type_identifier = type_ids.type_identifier2();
+                            }
+                        }
+                    }
 
-                //     if (att.type.m_type_object._d() == static_cast<uint8_t>(0x00))
-                //     {
-                //         bool type_is_complete = has_type_id &&
-                //                 rpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
-                //         const types::TypeObject* type_obj =
-                //                 types::TypeObjectFactory::get_instance()->get_type_object(
-                //             rpd->typeName().c_str(), type_is_complete);
-                //         if (type_obj != nullptr)
-                //         {
-                //             rpd->type().m_type_object = *type_obj;
-                //         }
-                //     }
-                // }
+                    if (att.type.m_type_object._d() == fastdds::dds::xtypes::TK_NONE)
+                    {
+                        // TODO (adelcampo) Change to xtypes
+                        // fastdds::dds::xtypes::TypeObject type_obj;
+                        // if (eprosima::fastdds::dds::RETCODE_OK ==
+                        //         fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_object(
+                        //             rpd->type_id().m_type_identifier, type_obj))
+                        // {
+                        //     rpd->type().m_type_object = type_obj;
+                        // }
+                    }
 
+                }
                 return true;
             };
 
     //ADD IT TO THE LIST OF READERPROXYDATA
     GUID_t participant_guid;
-    ReaderProxyData* reader_data = this->mp_PDP->addReaderProxyData(reader->getGuid(), participant_guid, init_fun);
+    ReaderProxyData* reader_data = this->mp_PDP->addReaderProxyData(
+        reader->getGuid(), participant_guid, init_fun);
     if (reader_data == nullptr)
     {
         return false;
@@ -285,11 +301,11 @@ bool EDP::newLocalWriterProxyData(
                 wpd->topicName(att.getTopicName());
                 wpd->typeName(att.getTopicDataType());
                 wpd->topicKind(att.getTopicKind());
-                if (att.type_id.m_type_identifier._d() != static_cast<uint8_t>(0x00))
+                if (att.type_id.m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE)
                 {
                     wpd->type_id(att.type_id);
                 }
-                if (att.type.m_type_object._d() != static_cast<uint8_t>(0x00))
+                if (att.type.m_type_object._d() != fastdds::dds::xtypes::TK_NONE)
                 {
                     wpd->type(att.type);
                 }
@@ -324,42 +340,58 @@ bool EDP::newLocalWriterProxyData(
                                 fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_information(
                                     wpd->typeName().c_str(), type_info))
                         {
-                            // TODO Change to xtype
-                            // wpd->type_information() = *type_info;
+                            // TODO (adelcampo) Change to xtypes
+                            // wpd->type_information() = type_info;
                         }
                     }
                 }
 
-                // if (att.auto_fill_type_object)
-                // {
-                //     bool has_type_id = true;
-                //     if (att.type_id.m_type_identifier._d() == static_cast<uint8_t>(0x00))
-                //     {
-                //         has_type_id = false;
-                //         const types::TypeIdentifier* type_id =
-                //                 types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                //             wpd->typeName().c_str());
-                //         if (type_id != nullptr)
-                //         {
-                //             has_type_id = true;
-                //             wpd->type_id().m_type_identifier = *type_id;
-                //         }
-                //     }
+                if (att.auto_fill_type_object)
+                {
+                    if (att.type_id.m_type_identifier._d() == fastdds::dds::xtypes::TK_NONE)
+                    {
+                        fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                        if (eprosima::fastdds::dds::RETCODE_OK ==
+                                fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
+                                        get_type_identifiers(wpd->typeName().c_str(), type_ids))
+                        {
+                            if (type_ids.type_identifier1()._d() == fastdds::dds::xtypes::EK_COMPLETE)
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //wpd->type_id().m_type_identifier = type_ids.type_identifier1();
+                            }
+                            else if (type_ids.type_identifier2()._d() == fastdds::dds::xtypes::EK_COMPLETE)
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //wpd->type_id().m_type_identifier = type_ids.type_identifier1();
+                            }
+                            else if (type_ids.type_identifier1()._d() == fastdds::dds::xtypes::EK_MINIMAL)
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //wpd->type_id().m_type_identifier = type_ids.type_identifier1();
+                            }
+                            else
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //wpd->type_id().m_type_identifier = type_ids.type_identifier2();
+                            }
+                        }
+                    }
 
-                //     if (att.type.m_type_object._d() == static_cast<uint8_t>(0x00))
-                //     {
-                //         bool type_is_complete = has_type_id &&
-                //                 wpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
-                //         const types::TypeObject* type_obj =
-                //                 types::TypeObjectFactory::get_instance()->get_type_object(
-                //             wpd->typeName().c_str(), type_is_complete);
-                //         if (type_obj != nullptr)
-                //         {
-                //             wpd->type().m_type_object = *type_obj;
-                //         }
-                //     }
-                // }
+                    if (att.type.m_type_object._d() == fastdds::dds::xtypes::TK_NONE)
+                    {
+                        // TODO (adelcampo) Change to xtypes
+                        // fastdds::dds::xtypes::TypeObject type_obj;
+                        // if (eprosima::fastdds::dds::RETCODE_OK ==
+                        //         fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_object(
+                        //             wpd->type_id().m_type_identifier, type_obj))
+                        // {
+                        //     // TODO (adelcampo) Change to xtypes
+                        //     //wpd->type().m_type_object = type_obj;
+                        // }
+                    }
 
+                }
                 return true;
             };
 
@@ -441,37 +473,57 @@ bool EDP::updatedLocalReader(
                                 fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_information(
                                     rdata->typeName().c_str(), type_info))
                         {
-                            // TODO Change to xtype
-                            // rdata->type_information() = *type_info;
+                            // TODO (adelcampo) Change to xtypes
+                            // rdata->type_information() = type_info;
                         }
                     }
                 }
 
-                // if (att.auto_fill_type_object)
-                // {
+                if (att.auto_fill_type_object)
+                {
+                    if (att.type_id.m_type_identifier._d() == fastdds::dds::xtypes::TK_NONE)
+                    {
+                        fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                        if (eprosima::fastdds::dds::RETCODE_OK ==
+                                fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
+                                        get_type_identifiers(rdata->typeName().c_str(), type_ids))
+                        {
+                            if (type_ids.type_identifier1()._d() == fastdds::dds::xtypes::EK_COMPLETE)
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //rdata->type_id().m_type_identifier = type_ids.type_identifier1();
+                            }
+                            else if (type_ids.type_identifier2()._d() == fastdds::dds::xtypes::EK_COMPLETE)
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //rdata->type_id().m_type_identifier = type_ids.type_identifier1();
+                            }
+                            else if (type_ids.type_identifier1()._d() == fastdds::dds::xtypes::EK_MINIMAL)
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //rdata->type_id().m_type_identifier = type_ids.type_identifier1();
+                            }
+                            else
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //rdata->type_id().m_type_identifier = type_ids.type_identifier2();
+                            }
+                        }
+                    }
 
-                //     if (rdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
-                //     {
-                //         const types::TypeIdentifier* type_id =
-                //                 types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                //             rdata->typeName().c_str());
-                //         if (type_id != nullptr)
-                //         {
-                //             rdata->type_id().m_type_identifier = *type_id;
-                //         }
-                //     }
-
-                //     if (rdata->type().m_type_object._d() == static_cast<uint8_t>(0x00))
-                //     {
-                //         const types::TypeObject* type_obj =
-                //                 types::TypeObjectFactory::get_instance()->get_type_object(
-                //             rdata->typeName().c_str(), rdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
-                //         if (type_obj != nullptr)
-                //         {
-                //             rdata->type().m_type_object = *type_obj;
-                //         }
-                //     }
-                // }
+                    if (att.type.m_type_object._d() == fastdds::dds::xtypes::TK_NONE)
+                    {
+                        // TODO (adelcampo) Change to xtypes
+                        // fastdds::dds::xtypes::TypeObject type_obj;
+                        // if (eprosima::fastdds::dds::RETCODE_OK ==
+                        //         fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_object(
+                        //             rdata->type_id().m_type_identifier, type_obj))
+                        // {
+                        //     // TODO (adelcampo) Change to xtypes
+                        //     //rdata->type().m_type_object = type_obj;
+                        // }
+                    }
+                }
 
                 return true;
             };
@@ -528,37 +580,57 @@ bool EDP::updatedLocalWriter(
                                 fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_information(
                                     wdata->typeName().c_str(), type_info))
                         {
-                            // TODO Change to xtype
+                            // TODO (adelcampo) Change to xtypes
                             // wdata->type_information() = *type_info;
                         }
                     }
                 }
 
-                // if (att.auto_fill_type_object)
-                // {
+                if (att.auto_fill_type_object)
+                {
+                    if (att.type_id.m_type_identifier._d() == fastdds::dds::xtypes::TK_NONE)
+                    {
+                        fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                        if (eprosima::fastdds::dds::RETCODE_OK ==
+                                fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
+                                        get_type_identifiers(wdata->typeName().c_str(), type_ids))
+                        {
+                            if (type_ids.type_identifier1()._d() == fastdds::dds::xtypes::EK_COMPLETE)
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //wdata->type_id().m_type_identifier = type_ids.type_identifier1();
+                            }
+                            else if (type_ids.type_identifier2()._d() == fastdds::dds::xtypes::EK_COMPLETE)
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //wdata->type_id().m_type_identifier = type_ids.type_identifier1();
+                            }
+                            else if (type_ids.type_identifier1()._d() == fastdds::dds::xtypes::EK_MINIMAL)
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //wdata->type_id().m_type_identifier = type_ids.type_identifier1();
+                            }
+                            else
+                            {
+                                // TODO (adelcampo) Change to xtypes
+                                //wdata->type_id().m_type_identifier = type_ids.type_identifier2();
+                            }
+                        }
+                    }
 
-                //     if (wdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
-                //     {
-                //         const types::TypeIdentifier* type_id =
-                //                 types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                //             wdata->typeName().c_str());
-                //         if (type_id != nullptr)
-                //         {
-                //             wdata->type_id().m_type_identifier = *type_id;
-                //         }
-                //     }
-
-                //     if (wdata->type().m_type_object._d() == static_cast<uint8_t>(0x00))
-                //     {
-                //         const types::TypeObject* type_obj =
-                //                 types::TypeObjectFactory::get_instance()->get_type_object(
-                //             wdata->typeName().c_str(), wdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
-                //         if (type_obj != nullptr)
-                //         {
-                //             wdata->type().m_type_object = *type_obj;
-                //         }
-                //     }
-                // }
+                    if (att.type.m_type_object._d() == fastdds::dds::xtypes::TK_NONE)
+                    {
+                        // TODO (adelcampo) Change to xtypes
+                        // fastdds::dds::xtypes::TypeObject type_obj;
+                        // if (eprosima::fastdds::dds::RETCODE_OK ==
+                        //         fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_object(
+                        //             wdata->type_id().m_type_identifier, type_obj))
+                        // {
+                        //     // TODO (adelcampo) Change to xtypes
+                        //     //wdata->type().m_type_object = type_obj;
+                        // }
+                    }
+                }
 
                 return true;
             };
@@ -695,7 +767,6 @@ bool EDP::valid_matching(
         EPROSIMA_LOG_WARNING(RTPS_EDP, "INCOMPATIBLE QOS:Remote Reader " << rdata->guid() << " is publishing in topic "
                                                                          << rdata->topicName() << "(keyed:" << rdata->topicKind() <<
                 "), local writer publishes as keyed: " << wdata->topicKind());
-
         reason.set(MatchingFailureMask::inconsistent_topic);
         return false;
     }
@@ -1692,7 +1763,7 @@ bool EDP::checkTypeIdentifier(
     coercion.m_force_type_validation = true;
     coercion.m_prevent_type_widening = true;
     coercion.m_ignore_sequence_bounds = false;
-    return wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
+    return wdata->type_id().m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE &&
            wdata->type_id().m_type_identifier.consistent(
         //rdata->type_id().m_type_identifier, rdata->m_qos.type_consistency);
         rdata->type_id().m_type_identifier, coercion);
@@ -1702,8 +1773,8 @@ bool EDP::hasTypeIdentifier(
         const WriterProxyData* wdata,
         const ReaderProxyData* rdata) const
 {
-    return wdata->has_type_id() && wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
-           rdata->has_type_id() && rdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00);
+    return wdata->has_type_id() && wdata->type_id().m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE &&
+           rdata->has_type_id() && rdata->type_id().m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE;
 }
 
 bool EDP::checkTypeObject(
@@ -1717,17 +1788,17 @@ bool EDP::checkTypeObject(
         const types::TypeIdentifier* wtype = nullptr;
 
         if (wdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
-                static_cast<uint8_t>(0x00) &&
+                fastdds::dds::xtypes::TK_NONE &&
                 rdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
-                static_cast<uint8_t>(0x00))
+                fastdds::dds::xtypes::TK_NONE)
         {
             rtype = &rdata->type_information().type_information.complete().typeid_with_size().type_id();
             wtype = &wdata->type_information().type_information.complete().typeid_with_size().type_id();
         }
         else if (wdata->type_information().type_information.minimal().typeid_with_size().type_id()._d() !=
-                static_cast<uint8_t>(0x00) &&
+                fastdds::dds::xtypes::TK_NONE &&
                 rdata->type_information().type_information.minimal().typeid_with_size().type_id()._d() !=
-                static_cast<uint8_t>(0x00))
+                fastdds::dds::xtypes::TK_NONE)
         {
             rtype = &rdata->type_information().type_information.minimal().typeid_with_size().type_id();
             wtype = &wdata->type_information().type_information.minimal().typeid_with_size().type_id();
@@ -1758,8 +1829,8 @@ bool EDP::checkTypeObject(
         return false;
     }
 
-    if (wdata->has_type() && wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
-            rdata->has_type() && rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
+    if (wdata->has_type() && wdata->type().m_type_object._d() != fastdds::dds::xtypes::TK_NONE &&
+            rdata->has_type() && rdata->type().m_type_object._d() != fastdds::dds::xtypes::TK_NONE)
     {
         // TODO - Remove once XCDR or XCDR2 is implemented.
         /*
@@ -1792,24 +1863,24 @@ bool EDP::hasTypeObject(
             rdata->has_type_information() && rdata->type_information().assigned())
     {
         if (wdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
-                static_cast<uint8_t>(0x00) &&
+                fastdds::dds::xtypes::TK_NONE &&
                 rdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
-                static_cast<uint8_t>(0x00))
+                fastdds::dds::xtypes::TK_NONE)
         {
             return true;
         }
         else if (wdata->type_information().type_information.minimal().typeid_with_size().type_id()._d() !=
-                static_cast<uint8_t>(0x00) &&
+                fastdds::dds::xtypes::TK_NONE &&
                 rdata->type_information().type_information.minimal().typeid_with_size().type_id()._d() !=
-                static_cast<uint8_t>(0x00))
+                fastdds::dds::xtypes::TK_NONE)
         {
             return true;
         }
         return false;
     }
 
-    if (wdata->has_type() && wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
-            rdata->has_type() && rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
+    if (wdata->has_type() && wdata->type().m_type_object._d() != fastdds::dds::xtypes::TK_NONE &&
+            rdata->has_type() && rdata->type().m_type_object._d() != fastdds::dds::xtypes::TK_NONE)
     {
         return true;
     }
@@ -1874,5 +1945,6 @@ const fastdds::dds::PublicationMatchedStatus& EDP::update_publication_matched_st
 }
 
 } // namespace rtps
+
 } // namespace fastrtps
 } // namespace eprosima

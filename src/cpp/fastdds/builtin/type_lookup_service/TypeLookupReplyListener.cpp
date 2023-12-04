@@ -84,7 +84,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                 {
                     if (pair.type_object()._d() == EK_COMPLETE) // Just in case
                     {
-                        // TODO Change to xtype with TypeObjectRegistry
+                        // TODO (adelcampo) Change to xtypes with TypeObjectRegistry
                         // If build_dynamic_type failed, just sent the nullptr already contained on it.
                         // tlm_->participant_->getListener()->on_type_discovery(
                         //     tlm_->participant_->getUserRTPSParticipant(),
@@ -103,7 +103,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                 //const TypeLookup_getTypeDependencies_Out dependencies =
                 //    reply.return_value.getTypeDependencies().result();
 
-                // TODO Change to xtype with TypeObjectRegistry
+                // TODO (adelcampo) Change to xtypes with TypeObjectRegistry
                 // tlm_->get_RTPS_participant()->getListener()->on_type_dependencies_reply(
                 //     tlm_->builtin_protocols_->mp_participantImpl->getUserRTPSParticipant(),
                 //     reply.header().relatedRequestId(),

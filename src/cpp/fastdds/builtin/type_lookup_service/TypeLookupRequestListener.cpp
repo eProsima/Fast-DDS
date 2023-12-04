@@ -91,7 +91,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                 for (const xtypes::TypeIdentifier& type_id : in.type_ids())
                 {
                     xtypes::TypeObject obj;
-                    // TODO Change to xtype with TypeObjectRegistry
+                    // TODO (adelcampo) Change to xtypes
                     // const TypeIdentifier* obj_ident = factory_->typelookup_get_type(type_id, obj);
                     xtypes::TypeIdentifier* obj_ident = nullptr;
 
@@ -129,7 +129,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                 TypeLookup_getTypeDependencies_Out out;
                 //for (size_t index = 0; index < in.type_ids.size(); ++index)
                 {
-                    // TODO Change to xtype with TypeObjectRegistry
+                    // TODO (adelcampo) Change to xtypes
                     // out.dependent_typeids = factory_->typelookup_get_type_dependencies(
                     //     in.type_ids, in.continuation_point, out.continuation_point, 255); // TODO: Make configurable?
                 }

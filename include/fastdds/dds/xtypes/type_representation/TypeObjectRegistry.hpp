@@ -95,7 +95,6 @@ class TypeObjectRegistry
 {
 
     friend class TypeObjectRegistryObserver;
-    friend class TypeObjectUtils;
 
 public:
 
