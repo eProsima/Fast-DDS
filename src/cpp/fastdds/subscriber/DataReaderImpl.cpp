@@ -121,7 +121,8 @@ DataReaderImpl::DataReaderImpl(
     endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
     endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
     RTPSParticipantImpl::preprocess_endpoint_attributes<READER, 0x04, 0x07>(
-        fastrtps::rtps::EntityId_t::unknown(), subscriber_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
+        fastrtps::rtps::EntityId_t::unknown(),
+        subscriber_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = subscriber_->get_participant_impl()->guid().guidPrefix;
 
     if (payload_pool != nullptr)

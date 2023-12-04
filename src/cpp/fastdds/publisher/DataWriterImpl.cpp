@@ -173,7 +173,8 @@ DataWriterImpl::DataWriterImpl(
     endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
     endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
     fastrtps::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(
-        fastrtps::rtps::EntityId_t::unknown(), publisher_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
+        fastrtps::rtps::EntityId_t::unknown(),
+        publisher_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = publisher_->get_participant_impl()->guid().guidPrefix;
 
     if (payload_pool != nullptr)
