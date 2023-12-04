@@ -136,7 +136,7 @@ protected:
             std::shared_ptr<TCPChannelResource>& channel);
 
     //! Creates a TCP acceptor to wait for incoming connections by the given locator.
-    bool create_acceptor_socket(
+    uint16_t create_acceptor_socket(
             const Locator& locator);
 
     virtual void get_ips(

@@ -1618,6 +1618,44 @@ TEST_F(TCPv4Tests, header_read_interrumption)
     thread.join();
 }
 
+// This test verifies that the autofill port feature correctly sets an automatic port when
+// the descriptors's port is set to 0.
+TEST_F(TCPv4Tests, autofill_port)
+{
+    // Check normal port assignation
+    TCPv4TransportDescriptor test_descriptor;
+    test_descriptor.add_listener_port(g_default_port);
+    TCPv4Transport transportUnderTest(test_descriptor);
+    transportUnderTest.init();
+
+    EXPECT_TRUE(transportUnderTest.configuration()->listening_ports[0] == g_default_port);
+
+    // Check default port assignation
+    TCPv4TransportDescriptor test_descriptor_autofill;
+    test_descriptor_autofill.add_listener_port(0);
+    TCPv4Transport transportUnderTest_autofill(test_descriptor_autofill);
+    transportUnderTest_autofill.init();
+
+    EXPECT_TRUE(transportUnderTest_autofill.configuration()->listening_ports[0] != 0);
+    EXPECT_TRUE(transportUnderTest_autofill.configuration()->listening_ports.size() == 1);
+
+    uint16_t port = 12345;
+    TCPv4TransportDescriptor test_descriptor_multiple_autofill;
+    test_descriptor_multiple_autofill.add_listener_port(0);
+    test_descriptor_multiple_autofill.add_listener_port(port);
+    test_descriptor_multiple_autofill.add_listener_port(0);
+    TCPv4Transport transportUnderTest_multiple_autofill(test_descriptor_multiple_autofill);
+    transportUnderTest_multiple_autofill.init();
+
+    EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports[0] != 0);
+    EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports[1] == port);
+    EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports[2] != 0);
+    EXPECT_TRUE(
+        transportUnderTest_multiple_autofill.configuration()->listening_ports[0] !=
+        transportUnderTest_multiple_autofill.configuration()->listening_ports[2]);
+    EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports.size() == 3);
+}
+
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.add_listener_port(g_default_port);
