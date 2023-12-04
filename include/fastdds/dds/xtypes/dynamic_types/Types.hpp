@@ -22,6 +22,16 @@
 #include "detail/dynamic_language_binding.hpp"
 #include "type_traits.hpp"
 
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+
+constexpr MemberId MEMBER_ID_INVALID {0x0FFFFFFF};
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
+
 #endif // _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP_
 
 

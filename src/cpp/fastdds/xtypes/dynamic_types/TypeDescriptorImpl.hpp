@@ -60,7 +60,6 @@ public:
 
     virtual ~TypeDescriptorImpl() noexcept = default;
 
-
     TypeKind kind() const noexcept override
     {
         return kind_;
