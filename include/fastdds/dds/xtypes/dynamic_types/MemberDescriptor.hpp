@@ -21,7 +21,6 @@
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/Types.hpp>
-#include <fastrtps/utils/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -40,7 +39,7 @@ public:
     virtual ObjectName& name() = 0;
 
     /*!
-     * Returns the name of this type.
+     * Returns the name of this member.
      * @return Member's name.
      */
     virtual const ObjectName& name() const = 0;
@@ -134,13 +133,6 @@ public:
      * @return Order of definition.
      */
     virtual uint32_t& index() = 0;
-
-    /*!
-     * Modifies the order of definition of the member.
-     * @param[in] index Order of definition to be set.
-     */
-    virtual void index(
-            MemberId index) = 0;
 
     /*!
      * Returns the labels the member belongs to.

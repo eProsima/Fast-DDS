@@ -35,7 +35,7 @@ class MemberDescriptorImpl : public virtual MemberDescriptor
     //! Default value of the member in string.
     std::string default_value_;
 
-    //! Definition order of the member inside it's parent.
+    //! Definition order of the member inside its parent.
     uint32_t index_ {0};
 
     //! Case Labels for unions.
@@ -53,10 +53,10 @@ class MemberDescriptorImpl : public virtual MemberDescriptor
     //! If the member is must_understand.
     bool is_must_understand_ {false};
 
-    //! If the member is shared.
+    //! If the member is shared (external).
     bool is_shared_ {false};
 
-    //! If the member is default_label.
+    //! If the union member is default.
     bool is_default_label_ {false};
 
 public:
