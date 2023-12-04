@@ -2,10 +2,11 @@ name: Documentation build and test
 on:
   workflow_dispatch:
     inputs:
-      optional_documentation_branch:
-        description: 'Optional Documentation branch name'
-        required: false
+      documentation_branch:
+        description: 'Documentation branch name'
+        required: true
         type: string
+        default: '2.6.x'
 
   push:
     branches:
@@ -28,7 +29,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ACTION_BRANCH_NAME: ${{ github.head_ref }}
+  ACTION_BRANCH_NAME: ${{ github.ref }}
 
 jobs:
   ubuntu-build-and-test-documentation:
@@ -58,36 +59,56 @@ jobs:
 
       - name: Determine the Fast DDS Documentation branch to be used
         run: |
-          TEMP_BRANCH=${{ inputs.optional_documentation_branch }}
-          DOC_REPO=https://github.com/eProsima/fast-dds-docs.git
-          RESPONSE_CODE=$(git ls-remote --heads $DOC_REPO $TEMP_BRANCH | wc -l)
-          if [[ -z "$TEMP_BRANCH" || ${RESPONSE_CODE} == "0" ]]
+          if [[ ${{ github.event_name }} == "push" ]]
           then
+            echo "ACTION_BRANCH_NAME=${{ github.ref }}" >> $GITHUB_ENV
+            echo "Push event: using pushed branch '${{ github.ref }}' for docs repository"
+
+          elif [[ ${{ github.event_name }} == "workflow_dispatch" ]]
+          then
+            echo "ACTION_BRANCH_NAME=${{ inputs.documentation_branch }}" >> $GITHUB_ENV
+            echo "Workflow dispatch event: using input branch '${{ inputs.documentation_branch }}' for docs repository"
+
+          elif [[ ${{ github.event_name }} == "pull_request" ]]
+          then
+            DOCS_REPO=https://github.com/eProsima/fast-dds-docs.git
+
+            # Attempt to use PR's source branch
             TEMP_BRANCH=${{ github.head_ref }}
-            echo "$given '${{ inputs.optional_documentation_branch }}' branch DOES NOT exist, using head '${{ github.head_ref }}'"
-            RESPONSE_CODE=$(git ls-remote --heads $DOC_REPO $TEMP_BRANCH | wc -l)
+            RESPONSE_CODE=$(git ls-remote --heads $DOCS_REPO $TEMP_BRANCH | wc -l)
+
             if [[ ${RESPONSE_CODE} == "0" ]]
             then
+              echo "PR source branch '$TEMP_BRANCH' branch DOES NOT exist in $DOCS_REPO"
+
+              # Attempt to use PR's base branch
               TEMP_BRANCH=${{ github.base_ref }}
-              echo "head '${{ github.head_ref }}' branch DOES NOT exist, using base '${{ github.base_ref }}'"
-              RESPONSE_CODE=$(git ls-remote --heads $DOC_REPO $TEMP_BRANCH | wc -l)
+              RESPONSE_CODE=$(git ls-remote --heads $DOCS_REPO $TEMP_BRANCH | wc -l)
+
               if [[ ${RESPONSE_CODE} == "0" ]]
               then
-                echo "ACTION_BRANCH_NAME=2.6.x" >> $GITHUB_ENV
-                echo "base '${{ github.base_ref }}' branch DOES NOT exist, using '2.6.x'"
-              else
-                echo "ACTION_BRANCH_NAME=${{ github.base_ref }}" >> $GITHUB_ENV
+                echo "PR base branch '$TEMP_BRANCH' branch DOES NOT exist in $DOCS_REPO"
+
+                # Attempt to use version's branch, which will most likely be the base anyways.
+                # This is just in case the PR was to an intermediate branch
+                TEMP_BRANCH=2.6.x
+                RESPONSE_CODE=$(git ls-remote --heads $DOCS_REPO $TEMP_BRANCH | wc -l)
+
+                if [[ ${RESPONSE_CODE} == "0" ]]
+                then
+                  # There are no more fallbacks, so we need to fail here
+                  echo "Version branch '$TEMP_BRANCH' branch DOES NOT exist in $DOCS_REPO"
+                  exit 1
+                fi
               fi
-            else
-              echo "ACTION_BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
             fi
-          else
-            echo "ACTION_BRANCH_NAME=${{ inputs.optional_documentation_branch }}" >> $GITHUB_ENV
-            echo "using given '${{ inputs.optional_documentation_branch }}' branch"
+
+            echo "ACTION_BRANCH_NAME=$TEMP_BRANCH" >> $GITHUB_ENV
+            echo "PR event: using deduced branch '$TEMP_BRANCH' for docs repository"
           fi
 
       - name: Download FastDDS documentation repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: eProsima/Fast-DDS-docs
           path: src/fastdds-docs
