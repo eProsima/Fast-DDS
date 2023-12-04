@@ -24,6 +24,8 @@
 
 #include "TCPReqRepHelloWorldRequester.hpp"
 #include "TCPReqRepHelloWorldReplier.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -598,7 +600,7 @@ TEST_P(TransportTCP, TCPv6_equal_operator)
 // Test copy constructor and copy assignment for TCPv6
 TEST_P(TransportTCP, TCPv6_copy)
 {
-    // Change some varibles in order to check the non default cretion
+    // Change some varibles in order to check the non default creation
     TCPv6TransportDescriptor tcpv6_transport;
     tcpv6_transport.enable_tcp_nodelay = !tcpv6_transport.enable_tcp_nodelay; // change default value
     tcpv6_transport.max_logical_port = tcpv6_transport.max_logical_port + 10; // change default value
@@ -672,6 +674,66 @@ TEST(TransportTCP, Client_reconnection)
 
     delete replier;
     delete requester;
+}
+
+// Test copy constructor and copy assignment for TCPv4
+TEST_P(TransportTCP, TCPv4_autofill_port)
+{
+    PubSubReader<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> p2(TEST_TOPIC_NAME);
+
+    // Add TCP Transport with listening port 0
+    auto p1_transport = std::make_shared<TCPv4TransportDescriptor>();
+    p1_transport->add_listener_port(0);
+    p1.disable_builtin_transport().add_user_transport_to_pparams(p1_transport);
+    p1.init();
+    ASSERT_TRUE(p1.isInitialized());
+
+    // Add TCP Transport with listening port different from 0
+    uint16_t port = 12345;
+    auto p2_transport = std::make_shared<TCPv4TransportDescriptor>();
+    p2_transport->add_listener_port(port);
+    p2.disable_builtin_transport().add_user_transport_to_pparams(p2_transport);
+    p2.init();
+    ASSERT_TRUE(p2.isInitialized());
+
+    LocatorList_t p1_locators;
+    p1.get_native_reader().get_listening_locators(p1_locators);
+    EXPECT_TRUE(IPLocator::getPhysicalPort(p1_locators.begin()[0]) != 0);
+
+    LocatorList_t p2_locators;
+    p2.get_native_reader().get_listening_locators(p2_locators);
+    EXPECT_TRUE(IPLocator::getPhysicalPort(p2_locators.begin()[0]) == port);
+}
+
+// Test copy constructor and copy assignment for TCPv6
+TEST_P(TransportTCP, TCPv6_autofill_port)
+{
+    PubSubReader<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> p2(TEST_TOPIC_NAME);
+
+    // Add TCP Transport with listening port 0
+    auto p1_transport = std::make_shared<TCPv6TransportDescriptor>();
+    p1_transport->add_listener_port(0);
+    p1.disable_builtin_transport().add_user_transport_to_pparams(p1_transport);
+    p1.init();
+    ASSERT_TRUE(p1.isInitialized());
+
+    // Add TCP Transport with listening port different from 0
+    uint16_t port = 12345;
+    auto p2_transport = std::make_shared<TCPv6TransportDescriptor>();
+    p2_transport->add_listener_port(port);
+    p2.disable_builtin_transport().add_user_transport_to_pparams(p2_transport);
+    p2.init();
+    ASSERT_TRUE(p2.isInitialized());
+
+    LocatorList_t p1_locators;
+    p1.get_native_reader().get_listening_locators(p1_locators);
+    EXPECT_TRUE(IPLocator::getPhysicalPort(p1_locators.begin()[0]) != 0);
+
+    LocatorList_t p2_locators;
+    p2.get_native_reader().get_listening_locators(p2_locators);
+    EXPECT_TRUE(IPLocator::getPhysicalPort(p2_locators.begin()[0]) == port);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
