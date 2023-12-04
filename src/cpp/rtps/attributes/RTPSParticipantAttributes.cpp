@@ -21,6 +21,7 @@
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
@@ -92,6 +93,25 @@ static std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> create_tcpv4_tra
         const RTPSParticipantAttributes& att)
 {
     auto descriptor = std::make_shared<fastdds::rtps::TCPv4TransportDescriptor>();
+    descriptor->add_listener_port(0);
+    descriptor->sendBufferSize = att.sendSocketBufferSize;
+    descriptor->receiveBufferSize = att.listenSocketBufferSize;
+
+    descriptor->calculate_crc = false;
+    descriptor->check_crc = false;
+    descriptor->apply_security = false;
+    descriptor->enable_tcp_nodelay = true;
+
+    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
+    descriptor->accept_thread = att.builtin_transports_reception_threads;
+    descriptor->keep_alive_thread = att.builtin_transports_reception_threads;
+    return descriptor;
+}
+
+static std::shared_ptr<fastdds::rtps::TCPv6TransportDescriptor> create_tcpv6_transport(
+        const RTPSParticipantAttributes& att)
+{
+    auto descriptor = std::make_shared<fastdds::rtps::TCPv6TransportDescriptor>();
     descriptor->add_listener_port(0);
     descriptor->sendBufferSize = att.sendSocketBufferSize;
     descriptor->receiveBufferSize = att.listenSocketBufferSize;
@@ -210,6 +230,42 @@ static void setup_transports_large_data(
     }
 }
 
+static void setup_transports_large_datav6(
+        RTPSParticipantAttributes& att,
+        bool intraprocess_only)
+{
+    if (!intraprocess_only)
+    {
+        auto shm_transport = create_shm_transport(att);
+        att.userTransports.push_back(shm_transport);
+
+        auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
+        att.builtin.metatrafficUnicastLocatorList.push_back(shm_loc);
+        att.defaultUnicastLocatorList.push_back(shm_loc);
+
+        auto tcp_transport = create_tcpv6_transport(att);
+        att.userTransports.push_back(tcp_transport);
+
+        Locator_t tcp_loc;
+        tcp_loc.kind = LOCATOR_KIND_TCPv6;
+        IPLocator::setIPv6(tcp_loc, "::");
+        IPLocator::setPhysicalPort(tcp_loc, 0);
+        IPLocator::setLogicalPort(tcp_loc, 0);
+        att.builtin.metatrafficUnicastLocatorList.push_back(tcp_loc);
+        att.defaultUnicastLocatorList.push_back(tcp_loc);
+    }
+
+    auto udp_descriptor = create_udpv6_transport(att, intraprocess_only);
+    att.userTransports.push_back(udp_descriptor);
+
+    if (!intraprocess_only)
+    {
+        Locator_t pdp_locator;
+        pdp_locator.kind = LOCATOR_KIND_UDPv6;
+        att.builtin.metatrafficMulticastLocatorList.push_back(pdp_locator);
+    }
+}
+
 void RTPSParticipantAttributes::setup_transports(
         fastdds::rtps::BuiltinTransports transports)
 {
@@ -242,6 +298,10 @@ void RTPSParticipantAttributes::setup_transports(
 
         case fastdds::rtps::BuiltinTransports::LARGE_DATA:
             setup_transports_large_data(*this, intraprocess_only);
+            break;
+
+        case fastdds::rtps::BuiltinTransports::LARGE_DATAv6:
+            setup_transports_large_datav6(*this, intraprocess_only);
             break;
 
         default:
