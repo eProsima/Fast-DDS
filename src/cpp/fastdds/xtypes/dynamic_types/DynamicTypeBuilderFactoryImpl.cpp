@@ -1402,11 +1402,11 @@ void DynamicTypeBuilderFactoryImpl::build_enum_type_code(
             const DynamicTypeMemberImpl& member = *pm;
             fastrtps::types::CompleteEnumeratedLiteral mel;
             mel.common().flags().IS_DEFAULT(member.annotation_is_default_literal());
-            mel.common().value(member.get_index());
-            mel.detail().name(member.get_name());
+            mel.common().value(member.index());
+            mel.detail().name(member.name().c_str());
 
             // Apply member annotations
-            apply_type_annotations(mel.detail().ann_custom(), *member.get_type());
+            //TODO(richiware) apply_type_annotations(mel.detail().ann_custom(), *member.type());
 
             object.complete().enumerated_type().literal_seq().emplace_back(mel);
         }
@@ -1449,8 +1449,8 @@ void DynamicTypeBuilderFactoryImpl::build_enum_type_code(
             const DynamicTypeMemberImpl& member = *pm;
             fastrtps::types::MinimalEnumeratedLiteral mel;
             mel.common().flags().IS_DEFAULT(member.annotation_is_default_literal());
-            mel.common().value(member.get_index());
-            MD5 hash(member.get_name());
+            mel.common().value(member.index());
+            MD5 hash(member.name().c_str());
             for (int i = 0; i < 4; ++i)
             {
                 mel.detail().name_hash()[i] = hash.digest[i];
@@ -1526,7 +1526,7 @@ void DynamicTypeBuilderFactoryImpl::build_struct_type_code(
             const DynamicTypeMemberImpl& member = **it;
 
             fastrtps::types::CompleteStructMember msm;
-            msm.common().member_id(MemberId(member.get_index()));
+            msm.common().member_id(MemberId(member.index()));
             msm.common().member_flags().TRY_CONSTRUCT1(false);
             msm.common().member_flags().TRY_CONSTRUCT2(false);
             msm.common().member_flags().IS_EXTERNAL(false);
@@ -1536,17 +1536,17 @@ void DynamicTypeBuilderFactoryImpl::build_struct_type_code(
             msm.common().member_flags().IS_DEFAULT(false);
 
             // Apply member annotations
-            auto member_type = member.get_type();
-            apply_type_annotations(msm.detail().ann_custom(), *member_type);
+            auto member_type = member.type();
+            //TODO(richiware) apply_type_annotations(msm.detail().ann_custom(), *member_type);
 
             fastrtps::types::TypeObject memObj;
-            build_type_object(*member_type, memObj);
+            //TODO(richiware) build_type_object(*member_type, memObj);
             const fastrtps::types::TypeIdentifier* typeId =
                     fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
                 member_type->get_name());
             if (typeId == nullptr)
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member.get_name() << " of struct "
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member.name().c_str() << " of struct "
                                                         << descriptor.get_name() << " failed.");
             }
             else
@@ -1555,7 +1555,7 @@ void DynamicTypeBuilderFactoryImpl::build_struct_type_code(
                 msm.common().member_type_id(memIdent);
             }
 
-            msm.detail().name(member.get_name());
+            msm.detail().name(member.name().c_str());
             object.complete().struct_type().member_seq().emplace_back(msm);
         }
 
@@ -1610,7 +1610,7 @@ void DynamicTypeBuilderFactoryImpl::build_struct_type_code(
             const DynamicTypeMemberImpl& member = *pm;
 
             fastrtps::types::MinimalStructMember msm;
-            msm.common().member_id(MemberId(member.get_index()));
+            msm.common().member_id(MemberId(member.index()));
             msm.common().member_flags().TRY_CONSTRUCT1(false);
             msm.common().member_flags().TRY_CONSTRUCT2(false);
             msm.common().member_flags().IS_EXTERNAL(false);
@@ -1622,13 +1622,13 @@ void DynamicTypeBuilderFactoryImpl::build_struct_type_code(
             //build_type_identifier(*member.get_type(), memIdent);
 
             fastrtps::types::TypeObject memObj;
-            build_type_object(*member.get_type(), memObj, false);
+            //TODO(richiware) build_type_object(*member.type(), memObj, false);
             const fastrtps::types::TypeIdentifier* typeId =
                     fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier(
-                member.get_type()->get_name());
+                member.type()->get_name());
             if (typeId == nullptr)
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member.get_name()
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member.name().c_str()
                                                         << " of struct " << descriptor.get_name() << " failed.");
             }
             else
@@ -1637,7 +1637,7 @@ void DynamicTypeBuilderFactoryImpl::build_struct_type_code(
                 msm.common().member_type_id(memIdent);
             }
 
-            MD5 hash(member.get_name());
+            MD5 hash(member.name().c_str());
             for (int i = 0; i < 4; ++i)
             {
                 msm.detail().name_hash()[i] = hash.digest[i];
@@ -1724,27 +1724,27 @@ void DynamicTypeBuilderFactoryImpl::build_union_type_code(
             const DynamicTypeMemberImpl& member = *pm;
 
             fastrtps::types::CompleteUnionMember mum;
-            mum.common().member_id(MemberId(member.get_index()));
+            mum.common().member_id(MemberId(member.index()));
             mum.common().member_flags().TRY_CONSTRUCT1(false);
             mum.common().member_flags().TRY_CONSTRUCT2(false);
             mum.common().member_flags().IS_EXTERNAL(false);
             mum.common().member_flags().IS_OPTIONAL(false);
             mum.common().member_flags().IS_MUST_UNDERSTAND(false);
             mum.common().member_flags().IS_KEY(false);
-            mum.common().member_flags().IS_DEFAULT(member.is_default_union_value());
+            mum.common().member_flags().IS_DEFAULT(member.is_default_label());
 
             // Apply member annotations
-            const auto& state = *member.get_type();
-            apply_type_annotations(mum.detail().ann_custom(), state);
+            const auto& state = *member.type();
+            //TODO(richiware) apply_type_annotations(mum.detail().ann_custom(), state);
 
             fastrtps::types::TypeObject memObj;
-            build_type_object(state, memObj);
+            //TODO(richiware) build_type_object(state, memObj);
             const fastrtps::types::TypeIdentifier* typeId =
                     fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                member.get_type()->get_name());
+                member.type()->get_name());
             if (typeId == nullptr)
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member.get_name()
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member.name().c_str()
                                                         << " of union " << descriptor.get_name() << " failed.");
             }
             else
@@ -1753,11 +1753,11 @@ void DynamicTypeBuilderFactoryImpl::build_union_type_code(
                 mum.common().type_id(memIdent);
             }
 
-            for (uint64_t lab : member.get_union_labels())
+            for (uint64_t lab : member.label())
             {
                 mum.common().label_seq().emplace_back(static_cast<uint32_t>(lab));
             }
-            mum.detail().name(member.get_name());
+            mum.detail().name(member.name().c_str());
             object.complete().union_type().member_seq().emplace_back(mum);
         }
 
@@ -1822,26 +1822,26 @@ void DynamicTypeBuilderFactoryImpl::build_union_type_code(
             const DynamicTypeMemberImpl& member = *pm;
 
             fastrtps::types::MinimalUnionMember mum;
-            mum.common().member_id(MemberId(member.get_index()));
+            mum.common().member_id(MemberId(member.index()));
             mum.common().member_flags().TRY_CONSTRUCT1(false);
             mum.common().member_flags().TRY_CONSTRUCT2(false);
             mum.common().member_flags().IS_EXTERNAL(false);
             mum.common().member_flags().IS_OPTIONAL(false);
             mum.common().member_flags().IS_MUST_UNDERSTAND(false);
             mum.common().member_flags().IS_KEY(false);
-            mum.common().member_flags().IS_DEFAULT(member.is_default_union_value());
+            mum.common().member_flags().IS_DEFAULT(member.is_default_label());
 
             //fastrtps::types::TypeIdentifier memIdent;
             //build_type_identifier(*member.get_type(), memIdent);
 
             fastrtps::types::TypeObject memObj;
-            build_type_object(*member.get_type(), memObj);
+            //TODO(richiware) build_type_object(*member.type(), memObj);
             const fastrtps::types::TypeIdentifier* typeId =
                     fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier(
-                member.get_type()->get_name());
+                member.type()->get_name());
             if (typeId == nullptr)
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member.get_name()
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member.name().c_str()
                                                         << " of union " << descriptor.get_name() << " failed.");
             }
             else
@@ -1850,11 +1850,11 @@ void DynamicTypeBuilderFactoryImpl::build_union_type_code(
                 mum.common().type_id(memIdent);
             }
 
-            for (uint64_t lab : member.get_union_labels())
+            for (uint64_t lab : member.label())
             {
                 mum.common().label_seq().emplace_back(static_cast<uint32_t>(lab));
             }
-            MD5 hash(member.get_name());
+            MD5 hash(member.name().c_str());
             for (int i = 0; i < 4; ++i)
             {
                 mum.detail().name_hash()[i] = hash.digest[i];
@@ -1917,11 +1917,11 @@ void DynamicTypeBuilderFactoryImpl::build_bitset_type_code(
             msm.common().position(member.annotation_get_position()); // Position stored as annotation
             // Bitcount stored as bit_bound annotation
             msm.common().bitcount(static_cast<eprosima::fastrtps::rtps::octet>(member.annotation_get_bit_bound()));
-            msm.common().holder_type(member.get_type()->get_kind());
-            msm.detail().name(member.get_name());
+            msm.common().holder_type(member.type()->get_kind());
+            msm.detail().name(member.name().c_str());
 
             // Apply member annotations
-            apply_type_annotations(msm.detail().ann_custom(), *member.get_type());
+            //TODO(richiware) apply_type_annotations(msm.detail().ann_custom(), *member.type());
 
             object.complete().bitset_type().field_seq().emplace_back(msm);
         }
@@ -1987,8 +1987,8 @@ void DynamicTypeBuilderFactoryImpl::build_bitset_type_code(
             msm.common().position(member.annotation_get_position()); // Position stored as annotation
             // Bitcount stored as bit_bound annotation
             msm.common().bitcount(static_cast<eprosima::fastrtps::rtps::octet>(member.annotation_get_bit_bound()));
-            msm.common().holder_type(member.get_type()->get_kind());
-            MD5 parent_bitfield_hash(member.get_name());
+            msm.common().holder_type(member.type()->get_kind());
+            MD5 parent_bitfield_hash(member.name().c_str());
             for (int i = 0; i < 4; ++i)
             {
                 msm.name_hash()[i] = parent_bitfield_hash.digest[i];
@@ -2064,10 +2064,10 @@ void DynamicTypeBuilderFactoryImpl::build_bitmask_type_code(
 
             fastrtps::types::CompleteBitflag msm;
             msm.common().position(member.annotation_get_position()); // Position stored as annotation
-            msm.detail().name(member.get_name());
+            msm.detail().name(member.name().c_str());
 
             // Apply member annotations
-            apply_type_annotations(msm.detail().ann_custom(), *member.get_type());
+            //TODO(richiware) apply_type_annotations(msm.detail().ann_custom(), *member.type());
 
             object.complete().bitmask_type().flag_seq().emplace_back(msm);
         }
@@ -2121,7 +2121,7 @@ void DynamicTypeBuilderFactoryImpl::build_bitmask_type_code(
 
             fastrtps::types::MinimalBitflag msm;
             msm.common().position(member.annotation_get_position()); // Position stored as annotation
-            MD5 parent_bitfield_hash(member.get_name());
+            MD5 parent_bitfield_hash(member.name().c_str());
             for (int i = 0; i < 4; ++i)
             {
                 msm.detail().name_hash()[i] = parent_bitfield_hash.digest[i];
@@ -2176,9 +2176,9 @@ void DynamicTypeBuilderFactoryImpl::build_annotation_type_code(
             const DynamicTypeMemberImpl& member = *pm;
 
             fastrtps::types::CompleteAnnotationParameter msm;
-            msm.name(member.get_name());
+            msm.name(member.name().c_str());
 
-            if (!member.get_default_value().empty())
+            if (!member.default_value().empty())
             {
                 fastrtps::types::AnnotationParameterValue apv;
                 set_annotation_default_value(apv, member);
@@ -2186,13 +2186,13 @@ void DynamicTypeBuilderFactoryImpl::build_annotation_type_code(
             }
 
             fastrtps::types::TypeObject memObj;
-            build_type_object(*member.get_type(), memObj);
+            //TODO(richiware) build_type_object(*member.type(), memObj);
             const fastrtps::types::TypeIdentifier* typeId =
                     fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier(
-                member.get_type()->get_name());
+                member.type()->get_name());
             if (typeId == nullptr)
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member.get_name()
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member.name().c_str()
                                                         << " of annotation " << descriptor.get_name() << " failed.");
             }
             else
@@ -2247,9 +2247,9 @@ void DynamicTypeBuilderFactoryImpl::build_annotation_type_code(
             const DynamicTypeMemberImpl& member = *pm;
 
             fastrtps::types::MinimalAnnotationParameter msm;
-            msm.name(member.get_name());
+            msm.name(member.name().c_str());
 
-            if (!member.get_default_value().empty())
+            if (!member.default_value().empty())
             {
                 fastrtps::types::AnnotationParameterValue apv;
                 set_annotation_default_value(apv, member);
@@ -2257,13 +2257,13 @@ void DynamicTypeBuilderFactoryImpl::build_annotation_type_code(
             }
 
             fastrtps::types::TypeObject memObj;
-            build_type_object(*member.get_type(), memObj);
+            //TODO(richiware) build_type_object(*member.type(), memObj);
             const fastrtps::types::TypeIdentifier* typeId =
                     fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier(
-                member.get_type()->get_name());
+                member.type()->get_name());
             if (typeId == nullptr)
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member.get_name()
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member " << member.name().c_str()
                                                         << " of annotation " << descriptor.get_name() << " failed.");
             }
             else
@@ -2311,11 +2311,11 @@ void DynamicTypeBuilderFactoryImpl::set_annotation_default_value(
         fastrtps::types::AnnotationParameterValue& apv,
         const MemberDescriptorImpl& member) const
 {
-    switch (member.get_kind())
+    switch (member.type()->get_kind())
     {
         case TK_BOOLEAN:
         {
-            std::string value = member.get_default_value();
+            std::string value = member.default_value();
             std::transform(value.begin(), value.end(), value.begin(),
                     [](unsigned char c)
                     {
@@ -2326,78 +2326,78 @@ void DynamicTypeBuilderFactoryImpl::set_annotation_default_value(
         break;
         case TK_BYTE:
         {
-            apv.byte_value(static_cast<uint8_t>(std::stoul(member.get_default_value())));
+            apv.byte_value(static_cast<uint8_t>(std::stoul(member.default_value())));
         }
         break;
         case TK_INT16:
         {
-            apv.int16_value(static_cast<int16_t>(std::stoi(member.get_default_value())));
+            apv.int16_value(static_cast<int16_t>(std::stoi(member.default_value())));
         }
         break;
         case TK_INT32:
         {
-            apv.int32_value(static_cast<int32_t>(std::stoi(member.get_default_value())));
+            apv.int32_value(static_cast<int32_t>(std::stoi(member.default_value())));
         }
         break;
         case TK_INT64:
         {
-            apv.int64_value(static_cast<int64_t>(std::stoll(member.get_default_value())));
+            apv.int64_value(static_cast<int64_t>(std::stoll(member.default_value())));
         }
         break;
         case TK_UINT16:
         {
-            apv.uint_16_value(static_cast<uint16_t>(std::stoul(member.get_default_value())));
+            apv.uint_16_value(static_cast<uint16_t>(std::stoul(member.default_value())));
         }
         break;
         case TK_UINT32:
         {
-            apv.uint32_value(static_cast<uint32_t>(std::stoul(member.get_default_value())));
+            apv.uint32_value(static_cast<uint32_t>(std::stoul(member.default_value())));
         }
         break;
         case TK_UINT64:
         {
-            apv.uint64_value(static_cast<uint64_t>(std::stoull(member.get_default_value())));
+            apv.uint64_value(static_cast<uint64_t>(std::stoull(member.default_value())));
         }
         break;
         case TK_FLOAT32:
         {
-            apv.float32_value(std::stof(member.get_default_value()));
+            apv.float32_value(std::stof(member.default_value()));
         }
         break;
         case TK_FLOAT64:
         {
-            apv.float64_value(std::stod(member.get_default_value()));
+            apv.float64_value(std::stod(member.default_value()));
         }
         break;
         case TK_FLOAT128:
         {
-            apv.float128_value(std::stold(member.get_default_value()));
+            apv.float128_value(std::stold(member.default_value()));
         }
         break;
         case TK_CHAR8:
         {
-            apv.char_value(member.get_default_value().c_str()[0]);
+            apv.char_value(member.default_value().c_str()[0]);
         }
         break;
         case TK_CHAR16:
         {
-            apv.wchar_value(fastrtps::wstring_from_bytes(member.get_default_value()).c_str()[0]);
+            apv.wchar_value(fastrtps::wstring_from_bytes(member.default_value()).c_str()[0]);
         }
         break;
         case TK_STRING8:
         {
-            apv.string8_value(member.get_default_value());
+            apv.string8_value(member.default_value());
         }
         break;
         case TK_STRING16:
         {
-            apv.string16_value(fastrtps::wstring_from_bytes(member.get_default_value()));
+            apv.string16_value(fastrtps::wstring_from_bytes(member.default_value()));
         }
         break;
         case TK_ENUM:
         {
             // TODO Translate from enum value name to integer value
-            apv.enumerated_value(static_cast<int32_t>(std::stoul(member.get_default_value())));
+            apv.enumerated_value(static_cast<int32_t>(std::stoul(member.default_value())));
         }
         break;
         default:

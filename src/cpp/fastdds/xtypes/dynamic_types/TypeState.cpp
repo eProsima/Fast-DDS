@@ -93,7 +93,7 @@ TypeState::TypeState(
 
     kind_ = descriptor.kind();
 
-    /*
+    /*TODO(richiware)
        const DynamicType* type = descriptor.base_type();
 
        if (type != nullptr)
@@ -127,7 +127,7 @@ TypeState::TypeState(
      */
 }
 
-/*
+/*TODO(richiware)
    TypeDescriptor TypeState::get_descriptor() const noexcept
    {
    TypeDescriptorImpl res;
@@ -186,11 +186,13 @@ void TypeState::refresh_indexes()
     member_by_name_.clear();
 
     // update indexes with member info
-    for (DynamicTypeMemberImpl& m : members_)
-    {
-        member_by_id_[m.get_id()] = &m;
-        member_by_name_[m.get_name()] = &m;
-    }
+    /*TODO(richiware)
+       for (DynamicTypeMemberImpl& m : members_)
+       {
+       member_by_id_[m.id()] = &m;
+       member_by_name_[m.name().c_str()] = &m;
+       }
+     */
 }
 
 const DynamicTypeImpl& TypeState::resolve_alias_type(
@@ -216,7 +218,7 @@ void TypeState::clean()
     element_type_.reset();
     key_element_type_.reset();
 
-    members_.clear();
+    //TODO(richiware)members_.clear();
     member_by_id_.clear();
     member_by_name_.clear();
 }
@@ -256,7 +258,7 @@ bool TypeState::operator ==(
            a->kind_ == b->kind_ &&
            a->bound_ == b->bound_ &&
            a->AnnotationManager::operator ==(*b) &&
-           a->members_ == b->members_ &&
+           //TODO(richiware)a->members_ == b->members_ &&
            (a->base_type_ == b->base_type_ || (
                a->base_type_ &&
                b->base_type_ &&
@@ -366,10 +368,12 @@ bool TypeState::is_consistent(
         bool type /* = false*/) const
 {
     // Enums should have at least one member
-    if (type && kind_ == TK_ENUM && members_.empty())
-    {
-        return false;
-    }
+    /*TODO(richiware)
+       if (type && kind_ == TK_ENUM && members_.empty())
+       {
+       return false;
+       }
+     */
 
     // Alias Types need the base type to indicate what type has been aliased.
     if (kind_ == TK_ALIAS && !base_type_)
@@ -429,15 +433,17 @@ bool TypeState::is_consistent(
     }
 
     // Check members if any
-    if (type && std::any_of(members_.begin(), members_.end(),
-            [this](const DynamicTypeMemberImpl& m)
-            {
-                return !m.is_consistent(kind_);
-            }))
-    {
-        // inconsistencies in the use of annotations
-        return false;
-    }
+    /*TODO(richiware)
+       if (type && std::any_of(members_.begin(), members_.end(),
+       [this](const DynamicTypeMemberImpl& m)
+       {
+        return !m.is_consistent(kind_);
+       }))
+       {
+       // inconsistencies in the use of annotations
+       return false;
+       }
+     */
 
     return true;
 }
@@ -446,7 +452,7 @@ bool TypeState::is_primitive() const
 {
     return kind_ > TK_NONE && kind_ <= TK_CHAR16 &&
            0u == get_annotation_count() &&
-           members_.empty() &&
+           //TODO(richiware) members_.empty() &&
            !base_type_ && !discriminator_type_ &&
            !element_type_ && !key_element_type_;
 }
@@ -530,14 +536,16 @@ const std::list<const DynamicTypeMemberImpl*> TypeState::get_all_members() const
     }
 
     // populate the local members
-    std::transform(
-        members_.begin(),
-        members_.end(),
-        std::back_inserter(res),
-        [](const DynamicTypeMemberImpl& m)
-        {
-            return &m;
-        });
+    /*TODO(richiware)
+       std::transform(
+       members_.begin(),
+       members_.end(),
+       std::back_inserter(res),
+       [](const DynamicTypeMemberImpl& m)
+       {
+       return &m;
+       });
+     */
 
     return res;
 }
@@ -614,16 +622,20 @@ const DynamicTypeMemberImpl& TypeState::get_member_by_index(
         }
     }
 
-    if (index >= (offset + members_.size()))
-    {
-        //TODO(richiware) throw std::system_error(
-        //TODO(richiware)           make_error_code(RETCODE_ERROR),
-        //TODO(richiware)           "Error getting member by index, member not found.");
-    }
+    /*TODO(richiware)
+       if (index >= (offset + members_.size()))
+       {
+       //TODO(richiware) throw std::system_error(
+       //TODO(richiware)           make_error_code(RETCODE_ERROR),
+       //TODO(richiware)           "Error getting member by index, member not found.");
+       }
+     */
 
-    auto it = members_.begin();
-    std::advance(it, index - offset);
-    return *it;
+    /*TODO(richiware)
+       auto it = members_.begin();
+       std::advance(it, index - offset);
+       return *it;
+     */
 }
 
 const DynamicTypeMemberImpl& TypeState::get_member_by_name(
@@ -703,14 +715,16 @@ const DynamicTypeMemberImpl& TypeState::get_member(
 
 uint32_t TypeState::get_member_count() const
 {
-    std::size_t res{members_.size()};
+    /*TODO(richiware)
+       std::size_t res{members_.size()};
 
-    if (base_type_)
-    {
-        res += resolve_alias_type(*base_type_).get_member_count();
-    }
+       if (base_type_)
+       {
+       res += resolve_alias_type(*base_type_).get_member_count();
+       }
 
-    return static_cast<uint32_t>(res);
+       return static_cast<uint32_t>(res);
+     */
 }
 
 MemberId TypeState::get_member_id_by_name(
@@ -720,7 +734,7 @@ MemberId TypeState::get_member_id_by_name(
 
     if (it != member_by_name_.end())
     {
-        return it->second->get_id();
+        return it->second->id();
     }
     else if (base_type_)
     {
@@ -752,21 +766,25 @@ MemberId TypeState::get_member_id_at_index(
         }
     }
 
-    if (index >= (offset + members_.size()))
-    {
-        // index out of boundaries
-        return MEMBER_ID_INVALID;
-    }
+    /*TODO(richiware)
+       if (index >= (offset + members_.size()))
+       {
+       // index out of boundaries
+       return MEMBER_ID_INVALID;
+       }
+     */
 
     // retrieve from local collection
-    auto it = members_.begin();
-    std::advance(it, index - offset);
-    assert(it->get_index() == index);
-    return it->get_id();
+    /*TODO(richiware)
+       auto it = members_.begin();
+       std::advance(it, index - offset);
+       assert(it->index() == index);
+       return it->id();
+     */
 }
 
 bool TypeState::exists_member_by_name(
-        const std::string& name) const
+        const ObjectName& name) const
 {
     auto base = get_base_type();
     if (base)
@@ -776,7 +794,7 @@ bool TypeState::exists_member_by_name(
             return true;
         }
     }
-    return member_by_name_.find(name) != member_by_name_.end();
+    //TODO(richiware) return member_by_name_.find(name) != member_by_name_.end();
 }
 
 bool TypeState::exists_member_by_id(
@@ -813,15 +831,16 @@ MemberId TypeState::get_id_from_label(
     }
 
     // Check the members
-    for (auto& m : members_)
-    {
-        auto& lbs = m.get_union_labels();
-        auto it = lbs.find(label);
-        if (it != lbs.end())
-        {
-            return m.get_id();
-        }
-    }
+    /*TODO(richiware)
+       for (auto& m : members_)
+       {
+       auto& lbs = m.label();
+       if (it != lbs.end())
+       {
+       return m.id();
+       }
+       }
+     */
 
     return MEMBER_ID_INVALID;
 }

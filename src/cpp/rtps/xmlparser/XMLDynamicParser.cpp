@@ -196,13 +196,15 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
         return XMLP_ret::XML_ERROR;
     }
 
-    MemberDescriptor md;
-    md.set_name(memberName);
-    md.set_id(MemberId{field_position});
-    builder.add_member(md);
-    //builder.apply_annotation_to_member(
-    //    builder.get_member_id_by_name(memberName), ANNOTATION_POSITION_ID, "value", position);
-    ++field_position;
+    /* TODO(richiware)
+       MemberDescriptor md;
+       md.set_name(memberName);
+       md.set_id(MemberId{field_position});
+       builder.add_member(md);
+       //builder.apply_annotation_to_member(
+       //    builder.get_member_id_by_name(memberName), ANNOTATION_POSITION_ID, "value", position);
+     ++field_position;
+     */
 
     return XMLP_ret::XML_OK;
 }
@@ -582,11 +584,13 @@ const eprosima::fastdds::dds::DynamicTypeBuilder* XMLParser::parseXMLBitfieldDyn
         EPROSIMA_LOG_ERROR(XMLPARSER, "Failed creating " << memberType << ": " << memberName);
     }
 
-    MemberDescriptor md;
-    md.set_id(mId);
-    md.set_name(memberName);
-    md.set_type(memberBuilder->build());
-    builder.add_member(md);
+    /*TODO(richiware)
+       MemberDescriptor md;
+       md.set_id(mId);
+       md.set_name(memberName);
+       md.set_type(memberBuilder->build());
+       builder.add_member(md);
+     */
 
     if (!std::string(memberName).empty())
     {
@@ -719,10 +723,12 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
             currValue = static_cast<uint32_t>(std::atoi(value));
         }
 
-        MemberDescriptor md;
-        md.set_id(currValue++);
-        md.set_name(name);
-        typeBuilder->add_member(md);
+        /*TODO(richiware)
+           MemberDescriptor md;
+           md.set_id(currValue++);
+           md.set_name(name);
+           typeBuilder->add_member(md);
+         */
     }
 
     XMLProfileManager::insertDynamicTypeByName(enumName, std::move(typeBuilder));
@@ -1518,21 +1524,23 @@ const eprosima::fastdds::dds::DynamicTypeBuilder* XMLParser::parseXMLMemberDynam
 
     const char* memberName = p_root->Attribute(NAME);
 
-    MemberDescriptor md;
-    md.set_id(mId);
-    md.set_name(memberName);
-    md.set_type(memberBuilder->build());
+    /*TODO(richiware)
+       MemberDescriptor md;
+       md.set_id(mId);
+       md.set_name(memberName);
+       md.set_type(memberBuilder->build());
 
-    if (memberName != nullptr && !values.empty())
-    {
+       if (memberName != nullptr && !values.empty())
+       {
         std::vector<uint32_t> labels;
         bool defaultLabel = dimensionsToLabels(values, labels);
 
         md.set_labels(labels.data(), static_cast<uint32_t>(labels.size()));
         md.set_default_label(defaultLabel);
-    }
+       }
 
-    builder.add_member(md);
+       builder.add_member(md);
+     */
 
     return memberBuilder;
 }

@@ -82,7 +82,7 @@ void DynamicTypeBuilderImpl::before_destruction(
 
 DynamicTypeBuilderImpl::member_iterator DynamicTypeBuilderImpl::add_empty_member(
         uint32_t index,
-        const std::string& name)
+        const ObjectName& name)
 {
     // inheritance corrections
     uint32_t offset = 0;
@@ -94,31 +94,33 @@ DynamicTypeBuilderImpl::member_iterator DynamicTypeBuilderImpl::add_empty_member
 
     // insert the new member
     member_iterator it;
-    if (index >= members_.size() + offset)
-    {
-        // adjust index
-        index = static_cast<uint32_t>(members_.size()) + offset;
-        // at the end
-        it = members_.emplace(members_.end(), index, name); //TODO(richiware) Review idnex
-    }
-    else
-    {
-        // adjust index
-        int advance = std::max(int(index - offset), 0);
-        index = offset + advance;
+    /*TODO(richiware)
+       if (index >= members_.size() + offset)
+       {
+       // adjust index
+       index = static_cast<uint32_t>(members_.size()) + offset;
+       // at the end
+       //TODO(richiware) it = members_.emplace(members_.end(), index, name); //TODO(richiware) Review idnex
+       }
+       else
+       {
+       // adjust index
+       int advance = std::max(int(index - offset), 0);
+       index = offset + advance;
 
-        // move all the others
-        it = members_.begin();
-        std::advance(it, advance);
-        it = members_.emplace(it, index, name);
-        // rename the others
-        auto nit = it;
-        for (auto i = index; nit != members_.end(); ++nit, ++i)
-        {
-            nit->set_index(i);
-            assert(nit->get_index() == i);
-        }
-    }
+       // move all the others
+       it = members_.begin();
+       std::advance(it, advance);
+       //TODO(richiware) it = members_.emplace(it, index, name);
+       // rename the others
+       auto nit = it;
+       for (auto i = index; nit != members_.end(); ++nit, ++i)
+       {
+       nit->index(i);
+       assert(nit->index() == i);
+       }
+       }
+     */
 
     if (get_kind() == TK_BITMASK)
     {
@@ -135,7 +137,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 {
     try
     {
-        if (!descriptor.is_consistent(get_kind()))
+        if (!descriptor.is_consistent()) //TODO(richiware)
         {
             // TODO(richiware) throw std::system_error(
             // TODO(richiware)           RETCODE_BAD_PARAMETER,
@@ -155,24 +157,24 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             // TODO(richiware)           os.str());
         }
 
-        auto member_name = descriptor.get_name();
+        auto member_name = descriptor.name();
 
         // Bitsets allow multiple empty members.
-        if ( get_kind() != TK_BITSET && descriptor.get_name().empty())
+        if ( get_kind() != TK_BITSET && 0 == descriptor.name().size())
         {
             // TODO(richiware) throw std::system_error(
             // TODO(richiware)           RETCODE_BAD_PARAMETER,
             // TODO(richiware)           "Error adding member, missing proper name.");
         }
 
-        if (!member_name.empty() && exists_member_by_name(member_name))
+        if (0 != member_name.size() && exists_member_by_name(member_name))
         {
             // TODO(richiware) throw std::system_error(
             // TODO(richiware)           RETCODE_BAD_PARAMETER,
             // TODO(richiware)           "Error adding member, there is other member with the same name.");
         }
 
-        auto member_id = descriptor.get_id();
+        auto member_id = descriptor.id();
         if (member_id != MEMBER_ID_INVALID && exists_member_by_id(member_id))
         {
             // TODO(richiware) throw std::system_error(
@@ -188,19 +190,19 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         }
 
         if (get_kind() == TK_BITMASK &&
-                descriptor.get_id() >= get_bounds(0))
+                descriptor.id() >= get_bounds(0))
         {
             // TODO(richiware) throw std::system_error(
             // TODO(richiware)           RETCODE_BAD_PARAMETER,
             // TODO(richiware)           "Error adding member, out of bounds.");
         }
 
-        auto it = add_empty_member(descriptor.get_index(), member_name);
+        auto it = add_empty_member(descriptor.index(), member_name);
 
         DynamicTypeMemberImpl& newMember = *it;
         // Copy all elements but keep the index
-        descriptor.index_ = newMember.index_;
-        newMember = std::move(descriptor);
+        descriptor.index(newMember.index());
+        //TODO(richiware) newMember = std::move(descriptor);
 
         if (member_id == MEMBER_ID_INVALID)
         {
@@ -211,11 +213,11 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             } // check and advance
             while (exists_member_by_id(current_member_id_++));
 
-            newMember.set_id(member_id);
+            newMember.id(member_id);
         }
 
         // update the indexes collections
-        if (!member_name.empty()) // Don't store empty bitset members.
+        if (0 != member_name.size()) // Don't store empty bitset members.
         {
             member_by_id_.insert(std::make_pair(member_id, &newMember));
             member_by_name_.insert(std::make_pair(member_name, &newMember));
@@ -283,20 +285,22 @@ bool DynamicTypeBuilderImpl::check_union_configuration(
 {
     if (get_kind() == TK_UNION)
     {
-        bool default_union_value = descriptor.is_default_union_value();
-        if (!default_union_value && descriptor.get_union_labels().size() == 0)
+        bool default_union_value = descriptor.is_default_label();
+        if (!default_union_value && descriptor.label().size() == 0)
         {
             return false;
         }
-        for (auto& m : members_ )
-        {
-            // Check that there isn't any member as default label and that there isn't any member with the same case.
-            if ((default_union_value && m.is_default_union_value()) ||
-                    !descriptor.check_union_labels(m.get_union_labels()))
-            {
-                return false;
-            }
-        }
+        /*TODO(richiware)
+           for (auto& m : members_ )
+           {
+           // Check that there isn't any member as default label and that there isn't any member with the same case.
+           if ((default_union_value && m.is_default_label()) ||
+                true) // TODO(richiware)!descriptor.check_union_labels(m.label()))
+           {
+            return false;
+           }
+           }
+         */
     }
     return true;
 }

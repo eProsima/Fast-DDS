@@ -29,40 +29,42 @@ namespace dds {
 bool DynamicTypeMemberImpl::operator ==(
         const DynamicTypeMemberImpl& other) const
 {
-    return get_descriptor() == other.get_descriptor() && AnnotationManager::operator ==(other);
+    //TODO(richiware) return get_descriptor() == other.get_descriptor() && AnnotationManager::operator ==(other);
 }
 
 std::string DynamicTypeMemberImpl::get_default_value() const
 {
     // Fallback to annotation
-    std::string res = MemberDescriptorImpl::get_default_value();
+    std::string res = MemberDescriptorImpl::default_value();
     return res.empty() ? annotation_get_default().c_str() : res;
 }
 
 bool DynamicTypeMemberImpl::is_consistent(
         TypeKind parentKind) const
 {
-    if (!MemberDescriptorImpl::is_consistent(parentKind))
-    {
+    /*TODO(richiware)
+       if (!MemberDescriptorImpl::is_consistent(parentKind))
+       {
         return false;
-    }
+       }
 
-    // checks based on annotations
+       // checks based on annotations
 
-    // Structures and unions allow it for @external. This condition can only
-    // be check in the DynamicTypeMemberImpl override
-    if ((parentKind == TK_STRUCTURE || parentKind == TK_UNION) &&
+       // Structures and unions allow it for @external. This condition can only
+       // be check in the DynamicTypeMemberImpl override
+       if ((parentKind == TK_STRUCTURE || parentKind == TK_UNION) &&
             !type_ && !annotation_is_external())
-    {
+       {
         return false;
-    }
+       }
 
-    // Bitset non-anonymous elements must have position and bound
-    if (parentKind == TK_BITSET && !name_.empty() &&
+       // Bitset non-anonymous elements must have position and bound
+       if (parentKind == TK_BITSET && 0 != name_.size() &&
             (!annotation_is_bit_bound() || !annotation_is_position()))
-    {
+       {
         return false;
-    }
+       }
+     */
 
     return true;
 }
@@ -74,7 +76,7 @@ std::ostream& operator <<(
     using namespace std;
 
     // delegate into the base class
-    os << static_cast<const MemberDescriptorImpl&>(dm);
+    //TODO(richiware) os << static_cast<const MemberDescriptorImpl&>(dm);
 
     // Show the annotations if any
     if (dm.get_annotation_count())
