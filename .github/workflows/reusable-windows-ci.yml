@@ -387,7 +387,7 @@ jobs:
               $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_${{ inputs.fastdds_branch }}.repos"
               if (!(Test-Path -Path $depends_repos_path))
               {
-                $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_master.repos"
+                $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_2.10.x.repos"
               }
               $meta_path = ".\src\fastrtps\.github\workflows\config\default_ci.meta"
           }
