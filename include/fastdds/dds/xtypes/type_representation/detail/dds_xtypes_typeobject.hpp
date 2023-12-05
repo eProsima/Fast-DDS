@@ -23,9 +23,7 @@
 #define _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_DDS_XTYPES_DDS_XTYPES_TYPEOBJECT_HPP_
 
 #include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
 #include <string>
 #include <utility>
 #include <vector>

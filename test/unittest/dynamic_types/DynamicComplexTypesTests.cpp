@@ -561,7 +561,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_A)
     types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
 
     CompleteStruct staticData;
-    staticData.my_union()._d(A);
+    staticData.my_union()._d(MyEnum::A);
     staticData.my_union().basic().my_bool(true);
     staticData.my_union().basic().my_octet(166);
     staticData.my_union().basic().my_int16(-10401);
@@ -630,7 +630,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_B)
     types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
 
     CompleteStruct staticData;
-    staticData.my_union()._d(A);
+    staticData.my_union()._d(MyEnum::A);
     staticData.my_union().basic().my_bool(true);
     staticData.my_union().basic().my_octet(166);
     staticData.my_union().basic().my_int16(-10401);
@@ -699,7 +699,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
     types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
 
     CompleteStruct staticData;
-    staticData.my_union()._d(A);
+    staticData.my_union()._d(MyEnum::A);
     staticData.my_union().basic().my_bool(true);
     staticData.my_union().basic().my_octet(166);
     staticData.my_union().basic().my_int16(-10401);
@@ -764,7 +764,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
 
     CompleteStruct staticData;
-    staticData.my_union()._d() = B;
+    staticData.my_union()._d() = MyEnum::B;
     staticData.my_union().complex().my_octet(66);
     staticData.my_union().complex().my_basic_struct().my_bool(true);
     staticData.my_union().complex().my_basic_struct().my_octet(166);
@@ -782,8 +782,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     staticData.my_union().complex().my_basic_struct().my_string("Luis@eProsima");
     //staticData.my_union().complex().my_basic_struct().my_wstring(L"LuisGasco@eProsima");
 
-    staticData.my_union().complex().my_alias_enum(C);
-    staticData.my_union().complex().my_enum(B);
+    staticData.my_union().complex().my_alias_enum(MyEnum::C);
+    staticData.my_union().complex().my_enum(MyEnum::B);
     staticData.my_union().complex().my_sequence_octet().push_back(88);
     staticData.my_union().complex().my_sequence_octet().push_back(99);
     staticData.my_union().complex().my_sequence_struct().push_back(staticData.my_union().complex().my_basic_struct());
@@ -866,7 +866,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
         staticData.my_union().complex().my_sequences_array()[i].push_back(i * 10);
         staticData.my_union().complex().my_sequences_array()[i].push_back(i * 100);
     }
-    staticData.my_union_2()._d(A);
+    staticData.my_union_2()._d(0);
     staticData.my_union_2().uno(156);
 
     DynamicData* my_union = dynData->loan_value(dynData->get_member_id_by_name("my_union"));
@@ -1266,7 +1266,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
 
     CompleteStruct staticData;
-    staticData.my_union()._d() = B;
+    staticData.my_union()._d() = MyEnum::B;
     staticData.my_union().complex().my_octet(66);
     staticData.my_union().complex().my_basic_struct().my_bool(true);
     staticData.my_union().complex().my_basic_struct().my_octet(166);
@@ -1284,8 +1284,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     staticData.my_union().complex().my_basic_struct().my_string("Luis@eProsima");
     //staticData.my_union().complex().my_basic_struct().my_wstring(L"LuisGasco@eProsima");
 
-    staticData.my_union().complex().my_alias_enum(C);
-    staticData.my_union().complex().my_enum(B);
+    staticData.my_union().complex().my_alias_enum(MyEnum::C);
+    staticData.my_union().complex().my_enum(MyEnum::B);
     staticData.my_union().complex().my_sequence_octet().push_back(88);
     staticData.my_union().complex().my_sequence_octet().push_back(99);
     staticData.my_union().complex().my_sequence_struct().push_back(staticData.my_union().complex().my_basic_struct());
@@ -1726,7 +1726,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
 
     CompleteStruct staticData;
-    staticData.my_union()._d() = B;
+    staticData.my_union()._d() = MyEnum::B;
     staticData.my_union().complex().my_octet(66);
     staticData.my_union().complex().my_basic_struct().my_bool(true);
     staticData.my_union().complex().my_basic_struct().my_octet(166);
@@ -1744,8 +1744,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     staticData.my_union().complex().my_basic_struct().my_string("Luis@eProsima");
     //staticData.my_union().complex().my_basic_struct().my_wstring(L"LuisGasco@eProsima");
 
-    staticData.my_union().complex().my_alias_enum(C);
-    staticData.my_union().complex().my_enum(B);
+    staticData.my_union().complex().my_alias_enum(MyEnum::C);
+    staticData.my_union().complex().my_enum(MyEnum::B);
     staticData.my_union().complex().my_sequence_octet().push_back(88);
     staticData.my_union().complex().my_sequence_octet().push_back(99);
     staticData.my_union().complex().my_sequence_struct().push_back(staticData.my_union().complex().my_basic_struct());

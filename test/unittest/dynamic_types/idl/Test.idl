@@ -72,11 +72,11 @@ union MyUnion switch (MyEnum)
 
 union MyUnion2 switch (octet)
 {
-    case A:
+    case 0:
         long uno;
-    case B:
+    case 1:
         string imString;
-    case C:
+    case 2:
         long tres;
 };
 
