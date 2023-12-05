@@ -615,7 +615,7 @@ TEST_P(TransportTCP, TCPv6_copy)
     EXPECT_EQ(tcpv6_transport_copy, tcpv6_transport);
 }
 
-// Test connection is successfully restablished after dropping and relaunching a TCP client (requester), 
+// Test connection is successfully restablished after dropping and relaunching a TCP client (requester),
 // when the server's listening thread for the old client hasn't processed all its messages.
 // Issue -> https://github.com/eProsima/Fast-DDS/issues/2409
 // Issue -> https://github.com/eProsima/Fast-DDS/issues/4026

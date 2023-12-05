@@ -930,9 +930,9 @@ void TCPTransportInterface::perform_listen_operation(
                 TransportReceiverInterface* receiver = it->second.first;
                 ReceiverInUseCV* receiver_in_use = it->second.second;
                 receiver_in_use->cv.wait(scopedLock, [&]()
-                    {
-                        return receiver_in_use->in_use == false;
-                    });
+                        {
+                            return receiver_in_use->in_use == false;
+                        });
                 if (TCPChannelResource::eConnectionStatus::eConnecting < channel->connection_status())
                 {
                     receiver_in_use->in_use = true;

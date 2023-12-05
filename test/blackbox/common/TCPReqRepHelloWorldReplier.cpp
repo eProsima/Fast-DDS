@@ -134,7 +134,7 @@ void TCPReqRepHelloWorldReplier::init(
     puattr.topic.topicDataType = type_.getName();
     puattr.topic.topicName = "HelloWorldTopicReply";
     configPublisher("Reply");
-    if(use_bussy_listener)
+    if (use_bussy_listener)
     {
         reply_publisher_ = Domain::createPublisher(participant_, puattr, &reply_bussy_listener_);
     }
