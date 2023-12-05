@@ -234,13 +234,6 @@ if(NOT LibP11_FOUND)
     endif() # GTEST_INDIVIDUAL
 endif() # LibP11_FOUND
 
-<<<<<<< HEAD
-=======
-if(EPROSIMA_TEST_DNS_NOT_SET_UP)
-    set(dns_filter "-Discovery.ServerClientEnvironmentSetUpDNS")
-endif()
-
->>>>>>> 36f31dd53 (Add Autofill port to TCP Transport (#4061))
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorld.cxx
@@ -369,7 +362,7 @@ if(FASTRTPS_API_TESTS)
         GTest::gtest
         $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
         )
-       
+
     add_blackbox_gtest(BlackboxTests_FastRTPS SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
         ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
         "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
