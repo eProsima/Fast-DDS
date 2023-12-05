@@ -23,7 +23,7 @@
 #define _FAST_DDS_GENERATED_DDSSECURITYRETURNCODE_HPP_
 
 #include <cstdint>
-
+#include <utility>
 #include "DDSReturnCode.hpp"
 
 #if defined(_WIN32)
@@ -67,4 +67,5 @@ const ReturnCode_t RETCODE_NOT_ALLOWED_BY_SECURITY = 1000;
 
 
 #endif // _FAST_DDS_GENERATED_DDSSECURITYRETURNCODE_HPP_
+
 

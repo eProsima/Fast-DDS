@@ -23,7 +23,6 @@
 #define _FAST_DDS_GENERATED_TEST_HPP_
 
 #include <array>
-#include <bitset>
 #include <cstdint>
 #include <map>
 #include <string>
@@ -31,8 +30,6 @@
 #include <vector>
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 
 
@@ -66,7 +63,7 @@
  * @brief This class represents the enumeration MyEnum defined by the user in the IDL file.
  * @ingroup Test
  */
-enum MyEnum : uint32_t
+enum class MyEnum : uint32_t
 {
     A,
     B,
@@ -1649,8 +1646,8 @@ private:
 
     uint8_t m_my_octet{0};
     BasicStruct m_my_basic_struct;
-    MyAliasEnum m_my_alias_enum{::A};
-    MyEnum m_my_enum{::A};
+    MyAliasEnum m_my_alias_enum{MyEnum::A};
+    MyEnum m_my_enum{MyEnum::A};
     std::vector<uint8_t> m_my_sequence_octet;
     std::vector<BasicStruct> m_my_sequence_struct;
     std::array<std::array<std::array<char, 4>, 5>, 500> m_my_array_octet{ {{ {{0}} }} };
@@ -1664,7 +1661,7 @@ private:
     eprosima::fastcdr::fixed_string<128> m_my_small_string_8;
     eprosima::fastcdr::fixed_string<500> m_my_large_string_8;
     std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5> m_my_array_string;
-    MA3 m_multi_alias_array_42{::A};
+    MA3 m_multi_alias_array_42{MyEnum::A};
     std::array<MyMiniArray, 5> m_my_array_arrays{ {{0}} };
     std::array<MySequenceLong, 23> m_my_sequences_array;
 
@@ -1684,7 +1681,7 @@ public:
      */
     eProsima_user_DllExport MyUnion()
     {
-        m__d = ::A;
+        m__d = MyEnum::A;
     }
 
     /*!
@@ -1705,13 +1702,13 @@ public:
 
         switch (m__d)
         {
-            case ::A:
+            case MyEnum::A:
                 m_basic = x.m_basic;
                 break;
 
 
-            case ::B:
-            case ::C:
+            case MyEnum::B:
+            case MyEnum::C:
                 m_complex = x.m_complex;
                 break;
 
@@ -1731,14 +1728,14 @@ public:
 
         switch (m__d)
         {
-            case ::A:
+            case MyEnum::A:
                 m_basic = std::move(x.m_basic);
 
                 break;
 
 
-            case ::B:
-            case ::C:
+            case MyEnum::B:
+            case MyEnum::C:
                 m_complex = std::move(x.m_complex);
 
                 break;
@@ -1759,13 +1756,13 @@ public:
 
         switch (m__d)
         {
-            case ::A:
+            case MyEnum::A:
                 m_basic = x.m_basic;
                 break;
 
 
-            case ::B:
-            case ::C:
+            case MyEnum::B:
+            case MyEnum::C:
                 m_complex = x.m_complex;
                 break;
 
@@ -1787,14 +1784,14 @@ public:
 
         switch (m__d)
         {
-            case ::A:
+            case MyEnum::A:
                 m_basic = std::move(x.m_basic);
 
                 break;
 
 
-            case ::B:
-            case ::C:
+            case MyEnum::B:
+            case MyEnum::C:
                 m_complex = std::move(x.m_complex);
 
                 break;
@@ -1820,13 +1817,13 @@ public:
 
         switch (m__d)
         {
-            case ::A:
+            case MyEnum::A:
                 return (m_basic == x.m_basic);
                 break;
 
 
-            case ::B:
-            case ::C:
+            case MyEnum::B:
+            case MyEnum::C:
                 return (m_complex == x.m_complex);
                 break;
 
@@ -1858,10 +1855,10 @@ public:
 
         switch (m__d)
         {
-            case ::A:
+            case MyEnum::A:
                 switch (__d)
                 {
-                    case ::A:
+                    case MyEnum::A:
                         b = true;
                         break;
                     default:
@@ -1870,12 +1867,12 @@ public:
                 break;
 
 
-            case ::B:
-            case ::C:
+            case MyEnum::B:
+            case MyEnum::C:
                 switch (__d)
                 {
-                    case ::B:
-                    case ::C:
+                    case MyEnum::B:
+                    case MyEnum::C:
                         b = true;
                         break;
                     default:
@@ -1921,7 +1918,7 @@ public:
             const BasicStruct& _basic)
     {
         m_basic = _basic;
-        m__d = ::A;
+        m__d = MyEnum::A;
 
     }
 
@@ -1933,7 +1930,7 @@ public:
             BasicStruct&& _basic)
     {
         m_basic = std::move(_basic);
-        m__d = ::A;
+        m__d = MyEnum::A;
 
     }
 
@@ -1948,7 +1945,7 @@ public:
 
         switch (m__d)
         {
-            case ::A:
+            case MyEnum::A:
                 b = true;
                 break;
             default:
@@ -1974,7 +1971,7 @@ public:
 
         switch (m__d)
         {
-            case ::A:
+            case MyEnum::A:
                 b = true;
                 break;
             default:
@@ -1998,7 +1995,7 @@ public:
             const ComplexStruct& _complex)
     {
         m_complex = _complex;
-        m__d = ::B;
+        m__d = MyEnum::B;
 
     }
 
@@ -2010,7 +2007,7 @@ public:
             ComplexStruct&& _complex)
     {
         m_complex = std::move(_complex);
-        m__d = ::B;
+        m__d = MyEnum::B;
 
     }
 
@@ -2025,8 +2022,8 @@ public:
 
         switch (m__d)
         {
-            case ::B:
-            case ::C:
+            case MyEnum::B:
+            case MyEnum::C:
                 b = true;
                 break;
             default:
@@ -2052,8 +2049,8 @@ public:
 
         switch (m__d)
         {
-            case ::B:
-            case ::C:
+            case MyEnum::B:
+            case MyEnum::C:
                 b = true;
                 break;
             default:
@@ -2092,7 +2089,7 @@ public:
      */
     eProsima_user_DllExport MyUnion2()
     {
-        m__d = A;
+        m__d = 0;
     }
 
     /*!
@@ -2113,17 +2110,17 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_uno = x.m_uno;
                 break;
 
 
-            case B:
+            case 1:
                 m_imString = x.m_imString;
                 break;
 
 
-            case C:
+            case 2:
                 m_tres = x.m_tres;
                 break;
 
@@ -2143,18 +2140,18 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_uno = x.m_uno;
                 break;
 
 
-            case B:
+            case 1:
                 m_imString = std::move(x.m_imString);
 
                 break;
 
 
-            case C:
+            case 2:
                 m_tres = x.m_tres;
                 break;
 
@@ -2174,17 +2171,17 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_uno = x.m_uno;
                 break;
 
 
-            case B:
+            case 1:
                 m_imString = x.m_imString;
                 break;
 
 
-            case C:
+            case 2:
                 m_tres = x.m_tres;
                 break;
 
@@ -2206,18 +2203,18 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_uno = x.m_uno;
                 break;
 
 
-            case B:
+            case 1:
                 m_imString = std::move(x.m_imString);
 
                 break;
 
 
-            case C:
+            case 2:
                 m_tres = x.m_tres;
                 break;
 
@@ -2242,17 +2239,17 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 return (m_uno == x.m_uno);
                 break;
 
 
-            case B:
+            case 1:
                 return (m_imString == x.m_imString);
                 break;
 
 
-            case C:
+            case 2:
                 return (m_tres == x.m_tres);
                 break;
 
@@ -2284,10 +2281,10 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 switch (__d)
                 {
-                    case A:
+                    case 0:
                         b = true;
                         break;
                     default:
@@ -2296,10 +2293,10 @@ public:
                 break;
 
 
-            case B:
+            case 1:
                 switch (__d)
                 {
-                    case B:
+                    case 1:
                         b = true;
                         break;
                     default:
@@ -2308,10 +2305,10 @@ public:
                 break;
 
 
-            case C:
+            case 2:
                 switch (__d)
                 {
-                    case C:
+                    case 2:
                         b = true;
                         break;
                     default:
@@ -2357,7 +2354,7 @@ public:
             int32_t _uno)
     {
         m_uno = _uno;
-        m__d = A;
+        m__d = 0;
 
     }
 
@@ -2372,7 +2369,7 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 b = true;
                 break;
             default:
@@ -2398,7 +2395,7 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 b = true;
                 break;
             default:
@@ -2422,7 +2419,7 @@ public:
             const std::string& _imString)
     {
         m_imString = _imString;
-        m__d = B;
+        m__d = 1;
 
     }
 
@@ -2434,7 +2431,7 @@ public:
             std::string&& _imString)
     {
         m_imString = std::move(_imString);
-        m__d = B;
+        m__d = 1;
 
     }
 
@@ -2449,7 +2446,7 @@ public:
 
         switch (m__d)
         {
-            case B:
+            case 1:
                 b = true;
                 break;
             default:
@@ -2475,7 +2472,7 @@ public:
 
         switch (m__d)
         {
-            case B:
+            case 1:
                 b = true;
                 break;
             default:
@@ -2499,7 +2496,7 @@ public:
             int32_t _tres)
     {
         m_tres = _tres;
-        m__d = C;
+        m__d = 2;
 
     }
 
@@ -2514,7 +2511,7 @@ public:
 
         switch (m__d)
         {
-            case C:
+            case 2:
                 b = true;
                 break;
             default:
@@ -2540,7 +2537,7 @@ public:
 
         switch (m__d)
         {
-            case C:
+            case 2:
                 b = true;
                 break;
             default:

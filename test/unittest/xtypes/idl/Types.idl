@@ -202,33 +202,33 @@ struct MapMapBoundsStruct
 
 union SimpleUnion switch (long)
 {
-    case A:
+    case 0:
         long first;
-    case B:
+    case 1:
         long long second;
 };
 
 union SimpleUnionNames switch (long)
 {
-    case A:
+    case 0:
         long first_case;
-    case B:
+    case 1:
         long long second_case;
 };
 
 union SimpleTypeUnion switch (long)
 {
-    case A:
+    case 0:
         octet first;
-    case B:
+    case 1:
         long long second;
 };
 
 union SimpleBadUnion switch (long)
 {
-    case A:
+    case 0:
         long first;
-    case C:
+    case 2:
         long long second;
 };
 

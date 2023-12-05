@@ -22,19 +22,8 @@
 #ifndef _FAST_DDS_GENERATED_CALCULATOR_HPP_
 #define _FAST_DDS_GENERATED_CALCULATOR_HPP_
 
-#include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
-#include <string>
 #include <utility>
-#include <vector>
-
-#include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -64,7 +53,7 @@
  * @brief This class represents the enumeration OperationType defined by the user in the IDL file.
  * @ingroup Calculator
  */
-enum OperationType : uint32_t
+enum class OperationType : uint32_t
 {
     ADDITION,
     SUBTRACTION,
@@ -265,7 +254,7 @@ public:
 
 private:
 
-    OperationType m_operation{::ADDITION};
+    OperationType m_operation{OperationType::ADDITION};
     int32_t m_x{0};
     int32_t m_y{0};
 

@@ -556,7 +556,7 @@ const TypeObject* GetMinimalSimpleWideUnionObject()
     type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
     type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
-    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
+    type_object->minimal().union_type().discriminator().common().type_id(*GetMyEnumWideIdentifier(false));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_first;
@@ -571,7 +571,7 @@ const TypeObject* GetMinimalSimpleWideUnionObject()
     mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
 
-    mst_first.common().label_seq().emplace_back(A);
+    mst_first.common().label_seq().emplace_back(static_cast<int32_t>(MyEnumWide::A));
 
     MD5 first_hash("first");
     for(int i = 0; i < 4; ++i)
@@ -592,7 +592,7 @@ const TypeObject* GetMinimalSimpleWideUnionObject()
     mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
 
-    mst_second.common().label_seq().emplace_back(B);
+    mst_second.common().label_seq().emplace_back(static_cast<int32_t>(MyEnumWide::B));
 
     MD5 second_hash("second");
     for(int i = 0; i < 4; ++i)
@@ -613,7 +613,7 @@ const TypeObject* GetMinimalSimpleWideUnionObject()
     mst_third.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
 
-    mst_third.common().label_seq().emplace_back(D);
+    mst_third.common().label_seq().emplace_back(static_cast<int32_t>(MyEnumWide::D));
 
     MD5 third_hash("third");
     for(int i = 0; i < 4; ++i)
@@ -686,7 +686,7 @@ const TypeObject* GetCompleteSimpleWideUnionObject()
     type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
     type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
-    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
+    type_object->complete().union_type().discriminator().common().type_id(*GetMyEnumWideIdentifier(true));
 
     MemberId memberId = 0;
     CompleteUnionMember cst_first;
@@ -700,7 +700,7 @@ const TypeObject* GetCompleteSimpleWideUnionObject()
     cst_first.common().member_flags().IS_DEFAULT(false);
     cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
-    cst_first.common().label_seq().emplace_back(A);
+    cst_first.common().label_seq().emplace_back(static_cast<int32_t>(MyEnumWide::A));
 
 
     cst_first.detail().name("first");
@@ -718,7 +718,7 @@ const TypeObject* GetCompleteSimpleWideUnionObject()
     cst_second.common().member_flags().IS_DEFAULT(false);
     cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
-    cst_second.common().label_seq().emplace_back(B);
+    cst_second.common().label_seq().emplace_back(static_cast<int32_t>(MyEnumWide::B));
 
 
     cst_second.detail().name("second");
@@ -736,7 +736,7 @@ const TypeObject* GetCompleteSimpleWideUnionObject()
     cst_third.common().member_flags().IS_DEFAULT(false);
     cst_third.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
-    cst_third.common().label_seq().emplace_back(D);
+    cst_third.common().label_seq().emplace_back(static_cast<int32_t>(MyEnumWide::D));
 
 
     cst_third.detail().name("third");

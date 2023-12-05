@@ -23,7 +23,6 @@
 #define _FAST_DDS_GENERATED_TYPES_HPP_
 
 #include <array>
-#include <bitset>
 #include <cstdint>
 #include <map>
 #include <string>
@@ -31,8 +30,6 @@
 #include <vector>
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 
 
@@ -66,7 +63,7 @@
  * @brief This class represents the enumeration MyEnum defined by the user in the IDL file.
  * @ingroup Types
  */
-enum MyEnum : uint32_t
+enum class MyEnum : uint32_t
 {
     A,
     B,
@@ -76,7 +73,7 @@ enum MyEnum : uint32_t
  * @brief This class represents the enumeration MyBadEnum defined by the user in the IDL file.
  * @ingroup Types
  */
-enum MyBadEnum : uint32_t
+enum class MyBadEnum : uint32_t
 {
     A1,
     B1,
@@ -206,7 +203,7 @@ public:
 
 private:
 
-    MyEnum m_my_enum{::A};
+    MyEnum m_my_enum{MyEnum::A};
 
 };
 
@@ -333,7 +330,7 @@ public:
 
 private:
 
-    MyBadEnum m_my_enum{::A1};
+    MyBadEnum m_my_enum{MyBadEnum::A1};
 
 };
 typedef MyEnum MyAliasEnum;
@@ -462,7 +459,7 @@ public:
 
 private:
 
-    MyAliasEnum m_my_enum{::A};
+    MyAliasEnum m_my_enum{MyEnum::A};
 
 };
 
@@ -4733,7 +4730,7 @@ public:
      */
     eProsima_user_DllExport SimpleUnion()
     {
-        m__d = A;
+        m__d = 0;
     }
 
     /*!
@@ -4754,12 +4751,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first = x.m_first;
                 break;
 
 
-            case B:
+            case 1:
                 m_second = x.m_second;
                 break;
 
@@ -4779,12 +4776,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first = x.m_first;
                 break;
 
 
-            case B:
+            case 1:
                 m_second = x.m_second;
                 break;
 
@@ -4804,12 +4801,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first = x.m_first;
                 break;
 
 
-            case B:
+            case 1:
                 m_second = x.m_second;
                 break;
 
@@ -4831,12 +4828,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first = x.m_first;
                 break;
 
 
-            case B:
+            case 1:
                 m_second = x.m_second;
                 break;
 
@@ -4861,12 +4858,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 return (m_first == x.m_first);
                 break;
 
 
-            case B:
+            case 1:
                 return (m_second == x.m_second);
                 break;
 
@@ -4898,10 +4895,10 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 switch (__d)
                 {
-                    case A:
+                    case 0:
                         b = true;
                         break;
                     default:
@@ -4910,10 +4907,10 @@ public:
                 break;
 
 
-            case B:
+            case 1:
                 switch (__d)
                 {
-                    case B:
+                    case 1:
                         b = true;
                         break;
                     default:
@@ -4959,7 +4956,7 @@ public:
             int32_t _first)
     {
         m_first = _first;
-        m__d = A;
+        m__d = 0;
 
     }
 
@@ -4974,7 +4971,7 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 b = true;
                 break;
             default:
@@ -5000,7 +4997,7 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 b = true;
                 break;
             default:
@@ -5024,7 +5021,7 @@ public:
             int64_t _second)
     {
         m_second = _second;
-        m__d = B;
+        m__d = 1;
 
     }
 
@@ -5039,7 +5036,7 @@ public:
 
         switch (m__d)
         {
-            case B:
+            case 1:
                 b = true;
                 break;
             default:
@@ -5065,7 +5062,7 @@ public:
 
         switch (m__d)
         {
-            case B:
+            case 1:
                 b = true;
                 break;
             default:
@@ -5104,7 +5101,7 @@ public:
      */
     eProsima_user_DllExport SimpleUnionNames()
     {
-        m__d = A;
+        m__d = 0;
     }
 
     /*!
@@ -5125,12 +5122,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first_case = x.m_first_case;
                 break;
 
 
-            case B:
+            case 1:
                 m_second_case = x.m_second_case;
                 break;
 
@@ -5150,12 +5147,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first_case = x.m_first_case;
                 break;
 
 
-            case B:
+            case 1:
                 m_second_case = x.m_second_case;
                 break;
 
@@ -5175,12 +5172,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first_case = x.m_first_case;
                 break;
 
 
-            case B:
+            case 1:
                 m_second_case = x.m_second_case;
                 break;
 
@@ -5202,12 +5199,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first_case = x.m_first_case;
                 break;
 
 
-            case B:
+            case 1:
                 m_second_case = x.m_second_case;
                 break;
 
@@ -5232,12 +5229,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 return (m_first_case == x.m_first_case);
                 break;
 
 
-            case B:
+            case 1:
                 return (m_second_case == x.m_second_case);
                 break;
 
@@ -5269,10 +5266,10 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 switch (__d)
                 {
-                    case A:
+                    case 0:
                         b = true;
                         break;
                     default:
@@ -5281,10 +5278,10 @@ public:
                 break;
 
 
-            case B:
+            case 1:
                 switch (__d)
                 {
-                    case B:
+                    case 1:
                         b = true;
                         break;
                     default:
@@ -5330,7 +5327,7 @@ public:
             int32_t _first_case)
     {
         m_first_case = _first_case;
-        m__d = A;
+        m__d = 0;
 
     }
 
@@ -5345,7 +5342,7 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 b = true;
                 break;
             default:
@@ -5371,7 +5368,7 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 b = true;
                 break;
             default:
@@ -5395,7 +5392,7 @@ public:
             int64_t _second_case)
     {
         m_second_case = _second_case;
-        m__d = B;
+        m__d = 1;
 
     }
 
@@ -5410,7 +5407,7 @@ public:
 
         switch (m__d)
         {
-            case B:
+            case 1:
                 b = true;
                 break;
             default:
@@ -5436,7 +5433,7 @@ public:
 
         switch (m__d)
         {
-            case B:
+            case 1:
                 b = true;
                 break;
             default:
@@ -5475,7 +5472,7 @@ public:
      */
     eProsima_user_DllExport SimpleTypeUnion()
     {
-        m__d = A;
+        m__d = 0;
     }
 
     /*!
@@ -5496,12 +5493,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first = x.m_first;
                 break;
 
 
-            case B:
+            case 1:
                 m_second = x.m_second;
                 break;
 
@@ -5521,12 +5518,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first = x.m_first;
                 break;
 
 
-            case B:
+            case 1:
                 m_second = x.m_second;
                 break;
 
@@ -5546,12 +5543,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first = x.m_first;
                 break;
 
 
-            case B:
+            case 1:
                 m_second = x.m_second;
                 break;
 
@@ -5573,12 +5570,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first = x.m_first;
                 break;
 
 
-            case B:
+            case 1:
                 m_second = x.m_second;
                 break;
 
@@ -5603,12 +5600,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 return (m_first == x.m_first);
                 break;
 
 
-            case B:
+            case 1:
                 return (m_second == x.m_second);
                 break;
 
@@ -5640,10 +5637,10 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 switch (__d)
                 {
-                    case A:
+                    case 0:
                         b = true;
                         break;
                     default:
@@ -5652,10 +5649,10 @@ public:
                 break;
 
 
-            case B:
+            case 1:
                 switch (__d)
                 {
-                    case B:
+                    case 1:
                         b = true;
                         break;
                     default:
@@ -5701,7 +5698,7 @@ public:
             uint8_t _first)
     {
         m_first = _first;
-        m__d = A;
+        m__d = 0;
 
     }
 
@@ -5716,7 +5713,7 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 b = true;
                 break;
             default:
@@ -5742,7 +5739,7 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 b = true;
                 break;
             default:
@@ -5766,7 +5763,7 @@ public:
             int64_t _second)
     {
         m_second = _second;
-        m__d = B;
+        m__d = 1;
 
     }
 
@@ -5781,7 +5778,7 @@ public:
 
         switch (m__d)
         {
-            case B:
+            case 1:
                 b = true;
                 break;
             default:
@@ -5807,7 +5804,7 @@ public:
 
         switch (m__d)
         {
-            case B:
+            case 1:
                 b = true;
                 break;
             default:
@@ -5846,7 +5843,7 @@ public:
      */
     eProsima_user_DllExport SimpleBadUnion()
     {
-        m__d = A;
+        m__d = 0;
     }
 
     /*!
@@ -5867,12 +5864,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first = x.m_first;
                 break;
 
 
-            case C:
+            case 2:
                 m_second = x.m_second;
                 break;
 
@@ -5892,12 +5889,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first = x.m_first;
                 break;
 
 
-            case C:
+            case 2:
                 m_second = x.m_second;
                 break;
 
@@ -5917,12 +5914,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first = x.m_first;
                 break;
 
 
-            case C:
+            case 2:
                 m_second = x.m_second;
                 break;
 
@@ -5944,12 +5941,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 m_first = x.m_first;
                 break;
 
 
-            case C:
+            case 2:
                 m_second = x.m_second;
                 break;
 
@@ -5974,12 +5971,12 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 return (m_first == x.m_first);
                 break;
 
 
-            case C:
+            case 2:
                 return (m_second == x.m_second);
                 break;
 
@@ -6011,10 +6008,10 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 switch (__d)
                 {
-                    case A:
+                    case 0:
                         b = true;
                         break;
                     default:
@@ -6023,10 +6020,10 @@ public:
                 break;
 
 
-            case C:
+            case 2:
                 switch (__d)
                 {
-                    case C:
+                    case 2:
                         b = true;
                         break;
                     default:
@@ -6072,7 +6069,7 @@ public:
             int32_t _first)
     {
         m_first = _first;
-        m__d = A;
+        m__d = 0;
 
     }
 
@@ -6087,7 +6084,7 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 b = true;
                 break;
             default:
@@ -6113,7 +6110,7 @@ public:
 
         switch (m__d)
         {
-            case A:
+            case 0:
                 b = true;
                 break;
             default:
@@ -6137,7 +6134,7 @@ public:
             int64_t _second)
     {
         m_second = _second;
-        m__d = C;
+        m__d = 2;
 
     }
 
@@ -6152,7 +6149,7 @@ public:
 
         switch (m__d)
         {
-            case C:
+            case 2:
                 b = true;
                 break;
             default:
@@ -6178,7 +6175,7 @@ public:
 
         switch (m__d)
         {
-            case C:
+            case 2:
                 b = true;
                 break;
             default:
