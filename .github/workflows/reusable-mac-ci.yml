@@ -1,0 +1,159 @@
+name: Fast-DDS MacOS CI reusable workflow
+
+on:
+  workflow_call:
+    inputs:
+      label:
+        description: 'ID associated to the workflow'
+        required: true
+        type: string
+      colcon-args:
+        description: 'Extra arguments for colcon cli'
+        required: false
+        type: string
+      cmake-args:
+        description: 'Extra arguments for cmake cli'
+        required: false
+        type: string
+      ctest-args:
+        description: 'Extra arguments for ctest cli'
+        required: false
+        type: string
+      fastdds_branch:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        required: true
+        type: string
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  reusable-mac-ci:
+    runs-on: macos-latest
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        colcon-mixin-config:
+          - 'rel-with-deb-info'
+    steps:
+      - name: Sync eProsima/Fast-DDS repository
+        uses: actions/checkout@v4
+        with:
+          path: src/fastrtps
+
+      - name: Install dependencies
+        run: |
+          brew install llvm asio tinyxml2 openssl python3
+
+      - name: Get minimum supported version of CMake
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: '3.22.6'
+
+      - name: Install Python dependencies
+        run: |
+          pip3 install --upgrade -U \
+            vcstool \
+            xmlschema
+
+      - name: Install colcon
+        run: |
+          pip3 install --upgrade -U \
+            setuptools==58.3.0 \
+            colcon-common-extensions \
+            colcon-mixin
+          colcon mixin add default https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
+          colcon mixin update default
+
+      # TODO(eduponz): remove this step as it's on the CI repos file
+      # - name: Install googletest
+      #   run: |
+      #     git clone --branch release-1.11.0 https://github.com/google/googletest.git googletest
+
+      #     # Generate
+      #     cmake \
+      #       -DBUILD_GMOCK=ON \
+      #       -DCMAKE_BUILD_TYPE=${{ matrix.colcon-mixin-config }} \
+      #       -Dgtest_force_shared_crt=ON \
+      #       -DCMAKE_VERBOSE_MAKEFILE=ON \
+      #       -B ./googletest/build \
+      #       ./googletest
+
+      #     # Build and install
+      #     cmake --build ./googletest/build --target install
+
+      #     # Clean up
+      #     rm -r googletest
+
+      # TODO(eduponz)
+      # - name: Update known hosts file for DNS resolver testing
+      #   if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+      #   run: |
+
+      # TODO(eduponz)
+      # - name: Set up libp11 and SoftHSM
+      #   continue-on-error: true
+      #   run: |
+
+      - name: Prepare colcon workspace
+        run: |
+          # Nightly job
+          if [[ "${{ inputs.label }}" == *"nightly"* ]]
+          then
+            $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_${{ inputs.fastdds_branch }}.repos"
+            if [ ! -f $depends_repos_path ]
+            then
+              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_master.repos"
+            fi
+            $meta_path = ".\src\fastrtps\.github\workflows\config\nightly.meta"
+
+          # Either PR or manual
+          else
+            $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_${{ inputs.fastdds_branch }}.repos"
+            if [ ! -f $depends_repos_path ]
+            then
+              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_master.repos"
+            fi
+            $meta_path = ".\src\fastrtps\.github\workflows\config\default_ci.meta"
+          fi
+
+          echo "Selected repos files: $depends_repos_path"
+          cat $depends_repos_path
+
+          echo "Selected metas files: $meta_path"
+          cp $meta_path ci.meta
+          cat ci.meta
+
+          # Create source dir and download the sources
+          vcs import src --input $depends_repos_path --skip-existing
+
+      - name: Build
+        id: build
+        continue-on-error: false
+        run: |
+          colcon build \
+            --event-handlers=console_direct+ \
+            --mixin ${{ matrix.colcon-mixin-config }} \
+            --metas ci.meta \
+            ${{ inputs.colcon-args }} \
+            --cmake-args ${{ inputs.cmake-args }}
+
+      - name: Test
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        id: test
+        continue-on-error: false
+        run: |
+          colcon test \
+            --packages-select fastrtps \
+            --event-handlers=console_direct+ \
+            --ctest-args ${{ inputs.ctest-args }} \
+            --repeat until-pass:3 \
+            --timeout 300
+
+      # TODO(eduponz)
+      # - name: Create test Summary
+      #   id: summary
+      #   if: ${{ steps.test.outcome == 'success' }}
+      #   run: |

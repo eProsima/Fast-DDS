@@ -1,0 +1,57 @@
+name: Fast-DDS MacOS CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: 'ID associated to the workflow'
+        required: true
+        type: string
+      colcon-args:
+        description: 'Extra arguments for colcon cli'
+        required: false
+        type: string
+      cmake-args:
+        description: 'Extra arguments for cmake cli'
+        required: false
+        type: string
+      ctest-args:
+        description: 'Extra arguments for ctest cli'
+        required: false
+        type: string
+      fastdds_branch:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        type: string
+        required: true
+
+  push:
+    branches:
+      - 'master'
+      - '2.12.x'
+      - '2.11.x'
+      - '2.10.x'
+      - '2.6.x'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mac-ci:
+    uses: ./.github/workflows/reusable-mac-ci.yml
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+    with:
+      label: ${{ inputs.label || 'mac-ci' }}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: ${{ inputs.cmake-args }}
+      ctest-args: ${{ inputs.ctest-args }}
+      fastdds_branch: ${{ inputs.fastdds_branch || github.base_ref || github.ref || 'master' }}
