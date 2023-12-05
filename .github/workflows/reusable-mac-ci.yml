@@ -67,6 +67,9 @@ jobs:
           colcon mixin add default https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
           colcon mixin update default
 
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
       # TODO(eduponz)
       # - name: Update known hosts file for DNS resolver testing
       #   if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
