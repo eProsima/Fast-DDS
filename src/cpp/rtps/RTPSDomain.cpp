@@ -478,7 +478,17 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
     // RemoteServerAttributes already fill in above
 
+<<<<<<< HEAD
     RTPSParticipant* part = RTPSDomain::createParticipant(domain_id, enabled, client_att, listen);
+=======
+    // Check if the client must become a super client
+    if (ros_super_client_env())
+    {
+        client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SUPER_CLIENT;
+    }
+
+    RTPSParticipant* part = createParticipant(domain_id, enabled, client_att, listen);
+>>>>>>> f40d54c7e (Define a super client by environment variable  (#4047))
     if (nullptr != part)
     {
         // client successfully created
