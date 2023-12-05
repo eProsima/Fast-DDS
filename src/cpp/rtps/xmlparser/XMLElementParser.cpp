@@ -4666,6 +4666,49 @@ XMLP_ret XMLParser::getXMLEntityFactoryQos(
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLParser::getXMLBuiltinTransports(
+        tinyxml2::XMLElement* elem,
+        eprosima::fastdds::rtps::BuiltinTransports* bt,
+        uint8_t /*ident*/)
+{
+    /*
+        <xs:simpleType name="builtinTransports">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="NONE"/>
+                <xs:enumeration value="DEFAULT"/>
+                <xs:enumeration value="DEFAULTv6"/>
+                <xs:enumeration value="SHM"/>
+                <xs:enumeration value="UDPv4"/>
+                <xs:enumeration value="UDPv6"/>
+                <xs:enumeration value="LARGE_DATA"/>
+                <xs:enumeration value="LARGE_DATAv6"/>
+            </xs:restriction>
+        </xs:simpleType>
+     */
+    std::string text = get_element_text(elem);
+    if (text.empty())
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    if (!get_element_enum_value(text.c_str(), *bt,
+            NONE, eprosima::fastdds::rtps::BuiltinTransports::NONE,
+            DEFAULT_C, eprosima::fastdds::rtps::BuiltinTransports::DEFAULT,
+            DEFAULTv6, eprosima::fastdds::rtps::BuiltinTransports::DEFAULTv6,
+            SHM, eprosima::fastdds::rtps::BuiltinTransports::SHM,
+            UDPv4, eprosima::fastdds::rtps::BuiltinTransports::UDPv4,
+            UDPv6, eprosima::fastdds::rtps::BuiltinTransports::UDPv6,
+            LARGE_DATA, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA,
+            LARGE_DATAv6, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATAv6))
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' bad content");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
 }  // namespace xmlparser
 }  // namespace fastrtps
 }  // namespace eprosima
