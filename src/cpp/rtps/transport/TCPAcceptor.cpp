@@ -44,12 +44,8 @@ TCPAcceptor::TCPAcceptor(
     , locator_(locator)
     , io_service_(&io_service)
 {
-<<<<<<< HEAD
-    endpoint_ = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
-=======
     locator_.port = acceptor_.local_endpoint().port();
-    endpoint_ = asio::ip::tcp::endpoint(asio::ip::address::from_string(interface),
->>>>>>> 36f31dd53 (Add Autofill port to TCP Transport (#4061))
+    endpoint_ = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
                     IPLocator::getPhysicalPort(locator_));
 }
 
