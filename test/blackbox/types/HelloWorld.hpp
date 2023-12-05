@@ -22,19 +22,10 @@
 #ifndef _FAST_DDS_GENERATED_HELLOWORLD_HPP_
 #define _FAST_DDS_GENERATED_HELLOWORLD_HPP_
 
-#include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
 #include <string>
 #include <utility>
-#include <vector>
-
 #include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 
 #include "HelloWorldTypeObject.h"
 

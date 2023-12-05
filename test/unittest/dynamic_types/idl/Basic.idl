@@ -166,25 +166,25 @@ struct StructStructStruct
 
 union SimpleUnion switch (long)
 {
-    case A:
+    case 0:
         long first;
-    case B:
+    case 1:
         long long second;
 };
 
 union UnionUnion switch (long)
 {
-    case A:
+    case 0:
         long first;
-    case B:
+    case 1:
         SimpleUnion second;
 };
 
 union WCharUnion switch (wchar)
 {
-    case A:
+    case 'A':
         long first;
-    case B:
+    case 'B':
         long long second;
 };
 

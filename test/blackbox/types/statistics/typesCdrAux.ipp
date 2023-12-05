@@ -1494,51 +1494,51 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+        case HISTORY2HISTORY_LATENCY:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
                                 data.writer_reader_data(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::NETWORK_LATENCY:
+        case NETWORK_LATENCY:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.locator2locator_data(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-        case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+        case PUBLICATION_THROUGHPUT:
+        case SUBSCRIPTION_THROUGHPUT:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.entity_data(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::RTPS_SENT:
-        case eprosima::fastdds::statistics::RTPS_LOST:
+        case RTPS_SENT:
+        case RTPS_LOST:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.entity2locator_traffic(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::RESENT_DATAS:
-        case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-        case eprosima::fastdds::statistics::ACKNACK_COUNT:
-        case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-        case eprosima::fastdds::statistics::GAP_COUNT:
-        case eprosima::fastdds::statistics::DATA_COUNT:
-        case eprosima::fastdds::statistics::PDP_PACKETS:
-        case eprosima::fastdds::statistics::EDP_PACKETS:
+        case RESENT_DATAS:
+        case HEARTBEAT_COUNT:
+        case ACKNACK_COUNT:
+        case NACKFRAG_COUNT:
+        case GAP_COUNT:
+        case DATA_COUNT:
+        case PDP_PACKETS:
+        case EDP_PACKETS:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.entity_count(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+        case DISCOVERED_ENTITY:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.discovery_time(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::SAMPLE_DATAS:
+        case SAMPLE_DATAS:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.sample_identity_count(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::PHYSICAL_DATA:
+        case PHYSICAL_DATA:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.physical_data(), current_alignment);
                     break;
@@ -1570,44 +1570,44 @@ eProsima_user_DllExport void serialize(
 
     switch (data._d())
     {
-                case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+                case HISTORY2HISTORY_LATENCY:
                     scdr << eprosima::fastcdr::MemberId(0) << data.writer_reader_data();
                     break;
 
-                case eprosima::fastdds::statistics::NETWORK_LATENCY:
+                case NETWORK_LATENCY:
                     scdr << eprosima::fastcdr::MemberId(1) << data.locator2locator_data();
                     break;
 
-                case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-                case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+                case PUBLICATION_THROUGHPUT:
+                case SUBSCRIPTION_THROUGHPUT:
                     scdr << eprosima::fastcdr::MemberId(2) << data.entity_data();
                     break;
 
-                case eprosima::fastdds::statistics::RTPS_SENT:
-                case eprosima::fastdds::statistics::RTPS_LOST:
+                case RTPS_SENT:
+                case RTPS_LOST:
                     scdr << eprosima::fastcdr::MemberId(3) << data.entity2locator_traffic();
                     break;
 
-                case eprosima::fastdds::statistics::RESENT_DATAS:
-                case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-                case eprosima::fastdds::statistics::ACKNACK_COUNT:
-                case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-                case eprosima::fastdds::statistics::GAP_COUNT:
-                case eprosima::fastdds::statistics::DATA_COUNT:
-                case eprosima::fastdds::statistics::PDP_PACKETS:
-                case eprosima::fastdds::statistics::EDP_PACKETS:
+                case RESENT_DATAS:
+                case HEARTBEAT_COUNT:
+                case ACKNACK_COUNT:
+                case NACKFRAG_COUNT:
+                case GAP_COUNT:
+                case DATA_COUNT:
+                case PDP_PACKETS:
+                case EDP_PACKETS:
                     scdr << eprosima::fastcdr::MemberId(4) << data.entity_count();
                     break;
 
-                case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+                case DISCOVERED_ENTITY:
                     scdr << eprosima::fastcdr::MemberId(5) << data.discovery_time();
                     break;
 
-                case eprosima::fastdds::statistics::SAMPLE_DATAS:
+                case SAMPLE_DATAS:
                     scdr << eprosima::fastcdr::MemberId(6) << data.sample_identity_count();
                     break;
 
-                case eprosima::fastdds::statistics::PHYSICAL_DATA:
+                case PHYSICAL_DATA:
                     scdr << eprosima::fastcdr::MemberId(7) << data.physical_data();
                     break;
 
@@ -1639,44 +1639,44 @@ eProsima_user_DllExport void deserialize(
                     default:
                         switch (data._d())
                         {
-                                                        case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+                                                        case HISTORY2HISTORY_LATENCY:
                                                             dcdr >> data.writer_reader_data();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::NETWORK_LATENCY:
+                                                        case NETWORK_LATENCY:
                                                             dcdr >> data.locator2locator_data();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-                                                        case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+                                                        case PUBLICATION_THROUGHPUT:
+                                                        case SUBSCRIPTION_THROUGHPUT:
                                                             dcdr >> data.entity_data();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::RTPS_SENT:
-                                                        case eprosima::fastdds::statistics::RTPS_LOST:
+                                                        case RTPS_SENT:
+                                                        case RTPS_LOST:
                                                             dcdr >> data.entity2locator_traffic();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::RESENT_DATAS:
-                                                        case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-                                                        case eprosima::fastdds::statistics::ACKNACK_COUNT:
-                                                        case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-                                                        case eprosima::fastdds::statistics::GAP_COUNT:
-                                                        case eprosima::fastdds::statistics::DATA_COUNT:
-                                                        case eprosima::fastdds::statistics::PDP_PACKETS:
-                                                        case eprosima::fastdds::statistics::EDP_PACKETS:
+                                                        case RESENT_DATAS:
+                                                        case HEARTBEAT_COUNT:
+                                                        case ACKNACK_COUNT:
+                                                        case NACKFRAG_COUNT:
+                                                        case GAP_COUNT:
+                                                        case DATA_COUNT:
+                                                        case PDP_PACKETS:
+                                                        case EDP_PACKETS:
                                                             dcdr >> data.entity_count();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+                                                        case DISCOVERED_ENTITY:
                                                             dcdr >> data.discovery_time();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::SAMPLE_DATAS:
+                                                        case SAMPLE_DATAS:
                                                             dcdr >> data.sample_identity_count();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::PHYSICAL_DATA:
+                                                        case PHYSICAL_DATA:
                                                             dcdr >> data.physical_data();
                                                             break;
 
