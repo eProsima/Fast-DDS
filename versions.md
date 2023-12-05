@@ -3,6 +3,7 @@ Forthcoming
 
 * Enable configuration of thread setting for all threads.
 * Added the possibility to define interfaces in the whitelist by interface name.
+* Enable support for DataRepresentationQos to select the CDR encoding.
 
 Version 2.12.0
 --------------
