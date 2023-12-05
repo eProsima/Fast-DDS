@@ -14,7 +14,7 @@ struct MyEnumWideStruct
 };
 
 
-union SimpleWideUnion switch (long)
+union SimpleWideUnion switch (MyEnumWide)
 {
     case A:
         long first;

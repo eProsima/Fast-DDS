@@ -23,17 +23,8 @@
 #define _FAST_DDS_GENERATED_HELLOWORLD_HPP_
 
 #include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
-#include <string>
 #include <utility>
-#include <vector>
-
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -92,9 +83,9 @@ public:
     eProsima_user_DllExport HelloWorld(
             const HelloWorld& x)
     {
-                    m_index = x.m_index;
+        m_index = x.m_index;
 
-                    m_message = x.m_message;
+        m_message = x.m_message;
 
     }
 
@@ -117,9 +108,9 @@ public:
             const HelloWorld& x)
     {
 
-                    m_index = x.m_index;
+        m_index = x.m_index;
 
-                    m_message = x.m_message;
+        m_message = x.m_message;
 
         return *this;
     }
@@ -145,7 +136,7 @@ public:
             const HelloWorld& x) const
     {
         return (m_index == x.m_index &&
-           m_message == x.m_message);
+               m_message == x.m_message);
     }
 
     /*!
@@ -186,7 +177,6 @@ public:
         return m_index;
     }
 
-
     /*!
      * @brief This function copies the value in member message
      * @param _message New value to be copied in member message
@@ -224,8 +214,6 @@ public:
     {
         return m_message;
     }
-
-
 
 private:
 

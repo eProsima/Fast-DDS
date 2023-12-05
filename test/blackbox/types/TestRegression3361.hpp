@@ -22,19 +22,8 @@
 #ifndef _FAST_DDS_GENERATED_TESTREGRESSION3361_HPP_
 #define _FAST_DDS_GENERATED_TESTREGRESSION3361_HPP_
 
-#include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
-#include <string>
 #include <utility>
-#include <vector>
-
-#include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 #include "TestIncludeRegression3361.hpp"
 
 #include "TestRegression3361TypeObject.h"

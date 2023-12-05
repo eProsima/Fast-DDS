@@ -23,18 +23,12 @@
 #define _FAST_DDS_GENERATED_CONTENTFILTERTESTTYPE_HPP_
 
 #include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 
 #include "ContentFilterTestTypeTypeObject.h"
 
@@ -66,7 +60,7 @@
  * @brief This class represents the enumeration Color defined by the user in the IDL file.
  * @ingroup ContentFilterTestType
  */
-enum Color : uint32_t
+enum class Color : uint32_t
 {
     RED,
     GREEN,
@@ -78,7 +72,7 @@ enum Color : uint32_t
  * @brief This class represents the enumeration Material defined by the user in the IDL file.
  * @ingroup ContentFilterTestType
  */
-enum Material : uint32_t
+enum class Material : uint32_t
 {
     WOOD,
     PLASTIC,
@@ -737,8 +731,8 @@ private:
     long double m_long_double_field{0.0};
     bool m_bool_field{false};
     std::string m_string_field;
-    Color m_enum_field{::RED};
-    Material m_enum2_field{::WOOD};
+    Color m_enum_field{Color::RED};
+    Material m_enum2_field{Material::WOOD};
 
 };
 const uint32_t max_array_size = 3;
@@ -3648,8 +3642,8 @@ private:
     long double m_long_double_field{0.0};
     bool m_bool_field{false};
     std::string m_string_field;
-    Color m_enum_field{::RED};
-    Material m_enum2_field{::WOOD};
+    Color m_enum_field{Color::RED};
+    Material m_enum2_field{Material::WOOD};
     StructType m_struct_field;
     std::array<char, max_array_size> m_array_char_field{0};
     std::array<uint8_t, max_array_size> m_array_uint8_field{0};
@@ -3664,8 +3658,8 @@ private:
     std::array<long double, max_array_size> m_array_long_double_field{0.0};
     std::array<bool, max_array_size> m_array_bool_field{false};
     std::array<std::string, max_array_size> m_array_string_field;
-    std::array<Color, max_array_size> m_array_enum_field{::RED};
-    std::array<Material, max_array_size> m_array_enum2_field{::WOOD};
+    std::array<Color, max_array_size> m_array_enum_field{Color::RED};
+    std::array<Material, max_array_size> m_array_enum2_field{Material::WOOD};
     std::array<StructType, max_array_size> m_array_struct_field;
     std::vector<char> m_bounded_sequence_char_field;
     std::vector<uint8_t> m_bounded_sequence_uint8_field;

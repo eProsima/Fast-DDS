@@ -22,18 +22,8 @@
 #ifndef _FAST_DDS_GENERATED_FILTERINGEXAMPLE_HPP_
 #define _FAST_DDS_GENERATED_FILTERINGEXAMPLE_HPP_
 
-#include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
-#include <string>
 #include <utility>
-#include <vector>
-
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -90,7 +80,7 @@ public:
     eProsima_user_DllExport FilteringExample(
             const FilteringExample& x)
     {
-                    m_sampleNumber = x.m_sampleNumber;
+        m_sampleNumber = x.m_sampleNumber;
 
     }
 
@@ -112,7 +102,7 @@ public:
             const FilteringExample& x)
     {
 
-                    m_sampleNumber = x.m_sampleNumber;
+        m_sampleNumber = x.m_sampleNumber;
 
         return *this;
     }
@@ -176,8 +166,6 @@ public:
     {
         return m_sampleNumber;
     }
-
-
 
 private:
 
