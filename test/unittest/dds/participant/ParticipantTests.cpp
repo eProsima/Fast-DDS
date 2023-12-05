@@ -738,8 +738,6 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfiguration)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
-<<<<<<< HEAD
-=======
 
 /**
  * Test that a SIMPLE participant is transformed into a CLIENT if the variable ROS_SUPER_CLIENT is false and into a SUPERCLIENT if it's true.
@@ -881,7 +879,6 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfigurationDNS)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
->>>>>>> f40d54c7e (Define a super client by environment variable  (#4047))
 /**
  * This test checks the dynamic addition of remote servers to a SIMPLE participant that has been transformed to a CLIENT
  */
