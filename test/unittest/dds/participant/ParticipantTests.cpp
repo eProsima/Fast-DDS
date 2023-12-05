@@ -738,6 +738,150 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfiguration)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
+<<<<<<< HEAD
+=======
+
+/**
+ * Test that a SIMPLE participant is transformed into a CLIENT if the variable ROS_SUPER_CLIENT is false and into a SUPERCLIENT if it's true.
+ * It also checks that the environment variable has priority over the coded QoS settings.
+ */
+TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
+{
+    set_environment_variable();
+
+#ifdef _WIN32
+    ASSERT_EQ(0, _putenv_s(rtps::ROS_SUPER_CLIENT, "false"));
+#else
+    ASSERT_EQ(0, setenv(rtps::ROS_SUPER_CLIENT, "false", 1));
+#endif // _WIN32
+
+    rtps::RemoteServerList_t output;
+    rtps::RemoteServerList_t qos_output;
+    expected_remote_server_list_output(output);
+
+    DomainParticipantQos qos;
+    set_participant_qos(qos, qos_output);
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, qos);
+    ASSERT_NE(nullptr, participant);
+
+    fastrtps::rtps::RTPSParticipantAttributes attributes;
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+
+#ifdef _WIN32
+    ASSERT_EQ(0, _putenv_s(rtps::ROS_SUPER_CLIENT, "true"));
+#else
+    ASSERT_EQ(0, setenv(rtps::ROS_SUPER_CLIENT, "true", 1));
+#endif // _WIN32
+
+    DomainParticipant* participant_2 = DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, qos);
+    ASSERT_NE(nullptr, participant_2);
+
+    fastrtps::rtps::RTPSParticipantAttributes attributes_2;
+    get_rtps_attributes(participant_2, attributes_2);
+    EXPECT_EQ(attributes_2.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SUPER_CLIENT);
+    EXPECT_EQ(attributes_2.builtin.discovery_config.m_DiscoveryServers, output);
+
+    // check UDPv6 transport is there
+    auto udpv6_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes) -> bool
+            {
+                for (auto& transportDescriptor : attributes.userTransports)
+                {
+                    if ( nullptr != dynamic_cast<fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            };
+    EXPECT_TRUE(udpv6_check(attributes));
+
+    DomainParticipantQos result_qos = participant->get_qos();
+    EXPECT_EQ(result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers, qos_output);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+
+    // check UDPv6 transport is there
+    auto udpv6_check_2 = [](fastrtps::rtps::RTPSParticipantAttributes& attributes_2) -> bool
+            {
+                for (auto& transportDescriptor : attributes_2.userTransports)
+                {
+                    if ( nullptr != dynamic_cast<fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            };
+    EXPECT_TRUE(udpv6_check_2(attributes_2));
+
+    result_qos = participant_2->get_qos();
+    EXPECT_EQ(result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers, qos_output);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant_2->set_qos(result_qos));
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_2));
+}
+
+
+
+/**
+ * Test that:
+ * + checks a SIMPLE participant is transformed into a CLIENT.
+ * + the environment variable resolves DNS inputs adding both IPv4 and IPv6 locators
+ * + UDPv6 transport is included to service IPv6 locators
+ */
+TEST(ParticipantTests, SimpleParticipantRemoteServerListConfigurationDNS)
+{
+    // populate environment
+    set_environment_variable("www.acme.com.test");
+
+    // fill in expected result
+    rtps::RemoteServerAttributes server;
+    fastrtps::rtps::Locator_t locator4(11811), locator6(LOCATOR_KIND_UDPv6, 11811);
+    fastrtps::rtps::IPLocator::setIPv4(locator4, "216.58.215.164");
+    fastrtps::rtps::IPLocator::setIPv6(locator6, "2a00:1450:400e:803::2004");
+    server.metatrafficUnicastLocatorList.push_back(locator4);
+    server.metatrafficUnicastLocatorList.push_back(locator6);
+    get_server_client_default_guidPrefix(0, server.guidPrefix);
+
+    rtps::RemoteServerList_t output;
+    output.push_back(server);
+
+    // Create the participant
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0,
+                    PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+
+    fastrtps::rtps::RTPSParticipantAttributes attributes;
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+
+    // check UDPv6 transport is there
+    auto udpv6_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes) -> bool
+            {
+                for (auto& transportDescriptor : attributes.userTransports)
+                {
+                    if ( nullptr != dynamic_cast<fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            };
+    EXPECT_TRUE(udpv6_check(attributes));
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+}
+
+>>>>>>> f40d54c7e (Define a super client by environment variable  (#4047))
 /**
  * This test checks the dynamic addition of remote servers to a SIMPLE participant that has been transformed to a CLIENT
  */
