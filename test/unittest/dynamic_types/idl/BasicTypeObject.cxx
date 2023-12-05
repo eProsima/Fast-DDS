@@ -6633,7 +6633,7 @@ const TypeObject* GetMinimalSimpleUnionObject()
     mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
 
-    mst_first.common().label_seq().emplace_back(A);
+    mst_first.common().label_seq().emplace_back(static_cast<int32_t>(0));
 
     MD5 first_hash("first");
     for(int i = 0; i < 4; ++i)
@@ -6654,7 +6654,7 @@ const TypeObject* GetMinimalSimpleUnionObject()
     mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
 
-    mst_second.common().label_seq().emplace_back(B);
+    mst_second.common().label_seq().emplace_back(static_cast<int32_t>(1));
 
     MD5 second_hash("second");
     for(int i = 0; i < 4; ++i)
@@ -6741,7 +6741,7 @@ const TypeObject* GetCompleteSimpleUnionObject()
     cst_first.common().member_flags().IS_DEFAULT(false);
     cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
-    cst_first.common().label_seq().emplace_back(A);
+    cst_first.common().label_seq().emplace_back(static_cast<int32_t>(0));
 
 
     cst_first.detail().name("first");
@@ -6759,7 +6759,7 @@ const TypeObject* GetCompleteSimpleUnionObject()
     cst_second.common().member_flags().IS_DEFAULT(false);
     cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
-    cst_second.common().label_seq().emplace_back(B);
+    cst_second.common().label_seq().emplace_back(static_cast<int32_t>(1));
 
 
     cst_second.detail().name("second");
@@ -6874,7 +6874,7 @@ const TypeObject* GetMinimalUnionUnionObject()
     mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
 
-    mst_first.common().label_seq().emplace_back(A);
+    mst_first.common().label_seq().emplace_back(static_cast<int32_t>(0));
 
     MD5 first_hash("first");
     for(int i = 0; i < 4; ++i)
@@ -6894,7 +6894,7 @@ const TypeObject* GetMinimalUnionUnionObject()
     mst_second.common().member_flags().IS_DEFAULT(false);
     mst_second.common().type_id(*GetSimpleUnionIdentifier(false));
 
-    mst_second.common().label_seq().emplace_back(B);
+    mst_second.common().label_seq().emplace_back(static_cast<int32_t>(1));
 
     MD5 second_hash("second");
     for(int i = 0; i < 4; ++i)
@@ -6981,7 +6981,7 @@ const TypeObject* GetCompleteUnionUnionObject()
     cst_first.common().member_flags().IS_DEFAULT(false);
     cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
-    cst_first.common().label_seq().emplace_back(A);
+    cst_first.common().label_seq().emplace_back(static_cast<int32_t>(0));
 
 
     cst_first.detail().name("first");
@@ -6998,7 +6998,7 @@ const TypeObject* GetCompleteUnionUnionObject()
     cst_second.common().member_flags().IS_KEY(false); // Doesn't apply
     cst_second.common().member_flags().IS_DEFAULT(false);
     cst_second.common().type_id(*GetSimpleUnionIdentifier(true));
-    cst_second.common().label_seq().emplace_back(B);
+    cst_second.common().label_seq().emplace_back(static_cast<int32_t>(1));
 
 
     cst_second.detail().name("second");
@@ -7113,7 +7113,7 @@ const TypeObject* GetMinimalWCharUnionObject()
     mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
 
-    mst_first.common().label_seq().emplace_back(A);
+    mst_first.common().label_seq().emplace_back(static_cast<int32_t>('A'));
 
     MD5 first_hash("first");
     for(int i = 0; i < 4; ++i)
@@ -7134,7 +7134,7 @@ const TypeObject* GetMinimalWCharUnionObject()
     mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
 
-    mst_second.common().label_seq().emplace_back(B);
+    mst_second.common().label_seq().emplace_back(static_cast<int32_t>('B'));
 
     MD5 second_hash("second");
     for(int i = 0; i < 4; ++i)
@@ -7221,7 +7221,7 @@ const TypeObject* GetCompleteWCharUnionObject()
     cst_first.common().member_flags().IS_DEFAULT(false);
     cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
-    cst_first.common().label_seq().emplace_back(A);
+    cst_first.common().label_seq().emplace_back(static_cast<int32_t>('A'));
 
 
     cst_first.detail().name("first");
@@ -7239,7 +7239,7 @@ const TypeObject* GetCompleteWCharUnionObject()
     cst_second.common().member_flags().IS_DEFAULT(false);
     cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int64_t", false));
 
-    cst_second.common().label_seq().emplace_back(B);
+    cst_second.common().label_seq().emplace_back(static_cast<int32_t>('B'));
 
 
     cst_second.detail().name("second");

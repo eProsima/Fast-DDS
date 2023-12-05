@@ -134,17 +134,17 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case A:
+        case MyEnumWide::A:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
                                 data.first(), current_alignment);
                     break;
 
-        case B:
+        case MyEnumWide::B:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.second(), current_alignment);
                     break;
 
-        case D:
+        case MyEnumWide::D:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.third(), current_alignment);
                     break;
@@ -174,15 +174,15 @@ eProsima_user_DllExport void serialize(
 
     switch (data._d())
     {
-                case A:
+                case MyEnumWide::A:
                     scdr << eprosima::fastcdr::MemberId(0) << data.first();
                     break;
 
-                case B:
+                case MyEnumWide::B:
                     scdr << eprosima::fastcdr::MemberId(1) << data.second();
                     break;
 
-                case D:
+                case MyEnumWide::D:
                     scdr << eprosima::fastcdr::MemberId(2) << data.third();
                     break;
 
@@ -212,15 +212,15 @@ eProsima_user_DllExport void deserialize(
                     default:
                         switch (data._d())
                         {
-                                                        case A:
+                                                        case MyEnumWide::A:
                                                             dcdr >> data.first();
                                                             break;
 
-                                                        case B:
+                                                        case MyEnumWide::B:
                                                             dcdr >> data.second();
                                                             break;
 
-                                                        case D:
+                                                        case MyEnumWide::D:
                                                             dcdr >> data.third();
                                                             break;
 

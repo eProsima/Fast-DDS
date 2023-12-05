@@ -28,6 +28,12 @@ files_needing_output_dir=(
     './include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.idl|./detail'
     )
 
+files_needing_no_typesupport=(
+    './include/fastdds/dds/core/detail/DDSReturnCode.idl'
+    './include/fastdds/dds/core/detail/DDSSecurityReturnCode.idl'
+    './include/fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.idl'
+    )
+
 red='\E[1;31m'
 yellow='\E[1;33m'
 textreset='\E[1;0m'
@@ -69,6 +75,8 @@ for idl_file in "${idl_files[@]}"; do
     # Detect if needs case sensitive.
     [[ ${files_needing_case_sensitive[*]} =~ $idl_file ]] && cs_arg='-cs' || cs_arg=''
 
+    [[ ${files_needing_no_typesupport[*]} =~ $idl_file ]] && nosupport_arg='-no-typesupport' || nosupport_arg=''
+
     # Detect if needs output directories.
     not_processed=true
     for od_entry in ${files_needing_output_dir[@]}; do
@@ -84,7 +92,7 @@ for idl_file in "${idl_files[@]}"; do
     done
 
     if $not_processed ; then
-        fastddsgen -replace -genapi $to_arg $cs_arg "$file_from_gen"
+        fastddsgen -replace -genapi $to_arg $cs_arg $nosupport_arg "$file_from_gen"
     fi
 
     if [[ $? != 0 ]]; then

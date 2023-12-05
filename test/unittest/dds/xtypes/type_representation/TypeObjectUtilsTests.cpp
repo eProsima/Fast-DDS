@@ -1255,7 +1255,7 @@ TEST(TypeObjectUtilsTests, build_complete_annotation_parameter_inconsistent_data
     AnnotationParameterValue char8_param = TypeObjectUtils::build_annotation_parameter_value('A');
     AnnotationParameterValue char16_param = TypeObjectUtils::build_annotation_parameter_value(L'A');
     AnnotationParameterValue enum_param = TypeObjectUtils::build_annotation_parameter_value_enum(
-        TryConstructFailAction::DISCARD);
+        static_cast<int32_t>(TryConstructFailAction::DISCARD));
     AnnotationParameterValue string8_param = TypeObjectUtils::build_annotation_parameter_value("Hello");
     AnnotationParameterValue string16_param = TypeObjectUtils::build_annotation_parameter_value(L"Hello");
     std::vector<AnnotationParameterValue> ann_param_seq;

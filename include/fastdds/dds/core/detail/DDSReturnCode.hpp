@@ -23,6 +23,7 @@
 #define _FAST_DDS_GENERATED_DDSRETURNCODE_HPP_
 
 #include <cstdint>
+#include <utility>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -79,4 +80,5 @@ const ReturnCode_t RETCODE_ILLEGAL_OPERATION = 12;
 
 
 #endif // _FAST_DDS_GENERATED_DDSRETURNCODE_HPP_
+
 
