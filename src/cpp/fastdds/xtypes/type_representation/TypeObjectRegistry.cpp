@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
+#include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
 #include <exception>
 #include <mutex>
@@ -189,44 +189,6 @@ ReturnCode_t TypeObjectRegistry::get_type_identifiers(
     return eprosima::fastdds::dds::RETCODE_OK;
 }
 
-TypeObjectRegistry::TypeObjectRegistry()
-{
-    register_primitive_type_identifiers();
-    /* TODO(jlbueno)
-        register_builtin_annotations_type_objects();
-     */
-}
-
-ReturnCode_t TypeObjectRegistry::register_type_object(
-        const TypeIdentifier& type_identifier,
-        const TypeObject& type_object)
-{
-    uint32_t type_object_serialized_size = 0;
-    TypeObject minimal_type_object;
-    if (type_identifier._d() != type_object._d() ||
-            type_identifier != calculate_type_identifier(type_object, type_object_serialized_size))
-    {
-        return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
-    }
-    if (EK_COMPLETE == type_object._d())
-    {
-        TypeRegistryEntry entry;
-        entry.type_object_ = build_minimal_from_complete_type_object(type_object.complete());
-        TypeIdentifier minimal_type_id = calculate_type_identifier(entry.type_object_,
-                        entry.type_object_serialized_size_);
-
-        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-        type_registry_entries_.insert({minimal_type_id, entry});
-    }
-    TypeRegistryEntry entry;
-    entry.type_object_ = type_object;
-    entry.type_object_serialized_size_ = type_object_serialized_size;
-
-    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-    type_registry_entries_.insert({type_identifier, entry});
-    return eprosima::fastdds::dds::RETCODE_OK;
-}
-
 ReturnCode_t TypeObjectRegistry::get_type_object(
         const TypeIdentifier& type_identifier,
         TypeObject& type_object)
@@ -290,15 +252,6 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
     return ret_code;
 }
 
-ReturnCode_t TypeObjectRegistry::are_types_compatible(
-        const TypeIdentifierPair& type_identifiers,
-        const TypeConsistencyEnforcementQosPolicy& type_consistency_qos)
-{
-    static_cast<void>(type_identifiers);
-    static_cast<void>(type_consistency_qos);
-    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
-}
-
 ReturnCode_t TypeObjectRegistry::get_type_dependencies(
         const TypeIdentifierSeq& type_identifiers,
         std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
@@ -322,6 +275,122 @@ ReturnCode_t TypeObjectRegistry::get_type_dependencies(
         }
     }
     return ret_code;
+}
+
+bool TypeObjectRegistry::is_type_identifier_known(
+        const TypeIdentifier& type_identifier)
+{
+    if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier))
+    {
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        if (type_registry_entries_.find(type_identifier) != type_registry_entries_.end())
+        {
+            return true;
+        }
+    }
+
+    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+    for (const auto& it : local_type_identifiers_)
+    {
+        if (it.second.type_identifier1() == type_identifier || it.second.type_identifier2() == type_identifier)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool TypeObjectRegistry::is_builtin_annotation(
+        const TypeIdentifier& type_identifier)
+{
+    if (!TypeObjectUtils::is_direct_hash_type_identifier(type_identifier))
+    {
+        return false;
+    }
+
+    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+    for (const auto& it : local_type_identifiers_)
+    {
+        if (it.second.type_identifier1() == type_identifier || it.second.type_identifier2() == type_identifier)
+        {
+            return is_builtin_annotation_name(it.first);
+        }
+    }
+    return false;
+}
+
+const TypeIdentifier TypeObjectRegistry::calculate_type_identifier(
+        const TypeObject& type_object,
+        uint32_t& type_object_serialized_size)
+{
+    TypeIdentifier type_id;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t current_alignment {0};
+    eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
+                calculator.calculate_serialized_size(type_object, current_alignment)));
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+            eprosima::fastcdr::CdrVersion::XCDRv2);
+    ser << type_object;
+    type_object_serialized_size = static_cast<uint32_t>(ser.get_serialized_data_length());
+    EquivalenceHash equivalence_hash;
+    MD5 type_object_hash;
+    type_object_hash.update(reinterpret_cast<char*>(payload.data), type_object_serialized_size);
+    type_object_hash.finalize();
+    for (size_t i = 0; i < equivalence_hash.size(); i++)
+    {
+        equivalence_hash[i] = type_object_hash.digest[i];
+    }
+    type_id.equivalence_hash(equivalence_hash);
+    type_id._d(type_object._d());
+    return type_id;
+}
+
+TypeObjectRegistry::TypeObjectRegistry()
+{
+    register_primitive_type_identifiers();
+    /* TODO(jlbueno)
+        register_builtin_annotations_type_objects();
+     */
+}
+
+ReturnCode_t TypeObjectRegistry::register_type_object(
+        const TypeIdentifier& type_identifier,
+        const TypeObject& type_object)
+{
+    uint32_t type_object_serialized_size = 0;
+    TypeObject minimal_type_object;
+    if (type_identifier._d() != type_object._d() ||
+            type_identifier != calculate_type_identifier(type_object, type_object_serialized_size))
+    {
+        return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
+    }
+    if (EK_COMPLETE == type_object._d())
+    {
+        TypeRegistryEntry entry;
+        entry.type_object_ = build_minimal_from_complete_type_object(type_object.complete());
+        TypeIdentifier minimal_type_id = calculate_type_identifier(entry.type_object_,
+                        entry.type_object_serialized_size_);
+
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        type_registry_entries_.insert({minimal_type_id, entry});
+    }
+    TypeRegistryEntry entry;
+    entry.type_object_ = type_object;
+    entry.type_object_serialized_size_ = type_object_serialized_size;
+
+    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+    type_registry_entries_.insert({type_identifier, entry});
+    return eprosima::fastdds::dds::RETCODE_OK;
+}
+
+ReturnCode_t TypeObjectRegistry::are_types_compatible(
+        const TypeIdentifierPair& type_identifiers,
+        const TypeConsistencyEnforcementQosPolicy& type_consistency_qos)
+{
+    static_cast<void>(type_identifiers);
+    static_cast<void>(type_consistency_qos);
+    return eprosima::fastdds::dds::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
@@ -414,48 +483,6 @@ void TypeObjectRegistry::add_dependency(
     type_dependencies.insert(type_id_size);
 }
 
-bool TypeObjectRegistry::is_type_identifier_known(
-        const TypeIdentifier& type_identifier)
-{
-    if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier))
-    {
-        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-        if (type_registry_entries_.find(type_identifier) != type_registry_entries_.end())
-        {
-            return true;
-        }
-    }
-
-    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-    for (const auto& it : local_type_identifiers_)
-    {
-        if (it.second.type_identifier1() == type_identifier || it.second.type_identifier2() == type_identifier)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool TypeObjectRegistry::is_builtin_annotation(
-        const TypeIdentifier& type_identifier)
-{
-    if (!TypeObjectUtils::is_direct_hash_type_identifier(type_identifier))
-    {
-        return false;
-    }
-
-    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-    for (const auto& it : local_type_identifiers_)
-    {
-        if (it.second.type_identifier1() == type_identifier || it.second.type_identifier2() == type_identifier)
-        {
-            return is_builtin_annotation_name(it.first);
-        }
-    }
-    return false;
-}
-
 bool TypeObjectRegistry::is_builtin_annotation_name(
         const std::string& name)
 {
@@ -477,33 +504,6 @@ bool TypeObjectRegistry::is_builtin_annotation_name(
         return true;
     }
     return false;
-}
-
-const TypeIdentifier TypeObjectRegistry::calculate_type_identifier(
-        const TypeObject& type_object,
-        uint32_t& type_object_serialized_size)
-{
-    TypeIdentifier type_id;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
-    size_t current_alignment {0};
-    eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
-                calculator.calculate_serialized_size(type_object, current_alignment)));
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-            eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser << type_object;
-    type_object_serialized_size = static_cast<uint32_t>(ser.get_serialized_data_length());
-    EquivalenceHash equivalence_hash;
-    MD5 type_object_hash;
-    type_object_hash.update(reinterpret_cast<char*>(payload.data), type_object_serialized_size);
-    type_object_hash.finalize();
-    for (size_t i = 0; i < equivalence_hash.size(); i++)
-    {
-        equivalence_hash[i] = type_object_hash.digest[i];
-    }
-    type_id.equivalence_hash(equivalence_hash);
-    type_id._d(type_object._d());
-    return type_id;
 }
 
 const TypeObject TypeObjectRegistry::build_minimal_from_complete_type_object(

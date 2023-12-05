@@ -36,8 +36,6 @@
 
 #include <fastrtps/utils/StringMatching.h>
 
-#include <fastdds/xtypes/type_representation/TypeObjectRegistryObserver.hpp>
-
 #include <fastdds/core/policy/ParameterList.hpp>
 
 #include <foonathan/memory/container.hpp>
@@ -46,6 +44,7 @@
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/network/ExternalLocatorsProcessor.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/RTPSDomainImpl.hpp>
 
 #include <utils/collections/node_size_helpers.hpp>
 
@@ -184,8 +183,8 @@ bool EDP::newLocalReaderProxyData(
                     {
                         fastdds::dds::xtypes::TypeInformation type_info;
                         if (eprosima::fastdds::dds::RETCODE_OK ==
-                                fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_information(
-                                    rpd->typeName().c_str(), type_info))
+                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+                                        .get_type_information(rpd->typeName().c_str(), type_info))
                         {
                             // TODO (adelcampo) Change to xtypes
                             // rpd->type_information() = type_info;
@@ -199,7 +198,7 @@ bool EDP::newLocalReaderProxyData(
                     {
                         fastdds::dds::xtypes::TypeIdentifierPair type_ids;
                         if (eprosima::fastdds::dds::RETCODE_OK ==
-                                fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
+                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry().
                                         get_type_identifiers(rpd->typeName().c_str(), type_ids))
                         {
                             if (type_ids.type_identifier1()._d() == fastdds::dds::xtypes::EK_COMPLETE)
@@ -230,8 +229,8 @@ bool EDP::newLocalReaderProxyData(
                         // TODO (adelcampo) Change to xtypes
                         // fastdds::dds::xtypes::TypeObject type_obj;
                         // if (eprosima::fastdds::dds::RETCODE_OK ==
-                        //         fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_object(
-                        //             rpd->type_id().m_type_identifier, type_obj))
+                        //         eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+                        //                 .get_type_object(rpd->type_id().m_type_identifier, type_obj))
                         // {
                         //     rpd->type().m_type_object = type_obj;
                         // }
@@ -337,8 +336,8 @@ bool EDP::newLocalWriterProxyData(
                     {
                         fastdds::dds::xtypes::TypeInformation type_info;
                         if (eprosima::fastdds::dds::RETCODE_OK ==
-                                fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_information(
-                                    wpd->typeName().c_str(), type_info))
+                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+                                        .get_type_information(wpd->typeName().c_str(), type_info))
                         {
                             // TODO (adelcampo) Change to xtypes
                             // wpd->type_information() = type_info;
@@ -352,7 +351,7 @@ bool EDP::newLocalWriterProxyData(
                     {
                         fastdds::dds::xtypes::TypeIdentifierPair type_ids;
                         if (eprosima::fastdds::dds::RETCODE_OK ==
-                                fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
+                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry().
                                         get_type_identifiers(wpd->typeName().c_str(), type_ids))
                         {
                             if (type_ids.type_identifier1()._d() == fastdds::dds::xtypes::EK_COMPLETE)
@@ -383,7 +382,7 @@ bool EDP::newLocalWriterProxyData(
                         // TODO (adelcampo) Change to xtypes
                         // fastdds::dds::xtypes::TypeObject type_obj;
                         // if (eprosima::fastdds::dds::RETCODE_OK ==
-                        //         fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_object(
+                        //         eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
                         //             wpd->type_id().m_type_identifier, type_obj))
                         // {
                         //     // TODO (adelcampo) Change to xtypes
@@ -470,8 +469,8 @@ bool EDP::updatedLocalReader(
                     {
                         fastdds::dds::xtypes::TypeInformation type_info;
                         if (eprosima::fastdds::dds::RETCODE_OK ==
-                                fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_information(
-                                    rdata->typeName().c_str(), type_info))
+                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+                                        .get_type_information(rdata->typeName().c_str(), type_info))
                         {
                             // TODO (adelcampo) Change to xtypes
                             // rdata->type_information() = type_info;
@@ -485,7 +484,7 @@ bool EDP::updatedLocalReader(
                     {
                         fastdds::dds::xtypes::TypeIdentifierPair type_ids;
                         if (eprosima::fastdds::dds::RETCODE_OK ==
-                                fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
+                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry().
                                         get_type_identifiers(rdata->typeName().c_str(), type_ids))
                         {
                             if (type_ids.type_identifier1()._d() == fastdds::dds::xtypes::EK_COMPLETE)
@@ -516,7 +515,7 @@ bool EDP::updatedLocalReader(
                         // TODO (adelcampo) Change to xtypes
                         // fastdds::dds::xtypes::TypeObject type_obj;
                         // if (eprosima::fastdds::dds::RETCODE_OK ==
-                        //         fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_object(
+                        //         eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
                         //             rdata->type_id().m_type_identifier, type_obj))
                         // {
                         //     // TODO (adelcampo) Change to xtypes
@@ -577,8 +576,8 @@ bool EDP::updatedLocalWriter(
                     {
                         fastdds::dds::xtypes::TypeInformation type_info;
                         if (eprosima::fastdds::dds::RETCODE_OK ==
-                                fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_information(
-                                    wdata->typeName().c_str(), type_info))
+                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+                                        .get_type_information(wdata->typeName().c_str(), type_info))
                         {
                             // TODO (adelcampo) Change to xtypes
                             // wdata->type_information() = *type_info;
@@ -592,7 +591,7 @@ bool EDP::updatedLocalWriter(
                     {
                         fastdds::dds::xtypes::TypeIdentifierPair type_ids;
                         if (eprosima::fastdds::dds::RETCODE_OK ==
-                                fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
+                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry().
                                         get_type_identifiers(wdata->typeName().c_str(), type_ids))
                         {
                             if (type_ids.type_identifier1()._d() == fastdds::dds::xtypes::EK_COMPLETE)
@@ -623,7 +622,7 @@ bool EDP::updatedLocalWriter(
                         // TODO (adelcampo) Change to xtypes
                         // fastdds::dds::xtypes::TypeObject type_obj;
                         // if (eprosima::fastdds::dds::RETCODE_OK ==
-                        //         fastdds::dds::xtypes::TypeObjectRegistryObserver::get_type_object(
+                        //         eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
                         //             wdata->type_id().m_type_identifier, type_obj))
                         // {
                         //     // TODO (adelcampo) Change to xtypes

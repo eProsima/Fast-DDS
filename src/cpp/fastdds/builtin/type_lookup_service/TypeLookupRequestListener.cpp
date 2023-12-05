@@ -28,7 +28,6 @@
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
-#include <fastdds/xtypes/type_representation/TypeObjectRegistryObserver.hpp>
 
 using eprosima::fastrtps::rtps::RTPSReader;
 using eprosima::fastrtps::rtps::CacheChange_t;

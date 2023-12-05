@@ -797,6 +797,18 @@ void RTPSDomainImpl::set_filewatch_thread_config(
     instance->callback_thread_config_ = callback_thread;
 }
 
+fastdds::dds::xtypes::ITypeObjectRegistry& RTPSDomainImpl::type_object_registry()
+{
+    auto instance = get_instance();
+    return instance->type_object_registry_;
+}
+
+fastdds::dds::xtypes::TypeObjectRegistry& RTPSDomainImpl::type_object_registry_observer()
+{
+    auto instance = get_instance();
+    return instance->type_object_registry_;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

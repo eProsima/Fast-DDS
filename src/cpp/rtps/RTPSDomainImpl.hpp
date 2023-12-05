@@ -33,6 +33,8 @@
 
 #include <utils/shared_memory/BoostAtExitRegistry.hpp>
 
+#include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -215,6 +217,20 @@ public:
             const fastdds::rtps::ThreadSettings& watch_thread,
             const fastdds::rtps::ThreadSettings& callback_thread);
 
+    /**
+     * @brief Return the ITypeObjectRegistry member to access the interface for the public API.
+     *
+     * @return const xtypes::ITypeObjectRegistry reference.
+     */
+    static fastdds::dds::xtypes::ITypeObjectRegistry& type_object_registry();
+
+    /**
+     * @brief Return the TypeObjectRegistry member to access the  API.
+     *
+     * @return const xtypes::TypeObjectRegistry reference.
+     */
+    static fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer();
+
 private:
 
     /**
@@ -266,6 +282,9 @@ private:
     FileWatchHandle file_watch_handle_;
     fastdds::rtps::ThreadSettings watch_thread_config_;
     fastdds::rtps::ThreadSettings callback_thread_config_;
+
+    eprosima::fastdds::dds::xtypes::TypeObjectRegistry type_object_registry_;
+
 };
 
 } // namespace rtps
