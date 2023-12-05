@@ -15,20 +15,14 @@
 #include "BlackboxTests.hpp"
 #include "TCPReqRepHelloWorldRequester.hpp"
 #include "TCPReqRepHelloWorldReplier.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 #include <gtest/gtest.h>
 
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 
-<<<<<<< HEAD
-=======
-#include "TCPReqRepHelloWorldRequester.hpp"
-#include "TCPReqRepHelloWorldReplier.hpp"
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
-
->>>>>>> 36f31dd53 (Add Autofill port to TCP Transport (#4061))
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
