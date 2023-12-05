@@ -67,26 +67,6 @@ jobs:
           colcon mixin add default https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
           colcon mixin update default
 
-      # TODO(eduponz): remove this step as it's on the CI repos file
-      # - name: Install googletest
-      #   run: |
-      #     git clone --branch release-1.11.0 https://github.com/google/googletest.git googletest
-
-      #     # Generate
-      #     cmake \
-      #       -DBUILD_GMOCK=ON \
-      #       -DCMAKE_BUILD_TYPE=${{ matrix.colcon-mixin-config }} \
-      #       -Dgtest_force_shared_crt=ON \
-      #       -DCMAKE_VERBOSE_MAKEFILE=ON \
-      #       -B ./googletest/build \
-      #       ./googletest
-
-      #     # Build and install
-      #     cmake --build ./googletest/build --target install
-
-      #     # Clean up
-      #     rm -r googletest
-
       # TODO(eduponz)
       # - name: Update known hosts file for DNS resolver testing
       #   if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
