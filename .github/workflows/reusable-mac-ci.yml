@@ -87,25 +87,26 @@ jobs:
       #   run: |
 
       - name: Prepare colcon workspace
+        id: colcon_ws_setup
         run: |
           # Nightly job
           if [[ "${{ inputs.label }}" == *"nightly"* ]]
           then
-            $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_${{ inputs.fastdds_branch }}.repos"
+            depends_repos_path="./src/fastrtps/.github/workflows/config/nightly_${{ inputs.fastdds_branch }}.repos"
             if [ ! -f $depends_repos_path ]
             then
-              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_master.repos"
+              depends_repos_path="./src/fastrtps/.github/workflows/config/nightly_master.repos"
             fi
-            $meta_path = ".\src\fastrtps\.github\workflows\config\nightly.meta"
+            meta_path="./src/fastrtps/.github/workflows/config/nightly.meta"
 
           # Either PR or manual
           else
-            $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_${{ inputs.fastdds_branch }}.repos"
+            depends_repos_path="./src/fastrtps/.github/workflows/config/default_ci_${{ inputs.fastdds_branch }}.repos"
             if [ ! -f $depends_repos_path ]
             then
-              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_master.repos"
+              depends_repos_path="./src/fastrtps/.github/workflows/config/default_ci_master.repos"
             fi
-            $meta_path = ".\src\fastrtps\.github\workflows\config\default_ci.meta"
+            meta_path="./src/fastrtps/.github/workflows/config/default_ci.meta"
           fi
 
           echo "Selected repos files: $depends_repos_path"
