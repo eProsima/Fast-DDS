@@ -150,10 +150,12 @@ jobs:
             --event-handlers=console_direct+ \
             --ctest-args ${{ inputs.ctest-args }} \
             --repeat until-pass:3 \
-            --timeout 300
+            --timeout 300 \
+            --output-junit junit/junit.xml
 
-      # TODO(eduponz)
-      # - name: Create test Summary
-      #   id: summary
-      #   if: ${{ steps.test.outcome == 'success' }}
-      #   run: |
+      - name: Create test Summary
+        id: summary
+        run: |
+          python3 src/fastrtps/.github/workflows/utils/junit_summary.py \
+            --junit-report build/fastrtps/junit/junit.xml \
+            --output-file $GITHUB_STEP_SUMMARY
