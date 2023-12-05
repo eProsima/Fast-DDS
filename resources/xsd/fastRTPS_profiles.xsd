@@ -885,12 +885,15 @@
             <xs:element name="maxInitialPeersRange" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="interfaceWhiteList" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
-                    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                        <xs:element name="address" minOccurs="0" maxOccurs="unbounded">
-                            <xs:simpleType>
-                                <xs:union memberTypes="ipv4Address ipv6Address"/>
-                            </xs:simpleType>
-                        </xs:element>
+                    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                        <xs:choice minOccurs="1">
+                            <xs:element name="address" maxOccurs="unbounded">
+                                <xs:simpleType>
+                                    <xs:union memberTypes="ipv4Address ipv6Address"/>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="interface" type="string" maxOccurs="unbounded"/> 
+                        </xs:choice>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

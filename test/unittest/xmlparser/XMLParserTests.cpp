@@ -859,8 +859,8 @@ TEST_F(XMLParserTests, loadXMLProfiles)
 /*
  * This test checks the return of the parseXMLTransportData method  and the storage of the values in the XMLProfileManager
  * xml is parsed
- * 1. Check the correct parsing of a UDP transport descriptor for birth v4 and v6
- * 2. Check the correct parsing of a TCP transport descriptor for birth v4 and v6
+ * 1. Check the correct parsing of a UDP transport descriptor for both v4 and v6
+ * 2. Check the correct parsing of a TCP transport descriptor for both v4 and v6
  * 3. Check the correct parsing of a SHM transport descriptor
  */
 TEST_F(XMLParserTests, parseXMLTransportData)
@@ -890,6 +890,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <interfaceWhiteList>\
                         <address>192.168.1.41</address>\
                         <address>127.0.0.1</address>\
+                        <address>wlp0s20f3</address>\
+                        <address>lo</address>\
                     </interfaceWhiteList>\
                     <wan_addr>80.80.55.44</wan_addr>\
                     <output_port>5101</output_port>\
@@ -951,6 +953,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pUDPv4Desc->max_initial_peers_range(), 100u);
         EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[0], "192.168.1.41");
         EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[1], "127.0.0.1");
+        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[2], "wlp0s20f3");
+        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[3], "lo");
         EXPECT_EQ(pUDPv4Desc->m_output_udp_socket, 5101u);
         EXPECT_EQ(pUDPv4Desc->default_reception_threads(), modified_thread_settings);
         EXPECT_EQ(pUDPv4Desc->get_thread_config_for_port(12345), modified_thread_settings);
@@ -974,6 +978,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pUDPv6Desc->max_initial_peers_range(), 100u);
         EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[0], "192.168.1.41");
         EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[1], "127.0.0.1");
+        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[2], "wlp0s20f3");
+        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[3], "lo");
         EXPECT_EQ(pUDPv6Desc->m_output_udp_socket, 5101u);
         EXPECT_EQ(pUDPv6Desc->default_reception_threads(), modified_thread_settings);
         EXPECT_EQ(pUDPv6Desc->get_thread_config_for_port(12345), modified_thread_settings);
@@ -1181,6 +1187,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         xmlparser::XMLProfileManager::DeleteInstance();
     }
 }
+
 
 /*
  * This test checks the return of the negative cases of th parseXMLTransportData method.

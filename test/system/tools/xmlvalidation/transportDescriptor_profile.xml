@@ -12,6 +12,7 @@
                 <interfaceWhiteList>
                     <address>192.168.1.41</address>
                     <address>127.0.0.1</address>
+                    <interface>lo</interface>
                 </interfaceWhiteList>
                 <TTL>250</TTL>
                 <non_blocking_send>false</non_blocking_send>
@@ -28,6 +29,7 @@
                 <interfaceWhiteList>
                     <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
                     <address>8a2e:0370:7334:0000:0000:2001:0db8:85a3</address>
+                    <interface>wlp0</interface>
                 </interfaceWhiteList>
                 <TTL>250</TTL>
                 <non_blocking_send>false</non_blocking_send>
@@ -44,6 +46,7 @@
                 <interfaceWhiteList>
                     <address>192.168.1.41</address>
                     <address>127.0.0.1</address>
+                    <interface>lo</interface>
                 </interfaceWhiteList>
                 <wan_addr>80.80.55.44</wan_addr>
                 <keep_alive_frequency_ms>5000</keep_alive_frequency_ms>

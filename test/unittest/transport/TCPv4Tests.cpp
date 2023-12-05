@@ -459,6 +459,115 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
     }
 }
 
+static void GetIP4s(
+        std::vector<IPFinder::info_IP>& interfaces)
+{
+    IPFinder::getIPs(&interfaces, false);
+    auto new_end = remove_if(interfaces.begin(),
+                    interfaces.end(),
+                    [](IPFinder::info_IP ip)
+                    {
+                        return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;
+                    });
+    interfaces.erase(new_end, interfaces.end());
+    std::for_each(interfaces.begin(), interfaces.end(), [](IPFinder::info_IP& loc)
+            {
+                loc.locator.kind = LOCATOR_KIND_TCPv4;
+            });
+}
+
+// Send and receive between allowed interfaces (the first available except the local) added by name
+TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports_by_name)
+{
+    std::vector<IPFinder::info_IP> interfaces;
+
+    GetIP4s(interfaces);
+
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
+    std::regex filter("RTCP(?!_SEQ)");
+    eprosima::fastdds::dds::Log::SetCategoryFilter(filter);
+    TCPv4TransportDescriptor recvDescriptor;
+    std::cout << "Adding to whitelist: " << interfaces[0].dev << " " << interfaces[0].name << " " <<
+        interfaces[0].locator << std::endl;
+    recvDescriptor.interfaceWhiteList.emplace_back(interfaces[0].dev);
+
+    recvDescriptor.add_listener_port(g_default_port);
+    TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.interfaceWhiteList.emplace_back(interfaces[0].dev);
+
+    TCPv4Transport sendTransportUnderTest(sendDescriptor);
+    sendTransportUnderTest.init();
+
+    Locator_t inputLocator;
+    inputLocator.kind = LOCATOR_KIND_TCPv4;
+    inputLocator.port = g_default_port;
+    inputLocator.set_address(interfaces[0].locator);
+    IPLocator::setLogicalPort(inputLocator, 7410);
+
+    LocatorList_t locator_list;
+    locator_list.push_back(inputLocator);
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv4;
+    outputLocator.set_address(interfaces[0].locator);
+    outputLocator.port = g_default_port;
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    {
+        MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+        MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+        SendResourceList send_resource_list;
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
+        ASSERT_FALSE(send_resource_list.empty());
+        octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+        bool bOk = false;
+        std::function<void()> recCallback = [&]()
+                {
+                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                    bOk = true;
+                };
+
+        msg_recv->setCallback(recCallback);
+
+        bool bFinish(false);
+        auto sendThreadFunction = [&]()
+                {
+                    Locators input_begin(locator_list.begin());
+                    Locators input_end(locator_list.end());
+
+                    bool sent =
+                            send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                    (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                    while (!bFinish && !sent)
+                    {
+                        Locators input_begin2(locator_list.begin());
+                        Locators input_end2(locator_list.end());
+
+                        sent =
+                                send_resource_list.at(0)->send(message, 5, &input_begin2, &input_end2,
+                                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    }
+                    EXPECT_TRUE(sent);
+                    //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+                };
+
+        senderThread.reset(new std::thread(sendThreadFunction));
+        std::this_thread::sleep_for(std::chrono::seconds(10));
+        bFinish = true;
+        senderThread->join();
+        ASSERT_TRUE(bOk);
+    }
+
+
+}
+
+
 #if TLS_FOUND
 TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
 {

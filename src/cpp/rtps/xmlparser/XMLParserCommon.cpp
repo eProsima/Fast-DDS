@@ -48,6 +48,7 @@ const char* SEND_BUFFER_SIZE = "sendBufferSize";
 const char* TTL = "TTL";
 const char* NON_BLOCKING_SEND = "non_blocking_send";
 const char* WHITE_LIST = "interfaceWhiteList";
+const char* INTERFACE = "interface";
 const char* MAX_MESSAGE_SIZE = "maxMessageSize";
 const char* MAX_INITIAL_PEERS_RANGE = "maxInitialPeersRange";
 const char* KEEP_ALIVE_FREQUENCY = "keep_alive_frequency_ms";
@@ -196,6 +197,7 @@ const char* SECONDS = "sec";
 const char* NANOSECONDS = "nanosec";
 const char* SHARED = "SHARED";
 const char* EXCLUSIVE = "EXCLUSIVE";
+
 // For backward compatibility we allow any DURATION_XXX in duration_t element and any subelement
 // const char* DURATION_INFINITY = R"xsd(\s*DURATION_INFINITY\s*)xsd";
 // const char* DURATION_INFINITE_SEC = R"xsd(\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*)xsd";

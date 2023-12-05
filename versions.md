@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * Enable configuration of thread setting for all threads.
+* Added the possibility to define interfaces in the whitelist by interface name.
 
 Version 2.12.0
 --------------
