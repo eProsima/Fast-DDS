@@ -12,17 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "../../../logging/mock/MockConsumer.h"
-#include "mock/MockEntity.hpp"
-#include <fastdds/dds/log/Log.hpp>
+#include <thread>
+
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/types/TypesBase.h>
+
+#include "../../../logging/mock/MockConsumer.h"
+#include "mock/MockEntity.hpp"
 
 using namespace eprosima::fastdds::dds;
 using namespace std;
