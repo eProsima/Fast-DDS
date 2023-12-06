@@ -48,6 +48,8 @@ jobs:
         uses: eProsima/eProsima-CI/macos/install_brew_packages@feature/fastdds_mac_ci_support
         with:
           packages: llvm asio tinyxml2 openssl python3
+          update: false
+          upgrade: false
 
       - name: Get minimum supported version of CMake
         uses: lukka/get-cmake@latest
