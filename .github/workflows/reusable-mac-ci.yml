@@ -133,6 +133,7 @@ jobs:
           colcon_build_args_default: --event-handlers=console_direct+
           cmake_args: ${{ inputs.cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
 
       - name: Colcon test
         id: test
