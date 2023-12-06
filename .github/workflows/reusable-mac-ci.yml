@@ -56,14 +56,14 @@ jobs:
         with:
           cmakeVersion: '3.22.6'
 
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/macos/install_colcon@feature/fastdds_mac_ci_support
+
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/macos/install_python_packages@feature/fastdds_mac_ci_support
         with:
           packages: vcstool xmlschema
-          upgrade: true
-
-      - name: Install colcon
-        uses: eProsima/eProsima-CI/macos/install_colcon@feature/fastdds_mac_ci_support
+          upgrade: false
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
