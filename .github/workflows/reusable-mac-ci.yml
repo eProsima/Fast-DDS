@@ -145,6 +145,7 @@ jobs:
           colcon_test_args_default: --packages-select fastrtps --event-handlers=console_direct+
           ctest_args: ${{ inputs.ctest-args }}
           ctest_args_default: --repeat until-pass:3 --timeout 300 --output-junit junit/junit.xml
+          workspace: ${{ github.workspace }}
 
       - name: Create test summary
         id: summary
