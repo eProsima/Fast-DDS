@@ -1,0 +1,156 @@
+name: Fast-DDS Ubuntu CI reusable workflow
+
+on:
+  workflow_call:
+    inputs:
+      label:
+        description: 'ID associated to the workflow'
+        required: true
+        type: string
+      colcon-args:
+        description: 'Extra arguments for colcon cli'
+        required: false
+        type: string
+      cmake-args:
+        description: 'Extra arguments for cmake cli'
+        required: false
+        type: string
+      ctest-args:
+        description: 'Extra arguments for ctest cli'
+        required: false
+        type: string
+      fastdds-branch:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        required: true
+        type: string
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  reusable-mac-ci:
+    runs-on: ubuntu-22.04
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        cmake-build-type:
+          - 'RelWithDebInfo'
+    steps:
+      - name: Sync eProsima/Fast-DDS repository
+        uses: actions/checkout@v4
+        with:
+          path: src/fastrtps
+          ref: ${{ inputs.fastdds-branch }}
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install apt dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: libasio-dev libtinyxml2-dev libssl-dev libp11-dev softhsm2 libengine-pkcs11-openssl
+          update: false
+          upgrade: false
+
+      - name: Get minimum supported version of CMake
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: '3.22.6'
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool xmlschema
+          upgrade: false
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
+      - name: Update known hosts file for DNS resolver testing
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        run: |
+          sudo echo ""                                                >> /etc/hosts
+          sudo echo "# Hosts for Fast DDS testing of DNS feature"     >> /etc/hosts
+          sudo echo "127.0.0.1                 localhost.test"        >> /etc/hosts
+          sudo echo "::1                       localhost.test"        >> /etc/hosts
+          sudo echo "154.56.134.194            www.eprosima.com.test" >> /etc/hosts
+          sudo echo "216.58.215.164            www.acme.com.test"     >> /etc/hosts
+          sudo echo "2a00:1450:400e:803::2004  www.acme.com.test"     >> /etc/hosts
+          sudo echo "140.82.121.4              www.foo.com.test"      >> /etc/hosts
+          sudo echo "140.82.121.3              www.foo.com.test"      >> /etc/hosts
+          sudo echo "ff1e::ffff:efff:1         acme.org.test"         >> /etc/hosts
+
+      # TODO(eduponz)
+      # - name: Set up libp11 and SoftHSM
+      #   continue-on-error: true
+      #   run: |
+
+      - name: Prepare colcon workspace
+        id: colcon_ws_setup
+        run: |
+          # Nightly job
+          if [[ "${{ inputs.label }}" == *"nightly"* ]]
+          then
+            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_${{ inputs.fastdds-branch }}.repos"
+            if [ ! -f ${DEPENDS_REPOS_PATH} ]
+            then
+              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_master.repos"
+            fi
+            META_PATH="./src/fastrtps/.github/workflows/config/nightly.meta"
+
+          # Either PR or manual
+          else
+            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_${{ inputs.fastdds-branch }}.repos"
+            if [ ! -f ${DEPENDS_REPOS_PATH} ]
+            then
+              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_master.repos"
+            fi
+            META_PATH="./src/fastrtps/.github/workflows/config/default_ci.meta"
+          fi
+
+          echo "Selected repos files: ${DEPENDS_REPOS_PATH}"
+          cat ${DEPENDS_REPOS_PATH}
+
+          echo "Selected metas files: ${META_PATH}"
+          cp ${META_PATH} ci.meta
+          cat ci.meta
+
+          # Create source dir and download the sources
+          vcs import src --input ${DEPENDS_REPOS_PATH} --skip-existing
+
+      - name: Colcon build
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ci.meta
+          colcon_build_args: ${{ inputs.colcon-args }}
+          colcon_build_args_default: --event-handlers=console_direct+
+          cmake_args: ${{ inputs.cmake-args }}
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
+
+      - name: Colcon test
+        id: test
+        continue-on-error: true
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        with:
+          colcon_test_args: ${{ inputs.colcon-args }}
+          colcon_test_args_default: --packages-select fastrtps --event-handlers=console_direct+
+          ctest_args: ${{ inputs.ctest-args }}
+          ctest_args_default: --repeat until-pass:3 --timeout 300 --output-junit junit/junit.xml
+          workspace: ${{ github.workspace }}
+
+      - name: Create test summary
+        id: summary
+        run: |
+          python3 src/fastrtps/.github/workflows/utils/junit_summary.py \
+            --junit-report build/fastrtps/junit/junit.xml \
+            --output-file $GITHUB_STEP_SUMMARY \
+            --print-summary \
+            --show-failed

@@ -1,0 +1,23 @@
+name: Fast-DDS Ubuntu CI (nightly)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'
+
+jobs:
+  nightly-sec-ubuntu-ci:
+    uses: ./.github/workflows/reusable-ubuntu-ci.yml
+    with:
+      label: 'nightly-sec-ubuntu-ci'
+      cmake-args: "-DSECURITY=ON"
+      ctest-args: "-LE xfail"
+      fastdds-branch: 'master'
+
+  nightly-nosec-ubuntu-ci:
+    uses: ./.github/workflows/reusable-ubuntu-ci.yml
+    with:
+      label: 'nightly-nosec-ubuntu-ci'
+      cmake-args: "-DSECURITY=OFF"
+      ctest-args: "-LE xfail"
+      fastdds-branch: 'master'
