@@ -54,4 +54,4 @@ jobs:
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: ${{ inputs.cmake-args }}
       ctest-args: ${{ inputs.ctest-args }}
-      fastdds-branch: ${{ inputs.fastdds_branch || github.base_ref || github.ref || 'master' }}
+      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
