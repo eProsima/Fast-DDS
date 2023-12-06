@@ -72,19 +72,20 @@ jobs:
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
 
-      - name: Update known hosts file for DNS resolver testing
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
-        run: |
-          sudo echo ""                                                >> /etc/hosts
-          sudo echo "# Hosts for Fast DDS testing of DNS feature"     >> /etc/hosts
-          sudo echo "127.0.0.1                 localhost.test"        >> /etc/hosts
-          sudo echo "::1                       localhost.test"        >> /etc/hosts
-          sudo echo "154.56.134.194            www.eprosima.com.test" >> /etc/hosts
-          sudo echo "216.58.215.164            www.acme.com.test"     >> /etc/hosts
-          sudo echo "2a00:1450:400e:803::2004  www.acme.com.test"     >> /etc/hosts
-          sudo echo "140.82.121.4              www.foo.com.test"      >> /etc/hosts
-          sudo echo "140.82.121.3              www.foo.com.test"      >> /etc/hosts
-          sudo echo "ff1e::ffff:efff:1         acme.org.test"         >> /etc/hosts
+      # TODO(eduponz)
+      # - name: Update known hosts file for DNS resolver testing
+      #   if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+      #   run: |
+      #     sudo echo ""                                                >> /etc/hosts
+      #     sudo echo "# Hosts for Fast DDS testing of DNS feature"     >> /etc/hosts
+      #     sudo echo "127.0.0.1                 localhost.test"        >> /etc/hosts
+      #     sudo echo "::1                       localhost.test"        >> /etc/hosts
+      #     sudo echo "154.56.134.194            www.eprosima.com.test" >> /etc/hosts
+      #     sudo echo "216.58.215.164            www.acme.com.test"     >> /etc/hosts
+      #     sudo echo "2a00:1450:400e:803::2004  www.acme.com.test"     >> /etc/hosts
+      #     sudo echo "140.82.121.4              www.foo.com.test"      >> /etc/hosts
+      #     sudo echo "140.82.121.3              www.foo.com.test"      >> /etc/hosts
+      #     sudo echo "ff1e::ffff:efff:1         acme.org.test"         >> /etc/hosts
 
       # TODO(eduponz)
       # - name: Set up libp11 and SoftHSM
