@@ -144,4 +144,6 @@ jobs:
         run: |
           python3 src/fastrtps/.github/workflows/utils/junit_summary.py \
             --junit-report build/fastrtps/junit/junit.xml \
-            --output-file $GITHUB_STEP_SUMMARY
+            --output-file $GITHUB_STEP_SUMMARY \
+            --print-summary \
+            --show-failed
