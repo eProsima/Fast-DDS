@@ -35,17 +35,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        colcon-mixin-config:
-          - 'rel-with-deb-info'
+        cmake-build-type:
+          - 'RelWithDebInfo'
     steps:
+      # TODO(eduponz): Use input branch
       - name: Sync eProsima/Fast-DDS repository
         uses: actions/checkout@v4
         with:
           path: src/fastrtps
 
-      - name: Install dependencies
-        run: |
-          brew install llvm asio tinyxml2 openssl python3
+      - name: Install brew dependencies
+        uses: eProsima/eProsima-CI/macos/install_brew_packages@feature/fastdds_mac_ci_support
+        with:
+          packages: llvm asio tinyxml2 openssl python3
 
       - name: Get minimum supported version of CMake
         uses: lukka/get-cmake@latest
@@ -53,19 +55,13 @@ jobs:
           cmakeVersion: '3.22.6'
 
       - name: Install Python dependencies
-        run: |
-          pip3 install --upgrade -U \
-            vcstool \
-            xmlschema
+        uses: eProsima/eProsima-CI/macos/install_python_packages@feature/fastdds_mac_ci_support
+        with:
+          packages: vcstool xmlschema
+          upgrade: true
 
       - name: Install colcon
-        run: |
-          pip3 install --upgrade -U \
-            setuptools==58.3.0 \
-            colcon-common-extensions \
-            colcon-mixin
-          colcon mixin add default https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
-          colcon mixin update default
+        uses: eProsima/eProsima-CI/macos/install_colcon@feature/fastdds_mac_ci_support
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
@@ -123,29 +119,25 @@ jobs:
           # Create source dir and download the sources
           vcs import src --input $depends_repos_path --skip-existing
 
-      - name: Build
-        id: build
-        continue-on-error: false
-        run: |
-          colcon build \
-            --event-handlers=console_direct+ \
-            --mixin ${{ matrix.colcon-mixin-config }} \
-            --metas ci.meta \
-            ${{ inputs.colcon-args }} \
-            --cmake-args ${{ inputs.cmake-args }}
+      - name: Colcon build
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@feature/fastdds_mac_ci_support
+        with:
+          colcon_meta_file: ci.meta
+          colcon_build_args: ${{ inputs.colcon-args }}
+          colcon_build_args_default: --event-handlers=console_direct+
+          cmake_args: ${{ inputs.cmake-args }}
+          cmake_build_type: ${{ matrix.cmake-build-type }}
 
-      - name: Test
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+      - name: Colcon test
         id: test
-        continue-on-error: false
-        run: |
-          colcon test \
-            --packages-select fastrtps \
-            --event-handlers=console_direct+ \
-            --ctest-args ${{ inputs.ctest-args }} \
-            --repeat until-pass:3 \
-            --timeout 300 \
-            --output-junit junit/junit.xml
+        continue-on-error: true
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@feature/fastdds_mac_ci_support
+        with:
+          colcon_test_args: ${{ inputs.colcon-args }}
+          colcon_test_args_default: --packages-select fastrtps --event-handlers=console_direct+
+          ctest_args: ${{ inputs.ctest-args }}
+          ctest_args_default: --repeat until-pass:3 --timeout 300 --output-junit junit/junit.xml
 
       - name: Create test Summary
         id: summary
