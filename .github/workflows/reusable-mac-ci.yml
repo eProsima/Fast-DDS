@@ -19,7 +19,7 @@ on:
         description: 'Extra arguments for ctest cli'
         required: false
         type: string
-      fastdds_branch:
+      fastdds-branch:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
         type: string
@@ -38,11 +38,11 @@ jobs:
         cmake-build-type:
           - 'RelWithDebInfo'
     steps:
-      # TODO(eduponz): Use input branch
       - name: Sync eProsima/Fast-DDS repository
         uses: actions/checkout@v4
         with:
           path: src/fastrtps
+          ref: ${{ inputs.fastdds-branch }}
 
       - name: Install brew dependencies
         uses: eProsima/eProsima-CI/macos/install_brew_packages@feature/fastdds_mac_ci_support
@@ -92,32 +92,32 @@ jobs:
           # Nightly job
           if [[ "${{ inputs.label }}" == *"nightly"* ]]
           then
-            depends_repos_path="./src/fastrtps/.github/workflows/config/nightly_${{ inputs.fastdds_branch }}.repos"
-            if [ ! -f $depends_repos_path ]
+            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_${{ inputs.fastdds-branch }}.repos"
+            if [ ! -f ${DEPENDS_REPOS_PATH} ]
             then
-              depends_repos_path="./src/fastrtps/.github/workflows/config/nightly_master.repos"
+              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_master.repos"
             fi
-            meta_path="./src/fastrtps/.github/workflows/config/nightly.meta"
+            META_PATH="./src/fastrtps/.github/workflows/config/nightly.meta"
 
           # Either PR or manual
           else
-            depends_repos_path="./src/fastrtps/.github/workflows/config/default_ci_${{ inputs.fastdds_branch }}.repos"
-            if [ ! -f $depends_repos_path ]
+            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_${{ inputs.fastdds-branch }}.repos"
+            if [ ! -f ${DEPENDS_REPOS_PATH} ]
             then
-              depends_repos_path="./src/fastrtps/.github/workflows/config/default_ci_master.repos"
+              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_master.repos"
             fi
-            meta_path="./src/fastrtps/.github/workflows/config/default_ci.meta"
+            META_PATH="./src/fastrtps/.github/workflows/config/default_ci.meta"
           fi
 
-          echo "Selected repos files: $depends_repos_path"
-          cat $depends_repos_path
+          echo "Selected repos files: ${DEPENDS_REPOS_PATH}"
+          cat ${DEPENDS_REPOS_PATH}
 
-          echo "Selected metas files: $meta_path"
-          cp $meta_path ci.meta
+          echo "Selected metas files: ${META_PATH}"
+          cp ${META_PATH} ci.meta
           cat ci.meta
 
           # Create source dir and download the sources
-          vcs import src --input $depends_repos_path --skip-existing
+          vcs import src --input ${DEPENDS_REPOS_PATH} --skip-existing
 
       - name: Colcon build
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@feature/fastdds_mac_ci_support
@@ -139,7 +139,7 @@ jobs:
           ctest_args: ${{ inputs.ctest-args }}
           ctest_args_default: --repeat until-pass:3 --timeout 300 --output-junit junit/junit.xml
 
-      - name: Create test Summary
+      - name: Create test summary
         id: summary
         run: |
           python3 src/fastrtps/.github/workflows/utils/junit_summary.py \
