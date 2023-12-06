@@ -67,6 +67,15 @@
 #include "../../logging/mock/MockConsumer.h"
 #include "fastdds/dds/domain/DomainParticipant.hpp"
 
+#if defined(__cplusplus_winrt)
+#define GET_PID GetCurrentProcessId
+#elif defined(_WIN32)
+#include <process.h>
+#define GET_PID _getpid
+#else
+#define GET_PID getpid
+#endif // if defined(_WIN32)
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
