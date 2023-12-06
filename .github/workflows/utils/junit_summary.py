@@ -49,6 +49,30 @@ def parse_options():
         required=True,
         help='Path to output file.'
     )
+    parser.add_argument(
+        '-p',
+        '--print-summary',
+        action='store_true',
+        help='Print the summary to STDOUT'
+    )
+    parser.add_argument(
+        '-f',
+        '--show-failed',
+        action='store_true',
+        help='Show a list of failed tests'
+    )
+    parser.add_argument(
+        '-d',
+        '--show-disabled',
+        action='store_true',
+        help='Show a list of disabled tests'
+    )
+    parser.add_argument(
+        '-s',
+        '--show-skipped',
+        action='store_true',
+        help='Show a list of skipped tests'
+    )
 
     return parser.parse_args()
 
@@ -85,7 +109,7 @@ def junit_report_to_dict(junit_report):
 
     return result
 
-def create_md_summary(results_dict):
+def create_md_summary(results_dict, show_failed, show_disabled, show_skipped):
     """Create Markdown summary from results."""
     # Test summary
     summary = '## Test summary\n'
@@ -104,19 +128,19 @@ def create_md_summary(results_dict):
     summary += '|\n'
 
     # Failed tests list
-    if len(results_dict['failed_tests']) != 0:
+    if show_failed is True and len(results_dict['failed_tests']) != 0:
         summary += '\n## Failed tests\n'
         for failed_test in results_dict['failed_tests']:
             summary += f'* {failed_test}\n'
 
     # Disabled tests list
-    if len(results_dict['disabled_tests']) != 0:
+    if show_disabled is True and len(results_dict['disabled_tests']) != 0:
         summary += '\n## Disabled tests\n'
         for failed_test in results_dict['disabled_tests']:
             summary += f'* {failed_test}\n'
 
     # Skipped tests list
-    if len(results_dict['skipped_tests']) != 0:
+    if show_skipped is True and len(results_dict['skipped_tests']) != 0:
         summary += '\n## Skipped tests\n'
         for failed_test in results_dict['skipped_tests']:
             summary += f'* {failed_test}\n'
@@ -129,9 +153,29 @@ if __name__ == '__main__':
     args = parse_options()
     results = junit_report_to_dict(args.junit_report)
 
-    # Write output
-    with open(args.output_file, 'a') as file:
-        file.write(create_md_summary(results))
+    # Create summary
+    summary = create_md_summary(
+        results,
+        args.show_failed,
+        args.show_disabled,
+        args.show_skipped
+    )
+
+    # Print summary if required
+    if args.print_summary is True:
+        print(summary)
+
+    # Write output if required
+    if args.output_file != '':
+        with open(args.output_file, 'a') as file:
+            file.write(
+                create_md_summary(
+                    results,
+                    args.show_failed,
+                    args.show_disabled,
+                    args.show_skipped
+                )
+            )
 
     # Exit code is the number of failed tests
-    exit(results['failures'])
+    exit(int(results['failures']))
