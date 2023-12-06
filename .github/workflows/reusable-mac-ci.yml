@@ -44,10 +44,14 @@ jobs:
           path: src/fastrtps
           ref: ${{ inputs.fastdds-branch }}
 
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
       - name: Install brew dependencies
         uses: eProsima/eProsima-CI/macos/install_brew_packages@feature/fastdds_mac_ci_support
         with:
-          packages: llvm asio tinyxml2 openssl python3
+          packages: llvm asio tinyxml2 openssl
           update: false
           upgrade: false
 
