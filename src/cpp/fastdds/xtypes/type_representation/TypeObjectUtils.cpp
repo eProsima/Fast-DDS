@@ -2696,39 +2696,38 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
     {
         throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
     }
-    // Enum
+    // Enum & Alias
     else if (is_direct_hash_type_identifier(type_id))
     {
-        if (value._d() == TK_ENUM)
+        if (eprosima::fastdds::dds::RETCODE_OK == type_object_registry_observer().get_type_object(type_id, type_object))
         {
-            if (eprosima::fastdds::dds::RETCODE_OK ==
-                    type_object_registry_observer().get_type_object(type_id, type_object))
+            if (EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
             {
-                if (EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
-                {
-                    common_annotation_parameter_type_identifier_default_value_consistency(
-                        type_object.complete().alias_type().body().common().related_type(), value);
-                }
-                else if (EK_MINIMAL == type_object._d() && type_object.minimal()._d() == TK_ALIAS)
-                {
-                    common_annotation_parameter_type_identifier_default_value_consistency(
-                        type_object.minimal().alias_type().body().common().related_type(), value);
-                }
-                else if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ENUM) ||
-                        (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
-                {
-                    throw InvalidArgumentError(
-                              "Given annotation parameter value is inconsistent with given TypeIdentifier");
-                }
+                common_annotation_parameter_type_identifier_default_value_consistency(
+                    type_object.complete().alias_type().body().common().related_type(), value);
+                return;
             }
-            else
+            else if (EK_MINIMAL == type_object._d() && type_object.minimal()._d() == TK_ALIAS)
             {
-                throw InvalidArgumentError("Given TypeIdentifier is not found in TypeObjectRegistry");
+                common_annotation_parameter_type_identifier_default_value_consistency(
+                    type_object.minimal().alias_type().body().common().related_type(), value);
+                return;
+            }
+            if (TK_ENUM != value._d())
+            {
+                throw InvalidArgumentError(
+                            "Given annotation parameter value is inconsistent with given TypeIdentifier");
+            }
+            else if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ENUM) ||
+                    (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
+            {
+                throw InvalidArgumentError(
+                            "Given annotation parameter value is inconsistent with given TypeIdentifier");
             }
         }
         else
         {
-            throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+            throw InvalidArgumentError("Given TypeIdentifier is not found in TypeObjectRegistry");
         }
     }
 }
