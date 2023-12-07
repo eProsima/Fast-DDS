@@ -373,25 +373,35 @@ const ExtendedTypeDefn TypeObjectUtils::build_extended_type_defn()
 
 ReturnCode_t TypeObjectUtils::build_and_register_s_string_type_identifier(
         const StringSTypeDefn& string,
-        const std::string& type_name)
+        const std::string& type_name,
+        bool wstring)
 {
 #if !defined(NDEBUG)
     string_sdefn_consistency(string);
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.string_sdefn(string);
+    if (wstring)
+    {
+        type_identifier._d(TI_STRING16_SMALL);
+    }
     return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_string_type_identifier(
         const StringLTypeDefn& string,
-        const std::string& type_name)
+        const std::string& type_name,
+        bool wstring)
 {
 #if !defined(NDEBUG)
     string_ldefn_consistency(string);
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.string_ldefn(string);
+    if (wstring)
+    {
+        type_identifier._d(TI_STRING16_LARGE);
+    }
     return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
 }
 

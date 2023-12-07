@@ -388,6 +388,7 @@ public:
      *
      * @param[in] string StringSTypeDefn union member to set.
      * @param[in] type_name Type name to be registered.
+     * @param[in] wstring Flag to build a wstring. Default false.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -397,13 +398,15 @@ public:
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_s_string_type_identifier(
             const StringSTypeDefn& string,
-            const std::string& type_name);
+            const std::string& type_name,
+            bool wstring = false);
 
     /**
      * @brief Register large string/wstring TypeIdentifier into TypeObjectRegistry.
      *
      * @param[in] string StringLTypeDefn union member to set.
      * @param[in] type_name Type name to be registered.
+     * @param[in] wstring Flag to build a wstring. Default false.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -413,7 +416,8 @@ public:
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_l_string_type_identifier(
             const StringLTypeDefn& string,
-            const std::string& type_name);
+            const std::string& type_name,
+            bool wstring = false);
 
     /**
      * @brief Register small sequence TypeIdentifier into TypeObjectRegistry.
