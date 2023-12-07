@@ -25,8 +25,6 @@
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 
-#include <fastdds/xtypes/type_representation/BuiltinAnnotations.hpp>
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
