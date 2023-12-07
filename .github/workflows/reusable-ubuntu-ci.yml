@@ -64,7 +64,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
 
       - name: Install Python dependencies
-        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@feature/fastdds_mac_ci_support
         with:
           packages: vcstool xmlschema
           upgrade: false
