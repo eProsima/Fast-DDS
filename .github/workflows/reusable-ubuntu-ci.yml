@@ -29,7 +29,7 @@ defaults:
     shell: bash
 
 jobs:
-  reusable-mac-ci:
+  reusable-ubuntu-ci:
     runs-on: ubuntu-22.04
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
     strategy:
