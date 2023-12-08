@@ -929,6 +929,33 @@ void PDPClient::match_pdp_reader_nts_(
     }
 }
 
+bool ros_super_client_env()
+{
+    std::string super_client_str;
+    bool super_client = false;
+    std::vector<std::string> true_vec = {"TRUE", "true", "True", "1"};
+    std::vector<std::string> false_vec = {"FALSE", "false", "False", "0"};
+
+    SystemInfo::get_env(ROS_SUPER_CLIENT, super_client_str);
+    if (super_client_str != "")
+    {
+        if (find(true_vec.begin(), true_vec.end(), super_client_str) != true_vec.end())
+        {
+            super_client = true;
+        }
+        else if (find(false_vec.begin(), false_vec.end(), super_client_str) != false_vec.end())
+        {
+            super_client = false;
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PDP,
+                    "Invalid value for ROS_SUPER_CLIENT environment variable : " << super_client_str);
+        }
+    }
+    return super_client;
+}
+
 const std::string& ros_discovery_server_env()
 {
     static std::string servers;
