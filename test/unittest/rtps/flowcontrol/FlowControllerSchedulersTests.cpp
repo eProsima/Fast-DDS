@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-#include <rtps/flowcontrol/FlowControllerImpl.hpp>
-=======
 // Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,11 +16,9 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/attributes/ThreadSettings.hpp>
->>>>>>> 6390715a1 (Add missing thread include (#4045))
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 
-#include <gtest/gtest.h>
+#include <rtps/flowcontrol/FlowControllerImpl.hpp>
 
 namespace eprosima {
 namespace fastrtps {
