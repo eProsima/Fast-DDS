@@ -276,7 +276,6 @@ int main(
     {
 
         DomainParticipantQos participant_qos;
-        participant_qos.wire_protocol().builtin.typelookup_config.use_client = true;
         StatusMask participant_mask = StatusMask::none();
         participant =
                 DomainParticipantFactory::get_instance()->create_participant(seed % 230, participant_qos,

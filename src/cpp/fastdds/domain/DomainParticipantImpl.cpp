@@ -2235,10 +2235,6 @@ bool DomainParticipantImpl::can_qos_be_updated(
                 from.wire_protocol().ignore_non_matching_locators) ||
                 !(to.wire_protocol().builtin.use_WriterLivelinessProtocol ==
                 from.wire_protocol().builtin.use_WriterLivelinessProtocol) ||
-                !(to.wire_protocol().builtin.typelookup_config.use_client ==
-                from.wire_protocol().builtin.typelookup_config.use_client) ||
-                !(to.wire_protocol().builtin.typelookup_config.use_server ==
-                from.wire_protocol().builtin.typelookup_config.use_server) ||
                 !(to.wire_protocol().builtin.network_configuration ==
                 from.wire_protocol().builtin.network_configuration) ||
                 !(to.wire_protocol().builtin.metatrafficUnicastLocatorList ==

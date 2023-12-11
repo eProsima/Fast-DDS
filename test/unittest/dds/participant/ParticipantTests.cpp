@@ -1381,20 +1381,6 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
-    // Check changing wire_protocol().builtin.typelookup_config.use_client is NOT OK
-    participant->get_qos(qos);
-    qos.wire_protocol().builtin.typelookup_config.use_client ^= true;
-    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
-    participant->get_qos(set_qos);
-    ASSERT_FALSE(set_qos == qos);
-
-    // Check changing wire_protocol().builtin.typelookup_config.use_server is NOT OK
-    participant->get_qos(qos);
-    qos.wire_protocol().builtin.typelookup_config.use_server ^= true;
-    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
-    participant->get_qos(set_qos);
-    ASSERT_FALSE(set_qos == qos);
-
     // Check changing wire_protocol().builtin.metatrafficUnicastLocatorList is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(loc);
@@ -3171,7 +3157,6 @@ TEST(ParticipantTests, GetTypes)
 {
     // Create the participant
     DomainParticipantQos pqos;
-    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, pqos);
@@ -3214,7 +3199,6 @@ TEST(ParticipantTests, GetTypeDependencies)
 {
     // Create the participant
     DomainParticipantQos pqos;
-    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, pqos);

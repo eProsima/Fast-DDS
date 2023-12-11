@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <mutex>
+#include <unordered_map>
 
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -31,7 +32,6 @@
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h>
 #include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
-
 
 namespace eprosima {
 namespace fastrtps {
@@ -54,6 +54,8 @@ namespace dds {
 namespace builtin {
 
 extern const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
+
+using AsyncGetTypeCallback = std::function<void ()>;
 
 inline SequenceNumber_t get_sequence_number_from_rtps(
         fastrtps::rtps::SequenceNumber_t seq_number)
@@ -120,17 +122,9 @@ public:
      * @param prot Pointer to the BuiltinProtocols object.
      */
     TypeLookupManager(
-            fastrtps::rtps::BuiltinProtocols* prot);
+            fastrtps::rtps::BuiltinProtocols* protocols);
 
     virtual ~TypeLookupManager();
-
-    /**
-     * Initialize the TypeLookupManager protocol.
-     * @param p Pointer to the RTPS participant implementation.
-     * @return true if the initialziacion was successful.
-     */
-    bool init_typelookup_service(
-            fastrtps::rtps::RTPSParticipantImpl* p);
 
     /**
      * Assign the remote endpoints for a newly discovered RTPSParticipant.
@@ -147,80 +141,16 @@ public:
     void remove_remote_endpoints(
             fastrtps::rtps::ParticipantProxyData* pdata);
 
-    /**
-     * Get the builtin protocols
-     * @return Builtin protocols
-     */
-    fastrtps::rtps::BuiltinProtocols* get_builtin_protocols()
-    {
-        return builtin_protocols_;
-    }
-
-    /**
-     * Get the builtin request writer
-     * @return stateful writer
-     */
-    fastrtps::rtps::StatefulWriter* get_builtin_request_writer();
-
-    /**
-     * Get the builtin reply writer
-     * @return stateful writer
-     */
-    fastrtps::rtps::StatefulWriter* get_builtin_reply_writer();
-
-    /**
-     * Get the builtin request writer's history
-     * @return writer history
-     */
-    fastrtps::rtps::WriterHistory* get_builtin_request_writer_history();
-
-    /**
-     * Get the builtin reply writer's history
-     * @return writer history
-     */
-    fastrtps::rtps::WriterHistory* get_builtin_reply_writer_history();
-
-    /**
-     * Get the builtin request reader
-     * @return stateful reader
-     */
-    fastrtps::rtps::StatefulReader* get_builtin_request_reader();
-
-    /**
-     * Get the builtin reply reader
-     * @return stateful reader
-     */
-    fastrtps::rtps::StatefulReader* get_builtin_reply_reader();
-
-    /**
-     * Get the builtin request reader's history
-     * @return reader history
-     */
-    fastrtps::rtps::ReaderHistory* get_builtin_request_reader_history();
-
-    /**
-     * Get the builtin reply reader's history
-     * @return reader history
-     */
-    fastrtps::rtps::ReaderHistory* get_builtin_reply_reader_history();
-
-    /* TODO Uncomment if security is implemented.
-     #if HAVE_SECURITY
-        bool pairing_remote_reader_with_local_writer_after_security(
-                const fastrtps::rtps::GUID_t& local_writer,
-                const fastrtps::rtps::ReaderProxyData& remote_reader_data);
-
-        bool pairing_remote_writer_with_local_reader_after_security(
-                const fastrtps::rtps::GUID_t& local_reader,
-                const fastrtps::rtps::WriterProxyData& remote_writer_data);
-     #endif
-     */
-
     fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
+            const fastrtps::types::TypeIdentifierSeq& id_seq) const;
 
     fastrtps::rtps::SampleIdentity get_types(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
+            const fastrtps::types::TypeIdentifierSeq& id_seq) const;
+
+    ReturnCode_t async_get_type(
+            xtypes::TypeInformation typeinformation,
+            GuidPrefix_t type_server,
+            AsyncGetTypeCallback& callback);
 
 private:
 
@@ -229,6 +159,24 @@ private:
      * @return true if correct.
      */
     bool create_endpoints();
+
+    //! Aux method to send requests
+    bool send_request(
+            TypeLookup_Request& request) const;
+
+    //! Aux method to send replies
+    bool send_reply(
+            TypeLookup_Reply& reply) const;
+
+    //! Aux method to received requests
+    bool recv_request(
+            fastrtps::rtps::CacheChange_t& change,
+            TypeLookup_Request& request) const;
+
+    //! Aux method to received replies
+    bool recv_reply(
+            fastrtps::rtps::CacheChange_t& change,
+            TypeLookup_Reply& reply) const;
 
     /**
      * Get the RTPS participant
@@ -242,60 +190,17 @@ private:
     //! Get out instanceName as defined in 7.6.2.3.4 of the XTypes 1.2 document
     std::string get_instanceName() const;
 
-    //! Aux method to send requests
-    bool send_request(
-            TypeLookup_Request& req) const;
-
-    //! Aux method to send replies
-    bool send_reply(
-            TypeLookup_Reply& rep) const;
-
-    //! Aux method to received requests
-    bool recv_request(
-            fastrtps::rtps::CacheChange_t& change,
-            TypeLookup_Request& req) const;
-
-    //! Aux method to received replies
-    bool recv_reply(
-            fastrtps::rtps::CacheChange_t& change,
-            TypeLookup_Reply& rep) const;
-
-    const fastrtps::rtps::GUID_t& get_builtin_request_writer_guid() const;
-
-    //!Pointer to the local RTPSParticipant.
     fastrtps::rtps::RTPSParticipantImpl* participant_;
-
-    //!Pointer to the builtinprotocol class.
     fastrtps::rtps::BuiltinProtocols* builtin_protocols_;
-
-    //!Pointer to the builtinRTPSParticipantMEssageWriter.
     fastrtps::rtps::StatefulWriter* builtin_request_writer_;
-
-    //!Pointer to the builtinRTPSParticipantMEssageReader.
     fastrtps::rtps::StatefulReader* builtin_request_reader_;
-
-    //!Pointer to the builtinRTPSParticipantMEssageWriter.
     fastrtps::rtps::StatefulWriter* builtin_reply_writer_;
-
-    //!Pointer to the builtinRTPSParticipantMEssageReader.
     fastrtps::rtps::StatefulReader* builtin_reply_reader_;
-
-    //!Writer History
     fastrtps::rtps::WriterHistory* builtin_request_writer_history_;
-
-    //!Writer History
     fastrtps::rtps::WriterHistory* builtin_reply_writer_history_;
-
-    //!Reader History
     fastrtps::rtps::ReaderHistory* builtin_request_reader_history_;
-
-    //!Reader History
     fastrtps::rtps::ReaderHistory* builtin_reply_reader_history_;
-
-    //!Request Listener object.
     TypeLookupRequestListener* request_listener_;
-
-    //!Reply Listener object.
     TypeLookupReplyListener* reply_listener_;
 
     std::mutex temp_data_lock_;
@@ -305,36 +210,6 @@ private:
     mutable fastrtps::rtps::SequenceNumber_t request_seq_number_;
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
-
-    /* TODO Uncomment if security is implemented.
-     #if HAVE_SECURITY
-        //!Pointer to the builtinRTPSParticipantMEssageWriter.
-        fastrtps::rtps::StatefulWriter* builtin_request_writer_secure_;
-
-        //!Pointer to the builtinRTPSParticipantMEssageWriter.
-        fastrtps::rtps::StatefulWriter* builtin_reply_writer_secure_;
-
-        //!Pointer to the builtinRTPSParticipantMEssageReader.
-        fastrtps::rtps::StatefulReader* builtin_request_reader_secure_;
-
-        //!Pointer to the builtinRTPSParticipantMEssageReader.
-        fastrtps::rtps::StatefulReader* builtin_reply_reader_secure_;
-
-        //!Writer History
-        fastrtps::rtps::WriterHistory* builtin_request_writer_secure_history_;
-
-        //!Writer History
-        fastrtps::rtps::WriterHistory* builtin_reply_writer_secure_history_;
-
-        //!Reader History
-        fastrtps::rtps::ReaderHistory* builtin_request_reader_secure_history_;
-
-        //!Reader History
-        fastrtps::rtps::ReaderHistory* builtin_reply_reader_secure_history_;
-
-        bool create_secure_endpoints();
-     #endif
-     */
 };
 
 } /* namespace builtin */

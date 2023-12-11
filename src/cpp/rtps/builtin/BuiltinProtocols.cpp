@@ -143,11 +143,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
     }
 
     // TypeLookupManager
-    if (m_att.typelookup_config.use_client || m_att.typelookup_config.use_server)
-    {
-        tlm_ = new fastdds::dds::builtin::TypeLookupManager(this);
-        tlm_->init_typelookup_service(mp_participantImpl);
-    }
+    tlm_ = new fastdds::dds::builtin::TypeLookupManager(this);
 
     return true;
 }
