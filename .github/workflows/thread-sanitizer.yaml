@@ -59,6 +59,9 @@ jobs:
         with:
           packages: wget
 
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
       - name: Install colcon
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
 
