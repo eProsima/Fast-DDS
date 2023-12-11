@@ -158,7 +158,7 @@ public:
     }
 
     void index(
-            uint32_t index) noexcept override
+            uint32_t index) noexcept
     {
         index_ = index;
     }
