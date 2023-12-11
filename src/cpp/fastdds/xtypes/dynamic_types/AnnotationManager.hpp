@@ -46,9 +46,6 @@ class AnnotationManager
             const std::string& id,
             const char* new_val);
 
-    // external interface
-    Annotations col_interface_;
-
 protected:
 
     //! reset
@@ -61,7 +58,7 @@ protected:
     bool operator ==(
             const AnnotationManager& other) const
     {
-        return annotation_ == other.annotation_;
+        return true; //TODO(richiware) annotation_ == other.annotation_;
     }
 
 public:
@@ -278,24 +275,6 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
     std::size_t get_annotation_count() const;
-
-    /**
-     * Provides an STL independent interface to traverse the internal collection
-     * @return @ref Annotations object
-     */
-    const Annotations& get_annotations() const
-    {
-        return col_interface_;
-    }
-
-    //! retrieve manager from the Annotations collection
-    static const AnnotationManager& get_manager(
-            const Annotations& col)
-    {
-        return *(AnnotationManager*)((const char*)&col -
-               (::size_t)&reinterpret_cast<char const volatile&>((((AnnotationManager*)0)->col_interface_)));
-    }
-
 };
 
 } // namespace dds

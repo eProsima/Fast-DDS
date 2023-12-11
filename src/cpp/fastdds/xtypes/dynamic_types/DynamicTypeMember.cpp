@@ -59,11 +59,6 @@ MemberId DynamicTypeMember::get_id() const noexcept
     return DynamicTypeMemberImpl::get_implementation(*this).id();
 }
 
-const Annotations* DynamicTypeMember::get_annotation() const noexcept
-{
-    return &DynamicTypeMemberImpl::get_implementation(*this).get_annotations();
-}
-
 const DynamicTypeMember* DynamicTypeMembersByName::operator [](
         const char* key) const noexcept
 {

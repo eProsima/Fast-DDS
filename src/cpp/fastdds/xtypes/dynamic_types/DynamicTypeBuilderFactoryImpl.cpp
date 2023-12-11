@@ -2540,7 +2540,7 @@ void DynamicTypeBuilderFactoryImpl::apply_type_annotations(
             *fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(annotation.type()->
                     get_name()));
         Parameters values;
-        annotation.get_all_value(values);
+        //TODO(richiware) annotation.get_all_value(values);
         for (auto it : values)
         {
             fastrtps::types::AppliedAnnotationParameter ann_param;

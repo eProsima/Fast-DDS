@@ -35,8 +35,8 @@ AnnotationManager::get_annotation(
     {
         const AnnotationDescriptorImpl& d = *it;
         if ( d.type() && d.type()->get_kind() != TK_NONE
-                && !d.type()->get_name().empty()
-                && d.type()->get_name().compare(name) == 0)
+                && 0 != strlen(d.type()->get_name())
+                && 0 == name.compare(d.type()->get_name()))
         {
             return std::make_pair(it, true);
         }
@@ -71,7 +71,7 @@ bool AnnotationManager::annotation_is_optional() const
     if (found)
     {
         ObjectName value;
-        if (it->get_value(value) == RETCODE_OK)
+        //TODO(richiware) if (it->get_value(value, "value") == RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -92,7 +92,7 @@ bool AnnotationManager::annotation_is_key() const
     if (found)
     {
         ObjectName value;
-        if (it->get_value(value) == RETCODE_OK)
+        //TODO(richiware) if (it->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -109,7 +109,7 @@ bool AnnotationManager::annotation_is_must_understand() const
     if (found)
     {
         ObjectName value;
-        if (it->get_value(value) == RETCODE_OK)
+        //TODO(richiware) if (it->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -126,7 +126,7 @@ bool AnnotationManager::annotation_is_non_serialized() const
     if (found)
     {
         ObjectName value;
-        if (it->get_value(value) == RETCODE_OK)
+        //TODO(richiware) if (it->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -170,7 +170,7 @@ ObjectName AnnotationManager::annotation_get_value() const
     if (found)
     {
         ObjectName value;
-        if (it->get_value(value) == RETCODE_OK)
+        //TODO(richiware) if (it->get_value(value) == RETCODE_OK)
         {
             return value;
         }
@@ -187,7 +187,7 @@ ObjectName AnnotationManager::annotation_get_default() const
     if (found)
     {
         ObjectName value;
-        if (it->get_value(value) == RETCODE_OK)
+        //TODO(richiware) if (it->get_value(value) == RETCODE_OK)
         {
             return value;
         }
@@ -204,7 +204,7 @@ uint16_t AnnotationManager::annotation_get_position() const
     if (found)
     {
         ObjectName value;
-        if (it->get_value(value) == RETCODE_OK)
+        //TODO(richiware) if (it->get_value(value) == RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value.c_str()));
         }
@@ -222,7 +222,7 @@ uint16_t AnnotationManager::annotation_get_bit_bound() const
     if (found)
     {
         ObjectName value;
-        if (it->get_value(value) == RETCODE_OK)
+        //TODO(richiware) if (it->get_value(value) == RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value.c_str()));
         }
@@ -248,8 +248,10 @@ void AnnotationManager::annotation_set(
     if (!found)
     {
         AnnotationDescriptorImpl descriptor;
-        descriptor.set_type(
+        /* TODO(richiware)
+           descriptor.type(
             DynamicTypeBuilderFactoryImpl::get_instance().create_annotation_primitive(id));
+         */
         m(descriptor);
         apply_annotation(descriptor);
     }
@@ -259,7 +261,7 @@ void AnnotationManager::annotation_set(
         AnnotationDescriptorImpl descriptor(std::move(*it));
         it = annotation_.erase(it);
         m(descriptor);
-        annotation_.insert(it, std::move(descriptor));
+        //TODO(richiware) annotation_.insert(it, std::move(descriptor));
     }
 
     std::tie(it, found) = get_annotation(id);
@@ -276,7 +278,7 @@ void AnnotationManager::annotation_set(
         [new_val](const AnnotationDescriptorImpl& d) -> bool
         {
             ObjectName val;
-            d.get_value(val, "value");
+            // TODO(richiware) d.get_value(val, "value");
             return 0 != val.compare(new_val);
         },
         [new_val](AnnotationDescriptorImpl& d)
@@ -383,16 +385,18 @@ void AnnotationManager::annotation_set_external(
 ReturnCode_t AnnotationManager::apply_annotation(
         const AnnotationDescriptorImpl& descriptor)
 {
-    if (descriptor.is_consistent())
-    {
+    /*TODO(richiware)
+       if (descriptor.is_consistent())
+       {
         annotation_.insert(descriptor);
         return RETCODE_OK;
-    }
-    else
-    {
+       }
+       else
+       {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
         return RETCODE_BAD_PARAMETER;
-    }
+       }
+     */
 }
 
 ReturnCode_t AnnotationManager::apply_annotation(
@@ -405,7 +409,7 @@ ReturnCode_t AnnotationManager::apply_annotation(
         [&key, &value](const AnnotationDescriptorImpl& d) -> bool
         {
             ObjectName val;
-            d.get_value(val, key);
+            //TODO(richiware) d.get_value(val, key);
             return val != value;
         },
         [&key, &value](AnnotationDescriptorImpl& d)
@@ -449,7 +453,7 @@ bool AnnotationManager::annotation_is_nested() const
     if (found)
     {
         ObjectName value;
-        if (it->get_value(value) == RETCODE_OK)
+        //TODO(richiware) if (it->get_value(value) == RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -468,7 +472,7 @@ ObjectName AnnotationManager::annotation_get_extensibility() const
     if (found)
     {
         ObjectName value;
-        if (it->get_value(value) == RETCODE_OK)
+        //TODO(richiware) if (it->get_value(value) == RETCODE_OK)
         {
             return value;
         }
@@ -485,7 +489,7 @@ ObjectName AnnotationManager::annotation_get_external_typename() const
     if (found)
     {
         ObjectName value;
-        if (it->get_value(value) == RETCODE_OK)
+        //TODO(richiware) if (it->get_value(value) == RETCODE_OK)
         {
             return value;
         }
@@ -508,7 +512,7 @@ ReturnCode_t AnnotationManager::get_annotation(
 
     if (found)
     {
-        annotation = it->get_descriptor();
+        //TODO(richiware) annotation = it->get_descriptor();
         return RETCODE_OK;
     }
 
@@ -519,7 +523,7 @@ bool AnnotationManager::key_annotation() const
 {
     for (auto anIt = annotation_.begin(); anIt != annotation_.end(); ++anIt)
     {
-        if ((*anIt).key_annotation())
+        //TODO(richiware) if ((*anIt).key_annotation())
         {
             return true;
         }

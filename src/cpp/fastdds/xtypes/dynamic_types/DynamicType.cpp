@@ -141,17 +141,6 @@ ReturnCode_t DynamicType::get_annotation(
     return DynamicTypeImpl::get_implementation(*this).get_annotation(annotation, index);
 }
 
-const Annotations* DynamicType::get_all_annotations(
-        ReturnCode_t* ec /*= nullptr*/) const noexcept
-{
-    if (ec)
-    {
-        *ec = ReturnCode_t{};
-    }
-
-    return &DynamicTypeImpl::get_implementation(*this).get_annotations();
-}
-
 bool DynamicType::equals(
         const DynamicType& other) const noexcept
 {

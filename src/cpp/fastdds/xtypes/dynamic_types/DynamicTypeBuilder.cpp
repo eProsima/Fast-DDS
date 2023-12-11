@@ -158,7 +158,7 @@ ReturnCode_t DynamicTypeBuilder::get_annotation(
 ReturnCode_t DynamicTypeBuilder::apply_annotation(
         const AnnotationDescriptor& annotation) noexcept
 {
-    return DynamicTypeBuilderImpl::get_implementation(*this).apply_annotation(annotation);
+    return RETCODE_OK; //TODO(richiware) DynamicTypeBuilderImpl::get_implementation(*this).apply_annotation(annotation);
 }
 
 ReturnCode_t DynamicTypeBuilder::apply_annotation_to_member(
@@ -167,17 +167,6 @@ ReturnCode_t DynamicTypeBuilder::apply_annotation_to_member(
 {
     return DynamicTypeBuilderImpl::get_implementation(*this)
                    .apply_annotation_to_member(id, annotation);
-}
-
-const Annotations* DynamicTypeBuilder::get_all_annotations(
-        ReturnCode_t* ec /*= nullptr*/) const noexcept
-{
-    if (ec)
-    {
-        *ec = ReturnCode_t{};
-    }
-
-    return &DynamicTypeBuilderImpl::get_implementation(*this).get_annotations();
 }
 
 const DynamicType* DynamicTypeBuilder::build() const noexcept
