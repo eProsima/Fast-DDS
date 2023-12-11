@@ -144,7 +144,7 @@ bool HelloWorldPublisher::init(
 
             server_locator.kind = LOCATOR_KIND_TCPv6;
             eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
+            eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
             break;
         }
 
