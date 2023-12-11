@@ -387,8 +387,8 @@ int fastdds_discovery_server(
     }
 
     // Add TCP default locators addresses
-    Locator locator_tcp_4(4, rtps::DEFAULT_TCP_SERVER_PORT);
-    Locator locator_tcp_6(8, rtps::DEFAULT_TCP_SERVER_PORT);
+    Locator locator_tcp_4(LOCATOR_KIND_TCPv4, rtps::DEFAULT_TCP_SERVER_PORT);
+    Locator locator_tcp_6(LOCATOR_KIND_TCPv6, rtps::DEFAULT_TCP_SERVER_PORT);
     bool default_port = true;
 
     // Retrieve first TCP port

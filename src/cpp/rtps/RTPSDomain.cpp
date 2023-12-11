@@ -560,7 +560,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         return nullptr;
     }
 
-    // Check if some server requires the UDPv6 transport
+    // Check if some server requires the UDPv6, TCPv4 or TCPv6 transport
     for (auto& server : server_list)
     {
         if (server.requires_transport<LOCATOR_KIND_UDPv6>())
@@ -610,7 +610,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         }
         if (server.requires_transport<LOCATOR_KIND_TCPv6>())
         {
-            // Check if a TCPv4 transport exists. Otherwise create it
+            // Check if a TCPv6 transport exists. Otherwise create it
             fastdds::rtps::TCPTransportDescriptor* pT = nullptr;
             std::shared_ptr<fastdds::rtps::TCPv6TransportDescriptor> p6;
             bool no_tcpv6 = true;
@@ -635,7 +635,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
             }
             if (no_tcpv6)
             {
-                // Extend builtin transports with the TCPv4 transport
+                // Extend builtin transports with the TCPv6 transport
                 auto descriptor = std::make_shared<fastdds::rtps::TCPv6TransportDescriptor>();
                 // Add automatic port
                 descriptor->add_listener_port(0);

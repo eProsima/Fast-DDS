@@ -79,7 +79,7 @@ const option::Descriptor usage[] = {
       "\t              address, a name can be specified.\n"},
 
     { TCP_PORT,  0, "q",  "tcp-port",         Arg::check_tcp_port,
-      "  -q  \t--tcp-port    TCP port chosen to listen the clients. Defaults to 16166\n" },
+      "  -q  \t--tcp-port    TCP port chosen to listen the clients. Defaults to 42100\n" },
 
     { BACKUP,    0, "b",  "backup",       Arg::None,
       "  -b  \t--backup      Creates a server with a backup file associated.\n" },
