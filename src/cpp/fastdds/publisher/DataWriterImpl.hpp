@@ -497,6 +497,8 @@ protected:
 
     std::unique_ptr<ReaderFilterCollection> reader_filters_;
 
+    DataRepresentationId_t data_representation_ {DEFAULT_DATA_REPRESENTATION};
+
     ReturnCode_t check_write_preconditions(
             void* data,
             const InstanceHandle_t& handle,

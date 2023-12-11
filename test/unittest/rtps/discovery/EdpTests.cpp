@@ -399,6 +399,41 @@ TEST_F(EdpTests, CheckPositiveAckCompatibility)
     }
 }
 
+TEST_F(EdpTests, CheckDataRepresentationCompatibility)
+{
+    using DataRepresentationQosVector = std::vector<DataRepresentationId>;
+    std::vector<QosTestingCase<DataRepresentationQosVector>> testing_cases{
+        { {}, {}, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {}, {DataRepresentationId::XCDR_DATA_REPRESENTATION}, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {}, {DataRepresentationId::XCDR_DATA_REPRESENTATION, DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {}, {DataRepresentationId::XCDR2_DATA_REPRESENTATION}, fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
+        { {DataRepresentationId::XCDR_DATA_REPRESENTATION}, {}, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {DataRepresentationId::XCDR_DATA_REPRESENTATION}, {DataRepresentationId::XCDR_DATA_REPRESENTATION},
+            fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {DataRepresentationId::XCDR_DATA_REPRESENTATION},
+            {DataRepresentationId::XCDR_DATA_REPRESENTATION, DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {DataRepresentationId::XCDR_DATA_REPRESENTATION}, {DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
+        { {DataRepresentationId::XCDR2_DATA_REPRESENTATION}, {}, fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
+        { {DataRepresentationId::XCDR2_DATA_REPRESENTATION}, {DataRepresentationId::XCDR_DATA_REPRESENTATION},
+            fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
+        { {DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            {DataRepresentationId::XCDR_DATA_REPRESENTATION, DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {DataRepresentationId::XCDR2_DATA_REPRESENTATION}, {DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            fastdds::dds::INVALID_QOS_POLICY_ID}
+    };
+
+    for (auto testing_case : testing_cases)
+    {
+        wdata->m_qos.representation.m_value = testing_case.offered_qos;
+        rdata->m_qos.representation.m_value = testing_case.requested_qos;
+        check_expectations(testing_case.failed_qos);
+    }
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

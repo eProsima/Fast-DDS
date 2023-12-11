@@ -306,6 +306,11 @@ ReturnCode_t DataWriterImpl::enable()
         reader_filters_.reset(new ReaderFilterCollection(qos_.writer_resource_limits().reader_filters_allocation));
     }
 
+    // Set Datawriter's DataRepresentationId taking into account the QoS.
+    data_representation_ = qos_.representation().m_value.empty()
+            || XCDR_DATA_REPRESENTATION == qos_.representation().m_value.at(0)
+                    ? XCDR_DATA_REPRESENTATION : XCDR2_DATA_REPRESENTATION;
+
     auto change_pool = get_change_pool();
     if (!change_pool)
     {
@@ -958,7 +963,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
         }
 
-        if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload))
+        if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload, data_representation_))
         {
             EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
             return_payload_to_pool(payload);

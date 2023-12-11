@@ -55,7 +55,8 @@ void LatencyDataType::copy_data(
 
 bool LatencyDataType::serialize(
         void* data,
-        SerializedPayload_t* payload)
+        SerializedPayload_t* payload,
+        eprosima::fastdds::dds::DataRepresentationId_t)
 {
     static uint8_t encapsulation[4] = { 0x0, 0x1, 0x0, 0x0 };
     LatencyType* lt = (LatencyType*)data;
@@ -88,7 +89,8 @@ bool LatencyDataType::deserialize(
 }
 
 std::function<uint32_t()> LatencyDataType::getSerializedSizeProvider(
-        void*)
+        void*,
+        eprosima::fastdds::dds::DataRepresentationId_t)
 {
     uint32_t size = m_typeSize;
     return [size]() -> uint32_t
@@ -110,7 +112,8 @@ void LatencyDataType::deleteData(
 
 bool TestCommandDataType::serialize(
         void* data,
-        SerializedPayload_t* payload)
+        SerializedPayload_t* payload,
+        eprosima::fastdds::dds::DataRepresentationId_t)
 {
     TestCommandType* t = (TestCommandType*)data;
     memcpy(payload->data, &t->m_command, sizeof(t->m_command));
@@ -131,7 +134,8 @@ bool TestCommandDataType::deserialize(
 }
 
 std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(
-        void*)
+        void*,
+        eprosima::fastdds::dds::DataRepresentationId_t)
 {
     return []() -> uint32_t
            {

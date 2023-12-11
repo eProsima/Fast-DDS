@@ -41,7 +41,15 @@ public:
 
     bool serialize(
             void* data,
-            fastrtps::rtps::SerializedPayload_t* payload) override
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+    {
+        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+    }
+
+    bool serialize(
+            void* data,
+            fastrtps::rtps::SerializedPayload_t* payload,
+            DataRepresentationId_t data_representation) override
     {
         type* p_type = static_cast<type*>(data);
 
@@ -49,13 +57,21 @@ public:
         eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload->data), payload->max_size);
         // Object that serializes the data.
         eprosima::fastcdr::Cdr ser(fb, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
+                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
         payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-        // Serialize encapsulation
-        ser.serialize_encapsulation();
+#if FASTCDR_VERSION_MAJOR > 1
+        ser.set_encoding_flag(
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
+#endif // FASTCDR_VERSION_MAJOR > 1
 
         try
         {
+            // Serialize encapsulation
+            ser.serialize_encapsulation();
+
             // Serialize the object.
             p_type->serialize(ser);
         }
@@ -110,6 +126,13 @@ public:
 
     std::function<uint32_t()> getSerializedSizeProvider(
             void* data) override
+    {
+        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+    }
+
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data,
+            DataRepresentationId_t /*data_representation*/) override
     {
         return [data]() -> uint32_t
                {

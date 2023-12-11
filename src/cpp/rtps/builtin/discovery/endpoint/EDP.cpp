@@ -752,6 +752,13 @@ bool EDP::valid_matching(
         incompatible_qos.set(fastdds::dds::LIVELINESS_QOS_POLICY_ID);
     }
 
+    // DataRepresentationQosPolicy
+    if (!checkDataRepresentationQos(wdata, rdata))
+    {
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "Incompatible Data Representation QoS");
+        incompatible_qos.set(fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID);
+    }
+
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
 #endif // if HAVE_SECURITY
@@ -827,7 +834,7 @@ bool EDP::valid_matching(
  * Table 7.57 XTypes document 1.2
  * Writer   Reader  Compatible
  * XCDR     XCDR    true
- * XCDR     XCDR2   true
+ * XCDR     XCDR2   false
  * XCDR2    XCDR    false
  * XCDR2    XCDR2   true
  * @param wdata
@@ -843,28 +850,25 @@ bool EDP::checkDataRepresentationQos(
 
     if (wdata->m_qos.representation.m_value.empty())
     {
-        compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR2_DATA_REPRESENTATION) != rr.end();
-        compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR_DATA_REPRESENTATION) != rr.end() || rr.empty();
+        compatible |=  rr.empty() ||
+                std::find(rr.begin(), rr.end(), fastdds::dds::XCDR_DATA_REPRESENTATION) != rr.end();
     }
     else
     {
-        for (DataRepresentationId writerRepresentation : wdata->m_qos.representation.m_value)
+        DataRepresentationId writerRepresentation {wdata->m_qos.representation.m_value.at(0)};
+
+        if (writerRepresentation == fastdds::dds::XCDR2_DATA_REPRESENTATION)
         {
-            if (writerRepresentation == fastdds::dds::XCDR2_DATA_REPRESENTATION)
-            {
-                compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR2_DATA_REPRESENTATION) != rr.end();
-            }
-            else if (writerRepresentation == fastdds::dds::XCDR_DATA_REPRESENTATION)
-            {
-                compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR2_DATA_REPRESENTATION) != rr.end();
-                compatible |=
-                        std::find(rr.begin(), rr.end(),
-                                fastdds::dds::XCDR_DATA_REPRESENTATION) != rr.end() || rr.empty();
-            }
-            else // XML_DATA_REPRESENTATION
-            {
-                EPROSIMA_LOG_INFO(EDP, "DataRepresentationQosPolicy XML_DATA_REPRESENTATION isn't supported.");
-            }
+            compatible |= std::find(rr.begin(), rr.end(), fastdds::dds::XCDR2_DATA_REPRESENTATION) != rr.end();
+        }
+        else if (writerRepresentation == fastdds::dds::XCDR_DATA_REPRESENTATION)
+        {
+            compatible |= rr.empty() ||
+                    std::find(rr.begin(), rr.end(), fastdds::dds::XCDR_DATA_REPRESENTATION) != rr.end();
+        }
+        else // XML_DATA_REPRESENTATION
+        {
+            EPROSIMA_LOG_INFO(EDP, "DataRepresentationQosPolicy XML_DATA_REPRESENTATION isn't supported.");
         }
     }
 
@@ -905,152 +909,7 @@ bool EDP::valid_matching(
         MatchingFailureMask& reason,
         fastdds::dds::PolicyMask& incompatible_qos)
 {
-    reason.reset();
-    incompatible_qos.reset();
-
-    if (rdata->topicName() != wdata->topicName())
-    {
-        reason.set(MatchingFailureMask::different_topic);
-        return false;
-    }
-
-    // Type Consistency Enforcement QosPolicy
-    if (!checkTypeValidation(wdata, rdata))
-    {
-        // TODO Trigger INCONSISTENT_TOPIC status change
-        reason.set(MatchingFailureMask::inconsistent_topic);
-        return false;
-    }
-
-    if (rdata->topicKind() != wdata->topicKind())
-    {
-        EPROSIMA_LOG_WARNING(RTPS_EDP, "INCOMPATIBLE QOS:Remote Writer " << wdata->guid() <<
-                " is publishing in topic " << wdata->topicName() << "(keyed:" << wdata->topicKind() <<
-                "), local reader subscribes as keyed: " << rdata->topicKind());
-        reason.set(MatchingFailureMask::inconsistent_topic);
-        return false;
-    }
-    if (rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS
-            && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
-    //Means our reader is reliable but hte writer is not
-    {
-        EPROSIMA_LOG_WARNING(RTPS_EDP,
-                "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "): Remote Writer " << wdata->guid()
-                                            << " is Best Effort and local reader is RELIABLE "
-                );
-        incompatible_qos.set(fastdds::dds::RELIABILITY_QOS_POLICY_ID);
-    }
-    if (rdata->m_qos.m_durability.kind > wdata->m_qos.m_durability.kind)
-    {
-        // TODO (MCC) Change log message
-        EPROSIMA_LOG_WARNING(RTPS_EDP,
-                "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter " << wdata->guid()
-                                            << " has VOLATILE DURABILITY and we want TRANSIENT_LOCAL";
-                );
-        incompatible_qos.set(fastdds::dds::DURABILITY_QOS_POLICY_ID);
-    }
-    if (rdata->m_qos.m_ownership.kind != wdata->m_qos.m_ownership.kind)
-    {
-        EPROSIMA_LOG_WARNING(RTPS_EDP,
-                "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):Remote Writer " << wdata->guid()
-                                            << " has different Ownership Kind");
-        incompatible_qos.set(fastdds::dds::OWNERSHIP_QOS_POLICY_ID);
-    }
-    if (rdata->m_qos.m_deadline.period < wdata->m_qos.m_deadline.period)
-    {
-        EPROSIMA_LOG_WARNING(RTPS_EDP, "INCOMPATIBLE QOS (topic: "
-                << wdata->topicName() << "):RemoteWriter "
-                << wdata->guid() << "has smaller DEADLINE period");
-        incompatible_qos.set(fastdds::dds::DEADLINE_QOS_POLICY_ID);
-    }
-    if (rdata->m_qos.m_disablePositiveACKs.enabled && !wdata->m_qos.m_disablePositiveACKs.enabled)
-    {
-        EPROSIMA_LOG_WARNING(RTPS_EDP, "Incompatible Disable Positive Acks QoS: writer is enabled but reader is not");
-        incompatible_qos.set(fastdds::dds::DISABLEPOSITIVEACKS_QOS_POLICY_ID);
-    }
-    if (wdata->m_qos.m_liveliness.lease_duration > rdata->m_qos.m_liveliness.lease_duration)
-    {
-        EPROSIMA_LOG_WARNING(RTPS_EDP, "Incompatible liveliness lease durations: offered lease duration "
-                << wdata->m_qos.m_liveliness.lease_duration << " must be <= requested lease duration "
-                << rdata->m_qos.m_liveliness.lease_duration);
-        incompatible_qos.set(fastdds::dds::LIVELINESS_QOS_POLICY_ID);
-    }
-    if (wdata->m_qos.m_liveliness.kind < rdata->m_qos.m_liveliness.kind)
-    {
-        EPROSIMA_LOG_WARNING(RTPS_EDP, "Incompatible liveliness kinds: offered kind is < than requested kind");
-        incompatible_qos.set(fastdds::dds::LIVELINESS_QOS_POLICY_ID);
-    }
-
-#if HAVE_SECURITY
-    // TODO: Check EndpointSecurityInfo
-#endif // if HAVE_SECURITY
-
-    //Partition mismatch does not trigger status change
-    if (incompatible_qos.any())
-    {
-        reason.set(MatchingFailureMask::incompatible_qos);
-        return false;
-    }
-
-    //Partition check:
-    bool matched = false;
-    if (rdata->m_qos.m_partition.empty() && wdata->m_qos.m_partition.empty())
-    {
-        matched = true;
-    }
-    else if (rdata->m_qos.m_partition.empty() && wdata->m_qos.m_partition.size() > 0)
-    {
-        for (auto rnameit = wdata->m_qos.m_partition.begin();
-                rnameit != wdata->m_qos.m_partition.end(); ++rnameit)
-        {
-            if (is_partition_empty(*rnameit))
-            {
-                matched = true;
-                break;
-            }
-        }
-    }
-    else if (rdata->m_qos.m_partition.size() > 0 && wdata->m_qos.m_partition.empty())
-    {
-        for (auto wnameit = rdata->m_qos.m_partition.begin();
-                wnameit !=  rdata->m_qos.m_partition.end(); ++wnameit)
-        {
-            if (is_partition_empty(*wnameit))
-            {
-                matched = true;
-                break;
-            }
-        }
-    }
-    else
-    {
-        for (auto wnameit = rdata->m_qos.m_partition.begin();
-                wnameit !=  rdata->m_qos.m_partition.end(); ++wnameit)
-        {
-            for (auto rnameit = wdata->m_qos.m_partition.begin();
-                    rnameit != wdata->m_qos.m_partition.end(); ++rnameit)
-            {
-                if (StringMatching::matchString(wnameit->name(), rnameit->name()))
-                {
-                    matched = true;
-                    break;
-                }
-            }
-            if (matched)
-            {
-                break;
-            }
-        }
-    }
-    if (!matched) //Different partitions
-    {
-        EPROSIMA_LOG_WARNING(RTPS_EDP, "INCOMPATIBLE QOS (topic: " <<  wdata->topicName() <<
-                "): Different Partitions");
-        reason.set(MatchingFailureMask::partitions);
-    }
-
-    return matched;
-
+    return valid_matching(wdata, rdata, reason, incompatible_qos);
 }
 
 ProxyPool<ReaderProxyData>& EDP::get_temporary_reader_proxies_pool()

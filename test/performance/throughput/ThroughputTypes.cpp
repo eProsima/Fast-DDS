@@ -43,7 +43,8 @@ bool ThroughputDataType::compare_data(
 // Serialization and deserialization functions
 bool ThroughputDataType::serialize(
         void* data,
-        SerializedPayload_t* payload)
+        SerializedPayload_t* payload,
+        eprosima::fastdds::dds::DataRepresentationId_t)
 {
     static uint8_t encapsulation[4] = { 0x0, 0x1, 0x0, 0x0 };
     ThroughputType* lt = (ThroughputType*)data;
@@ -75,7 +76,8 @@ bool ThroughputDataType::deserialize(
 }
 
 std::function<uint32_t()> ThroughputDataType::getSerializedSizeProvider(
-        void* )
+        void*,
+        eprosima::fastdds::dds::DataRepresentationId_t)
 {
     // uint32_t seqnum + uint32_t buffer_size_ + actual data
     uint32_t size = m_typeSize;
@@ -98,7 +100,8 @@ void ThroughputDataType::deleteData(
 
 bool ThroughputCommandDataType::serialize(
         void* data,
-        SerializedPayload_t* p)
+        SerializedPayload_t* p,
+        eprosima::fastdds::dds::DataRepresentationId_t)
 {
     ThroughputCommandType* t = (ThroughputCommandType*)data;
     p->length = 0;
@@ -146,7 +149,8 @@ bool ThroughputCommandDataType::deserialize(
 }
 
 std::function<uint32_t()> ThroughputCommandDataType::getSerializedSizeProvider(
-        void*)
+        void*,
+        eprosima::fastdds::dds::DataRepresentationId_t)
 {
     return []() -> uint32_t
            {
