@@ -23,18 +23,10 @@
 #define _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_DDS_RPC_RPC_TYPES_HPP_
 
 #include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
 #include <string>
 #include <utility>
-#include <vector>
-
 #include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
-#include <fastcdr/exceptions/BadParamException.h>
-
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -65,6 +57,7 @@ namespace eprosima {
 namespace fastdds {
 
 namespace dds {
+
 
 typedef std::array<uint8_t, 12> GuidPrefix_t;
 
@@ -1151,6 +1144,7 @@ private:
 } // namespace fastdds
 
 } // namespace eprosima
+
 
 #endif // _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_DDS_RPC_RPC_TYPES_HPP_
 

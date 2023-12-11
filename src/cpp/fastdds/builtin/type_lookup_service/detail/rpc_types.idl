@@ -1,6 +1,4 @@
 //#ifdef BASIC
-module eprosima {
-module fastdds {
 
 module dds { 
 
@@ -75,9 +73,6 @@ struct ReplyHeader
 }; // module rpc
 
 }; // module dds
-
-}; // fastdds
-}; // eprosima
 
 //#endif // BASIC 
 

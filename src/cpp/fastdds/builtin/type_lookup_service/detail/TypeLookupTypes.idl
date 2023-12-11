@@ -3,9 +3,6 @@
 #include "../../../../../../include/fastdds/dds/core/detail/DDSReturnCode.idl"
 #include "../../../../../../include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.idl"
 #include "rpc_types.idl"
-
-module eprosima {
-module fastdds {
     
 module dds {
 module builtin {
@@ -81,6 +78,3 @@ module builtin {
 
 }; // builtin
 }; // dds
-
-}; // fastdds
-}; // eprosima

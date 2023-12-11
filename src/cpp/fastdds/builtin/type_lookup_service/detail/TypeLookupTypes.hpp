@@ -22,17 +22,10 @@
 #ifndef _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_DDS_BUILTIN_TYPELOOKUPTYPES_HPP_
 #define _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_DDS_BUILTIN_TYPELOOKUPTYPES_HPP_
 
-#include <array>
-#include <bitset>
 #include <cstdint>
-#include <map>
-#include <string>
 #include <utility>
 #include <vector>
 
-#include <fastcdr/cdr/fixed_size_string.hpp>
-#include <fastcdr/xcdr/external.hpp>
-#include <fastcdr/xcdr/optional.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 
 #include "rpc_types.hpp"
@@ -68,6 +61,7 @@ namespace eprosima {
 namespace fastdds {
 
 namespace dds {
+
 
 namespace builtin {
 
@@ -2488,6 +2482,7 @@ private:
 } // namespace fastdds
 
 } // namespace eprosima
+
 
 #endif // _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_DDS_BUILTIN_TYPELOOKUPTYPES_HPP_
 

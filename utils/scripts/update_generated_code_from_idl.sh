@@ -84,14 +84,14 @@ for idl_file in "${idl_files[@]}"; do
             od_entry_split=(${od_entry//\|/ })
             for od_entry_split_element in ${od_entry_split[@]:1}; do
                 od_arg="-d ${od_entry_split_element}"
-                fastddsgen -replace -genapi $to_arg $cs_arg $od_arg "$file_from_gen"
+                fastddsgen -replace -genapi $to_arg $cs_arg $od_arg "$file_from_gen" -no-dependencies
             done
             break
         fi
     done
 
     if $not_processed ; then
-        fastddsgen -replace -genapi $to_arg $cs_arg $nosupport_arg "$file_from_gen"
+        fastddsgen -replace -genapi $to_arg $cs_arg $nosupport_arg "$file_from_gen" -no-dependencies
     fi
 
     if [[ $? != 0 ]]; then
@@ -104,9 +104,6 @@ done
 # Move source files to src/cpp
 mv ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.ipp ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.ipp
 mv ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.cxx ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
-
-rm ./include/fastdds/dds/core/detail/DDSReturnCodePubSubTypes.h
-rm ./include/fastdds/dds/core/detail/DDSSecurityReturnCodePubSubTypes.h
 
 sed -i 's+"dds_xtypes_typeobjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.ipp
 sed -i 's+"dds_xtypes_typeobjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
