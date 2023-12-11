@@ -93,7 +93,6 @@ std::ostream& operator <<(
         os << manips << "member annotations:" << endl;
         for (const AnnotationDescriptorImpl& d : dm.get_all_annotations())
         {
-            os << d;
         }
 
         // indentation decrement

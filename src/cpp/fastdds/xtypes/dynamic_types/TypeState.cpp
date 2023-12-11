@@ -905,7 +905,6 @@ std::ostream& operator <<(
         os << manips << "annotations:" << endl;
         for (const AnnotationDescriptorImpl& d : td.get_all_annotations())
         {
-            os << d;
         }
     }
 

@@ -596,14 +596,16 @@ const eprosima::fastdds::dds::DynamicTypeBuilder* XMLParser::parseXMLBitfieldDyn
     {
         auto& fact = DynamicTypeBuilderFactory::get_instance();
 
-        AnnotationDescriptor ad;
-        ad.set_type(fact.create_annotation_primitive(ANNOTATION_BIT_BOUND_ID));
-        ad.set_value("value", bit_bound);
-        builder.apply_annotation_to_member(mId, ad);
+        /*TODO(richiware)
+           AnnotationDescriptor ad;
+           ad.set_type(fact.create_annotation_primitive(ANNOTATION_BIT_BOUND_ID));
+           ad.set_value("value", bit_bound);
+           builder.apply_annotation_to_member(mId, ad);
 
-        ad.set_type(fact.create_annotation_primitive(ANNOTATION_POSITION_ID));
-        ad.set_value("value", std::to_string(position).c_str());
-        builder.apply_annotation_to_member(mId, ad);
+           ad.set_type(fact.create_annotation_primitive(ANNOTATION_POSITION_ID));
+           ad.set_value("value", std::to_string(position).c_str());
+           builder.apply_annotation_to_member(mId, ad);
+         */
     }
     position += static_cast<uint16_t>(atoi(bit_bound));
 
@@ -1476,10 +1478,12 @@ const eprosima::fastdds::dds::DynamicTypeBuilder* XMLParser::parseXMLMemberDynam
                 // copy if modification is required
                 eprosima::fastdds::dds::DynamicTypeBuilder* mutable_builder {factory.create_type_copy(*memberBuilder)};
 
-                AnnotationDescriptor ad;
-                ad.set_type(fact.create_annotation_primitive(ANNOTATION_KEY_ID));
-                ad.set_value("value", CONST_TRUE);
-                mutable_builder->apply_annotation(ad);
+                /*TODO(richiware)
+                   AnnotationDescriptor ad;
+                   ad.set_type(fact.create_annotation_primitive(ANNOTATION_KEY_ID));
+                   ad.set_value("value", CONST_TRUE);
+                   mutable_builder->apply_annotation(ad);
+                 */
 
                 return mutable_builder;
             }
@@ -1516,10 +1520,12 @@ const eprosima::fastdds::dds::DynamicTypeBuilder* XMLParser::parseXMLMemberDynam
     {
         auto& fact = DynamicTypeBuilderFactory::get_instance();
 
-        AnnotationDescriptor ad;
-        ad.set_type(fact.create_annotation_primitive(ANNOTATION_KEY_ID));
-        ad.set_value("value", CONST_TRUE);
-        builder.apply_annotation(ad);
+        /*TODO(richiware)
+           AnnotationDescriptor ad;
+           ad.set_type(fact.create_annotation_primitive(ANNOTATION_KEY_ID));
+           ad.set_value("value", CONST_TRUE);
+           builder.apply_annotation(ad);
+         */
     }
 
     const char* memberName = p_root->Attribute(NAME);

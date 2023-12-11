@@ -173,7 +173,6 @@ public:
 
     using AnnotationManager::get_all_annotations;
     using AnnotationManager::get_annotation_count;
-    using AnnotationManager::get_annotations;
 
     using AnnotationManager::annotation_is_bit_bound;
     using AnnotationManager::annotation_is_key;
