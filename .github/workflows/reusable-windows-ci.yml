@@ -51,6 +51,9 @@ jobs:
         with:
           cmakeVersion: '3.16.3'
 
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
       - name: Patch SDK for source indexing
         run: |
           # This is a well known issue and the workarond is taken from there
