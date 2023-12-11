@@ -385,7 +385,7 @@ public:
     TypeLookupSettings typelookup_config;
 
     //! Network Configuration
-    NetworkConfigSet_t network_configuration;
+    NetworkConfigSet_t network_configuration = 0;
 
     //! Metatraffic Unicast Locator List
     LocatorList_t metatrafficUnicastLocatorList;
