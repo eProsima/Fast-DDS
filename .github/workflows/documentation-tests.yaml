@@ -52,6 +52,9 @@ jobs:
       - name: Install documentation packages
         uses: ./src/fastrtps/.github/actions/install-apt-packages-documentation
 
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
       - name: Download FastDDS dependencies
         run: |
           pip3 install vcstool
