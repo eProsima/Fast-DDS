@@ -252,9 +252,10 @@ void TCPTransportInterface::calculate_crc(
     header.crc = crc;
 }
 
-bool TCPTransportInterface::create_acceptor_socket(
+uint16_t TCPTransportInterface::create_acceptor_socket(
         const Locator& locator)
 {
+    uint16_t final_port = 0;
     try
     {
         if (is_interface_whitelist_empty())
@@ -264,16 +265,18 @@ bool TCPTransportInterface::create_acceptor_socket(
             {
                 std::shared_ptr<TCPAcceptorSecure> acceptor =
                         std::make_shared<TCPAcceptorSecure>(io_service_, this, locator);
-                acceptors_[locator] = acceptor;
+                acceptors_[acceptor->locator()] = acceptor;
                 acceptor->accept(this, ssl_context_);
+                final_port = static_cast<uint16_t>(acceptor->locator().port);
             }
             else
 #endif // if TLS_FOUND
             {
                 std::shared_ptr<TCPAcceptorBasic> acceptor =
                         std::make_shared<TCPAcceptorBasic>(io_service_, this, locator);
-                acceptors_[locator] = acceptor;
+                acceptors_[acceptor->locator()] = acceptor;
                 acceptor->accept(this);
+                final_port = static_cast<uint16_t>(acceptor->locator().port);
             }
 
             logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
@@ -290,16 +293,18 @@ bool TCPTransportInterface::create_acceptor_socket(
                 {
                     std::shared_ptr<TCPAcceptorSecure> acceptor =
                             std::make_shared<TCPAcceptorSecure>(io_service_, sInterface, locator);
-                    acceptors_[locator] = acceptor;
+                    acceptors_[acceptor->locator()] = acceptor;
                     acceptor->accept(this, ssl_context_);
+                    final_port = static_cast<uint16_t>(acceptor->locator().port);
                 }
                 else
 #endif // if TLS_FOUND
                 {
                     std::shared_ptr<TCPAcceptorBasic> acceptor =
                             std::make_shared<TCPAcceptorBasic>(io_service_, sInterface, locator);
-                    acceptors_[locator] = acceptor;
+                    acceptors_[acceptor->locator()] = acceptor;
                     acceptor->accept(this);
+                    final_port = static_cast<uint16_t>(acceptor->locator().port);
                 }
 
                 logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
@@ -322,7 +327,7 @@ bool TCPTransportInterface::create_acceptor_socket(
         return false;
     }
 
-    return true;
+    return final_port;
 }
 
 void TCPTransportInterface::fill_rtcp_header(
