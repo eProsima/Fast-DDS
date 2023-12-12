@@ -81,8 +81,8 @@ namespace builtin {
     #if FASTCDR_VERSION_MAJOR > 1
         ser.set_encoding_flag(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
     #endif // FASTCDR_VERSION_MAJOR > 1
 
         try
@@ -271,8 +271,8 @@ namespace builtin {
     #if FASTCDR_VERSION_MAJOR > 1
         ser.set_encoding_flag(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
     #endif // FASTCDR_VERSION_MAJOR > 1
 
         try
@@ -463,8 +463,8 @@ namespace builtin {
     #if FASTCDR_VERSION_MAJOR > 1
         ser.set_encoding_flag(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
     #endif // FASTCDR_VERSION_MAJOR > 1
 
         try
@@ -653,8 +653,8 @@ namespace builtin {
     #if FASTCDR_VERSION_MAJOR > 1
         ser.set_encoding_flag(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
     #endif // FASTCDR_VERSION_MAJOR > 1
 
         try
