@@ -129,6 +129,7 @@
             ├ userTransports                       [0~1],
             |   └ transport_id                     [1~*] [string],
             ├ useBuiltinTransports                 [bool],
+            ├ builtinTransports                    [0~1][string]
             ├ propertiesPolicy                     [0~1],
             ├ allocation                           [0~1],
             ├ userData                             [0~1],
@@ -163,6 +164,7 @@
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="useBuiltinTransports" type="boolean" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtinTransports" type="string" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType"  minOccurs="0" maxOccurs="1"/>
                         <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -892,7 +894,7 @@
                                     <xs:union memberTypes="ipv4Address ipv6Address"/>
                                 </xs:simpleType>
                             </xs:element>
-                            <xs:element name="interface" type="string" maxOccurs="unbounded"/> 
+                            <xs:element name="interface" type="string" maxOccurs="unbounded"/>
                         </xs:choice>
                     </xs:sequence>
                 </xs:complexType>
