@@ -297,9 +297,9 @@ int fastdds_discovery_server(
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator4);
     }
-    else if (nullptr != pO_port)
+    else if (nullptr == pOp && nullptr != pO_port)
     {
-        // UDP port AND TCP port/address has been specified
+        // UDP port AND TCP port/address has been specified without specifying UDP address
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator4);
     }
     else if (nullptr != pOp)

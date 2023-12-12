@@ -1250,7 +1250,7 @@ TEST_F(IPLocatorTests, to_string)
 
     // TCPv4
     IPLocator::createLocator(LOCATOR_KIND_TCPv4, "0.0.1.1", 2u, locator);
-    ASSERT_EQ(IPLocator::to_string(locator), "TCPv4:[0.0.1.1]:2");
+    ASSERT_EQ(IPLocator::to_string(locator), "TCPv4:[0.0.1.1]:2-0");
 
     // UDPv6
     IPLocator::createLocator(LOCATOR_KIND_UDPv6, "200::", 3u, locator);
@@ -1258,7 +1258,7 @@ TEST_F(IPLocatorTests, to_string)
 
     // TCPv6
     IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::2", 4u, locator);
-    ASSERT_EQ(IPLocator::to_string(locator), "TCPv6:[::2]:4");
+    ASSERT_EQ(IPLocator::to_string(locator), "TCPv6:[::2]:4-0");
 
     // SHM
     IPLocator::createLocator(LOCATOR_KIND_SHM, "", 5u, locator);
@@ -1560,7 +1560,7 @@ TEST(LocatorTests, LocatorList_serialization)
 
     // Full list
     ss_filled << locator_list;
-    ASSERT_EQ(ss_filled.str(), "[UDPv4:[1.1.1.1]:1,TCPv4:[2.2.2.2]:2]");
+    ASSERT_EQ(ss_filled.str(), "[UDPv4:[1.1.1.1]:1,TCPv4:[2.2.2.2]:2-0]");
 }
 
 /*
@@ -1872,7 +1872,7 @@ TEST(LocatorDNSTests, dns_locator)
                 else
                 {
                     std::stringstream ss_address;
-                    ss_address << type << ":[" << ip << "]:1024";
+                    ss_address << type << ":[" << ip << "]:1024-0";
                     std::stringstream ss_locator;
                     ss_locator << locator;
                     EXPECT_EQ(ss_address.str(), ss_locator.str()) << "Wrong translation " << ss_locator.str()
