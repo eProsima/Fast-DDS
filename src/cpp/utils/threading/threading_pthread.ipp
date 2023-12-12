@@ -68,37 +68,37 @@ static void configure_current_thread_scheduler(
     int current_class;
     int result = 0;
     bool change_priority = (std::numeric_limits<int32_t>::min() != sched_priority);
-    
+
     // Get current scheduling parameters
     memset(&current_param, 0, sizeof(current_param));
     pthread_getschedparam(self_tid, &current_class, &current_param);
-        
+
     memset(&param, 0, sizeof(param));
     param.sched_priority = 0;
     sched_class = (sched_class == -1) ? current_class : sched_class;
-    
+
     //
-    // Set Scheduler Class and Priority       
+    // Set Scheduler Class and Priority
     //
-    
+
     if((sched_class == SCHED_OTHER) ||
        (sched_class == SCHED_BATCH) ||
-       (sched_class == SCHED_IDLE)) 
-    {               
+       (sched_class == SCHED_IDLE))
+    {
         //
         // BATCH and IDLE do not have explicit priority values.
         // - Requires priorty value to be zero (0).
-        
+
         result = pthread_setschedparam(self_tid, sched_class, &param);
 
         //
         // Sched OTHER has a nice value, that we pull from the priority parameter.
-        // 
-        
+        //
+
         if(0 == result && sched_class == SCHED_OTHER && change_priority)
-        {            
+        {
             result = setpriority(PRIO_PROCESS, gettid(), sched_priority);
-        }                
+        }
     }
     else if((sched_class == SCHED_FIFO) ||
             (sched_class == SCHED_RR))
@@ -106,7 +106,7 @@ static void configure_current_thread_scheduler(
         //
         // RT Policies use a different priority numberspace.
         //
-        
+
         param.sched_priority = change_priority ? sched_priority : current_param.sched_priority;
         result = pthread_setschedparam(self_tid, sched_class, &param);
     }
@@ -127,11 +127,11 @@ static void configure_current_thread_affinity(
     pthread_t self_tid = pthread_self();
 
     result = 0;
-       
+
     //
     // Rebuilt the cpu set from scratch...
     //
-    
+
     CPU_ZERO(&cpu_set);
 
     //
@@ -158,7 +158,11 @@ static void configure_current_thread_affinity(
 
     if(result > 0)
     {
+#ifdef ANDROID
+        result = sched_setaffinity(self_tid, sizeof(cpu_set_t), &cpu_set);
+#else
         result = pthread_setaffinity_np(self_tid, sizeof(cpu_set_t), &cpu_set);
+#endif
     }
 
     if (0 != result)
