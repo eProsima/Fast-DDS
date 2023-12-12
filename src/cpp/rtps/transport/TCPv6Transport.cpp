@@ -85,10 +85,10 @@ TCPv6Transport::TCPv6Transport(
         interface_whitelist_.emplace_back(ip::address_v6::from_string(interface));
     }
 
-    for (uint16_t port : configuration_.listening_ports)
+    for (uint16_t& port : configuration_.listening_ports)
     {
         Locator locator(LOCATOR_KIND_TCPv6, port);
-        create_acceptor_socket(locator);
+        port = create_acceptor_socket(locator);
     }
 
 #if !TLS_FOUND
