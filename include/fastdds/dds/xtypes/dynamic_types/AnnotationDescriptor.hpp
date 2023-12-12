@@ -60,7 +60,7 @@ public:
 
     /**
      * Getter for all the values.
-     * @param[inout] vlaue @ref Parameters interface to the strings map.
+     * @param[inout] value @ref Parameters interface to the strings map.
      * @return @ref ReturnCode_t returns operation success.
      */
     virtual ReturnCode_t get_all_value(
