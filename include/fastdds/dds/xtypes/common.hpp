@@ -26,16 +26,6 @@ namespace dds {
 namespace xtypes {
 
 /**
- * @brief EquivalenceKind values
- */
-enum EquivalenceKindValue
-{
-    MINIMAL,
-    COMPLETE,
-    BOTH
-};
-
-/**
  * @brief PlacementKind values (@verbatim annotation)
  */
 enum PlacementKindValue

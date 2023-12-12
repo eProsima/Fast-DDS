@@ -204,30 +204,15 @@ const StringLTypeDefn TypeObjectUtils::build_string_l_type_defn(
 }
 
 const PlainCollectionHeader TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue equiv_kind,
+        EquivalenceKind equiv_kind,
         CollectionElementFlag element_flags)
 {
+    equivalence_kind_consistency(equiv_kind);
 #if !defined(NDEBUG)
     collection_element_flag_consistency(element_flags);
 #endif // !defined(NDEBUG)
     PlainCollectionHeader plain_collection_header;
-    switch (equiv_kind)
-    {
-        case EquivalenceKindValue::MINIMAL:
-            plain_collection_header.equiv_kind(EK_MINIMAL);
-            break;
-
-        case EquivalenceKindValue::COMPLETE:
-            plain_collection_header.equiv_kind(EK_COMPLETE);
-            break;
-
-        case EquivalenceKindValue::BOTH:
-            plain_collection_header.equiv_kind(EK_BOTH);
-            break;
-
-        default:
-            break;
-    }
+    plain_collection_header.equiv_kind(equiv_kind);
     plain_collection_header.element_flags(element_flags);
     return plain_collection_header;
 }
@@ -2059,14 +2044,20 @@ void TypeObjectUtils::type_flag_consistency(
     }
 }
 
-void TypeObjectUtils::plain_collection_header_consistency(
-        const PlainCollectionHeader& header)
+void TypeObjectUtils::equivalence_kind_consistency(
+        EquivalenceKind equiv_kind)
 {
-    collection_element_flag_consistency(header.element_flags());
-    if (header.equiv_kind() != EK_COMPLETE && header.equiv_kind() != EK_MINIMAL && header.equiv_kind() != EK_BOTH)
+    if (EK_BOTH != equiv_kind && EK_COMPLETE != equiv_kind && EK_MINIMAL != equiv_kind)
     {
         throw InvalidArgumentError("Inconsistent PlainCollectionHeader, invalid EquivalenceKind");
     }
+}
+
+void TypeObjectUtils::plain_collection_header_consistency(
+        const PlainCollectionHeader& header)
+{
+    equivalence_kind_consistency(header.equiv_kind());
+    collection_element_flag_consistency(header.element_flags());
 }
 
 void TypeObjectUtils::plain_collection_type_identifier_header_consistency(
@@ -2324,7 +2315,7 @@ void TypeObjectUtils::applied_annotation_seq_consistency(
     std::unordered_set<TypeIdentifier> annotation_typeids;
     for (const AppliedAnnotation& annotation : applied_annotation_seq)
     {
-        if (annotation_typeids.insert(annotation.annotation_typeid()).second)
+        if (!annotation_typeids.insert(annotation.annotation_typeid()).second)
         {
             throw InvalidArgumentError("Repeated annotation in the sequence");
         }
