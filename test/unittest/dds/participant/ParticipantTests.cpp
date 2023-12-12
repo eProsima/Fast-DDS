@@ -777,7 +777,7 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
 #endif // _WIN32
 
     DomainParticipant* participant_2 = DomainParticipantFactory::get_instance()->create_participant(
-       0, qos);
+        0, qos);
     ASSERT_NE(nullptr, participant_2);
 
     fastrtps::rtps::RTPSParticipantAttributes attributes_2;
@@ -790,7 +790,8 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
             {
                 for (auto& transportDescriptor : attributes.userTransports)
                 {
-                    if ( nullptr != dynamic_cast<eprosima::fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    if ( nullptr !=
+                            dynamic_cast<eprosima::fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
                     {
                         return true;
                     }
@@ -809,7 +810,8 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
             {
                 for (auto& transportDescriptor : attributes_2.userTransports)
                 {
-                    if ( nullptr != dynamic_cast<eprosima::fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    if ( nullptr !=
+                            dynamic_cast<eprosima::fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
                     {
                         return true;
                     }
@@ -868,7 +870,8 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfigurationDNS)
             {
                 for (auto& transportDescriptor : attributes.userTransports)
                 {
-                    if ( nullptr != dynamic_cast<eprosima::fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    if ( nullptr !=
+                            dynamic_cast<eprosima::fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
                     {
                         return true;
                     }
