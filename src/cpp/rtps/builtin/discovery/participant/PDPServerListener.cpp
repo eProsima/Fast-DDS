@@ -140,7 +140,8 @@ void PDPServerListener::onNewCacheChangeAdded(
                     &msg,
                     true,
                     pdp_server()->getRTPSParticipant()->network_factory(),
-                    pdp_server()->getRTPSParticipant()->has_shm_transport()))
+                    pdp_server()->getRTPSParticipant()->has_shm_transport(),
+                    true))
         {
             if (parent_pdp_->getRTPSParticipant()->is_participant_ignored(participant_data.m_guid.guidPrefix))
             {

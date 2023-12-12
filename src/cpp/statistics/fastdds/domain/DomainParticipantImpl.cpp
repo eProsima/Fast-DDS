@@ -77,6 +77,7 @@ constexpr const char* EDP_PACKETS_TOPIC_ALIAS = "EDP_PACKETS_TOPIC";
 constexpr const char* DISCOVERY_TOPIC_ALIAS = "DISCOVERY_TOPIC";
 constexpr const char* SAMPLE_DATAS_TOPIC_ALIAS = "SAMPLE_DATAS_TOPIC";
 constexpr const char* PHYSICAL_DATA_TOPIC_ALIAS = "PHYSICAL_DATA_TOPIC";
+constexpr const char* MONITOR_SERVICE_TOPIC_ALIAS = "MONITOR_SERVICE_TOPIC";
 
 static constexpr uint32_t participant_statistics_mask =
         EventKindBits::RTPS_SENT | EventKindBits::RTPS_LOST | EventKindBits::NETWORK_LATENCY |
@@ -256,6 +257,20 @@ ReturnCode_t DomainParticipantImpl::enable()
     {
         rtps_participant_->add_statistics_listener(statistics_listener_, participant_statistics_mask);
         create_statistics_builtin_entities();
+
+        if (!rtps_participant_->is_monitor_service_created())
+        {
+            auto enable_ms_property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+                qos_.properties(), fastdds::dds::parameter_enable_monitor_service);
+
+            if (nullptr != enable_ms_property_value && *enable_ms_property_value == "true")
+            {
+                if (enable_monitor_service() != ReturnCode_t::RETCODE_OK)
+                {
+                    EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT, "Could not enable the Monitor Service");
+                }
+            }
+        }
     }
 
     return ret;
@@ -278,6 +293,79 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
     {
         builtin_publisher_impl_ = nullptr;
         builtin_publisher_ = nullptr;
+    }
+
+    return ret;
+}
+
+ReturnCode_t DomainParticipantImpl::enable_monitor_service()
+{
+    fastrtps::types::ReturnCode_t ret = fastrtps::types::ReturnCode_t::RETCODE_OK;
+
+    if (!rtps_participant_->is_monitor_service_created())
+    {
+        status_observer_.store(rtps_participant_->create_monitor_service(*this));
+    }
+
+    if (!rtps_participant_->enable_monitor_service() ||
+            nullptr == status_observer_)
+    {
+        ret = fastrtps::types::ReturnCode_t::RETCODE_ERROR;
+    }
+
+    return ret;
+}
+
+ReturnCode_t DomainParticipantImpl::disable_monitor_service()
+{
+    fastrtps::types::ReturnCode_t ret = fastrtps::types::ReturnCode_t::RETCODE_OK;
+
+    if (!rtps_participant_->is_monitor_service_created() ||
+            !rtps_participant_->disable_monitor_service())
+    {
+        ret = fastrtps::types::ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    return ret;
+}
+
+ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
+        fastrtps::rtps::ParticipantProxyData& data,
+        fastdds::statistics::MonitorServiceStatusData& msg)
+{
+    ReturnCode_t ret{ReturnCode_t::RETCODE_OK};
+
+    if (!get_rtps_participant()->fill_discovery_data_from_cdr_message(data, msg))
+    {
+        ret = ReturnCode_t::RETCODE_ERROR;
+    }
+
+    return ret;
+}
+
+ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
+        fastrtps::rtps::WriterProxyData& data,
+        fastdds::statistics::MonitorServiceStatusData& msg)
+{
+    ReturnCode_t ret{ReturnCode_t::RETCODE_OK};
+
+    if (!get_rtps_participant()->fill_discovery_data_from_cdr_message(data, msg))
+    {
+        ret = ReturnCode_t::RETCODE_ERROR;
+    }
+
+    return ret;
+}
+
+ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
+        fastrtps::rtps::ReaderProxyData& data,
+        fastdds::statistics::MonitorServiceStatusData& msg)
+{
+    ReturnCode_t ret{ReturnCode_t::RETCODE_OK};
+
+    if (!get_rtps_participant()->fill_discovery_data_from_cdr_message(data, msg))
+    {
+        ret = ReturnCode_t::RETCODE_ERROR;
     }
 
     return ret;
@@ -335,6 +423,16 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
     std::string topic;
     while (std::getline(topics, topic, ';'))
     {
+        if (MONITOR_SERVICE_TOPIC_ALIAS == topic)
+        {
+            if (!rtps_participant_->is_monitor_service_created() &&
+                    enable_monitor_service() != ReturnCode_t::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT, "Could not enable the Monitor Service");
+            }
+            continue;
+        }
+
         DataWriterQos datawriter_qos;
         PublisherAttributes attr;
         if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(topic, attr, false))
@@ -522,6 +620,46 @@ bool DomainParticipantImpl::delete_topic_and_type(
     // expected) and if the type_name is empty (which is not going to happen).
     unregister_type(type_name);
     return true;
+}
+
+bool DomainParticipantImpl::get_monitoring_status(
+        const fastrtps::rtps::GUID_t& entity_guid,
+        const uint32_t& status_id,
+        eprosima::fastdds::statistics::rtps::DDSEntityStatus*& status)
+{
+    ReturnCode_t ret = ReturnCode_t::RETCODE_ERROR;
+
+    if (entity_guid.entityId.is_reader())
+    {
+        std::lock_guard<std::mutex> lock(mtx_subs_);
+        for (auto& sub : subscribers_)
+        {
+            if (sub.second->get_monitoring_status(status_id, status, entity_guid))
+            {
+                ret = ReturnCode_t::RETCODE_OK;
+                break;
+            }
+        }
+    }
+    else if (entity_guid.entityId.is_writer())
+    {
+        std::lock_guard<std::mutex> lock(mtx_pubs_);
+        for (auto& pub : publishers_)
+        {
+            if (pub.second->get_monitoring_status(status_id, status, entity_guid))
+            {
+                ret = ReturnCode_t::RETCODE_OK;
+                break;
+            }
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT,
+                "Unknown entity type to get the status from " << entity_guid.entityId);
+    }
+
+    return (ret == ReturnCode_t::RETCODE_OK);
 }
 
 } // dds

@@ -445,6 +445,11 @@ protected:
                 SampleRejectedStatusKind reason,
                 const fastrtps::rtps::CacheChange_t* const change) override;
 
+#ifdef FASTDDS_STATISTICS
+        void notify_status_observer(
+                const uint32_t& status_id);
+#endif //FASTDDS_STATISTICS
+
         DataReaderImpl* data_reader_;
     }
     reader_listener_;

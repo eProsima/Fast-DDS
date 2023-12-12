@@ -38,6 +38,11 @@
 
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
+#ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
+#endif // ifdef FASTDDS_STATISTICS
+
 namespace eprosima {
 
 namespace fastdds {
@@ -360,6 +365,15 @@ public:
      */
     RTPS_DllAPI void set_enabled_statistics_writers_mask(
             uint32_t enabled_writers);
+
+    /**
+     * @brief Get the connection list of this writer
+     *
+     * @param [out] connection_list of the writer
+     * @return True if could be retrieved
+     */
+    RTPS_DllAPI virtual bool get_connections(
+            fastdds::statistics::rtps::ConnectionList& connection_list) = 0;
 
 #endif // FASTDDS_STATISTICS
 

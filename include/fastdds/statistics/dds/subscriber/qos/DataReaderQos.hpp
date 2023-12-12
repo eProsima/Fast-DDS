@@ -41,8 +41,26 @@ public:
     RTPS_DllAPI DataReaderQos();
 };
 
+/**
+ * Class MonitorServiceDataReaderQos: extends standard DDS DataReaderQos class to include specific default constructor for the
+ * recommended MonitorServiceDataReaderQos profile.
+ * @ingroup STATISTICS_MODULE
+ */
+class MonitorServiceDataReaderQos : public eprosima::fastdds::dds::DataReaderQos
+{
+public:
+
+    /**
+     * @brief Constructor
+     */
+    RTPS_DllAPI MonitorServiceDataReaderQos();
+};
+
 //! Constant to access default Statistics DataReader Qos
 const eprosima::fastdds::statistics::dds::DataReaderQos STATISTICS_DATAREADER_QOS;
+
+//! Constant to access default Monitor Service Statistics DataReader Qos
+const eprosima::fastdds::statistics::dds::MonitorServiceDataReaderQos MONITOR_SERVICE_DATAREADER_QOS;
 
 } // dds
 } // statistics

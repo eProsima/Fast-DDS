@@ -460,9 +460,13 @@ public:
 };
 
 // auxiliary conversion functions
-detail::Locator_s to_statistics_type(fastrtps::rtps::Locator_t);
-detail::GUID_s to_statistics_type(fastrtps::rtps::GUID_t);
-detail::SampleIdentity_s to_statistics_type(fastrtps::rtps::SampleIdentity);
+RTPS_DllAPI detail::Locator_s to_statistics_type(fastrtps::rtps::Locator_t);
+RTPS_DllAPI fastrtps::rtps::Locator_t to_fastdds_type(
+        detail::Locator_s);
+RTPS_DllAPI detail::GUID_s to_statistics_type(fastrtps::rtps::GUID_t);
+RTPS_DllAPI fastrtps::rtps::GUID_t to_fastdds_type(
+        detail::GUID_s);
+RTPS_DllAPI detail::SampleIdentity_s to_statistics_type(fastrtps::rtps::SampleIdentity);
 
 #else // dummy implementation
 

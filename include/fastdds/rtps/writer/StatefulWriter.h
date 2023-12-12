@@ -442,6 +442,11 @@ public:
         return locator_selector_async_;
     }
 
+#ifdef FASTDDS_STATISTICS
+    bool get_connections(
+            fastdds::statistics::rtps::ConnectionList& connection_list) override;
+#endif // ifdef FASTDDS_STATISTICS
+
 private:
 
     bool is_acked_by_all(

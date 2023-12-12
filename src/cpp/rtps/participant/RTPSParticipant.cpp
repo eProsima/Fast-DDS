@@ -234,6 +234,53 @@ void RTPSParticipant::set_enabled_statistics_writers_mask(
     mp_impl->set_enabled_statistics_writers_mask(enabled_writers);
 }
 
+const fastdds::statistics::rtps::IStatusObserver* RTPSParticipant::create_monitor_service(
+        fastdds::statistics::rtps::IStatusQueryable& sq)
+{
+    return mp_impl->create_monitor_service(sq);
+}
+
+bool RTPSParticipant::create_monitor_service()
+{
+    return mp_impl->create_monitor_service();
+}
+
+bool RTPSParticipant::is_monitor_service_created() const
+{
+    return mp_impl->is_monitor_service_created();
+}
+
+bool RTPSParticipant::enable_monitor_service() const
+{
+    return mp_impl->enable_monitor_service();
+}
+
+bool RTPSParticipant::disable_monitor_service() const
+{
+    return mp_impl->disable_monitor_service();
+}
+
+bool RTPSParticipant::fill_discovery_data_from_cdr_message(
+        fastrtps::rtps::ParticipantProxyData& data,
+        fastdds::statistics::MonitorServiceStatusData& msg)
+{
+    return mp_impl->fill_discovery_data_from_cdr_message(data, msg);
+}
+
+bool RTPSParticipant::fill_discovery_data_from_cdr_message(
+        fastrtps::rtps::WriterProxyData& data,
+        fastdds::statistics::MonitorServiceStatusData& msg)
+{
+    return mp_impl->fill_discovery_data_from_cdr_message(data, msg);
+}
+
+bool RTPSParticipant::fill_discovery_data_from_cdr_message(
+        fastrtps::rtps::ReaderProxyData& data,
+        fastdds::statistics::MonitorServiceStatusData& msg)
+{
+    return mp_impl->fill_discovery_data_from_cdr_message(data, msg);
+}
+
 #endif // FASTDDS_STATISTICS
 
 } /* namespace rtps */

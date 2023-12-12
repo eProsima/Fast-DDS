@@ -33,9 +33,11 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyObserver.hpp>
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyQueryable.hpp>
 #include <fastrtps/qos/QosPolicies.h>
-#include <fastrtps/utils/ProxyPool.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastrtps/utils/ProxyPool.hpp>
 
 namespace eprosima {
 
@@ -79,7 +81,7 @@ class ITopicPayloadPool;
  * It also keeps the Participant Discovery Data and provides interfaces to access it
  *@ingroup DISCOVERY_MODULE
  */
-class PDP
+class PDP : public fastdds::statistics::rtps::IProxyQueryable
 {
     friend class PDPListener;
     friend class PDPServerListener;
@@ -361,6 +363,15 @@ public:
     }
 
     /**
+     * Get the number of participant proxies.
+     * @return size_t.
+     */
+    size_t participant_proxies_number()
+    {
+        return participant_proxies_number_;
+    }
+
+    /**
      * Assert the liveliness of a Remote Participant.
      * @param remote_guid GuidPrefix_t of the participant whose liveliness is being asserted.
      */
@@ -429,6 +440,38 @@ public:
             const GUID_t& local_writer,
             const ReaderProxyData& remote_reader_data);
 #endif // HAVE_SECURITY
+
+#ifdef FASTDDS_STATISTICS
+    bool get_all_local_proxies(
+            std::vector<GUID_t>& guids) override;
+
+    bool get_serialized_proxy(
+            const GUID_t& guid,
+            CDRMessage_t* msg) override;
+
+    void set_proxy_observer(
+            const fastdds::statistics::rtps::IProxyObserver* proxy_observer);
+
+    const fastdds::statistics::rtps::IProxyObserver* get_proxy_observer()
+    {
+        return proxy_observer_.load();
+    }
+
+#else
+    bool get_all_local_proxies(
+            std::vector<GUID_t>&) override
+    {
+        return false;
+    }
+
+    bool get_serialized_proxy(
+            const GUID_t&,
+            CDRMessage_t*) override
+    {
+        return false;
+    }
+
+#endif // FASTDDS_STATISTICS
 
 protected:
 
@@ -530,6 +573,12 @@ protected:
      * Called after creating the builtin endpoints to update the metatraffic unicast locators of BuiltinProtocols
      */
     virtual void update_builtin_locators() = 0;
+
+#ifdef FASTDDS_STATISTICS
+
+    std::atomic<const fastdds::statistics::rtps::IProxyObserver*> proxy_observer_;
+
+#endif // FASTDDS_STATISTICS
 
 private:
 

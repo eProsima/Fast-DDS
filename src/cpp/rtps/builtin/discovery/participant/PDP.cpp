@@ -104,6 +104,9 @@ PDP::PDP (
                 allocation.locators.max_multicast_locators,
                 allocation.data_limits})
     , mp_mutex(new std::recursive_mutex())
+#ifdef FASTDDS_STATISTICS
+    , proxy_observer_(nullptr)
+#endif // ifdef FASTDDS_STATISTICS
     , resend_participant_info_event_(nullptr)
 {
     size_t max_unicast_locators = allocation.locators.max_unicast_locators;
@@ -982,6 +985,130 @@ bool PDP::pairing_remote_reader_with_local_writer_after_security(
 }
 
 #endif // HAVE_SECURITY
+
+#ifdef FASTDDS_STATISTICS
+bool PDP::get_all_local_proxies(
+        std::vector<GUID_t>& guids)
+{
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    ParticipantProxyData* local_participant = getLocalParticipantProxyData();
+    guids.reserve(local_participant->m_writers->size() +
+            local_participant->m_readers->size() +
+            1);
+
+    //! Add the Participant entity to the local entities
+    guids.push_back(local_participant->m_guid);
+
+    // Add all the writers and readers belonging to the participant
+    for (auto& writer : *(local_participant->m_writers))
+    {
+        guids.push_back(writer.second->guid());
+    }
+
+    for (auto& reader : *(local_participant->m_readers))
+    {
+        guids.push_back(reader.second->guid());
+    }
+
+    return true;
+}
+
+bool PDP::get_serialized_proxy(
+        const GUID_t& guid,
+        CDRMessage_t* msg)
+{
+    bool ret = false;
+    bool found = false;
+
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+
+    if (guid.entityId == c_EntityId_RTPSParticipant)
+    {
+        for (auto part_proxy = participant_proxies_.begin();
+                part_proxy != participant_proxies_.end(); ++part_proxy)
+        {
+            if ((*part_proxy)->m_guid == guid)
+            {
+                msg->msg_endian = LITTLEEND;
+                msg->max_size = msg->reserved_size = (*part_proxy)->get_serialized_size(true);
+                ret = (*part_proxy)->writeToCDRMessage(msg, true);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            EPROSIMA_LOG_ERROR(PDP, "Unknown participant proxy requested to serialize: " << guid);
+        }
+    }
+    else if (guid.entityId.is_reader())
+    {
+        for (auto part_proxy = participant_proxies_.begin();
+                part_proxy != participant_proxies_.end(); ++part_proxy)
+        {
+            if ((*part_proxy)->m_guid.guidPrefix == guid.guidPrefix)
+            {
+                for (auto& reader : *((*part_proxy)->m_readers))
+                {
+                    if (reader.second->guid() == guid)
+                    {
+                        msg->max_size = msg->reserved_size = reader.second->get_serialized_size(true);
+                        ret = reader.second->writeToCDRMessage(msg, true);
+                        found = true;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            EPROSIMA_LOG_ERROR(PDP, "Unknown reader proxy requested to serialize: " << guid);
+        }
+    }
+    else if (guid.entityId.is_writer())
+    {
+        for (auto part_proxy = participant_proxies_.begin();
+                part_proxy != participant_proxies_.end(); ++part_proxy)
+        {
+            if ((*part_proxy)->m_guid.guidPrefix == guid.guidPrefix)
+            {
+                for (auto& writer : *((*part_proxy)->m_writers))
+                {
+                    if (writer.second->guid() == guid)
+                    {
+                        msg->max_size = msg->reserved_size = writer.second->get_serialized_size(true);
+                        ret = writer.second->writeToCDRMessage(msg, true);
+                        found = true;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            EPROSIMA_LOG_ERROR(PDP, "Unknown writer proxy requested to serialize: " << guid);
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(PDP, "Unknown entitiy kind requested to serialize: " << guid);
+    }
+
+    return ret;
+}
+
+void PDP::set_proxy_observer(
+        const fastdds::statistics::rtps::IProxyObserver* proxy_observer)
+{
+    proxy_observer_.store(proxy_observer);
+}
+
+#endif // FASTDDS_STATISTICS
 
 bool PDP::remove_remote_participant(
         const GUID_t& partGUID,

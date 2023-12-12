@@ -23,17 +23,33 @@
 #include <cstdlib>
 #include <memory>
 
-#include <fastrtps/fastrtps_dll.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/statistics/IListeners.hpp>
+#include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/qos/ReaderQos.h>
 #include <fastrtps/qos/WriterQos.h>
 
 namespace eprosima {
 
 namespace fastdds {
+
+#ifdef FASTDDS_STATISTICS
+
+namespace statistics {
+
+class MonitorServiceStatusData;
+namespace rtps {
+
+struct IStatusQueryable;
+struct IStatusObserver;
+
+} // namespace rtps
+} // namespace statistics
+
+#endif //FASTDDS_STATISTICS
+
 namespace dds {
 namespace builtin {
 
@@ -333,9 +349,97 @@ public:
     void set_enabled_statistics_writers_mask(
             uint32_t enabled_writers);
 
+    /**
+     * Creates the monitor service in this RTPSParticipant with the provided interfaces.
+     *
+     * @param sq reference to the object implementing the StatusQueryable interface.
+     * It will usually be the DDS DomainParticipant
+     *
+     * @return A const pointer to the listener (implemented within the RTPSParticipant)
+     *
+     * @note Not supported yet. Currently always returns nullptr
+     */
+    const fastdds::statistics::rtps::IStatusObserver* create_monitor_service(
+            fastdds::statistics::rtps::IStatusQueryable& status_queryable);
+
+    /**
+     * Creates the monitor service in this RTPSParticipant with a simple default
+     * implementation of the IStatusQueryable.
+     *
+     * @return true if the monitor service could be correctly created.
+     *
+     * @note Not supported yet. Currently always returns false
+     */
+    bool create_monitor_service();
+
+    /**
+     * Returns whether the monitor service in created in this RTPSParticipant.
+     *
+     * @return true if the monitor service is created.
+     * @return false otherwise.
+     *
+     * @note Not supported yet. Currently always returns false
+     */
+    bool is_monitor_service_created() const;
+
+    /**
+     * Enables the monitor service in this RTPSParticipant.
+     *
+     * @return true if the monitor service could be correctly enabled.
+     *
+     * @note Not supported yet. Currently always returns false
+     */
+    bool enable_monitor_service() const;
+
+    /**
+     * Disables the monitor service in this RTPSParticipant. Does nothing if the service was not enabled before.
+     *
+     * @return true if the monitor service could be correctly disabled.
+     * @return false if the service could not be properly disabled or if the monitor service was not previously enabled.
+     *
+     * @note Not supported yet. Currently always returns false
+     */
+    bool disable_monitor_service() const;
+
+    /**
+     * fills in the ParticipantProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return true if the operation succeeds.
+     */
+    bool fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::ParticipantProxyData& data,
+            fastdds::statistics::MonitorServiceStatusData& msg);
+
+    /**
+     * fills in the WriterProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill.
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return true if the operation succeeds.
+     */
+    bool fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::WriterProxyData& data,
+            fastdds::statistics::MonitorServiceStatusData& msg);
+
+    /**
+     * fills in the ReaderProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill.
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return true if the operation succeeds.
+     */
+    bool fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::ReaderProxyData& data,
+            fastdds::statistics::MonitorServiceStatusData& msg);
+
 #endif // FASTDDS_STATISTICS
 
-private:
+protected:
 
     //!Pointer to the implementation.
     RTPSParticipantImpl* mp_impl;

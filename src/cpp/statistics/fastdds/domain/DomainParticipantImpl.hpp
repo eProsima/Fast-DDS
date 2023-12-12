@@ -34,6 +34,7 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
@@ -47,11 +48,15 @@ using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
+
+class MonitorServiceStatusData;
+
 namespace dds {
 
 class PublisherImpl;
 
-class DomainParticipantImpl : public efd::DomainParticipantImpl
+class DomainParticipantImpl : public efd::DomainParticipantImpl,
+    public rtps::IStatusQueryable
 {
 public:
 
@@ -118,6 +123,77 @@ public:
      * @return RETCODE_OK if successful
      */
     ReturnCode_t delete_contained_entities() override;
+
+    /**
+     * Enables the monitor service in this DomainParticipant.
+     *
+     * @return RETCODE_OK if the monitor service could be correctly enabled.
+     * @return RETCODE_ERROR if the monitor service could not be enabled properly.
+     * @return RETCODE_UNSUPPORTED if FASTDDS_STATISTICS is not enabled.
+     *
+     */
+    ReturnCode_t enable_monitor_service();
+
+    /**
+     * Disables the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
+     *
+     * @return RETCODE_OK if the monitor service could be correctly disabled.
+     * @return RETCODE_NOT_ENABLED if the monitor service was not previously enabled.
+     * @return RETCODE_ERROR if the service could not be properly disabled.
+     * @return RETCODE_UNSUPPORTED if FASTDDS_STATISTICS is not enabled.
+     *
+     */
+    ReturnCode_t disable_monitor_service();
+
+    /**
+     * fills in the ParticipantProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return RETCODE_OK if the operation succeeds.
+     * @return RETCODE_ERROR if the  operation fails.
+     */
+    ReturnCode_t fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::ParticipantProxyData& data,
+            fastdds::statistics::MonitorServiceStatusData& msg);
+
+    /**
+     * fills in the WriterProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill.
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return RETCODE_OK if the operation succeeds.
+     * @return RETCODE_ERROR if the  operation fails.
+     */
+    ReturnCode_t fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::WriterProxyData& data,
+            fastdds::statistics::MonitorServiceStatusData& msg);
+
+    /**
+     * fills in the ReaderProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill.
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return RETCODE_OK if the operation succeeds.
+     * @return RETCODE_ERROR if the  operation fails.
+     */
+    ReturnCode_t fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::ReaderProxyData& data,
+            fastdds::statistics::MonitorServiceStatusData& msg);
+
+    /**
+     * Gets the status observer for that entity
+     *
+     * @return status observer
+     */
+
+    const rtps::IStatusObserver* get_status_observer()
+    {
+        return status_observer_.load();
+    }
 
 protected:
 
@@ -209,9 +285,18 @@ protected:
     bool delete_topic_and_type(
             const std::string& topic_name) noexcept;
 
+    /**
+     * @brief Implementation of the IStatusQueryable interface.
+     */
+    bool get_monitoring_status(
+            const fastrtps::rtps::GUID_t& entity_guid,
+            const uint32_t& status_id,
+            eprosima::fastdds::statistics::rtps::DDSEntityStatus*&) override;
+
     efd::Publisher* builtin_publisher_ = nullptr;
     PublisherImpl* builtin_publisher_impl_ = nullptr;
     std::shared_ptr<DomainParticipantStatisticsListener> statistics_listener_;
+    std::atomic<const rtps::IStatusObserver*> status_observer_{nullptr};
 
     friend class efd::DomainParticipantFactory;
 };

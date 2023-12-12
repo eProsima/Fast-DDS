@@ -39,6 +39,10 @@
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#ifdef FASTDDS_STATISTICS
+#include <statistics/types/monitorservice_types.h>
+#endif //FASTDDS_STATISTICS
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -660,6 +664,73 @@ bool SubscriberImpl::can_be_deleted() const
     }
     return true;
 }
+
+#ifdef FASTDDS_STATISTICS
+bool SubscriberImpl::get_monitoring_status(
+        const uint32_t& status_id,
+        statistics::rtps::DDSEntityStatus*& status,
+        const fastrtps::rtps::GUID_t& entity_guid)
+{
+    bool ret = false;
+    std::vector<DataReader*> readers;
+    if (get_datareaders(readers) == ReturnCode_t::RETCODE_OK)
+    {
+        for (auto& reader : readers)
+        {
+            if (reader->guid() == entity_guid)
+            {
+                switch (status_id)
+                {
+                    case statistics::INCOMPATIBLE_QOS:
+                    {
+                        reader->get_requested_incompatible_qos_status(*static_cast<RequestedIncompatibleQosStatus*>(
+                                    status));
+                        ret = true;
+                        break;
+                    }
+                    //! TODO
+                    /*case statistics::INCONSISTENT_TOPIC:
+                       {
+                        reader->get_inconsistent_topic_status();
+                        ret = true;
+                        break;
+                       }*/
+                    case statistics::LIVELINESS_CHANGED:
+                    {
+                        reader->get_liveliness_changed_status(*static_cast<LivelinessChangedStatus*>(status));
+                        ret = true;
+                        break;
+                    }
+                    case statistics::DEADLINE_MISSED:
+                    {
+                        reader->get_requested_deadline_missed_status(*static_cast<DeadlineMissedStatus*>(status));
+                        ret = true;
+                        break;
+                    }
+                    case statistics::SAMPLE_LOST:
+                    {
+                        reader->get_sample_lost_status(*static_cast<SampleLostStatus*>(status));
+                        ret = true;
+                        break;
+                    }
+                    default:
+                    {
+                        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Queried status not available for this entity " << status_id);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not retrieve datareaders");
+    }
+
+    return ret;
+}
+
+#endif //FASTDDS_STATISTICS
 
 } /* namespace dds */
 } /* namespace fastdds */

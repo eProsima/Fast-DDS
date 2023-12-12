@@ -35,6 +35,10 @@
 #include <mutex>
 #include <map>
 
+#ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusQueryable.hpp>
+#endif // ifdef FASTDDS_STATISTICS
+
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
@@ -199,6 +203,13 @@ public:
             const StatusMask& status);
 
     bool can_be_deleted();
+
+#ifdef FASTDDS_STATISTICS
+    bool get_monitoring_status(
+            const uint32_t& status_id,
+            statistics::rtps::DDSEntityStatus*& status,
+            const fastrtps::rtps::GUID_t& entity_guid);
+#endif //FASTDDS_STATISTICS
 
 protected:
 

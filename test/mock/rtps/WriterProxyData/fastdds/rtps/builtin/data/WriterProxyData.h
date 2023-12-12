@@ -339,6 +339,12 @@ public:
         return m_userDefinedId;
     }
 
+    void copy(
+            WriterProxyData* /*wdat*/)
+    {
+
+    }
+
 #if HAVE_SECURITY
     security::EndpointSecurityAttributesMask security_attributes_ = 0UL;
     security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
