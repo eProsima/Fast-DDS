@@ -643,7 +643,7 @@ bool ros_super_client_env()
         }
         else
         {
-            EPROSIMA_LOG_ERROR(RTPS_PDP,
+            logError(RTPS_PDP,
                     "Invalid value for ROS_SUPER_CLIENT environment variable : " << super_client_str);
         }
     }

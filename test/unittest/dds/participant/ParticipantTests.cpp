@@ -56,7 +56,7 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/SystemInfo.hpp>
 
@@ -688,9 +688,10 @@ void set_server_qos(
     std::istringstream(rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX) >> qos.wire_protocol().prefix;
 }
 
-void set_environment_variable()
+void set_environment_variable(
+        const std::string environment_servers = "84.22.253.128:8888;;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783"
+        )
 {
-    std::string environment_servers = "84.22.253.128:8888;;localhost:1234";
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(rtps::DEFAULT_ROS2_MASTER_URI, environment_servers.c_str()));
 #else
@@ -761,7 +762,7 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
     set_participant_qos(qos, qos_output);
 
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, qos);
+        0, qos);
     ASSERT_NE(nullptr, participant);
 
     fastrtps::rtps::RTPSParticipantAttributes attributes;
@@ -776,7 +777,7 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
 #endif // _WIN32
 
     DomainParticipant* participant_2 = DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, qos);
+       0, qos);
     ASSERT_NE(nullptr, participant_2);
 
     fastrtps::rtps::RTPSParticipantAttributes attributes_2;
@@ -789,7 +790,7 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
             {
                 for (auto& transportDescriptor : attributes.userTransports)
                 {
-                    if ( nullptr != dynamic_cast<fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    if ( nullptr != dynamic_cast<eprosima::fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
                     {
                         return true;
                     }
@@ -808,7 +809,7 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
             {
                 for (auto& transportDescriptor : attributes_2.userTransports)
                 {
-                    if ( nullptr != dynamic_cast<fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    if ( nullptr != dynamic_cast<eprosima::fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
                     {
                         return true;
                     }
@@ -837,7 +838,8 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
 TEST(ParticipantTests, SimpleParticipantRemoteServerListConfigurationDNS)
 {
     // populate environment
-    set_environment_variable("www.acme.com.test");
+    std::string filename = "www.acme.com.test";
+    set_environment_variable(filename);
 
     // fill in expected result
     rtps::RemoteServerAttributes server;
@@ -866,7 +868,7 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfigurationDNS)
             {
                 for (auto& transportDescriptor : attributes.userTransports)
                 {
-                    if ( nullptr != dynamic_cast<fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    if ( nullptr != dynamic_cast<eprosima::fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
                     {
                         return true;
                     }
