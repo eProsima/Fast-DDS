@@ -29,7 +29,8 @@ set(STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesv1.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx)
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesv1.cxx)
 
 add_executable(StatisticsDomainParticipantTests ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
 target_compile_definitions(StatisticsDomainParticipantTests PRIVATE
@@ -77,6 +78,7 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesv1.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
+        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesv1.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
         ${TINYXML2_SOURCES}
@@ -282,6 +284,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
+        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesv1.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
@@ -473,6 +476,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
+        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesv1.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp

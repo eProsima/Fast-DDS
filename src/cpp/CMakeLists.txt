@@ -267,6 +267,7 @@ if (FASTDDS_STATISTICS)
         statistics/types/types.cxx
         statistics/types/typesv1.cxx
         statistics/types/monitorservice_types.cxx
+        statistics/types/monitorservice_typesv1.cxx
         statistics/types/monitorservice_typesPubSubTypes.cxx
         )
 

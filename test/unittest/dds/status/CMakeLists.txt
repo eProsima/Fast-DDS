@@ -117,6 +117,7 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
+        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesv1.cxx
         )
 
     list(APPEND LISTENERTESTS_SOURCE ${statistics_sources})
