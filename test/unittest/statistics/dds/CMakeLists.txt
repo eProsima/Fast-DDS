@@ -643,6 +643,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         StatisticsDomainParticipantStatusQueryableTests/mock/
         ${PROJECT_SOURCE_DIR}/test/mock/dds/Publisher/
         ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantImpl/
+        ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantAttributes
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}/include
         ${Asio_INCLUDE_DIR}
