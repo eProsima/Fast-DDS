@@ -28,6 +28,7 @@
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 
+#include <thread>
 #include <list>
 #include <condition_variable>
 #include <asio.hpp>
@@ -91,6 +92,7 @@ public:
         RequestListener(
                 TCPReqRepHelloWorldReplier& replier)
             : replier_(replier)
+            , use_busy_listener_(false)
         {
         }
 
@@ -106,6 +108,16 @@ public:
             {
                 replier_.matched();
             }
+            else if (info.status == eprosima::fastrtps::rtps::REMOVED_MATCHING && use_busy_listener_)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            }
+        }
+
+        void use_busy_listener(
+                const bool& value)
+        {
+            use_busy_listener_ = value;
         }
 
     private:
@@ -114,6 +126,7 @@ public:
                 const RequestListener&) = delete;
 
         TCPReqRepHelloWorldReplier& replier_;
+        bool use_busy_listener_;
 
     }
     reply_listener_;
@@ -125,7 +138,8 @@ public:
             int domainId,
             uint16_t listeningPort,
             uint32_t maxInitialPeer = 0,
-            const char* certs_path = nullptr);
+            const char* certs_path = nullptr,
+            bool use_busy_listener = false);
     bool isInitialized() const
     {
         return initialized_;
