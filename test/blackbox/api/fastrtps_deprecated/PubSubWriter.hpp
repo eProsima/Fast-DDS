@@ -289,15 +289,31 @@ public:
     void init()
     {
         //Create participant
-        participant_attr_.domainId = (uint32_t)GET_PID() % 230;
-
         // Use local copies of attributes to catch #6507 issues with valgrind
         eprosima::fastrtps::ParticipantAttributes participant_attr;
         eprosima::fastrtps::PublisherAttributes publisher_attr;
-        participant_attr = participant_attr_;
-        publisher_attr = publisher_attr_;
 
-        participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr, &participant_listener_);
+        if (!xml_file_.empty())
+        {
+            eprosima::fastrtps::Domain::loadXMLProfilesFile(xml_file_);
+            if (!participant_profile_.empty())
+            {
+                // Need to specify ID in XML
+                participant_ = eprosima::fastrtps::Domain::createParticipant(participant_profile_, &participant_listener_);
+                ASSERT_NE(participant_, nullptr);
+                participant_attr = participant_->getAttributes();
+                publisher_attr = publisher_attr_;
+            }
+        }
+        if (participant_ == nullptr)
+        {
+            participant_attr_.domainId = (uint32_t)GET_PID() % 230;
+
+            participant_attr = participant_attr_;
+            publisher_attr = publisher_attr_;
+
+            participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr, &participant_listener_);
+        }
 
         if (participant_ != nullptr)
         {
@@ -723,6 +739,12 @@ public:
             const int32_t depth)
     {
         publisher_attr_.topic.historyQos.depth = depth;
+        return *this;
+    }
+
+    PubSubWriter& setup_transports(eprosima::fastdds::rtps::BuiltinTransports transports)
+    {
+        participant_attr_.rtps.setup_transports(transports);
         return *this;
     }
 
@@ -1208,6 +1230,18 @@ public:
         return matched_;
     }
 
+    void set_xml_filename(
+            const std::string& name)
+    {
+        xml_file_ = name;
+    }
+
+    void set_participant_profile(
+            const std::string& profile)
+    {
+        participant_profile_ = profile;
+    }
+
     unsigned int missed_deadlines() const
     {
         return listener_.missed_deadlines();
@@ -1487,6 +1521,9 @@ private:
     std::map<std::string,  int> mapTopicCountList_;
     std::map<std::string,  int> mapPartitionCountList_;
     bool discovery_result_;
+
+    std::string xml_file_ = "";
+    std::string participant_profile_ = "";
 
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
 
