@@ -1,7 +1,9 @@
+//This directive is not supported yet.
 //#ifdef BASIC
 
 module dds { 
 
+//This directive is not supported yet.
 //#ifdef REDEFINE_DDS_TYPES
 
   // The following DDS related types are 
