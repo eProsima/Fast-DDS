@@ -5,6 +5,9 @@ Forthcoming
 * Added monitor service feature.
 * Added the possibility to define interfaces in the whitelist by interface name.
 * Enable support for DataRepresentationQos to select the CDR encoding.
+* Added the possibility to define a listening port equal to 0 in TCP Transport
+* Added support for TCP to Fast DDS CLI and environment variable
+* Enable Discovery Server example through TCP
 
 Version 2.12.0
 --------------
