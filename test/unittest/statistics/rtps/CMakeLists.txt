@@ -19,6 +19,7 @@ endif()
 set(STATISTICS_RTPS_TESTS_SOURCE
     RTPSStatisticsTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesv1.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesv1.cxx
     )
@@ -100,7 +101,9 @@ set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorServiceListener.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesv1.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesv1.cxx
     )
 
 add_executable(MonitorServiceTests ${STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE})

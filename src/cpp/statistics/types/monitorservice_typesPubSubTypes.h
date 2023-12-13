@@ -45,6 +45,10 @@ namespace eprosima
         namespace statistics
         {
 
+
+
+
+
             /*!
              * @brief This class represents the TopicDataType of the type Connection defined by the user in the IDL file.
              * @ingroup monitorservice_types
@@ -132,6 +136,8 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
+
+
 
             /*!
              * @brief This class represents the TopicDataType of the type QosPolicyCount_s defined by the user in the IDL file.
@@ -221,6 +227,8 @@ namespace eprosima
 
             };
 
+
+
             /*!
              * @brief This class represents the TopicDataType of the type BaseStatus_s defined by the user in the IDL file.
              * @ingroup monitorservice_types
@@ -308,7 +316,11 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
+
+
             typedef std::vector<eprosima::fastdds::statistics::QosPolicyCount_s> QosPolicyCountSeq_s;
+
+
 
             /*!
              * @brief This class represents the TopicDataType of the type IncompatibleQoSStatus_s defined by the user in the IDL file.
@@ -398,6 +410,8 @@ namespace eprosima
 
             };
 
+
+
             /*!
              * @brief This class represents the TopicDataType of the type LivelinessChangedStatus_s defined by the user in the IDL file.
              * @ingroup monitorservice_types
@@ -485,6 +499,8 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
+
+
 
             /*!
              * @brief This class represents the TopicDataType of the type DeadlineMissedStatus_s defined by the user in the IDL file.
@@ -576,6 +592,11 @@ namespace eprosima
             typedef eprosima::fastdds::statistics::BaseStatus_s LivelinessLostStatus_s;
             typedef eprosima::fastdds::statistics::BaseStatus_s InconsistentTopicStatus_s;
             typedef eprosima::fastdds::statistics::BaseStatus_s SampleLostStatus_s;
+
+
+
+
+
 
 
 

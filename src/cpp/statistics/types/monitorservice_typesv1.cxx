@@ -28,7 +28,7 @@ char dummy;
 
 #include "monitorservice_types.h"
 
-#if FASTCDR_VERSION_MAJOR > 1
+#if FASTCDR_VERSION_MAJOR == 1
 
 #include <fastcdr/Cdr.h>
 
@@ -37,6 +37,82 @@ char dummy;
 using namespace eprosima::fastcdr::exception;
 
 #include <utility>
+
+namespace helper { namespace internal {
+
+enum class Size {
+    UInt8,
+    UInt16,
+    UInt32,
+    UInt64,
+};
+
+constexpr Size get_size(int s) {
+    return (s <= 8 ) ? Size::UInt8:
+           (s <= 16) ? Size::UInt16:
+           (s <= 32) ? Size::UInt32: Size::UInt64;
+}
+
+template<Size s>
+struct FindTypeH;
+
+template<>
+struct FindTypeH<Size::UInt8> {
+    using type = std::uint8_t;
+};
+
+template<>
+struct FindTypeH<Size::UInt16> {
+    using type = std::uint16_t;
+};
+
+template<>
+struct FindTypeH<Size::UInt32> {
+    using type = std::uint32_t;
+};
+
+template<>
+struct FindTypeH<Size::UInt64> {
+    using type = std::uint64_t;
+};
+}
+
+template<int S>
+struct FindType {
+    using type = typename internal::FindTypeH<internal::get_size(S)>::type;
+};
+}
+
+#define eprosima_fastdds_statistics_DiscoveryTime_max_cdr_typesize 852ULL;
+
+#define eprosima_fastdds_statistics_BaseStatus_s_max_cdr_typesize 8ULL;
+
+
+#define eprosima_fastdds_statistics_detail_SampleIdentity_s_max_cdr_typesize 44ULL;
+
+
+
+#define eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_cdr_typesize 24ULL;
+#define eprosima_fastdds_statistics_detail_EntityId_s_max_cdr_typesize 8ULL;
+#define eprosima_fastdds_statistics_QosPolicyCount_s_max_cdr_typesize 12ULL;
+#define eprosima_fastdds_statistics_detail_SequenceNumber_s_max_cdr_typesize 12ULL;
+
+#define eprosima_fastdds_statistics_MonitorServiceStatusData_max_cdr_typesize 565252ULL;
+#define eprosima_fastdds_statistics_PhysicalData_max_cdr_typesize 812ULL;
+#define eprosima_fastdds_statistics_detail_Locator_s_max_cdr_typesize 28ULL;
+#define eprosima_fastdds_statistics_detail_GuidPrefix_s_max_cdr_typesize 16ULL;
+#define eprosima_fastdds_statistics_EntityData_max_cdr_typesize 36ULL;
+#define eprosima_fastdds_statistics_Connection_max_cdr_typesize 5652ULL;
+#define eprosima_fastdds_statistics_Entity2LocatorTraffic_max_cdr_typesize 82ULL;
+#define eprosima_fastdds_statistics_EntityCount_max_cdr_typesize 40ULL;
+#define eprosima_fastdds_statistics_IncompatibleQoSStatus_s_max_cdr_typesize 1220ULL;
+
+
+#define eprosima_fastdds_statistics_WriterReaderData_max_cdr_typesize 64ULL;
+#define eprosima_fastdds_statistics_SampleIdentityCount_max_cdr_typesize 56ULL;
+#define eprosima_fastdds_statistics_Locator2LocatorData_max_cdr_typesize 64ULL;
+#define eprosima_fastdds_statistics_detail_GUID_s_max_cdr_typesize 28ULL;
+#define eprosima_fastdds_statistics_LivelinessChangedStatus_s_max_cdr_typesize 28ULL;
 
 
 namespace eprosima {
@@ -51,6 +127,15 @@ namespace statistics {
 
 Connection::Connection()
 {
+    // eprosima::fastdds::statistics::ConnectionMode m_mode
+    m_mode = eprosima::fastdds::statistics::DATA_SHARING;
+    // eprosima::fastdds::statistics::detail::GUID_s m_guid
+
+    // sequence<eprosima::fastdds::statistics::detail::Locator_s> m_announced_locators
+
+    // sequence<eprosima::fastdds::statistics::detail::Locator_s> m_used_locators
+
+
 }
 
 Connection::~Connection()
@@ -61,39 +146,65 @@ Connection::Connection(
         const Connection& x)
 {
     m_mode = x.m_mode;
+
+
     m_guid = x.m_guid;
+
+
     m_announced_locators = x.m_announced_locators;
+
+
     m_used_locators = x.m_used_locators;
+
 }
 
 Connection::Connection(
         Connection&& x) noexcept
 {
     m_mode = x.m_mode;
+
+
     m_guid = std::move(x.m_guid);
+
+
     m_announced_locators = std::move(x.m_announced_locators);
+
+
     m_used_locators = std::move(x.m_used_locators);
+
 }
 
 Connection& Connection::operator =(
         const Connection& x)
 {
-
     m_mode = x.m_mode;
+
+
     m_guid = x.m_guid;
+
+
     m_announced_locators = x.m_announced_locators;
+
+
     m_used_locators = x.m_used_locators;
+
     return *this;
 }
 
 Connection& Connection::operator =(
         Connection&& x) noexcept
 {
-
     m_mode = x.m_mode;
+
+
     m_guid = std::move(x.m_guid);
+
+
     m_announced_locators = std::move(x.m_announced_locators);
+
+
     m_used_locators = std::move(x.m_used_locators);
+
     return *this;
 }
 
@@ -110,6 +221,101 @@ bool Connection::operator !=(
         const Connection& x) const
 {
     return !(*this == x);
+}
+
+size_t Connection::getMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    static_cast<void>(current_alignment);
+    return eprosima_fastdds_statistics_Connection_max_cdr_typesize;
+}
+
+size_t Connection::getCdrSerializedSize(
+        const Connection& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += eprosima::fastdds::statistics::detail::GUID_s::getCdrSerializedSize(data.guid(), current_alignment);
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    for(size_t a = 0; a < data.announced_locators().size(); ++a)
+    {
+        current_alignment += eprosima::fastdds::statistics::detail::Locator_s::getCdrSerializedSize(data.announced_locators().at(a), current_alignment);
+    }
+
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    for(size_t a = 0; a < data.used_locators().size(); ++a)
+    {
+        current_alignment += eprosima::fastdds::statistics::detail::Locator_s::getCdrSerializedSize(data.used_locators().at(a), current_alignment);
+    }
+
+
+
+    return current_alignment - initial_alignment;
+}
+
+
+void Connection::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    scdr << (uint32_t)m_mode;
+
+    scdr << m_guid;
+
+    scdr << m_announced_locators;
+
+
+    scdr << m_used_locators;
+
+
+}
+
+void Connection::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    {
+        uint32_t enum_value = 0;
+        dcdr >> enum_value;
+        m_mode = (eprosima::fastdds::statistics::ConnectionMode)enum_value;
+    }
+
+
+
+    dcdr >> m_guid;
+
+
+
+    dcdr >> m_announced_locators;
+
+
+
+    dcdr >> m_used_locators;
+
+
+}
+
+
+bool Connection::isKeyDefined()
+{
+    return false;
+}
+
+void Connection::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    (void) scdr;
 }
 
 /*!
@@ -260,8 +466,14 @@ std::vector<eprosima::fastdds::statistics::detail::Locator_s>& Connection::used_
 
 
 
+
 QosPolicyCount_s::QosPolicyCount_s()
 {
+    // unsigned long m_policy_id
+    m_policy_id = 0;
+    // unsigned long m_count
+    m_count = 0;
+
 }
 
 QosPolicyCount_s::~QosPolicyCount_s()
@@ -272,31 +484,41 @@ QosPolicyCount_s::QosPolicyCount_s(
         const QosPolicyCount_s& x)
 {
     m_policy_id = x.m_policy_id;
+
+
     m_count = x.m_count;
+
 }
 
 QosPolicyCount_s::QosPolicyCount_s(
         QosPolicyCount_s&& x) noexcept
 {
     m_policy_id = x.m_policy_id;
+
+
     m_count = x.m_count;
+
 }
 
 QosPolicyCount_s& QosPolicyCount_s::operator =(
         const QosPolicyCount_s& x)
 {
-
     m_policy_id = x.m_policy_id;
+
+
     m_count = x.m_count;
+
     return *this;
 }
 
 QosPolicyCount_s& QosPolicyCount_s::operator =(
         QosPolicyCount_s&& x) noexcept
 {
-
     m_policy_id = x.m_policy_id;
+
+
     m_count = x.m_count;
+
     return *this;
 }
 
@@ -311,6 +533,63 @@ bool QosPolicyCount_s::operator !=(
         const QosPolicyCount_s& x) const
 {
     return !(*this == x);
+}
+
+size_t QosPolicyCount_s::getMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    static_cast<void>(current_alignment);
+    return eprosima_fastdds_statistics_QosPolicyCount_s_max_cdr_typesize;
+}
+
+size_t QosPolicyCount_s::getCdrSerializedSize(
+        const QosPolicyCount_s& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    return current_alignment - initial_alignment;
+}
+
+
+void QosPolicyCount_s::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    scdr << m_policy_id;
+
+    scdr << m_count;
+
+}
+
+void QosPolicyCount_s::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    dcdr >> m_policy_id;
+
+
+
+    dcdr >> m_count;
+
+
+}
+
+
+bool QosPolicyCount_s::isKeyDefined()
+{
+    return false;
+}
+
+void QosPolicyCount_s::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    (void) scdr;
 }
 
 /*!
@@ -373,8 +652,12 @@ uint32_t& QosPolicyCount_s::count()
 
 
 
+
 BaseStatus_s::BaseStatus_s()
 {
+    // unsigned long m_total_count
+    m_total_count = 0;
+
 }
 
 BaseStatus_s::~BaseStatus_s()
@@ -385,27 +668,29 @@ BaseStatus_s::BaseStatus_s(
         const BaseStatus_s& x)
 {
     m_total_count = x.m_total_count;
+
 }
 
 BaseStatus_s::BaseStatus_s(
         BaseStatus_s&& x) noexcept
 {
     m_total_count = x.m_total_count;
+
 }
 
 BaseStatus_s& BaseStatus_s::operator =(
         const BaseStatus_s& x)
 {
-
     m_total_count = x.m_total_count;
+
     return *this;
 }
 
 BaseStatus_s& BaseStatus_s::operator =(
         BaseStatus_s&& x) noexcept
 {
-
     m_total_count = x.m_total_count;
+
     return *this;
 }
 
@@ -419,6 +704,54 @@ bool BaseStatus_s::operator !=(
         const BaseStatus_s& x) const
 {
     return !(*this == x);
+}
+
+size_t BaseStatus_s::getMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    static_cast<void>(current_alignment);
+    return eprosima_fastdds_statistics_BaseStatus_s_max_cdr_typesize;
+}
+
+size_t BaseStatus_s::getCdrSerializedSize(
+        const BaseStatus_s& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    return current_alignment - initial_alignment;
+}
+
+
+void BaseStatus_s::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    scdr << m_total_count;
+
+}
+
+void BaseStatus_s::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    dcdr >> m_total_count;
+
+
+}
+
+
+bool BaseStatus_s::isKeyDefined()
+{
+    return false;
+}
+
+void BaseStatus_s::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    (void) scdr;
 }
 
 /*!
@@ -455,8 +788,16 @@ uint32_t& BaseStatus_s::total_count()
 
 
 
+
 IncompatibleQoSStatus_s::IncompatibleQoSStatus_s()
 {
+    // unsigned long m_total_count
+    m_total_count = 0;
+    // unsigned long m_last_policy_id
+    m_last_policy_id = 0;
+    // eprosima::fastdds::statistics::QosPolicyCountSeq_s m_policies
+
+
 }
 
 IncompatibleQoSStatus_s::~IncompatibleQoSStatus_s()
@@ -467,35 +808,53 @@ IncompatibleQoSStatus_s::IncompatibleQoSStatus_s(
         const IncompatibleQoSStatus_s& x)
 {
     m_total_count = x.m_total_count;
+
+
     m_last_policy_id = x.m_last_policy_id;
+
+
     m_policies = x.m_policies;
+
 }
 
 IncompatibleQoSStatus_s::IncompatibleQoSStatus_s(
         IncompatibleQoSStatus_s&& x) noexcept
 {
     m_total_count = x.m_total_count;
+
+
     m_last_policy_id = x.m_last_policy_id;
+
+
     m_policies = std::move(x.m_policies);
+
 }
 
 IncompatibleQoSStatus_s& IncompatibleQoSStatus_s::operator =(
         const IncompatibleQoSStatus_s& x)
 {
-
     m_total_count = x.m_total_count;
+
+
     m_last_policy_id = x.m_last_policy_id;
+
+
     m_policies = x.m_policies;
+
     return *this;
 }
 
 IncompatibleQoSStatus_s& IncompatibleQoSStatus_s::operator =(
         IncompatibleQoSStatus_s&& x) noexcept
 {
-
     m_total_count = x.m_total_count;
+
+
     m_last_policy_id = x.m_last_policy_id;
+
+
     m_policies = std::move(x.m_policies);
+
     return *this;
 }
 
@@ -511,6 +870,80 @@ bool IncompatibleQoSStatus_s::operator !=(
         const IncompatibleQoSStatus_s& x) const
 {
     return !(*this == x);
+}
+
+size_t IncompatibleQoSStatus_s::getMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    static_cast<void>(current_alignment);
+    return eprosima_fastdds_statistics_IncompatibleQoSStatus_s_max_cdr_typesize;
+}
+
+size_t IncompatibleQoSStatus_s::getCdrSerializedSize(
+        const IncompatibleQoSStatus_s& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    for(size_t a = 0; a < data.policies().size(); ++a)
+    {
+        current_alignment += eprosima::fastdds::statistics::QosPolicyCount_s::getCdrSerializedSize(data.policies().at(a), current_alignment);
+    }
+
+
+
+    return current_alignment - initial_alignment;
+}
+
+
+void IncompatibleQoSStatus_s::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    scdr << m_total_count;
+
+    scdr << m_last_policy_id;
+
+    scdr << m_policies;
+
+
+}
+
+void IncompatibleQoSStatus_s::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    dcdr >> m_total_count;
+
+
+
+    dcdr >> m_last_policy_id;
+
+
+
+    dcdr >> m_policies;
+
+
+}
+
+
+bool IncompatibleQoSStatus_s::isKeyDefined()
+{
+    return false;
+}
+
+void IncompatibleQoSStatus_s::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    (void) scdr;
 }
 
 /*!
@@ -612,8 +1045,16 @@ eprosima::fastdds::statistics::QosPolicyCountSeq_s& IncompatibleQoSStatus_s::pol
 
 
 
+
 LivelinessChangedStatus_s::LivelinessChangedStatus_s()
 {
+    // unsigned long m_alive_count
+    m_alive_count = 0;
+    // unsigned long m_not_alive_count
+    m_not_alive_count = 0;
+    // octet m_last_publication_handle
+    memset(&m_last_publication_handle, 0, ((16)) * 1);
+
 }
 
 LivelinessChangedStatus_s::~LivelinessChangedStatus_s()
@@ -624,35 +1065,53 @@ LivelinessChangedStatus_s::LivelinessChangedStatus_s(
         const LivelinessChangedStatus_s& x)
 {
     m_alive_count = x.m_alive_count;
+
+
     m_not_alive_count = x.m_not_alive_count;
+
+
     m_last_publication_handle = x.m_last_publication_handle;
+
 }
 
 LivelinessChangedStatus_s::LivelinessChangedStatus_s(
         LivelinessChangedStatus_s&& x) noexcept
 {
     m_alive_count = x.m_alive_count;
+
+
     m_not_alive_count = x.m_not_alive_count;
+
+
     m_last_publication_handle = std::move(x.m_last_publication_handle);
+
 }
 
 LivelinessChangedStatus_s& LivelinessChangedStatus_s::operator =(
         const LivelinessChangedStatus_s& x)
 {
-
     m_alive_count = x.m_alive_count;
+
+
     m_not_alive_count = x.m_not_alive_count;
+
+
     m_last_publication_handle = x.m_last_publication_handle;
+
     return *this;
 }
 
 LivelinessChangedStatus_s& LivelinessChangedStatus_s::operator =(
         LivelinessChangedStatus_s&& x) noexcept
 {
-
     m_alive_count = x.m_alive_count;
+
+
     m_not_alive_count = x.m_not_alive_count;
+
+
     m_last_publication_handle = std::move(x.m_last_publication_handle);
+
     return *this;
 }
 
@@ -668,6 +1127,74 @@ bool LivelinessChangedStatus_s::operator !=(
         const LivelinessChangedStatus_s& x) const
 {
     return !(*this == x);
+}
+
+size_t LivelinessChangedStatus_s::getMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    static_cast<void>(current_alignment);
+    return eprosima_fastdds_statistics_LivelinessChangedStatus_s_max_cdr_typesize;
+}
+
+size_t LivelinessChangedStatus_s::getCdrSerializedSize(
+        const LivelinessChangedStatus_s& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += (((16)) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+
+    return current_alignment - initial_alignment;
+}
+
+
+void LivelinessChangedStatus_s::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    scdr << m_alive_count;
+
+    scdr << m_not_alive_count;
+
+    scdr << m_last_publication_handle;
+
+
+}
+
+void LivelinessChangedStatus_s::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    dcdr >> m_alive_count;
+
+
+
+    dcdr >> m_not_alive_count;
+
+
+
+    dcdr >> m_last_publication_handle;
+
+
+}
+
+
+bool LivelinessChangedStatus_s::isKeyDefined()
+{
+    return false;
+}
+
+void LivelinessChangedStatus_s::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    (void) scdr;
 }
 
 /*!
@@ -769,8 +1296,14 @@ std::array<uint8_t, 16>& LivelinessChangedStatus_s::last_publication_handle()
 
 
 
+
 DeadlineMissedStatus_s::DeadlineMissedStatus_s()
 {
+    // unsigned long m_total_count
+    m_total_count = 0;
+    // octet m_last_instance_handle
+    memset(&m_last_instance_handle, 0, ((16)) * 1);
+
 }
 
 DeadlineMissedStatus_s::~DeadlineMissedStatus_s()
@@ -781,31 +1314,41 @@ DeadlineMissedStatus_s::DeadlineMissedStatus_s(
         const DeadlineMissedStatus_s& x)
 {
     m_total_count = x.m_total_count;
+
+
     m_last_instance_handle = x.m_last_instance_handle;
+
 }
 
 DeadlineMissedStatus_s::DeadlineMissedStatus_s(
         DeadlineMissedStatus_s&& x) noexcept
 {
     m_total_count = x.m_total_count;
+
+
     m_last_instance_handle = std::move(x.m_last_instance_handle);
+
 }
 
 DeadlineMissedStatus_s& DeadlineMissedStatus_s::operator =(
         const DeadlineMissedStatus_s& x)
 {
-
     m_total_count = x.m_total_count;
+
+
     m_last_instance_handle = x.m_last_instance_handle;
+
     return *this;
 }
 
 DeadlineMissedStatus_s& DeadlineMissedStatus_s::operator =(
         DeadlineMissedStatus_s&& x) noexcept
 {
-
     m_total_count = x.m_total_count;
+
+
     m_last_instance_handle = std::move(x.m_last_instance_handle);
+
     return *this;
 }
 
@@ -820,6 +1363,65 @@ bool DeadlineMissedStatus_s::operator !=(
         const DeadlineMissedStatus_s& x) const
 {
     return !(*this == x);
+}
+
+size_t DeadlineMissedStatus_s::getMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    static_cast<void>(current_alignment);
+    return eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_cdr_typesize;
+}
+
+size_t DeadlineMissedStatus_s::getCdrSerializedSize(
+        const DeadlineMissedStatus_s& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += (((16)) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+
+    return current_alignment - initial_alignment;
+}
+
+
+void DeadlineMissedStatus_s::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    scdr << m_total_count;
+
+    scdr << m_last_instance_handle;
+
+
+}
+
+void DeadlineMissedStatus_s::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    dcdr >> m_total_count;
+
+
+
+    dcdr >> m_last_instance_handle;
+
+
+}
+
+
+bool DeadlineMissedStatus_s::isKeyDefined()
+{
+    return false;
+}
+
+void DeadlineMissedStatus_s::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    (void) scdr;
 }
 
 /*!
@@ -896,9 +1498,28 @@ std::array<uint8_t, 16>& DeadlineMissedStatus_s::last_instance_handle()
 
 
 
+
 MonitorServiceData::MonitorServiceData()
 {
     m__d = eprosima::fastdds::statistics::PROXY;
+    // sequence<octet> m_entity_proxy
+
+    // sequence<eprosima::fastdds::statistics::Connection> m_connection_list
+
+    // eprosima::fastdds::statistics::IncompatibleQoSStatus_s m_incompatible_qos_status
+
+    // eprosima::fastdds::statistics::InconsistentTopicStatus_s m_inconsistent_topic_status
+
+    // eprosima::fastdds::statistics::LivelinessLostStatus_s m_liveliness_lost_status
+
+    // eprosima::fastdds::statistics::LivelinessChangedStatus_s m_liveliness_changed_status
+
+    // eprosima::fastdds::statistics::DeadlineMissedStatus_s m_deadline_missed_status
+
+    // eprosima::fastdds::statistics::SampleLostStatus_s m_sample_lost_status
+
+    // octet m_statuses_size
+    m_statuses_size = 0;
 }
 
 MonitorServiceData::~MonitorServiceData()
@@ -910,54 +1531,54 @@ MonitorServiceData::MonitorServiceData(
 {
     m__d = x.m__d;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::PROXY:
-            m_entity_proxy = x.m_entity_proxy;
-            break;
+        m_entity_proxy = x.m_entity_proxy;
+        break;
 
 
         case eprosima::fastdds::statistics::CONNECTION_LIST:
-            m_connection_list = x.m_connection_list;
-            break;
+        m_connection_list = x.m_connection_list;
+        break;
 
 
         case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
-            m_incompatible_qos_status = x.m_incompatible_qos_status;
-            break;
+        m_incompatible_qos_status = x.m_incompatible_qos_status;
+        break;
 
 
         case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
-            m_inconsistent_topic_status = x.m_inconsistent_topic_status;
-            break;
+        m_inconsistent_topic_status = x.m_inconsistent_topic_status;
+        break;
 
 
         case eprosima::fastdds::statistics::LIVELINESS_LOST:
-            m_liveliness_lost_status = x.m_liveliness_lost_status;
-            break;
+        m_liveliness_lost_status = x.m_liveliness_lost_status;
+        break;
 
 
         case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
-            m_liveliness_changed_status = x.m_liveliness_changed_status;
-            break;
+        m_liveliness_changed_status = x.m_liveliness_changed_status;
+        break;
 
 
         case eprosima::fastdds::statistics::DEADLINE_MISSED:
-            m_deadline_missed_status = x.m_deadline_missed_status;
-            break;
+        m_deadline_missed_status = x.m_deadline_missed_status;
+        break;
 
 
         case eprosima::fastdds::statistics::SAMPLE_LOST:
-            m_sample_lost_status = x.m_sample_lost_status;
-            break;
+        m_sample_lost_status = x.m_sample_lost_status;
+        break;
 
 
         case eprosima::fastdds::statistics::STATUSES_SIZE:
-            m_statuses_size = x.m_statuses_size;
-            break;
+        m_statuses_size = x.m_statuses_size;
+        break;
 
         default:
-            break;
+        break;
     }
 }
 
@@ -966,62 +1587,62 @@ MonitorServiceData::MonitorServiceData(
 {
     m__d = x.m__d;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::PROXY:
-            m_entity_proxy = std::move(x.m_entity_proxy);
+        m_entity_proxy = std::move(x.m_entity_proxy);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::CONNECTION_LIST:
-            m_connection_list = std::move(x.m_connection_list);
+        m_connection_list = std::move(x.m_connection_list);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
-            m_incompatible_qos_status = std::move(x.m_incompatible_qos_status);
+        m_incompatible_qos_status = std::move(x.m_incompatible_qos_status);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
-            m_inconsistent_topic_status = std::move(x.m_inconsistent_topic_status);
+        m_inconsistent_topic_status = std::move(x.m_inconsistent_topic_status);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::LIVELINESS_LOST:
-            m_liveliness_lost_status = std::move(x.m_liveliness_lost_status);
+        m_liveliness_lost_status = std::move(x.m_liveliness_lost_status);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
-            m_liveliness_changed_status = std::move(x.m_liveliness_changed_status);
+        m_liveliness_changed_status = std::move(x.m_liveliness_changed_status);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::DEADLINE_MISSED:
-            m_deadline_missed_status = std::move(x.m_deadline_missed_status);
+        m_deadline_missed_status = std::move(x.m_deadline_missed_status);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::SAMPLE_LOST:
-            m_sample_lost_status = std::move(x.m_sample_lost_status);
+        m_sample_lost_status = std::move(x.m_sample_lost_status);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::STATUSES_SIZE:
-            m_statuses_size = x.m_statuses_size;
-            break;
+        m_statuses_size = x.m_statuses_size;
+        break;
 
         default:
-            break;
+        break;
     }
 }
 
@@ -1030,54 +1651,54 @@ MonitorServiceData& MonitorServiceData::operator =(
 {
     m__d = x.m__d;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::PROXY:
-            m_entity_proxy = x.m_entity_proxy;
-            break;
+        m_entity_proxy = x.m_entity_proxy;
+        break;
 
 
         case eprosima::fastdds::statistics::CONNECTION_LIST:
-            m_connection_list = x.m_connection_list;
-            break;
+        m_connection_list = x.m_connection_list;
+        break;
 
 
         case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
-            m_incompatible_qos_status = x.m_incompatible_qos_status;
-            break;
+        m_incompatible_qos_status = x.m_incompatible_qos_status;
+        break;
 
 
         case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
-            m_inconsistent_topic_status = x.m_inconsistent_topic_status;
-            break;
+        m_inconsistent_topic_status = x.m_inconsistent_topic_status;
+        break;
 
 
         case eprosima::fastdds::statistics::LIVELINESS_LOST:
-            m_liveliness_lost_status = x.m_liveliness_lost_status;
-            break;
+        m_liveliness_lost_status = x.m_liveliness_lost_status;
+        break;
 
 
         case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
-            m_liveliness_changed_status = x.m_liveliness_changed_status;
-            break;
+        m_liveliness_changed_status = x.m_liveliness_changed_status;
+        break;
 
 
         case eprosima::fastdds::statistics::DEADLINE_MISSED:
-            m_deadline_missed_status = x.m_deadline_missed_status;
-            break;
+        m_deadline_missed_status = x.m_deadline_missed_status;
+        break;
 
 
         case eprosima::fastdds::statistics::SAMPLE_LOST:
-            m_sample_lost_status = x.m_sample_lost_status;
-            break;
+        m_sample_lost_status = x.m_sample_lost_status;
+        break;
 
 
         case eprosima::fastdds::statistics::STATUSES_SIZE:
-            m_statuses_size = x.m_statuses_size;
-            break;
+        m_statuses_size = x.m_statuses_size;
+        break;
 
         default:
-            break;
+        break;
     }
 
     return *this;
@@ -1088,62 +1709,62 @@ MonitorServiceData& MonitorServiceData::operator =(
 {
     m__d = x.m__d;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::PROXY:
-            m_entity_proxy = std::move(x.m_entity_proxy);
+        m_entity_proxy = std::move(x.m_entity_proxy);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::CONNECTION_LIST:
-            m_connection_list = std::move(x.m_connection_list);
+        m_connection_list = std::move(x.m_connection_list);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
-            m_incompatible_qos_status = std::move(x.m_incompatible_qos_status);
+        m_incompatible_qos_status = std::move(x.m_incompatible_qos_status);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
-            m_inconsistent_topic_status = std::move(x.m_inconsistent_topic_status);
+        m_inconsistent_topic_status = std::move(x.m_inconsistent_topic_status);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::LIVELINESS_LOST:
-            m_liveliness_lost_status = std::move(x.m_liveliness_lost_status);
+        m_liveliness_lost_status = std::move(x.m_liveliness_lost_status);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
-            m_liveliness_changed_status = std::move(x.m_liveliness_changed_status);
+        m_liveliness_changed_status = std::move(x.m_liveliness_changed_status);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::DEADLINE_MISSED:
-            m_deadline_missed_status = std::move(x.m_deadline_missed_status);
+        m_deadline_missed_status = std::move(x.m_deadline_missed_status);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::SAMPLE_LOST:
-            m_sample_lost_status = std::move(x.m_sample_lost_status);
+        m_sample_lost_status = std::move(x.m_sample_lost_status);
 
-            break;
+        break;
 
 
         case eprosima::fastdds::statistics::STATUSES_SIZE:
-            m_statuses_size = x.m_statuses_size;
-            break;
+        m_statuses_size = x.m_statuses_size;
+        break;
 
         default:
-            break;
+        break;
     }
 
     return *this;
@@ -1157,7 +1778,7 @@ bool MonitorServiceData::operator ==(
         return false;
     }
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::PROXY:
             return (m_entity_proxy == x.m_entity_proxy);
@@ -1204,7 +1825,7 @@ bool MonitorServiceData::operator ==(
             break;
 
         default:
-            break;
+        break;
     }
     return false;
 }
@@ -1220,120 +1841,118 @@ void MonitorServiceData::_d(
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::PROXY:
-            switch (__d)
-            {
-                case eprosima::fastdds::statistics::PROXY:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
+        switch(__d)
+        {
+            case eprosima::fastdds::statistics::PROXY:
+            b = true;
             break;
+            default:
+            break;
+        }
+        break;
 
 
         case eprosima::fastdds::statistics::CONNECTION_LIST:
-            switch (__d)
-            {
-                case eprosima::fastdds::statistics::CONNECTION_LIST:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
+        switch(__d)
+        {
+            case eprosima::fastdds::statistics::CONNECTION_LIST:
+            b = true;
             break;
+            default:
+            break;
+        }
+        break;
 
 
         case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
-            switch (__d)
-            {
-                case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
+        switch(__d)
+        {
+            case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
+            b = true;
             break;
+            default:
+            break;
+        }
+        break;
 
 
         case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
-            switch (__d)
-            {
-                case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
+        switch(__d)
+        {
+            case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
+            b = true;
             break;
+            default:
+            break;
+        }
+        break;
 
 
         case eprosima::fastdds::statistics::LIVELINESS_LOST:
-            switch (__d)
-            {
-                case eprosima::fastdds::statistics::LIVELINESS_LOST:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
+        switch(__d)
+        {
+            case eprosima::fastdds::statistics::LIVELINESS_LOST:
+            b = true;
             break;
+            default:
+            break;
+        }
+        break;
 
 
         case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
-            switch (__d)
-            {
-                case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
+        switch(__d)
+        {
+            case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
+            b = true;
             break;
+            default:
+            break;
+        }
+        break;
 
 
         case eprosima::fastdds::statistics::DEADLINE_MISSED:
-            switch (__d)
-            {
-                case eprosima::fastdds::statistics::DEADLINE_MISSED:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
+        switch(__d)
+        {
+            case eprosima::fastdds::statistics::DEADLINE_MISSED:
+            b = true;
             break;
+            default:
+            break;
+        }
+        break;
 
 
         case eprosima::fastdds::statistics::SAMPLE_LOST:
-            switch (__d)
-            {
-                case eprosima::fastdds::statistics::SAMPLE_LOST:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
+        switch(__d)
+        {
+            case eprosima::fastdds::statistics::SAMPLE_LOST:
+            b = true;
             break;
+            default:
+            break;
+        }
+        break;
 
 
         case eprosima::fastdds::statistics::STATUSES_SIZE:
-            switch (__d)
-            {
-                case eprosima::fastdds::statistics::STATUSES_SIZE:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
+        switch(__d)
+        {
+            case eprosima::fastdds::statistics::STATUSES_SIZE:
+            b = true;
             break;
+            default:
+            break;
+        }
+        break;
 
-        default:
-            break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("Discriminator doesn't correspond with the selected union member");
     }
@@ -1371,16 +1990,16 @@ const std::vector<uint8_t>& MonitorServiceData::entity_proxy() const
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::PROXY:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1392,16 +2011,16 @@ std::vector<uint8_t>& MonitorServiceData::entity_proxy()
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::PROXY:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1430,16 +2049,16 @@ const std::vector<eprosima::fastdds::statistics::Connection>& MonitorServiceData
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::CONNECTION_LIST:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1451,16 +2070,16 @@ std::vector<eprosima::fastdds::statistics::Connection>& MonitorServiceData::conn
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::CONNECTION_LIST:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1489,16 +2108,16 @@ const eprosima::fastdds::statistics::IncompatibleQoSStatus_s& MonitorServiceData
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1510,16 +2129,16 @@ eprosima::fastdds::statistics::IncompatibleQoSStatus_s& MonitorServiceData::inco
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1548,16 +2167,16 @@ const eprosima::fastdds::statistics::InconsistentTopicStatus_s& MonitorServiceDa
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1569,16 +2188,16 @@ eprosima::fastdds::statistics::InconsistentTopicStatus_s& MonitorServiceData::in
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1607,16 +2226,16 @@ const eprosima::fastdds::statistics::LivelinessLostStatus_s& MonitorServiceData:
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::LIVELINESS_LOST:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1628,16 +2247,16 @@ eprosima::fastdds::statistics::LivelinessLostStatus_s& MonitorServiceData::livel
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::LIVELINESS_LOST:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1666,16 +2285,16 @@ const eprosima::fastdds::statistics::LivelinessChangedStatus_s& MonitorServiceDa
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1687,16 +2306,16 @@ eprosima::fastdds::statistics::LivelinessChangedStatus_s& MonitorServiceData::li
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1725,16 +2344,16 @@ const eprosima::fastdds::statistics::DeadlineMissedStatus_s& MonitorServiceData:
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::DEADLINE_MISSED:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1746,16 +2365,16 @@ eprosima::fastdds::statistics::DeadlineMissedStatus_s& MonitorServiceData::deadl
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::DEADLINE_MISSED:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1784,16 +2403,16 @@ const eprosima::fastdds::statistics::SampleLostStatus_s& MonitorServiceData::sam
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::SAMPLE_LOST:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1805,16 +2424,16 @@ eprosima::fastdds::statistics::SampleLostStatus_s& MonitorServiceData::sample_lo
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::SAMPLE_LOST:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1835,16 +2454,16 @@ uint8_t MonitorServiceData::statuses_size() const
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::STATUSES_SIZE:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1856,16 +2475,16 @@ uint8_t& MonitorServiceData::statuses_size()
 {
     bool b = false;
 
-    switch (m__d)
+    switch(m__d)
     {
         case eprosima::fastdds::statistics::STATUSES_SIZE:
-            b = true;
-            break;
+        b = true;
+        break;
         default:
-            break;
+        break;
     }
 
-    if (!b)
+    if(!b)
     {
         throw BadParamException("This member has not been selected");
     }
@@ -1874,10 +2493,254 @@ uint8_t& MonitorServiceData::statuses_size()
 }
 
 
+// TODO(Ricardo) Review
+size_t MonitorServiceData::getCdrSerializedSize(
+        const MonitorServiceData& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+
+    switch(data.m__d)
+    {
+        case eprosima::fastdds::statistics::PROXY:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        if (data.entity_proxy().size() > 0)
+        {
+            current_alignment += (data.entity_proxy().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        }
+
+
+
+        break;
+
+
+        case eprosima::fastdds::statistics::CONNECTION_LIST:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+        for(size_t a = 0; a < data.connection_list().size(); ++a)
+        {
+            current_alignment += eprosima::fastdds::statistics::Connection::getCdrSerializedSize(data.connection_list().at(a), current_alignment);
+        }
+
+
+        break;
+
+
+        case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
+        current_alignment += eprosima::fastdds::statistics::IncompatibleQoSStatus_s::getCdrSerializedSize(data.incompatible_qos_status(), current_alignment);
+
+        break;
+
+
+        case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
+        current_alignment += eprosima::fastdds::statistics::InconsistentTopicStatus_s::getCdrSerializedSize(data.inconsistent_topic_status(), current_alignment);
+
+        break;
+
+
+        case eprosima::fastdds::statistics::LIVELINESS_LOST:
+        current_alignment += eprosima::fastdds::statistics::LivelinessLostStatus_s::getCdrSerializedSize(data.liveliness_lost_status(), current_alignment);
+
+        break;
+
+
+        case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
+        current_alignment += eprosima::fastdds::statistics::LivelinessChangedStatus_s::getCdrSerializedSize(data.liveliness_changed_status(), current_alignment);
+
+        break;
+
+
+        case eprosima::fastdds::statistics::DEADLINE_MISSED:
+        current_alignment += eprosima::fastdds::statistics::DeadlineMissedStatus_s::getCdrSerializedSize(data.deadline_missed_status(), current_alignment);
+
+        break;
+
+
+        case eprosima::fastdds::statistics::SAMPLE_LOST:
+        current_alignment += eprosima::fastdds::statistics::SampleLostStatus_s::getCdrSerializedSize(data.sample_lost_status(), current_alignment);
+
+        break;
+
+
+        case eprosima::fastdds::statistics::STATUSES_SIZE:
+        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+        break;
+
+        default:
+        break;
+    }
+
+    return current_alignment - initial_alignment;
+}
+
+
+void MonitorServiceData::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    scdr << (uint32_t)m__d;
+
+    switch(m__d)
+    {
+        case eprosima::fastdds::statistics::PROXY:
+        scdr << m_entity_proxy;
+
+
+        break;
+
+
+        case eprosima::fastdds::statistics::CONNECTION_LIST:
+        scdr << m_connection_list;
+
+
+        break;
+
+
+        case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
+        scdr << m_incompatible_qos_status;
+
+        break;
+
+
+        case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
+        scdr << m_inconsistent_topic_status;
+
+        break;
+
+
+        case eprosima::fastdds::statistics::LIVELINESS_LOST:
+        scdr << m_liveliness_lost_status;
+
+        break;
+
+
+        case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
+        scdr << m_liveliness_changed_status;
+
+        break;
+
+
+        case eprosima::fastdds::statistics::DEADLINE_MISSED:
+        scdr << m_deadline_missed_status;
+
+        break;
+
+
+        case eprosima::fastdds::statistics::SAMPLE_LOST:
+        scdr << m_sample_lost_status;
+
+        break;
+
+
+        case eprosima::fastdds::statistics::STATUSES_SIZE:
+        scdr << m_statuses_size;
+
+        break;
+
+        default:
+        break;
+    }
+}
+
+void MonitorServiceData::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    {
+        uint32_t enum_value = 0;
+        dcdr >> enum_value;
+    m__d = (eprosima::fastdds::statistics::StatusKind)enum_value;
+    }
+
+
+    switch(m__d)
+    {
+        case eprosima::fastdds::statistics::PROXY:
+        dcdr >> m_entity_proxy;
+
+
+        break;
+
+
+        case eprosima::fastdds::statistics::CONNECTION_LIST:
+        dcdr >> m_connection_list;
+
+
+        break;
+
+
+        case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
+        dcdr >> m_incompatible_qos_status;
+
+
+        break;
+
+
+        case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
+        dcdr >> m_inconsistent_topic_status;
+
+
+        break;
+
+
+        case eprosima::fastdds::statistics::LIVELINESS_LOST:
+        dcdr >> m_liveliness_lost_status;
+
+
+        break;
+
+
+        case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
+        dcdr >> m_liveliness_changed_status;
+
+
+        break;
+
+
+        case eprosima::fastdds::statistics::DEADLINE_MISSED:
+        dcdr >> m_deadline_missed_status;
+
+
+        break;
+
+
+        case eprosima::fastdds::statistics::SAMPLE_LOST:
+        dcdr >> m_sample_lost_status;
+
+
+        break;
+
+
+        case eprosima::fastdds::statistics::STATUSES_SIZE:
+        dcdr >> m_statuses_size;
+
+
+        break;
+
+        default:
+        break;
+    }
+}
+
+
+
 
 
 MonitorServiceStatusData::MonitorServiceStatusData()
 {
+    // eprosima::fastdds::statistics::detail::GUID_s m_local_entity
+
+    // eprosima::fastdds::statistics::StatusKind m_status_kind
+    m_status_kind = eprosima::fastdds::statistics::PROXY;
+    // eprosima::fastdds::statistics::MonitorServiceData m_value
+
+
 }
 
 MonitorServiceStatusData::~MonitorServiceStatusData()
@@ -1888,35 +2751,53 @@ MonitorServiceStatusData::MonitorServiceStatusData(
         const MonitorServiceStatusData& x)
 {
     m_local_entity = x.m_local_entity;
+
+
     m_status_kind = x.m_status_kind;
+
+
     m_value = x.m_value;
+
 }
 
 MonitorServiceStatusData::MonitorServiceStatusData(
         MonitorServiceStatusData&& x) noexcept
 {
     m_local_entity = std::move(x.m_local_entity);
+
+
     m_status_kind = x.m_status_kind;
+
+
     m_value = std::move(x.m_value);
+
 }
 
 MonitorServiceStatusData& MonitorServiceStatusData::operator =(
         const MonitorServiceStatusData& x)
 {
-
     m_local_entity = x.m_local_entity;
+
+
     m_status_kind = x.m_status_kind;
+
+
     m_value = x.m_value;
+
     return *this;
 }
 
 MonitorServiceStatusData& MonitorServiceStatusData::operator =(
         MonitorServiceStatusData&& x) noexcept
 {
-
     m_local_entity = std::move(x.m_local_entity);
+
+
     m_status_kind = x.m_status_kind;
+
+
     m_value = std::move(x.m_value);
+
     return *this;
 }
 
@@ -1932,6 +2813,81 @@ bool MonitorServiceStatusData::operator !=(
         const MonitorServiceStatusData& x) const
 {
     return !(*this == x);
+}
+
+size_t MonitorServiceStatusData::getMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    static_cast<void>(current_alignment);
+    return eprosima_fastdds_statistics_MonitorServiceStatusData_max_cdr_typesize;
+}
+
+size_t MonitorServiceStatusData::getCdrSerializedSize(
+        const MonitorServiceStatusData& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += eprosima::fastdds::statistics::detail::GUID_s::getCdrSerializedSize(data.local_entity(), current_alignment);
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += eprosima::fastdds::statistics::MonitorServiceData::getCdrSerializedSize(data.value(), current_alignment);
+
+
+    return current_alignment - initial_alignment;
+}
+
+
+void MonitorServiceStatusData::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    scdr << m_local_entity;
+
+    scdr << (uint32_t)m_status_kind;
+
+    scdr << m_value;
+
+}
+
+void MonitorServiceStatusData::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    dcdr >> m_local_entity;
+
+
+
+    {
+        uint32_t enum_value = 0;
+        dcdr >> enum_value;
+        m_status_kind = (eprosima::fastdds::statistics::StatusKind)enum_value;
+    }
+
+
+
+    dcdr >> m_value;
+
+
+}
+
+
+bool MonitorServiceStatusData::isKeyDefined()
+{
+    return true;
+}
+
+void MonitorServiceStatusData::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    (void) scdr;
+        m_local_entity.serialize(scdr);    
+      
+    scdr << (uint32_t)m_status_kind;
+       
+      
 }
 
 /*!
@@ -2043,6 +2999,7 @@ eprosima::fastdds::statistics::MonitorServiceData& MonitorServiceStatusData::val
 
 
 
+
 } // namespace statistics
 
 
@@ -2050,7 +3007,5 @@ eprosima::fastdds::statistics::MonitorServiceData& MonitorServiceStatusData::val
 
 
 } // namespace eprosima
-// Include auxiliary functions like for serializing/deserializing.
-#include "monitorservice_typesCdrAux.ipp"
 
-#endif // FASTCDR_VERSION_MAJOR > 1
+#endif // FASTCDR_VERSION_MAJOR == 1
