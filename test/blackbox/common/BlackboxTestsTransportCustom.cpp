@@ -24,6 +24,8 @@
 
 #include <gtest/gtest.h>
 
+using BuiltinTransports = eprosima::fastdds::rtps::BuiltinTransports;
+
 class TestChainingTransportDescriptor : public eprosima::fastdds::rtps::ChainingTransportDescriptor
 {
 public:
@@ -305,4 +307,181 @@ TEST(ChainingTransportTests, tcp_client_server_with_wan_correct_sender_resources
     //! is being created
     ASSERT_LE(times_writer_send_function_called.load(), 30);
     ASSERT_LE(times_reader_receive_function_called.load(), 30);
+}
+
+TEST(ChainingTransportTests, builtin_transports_basic_test)
+{
+    std::vector<BuiltinTransports> bt_list;
+    bt_list.push_back(BuiltinTransports::DEFAULT);
+    bt_list.push_back(BuiltinTransports::DEFAULTv6);
+    bt_list.push_back(BuiltinTransports::SHM);
+    bt_list.push_back(BuiltinTransports::UDPv4);
+    bt_list.push_back(BuiltinTransports::UDPv6);
+    bt_list.push_back(BuiltinTransports::LARGE_DATA);
+    bt_list.push_back(BuiltinTransports::LARGE_DATAv6);
+
+    for (auto test_transport : bt_list)
+    {
+        {
+            PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+            PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+            writer.setup_transports(test_transport)
+                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                .init();
+
+            ASSERT_TRUE(writer.isInitialized());
+
+            reader.setup_transports(test_transport)
+                    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                    .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                    .init();
+
+            ASSERT_TRUE(reader.isInitialized());
+
+            // Wait for discovery.
+            writer.wait_discovery();
+            reader.wait_discovery();
+
+            auto data = default_helloworld_data_generator();
+            // size_t num_messages = data.size();
+            reader.startReception(data);
+            writer.send(data);
+            ASSERT_TRUE(data.empty());
+            reader.block_for_all();
+
+            // Check reception
+            // reader.wait_for_all_received(std::chrono::seconds(3), num_messages);
+            EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
+        }
+    }
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    BuiltinTransports test_transport = BuiltinTransports::NONE;
+
+    writer.setup_transports(test_transport)
+            .init();
+
+    ASSERT_FALSE(writer.isInitialized());
+
+    reader.setup_transports(test_transport)
+            .init();
+
+    ASSERT_FALSE(reader.isInitialized());
+}
+
+TEST(ChainingTransportTests, builtin_transports_env_var_test)
+{
+    const std::string env_var_name("FASTDDS_BUILTIN_TRANSPORTS");
+    std::string value("");
+
+    std::vector<std::string> bt_list;
+    bt_list.push_back("DEFAULT");
+    bt_list.push_back("DEFAULTv6");
+    bt_list.push_back("SHM");
+    bt_list.push_back("UDPv4");
+    bt_list.push_back("UDPv6");
+    bt_list.push_back("LARGE_DATA");
+    bt_list.push_back("LARGE_DATAv6");
+
+    for (auto test_transport : bt_list)
+    {
+        {
+            value = test_transport;
+            setenv(env_var_name.c_str(), value.c_str(), 1);
+
+            PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+            PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+            writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                .init();
+
+            ASSERT_TRUE(writer.isInitialized());
+
+            reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                    .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                    .init();
+
+            ASSERT_TRUE(reader.isInitialized());
+
+            // Wait for discovery.
+            writer.wait_discovery();
+            reader.wait_discovery();
+
+            auto data = default_helloworld_data_generator();
+            // size_t num_messages = data.size();
+            reader.startReception(data);
+            writer.send(data);
+            ASSERT_TRUE(data.empty());
+            reader.block_for_all();
+
+            // Check reception
+            // reader.wait_for_all_received(std::chrono::seconds(3), num_messages);
+            EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
+        }
+    }
+
+    value = "NONE";
+    setenv(env_var_name.c_str(), value.c_str(), 1);
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.init();
+
+    ASSERT_FALSE(writer.isInitialized());
+
+    reader.init();
+
+    ASSERT_FALSE(reader.isInitialized());
+}
+
+TEST(ChainingTransportTests, builtin_transports_xml_test)
+{
+    std::vector<std::string> bt_list;
+    bt_list.push_back("participant_none");
+    bt_list.push_back("participant_default");
+    bt_list.push_back("participant_defaultv6");
+    bt_list.push_back("participant_shm");
+    bt_list.push_back("participant_udp");
+    bt_list.push_back("participant_udpv6");
+    bt_list.push_back("participant_largedata");
+    bt_list.push_back("participant_largedatav6");
+
+    for (auto test_transport : bt_list)
+    {
+        {
+            PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+            PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+            writer.set_xml_filename("builtin_transports.xml");
+            writer.set_participant_profile(test_transport);
+            writer.init();
+
+            ASSERT_TRUE(writer.isInitialized());
+
+            reader.set_xml_filename("builtin_transports.xml");
+            reader.set_participant_profile(test_transport);
+            reader.init();
+
+            ASSERT_TRUE(reader.isInitialized());
+
+            // Wait for discovery.
+            writer.wait_discovery();
+            reader.wait_discovery();
+
+            auto data = default_helloworld_data_generator();
+            // size_t num_messages = data.size();
+            reader.startReception(data);
+            writer.send(data);
+            ASSERT_TRUE(data.empty());
+            reader.block_for_all();
+
+            // Check reception
+            // reader.wait_for_all_received(std::chrono::seconds(3), num_messages);
+            EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
+        }
+    }
 }
