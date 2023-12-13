@@ -173,7 +173,8 @@ DataWriterImpl::DataWriterImpl(
     endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
     endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
     fastrtps::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(
-        EntityId_t::unknown(), publisher_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
+        fastrtps::rtps::EntityId_t::unknown(),
+        publisher_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = publisher_->get_participant_impl()->guid().guidPrefix;
 
     if (payload_pool != nullptr)
@@ -783,7 +784,7 @@ InstanceHandle_t DataWriterImpl::do_register_instance(
                     // Serialization of the sample failed. Remove the instance to keep original state.
                     // Note that we will only end-up here if the instance has just been created, so it will be empty
                     // and removing its changes will remove the instance completely.
-                    history_.remove_instance_changes(instance_handle, SequenceNumber_t());
+                    history_.remove_instance_changes(instance_handle, fastrtps::rtps::SequenceNumber_t());
                 }
             }
             return instance_handle;
@@ -1095,7 +1096,7 @@ ReturnCode_t DataWriterImpl::get_sending_locators(
     return RETCODE_OK;
 }
 
-const GUID_t& DataWriterImpl::guid() const
+const fastrtps::rtps::GUID_t& DataWriterImpl::guid() const
 {
     return guid_;
 }

@@ -121,7 +121,8 @@ DataReaderImpl::DataReaderImpl(
     endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
     endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
     RTPSParticipantImpl::preprocess_endpoint_attributes<READER, 0x04, 0x07>(
-        EntityId_t::unknown(), subscriber_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
+        fastrtps::rtps::EntityId_t::unknown(),
+        subscriber_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = subscriber_->get_participant_impl()->guid().guidPrefix;
 
     if (payload_pool != nullptr)
@@ -782,7 +783,7 @@ uint64_t DataReaderImpl::get_unread_count(
     return ret_val;
 }
 
-const GUID_t& DataReaderImpl::guid() const
+const fastrtps::rtps::GUID_t& DataReaderImpl::guid() const
 {
     return guid_;
 }
@@ -883,9 +884,9 @@ const DataReaderQos& DataReaderImpl::get_qos() const
 
 void DataReaderImpl::InnerDataReaderListener::on_data_available(
         RTPSReader* /*reader*/,
-        const GUID_t& writer_guid,
-        const SequenceNumber_t& first_sequence,
-        const SequenceNumber_t& last_sequence,
+        const fastrtps::rtps::GUID_t& writer_guid,
+        const fastrtps::rtps::SequenceNumber_t& first_sequence,
+        const fastrtps::rtps::SequenceNumber_t& last_sequence,
         bool& should_notify_individual_changes)
 {
     should_notify_individual_changes = false;
@@ -1008,9 +1009,9 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
 }
 
 bool DataReaderImpl::on_data_available(
-        const GUID_t& writer_guid,
-        const SequenceNumber_t& first_sequence,
-        const SequenceNumber_t& last_sequence)
+        const fastrtps::rtps::GUID_t& writer_guid,
+        const fastrtps::rtps::SequenceNumber_t& first_sequence,
+        const fastrtps::rtps::SequenceNumber_t& last_sequence)
 {
     bool ret_val = false;
 

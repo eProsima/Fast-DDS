@@ -24,6 +24,7 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
@@ -70,43 +71,45 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     TypeLookup_Reply reply;
     if (tlm_->recv_reply(*change, reply))
     {
-        if (reply.header.requestId.writer_guid() != tlm_->get_builtin_request_writer_guid())
+        if (get_rtps_guid(reply.header().relatedRequestId().writer_guid()) != tlm_->builtin_request_writer_->getGuid())
         {
             // This message isn't for us.
             return;
         }
 
-        switch (reply.return_value._d())
+        switch (reply.return_value()._d())
         {
-            case TypeLookup_getTypes_Hash:
+            case TypeLookup_getTypes_HashId:
             {
-                const TypeLookup_getTypes_Out types = reply.return_value.getType().result();
-                for (auto pair : types.types)
+                const TypeLookup_getTypes_Out types = reply.return_value().getType().result();
+                for (auto pair : types.types())
                 {
                     if (pair.type_object()._d() == EK_COMPLETE) // Just in case
                     {
+                        // TODO Change to xtype with TypeObjectRegistry
                         // If build_dynamic_type failed, just sent the nullptr already contained on it.
-                        tlm_->participant_->getListener()->on_type_discovery(
-                            tlm_->participant_->getUserRTPSParticipant(),
-                            reply.header.requestId,
-                            "", // No topic_name available
-                            &pair.type_identifier(),
-                            &pair.type_object(),
-                            DynamicType_ptr(nullptr));
+                        // tlm_->participant_->getListener()->on_type_discovery(
+                        //     tlm_->participant_->getUserRTPSParticipant(),
+                        //     reply.header.requestId,
+                        //     "", // No topic_name available
+                        //     &pair.type_identifier(),
+                        //     &pair.type_object(),
+                        //     DynamicType_ptr(nullptr));
                     }
                 }
                 // TODO Call a callback once the job is done
                 break;
             }
-            case TypeLookup_getDependencies_Hash:
+            case TypeLookup_getDependencies_HashId:
             {
                 //const TypeLookup_getTypeDependencies_Out dependencies =
                 //    reply.return_value.getTypeDependencies().result();
 
-                tlm_->get_RTPS_participant()->getListener()->on_type_dependencies_reply(
-                    tlm_->builtin_protocols_->mp_participantImpl->getUserRTPSParticipant(),
-                    reply.header.requestId,
-                    reply.return_value.getTypeDependencies().result().dependent_typeids);
+                // TODO Change to xtype with TypeObjectRegistry
+                // tlm_->get_RTPS_participant()->getListener()->on_type_dependencies_reply(
+                //     tlm_->builtin_protocols_->mp_participantImpl->getUserRTPSParticipant(),
+                //     reply.header().relatedRequestId(),
+                //     reply.return_value().getTypeDependencies().result().dependent_typeids());
                 break;
             }
             default:

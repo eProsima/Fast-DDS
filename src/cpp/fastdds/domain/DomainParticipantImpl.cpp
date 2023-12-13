@@ -88,7 +88,6 @@ using fastrtps::rtps::ReaderDiscoveryInfo;
 using fastrtps::rtps::ReaderProxyData;
 using fastrtps::rtps::WriterDiscoveryInfo;
 using fastrtps::rtps::WriterProxyData;
-using fastrtps::rtps::GUID_t;
 using fastrtps::rtps::EndpointKind_t;
 using fastrtps::rtps::ResourceEvent;
 using eprosima::fastdds::dds::Log;
@@ -258,7 +257,7 @@ ReturnCode_t DomainParticipantImpl::enable()
     // Should not have been previously enabled
     assert(get_rtps_participant() == nullptr);
     // Should not have failed assigning the GUID
-    assert (guid_ != GUID_t::unknown());
+    assert (guid_ != fastrtps::rtps::GUID_t::unknown());
 
     fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
     utils::set_attributes_from_qos(rtps_attr, qos_);
@@ -758,7 +757,7 @@ const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
     return static_cast<const InstanceHandle_t&>(guid_);
 }
 
-const GUID_t& DomainParticipantImpl::guid() const
+const fastrtps::rtps::GUID_t& DomainParticipantImpl::guid() const
 {
     return guid_;
 }
@@ -1660,7 +1659,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_recei
 }
 
 bool DomainParticipantImpl::new_remote_endpoint_discovered(
-        const GUID_t& partguid,
+        const fastrtps::rtps::GUID_t& partguid,
         uint16_t endpointId,
         EndpointKind_t kind)
 {
