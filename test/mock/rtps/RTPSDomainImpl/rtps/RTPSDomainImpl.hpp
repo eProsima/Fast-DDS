@@ -107,14 +107,12 @@ public:
 
     static fastdds::dds::xtypes::ITypeObjectRegistry& type_object_registry()
     {
-        auto instance = get_instance();
-        return instance->type_object_registry_;
+        return get_instance()->type_object_registry_;
     }
 
     static fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer()
     {
-        auto instance = get_instance();
-        return instance->type_object_registry_;
+        return get_instance()->type_object_registry_;
     }
 
     eprosima::fastdds::dds::xtypes::TypeObjectRegistry type_object_registry_;

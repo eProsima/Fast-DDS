@@ -232,15 +232,6 @@ public:
             const TypeObject& type_object,
             uint32_t& type_object_serialized_size);
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-    // Only DomainParticipantFactory is allowed to instantiate the TypeObjectRegistry class.
-    // It cannot be protected as the standard library needs to access the constructor to allocate the resources.
-    // Rule of zero: resource managing types.
-    TypeObjectRegistry();
-#endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-protected:
-
     /**
      * @brief Register a remote TypeObject.
      *        This auxiliary method might register only the minimal TypeObject and TypeIdentifier or register both
@@ -285,6 +276,13 @@ protected:
     ReturnCode_t get_dependencies_from_type_object(
             const TypeObject& type_object,
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
+
+    // Only DomainParticipantFactory is allowed to instantiate the TypeObjectRegistry class.
+    // It cannot be protected as the standard library needs to access the constructor to allocate the resources.
+    // Rule of zero: resource managing types.
+    TypeObjectRegistry();
+
+protected:
 
     /**
      * @brief Add type dependency to the sequence.

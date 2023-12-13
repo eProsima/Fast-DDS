@@ -26,11 +26,10 @@
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/log/Log.hpp>
-
 #include <fastrtps/utils/md5.h>
 
-#include <rtps/RTPSDomainImpl.hpp>
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
+#include <rtps/RTPSDomainImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -53,9 +52,6 @@ constexpr const UnionDiscriminatorFlag union_discriminator_flag_mask = MemberFla
 constexpr const EnumeratedLiteralFlag enum_literal_flag_mask = MemberFlagBits::TRY_CONSTRUCT1 |
         MemberFlagBits::TRY_CONSTRUCT2 | MemberFlagBits::IS_EXTERNAL | MemberFlagBits::IS_OPTIONAL |
         MemberFlagBits::IS_MUST_UNDERSTAND | MemberFlagBits::IS_KEY;
-
-
-
 
 fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer()
 {
