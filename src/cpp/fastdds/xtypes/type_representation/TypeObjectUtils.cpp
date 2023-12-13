@@ -112,9 +112,7 @@ StructMemberFlag TypeObjectUtils::build_struct_member_flag(
     }
     if (key)
     {
-        // XTypes v1.3 Clause 7.2.2.4.4.4.8 Key members shall always have their "must understand" attribute set to true.
         struct_member_flag |= MemberFlagBits::IS_KEY;
-        struct_member_flag |= MemberFlagBits::IS_MUST_UNDERSTAND;
     }
     if (external)
     {
@@ -1973,19 +1971,9 @@ void TypeObjectUtils::l_bound_seq_consistency(
     }
 }
 
-void TypeObjectUtils::member_flag_consistency(
-        MemberFlag member_flags)
-{
-    if (!(member_flags & MemberFlagBits::TRY_CONSTRUCT1 || member_flags & MemberFlagBits::TRY_CONSTRUCT2))
-    {
-        throw InvalidArgumentError("Inconsistent MemberFlag: INVALID eprosima::fastdds::dds::TryConstructKind");
-    }
-}
-
 void TypeObjectUtils::collection_element_flag_consistency(
         CollectionElementFlag collection_element_flag)
 {
-    member_flag_consistency(collection_element_flag);
     if ((collection_element_flag & collection_element_flag_mask) != 0)
     {
         throw InvalidArgumentError("Only try construct and external flags apply to collection elements");
@@ -1995,14 +1983,9 @@ void TypeObjectUtils::collection_element_flag_consistency(
 void TypeObjectUtils::struct_member_flag_consistency(
         StructMemberFlag member_flags)
 {
-    member_flag_consistency(member_flags);
     if (member_flags & MemberFlagBits::IS_KEY && member_flags & MemberFlagBits::IS_OPTIONAL)
     {
         throw InvalidArgumentError("Keyed members cannot be optional");
-    }
-    if (member_flags & MemberFlagBits::IS_KEY && !(member_flags & MemberFlagBits::IS_MUST_UNDERSTAND))
-    {
-        throw InvalidArgumentError("Keyed members must have their \"must understand\" attribute set to true");
     }
     if ((MemberFlagBits::IS_DEFAULT & member_flags) != 0)
     {
@@ -2013,7 +1996,6 @@ void TypeObjectUtils::struct_member_flag_consistency(
 void TypeObjectUtils::union_member_flag_consistency(
         UnionMemberFlag union_member_flag)
 {
-    member_flag_consistency(union_member_flag);
     if ((union_member_flag & union_member_flag_mask) != 0)
     {
         throw InvalidArgumentError("Only try construct, default and external flags apply to union members");
@@ -2023,7 +2005,6 @@ void TypeObjectUtils::union_member_flag_consistency(
 void TypeObjectUtils::union_discriminator_flag_consistency(
         UnionDiscriminatorFlag union_discriminator_flag)
 {
-    member_flag_consistency(union_discriminator_flag);
     if ((union_discriminator_flag & union_discriminator_flag_mask) != 0)
     {
         throw InvalidArgumentError("Only try construct and key flags apply to union discriminator member");

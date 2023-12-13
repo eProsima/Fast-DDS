@@ -599,6 +599,8 @@ const MinimalAliasType TypeObjectRegistry::build_minimal_from_complete_alias_typ
     // alias_flags: unused. No flags apply.
     // header: empty. Available for future extension.
     minimal_alias_type.body().common(complete_alias_type.body().common());
+    minimal_alias_type.body().common().related_type(minimal_from_complete_type_identifier(
+            complete_alias_type.body().common().related_type()));
     return minimal_alias_type;
 }
 
@@ -613,6 +615,8 @@ const MinimalAnnotationType TypeObjectRegistry::build_minimal_from_complete_anno
     {
         MinimalAnnotationParameter minimal_annotation_parameter;
         minimal_annotation_parameter.common(complete_annotation_parameter.common());
+        minimal_annotation_parameter.common().member_type_id(minimal_from_complete_type_identifier(
+                complete_annotation_parameter.common().member_type_id()));
         minimal_annotation_parameter.name_hash(TypeObjectUtils::name_hash(
                     complete_annotation_parameter.name().c_str()));
         minimal_annotation_parameter.default_value(complete_annotation_parameter.default_value());
@@ -627,13 +631,16 @@ const MinimalStructType TypeObjectRegistry::build_minimal_from_complete_struct_t
 {
     MinimalStructType minimal_struct_type;
     minimal_struct_type.struct_flags(complete_struct_type.struct_flags());
-    minimal_struct_type.header().base_type(complete_struct_type.header().base_type());
+    minimal_struct_type.header().base_type(minimal_from_complete_type_identifier(
+            complete_struct_type.header().base_type()));
     // header().detail: empty. Available for future extension.
     MinimalStructMemberSeq minimal_struct_member_sequence;
     for (const CompleteStructMember& complete_struct_member : complete_struct_type.member_seq())
     {
         MinimalStructMember minimal_struct_member;
         minimal_struct_member.common(complete_struct_member.common());
+        minimal_struct_member.common().member_type_id(minimal_from_complete_type_identifier(
+                complete_struct_member.common().member_type_id()));
         minimal_struct_member.detail().name_hash(TypeObjectUtils::name_hash(
                     complete_struct_member.detail().name().c_str()));
         minimal_struct_member_sequence.push_back(minimal_struct_member);
@@ -649,11 +656,15 @@ const MinimalUnionType TypeObjectRegistry::build_minimal_from_complete_union_typ
     minimal_union_type.union_flags(complete_union_type.union_flags());
     // header: empty. Available for future extension.
     minimal_union_type.discriminator().common(complete_union_type.discriminator().common());
+    minimal_union_type.discriminator().common().type_id(minimal_from_complete_type_identifier(
+            complete_union_type.discriminator().common().type_id()));
     MinimalUnionMemberSeq minimal_union_member_sequence;
     for (const CompleteUnionMember& complete_union_member : complete_union_type.member_seq())
     {
         MinimalUnionMember minimal_union_member;
         minimal_union_member.common(complete_union_member.common());
+        minimal_union_member.common().type_id(minimal_from_complete_type_identifier(
+                minimal_union_member.common().type_id()));
         minimal_union_member.detail().name_hash(TypeObjectUtils::name_hash(
                     complete_union_member.detail().name().c_str()));
         minimal_union_member_sequence.push_back(minimal_union_member);
@@ -688,6 +699,8 @@ const MinimalSequenceType TypeObjectRegistry::build_minimal_from_complete_sequen
     // collection_flag: unused. No flags apply.
     minimal_sequence_type.header().common(complete_sequence_type.header().common());
     minimal_sequence_type.element().common(complete_sequence_type.element().common());
+    minimal_sequence_type.element().common().type(minimal_from_complete_type_identifier(
+            complete_sequence_type.element().common().type()));
     return minimal_sequence_type;
 }
 
@@ -698,6 +711,8 @@ const MinimalArrayType TypeObjectRegistry::build_minimal_from_complete_array_typ
     // collection_flag: unused. No flags apply.
     minimal_array_type.header().common(complete_array_type.header().common());
     minimal_array_type.element().common(complete_array_type.element().common());
+    minimal_array_type.element().common().type(minimal_from_complete_type_identifier(
+            complete_array_type.element().common().type()));
     return minimal_array_type;
 }
 
@@ -708,7 +723,11 @@ const MinimalMapType TypeObjectRegistry::build_minimal_from_complete_map_type(
     // collection_flag: unused. No flags apply.
     minimal_map_type.header().common(complete_map_type.header().common());
     minimal_map_type.key().common(complete_map_type.key().common());
+    minimal_map_type.key().common().type(minimal_from_complete_type_identifier(
+            complete_map_type.key().common().type()));
     minimal_map_type.element().common(complete_map_type.element().common());
+    minimal_map_type.element().common().type(minimal_from_complete_type_identifier(
+            complete_map_type.element().common().type()));
     return minimal_map_type;
 }
 
@@ -784,6 +803,27 @@ void TypeObjectRegistry::register_primitive_type_identifiers()
     local_type_identifiers_.insert({char8_type_name, type_ids});
     type_ids.type_identifier1()._d(TK_CHAR16);
     local_type_identifiers_.insert({char16_type_name, type_ids});
+}
+
+const TypeIdentifier TypeObjectRegistry::minimal_from_complete_type_identifier(
+        const TypeIdentifier& type_id)
+{
+    if (EK_COMPLETE == type_id._d())
+    {
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        for (const auto& it : local_type_identifiers_)
+        {
+            if (it.second.type_identifier1() == type_id)
+            {
+                return it.second.type_identifier2();
+            }
+            else if (it.second.type_identifier2() == type_id)
+            {
+                return it.second.type_identifier1();
+            }
+        }
+    }
+    return type_id;
 }
 
 } // xtypes

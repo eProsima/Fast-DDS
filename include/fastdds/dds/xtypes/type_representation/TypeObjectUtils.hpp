@@ -2021,17 +2021,6 @@ protected:
             const LBoundSeq& bound_seq);
 
     /**
-     * @brief Check MemberFlag consistency: At least one of the bits corresponding to the try construct annotation must
-     *        be set.
-     *
-     * @param[in] member_flags MemberFlag to be checked.
-     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given MemberFlag is not
-     *            consistent.
-     */
-    static void member_flag_consistency(
-            MemberFlag member_flags);
-
-    /**
      * @brief Check CollectionElementFlag consistency.
      *
      * @param[in] collection_element_flag CollectionElementFlag to be checked.
