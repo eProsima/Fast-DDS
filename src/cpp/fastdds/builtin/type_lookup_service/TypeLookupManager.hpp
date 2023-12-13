@@ -27,7 +27,8 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
-#include <fastdds/builtin/type_lookup_service/common/TypeLookupTypes.hpp>
+#include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
+#include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h>
 #include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
 
@@ -53,6 +54,55 @@ namespace dds {
 namespace builtin {
 
 extern const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
+
+inline SequenceNumber_t get_sequence_number_from_rtps(
+        fastrtps::rtps::SequenceNumber_t seq_number)
+{
+    SequenceNumber_t dds_seq_number;
+    dds_seq_number.low() = seq_number.low;
+    dds_seq_number.high() = seq_number.high;
+
+    return dds_seq_number;
+}
+
+inline GUID_t get_guid_from_rtps(
+        const fastrtps::rtps::GUID_t& rtps_guid)
+{
+    GUID_t guid;
+    std::memcpy(guid.guidPrefix().data(), rtps_guid.guidPrefix.value, 12);
+    for (size_t i = 0; i < 3; i++)
+    {
+        guid.entityId().entityKey()[i] = rtps_guid.entityId.value[i + 1];
+    }
+    guid.entityId().entityKind() = rtps_guid.entityId.value[0];
+
+    return guid;
+}
+
+inline fastrtps::rtps::GUID_t get_rtps_guid(
+        const GUID_t& guid)
+{
+    fastrtps::rtps::GUID_t rtps_guid;
+    std::memcpy(rtps_guid.guidPrefix.value, guid.guidPrefix().data(), 12);
+    for (size_t i = 0; i < 3; i++)
+    {
+        rtps_guid.entityId.value[i + 1] = guid.entityId().entityKey()[i];
+    }
+    rtps_guid.entityId.value[0] = guid.entityId().entityKind();
+
+    return rtps_guid;
+}
+
+inline fastrtps::rtps::SampleIdentity get_rtps_sample_identity(
+        const SampleIdentity& sampleid)
+{
+    fastrtps::rtps::SampleIdentity rtps_sampleid;
+    rtps_sampleid.writer_guid(get_rtps_guid(sampleid.writer_guid()));
+    rtps_sampleid.sequence_number().high = sampleid.sequence_number().high();
+    rtps_sampleid.sequence_number().low = sampleid.sequence_number().low();
+
+    return rtps_sampleid;
+}
 
 /**
  * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.2 specification.
@@ -253,10 +303,8 @@ private:
     fastrtps::rtps::WriterProxyData temp_writer_proxy_data_;
 
     mutable fastrtps::rtps::SequenceNumber_t request_seq_number_;
-
-    mutable TypeLookup_RequestTypeSupport request_type_;
-
-    mutable TypeLookup_ReplyTypeSupport reply_type_;
+    mutable TypeLookup_RequestPubSubType request_type_;
+    mutable TypeLookup_ReplyPubSubType reply_type_;
 
     /* TODO Uncomment if security is implemented.
      #if HAVE_SECURITY

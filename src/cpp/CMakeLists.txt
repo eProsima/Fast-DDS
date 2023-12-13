@@ -59,7 +59,8 @@ set(${PROJECT_NAME}_source_files
     dynamic-types/TypeObjectFactory.cpp
     dynamic-types/TypeObjectHashId.cpp
     dynamic-types/TypesBase.cpp
-    fastdds/builtin/type_lookup_service/common/TypeLookupTypes.cpp
+    fastdds/builtin/type_lookup_service/detail/rpc_typesPubSubTypes.cxx
+    fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.cxx
     fastdds/builtin/type_lookup_service/TypeLookupManager.cpp
     fastdds/builtin/type_lookup_service/TypeLookupRequestListener.cpp
     fastdds/builtin/type_lookup_service/TypeLookupReplyListener.cpp
