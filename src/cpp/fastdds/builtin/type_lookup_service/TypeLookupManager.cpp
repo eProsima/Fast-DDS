@@ -219,7 +219,7 @@ bool TypeLookupManager::assign_remote_endpoints(
 void TypeLookupManager::remove_remote_endpoints(
         fastrtps::rtps::ParticipantProxyData* pdata)
 {
-    GUID_t tmp_guid;
+    fastrtps::rtps::GUID_t tmp_guid;
     tmp_guid.guidPrefix = pdata->m_guid.guidPrefix;
 
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata->m_guid);
@@ -478,44 +478,48 @@ bool TypeLookupManager::create_endpoints()
  #endif
  */
 
-SampleIdentity TypeLookupManager::get_type_dependencies(
+fastrtps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies(
         const fastrtps::types::TypeIdentifierSeq& id_seq) const
 {
-    SampleIdentity id = INVALID_SAMPLE_IDENTITY;
+    fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
         TypeLookup_getTypeDependencies_In in;
-        in.type_ids = id_seq;
-        TypeLookup_RequestTypeSupport type;
-        TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.create_data());
-        request->data.getTypeDependencies(in);
+        //TODO with xtypes::TypeIdentifierSeq
+        // in.type_ids() = id_seq;
+        (void) id_seq;
+        TypeLookup_RequestPubSubType type;
+        TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
+        request->data().getTypeDependencies(in);
 
         if (send_request(*request))
         {
-            id = request->header.requestId;
+            id = get_rtps_sample_identity(request->header().requestId());
         }
-        type.delete_data(request);
+        type.deleteData(request);
     }
     return id;
 }
 
-SampleIdentity TypeLookupManager::get_types(
+fastrtps::rtps::SampleIdentity TypeLookupManager::get_types(
         const fastrtps::types::TypeIdentifierSeq& id_seq) const
 {
-    SampleIdentity id = INVALID_SAMPLE_IDENTITY;
+    fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
         TypeLookup_getTypes_In in;
-        in.type_ids = id_seq;
-        TypeLookup_RequestTypeSupport type;
-        TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.create_data());
-        request->data.getTypes(in);
+        //TODO with xtypes::TypeIdentifierSeq
+        // in.type_ids() = id_seq;
+        (void) id_seq;
+        TypeLookup_RequestPubSubType type;
+        TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
+        request->data().getTypes(in);
 
         if (send_request(*request))
         {
-            id = request->header.requestId;
+            id = get_rtps_sample_identity(request->header().requestId());
         }
-        type.delete_data(request);
+        type.deleteData(request);
     }
     return id;
 }
@@ -537,10 +541,10 @@ std::string TypeLookupManager::get_instanceName() const
 bool TypeLookupManager::send_request(
         TypeLookup_Request& req) const
 {
-    req.header.instanceName = get_instanceName();
-    req.header.requestId.writer_guid(builtin_request_writer_->getGuid());
-    req.header.requestId.sequence_number(request_seq_number_);
-    ++request_seq_number_;
+    req.header().instanceName() = get_instanceName();
+    req.header().requestId().writer_guid(get_guid_from_rtps(builtin_request_writer_->getGuid()));
+    req.header().requestId().sequence_number(get_sequence_number_from_rtps(request_seq_number_));
+    request_seq_number_++;
 
     CacheChange_t* change = builtin_request_writer_->new_change(
         [&req]()
@@ -583,8 +587,6 @@ bool TypeLookupManager::send_request(
 bool TypeLookupManager::send_reply(
         TypeLookup_Reply& rep) const
 {
-    rep.header.instanceName = get_instanceName();
-
     CacheChange_t* change = builtin_reply_writer_->new_change(
         [&rep]()
         {
