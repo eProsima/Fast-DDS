@@ -2003,7 +2003,7 @@ void TypeObjectUtils::struct_member_flag_consistency(
     {
         throw InvalidArgumentError("Keyed members must have their \"must understand\" attribute set to true");
     }
-    if ((MemberFlagBits::IS_DEFAULT& member_flags) != 0)
+    if ((MemberFlagBits::IS_DEFAULT & member_flags) != 0)
     {
         throw InvalidArgumentError("Default flag does not apply to structure members");
     }
