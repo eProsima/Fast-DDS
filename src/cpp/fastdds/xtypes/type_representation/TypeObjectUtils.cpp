@@ -77,7 +77,7 @@ const TypeObjectHashId TypeObjectUtils::build_type_object_hash_id(
 }
 
 CollectionElementFlag TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+        TryConstructKind try_construct_kind,
         bool external)
 {
     CollectionElementFlag collection_element_flag = 0;
@@ -90,7 +90,7 @@ CollectionElementFlag TypeObjectUtils::build_collection_element_flag(
 }
 
 StructMemberFlag TypeObjectUtils::build_struct_member_flag(
-        eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+        TryConstructKind try_construct_kind,
         bool optional,
         bool must_understand,
         bool key,
@@ -124,7 +124,7 @@ StructMemberFlag TypeObjectUtils::build_struct_member_flag(
 }
 
 UnionMemberFlag TypeObjectUtils::build_union_member_flag(
-        eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+        TryConstructKind try_construct_kind,
         bool default_member,
         bool external)
 {
@@ -142,7 +142,7 @@ UnionMemberFlag TypeObjectUtils::build_union_member_flag(
 }
 
 UnionDiscriminatorFlag TypeObjectUtils::build_union_discriminator_flag(
-        eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+        TryConstructKind try_construct_kind,
         bool key)
 {
     UnionDiscriminatorFlag union_discriminator_flag = 0;
@@ -166,7 +166,7 @@ EnumeratedLiteralFlag TypeObjectUtils::build_enumerated_literal_flag(
 }
 
 StructTypeFlag TypeObjectUtils::build_struct_type_flag(
-        eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
+        ExtensibilityKind extensibility_kind,
         bool nested,
         bool autoid_hash)
 {
@@ -176,7 +176,7 @@ StructTypeFlag TypeObjectUtils::build_struct_type_flag(
 }
 
 UnionTypeFlag TypeObjectUtils::build_union_type_flag(
-        eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
+        ExtensibilityKind extensibility_kind,
         bool nested,
         bool autoid_hash)
 {
@@ -709,29 +709,29 @@ void TypeObjectUtils::add_applied_annotation(
 }
 
 const AppliedVerbatimAnnotation TypeObjectUtils::build_applied_verbatim_annotation(
-        PlacementKindValue placement,
+        PlacementKind placement,
         const eprosima::fastcdr::fixed_string<32>& language,
         const std::string& text)
 {
     AppliedVerbatimAnnotation applied_verbatim_annotation;
     switch (placement)
     {
-        case PlacementKindValue::AFTER_DECLARATION:
+        case PlacementKind::AFTER_DECLARATION:
             applied_verbatim_annotation.placement(after_declaration);
             break;
-        case PlacementKindValue::BEFORE_DECLARATION:
+        case PlacementKind::BEFORE_DECLARATION:
             applied_verbatim_annotation.placement(before_declaration);
             break;
-        case PlacementKindValue::BEGIN_DECLARATION:
+        case PlacementKind::BEGIN_DECLARATION:
             applied_verbatim_annotation.placement(begin_declaration);
             break;
-        case PlacementKindValue::BEGIN_FILE:
+        case PlacementKind::BEGIN_FILE:
             applied_verbatim_annotation.placement(begin_declaration_file);
             break;
-        case PlacementKindValue::END_DECLARATION:
+        case PlacementKind::END_DECLARATION:
             applied_verbatim_annotation.placement(end_declaration);
             break;
-        case PlacementKindValue::END_FILE:
+        case PlacementKind::END_FILE:
             applied_verbatim_annotation.placement(end_declaration_file);
             break;
         default:
@@ -1835,28 +1835,31 @@ const NameHash TypeObjectUtils::name_hash(
 
 void TypeObjectUtils::set_try_construct_behavior(
         MemberFlag& member_flag,
-        eprosima::fastdds::dds::TryConstructKind try_construct_kind)
+        TryConstructKind try_construct_kind)
 {
     switch (try_construct_kind)
     {
-        case eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT:
+        case TryConstructKind::USE_DEFAULT:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT2;
             break;
 
-        case eprosima::fastdds::dds::TryConstructKind::TRIM:
+        case TryConstructKind::TRIM:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT1 | MemberFlagBits::TRY_CONSTRUCT2;
             break;
 
-        case eprosima::fastdds::dds::TryConstructKind::DISCARD:
-        default:
+        case TryConstructKind::DISCARD:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT1;
+            break;
+
+        // TryContructKind::NOT_APPLIED
+        default:
             break;
     }
 }
 
 void TypeObjectUtils::set_type_flag(
         TypeFlag& type_flag,
-        eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
+        ExtensibilityKind extensibility_kind,
         bool nested,
         bool autoid_hash)
 {
@@ -1873,21 +1876,24 @@ void TypeObjectUtils::set_type_flag(
 
 void TypeObjectUtils::set_extensibility_kind(
         TypeFlag& type_flag,
-        eprosima::fastdds::dds::ExtensibilityKind extensibility_kind)
+        ExtensibilityKind extensibility_kind)
 {
     switch (extensibility_kind)
     {
-        case eprosima::fastdds::dds::ExtensibilityKind::FINAL:
+        case ExtensibilityKind::FINAL:
             type_flag |= TypeFlagBits::IS_FINAL;
             break;
 
-        case eprosima::fastdds::dds::ExtensibilityKind::MUTABLE:
+        case ExtensibilityKind::MUTABLE:
             type_flag |= TypeFlagBits::IS_MUTABLE;
             break;
 
-        case eprosima::fastdds::dds::ExtensibilityKind::APPENDABLE:
-        default:
+        case ExtensibilityKind::APPENDABLE:
             type_flag |= TypeFlagBits::IS_APPENDABLE;
+            break;
+        
+        // ExtensibilityKind::NOT_APPLIED
+        default:
             break;
     }
 }

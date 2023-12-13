@@ -66,7 +66,7 @@ public:
      * @return CollectionElementFlag instance.
      */
     RTPS_DllAPI static CollectionElementFlag build_collection_element_flag(
-            eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+            TryConstructKind try_construct_kind,
             bool external);
 
     /**
@@ -82,7 +82,7 @@ public:
      * @return StructMemberFlag instance.
      */
     RTPS_DllAPI static StructMemberFlag build_struct_member_flag(
-            eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+            TryConstructKind try_construct_kind,
             bool optional,
             bool must_understand,
             bool key,
@@ -97,7 +97,7 @@ public:
      * @return UnionMemberFlag instance.
      */
     RTPS_DllAPI static UnionMemberFlag build_union_member_flag(
-            eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+            TryConstructKind try_construct_kind,
             bool default_member,
             bool external);
 
@@ -109,7 +109,7 @@ public:
      * @return UnionDiscriminatorFlag instance.
      */
     RTPS_DllAPI static UnionDiscriminatorFlag build_union_discriminator_flag(
-            eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+            TryConstructKind try_construct_kind,
             bool key);
 
     /**
@@ -137,7 +137,7 @@ public:
      * @return StructTypeFlag instance.
      */
     RTPS_DllAPI static StructTypeFlag build_struct_type_flag(
-            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
+            ExtensibilityKind extensibility_kind,
             bool nested,
             bool autoid_hash);
 
@@ -150,7 +150,7 @@ public:
      * @return UnionTypeFlag instance.
      */
     RTPS_DllAPI static UnionTypeFlag build_union_type_flag(
-            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
+            ExtensibilityKind extensibility_kind,
             bool nested,
             bool autoid_hash);
 
@@ -198,7 +198,7 @@ public:
      * @return const PlainCollectionHeader instance.
      */
     RTPS_DllAPI static const PlainCollectionHeader build_plain_collection_header(
-            EquivalenceKindValue equiv_kind,
+            EquivalenceKind equiv_kind,
             CollectionElementFlag element_flags);
 
     /**
@@ -761,7 +761,7 @@ public:
      * @return const AppliedVerbatimAnnotation instance.
      */
     RTPS_DllAPI static const AppliedVerbatimAnnotation build_applied_verbatim_annotation(
-            PlacementKindValue placement,
+            PlacementKind placement,
             const eprosima::fastcdr::fixed_string<32>& language,
             const std::string& text);
 
@@ -1884,7 +1884,7 @@ protected:
      */
     static void set_try_construct_behavior(
             MemberFlag& member_flag,
-            eprosima::fastdds::dds::TryConstructKind try_construct_kind);
+            TryConstructKind try_construct_kind);
 
     /**
      * @brief Set the TypeFlag object.
@@ -1896,7 +1896,7 @@ protected:
      */
     static void set_type_flag(
             TypeFlag& type_flag,
-            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
+            ExtensibilityKind extensibility_kind,
             bool nested,
             bool autoid_hash);
 
@@ -1908,7 +1908,7 @@ protected:
      */
     static void set_extensibility_kind(
             TypeFlag& type_flag,
-            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind);
+            ExtensibilityKind extensibility_kind);
 
     /**
      * @brief Check if a given TypeIdentifier is fully-descriptive.
@@ -2110,6 +2110,16 @@ protected:
             throw InvalidArgumentError("Flags should be empty. No flags apply");
         }
     }
+
+    /**
+     * @brief Check EquivalenceKind consistency.
+     *
+     * @param[in] equiv_kind Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given EquivalenceKind
+     *            is not consistent.
+     */
+    static void equivalence_kind_consistency(
+            EquivalenceKind equiv_kind);
 
     /**
      * @brief Check PlainCollectionHeader consistency:

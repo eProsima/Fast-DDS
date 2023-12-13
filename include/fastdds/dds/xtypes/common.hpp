@@ -25,10 +25,26 @@ namespace fastdds {
 namespace dds {
 namespace xtypes {
 
+enum class ExtensibilityKind : uint32_t
+{
+    NOT_APPLIED,
+    FINAL,
+    APPENDABLE,
+    MUTABLE
+};
+
+enum class TryConstructKind : uint32_t
+{
+    NOT_APPLIED,
+    USE_DEFAULT,
+    DISCARD,
+    TRIM
+};
+
 /**
  * @brief PlacementKind values (@verbatim annotation)
  */
-enum PlacementKindValue
+enum class PlacementKind : uint32_t
 {
     BEGIN_FILE,
     BEFORE_DECLARATION,
