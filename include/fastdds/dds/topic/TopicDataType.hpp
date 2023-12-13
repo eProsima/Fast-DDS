@@ -375,7 +375,7 @@ private:
 
     //! Data Type Name.
     std::string m_topicDataTypeName;
-
+    //TODO(XTypes)
     bool auto_fill_type_information_;
 
     friend class fastdds::dds::TypeSupport;

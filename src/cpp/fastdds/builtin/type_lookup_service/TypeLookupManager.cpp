@@ -224,13 +224,12 @@ void TypeLookupManager::remove_remote_endpoints(
 }
 
 fastrtps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies(
-        const fastrtps::types::TypeIdentifierSeq& id_seq) const
+        const xtypes::TypeIdentifierSeq& id_seq) const
 {
     fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
 
     TypeLookup_getTypeDependencies_In in;
-    //TODO with xtypes::TypeIdentifierSeq
-    // in.type_ids() = id_seq;
+    in.type_ids() = id_seq;
     (void) id_seq;
     TypeLookup_RequestPubSubType type;
     TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
@@ -245,13 +244,12 @@ fastrtps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies(
 }
 
 fastrtps::rtps::SampleIdentity TypeLookupManager::get_types(
-        const fastrtps::types::TypeIdentifierSeq& id_seq) const
+        const xtypes::TypeIdentifierSeq& id_seq) const
 {
     fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
 
     TypeLookup_getTypes_In in;
-    //TODO with xtypes::TypeIdentifierSeq
-    // in.type_ids() = id_seq;
+    in.type_ids() = id_seq;
     (void) id_seq;
     TypeLookup_RequestPubSubType type;
     TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
@@ -270,12 +268,11 @@ ReturnCode_t TypeLookupManager::async_get_type(
         GuidPrefix_t,
         AsyncGetTypeCallback&)
 {
-    return RETCODE_OK;
+    return RETCODE_UNSUPPORTED;
 }
 
 bool TypeLookupManager::create_endpoints()
 {
-    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Initializing TypeLookup Service");
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
 
     // Built-in history attributes.

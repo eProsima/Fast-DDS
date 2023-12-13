@@ -19,7 +19,6 @@
 
 #ifndef _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
 #define _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <vector>
 #include <mutex>
@@ -107,7 +106,7 @@ inline fastrtps::rtps::SampleIdentity get_rtps_sample_identity(
 }
 
 /**
- * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.2 specification.
+ * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.3 specification.
  * @ingroup XTYPES
  */
 class TypeLookupManager
@@ -141,12 +140,29 @@ public:
     void remove_remote_endpoints(
             fastrtps::rtps::ParticipantProxyData* pdata);
 
+    /**
+     * Retrieve additional type dependencies associated with a sequence of TypeIdentifiers
+     * @param id_seq
+     */
     fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const fastrtps::types::TypeIdentifierSeq& id_seq) const;
+            const xtypes::TypeIdentifierSeq& id_seq) const;
 
+    /**
+     * Retrieve TypeObjects associated with a sequence of TypeIdentifiers
+     * @param id_seq
+     */
     fastrtps::rtps::SampleIdentity get_types(
-            const fastrtps::types::TypeIdentifierSeq& id_seq) const;
+            const xtypes::TypeIdentifierSeq& id_seq) const;
 
+    /**
+     * Use builtin TypeLookup service to solve the type and dependencies of a given TypeInformation.
+     * Callback is used to notify when negotiation is complete.
+     * @param typeinformation
+     * @param type_server
+     * @param callback
+     * @return ReturnCode_t RETCODE_OK if negotiation is correctly initiated.
+     *                      RETCODE_ERROR if negotiation can not be initiated.
+     */
     ReturnCode_t async_get_type(
             xtypes::TypeInformation typeinformation,
             GuidPrefix_t type_server,
@@ -187,20 +203,43 @@ private:
         return participant_;
     }
 
-    //! Get out instanceName as defined in 7.6.2.3.4 of the XTypes 1.2 document
+    //! Get out instanceName as defined in 7.6.3.3.4 the XTypes 1.3 document
     std::string get_instanceName() const;
 
+    //!Pointer to the local RTPSParticipant.
     fastrtps::rtps::RTPSParticipantImpl* participant_;
+
+    //!Pointer to the BuiltinProtocols class.
     fastrtps::rtps::BuiltinProtocols* builtin_protocols_;
+
+    //!Pointer to the RTPSWriter for the TypeLookup_Request.
     fastrtps::rtps::StatefulWriter* builtin_request_writer_;
+
+    //!Pointer to the RTPSReader for the TypeLookup_Request.
     fastrtps::rtps::StatefulReader* builtin_request_reader_;
+
+    //!Pointer to the RTPSWriter for the TypeLookup_Reply.
     fastrtps::rtps::StatefulWriter* builtin_reply_writer_;
+
+    //!Pointer to the RTPSReader for the TypeLookup_Reply.
     fastrtps::rtps::StatefulReader* builtin_reply_reader_;
+
+    //!Writer History of TypeLookup_Request
     fastrtps::rtps::WriterHistory* builtin_request_writer_history_;
+
+    //!Writer History of TypeLookup_Reply
     fastrtps::rtps::WriterHistory* builtin_reply_writer_history_;
+
+    //!Reader History of TypeLookup_Request
     fastrtps::rtps::ReaderHistory* builtin_request_reader_history_;
+
+    //!Reader History of TypeLookup_Reply
     fastrtps::rtps::ReaderHistory* builtin_reply_reader_history_;
+
+    //!Request Listener object.
     TypeLookupRequestListener* request_listener_;
+
+    //!Reply Listener object.
     TypeLookupReplyListener* reply_listener_;
 
     std::mutex temp_data_lock_;
@@ -216,5 +255,4 @@ private:
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP */

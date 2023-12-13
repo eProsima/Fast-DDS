@@ -1447,6 +1447,7 @@ ReturnCode_t DomainParticipantImpl::register_type(
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.insert(std::make_pair(type_name, type));
 
+    //TODO(XTypes)
     if (type->auto_fill_type_information())
     {
         register_dynamic_type_to_factories(type);
@@ -1684,22 +1685,28 @@ ResourceEvent& DomainParticipantImpl::get_resource_event() const
     return get_rtps_participant()->get_resource_event();
 }
 
+//TODO(XTypes) this method will be removed
 fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_type_dependencies(
         const fastrtps::types::TypeIdentifierSeq& in) const
 {
-    const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
-    return nullptr != rtps_participant ?
-           rtps_participant->typelookup_manager()->get_type_dependencies(in) :
-           builtin::INVALID_SAMPLE_IDENTITY;
+    // const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
+    // return nullptr != rtps_participant ?
+    //        rtps_participant->typelookup_manager()->get_type_dependencies(in) :
+    //        builtin::INVALID_SAMPLE_IDENTITY;
+    (void) in;
+    return builtin::INVALID_SAMPLE_IDENTITY;
 }
 
+//TODO(XTypes) this method will be removed
 fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_types(
         const fastrtps::types::TypeIdentifierSeq& in) const
 {
-    const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
-    return nullptr != rtps_participant ?
-           rtps_participant->typelookup_manager()->get_types(in) :
-           builtin::INVALID_SAMPLE_IDENTITY;
+    // const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
+    // return nullptr != rtps_participant ?
+    //        rtps_participant->typelookup_manager()->get_types(in) :
+    //        builtin::INVALID_SAMPLE_IDENTITY;
+    (void) in;
+    return builtin::INVALID_SAMPLE_IDENTITY;
 }
 
 ReturnCode_t DomainParticipantImpl::register_remote_type(
