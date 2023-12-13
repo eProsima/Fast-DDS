@@ -1262,7 +1262,7 @@ bool load_environment_server_info(
                     {
                         case LOCATOR_KIND_TCPv4:
                         case LOCATOR_KIND_TCPv6:
-                            IPLocator::setLogicalPort(server_locator, server_locator.port);
+                            IPLocator::setLogicalPort(server_locator, static_cast<uint16_t>(server_locator.port));
                             flist.push_front(server_locator);
                             break;
                         case LOCATOR_KIND_INVALID:
@@ -1296,7 +1296,7 @@ bool load_environment_server_info(
                                     }
 
                                     process_port( port, server_locator);
-                                    IPLocator::setLogicalPort(server_locator, port);
+                                    IPLocator::setLogicalPort(server_locator, static_cast<uint16_t>(port));
                                     flist.push_front(server_locator);
                                 }
 
@@ -1313,7 +1313,7 @@ bool load_environment_server_info(
                                     }
 
                                     process_port( port, server_locator);
-                                    IPLocator::setLogicalPort(server_locator, port);
+                                    IPLocator::setLogicalPort(server_locator, static_cast<uint16_t>(port));
                                     flist.push_front(server_locator);
                                 }
                             }

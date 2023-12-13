@@ -243,7 +243,7 @@ int fastdds_discovery_server(
      *    5. No information provided.
      *          Locator: UDPv4:[0.0.0.0]:11811
      *
-     * The CLI has priority over the XML file configuration.
+     * The UDP CLI has priority over the XML file configuration.
      */
 
     // If the number of specify ports doesn't match the number of IPs the last port is used.
@@ -300,6 +300,7 @@ int fastdds_discovery_server(
     else if (nullptr == pOp && nullptr != pO_port)
     {
         // UDP port AND TCP port/address has been specified without specifying UDP address
+        participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator4);
     }
     else if (nullptr != pOp)
@@ -510,13 +511,13 @@ int fastdds_discovery_server(
                 if (type == LOCATOR_KIND_TCPv4)
                 {
                     auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
-                    tcp_descriptor->add_listener_port(locator_tcp_4.port);
+                    tcp_descriptor->add_listener_port(static_cast<uint16_t>(locator_tcp_4.port));
                     participantQos.transport().user_transports.push_back(tcp_descriptor);
                 }
                 else
                 {
                     auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
-                    tcp_descriptor->add_listener_port(locator_tcp_6.port);
+                    tcp_descriptor->add_listener_port(static_cast<uint16_t>(locator_tcp_6.port));
                     participantQos.transport().user_transports.push_back(tcp_descriptor);
                 }
 

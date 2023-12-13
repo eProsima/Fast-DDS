@@ -587,7 +587,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
                 {
                     if (!p4)
                     {
-                        if (p4 = std::dynamic_pointer_cast<fastdds::rtps::TCPv4TransportDescriptor>(sp))
+                        if ((p4 = std::dynamic_pointer_cast<fastdds::rtps::TCPv4TransportDescriptor>(sp)))
                         {
                             // TCPv4 transport already exists
                             no_tcpv4 = false;
@@ -624,7 +624,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
                     if (!p6)
                     {
                         // try to find a descriptor matching the listener port setup
-                        if (p6 = std::dynamic_pointer_cast<fastdds::rtps::TCPv6TransportDescriptor>(sp))
+                        if ((p6 = std::dynamic_pointer_cast<fastdds::rtps::TCPv6TransportDescriptor>(sp)))
                         {
                             // TCPv6 transport already exists
                             no_tcpv6 = false;
