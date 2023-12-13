@@ -65,7 +65,8 @@ void TCPReqRepHelloWorldReplier::init(
         int domainId,
         uint16_t listeningPort,
         uint32_t maxInitialPeer,
-        const char* certs_path)
+        const char* certs_path,
+        bool use_busy_listener)
 {
     ParticipantAttributes pattr;
     pattr.domainId = domainId;
@@ -133,8 +134,13 @@ void TCPReqRepHelloWorldReplier::init(
     puattr.topic.topicDataType = type_.getName();
     puattr.topic.topicName = "HelloWorldTopicReply";
     configPublisher("Reply");
+    if (use_busy_listener)
+    {
+        reply_listener_.use_busy_listener(true);
+    }
     reply_publisher_ = Domain::createPublisher(participant_, puattr, &reply_listener_);
     ASSERT_NE(reply_publisher_, nullptr);
+
 
     initialized_ = true;
 }
