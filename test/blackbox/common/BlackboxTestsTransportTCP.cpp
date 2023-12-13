@@ -615,8 +615,10 @@ TEST_P(TransportTCP, TCPv6_copy)
     EXPECT_EQ(tcpv6_transport_copy, tcpv6_transport);
 }
 
-// Test connection is successfully restablished after dropping and relaunching a TCP client (requester)
+// Test connection is successfully restablished after dropping and relaunching a TCP client (requester),
+// when the server's listening thread for the old client hasn't processed all its messages.
 // Issue -> https://github.com/eProsima/Fast-DDS/issues/2409
+// Issue -> https://github.com/eProsima/Fast-DDS/issues/4026
 TEST(TransportTCP, Client_reconnection)
 {
     TCPReqRepHelloWorldReplier* replier;
@@ -624,7 +626,7 @@ TEST(TransportTCP, Client_reconnection)
     const uint16_t nmsgs = 5;
 
     replier = new TCPReqRepHelloWorldReplier;
-    replier->init(1, 0, global_port);
+    replier->init(1, 0, global_port, 0, nullptr, true);
 
     ASSERT_TRUE(replier->isInitialized());
 
