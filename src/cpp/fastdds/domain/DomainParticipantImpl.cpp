@@ -1447,7 +1447,7 @@ ReturnCode_t DomainParticipantImpl::register_type(
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.insert(std::make_pair(type_name, type));
 
-    if (type->auto_fill_type_object() || type->auto_fill_type_information())
+    if (type->auto_fill_type_information())
     {
         register_dynamic_type_to_factories(type);
     }

@@ -116,7 +116,6 @@ bool TestSubscriber::init(
         }
 
         m_Type->auto_fill_type_information(false);
-        m_Type->auto_fill_type_object(false);
         m_Type.register_type(mp_participant);
 
         //CREATE THE TOPIC
@@ -365,7 +364,6 @@ void TestSubscriber::delete_datareader(
 bool TestSubscriber::register_discovered_type()
 {
     TypeSupport type(disc_type_);
-    type->auto_fill_type_object(true);
     type->auto_fill_type_information(true);
     return type.register_type(mp_participant, disc_type_->get_name()) == RETCODE_OK;
 }

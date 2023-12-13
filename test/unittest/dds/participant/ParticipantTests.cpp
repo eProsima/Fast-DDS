@@ -3037,10 +3037,9 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactories)
     DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
     // Register the type
     TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    // Activating the auto_fill_type_information or the auto_fill_type_object settings, the participant will try to
+    // Activating the auto_fill_type_information settings, the participant will try to
     // add the type dynamic type factories
     type->auto_fill_type_information(true);
-    type->auto_fill_type_object(true);
     ASSERT_EQ(type.register_type(participant), RETCODE_OK);
 
     // Remove the participant
@@ -3076,7 +3075,6 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotFillTypeInfo)
     // Register the type
     TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
     type->auto_fill_type_information(false);
-    type->auto_fill_type_object(true);
     ASSERT_EQ(type.register_type(participant), RETCODE_OK);
 
     // Remove the participant
@@ -3133,7 +3131,6 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
     // Register the type
     TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
     type->auto_fill_type_information(true);
-    type->auto_fill_type_object(true);
     type.register_type(participant);
 
     TypeSupport ret_type = participant->find_type("my_dynamic_type");
@@ -3172,7 +3169,6 @@ TEST(ParticipantTests, GetTypes)
 
     // Register the type
     type_string->auto_fill_type_information(true);
-    type_string->auto_fill_type_object(true);
     type_string.register_type(participant);
 
     // Create the sequence of TypeIdentifiers
@@ -3214,7 +3210,6 @@ TEST(ParticipantTests, GetTypeDependencies)
 
     // Register the type
     type_string->auto_fill_type_information(true);
-    type_string->auto_fill_type_object(true);
     type_string.register_type(participant);
 
     // Create the sequence of TypeIdentifiers
