@@ -26,11 +26,29 @@
 
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/types/TypeObject.h>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h>
 #include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
+
+namespace std {
+
+template<>
+struct hash<eprosima::fastdds::dds::xtypes::TypeInformation>
+{
+    std::size_t operator ()(
+            const eprosima::fastdds::dds::xtypes::TypeInformation& k) const
+    {
+        return (static_cast<size_t>(k.complete().typeid_with_size().type_id().equivalence_hash()[0]) << 16) |
+               (static_cast<size_t>(k.complete().typeid_with_size().type_id().equivalence_hash()[1]) << 8) |
+               (static_cast<size_t>(k.complete().typeid_with_size().type_id().equivalence_hash()[2]));
+    }
+
+};
+
+} // std
 
 namespace eprosima {
 namespace fastrtps {
@@ -176,16 +194,25 @@ public:
      */
     ReturnCode_t async_get_type(
             xtypes::TypeInformation typeinformation,
-            GuidPrefix_t type_server,
+            fastrtps::rtps::GuidPrefix_t type_server,
             AsyncGetTypeCallback& callback);
 
 private:
 
     /**
-     * Create the endpoints used in the TypeLookupManager.
-     * @return true if correct.
+     * Solve get_type_dependencies
+     * @param typeinformation[in] typeinformation for which dependencies are needed.
+     * @return true if all dependencies are solved, false otherwise.
      */
-    bool create_endpoints();
+    bool solve_dependencies(
+            xtypes::TypeInformation typeinformation);
+    /**
+     * Solve get_types
+     * @param typeinformation[in] typeinformation for which TypeObjects are to be retrieved.
+     * @return true if type is solved, false otherwise.
+     */
+    bool solve_types(
+            xtypes::TypeInformation typeinformation);
 
     //! Aux method to send requests
     bool send_request(
@@ -216,6 +243,12 @@ private:
 
     //! Get out instanceName as defined in 7.6.3.3.4 the XTypes 1.3 document
     std::string get_instanceName() const;
+
+    /**
+     * Create the endpoints used in the TypeLookupManager.
+     * @return true if correct.
+     */
+    bool create_endpoints();
 
     //!Pointer to the local RTPSParticipant.
     fastrtps::rtps::RTPSParticipantImpl* participant_ = nullptr;
@@ -265,6 +298,10 @@ private:
     mutable fastrtps::rtps::SequenceNumber_t request_seq_number_;
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
+
+    std::unordered_map<xtypes::TypeInformation, std::vector<AsyncGetTypeCallback>> async_get_types_callbacks_;
+    std::unordered_map<xtypes::TypeInformation,
+            std::vector<fastrtps::rtps::SampleIdentity>> get_types_dependencies_requests_;
 };
 
 } /* namespace builtin */
