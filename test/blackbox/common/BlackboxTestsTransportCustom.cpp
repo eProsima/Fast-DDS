@@ -456,13 +456,13 @@ TEST(ChainingTransportTests, builtin_transports_xml_test)
             PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
             PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-            writer.set_xml_filename("builtin_transports.xml");
+            writer.set_xml_filename("builtin_transports_profile.xml");
             writer.set_participant_profile(test_transport);
             writer.init();
 
             ASSERT_TRUE(writer.isInitialized());
 
-            reader.set_xml_filename("builtin_transports.xml");
+            reader.set_xml_filename("builtin_transports_profile.xml");
             reader.set_participant_profile(test_transport);
             reader.init();
 
