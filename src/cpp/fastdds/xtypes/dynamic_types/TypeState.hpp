@@ -16,6 +16,7 @@
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_TYPESTATE_HPP
 
 #include "DynamicTypeMemberImpl.hpp"
+#include "AnnotationManager.hpp"
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/dds/xtypes/Types.hpp>
 
@@ -159,14 +160,6 @@ protected:
     //! public interface common implementation for DynamicType and DynamicTypeBuilder
     const DynamicTypeMember* get_member_by_name(
             const char* name,
-            ReturnCode_t* ec) const noexcept;
-
-    //! public interface common implementation for DynamicType and DynamicTypeBuilder
-    DynamicTypeMembersByName get_all_members_by_name(
-            ReturnCode_t* ec) const noexcept;
-
-    //! public interface common implementation for DynamicType and DynamicTypeBuilder
-    DynamicTypeMembersById get_all_members_by_id(
             ReturnCode_t* ec) const noexcept;
 
 public:

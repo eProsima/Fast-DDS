@@ -126,7 +126,7 @@ DynamicTypeBuilderImpl::member_iterator DynamicTypeBuilderImpl::add_empty_member
     {
         // preconditions check on add_member() public API
         assert(index < get_bounds(0));
-        it->annotation_set_position(static_cast<uint16_t>(index));
+        //TODO(richiware) it->annotation_set_position(static_cast<uint16_t>(index));
     }
 
     return it;
@@ -201,7 +201,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
         DynamicTypeMemberImpl& newMember = *it;
         // Copy all elements but keep the index
-        descriptor.index(newMember.index());
+        //TODO(richiware) descriptor.index(newMember.index());
         //TODO(richiware) newMember = std::move(descriptor);
 
         if (member_id == MEMBER_ID_INVALID)
@@ -213,7 +213,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             } // check and advance
             while (exists_member_by_id(current_member_id_++));
 
-            newMember.id(member_id);
+            //TODO(richiware) newMember.id(member_id);
         }
 
         // update the indexes collections

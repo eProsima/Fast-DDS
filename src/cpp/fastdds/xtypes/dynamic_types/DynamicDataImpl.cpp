@@ -88,11 +88,13 @@ DynamicDataImpl::DynamicDataImpl(
                  */
 
                 // Set the default value for unions.
-                if (type.get_kind() == TK_UNION &&
+                /*TODO(richiware)
+                   if (type.get_kind() == TK_UNION &&
                         pm->is_default_label())
-                {
+                   {
                     set_union_id(pm->id());
-                }
+                   }
+                 */
             }
         }
 
@@ -156,7 +158,7 @@ ReturnCode_t DynamicDataImpl::get_descriptor(
         return rc;
     }
 
-    return member->get_descriptor(value);
+    //TODO(richiware) return member->get_descriptor(value);
 }
 
 MemberId DynamicDataImpl::get_member_id_by_name(
@@ -876,7 +878,7 @@ void DynamicDataImpl::set_default_value(
     try
     {
         const DynamicTypeMemberImpl& m = type_->get_member(id);
-        defaultValue = m.get_default_value();
+        //TODO(richiware) defaultValue = m.get_default_value();
     }
     catch (const std::system_error& ec)
     {
@@ -1314,14 +1316,16 @@ ReturnCode_t DynamicDataImpl::set_int32_value(
             {
                 try
                 {
-                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
-                    int32_t mask = 0x00;
-                    for (uint16_t i = 0; i < bit_bound; ++i)
-                    {
+                    /*TODO(richiware)
+                       uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                       int32_t mask = 0x00;
+                       for (uint16_t i = 0; i < bit_bound; ++i)
+                       {
                         mask = mask << 1;
                         mask += 1;
-                    }
-                    value &= mask;
+                       }
+                       value &= mask;
+                     */
                 }
                 catch (const std::system_error& e)
                 {
@@ -1490,14 +1494,16 @@ ReturnCode_t DynamicDataImpl::set_uint32_value(
             {
                 try
                 {
-                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
-                    uint32_t mask = 0x00;
-                    for (uint16_t i = 0; i < bit_bound; ++i)
-                    {
+                    /*TODO(richiware)
+                       uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                       uint32_t mask = 0x00;
+                       for (uint16_t i = 0; i < bit_bound; ++i)
+                       {
                         mask = mask << 1;
                         mask += 1;
-                    }
-                    value &= mask;
+                       }
+                       value &= mask;
+                     */
                 }
                 catch (const std::system_error& e)
                 {
@@ -1664,14 +1670,16 @@ ReturnCode_t DynamicDataImpl::set_int16_value(
             {
                 try
                 {
-                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
-                    int16_t mask = 0x00;
-                    for (uint16_t i = 0; i < bit_bound; ++i)
-                    {
+                    /*TODO(richiware)
+                       uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                       int16_t mask = 0x00;
+                       for (uint16_t i = 0; i < bit_bound; ++i)
+                       {
                         mask = mask << 1;
                         mask += 1;
-                    }
-                    value &= mask;
+                       }
+                       value &= mask;
+                     */
                 }
                 catch (const std::system_error& e)
                 {
@@ -1840,14 +1848,16 @@ ReturnCode_t DynamicDataImpl::set_uint16_value(
             {
                 try
                 {
-                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
-                    uint16_t mask = 0x00;
-                    for (uint16_t i = 0; i < bit_bound; ++i)
-                    {
+                    /*TODO(richiware)
+                       uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                       uint16_t mask = 0x00;
+                       for (uint16_t i = 0; i < bit_bound; ++i)
+                       {
                         mask = mask << 1;
                         mask += 1;
-                    }
-                    value &= mask;
+                       }
+                       value &= mask;
+                     */
                 }
                 catch (const std::system_error& e)
                 {
@@ -2013,14 +2023,16 @@ ReturnCode_t DynamicDataImpl::set_int64_value(
             {
                 try
                 {
-                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
-                    int64_t mask = 0x00;
-                    for (uint16_t i = 0; i < bit_bound; ++i)
-                    {
+                    /*TODO(richiware)
+                       uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                       int64_t mask = 0x00;
+                       for (uint16_t i = 0; i < bit_bound; ++i)
+                       {
                         mask = mask << 1;
                         mask += 1;
-                    }
-                    value &= mask;
+                       }
+                       value &= mask;
+                     */
                 }
                 catch (const std::system_error& e)
                 {
@@ -2189,14 +2201,16 @@ ReturnCode_t DynamicDataImpl::set_uint64_value(
             {
                 try
                 {
-                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
-                    uint64_t mask = 0x00;
-                    for (uint16_t i = 0; i < bit_bound; ++i)
-                    {
+                    /*TODO(richiware)
+                       uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                       uint64_t mask = 0x00;
+                       for (uint16_t i = 0; i < bit_bound; ++i)
+                       {
                         mask = mask << 1;
                         mask += 1;
-                    }
-                    value &= mask;
+                       }
+                       value &= mask;
+                     */
                 }
                 catch (const std::system_error& e)
                 {
@@ -3059,14 +3073,16 @@ ReturnCode_t DynamicDataImpl::set_byte_value(
             {
                 try
                 {
-                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
-                    eprosima::fastrtps::rtps::octet mask = 0x00;
-                    for (uint16_t i = 0; i < bit_bound; ++i)
-                    {
+                    /*TODO(richware)
+                       uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                       eprosima::fastrtps::rtps::octet mask = 0x00;
+                       for (uint16_t i = 0; i < bit_bound; ++i)
+                       {
                         mask = mask << 1;
                         mask += 1;
-                    }
-                    value &= mask;
+                       }
+                       value &= mask;
+                     */
                 }
                 catch (const std::system_error& e)
                 {
@@ -3951,7 +3967,7 @@ ReturnCode_t DynamicDataImpl::get_enum_value(
 
         try
         {
-            value = type_->get_member(MemberId{uint32_value_}).name().c_str();
+            //TODO(richiware) value = type_->get_member(MemberId{uint32_value_}).name().c_str();
         }
         catch (const std::system_error& e)
         {
@@ -4981,12 +4997,14 @@ uint64_t DynamicDataImpl::get_union_label() const
     }
 
     // return label if available
-    auto& labels = type_->get_member(union_id_).label();
-    auto it = labels.cbegin();
-    if (it != labels.cend())
-    {
+    /*TODO(richiware)
+       auto& labels = type_->get_member(union_id_).label();
+       auto it = labels.cbegin();
+       if (it != labels.cend())
+       {
         return *it;
-    }
+       }
+     */
 
     //TODO(richiware) throw std::system_error(
     //TODO(richiware)           RETCODE_PRECONDITION_NOT_MET,

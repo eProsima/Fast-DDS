@@ -95,15 +95,21 @@ ReturnCode_t TypeDescriptorImpl::copy_from(
         return RETCODE_BAD_PARAMETER;
     }
 
-    kind_ = descriptor->kind();
-    name_ = descriptor->name();
-    base_type_ = descriptor->base_type();
-    discriminator_type_ = descriptor->discriminator_type();
-    bound_ = descriptor->bound();
-    element_type_ = descriptor->element_type();
-    key_element_type_ = descriptor->key_element_type();
-    extensibility_kind_ = descriptor->extensibility_kind();
-    is_nested_ = descriptor->is_nested();
+    return copy_from(*traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(descriptor));
+}
+
+ReturnCode_t TypeDescriptorImpl::copy_from(
+        TypeDescriptorImpl& descriptor) noexcept
+{
+    kind_ = descriptor.kind_;
+    name_ = descriptor.name_;
+    base_type_ = descriptor.base_type_;
+    discriminator_type_ = descriptor.discriminator_type_;
+    bound_ = descriptor.bound_;
+    element_type_ = descriptor.element_type_;
+    key_element_type_ = descriptor.key_element_type_;
+    extensibility_kind_ = descriptor.extensibility_kind_;
+    is_nested_ = descriptor.is_nested_;
 
     return RETCODE_OK;
 }
@@ -111,15 +117,21 @@ ReturnCode_t TypeDescriptorImpl::copy_from(
 bool TypeDescriptorImpl::equals(
         traits<TypeDescriptor>::ref_type descriptor) noexcept
 {
-    return kind_ == descriptor->kind() &&
-           name_ == descriptor->name() &&
-           base_type_ == descriptor->base_type() && // TODO(richiware) change when dynamictype has equals.
-           discriminator_type_ == descriptor->discriminator_type() &&
-           bound_ == descriptor->bound() &&
-           element_type_ == descriptor->element_type() &&
-           key_element_type_ == descriptor->key_element_type() &&
-           extensibility_kind_ == descriptor->extensibility_kind() &&
-           is_nested_ == descriptor->is_nested();
+    return equals(*traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(descriptor));
+}
+
+bool TypeDescriptorImpl::equals(
+        TypeDescriptorImpl& descriptor) noexcept
+{
+    return kind_ == descriptor.kind_ &&
+           name_ == descriptor.name_ &&
+           base_type_ == descriptor.base_type_ && // TODO(richiware) change when dynamictype has equals.
+           discriminator_type_ == descriptor.discriminator_type_ &&
+           bound_ == descriptor.bound_ &&
+           element_type_ == descriptor.element_type_ &&
+           key_element_type_ == descriptor.key_element_type_ &&
+           extensibility_kind_ == descriptor.extensibility_kind_ &&
+           is_nested_ == descriptor.is_nested_;
 }
 
 bool TypeDescriptorImpl::is_consistent() noexcept
