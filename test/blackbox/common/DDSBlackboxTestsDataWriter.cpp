@@ -381,30 +381,34 @@ TEST(DDSDataWriter, OfferedDeadlineMissedListener)
  *   - Destruction order matters: writer must be destroyed before reader (otherwise heartbeats would no be sent while
  *     destroying the writer)
  */
-TEST_P(DDSDataWriter, HeartbeatWhileDestruction)
+TEST(DDSDataWriter, HeartbeatWhileDestruction)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    // A high number of samples increases the probability of the data race to occur
-    size_t n_samples = 1000;
+    // Force writer to be destroyed before reader, so they are still matched, and heartbeats are sent while writer is destroyed
+    {
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    reader.reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS).init();
-    ASSERT_TRUE(reader.isInitialized());
+        // A high number of samples increases the probability of the data race to occur
+        size_t n_samples = 1000;
 
-    writer.reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS).history_kind(
-        KEEP_LAST_HISTORY_QOS).history_depth(n_samples).heartbeat_period_seconds(0).heartbeat_period_nanosec(
-        20 * 1000).init();
-    ASSERT_TRUE(writer.isInitialized());
+        reader.reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS).init();
+        ASSERT_TRUE(reader.isInitialized());
 
-    reader.wait_discovery();
-    writer.wait_discovery();
+        writer.reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS).history_kind(
+            KEEP_LAST_HISTORY_QOS).history_depth(n_samples).heartbeat_period_seconds(0).heartbeat_period_nanosec(
+            20 * 1000).init();
+        ASSERT_TRUE(writer.isInitialized());
 
-    auto data = default_helloworld_data_generator(1000);
-    reader.startReception(data);
-    writer.send(data);
+        reader.wait_discovery();
+        writer.wait_discovery();
 
-    EXPECT_TRUE(data.empty());
+        auto data = default_helloworld_data_generator(1000);
+        reader.startReception(data);
+        writer.send(data);
+
+        EXPECT_TRUE(data.empty());
+    }
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
