@@ -246,9 +246,9 @@ void DynamicPubSubType::UpdateDynamicTypeInfo()
     }
 
     m_typeSize = static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(*dynamic_type_) + 4);
-    setName(dynamic_type_->get_name());
+    //TODO(richiware) setName(dynamic_type_->get_name());
 
-    m_isGetKeyDefined = dynamic_type_->key_annotation();
+    //TODO(richiware) m_isGetKeyDefined = dynamic_type_->key_annotation();
 }
 
 } // namespace dds

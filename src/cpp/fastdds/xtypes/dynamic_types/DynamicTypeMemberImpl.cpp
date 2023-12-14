@@ -19,14 +19,14 @@ namespace fastdds {
 namespace dds {
 
 ReturnCode_t DynamicTypeMemberImpl::get_descriptor(
-        traits<MemberDescriptor>::ref_type md) noexcept
+        traits<MemberDescriptor>::ref_type descriptor) noexcept
 {
-    if (!md)
+    if (!descriptor)
     {
         return RETCODE_BAD_PARAMETER;
     }
 
-    traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(md)->copy_from(member_descriptor_);
+    traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(descriptor)->copy_from(member_descriptor_);
     return RETCODE_OK;
 }
 
@@ -67,20 +67,28 @@ ReturnCode_t DynamicTypeMemberImpl::get_verbatim_text(
 }
 
 bool DynamicTypeMemberImpl::equals(
-        traits<DynamicTypeMember>::ref_type descriptor) noexcept
+        traits<DynamicTypeMember>::ref_type other) noexcept
 {
     bool ret_value = true;
-    auto impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(descriptor);
+    auto impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(other);
 
     if (annotation_.size() == impl->annotation_.size())
     {
-        for (size_t count {0}; count < annotation_.size(); ++count)
+        for (size_t count {0}; ret_value && count < annotation_.size(); ++count)
         {
             ret_value &= annotation_.at(count).equals(impl->annotation_.at(count));
         }
     }
 
     ret_value &= member_descriptor_.equals(impl->member_descriptor_);
+
+    if (verbatim_.size() == impl->verbatim_.size())
+    {
+        for (size_t count {0}; ret_value && count < verbatim_.size(); ++count)
+        {
+            ret_value &= verbatim_.at(count).equals(impl->verbatim_.at(count));
+        }
+    }
 
     return ret_value;
 }

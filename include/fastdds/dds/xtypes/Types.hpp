@@ -41,9 +41,6 @@ constexpr uint32_t BOUND_UNLIMITED = 0;
 
 inline namespace xtypes_names {
 
-const char* const CONST_TRUE = "true";
-const char* const CONST_FALSE = "false";
-
 const char* const ANNOTATION_KEY_ID = "key";
 const char* const ANNOTATION_EPKEY_ID = "Key";
 const char* const ANNOTATION_TOPIC_ID = "Topic";
