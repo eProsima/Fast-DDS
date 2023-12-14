@@ -1600,8 +1600,8 @@ bool EDP::checkTypeObject(
     if (wdata->has_type_information() && wdata->type_information().assigned() &&
             rdata->has_type_information() && rdata->type_information().assigned())
     {
-        const types::TypeIdentifier* rtype = nullptr;
-        const types::TypeIdentifier* wtype = nullptr;
+        const fastdds::dds::xtypes::TypeIdentifier* rtype = nullptr;
+        const fastdds::dds::xtypes::TypeIdentifier* wtype = nullptr;
 
         if (wdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
                 fastdds::dds::xtypes::TK_NONE &&
@@ -1639,7 +1639,10 @@ bool EDP::checkTypeObject(
             coercion.m_prevent_type_widening = true;
             coercion.m_ignore_sequence_bounds = false;
             //return wtype->consistent(*rtype, rdata->m_qos.type_consistency);
-            return wtype->consistent(*rtype, coercion);
+            //TODO(XTypes)
+            //return wtype->consistent(*rtype, coercion);
+            (void)rtype;
+            return true;
         }
 
         return false;
@@ -1665,7 +1668,9 @@ bool EDP::checkTypeObject(
         coercion.m_prevent_type_widening = true;
         coercion.m_ignore_sequence_bounds = false;
         //return wdata->type().m_type_object.consistent(rdata->type().m_type_object, rdata->m_qos.type_consistency);
-        return wdata->type().m_type_object.consistent(rdata->type().m_type_object, coercion);
+        //TODO(XTypes)
+        // return wdata->type().m_type_object.consistent(rdata->type().m_type_object, coercion);
+        return true;
     }
 
     return false;

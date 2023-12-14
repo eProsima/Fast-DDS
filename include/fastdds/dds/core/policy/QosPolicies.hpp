@@ -23,6 +23,7 @@
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
@@ -2514,7 +2515,7 @@ class TypeInformationParameter : public Parameter_t, public QosPolicy
 public:
 
     //!Type Information
-    fastrtps::types::TypeInformation type_information;
+    TypeInformation type_information;
 
     /**
      * @brief Constructor
@@ -2542,12 +2543,12 @@ public:
     }
 
     /**
-     * @brief Constructor using a fastrtps::types::TypeInformation
+     * @brief Constructor using a TypeInformation
      *
-     * @param info fastrtps::types::TypeInformation to be set
+     * @param info TypeInformation to be set
      */
     RTPS_DllAPI TypeInformationParameter(
-            const fastrtps::types::TypeInformation& info)
+            const TypeInformation& info)
         : Parameter_t(PID_TYPE_INFORMATION, 0)
         , QosPolicy(false)
         , type_information(info)
@@ -2627,7 +2628,7 @@ public:
     }
 
     RTPS_DllAPI TypeInformationParameter& operator =(
-            const fastrtps::types::TypeInformation& type_info)
+            const TypeInformation& type_info)
     {
         type_information = type_info;
         assigned_ = true;

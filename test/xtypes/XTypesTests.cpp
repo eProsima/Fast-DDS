@@ -26,6 +26,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <rtps/RTPSDomainImpl.hpp>
 
 #include <thread>
 #include <memory>
@@ -1129,7 +1130,11 @@ TEST_F(xtypestests, DISABLED_TypeIdentifierNamesIgnored)
 TEST_F(xtypestests, TypeInformationSameType)
 {
     TypeSupport type(new BasicStructPubSubType());
-    const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
+
+    eprosima::fastdds::dds::xtypes::TypeInformation type_info;
+    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+            .get_type_information("BasicStruct", type_info);
+
     TestPublisher pub;
     TestSubscriber sub;
 
@@ -1147,10 +1152,10 @@ TEST_F(xtypestests, TypeInformationSameType)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("TypeInformationSameType", DOMAIN_ID_, type, nullptr, nullptr, type_info, "Pub1", &dataRepQos);
+    pub.init("TypeInformationSameType", DOMAIN_ID_, type, nullptr, nullptr, &type_info, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationSameType", DOMAIN_ID_, type, nullptr, nullptr, type_info, "Sub1", &dataRepQos,
+    sub.init("TypeInformationSameType", DOMAIN_ID_, type, nullptr, nullptr, &type_info, "Sub1", &dataRepQos,
             nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1166,8 +1171,15 @@ TEST_F(xtypestests, TypeInformationDifferentType)
 {
     TypeSupport type1(new BasicStructPubSubType());
     TypeSupport type2(new BasicBadStructPubSubType());
-    const TypeInformation* type_info1 = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
-    const TypeInformation* type_info2 = TypeObjectFactory::get_instance()->get_type_information("BasicBadStruct");
+
+    eprosima::fastdds::dds::xtypes::TypeInformation type_info1;
+    eprosima::fastdds::dds::xtypes::TypeInformation type_info2;
+    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+            .get_type_information("BasicStruct", type_info1);
+    eprosima::fastdds::dds::xtypes::TypeInformation type_info;
+    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+            .get_type_information("BasicBadStruct", type_info2);
+
     TestPublisher pub;
     TestSubscriber sub;
     //TypeInformation* type_info = nullptr; // Not using it
@@ -1186,11 +1198,11 @@ TEST_F(xtypestests, TypeInformationDifferentType)
     typeConQos.m_prevent_type_widening = false;
     typeConQos.m_force_type_validation = false;
 
-    pub.init("TypeInformationDifferentType", DOMAIN_ID_, type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
+    pub.init("TypeInformationDifferentType", DOMAIN_ID_, type1, nullptr, nullptr, &type_info1, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationDifferentType", DOMAIN_ID_, type2, nullptr, nullptr, type_info2, "Sub1",
-            &dataRepQos, &typeConQos);
+    sub.init("TypeInformationDifferentType", DOMAIN_ID_, type2, nullptr, nullptr, &type_info2, "Sub1", &dataRepQos,
+            &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1206,8 +1218,15 @@ TEST_F(xtypestests, TypeInformationNamesManaged)
 {
     TypeSupport type1(new BasicStructPubSubType());
     TypeSupport type2(new BasicNamesStructPubSubType());
-    const TypeInformation* type_info1 = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
-    const TypeInformation* type_info2 = TypeObjectFactory::get_instance()->get_type_information("BasicNamesStruct");
+
+    eprosima::fastdds::dds::xtypes::TypeInformation type_info1;
+    eprosima::fastdds::dds::xtypes::TypeInformation type_info2;
+    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+            .get_type_information("BasicStruct", type_info1);
+    eprosima::fastdds::dds::xtypes::TypeInformation type_info;
+    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+            .get_type_information("BasicNamesStruct", type_info2);
+
     TestPublisher pub;
     TestSubscriber sub;
     //TypeInformation* type_info = nullptr; // Not using it
@@ -1226,10 +1245,10 @@ TEST_F(xtypestests, TypeInformationNamesManaged)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("TypeInformationNamesManaged", DOMAIN_ID_, type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
+    pub.init("TypeInformationNamesManaged", DOMAIN_ID_, type1, nullptr, nullptr, &type_info1, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationNamesManaged", DOMAIN_ID_, type2, nullptr, nullptr, type_info2, "Sub1",
+    sub.init("TypeInformationNamesManaged", DOMAIN_ID_, type2, nullptr, nullptr, &type_info2, "Sub1",
             &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1246,8 +1265,15 @@ TEST_F(xtypestests, DISABLED_TypeInformationNamesIgnored)
 {
     TypeSupport type1(new BasicStructPubSubType());
     TypeSupport type2(new BasicNamesStructPubSubType());
-    const TypeInformation* type_info1 = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
-    const TypeInformation* type_info2 = TypeObjectFactory::get_instance()->get_type_information("BasicNamesStruct");
+
+    eprosima::fastdds::dds::xtypes::TypeInformation type_info1;
+    eprosima::fastdds::dds::xtypes::TypeInformation type_info2;
+    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+            .get_type_information("BasicStruct", type_info1);
+    eprosima::fastdds::dds::xtypes::TypeInformation type_info;
+    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+            .get_type_information("BasicNamesStruct", type_info2);
+
     TestPublisher pub;
     TestSubscriber sub;
     //TypeInformation* type_info = nullptr; // Not using it
@@ -1266,10 +1292,10 @@ TEST_F(xtypestests, DISABLED_TypeInformationNamesIgnored)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("TypeInformationNamesIgnored", DOMAIN_ID_, type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
+    pub.init("TypeInformationNamesIgnored", DOMAIN_ID_, type1, nullptr, nullptr, &type_info1, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationNamesIgnored", DOMAIN_ID_, type2, nullptr, nullptr, type_info2, "Sub1",
+    sub.init("TypeInformationNamesIgnored", DOMAIN_ID_, type2, nullptr, nullptr, &type_info2, "Sub1",
             &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1312,7 +1338,10 @@ TEST_F(xtypestests, TypeIdentifier_TypeInformation)
     const TypeIdentifier* type_id = GetBasicStructIdentifier(false);
     TestPublisher pub;
     TestSubscriber sub;
-    const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
+
+    eprosima::fastdds::dds::xtypes::TypeInformation type_info;
+    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+            .get_type_information("BasicStruct", type_info);
 
     TypeConsistencyEnforcementQosPolicy typeConQos;
     typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
@@ -1321,7 +1350,7 @@ TEST_F(xtypestests, TypeIdentifier_TypeInformation)
     pub.init("TypeIdentifier_TypeInformation", DOMAIN_ID_, type, nullptr, type_id, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifier_TypeInformation", DOMAIN_ID_, type1, nullptr, nullptr, type_info, "Sub1", nullptr,
+    sub.init("TypeIdentifier_TypeInformation", DOMAIN_ID_, type1, nullptr, nullptr, &type_info, "Sub1", nullptr,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
@@ -1337,7 +1366,11 @@ TEST_F(xtypestests, TypeObject_TypeInformation)
     const TypeObject* type_obj = GetMinimalBasicStructObject();
     TestPublisher pub;
     TestSubscriber sub;
-    const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
+
+    eprosima::fastdds::dds::xtypes::TypeInformation type_info;
+    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
+            .get_type_information("BasicStruct", type_info);
+
 
     TypeConsistencyEnforcementQosPolicy typeConQos;
     typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
@@ -1346,7 +1379,7 @@ TEST_F(xtypestests, TypeObject_TypeInformation)
     pub.init("TypeObject_TypeInformation", DOMAIN_ID_, type, type_obj, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObject_TypeInformation", DOMAIN_ID_, type1, nullptr, nullptr, type_info, "Sub1", nullptr,
+    sub.init("TypeObject_TypeInformation", DOMAIN_ID_, type1, nullptr, nullptr, &type_info, "Sub1", nullptr,
             &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 

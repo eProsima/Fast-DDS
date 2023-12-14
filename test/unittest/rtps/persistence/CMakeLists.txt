@@ -37,13 +37,14 @@ if(SQLITE3_SUPPORT)
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
         )
     target_include_directories(PersistenceTests PRIVATE
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
+        ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
         ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
         ${PROJECT_SOURCE_DIR}/src/cpp
         )
     target_link_libraries(PersistenceTests
+        fastcdr
         foonathan_memory
-            GTest::gmock
+        GTest::gmock
         ${CMAKE_DL_LIBS}
         )
     if(MSVC OR MSVC_IDE)
