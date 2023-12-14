@@ -31,10 +31,8 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <rtps/transport/UDPv4Transport.h>
-#include <rtps/transport/UDPv6Transport.h>
 #include <rtps/transport/test_UDPv4Transport.h>
 #include <rtps/transport/TCPv4Transport.h>
-#include <rtps/transport/TCPv6Transport.h>
 
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -465,19 +463,10 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     RTPSParticipantAttributes client_att(att);
 
     // Retrieve the info from the environment variable
-    // TODO(jlbueno) This should be protected with the PDP mutex.
+    RemoteServerList_t& server_list = client_att.builtin.discovery_config.m_DiscoveryServers;
     if (load_environment_server_info(client_att.builtin.discovery_config.m_DiscoveryServers) &&
             client_att.builtin.discovery_config.m_DiscoveryServers.empty())
     {
-<<<<<<< HEAD
-        // it's not an error, the environment variable may not be set. Any issue with environment
-        // variable syntax is logError already
-        return nullptr;
-    }
-
-    logInfo(DOMAIN, "Detected auto client-server environment variable."
-            "Trying to create client with the default server setup.");
-=======
         // It's not an error, the environment variable may not be set. Any issue with environment
         // variable syntax is EPROSIMA_LOG_ERROR already
         return nullptr;
@@ -486,15 +475,6 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     // Check if some server requires the UDPv6, TCPv4 or TCPv6 transport
     for (auto& server : server_list)
     {
-        if (server.requires_transport<LOCATOR_KIND_UDPv6>())
-        {
-            // Extend builtin transports with the UDPv6 transport
-            auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
-            descriptor->sendBufferSize = client_att.sendSocketBufferSize;
-            descriptor->receiveBufferSize = client_att.listenSocketBufferSize;
-            client_att.userTransports.push_back(std::move(descriptor));
-            break;
-        }
         if (server.requires_transport<LOCATOR_KIND_TCPv4>())
         {
             // Check if a TCPv4 transport exists. Otherwise create it
@@ -531,48 +511,10 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
             }
 
         }
-        if (server.requires_transport<LOCATOR_KIND_TCPv6>())
-        {
-            // Check if a TCPv6 transport exists. Otherwise create it
-            fastdds::rtps::TCPTransportDescriptor* pT = nullptr;
-            std::shared_ptr<fastdds::rtps::TCPv6TransportDescriptor> p6;
-            bool no_tcpv6 = true;
-
-            for (auto sp : client_att.userTransports)
-            {
-                pT = dynamic_cast<fastdds::rtps::TCPTransportDescriptor*>(sp.get());
-
-                if (pT != nullptr)
-                {
-                    if (!p6)
-                    {
-                        // try to find a descriptor matching the listener port setup
-                        if ((p6 = std::dynamic_pointer_cast<fastdds::rtps::TCPv6TransportDescriptor>(sp)))
-                        {
-                            // TCPv6 transport already exists
-                            no_tcpv6 = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (no_tcpv6)
-            {
-                // Extend builtin transports with the TCPv6 transport
-                auto descriptor = std::make_shared<fastdds::rtps::TCPv6TransportDescriptor>();
-                // Add automatic port
-                descriptor->add_listener_port(0);
-                descriptor->sendBufferSize = client_att.sendSocketBufferSize;
-                descriptor->receiveBufferSize = client_att.listenSocketBufferSize;
-                client_att.userTransports.push_back(std::move(descriptor));
-            }
-        }
     }
 
-    EPROSIMA_LOG_INFO(DOMAIN, "Detected auto client-server environment variable."
-            << "Trying to create client with the default server setup: "
-            << client_att.builtin.discovery_config.m_DiscoveryServers);
->>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
+    logInfo(DOMAIN, "Detected auto client-server environment variable."
+            << "Trying to create client with the default server setup");
 
     client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
     // RemoteServerAttributes already fill in above
@@ -580,24 +522,14 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     RTPSParticipant* part = RTPSDomain::createParticipant(domain_id, enabled, client_att, listen);
     if (nullptr != part)
     {
-<<<<<<< HEAD
         // client successfully created
         logInfo(DOMAIN, "Auto default server-client setup. Default client created.");
-=======
-        // Client successfully created
-        EPROSIMA_LOG_INFO(DOMAIN, "Auto default server-client setup. Default client created.");
->>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
         part->mp_impl->client_override(true);
         return part;
     }
 
-<<<<<<< HEAD
     // unable to create auto server-client default participants
     logError(DOMAIN, "Auto default server-client setup. Unable to create the client.");
-=======
-    // Unable to create auto server-client default participants
-    EPROSIMA_LOG_ERROR(DOMAIN, "Auto default server-client setup. Unable to create the client.");
->>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
     return nullptr;
 }
 

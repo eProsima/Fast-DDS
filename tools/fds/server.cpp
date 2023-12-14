@@ -33,12 +33,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
-<<<<<<< HEAD
-=======
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
-#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
->>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -297,7 +292,7 @@ int fastdds_discovery_server(
     {
         // Add default locator in cases a) and b)
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
-        participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator4);
+        participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
     }
     else if (nullptr == pOp && nullptr != pO_port)
     {
@@ -307,13 +302,9 @@ int fastdds_discovery_server(
     }
     else
     {
-<<<<<<< HEAD
-        if (nullptr != pOp)
-=======
         // UDP address has been specified
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
         while (pOp)
->>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
         {
             participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
             while (pOp)
@@ -373,11 +364,8 @@ int fastdds_discovery_server(
         }
     }
 
-<<<<<<< HEAD
-=======
     // Add TCP default locators addresses
     Locator locator_tcp_4(LOCATOR_KIND_TCPv4, rtps::DEFAULT_TCP_SERVER_PORT);
-    Locator locator_tcp_6(LOCATOR_KIND_TCPv6, rtps::DEFAULT_TCP_SERVER_PORT);
     bool default_port = true;
 
     // Manage TCP port
@@ -391,9 +379,7 @@ int fastdds_discovery_server(
         if (!(is >> id
                 && is.eof()
                 && IPLocator::setPhysicalPort(locator_tcp_4, id)
-                && IPLocator::setLogicalPort(locator_tcp_4, id)
-                && IPLocator::setPhysicalPort(locator_tcp_6, id)
-                && IPLocator::setLogicalPort(locator_tcp_6, id)))
+                && IPLocator::setLogicalPort(locator_tcp_4, id)))
         {
             std::cout << "Invalid listening locator port specified:" << id << std::endl;
             return 1;
@@ -403,8 +389,6 @@ int fastdds_discovery_server(
     {
         IPLocator::setPhysicalPort(locator_tcp_4, rtps::DEFAULT_TCP_SERVER_PORT);
         IPLocator::setLogicalPort(locator_tcp_4, rtps::DEFAULT_TCP_SERVER_PORT);
-        IPLocator::setPhysicalPort(locator_tcp_6, rtps::DEFAULT_TCP_SERVER_PORT);
-        IPLocator::setLogicalPort(locator_tcp_6, rtps::DEFAULT_TCP_SERVER_PORT);
     }
 
     if (nullptr != pO_tcp || nullptr != pO_tcp_port)
@@ -424,14 +408,10 @@ int fastdds_discovery_server(
                 std::string address = std::string(pO_tcp->arg);
                 int type = LOCATOR_PORT_INVALID;
 
-                // Trial order IPv4, IPv6 & DNS
+                // Trial order IPv4 & DNS
                 if (IPLocator::isIPv4(address) && IPLocator::setIPv4(locator_tcp_4, address))
                 {
                     type = LOCATOR_KIND_TCPv4;
-                }
-                else if (IPLocator::isIPv6(address) && IPLocator::setIPv6(locator_tcp_6, address))
-                {
-                    type = LOCATOR_KIND_TCPv6;
                 }
                 else
                 {
@@ -444,14 +424,6 @@ int fastdds_discovery_server(
                         if (IPLocator::setIPv4(locator_tcp_4, address))
                         {
                             type = LOCATOR_KIND_TCPv4;
-                        }
-                    }
-                    else if (response.second.size() > 0)
-                    {
-                        address = response.second.begin()->data();
-                        if (IPLocator::setIPv6(locator_tcp_6, address))
-                        {
-                            type = LOCATOR_KIND_TCPv6;
                         }
                     }
                 }
@@ -473,9 +445,7 @@ int fastdds_discovery_server(
                     if (!(is >> id
                             && is.eof()
                             && IPLocator::setPhysicalPort(locator_tcp_4, id)
-                            && IPLocator::setLogicalPort(locator_tcp_4, id)
-                            && IPLocator::setPhysicalPort(locator_tcp_6, id)
-                            && IPLocator::setLogicalPort(locator_tcp_6, id)))
+                            && IPLocator::setLogicalPort(locator_tcp_4, id)))
                     {
                         std::cout << "Invalid listening locator port specified:" << id << std::endl;
                         return 1;
@@ -484,19 +454,13 @@ int fastdds_discovery_server(
 
                 // Add the locator
                 participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList
-                        .push_back( LOCATOR_KIND_TCPv4 == type ? locator_tcp_4 : locator_tcp_6 );
+                        .push_back(locator_tcp_4);
 
                 // Create user transport
                 if (type == LOCATOR_KIND_TCPv4)
                 {
                     auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
                     tcp_descriptor->add_listener_port(static_cast<uint16_t>(locator_tcp_4.port));
-                    participantQos.transport().user_transports.push_back(tcp_descriptor);
-                }
-                else
-                {
-                    auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
-                    tcp_descriptor->add_listener_port(static_cast<uint16_t>(locator_tcp_6.port));
                     participantQos.transport().user_transports.push_back(tcp_descriptor);
                 }
 
@@ -522,9 +486,6 @@ int fastdds_discovery_server(
         }
     }
 
-    fastrtps::rtps::GuidPrefix_t guid_prefix = participantQos.wire_protocol().prefix;
-
->>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
     // Create the server
     int return_value = 0;
     DomainParticipant* pServer = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
