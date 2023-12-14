@@ -173,9 +173,17 @@ int main(
                     {
                         transport = TransportKind::UDPv6;
                     }
+                    else if (transport_str == "tcpv4")
+                    {
+                        transport = TransportKind::TCPv4;
+                    }
+                    else if (transport_str == "tcpv6")
+                    {
+                        transport = TransportKind::TCPv6;
+                    }
                     else
                     {
-                        print_warning("udpv4|udpv6", opt.name);
+                        print_warning("udpv4|udpv6|tcpv4|tcpv6", opt.name);
                     }
 
                     break;
