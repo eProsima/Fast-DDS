@@ -31,6 +31,8 @@
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -228,20 +230,20 @@ int fastdds_discovery_server(
         participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
     }
 
-    // Set up listening locators.
+    // Set up listening UDP locators.
     /**
      * The metatraffic unicast locator list can be defined:
      *    1. By means of the CLI specifying a locator address (pOp != nullptr) and port (pO_port != nullptr)
-     *          Locator: IPaddress:port
+     *          Locator: UDPAddres:port
      *    2. By means of the CLI specifying only the locator address (pOp != nullptr)
-     *          Locator: IPaddress:11811
+     *          Locator: UDPAddress:11811
      *    3. By means of the CLI specifying only the port number (pO_port != nullptr)
-     *          Locator: [0.0.0.0]:port
+     *          Locator: UDPv4:[0.0.0.0]:port
      *    4. By means of the XML configuration file (options[XML_FILE] != nullptr)
      *    5. No information provided.
-     *          Locator: [0.0.0.0]:11811
+     *          Locator: UDPv4:[0.0.0.0]:11811
      *
-     * The CLI has priority over the XML file configuration.
+     * The UDP CLI has priority over the XML file configuration.
      */
 
     // If the number of specify ports doesn't match the number of IPs the last port is used.
@@ -250,9 +252,13 @@ int fastdds_discovery_server(
     Locator locator6(LOCATOR_KIND_UDPv6, rtps::DEFAULT_ROS2_SERVER_PORT);
 
     // Retrieve first UDP port
-    option::Option* pO_port = options[PORT];
+    option::Option* pO_port = options[UDP_PORT];
     if (nullptr != pO_port)
     {
+        // if (eprosima::fastdds::dds::check_udp_port(*pO_port, true) != option::ARG_OK)
+        // {
+        //     return 1;
+        // }
         std::stringstream is;
         is << pO_port->arg;
         uint16_t id;
@@ -271,23 +277,35 @@ int fastdds_discovery_server(
     IPLocator::setIPv6(locator6, 0, 0, 0, 0, 0, 0, 0, 0);
 
     // Retrieve first IP address
-    pOp = options[IPADDRESS];
+    pOp = options[UDPADDRESS];
+    option::Option* pO_tcp = options[TCPADDRESS];
+    // Retrieve first TCP port
+    option::Option* pO_tcp_port = options[TCP_PORT];
 
     /**
      * A locator has been initialized previously in [0.0.0.0] address using either the DEFAULT_ROS2_SERVER_PORT or the
      * port number set in the CLI. This locator must be used:
-     *     - If there is no IP address defined in the CLI (pOp == nullptr) but the port has been defined
-     *       (pO_port != nullptr)
-     *     - If there is no locator information provided either by CLI or XML file (options[XML_FILE] == nullptr)
+     *     a) If there is no IP address defined in the CLI (pOp == nullptr) but the port has been defined
+     *        (pO_port != nullptr) and there is no TCP address nor port provided by the CLI
+     *     b) If there is no locator information provided either by CLI (UDP and TCP) or XML file
+     *        (options[XML_FILE] == nullptr)
      */
-    if (nullptr == pOp && (nullptr == options[XML_FILE] || nullptr != pO_port))
+    if (nullptr == pOp && (nullptr == options[XML_FILE] || nullptr != pO_port) &&
+            (nullptr == pO_tcp && nullptr == pO_tcp_port))
     {
-        // Add default locator
+        // Add default locator in cases a) and b)
+        participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
+        participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator4);
+    }
+    else if (nullptr == pOp && nullptr != pO_port)
+    {
+        // UDP port AND TCP port/address has been specified without specifying UDP address
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator4);
     }
     else if (nullptr != pOp)
     {
+        // UDP address has been specified
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
         while (pOp)
         {
@@ -375,6 +393,153 @@ int fastdds_discovery_server(
             descriptor->sendBufferSize = participantQos.transport().send_socket_buffer_size;
             descriptor->receiveBufferSize = participantQos.transport().listen_socket_buffer_size;
             participantQos.transport().user_transports.push_back(std::move(descriptor));
+        }
+    }
+
+    // Add TCP default locators addresses
+    Locator locator_tcp_4(LOCATOR_KIND_TCPv4, rtps::DEFAULT_TCP_SERVER_PORT);
+    Locator locator_tcp_6(LOCATOR_KIND_TCPv6, rtps::DEFAULT_TCP_SERVER_PORT);
+    bool default_port = true;
+
+    // Manage TCP port
+    if (nullptr != pO_tcp_port)
+    {
+        std::stringstream is;
+        is << pO_tcp_port->arg;
+        uint16_t id;
+        default_port = false;
+
+        if (!(is >> id
+                && is.eof()
+                && IPLocator::setPhysicalPort(locator_tcp_4, id)
+                && IPLocator::setLogicalPort(locator_tcp_4, id)
+                && IPLocator::setPhysicalPort(locator_tcp_6, id)
+                && IPLocator::setLogicalPort(locator_tcp_6, id)))
+        {
+            std::cout << "Invalid listening locator port specified:" << id << std::endl;
+            return 1;
+        }
+    }
+    else
+    {
+        IPLocator::setPhysicalPort(locator_tcp_4, rtps::DEFAULT_TCP_SERVER_PORT);
+        IPLocator::setLogicalPort(locator_tcp_4, rtps::DEFAULT_TCP_SERVER_PORT);
+        IPLocator::setPhysicalPort(locator_tcp_6, rtps::DEFAULT_TCP_SERVER_PORT);
+        IPLocator::setLogicalPort(locator_tcp_6, rtps::DEFAULT_TCP_SERVER_PORT);
+    }
+
+    if (nullptr != pO_tcp || nullptr != pO_tcp_port)
+    {
+        if (nullptr == pO_tcp)
+        {
+            // Only the TCP port has been specified. Use localhost as default interface for TCP
+            IPLocator::setIPv4(locator_tcp_4, "127.0.0.1");
+            participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator_tcp_4);
+        }
+        else if (nullptr != pO_tcp)
+        {
+            // Add tcp locator address
+            while (pO_tcp)
+            {
+                // Get next address
+                std::string address = std::string(pO_tcp->arg);
+                int type = LOCATOR_PORT_INVALID;
+
+                // Trial order IPv4, IPv6 & DNS
+                if (IPLocator::isIPv4(address) && IPLocator::setIPv4(locator_tcp_4, address))
+                {
+                    type = LOCATOR_KIND_TCPv4;
+                }
+                else if (IPLocator::isIPv6(address) && IPLocator::setIPv6(locator_tcp_6, address))
+                {
+                    type = LOCATOR_KIND_TCPv6;
+                }
+                else
+                {
+                    auto response = IPLocator::resolveNameDNS(address);
+
+                    // Add the first valid IPv4 address that we can find
+                    if (response.first.size() > 0)
+                    {
+                        address = response.first.begin()->data();
+                        if (IPLocator::setIPv4(locator_tcp_4, address))
+                        {
+                            type = LOCATOR_KIND_TCPv4;
+                        }
+                    }
+                    else if (response.second.size() > 0)
+                    {
+                        address = response.second.begin()->data();
+                        if (IPLocator::setIPv6(locator_tcp_6, address))
+                        {
+                            type = LOCATOR_KIND_TCPv6;
+                        }
+                    }
+                }
+
+                // On failure report error
+                if ( LOCATOR_PORT_INVALID == type )
+                {
+                    std::cout << "Invalid listening locator address specified:" << address << std::endl;
+                    return 1;
+                }
+
+                // Update TCP port
+                if (nullptr != pO_tcp_port)
+                {
+                    std::stringstream is;
+                    is << pO_tcp_port->arg;
+                    uint16_t id;
+
+                    if (!(is >> id
+                            && is.eof()
+                            && IPLocator::setPhysicalPort(locator_tcp_4, id)
+                            && IPLocator::setLogicalPort(locator_tcp_4, id)
+                            && IPLocator::setPhysicalPort(locator_tcp_6, id)
+                            && IPLocator::setLogicalPort(locator_tcp_6, id)))
+                    {
+                        std::cout << "Invalid listening locator port specified:" << id << std::endl;
+                        return 1;
+                    }
+                }
+
+                // Add the locator
+                participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList
+                        .push_back( LOCATOR_KIND_TCPv4 == type ? locator_tcp_4 : locator_tcp_6 );
+
+                // Create user transport
+                if (type == LOCATOR_KIND_TCPv4)
+                {
+                    auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+                    tcp_descriptor->add_listener_port(static_cast<uint16_t>(locator_tcp_4.port));
+                    participantQos.transport().user_transports.push_back(tcp_descriptor);
+                }
+                else
+                {
+                    auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
+                    tcp_descriptor->add_listener_port(static_cast<uint16_t>(locator_tcp_6.port));
+                    participantQos.transport().user_transports.push_back(tcp_descriptor);
+                }
+
+                pO_tcp = pO_tcp->next();
+                if (pO_tcp_port)
+                {
+                    pO_tcp_port = pO_tcp_port->next();
+                    default_port = false;
+                }
+                else
+                {
+                    if (!default_port)
+                    {
+                        std::cout << "Error: the number of specified TCP ports doesn't match the ip addresses" <<
+                            std::endl
+                                  << "       provided. TCP transports cannot share their port number." << std::endl;
+                        return 1;
+                    }
+                    // One default port has already been used
+                    default_port = false;
+                }
+            }
         }
     }
 
@@ -525,6 +690,36 @@ option::ArgStatus Arg::check_udp_port(
     {
         std::cout << "Option '" << option.name
                   << "' value should be an UDP port between 1025 and 65535." << std::endl;
+    }
+
+    return option::ARG_ILLEGAL;
+}
+
+option::ArgStatus Arg::check_tcp_port(
+        const option::Option& option,
+        bool msg)
+{
+    // The argument is required
+    if (nullptr != option.arg)
+    {
+        // It must be in an ephemeral port range
+        std::stringstream is;
+        is << option.arg;
+        int id;
+
+        if (is >> id
+                && is.eof()
+                && id > 1024
+                && id < 65536)
+        {
+            return option::ARG_OK;
+        }
+    }
+
+    if (msg)
+    {
+        std::cout << "Option '" << option.name
+                  << "' value should be an TCP port between 1025 and 65535." << std::endl;
     }
 
     return option::ARG_ILLEGAL;

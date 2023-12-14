@@ -140,7 +140,9 @@ struct Arg : public option::Arg
             if (
                 // transport == "shm" ||
                 transport == "udpv4" ||
-                transport == "udpv6"
+                transport == "udpv6" ||
+                transport == "tcpv4" ||
+                transport == "tcpv6"
                 )
             {
                 return option::ARG_OK;
@@ -235,7 +237,7 @@ const option::Descriptor usage[] = {
         "",
         "transport",
         Arg::Transport,
-        "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv4 by default)."
+        "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6|tcpv4|tcpv6] (UDPv4 by default)."
     },
     {
         CONNECTION_DISCOVERY_SERVER_ID,
@@ -287,7 +289,7 @@ const option::Descriptor usage[] = {
         "",
         "transport",
         Arg::Transport,
-        "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv4 by default)."
+        "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6|tcpv4|tcpv6] (UDPv4 by default)."
     },
     {
         CONNECTION_DISCOVERY_SERVER_ID,
@@ -331,7 +333,7 @@ const option::Descriptor usage[] = {
         "",
         "transport",
         Arg::Transport,
-        "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv4 by default)."
+        "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6|tcpv4|tcpv6] (UDPv4 by default)."
     },
     {
         CONNECTION_PORT,
