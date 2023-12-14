@@ -114,7 +114,7 @@ public:
     //!Pointer to the WLP
     WLP* mp_WLP;
     //!The TypeLookupManager
-    fastdds::dds::builtin::TypeLookupManager tlm_;
+    fastdds::dds::builtin::TypeLookupManager typelookup_manager_;
     //!Locator list for metatraffic
     LocatorList_t m_metatrafficMulticastLocatorList;
     //!Locator List for metatraffic unicast

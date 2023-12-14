@@ -70,7 +70,7 @@ public:
 private:
 
     //! A pointer to the typelookup manager
-    TypeLookupManager* tlm_;
+    TypeLookupManager* typelookup_manager_;
 
 };
 

@@ -98,7 +98,20 @@ bool TypeLookupManager::init(
     temp_writer_proxy_data_ = new fastrtps::rtps::WriterProxyData(
         protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators);
-    return create_endpoints();
+
+
+    // Check if ReaderProxyData and WriterProxyData objects were created successfully
+    if (temp_reader_proxy_data_ && temp_writer_proxy_data_)
+    {
+        return create_endpoints();
+    }
+    else
+    {
+        // Clean up on failure and return false
+        delete temp_reader_proxy_data_;
+        delete temp_writer_proxy_data_;
+        return false;
+    }
 }
 
 bool TypeLookupManager::assign_remote_endpoints(

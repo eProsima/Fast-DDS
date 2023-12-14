@@ -1048,7 +1048,7 @@ bool PDP::remove_remote_participant(
             this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
         }
 
-        mp_builtin->tlm_.remove_remote_endpoints(pdata);
+        mp_builtin->typelookup_manager_.remove_remote_endpoints(pdata);
 
         this->mp_EDP->removeRemoteEndpoints(pdata);
         this->removeRemoteEndpoints(pdata);

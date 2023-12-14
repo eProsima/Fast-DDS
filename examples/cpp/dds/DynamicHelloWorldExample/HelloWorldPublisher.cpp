@@ -81,6 +81,7 @@ bool HelloWorldPublisher::init()
     }
 
     //REGISTER THE TYPE
+    //TODO(Xtypes) this property will be removed
     m_type.get()->auto_fill_type_information(false);
 
     m_type.register_type(mp_participant);

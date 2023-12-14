@@ -140,7 +140,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
     }
 
     // TypeLookupManager
-    tlm_.init(this);
+    typelookup_manager_.init(this);
 
     return true;
 }

@@ -32,17 +32,6 @@
 #include <fastrtps/qos/WriterQos.h>
 
 namespace eprosima {
-
-namespace fastdds {
-namespace dds {
-namespace builtin {
-
-class TypeLookupManager;
-
-} // namespace builtin
-} // namespace dds
-} // namespace fastdds
-
 namespace fastrtps {
 
 class TopicAttributes;
@@ -232,12 +221,6 @@ public:
      */
     void set_check_type_function(
             std::function<bool(const std::string&)>&& check_type);
-
-    /**
-     * @brief Retrieves the built-in typelookup service manager.
-     * @return
-     */
-    fastdds::dds::builtin::TypeLookupManager& typelookup_manager() const;
 
     /**
      * @brief Modifies the participant listener

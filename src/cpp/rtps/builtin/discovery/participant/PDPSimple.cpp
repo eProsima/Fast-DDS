@@ -503,7 +503,7 @@ void PDPSimple::notifyAboveRemoteEndpoints(
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, (notify_secure_endpoints ? true : false));
     }
 
-    mp_builtin->tlm_.assign_remote_endpoints(pdata);
+    mp_builtin->typelookup_manager_.assign_remote_endpoints(pdata);
 }
 
 bool PDPSimple::newRemoteEndpointStaticallyDiscovered(

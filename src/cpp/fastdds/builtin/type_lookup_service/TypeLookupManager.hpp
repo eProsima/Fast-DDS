@@ -124,9 +124,10 @@ public:
     virtual ~TypeLookupManager();
 
     /**
-     * Initialize the RTPSParticipantImpl BuiltinProtocols and temp ReaderProxyData and WriterProxyData
-     * of the TypeLookupManager
+     * Stores pointers to the RTPSParticipantImpl and BuiltinProtocols and creates temp
+     * ReaderProxyData and WriterProxyData objects for the TypeLookupManager.
      * @param prot Pointer to the BuiltinProtocols object.
+     * @return true if members and endpoints are created, false otherwise.
      */
     bool init(
             fastrtps::rtps::BuiltinProtocols* protocols);
@@ -167,7 +168,7 @@ public:
      * Use builtin TypeLookup service to solve the type and dependencies of a given TypeInformation.
      * It receives a callback that will be used to notify when the negotiation is complete.
      * @param typeinformation[in] TypeInformation that requires solving.
-     * @param type_server[in] GuidPrefix of the WriterProxyData with the TypeInformation.
+     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
      * @param callback AsyncGetTypeCallback called when the negotiation is complete.
      * @return ReturnCode_t RETCODE_OK if negotiation is correctly initiated.
      *                      RETCODE_ERROR if negotiation can not be initiated.

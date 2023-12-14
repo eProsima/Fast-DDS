@@ -2229,7 +2229,7 @@ WLP* RTPSParticipantImpl::wlp()
 
 fastdds::dds::builtin::TypeLookupManager& RTPSParticipantImpl::typelookup_manager() const
 {
-    return mp_builtinProtocols->tlm_;
+    return mp_builtinProtocols->typelookup_manager_;
 }
 
 IPersistenceService* RTPSParticipantImpl::get_persistence_service(
