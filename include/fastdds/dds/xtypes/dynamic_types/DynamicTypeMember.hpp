@@ -15,6 +15,7 @@
 #ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_TYPE_MEMBER_HPP
 #define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_TYPE_MEMBER_HPP
 
+#include <map>
 #include <memory>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
@@ -27,14 +28,6 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-class DynamicTypeMember;
-
-template<>
-struct traits<DynamicTypeMember> : public object_traits<DynamicTypeMember>
-{
-    using base_type = DynamicTypeMember;
-};
 
 /*!
  * Represents a "member" of a type. A "member" in this sense may be a member of an aggregated type, a constant within an
@@ -134,6 +127,10 @@ private:
     DynamicTypeMember& operator =(
             DynamicTypeMember&&) = delete;
 };
+
+typedef std::map<ObjectName, traits<DynamicTypeMember>::ref_type> DynamicTypeMembersByName;
+
+typedef std::map<MemberId, traits<DynamicTypeMember>::ref_type> DynamicTypeMembersById;
 
 } // namespace dds
 } // namespace fastdds
