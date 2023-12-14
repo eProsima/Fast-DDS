@@ -97,6 +97,40 @@ bool HelloWorldPublisher::init(
             auto udp_transport = std::make_shared<UDPv6TransportDescriptor>();
             pqos.transport().user_transports.push_back(udp_transport);
         }
+<<<<<<< HEAD:examples/C++/DDS/BasicConfigurationExample/BasicConfigurationPublisher.cpp
+=======
+
+        case TransportKind::TCPv4:
+        {
+            auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+            // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
+            // One listening port must be added either in the pub or the sub
+            descriptor_tmp->add_listener_port(0);
+            descriptor = descriptor_tmp;
+
+            server_locator.kind = LOCATOR_KIND_TCPv4;
+            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
+            eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
+            break;
+        }
+
+        case TransportKind::TCPv6:
+        {
+            auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
+            // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
+            // One listening port must be added either in the pub or the sub
+            descriptor_tmp->add_listener_port(0);
+            descriptor = descriptor_tmp;
+
+            server_locator.kind = LOCATOR_KIND_TCPv6;
+            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
+            eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
+            break;
+        }
+
+        default:
+            break;
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097)):examples/cpp/dds/DiscoveryServerExample/DiscoveryServerPublisher.cpp
     }
 
     // CREATE THE PARTICIPANT

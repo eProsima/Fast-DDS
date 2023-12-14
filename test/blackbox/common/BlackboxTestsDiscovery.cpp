@@ -1405,6 +1405,9 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
+<<<<<<< HEAD
+    // 2. single server address specifying a custom listening port
+=======
     // 2. Single server IPv6 address without specific port provided
     text = "2a02:26f0:dd:499::356e";
 
@@ -1421,6 +1424,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_EQ(output, standard);
 
     // 3. Single server address specifying a custom listening port
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
     text = "192.168.36.34:14520";
 
     att.clear();
@@ -1435,12 +1439,20 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
+<<<<<<< HEAD
+    // 3. check any locator is turned into localhost
+    text = "0.0.0.0:14520";
+=======
     // 4. Single server IPv6 address specifying a custom listening port
     text = "[2001:470:142:5::116]:14520";
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
 
     att.clear();
     output.clear();
     standard.clear();
+<<<<<<< HEAD
+    IPLocator::setIPv4(loc, string("127.0.0.1"));
+=======
     IPLocator::setIPv6(loc6, "2001:470:142:5::116");
     IPLocator::setPhysicalPort(loc6, 14520);
     att.metatrafficUnicastLocatorList.push_back(loc6);
@@ -1457,6 +1469,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     output.clear();
     standard.clear();
     IPLocator::setIPv4(loc, "127.0.0.1");
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
     IPLocator::setPhysicalPort(loc, 14520);
     att.metatrafficUnicastLocatorList.push_back(loc);
     get_server_client_default_guidPrefix(0, att.guidPrefix);
@@ -1465,21 +1478,36 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
+<<<<<<< HEAD
+    // 4. check empty string scenario is handled
+=======
     // 6. Check empty string scenario is handled
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
     text = "";
     output.clear();
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_TRUE(output.empty());
 
+<<<<<<< HEAD
+    // 5. check at least one server be present scenario is hadled
+=======
     // 7. Check at least one server be present scenario is hadled
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
     text = ";;;;";
     output.clear();
 
     ASSERT_FALSE(load_environment_server_info(text, output));
 
+<<<<<<< HEAD
+    // 6. check several server scenario
+=======
     // 8. Check several server scenario
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
+    text = "192.168.36.34:14520;172.29.55.77:8783;172.30.80.1:31090";
+
     output.clear();
+    standard.clear();
 
     att.clear();
     IPLocator::setIPv4(loc, string("192.168.36.34"));
@@ -1505,6 +1533,9 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
+<<<<<<< HEAD
+    // 7. check ignore some servers scenario
+=======
     // 9. Check several server scenario with IPv6 addresses too
     text = "192.168.36.34:14520;[2a02:ec80:600:ed1a::3]:8783;172.30.80.1:31090";
 
@@ -1559,6 +1590,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_EQ(output, standard);
 
     // 11. Check ignore some servers scenario
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
     text = ";192.168.36.34:14520;;172.29.55.77:8783;172.30.80.1:31090;";
 
     output.clear();
@@ -1629,6 +1661,8 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     IPLocator::setIPv4(loc, string("127.0.0.1"));
     IPLocator::setPhysicalPort(loc, 12345);
     att.metatrafficUnicastLocatorList.push_back(loc);
+<<<<<<< HEAD
+=======
     IPLocator::setIPv6(loc6, string("::1"));
     IPLocator::setPhysicalPort(loc6, 12345);
     att.metatrafficUnicastLocatorList.push_back(loc6);
@@ -1917,6 +1951,7 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     IPLocator::setIPv6(loc6, "2a00:1450:400e:803::2004");
     IPLocator::setPhysicalPort(loc6, 14520);
     att.metatrafficUnicastLocatorList.push_back(loc6);
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
     get_server_client_default_guidPrefix(1, att.guidPrefix);
     standard.push_back(att);
 

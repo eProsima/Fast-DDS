@@ -469,6 +469,15 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     if (load_environment_server_info(client_att.builtin.discovery_config.m_DiscoveryServers) &&
             client_att.builtin.discovery_config.m_DiscoveryServers.empty())
     {
+<<<<<<< HEAD
+        // it's not an error, the environment variable may not be set. Any issue with environment
+        // variable syntax is logError already
+        return nullptr;
+    }
+
+    logInfo(DOMAIN, "Detected auto client-server environment variable."
+            "Trying to create client with the default server setup.");
+=======
         // It's not an error, the environment variable may not be set. Any issue with environment
         // variable syntax is EPROSIMA_LOG_ERROR already
         return nullptr;
@@ -560,9 +569,10 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
         }
     }
 
-    logInfo(DOMAIN, "Detected auto client-server environment variable."
+    EPROSIMA_LOG_INFO(DOMAIN, "Detected auto client-server environment variable."
             << "Trying to create client with the default server setup: "
             << client_att.builtin.discovery_config.m_DiscoveryServers);
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
 
     client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
     // RemoteServerAttributes already fill in above
@@ -570,14 +580,24 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     RTPSParticipant* part = RTPSDomain::createParticipant(domain_id, enabled, client_att, listen);
     if (nullptr != part)
     {
+<<<<<<< HEAD
         // client successfully created
         logInfo(DOMAIN, "Auto default server-client setup. Default client created.");
+=======
+        // Client successfully created
+        EPROSIMA_LOG_INFO(DOMAIN, "Auto default server-client setup. Default client created.");
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
         part->mp_impl->client_override(true);
         return part;
     }
 
+<<<<<<< HEAD
     // unable to create auto server-client default participants
     logError(DOMAIN, "Auto default server-client setup. Unable to create the client.");
+=======
+    // Unable to create auto server-client default participants
+    EPROSIMA_LOG_ERROR(DOMAIN, "Auto default server-client setup. Unable to create the client.");
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
     return nullptr;
 }
 
