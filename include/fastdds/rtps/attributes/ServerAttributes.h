@@ -104,10 +104,60 @@ public:
 
 typedef std::list<RemoteServerAttributes> RemoteServerList_t;
 
+<<<<<<< HEAD
 // port use if the ros environment variable doesn't specified one
+=======
+template<class charT>
+struct server_ostream_separators
+{
+    RTPS_DllAPI static const charT* list_separator;
+    RTPS_DllAPI static const charT* locator_separator;
+};
+
+#ifndef _MSC_VER
+template<> const char* server_ostream_separators<char>::list_separator;
+template<> const wchar_t* server_ostream_separators<wchar_t>::list_separator;
+
+template<> const char* server_ostream_separators<char>::locator_separator;
+template<> const wchar_t* server_ostream_separators<wchar_t>::locator_separator;
+#endif // _MSC_VER
+
+template<class charT>
+std::basic_ostream<charT>& operator <<(
+        std::basic_ostream<charT>& output,
+        const RemoteServerAttributes& sa)
+{
+    typename std::basic_ostream<charT>::sentry s(output);
+    output << sa.guidPrefix;
+    if (!sa.metatrafficUnicastLocatorList.empty())
+    {
+        output << server_ostream_separators<charT>::locator_separator << sa.metatrafficUnicastLocatorList;
+    }
+    if (!sa.metatrafficMulticastLocatorList.empty())
+    {
+        output << server_ostream_separators<charT>::locator_separator << sa.metatrafficMulticastLocatorList;
+    }
+    return output;
+}
+
+template<class charT>
+std::basic_ostream<charT>& operator <<(
+        std::basic_ostream<charT>& output,
+        const RemoteServerList_t& list)
+{
+    typename std::basic_ostream<charT>::sentry s(output);
+    std::ostream_iterator<RemoteServerAttributes> os_iterator(output, server_ostream_separators<charT>::list_separator);
+    std::copy(list.begin(), list.end(), os_iterator);
+    return output;
+}
+
+// port used if the ros environment variable doesn't specify one
+>>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
 constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
 // default server base guidPrefix
 const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.49.4d.41";
+// port used by default for tcp transport
+constexpr uint16_t DEFAULT_TCP_SERVER_PORT = 42100;
 
 /* Environment variable to specify a semicolon-separated list of UDPv4 locators (ip:port) that define remote server
  * locators.
