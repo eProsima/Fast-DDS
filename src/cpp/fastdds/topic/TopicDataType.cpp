@@ -32,10 +32,10 @@ namespace fastdds {
 namespace dds {
 
 TopicDataType::TopicDataType()
-        : m_typeSize(0)
-        , m_isGetKeyDefined(false)
-        , auto_fill_type_object_(true)
-        , auto_fill_type_information_(true)
+    : m_typeSize(0)
+    , m_isGetKeyDefined(false)
+    , auto_fill_type_object_(true)
+    , auto_fill_type_information_(true)
 {
 }
 
@@ -60,9 +60,9 @@ std::function<uint32_t()> TopicDataType::getSerializedSizeProvider(
     static_cast<void>(data);
     static_cast<void>(data_representation);
     return []()
-            {
-                return 0;
-            };
+           {
+               return 0;
+           };
 }
 
 } /* namespace dds */
