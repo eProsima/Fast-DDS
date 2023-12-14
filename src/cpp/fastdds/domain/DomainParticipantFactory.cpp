@@ -24,7 +24,6 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/utils/QosConverters.hpp>
@@ -416,9 +415,9 @@ ReturnCode_t DomainParticipantFactory::set_qos(
     return RETCODE_OK;
 }
 
-xtypes::TypeObjectRegistry& DomainParticipantFactory::type_object_registry()
+xtypes::ITypeObjectRegistry& DomainParticipantFactory::type_object_registry()
 {
-    return type_object_registry_;
+    return rtps_domain_->type_object_registry();
 }
 
 void DomainParticipantFactory::reset_default_participant_qos()
