@@ -25,7 +25,6 @@
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
@@ -36,7 +35,6 @@ using eprosima::fastrtps::types::TypeIdentifier;
 using eprosima::fastrtps::types::TypeObject;
 using eprosima::fastrtps::types::TypeIdentifierTypeObjectPair;
 using eprosima::fastrtps::types::TypeIdentifierPair;
-using eprosima::fastrtps::types::TypeObjectFactory;
 using eprosima::fastrtps::types::TypeIdentifierWithSize;
 using eprosima::fastrtps::types::TypeIdentifierWithSizeSeq;
 using eprosima::fastdds::dds::Log;
@@ -51,7 +49,6 @@ namespace builtin {
 TypeLookupRequestListener::TypeLookupRequestListener(
         TypeLookupManager* manager)
     : tlm_(manager)
-    , factory_(TypeObjectFactory::get_instance())
 {
 }
 
@@ -90,32 +87,27 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                 const TypeLookup_getTypes_In in = request.data().getTypes();
                 TypeLookup_getTypes_Out out;
 
-                for (const xtypes::TypeIdentifier& xtypes_type_id : in.type_ids())
+                for (const xtypes::TypeIdentifier& type_id : in.type_ids())
                 {
-                    // TODO Change to xtype with TypeObjectRegistry
-                    (void) xtypes_type_id;
-
-                    TypeIdentifier type_id;
-                    TypeObject obj;
-                    const TypeIdentifier* obj_ident = factory_->typelookup_get_type(type_id, obj);
+                    xtypes::TypeObject obj;
+                    // TODO (adelcampo) Change to xtypes
+                    // const TypeIdentifier* obj_ident = factory_->typelookup_get_type(type_id, obj);
+                    xtypes::TypeIdentifier* obj_ident = nullptr;
 
                     if (obj_ident != nullptr && obj._d() != 0)
                     {
-                        TypeIdentifierTypeObjectPair pair;
+                        xtypes::TypeIdentifierTypeObjectPair pair;
                         pair.type_identifier(type_id);
                         pair.type_object(obj);
-                        // TODO Change to xtype with TypeObjectRegistry
-                        // out.types().push_back(std::move(pair));
+                        out.types().push_back(std::move(pair));
                     }
 
                     if (obj_ident != nullptr && !(type_id == *obj_ident))
                     {
-                        TypeIdentifierPair pair;
+                        xtypes::TypeIdentifierPair pair;
                         pair.type_identifier1(*obj_ident);
                         pair.type_identifier2(type_id);
-                        // TODO Change to xtype with TypeObjectRegistry
-                        // out.complete_to_minimal().push_back(std::move(pair));
-
+                        out.complete_to_minimal().push_back(std::move(pair));
                     }
                 }
 
@@ -136,7 +128,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                 TypeLookup_getTypeDependencies_Out out;
                 //for (size_t index = 0; index < in.type_ids.size(); ++index)
                 {
-                    // TODO Change to xtype with TypeObjectRegistry
+                    // TODO (adelcampo) Change to xtypes
                     // out.dependent_typeids = factory_->typelookup_get_type_dependencies(
                     //     in.type_ids, in.continuation_point, out.continuation_point, 255); // TODO: Make configurable?
                 }
