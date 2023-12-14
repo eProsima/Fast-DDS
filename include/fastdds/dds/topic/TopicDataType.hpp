@@ -94,7 +94,8 @@ public:
             fastrtps::rtps::SerializedPayload_t* payload) = 0;
 
     /**
-     * Serialize method, it should be implemented by the user, since it is abstract.
+     * Serialize method, it should be implemented by the user, since it is abstract. If not implemented, this method
+     * will call the serialize method in which the topic data representation is not considered.
      * It is VERY IMPORTANT that the user sets the SerializedPayload length correctly.
      *
      * @param[in] data Pointer to the data
@@ -107,10 +108,9 @@ public:
             fastrtps::rtps::SerializedPayload_t* payload,
             DataRepresentationId_t data_representation)
     {
-        static_cast<void>(data);
-        static_cast<void>(payload);
+
         static_cast<void>(data_representation);
-        return false;
+        return serialize(data, payload);
     }
 
     /**
