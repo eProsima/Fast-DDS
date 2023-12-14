@@ -22,6 +22,9 @@ namespace dds {
 template<typename T>
 struct traits;
 
+template<typename T>
+struct object_traits;
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

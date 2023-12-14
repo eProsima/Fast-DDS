@@ -219,8 +219,14 @@ public:
     ReturnCode_t copy_from(
             traits<TypeDescriptor>::ref_type descriptor) noexcept override;
 
+    ReturnCode_t copy_from(
+            TypeDescriptorImpl& descriptor) noexcept;
+
     bool equals(
             traits<TypeDescriptor>::ref_type descriptor) noexcept override;
+
+    bool equals(
+            TypeDescriptorImpl& descriptor) noexcept;
 
     bool is_consistent() noexcept override;
 };
