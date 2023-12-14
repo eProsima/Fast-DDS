@@ -17,6 +17,7 @@
 
 #include <memory>
 
+#include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 
 namespace eprosima {
@@ -103,6 +104,18 @@ public:
     {
         return RTPSDomain::createParticipant(domain_id, enabled, att, listen);
     }
+
+    static fastdds::dds::xtypes::ITypeObjectRegistry& type_object_registry()
+    {
+        return get_instance()->type_object_registry_;
+    }
+
+    static fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer()
+    {
+        return get_instance()->type_object_registry_;
+    }
+
+    eprosima::fastdds::dds::xtypes::TypeObjectRegistry type_object_registry_;
 
 };
 

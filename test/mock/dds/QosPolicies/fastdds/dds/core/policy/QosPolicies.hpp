@@ -1179,6 +1179,9 @@ typedef enum DataRepresentationId : int16_t
     XCDR2_DATA_REPRESENTATION   //!<
 } DataRepresentationId_t;
 
+//! Default @ref DataRepresentationId used in Fast DDS.
+constexpr DataRepresentationId_t DEFAULT_DATA_REPRESENTATION {DataRepresentationId_t::XCDR_DATA_REPRESENTATION};
+
 /**
  * Class DataRepresentationQosPolicy,
  */
