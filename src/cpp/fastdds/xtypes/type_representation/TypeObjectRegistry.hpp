@@ -26,6 +26,7 @@
 #include <unordered_set>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <fastrtps/fastrtps_dll.h>
@@ -79,20 +80,10 @@ struct TypeRegistryEntry
 
 };
 
-struct TypeObjectPair
-{
-    // Minimal TypeObject
-    MinimalTypeObject minimal_type_object;
-    // Complete TypeObject
-    CompleteTypeObject complete_type_object;
-};
-
 // Class which holds the TypeObject registry, including every TypeIdentifier (plain and non-plain types), every
 // non-plain TypeObject and the non-plain TypeObject serialized sizes.
-class TypeObjectRegistry
+class TypeObjectRegistry : public ITypeObjectRegistry
 {
-
-    friend class TypeObjectUtils;
 
 public:
 
@@ -112,9 +103,9 @@ public:
      *                      RETCODE_PRECONDITION_NOT_MET if the given type_name is empty or if the type_object
      *                      is inconsistent.
      */
-    RTPS_DllAPI ReturnCode_t register_type_object(
+    ReturnCode_t register_type_object(
             const std::string& type_name,
-            const CompleteTypeObject& complete_type_object);
+            const CompleteTypeObject& complete_type_object) override;
 
     /**
      * @brief Register an indirect hash TypeIdentifier.
@@ -131,9 +122,9 @@ public:
      *                      RETCODE_PRECONDITION_NOT_MET if the given TypeIdentifier is inconsistent or a direct hash
      *                      TypeIdentifier or if the given type_name is empty.
      */
-    RTPS_DllAPI ReturnCode_t register_type_identifier(
+    ReturnCode_t register_type_identifier(
             const std::string& type_name,
-            const TypeIdentifier& type_identifier);
+            const TypeIdentifier& type_identifier) override;
 
     /**
      * @brief Get the TypeObjects related to the given type name.
@@ -147,9 +138,9 @@ public:
      *                      RETCODE_BAD_PARAMETER if the type_name correspond to a indirect hash TypeIdentifier.
      *                      RETCODE_PRECONDITION_NOT_MET if the type_name is empty.
      */
-    RTPS_DllAPI ReturnCode_t get_type_objects(
+    ReturnCode_t get_type_objects(
             const std::string& type_name,
-            TypeObjectPair& type_objects);
+            TypeObjectPair& type_objects) override;
 
     /**
      * @brief Get the TypeIdentifiers related to the given type name.
@@ -164,37 +155,9 @@ public:
      *                      RETCODE_NO_DATA if the type_name has not been registered.
      *                      RETCODE_PRECONDITION_NOT_MET if the type_name is empty.
      */
-    RTPS_DllAPI ReturnCode_t get_type_identifiers(
+    ReturnCode_t get_type_identifiers(
             const std::string& type_name,
-            TypeIdentifierPair& type_identifiers);
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-    // Only DomainParticipantFactory is allowed to instantiate the TypeObjectRegistry class.
-    // It cannot be protected as the standard library needs to access the constructor to allocate the resources.
-    // Rule of zero: resource managing types.
-    TypeObjectRegistry();
-#endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-protected:
-
-    /**
-     * @brief Register a remote TypeObject.
-     *        This auxiliary method might register only the minimal TypeObject and TypeIdentifier or register both
-     *        TypeObjects constructing the minimal from the complete TypeObject information.
-     *
-     * @pre TypeIdentifier discriminator must match TypeObject discriminator.
-     *      TypeIdentifier consistency is only checked in Debug build mode.
-     *
-     * @param[in] type_identifier TypeIdentifier to register.
-     * @param[in] type_object Related TypeObject being registered.
-     * @return ReturnCode_t RETCODE_OK if correctly registered.
-     *                      RETCODE_PRECONDITION_NOT_MET if the discriminators differ.
-     *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not consistent with the given
-     *                      TypeObject.
-     */
-    ReturnCode_t register_type_object(
-            const TypeIdentifier& type_identifier,
-            const TypeObject& type_object);
+            TypeIdentifierPair& type_identifiers) override;
 
     /**
      * @brief Get the TypeObject related to the given TypeIdentifier.
@@ -228,19 +191,6 @@ protected:
             TypeInformation& type_information);
 
     /**
-     * @brief Check if two given types are compatible according to the given TypeConsistencyEnforcement QoS.
-     *
-     * @param[in] type_identifiers Pair of TypeIdentifiers to check compatibility.
-     * @param[in] type_consistency_qos TypeConsistencyEnforcement QoS to apply.
-     * @return ReturnCode_t RETCODE_OK if the two types are compatible.
-     *                      RETCODE_ERROR if the types are not compatible according to the TypeConsistencyEnforcement
-     *                      QoS.
-     */
-    ReturnCode_t are_types_compatible(
-            const TypeIdentifierPair& type_identifiers,
-            const TypeConsistencyEnforcementQosPolicy& type_consistency_qos);
-
-    /**
      * @brief Get the type dependencies of the given type identifiers.
      *
      * @param[in] type_identifiers Sequence with the queried TypeIdentifiers.
@@ -254,6 +204,67 @@ protected:
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
 
     /**
+     * @brief Check if the given TypeIdentifier is known by the registry.
+     *
+     * @param[in] type_identifier TypeIdentifier to query.
+     * @return true if TypeIdentifier is known. false otherwise.
+     */
+    bool is_type_identifier_known(
+            const TypeIdentifier& type_identifier);
+
+    /**
+     * @brief Check if a given TypeIdentifier corresponds to a builtin annotation.
+     *
+     * @param[in] type_identifier TypeIdentifier to check.
+     * @return true if the TypeIdentifier is from a builtin annotation. false otherwise.
+     */
+    bool is_builtin_annotation(
+            const TypeIdentifier& type_identifier);
+
+    /**
+     * @brief Calculate the TypeIdentifier given a TypeObject.
+     *
+     * @param[in] type_object TypeObject which is to be hashed.
+     * @param[out] type_object_serialized_size
+     * @return const TypeIdentifier related with the given TypeObject.
+     */
+    const TypeIdentifier calculate_type_identifier(
+            const TypeObject& type_object,
+            uint32_t& type_object_serialized_size);
+
+    /**
+     * @brief Register a remote TypeObject.
+     *        This auxiliary method might register only the minimal TypeObject and TypeIdentifier or register both
+     *        TypeObjects constructing the minimal from the complete TypeObject information.
+     *
+     * @pre TypeIdentifier discriminator must match TypeObject discriminator.
+     *      TypeIdentifier consistency is only checked in Debug build mode.
+     *
+     * @param[in] type_identifier TypeIdentifier to register.
+     * @param[in] type_object Related TypeObject being registered.
+     * @return ReturnCode_t RETCODE_OK if correctly registered.
+     *                      RETCODE_PRECONDITION_NOT_MET if the discriminators differ.
+     *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not consistent with the given
+     *                      TypeObject.
+     */
+    ReturnCode_t register_type_object(
+            const TypeIdentifier& type_identifier,
+            const TypeObject& type_object);
+
+    /**
+     * @brief Check if two given types are compatible according to the given TypeConsistencyEnforcement QoS.
+     *
+     * @param[in] type_identifiers Pair of TypeIdentifiers to check compatibility.
+     * @param[in] type_consistency_qos TypeConsistencyEnforcement QoS to apply.
+     * @return ReturnCode_t RETCODE_OK if the two types are compatible.
+     *                      RETCODE_ERROR if the types are not compatible according to the TypeConsistencyEnforcement
+     *                      QoS.
+     */
+    ReturnCode_t are_types_compatible(
+            const TypeIdentifierPair& type_identifiers,
+            const TypeConsistencyEnforcementQosPolicy& type_consistency_qos);
+
+    /**
      * @brief Get the type dependencies of the given TypeObject.
      *
      * @param[in] type_object TypeObject queried for its dependencies.
@@ -265,6 +276,13 @@ protected:
     ReturnCode_t get_dependencies_from_type_object(
             const TypeObject& type_object,
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
+
+    // Only DomainParticipantFactory is allowed to instantiate the TypeObjectRegistry class.
+    // It cannot be protected as the standard library needs to access the constructor to allocate the resources.
+    // Rule of zero: resource managing types.
+    TypeObjectRegistry();
+
+protected:
 
     /**
      * @brief Add type dependency to the sequence.
@@ -466,24 +484,6 @@ protected:
     }
 
     /**
-     * @brief Check if the given TypeIdentifier is known by the registry.
-     *
-     * @param[in] type_identifier TypeIdentifier to query.
-     * @return true if TypeIdentifier is known. false otherwise.
-     */
-    bool is_type_identifier_known(
-            const TypeIdentifier& type_identifier);
-
-    /**
-     * @brief Check if a given TypeIdentifier corresponds to a builtin annotation.
-     *
-     * @param[in] type_identifier TypeIdentifier to check.
-     * @return true if the TypeIdentifier is from a builtin annotation. false otherwise.
-     */
-    bool is_builtin_annotation(
-            const TypeIdentifier& type_identifier);
-
-    /**
      * @brief Check if a given name corresponds to a builtin annotation.
      *
      * @param[in] name to check.
@@ -491,17 +491,6 @@ protected:
      */
     bool is_builtin_annotation_name(
             const std::string& name);
-
-    /**
-     * @brief Calculate the TypeIdentifier given a TypeObject.
-     *
-     * @param[in] type_object TypeObject which is to be hashed.
-     * @param[out] type_object_serialized_size
-     * @return const TypeIdentifier related with the given TypeObject.
-     */
-    const TypeIdentifier calculate_type_identifier(
-            const TypeObject& type_object,
-            uint32_t& type_object_serialized_size);
 
     /**
      * @brief Build minimal TypeObject given a CompleteTypeObject.
