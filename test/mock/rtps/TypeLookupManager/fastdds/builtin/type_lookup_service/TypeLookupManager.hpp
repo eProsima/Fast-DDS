@@ -54,10 +54,8 @@ public:
 
     /**
      * Constructor
-     * @param prot Pointer to the BuiltinProtocols object.
      */
-    TypeLookupManager(
-            fastrtps::rtps::BuiltinProtocols*)
+    TypeLookupManager()
     {
     }
 

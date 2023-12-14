@@ -51,7 +51,6 @@ BuiltinProtocols::BuiltinProtocols()
     : mp_participantImpl(nullptr)
     , mp_PDP(nullptr)
     , mp_WLP(nullptr)
-    , tlm_(nullptr)
 {
 }
 
@@ -65,9 +64,7 @@ BuiltinProtocols::~BuiltinProtocols()
 
     // TODO Auto-generated destructor stub
     delete mp_WLP;
-    delete tlm_;
     delete mp_PDP;
-
 }
 
 bool BuiltinProtocols::initBuiltinProtocols(
@@ -143,7 +140,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
     }
 
     // TypeLookupManager
-    tlm_ = new fastdds::dds::builtin::TypeLookupManager(this);
+    tlm_.init(this);
 
     return true;
 }

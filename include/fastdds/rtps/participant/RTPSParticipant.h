@@ -237,7 +237,7 @@ public:
      * @brief Retrieves the built-in typelookup service manager.
      * @return
      */
-    fastdds::dds::builtin::TypeLookupManager* typelookup_manager() const;
+    fastdds::dds::builtin::TypeLookupManager& typelookup_manager() const;
 
     /**
      * @brief Modifies the participant listener

@@ -1757,7 +1757,10 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
             return register_dynamic_type(dyn);
         }
     }
-    else if (get_rtps_participant()->typelookup_manager() != nullptr)
+
+    //TODO(Xtypes) tlm always exists + and this function will be removed
+    //else if (get_rtps_participant()->typelookup_manager() != nullptr)
+    else if (true)
     {
         TypeIdentifierSeq dependencies;
         TypeIdentifierSeq retrieve_objects;

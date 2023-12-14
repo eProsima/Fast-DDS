@@ -51,28 +51,9 @@ namespace builtin {
 
 const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
 
-TypeLookupManager::TypeLookupManager(
-        BuiltinProtocols* protocols)
-    : participant_(protocols->mp_participantImpl)
-    , builtin_protocols_(protocols)
-    , builtin_request_writer_(nullptr)
-    , builtin_request_reader_(nullptr)
-    , builtin_reply_writer_(nullptr)
-    , builtin_reply_reader_(nullptr)
-    , builtin_request_writer_history_(nullptr)
-    , builtin_reply_writer_history_(nullptr)
-    , builtin_request_reader_history_(nullptr)
-    , builtin_reply_reader_history_(nullptr)
-    , request_listener_(nullptr)
-    , reply_listener_(nullptr)
-    , temp_reader_proxy_data_(
-        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
-    , temp_writer_proxy_data_(
-        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
+
+TypeLookupManager::TypeLookupManager()
 {
-    create_endpoints();
 }
 
 TypeLookupManager::~TypeLookupManager()
@@ -100,6 +81,24 @@ TypeLookupManager::~TypeLookupManager()
 
     delete reply_listener_;
     delete request_listener_;
+
+    delete temp_reader_proxy_data_;
+    delete temp_writer_proxy_data_;
+}
+
+bool TypeLookupManager::init(
+        fastrtps::rtps::BuiltinProtocols* protocols)
+{
+    participant_ = protocols->mp_participantImpl;
+    builtin_protocols_ = protocols;
+
+    temp_reader_proxy_data_ = new fastrtps::rtps::ReaderProxyData(
+        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators);
+    temp_writer_proxy_data_ = new fastrtps::rtps::WriterProxyData(
+        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators);
+    return create_endpoints();
 }
 
 bool TypeLookupManager::assign_remote_endpoints(
@@ -111,20 +110,20 @@ bool TypeLookupManager::assign_remote_endpoints(
 
     std::lock_guard<std::mutex> data_guard(temp_data_lock_);
 
-    temp_writer_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_writer_proxy_data_.persistence_guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_writer_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
-    temp_writer_proxy_data_.topicKind(NO_KEY);
-    temp_writer_proxy_data_.m_qos.m_durability.kind = fastrtps::VOLATILE_DURABILITY_QOS;
-    temp_writer_proxy_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
+    temp_writer_proxy_data_->guid().guidPrefix = pdata.m_guid.guidPrefix;
+    temp_writer_proxy_data_->persistence_guid().guidPrefix = pdata.m_guid.guidPrefix;
+    temp_writer_proxy_data_->set_remote_locators(pdata.metatraffic_locators, network, true);
+    temp_writer_proxy_data_->topicKind(NO_KEY);
+    temp_writer_proxy_data_->m_qos.m_durability.kind = fastrtps::VOLATILE_DURABILITY_QOS;
+    temp_writer_proxy_data_->m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
 
-    temp_reader_proxy_data_.clear();
-    temp_reader_proxy_data_.m_expectsInlineQos = false;
-    temp_reader_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_reader_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
-    temp_reader_proxy_data_.topicKind(NO_KEY);
-    temp_reader_proxy_data_.m_qos.m_durability.kind = fastrtps::VOLATILE_DURABILITY_QOS;
-    temp_reader_proxy_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
+    temp_reader_proxy_data_->clear();
+    temp_reader_proxy_data_->m_expectsInlineQos = false;
+    temp_reader_proxy_data_->guid().guidPrefix = pdata.m_guid.guidPrefix;
+    temp_reader_proxy_data_->set_remote_locators(pdata.metatraffic_locators, network, true);
+    temp_reader_proxy_data_->topicKind(NO_KEY);
+    temp_reader_proxy_data_->m_qos.m_durability.kind = fastrtps::VOLATILE_DURABILITY_QOS;
+    temp_reader_proxy_data_->m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
 
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata.m_guid);
 
@@ -133,9 +132,9 @@ bool TypeLookupManager::assign_remote_endpoints(
     if (auxendp != 0 && builtin_request_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote writer to the local Builtin Request Reader");
-        temp_writer_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
-        temp_writer_proxy_data_.persistence_guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
-        builtin_request_reader_->matched_writer_add(temp_writer_proxy_data_);
+        temp_writer_proxy_data_->guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
+        temp_writer_proxy_data_->persistence_guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
+        builtin_request_reader_->matched_writer_add(*temp_writer_proxy_data_);
     }
 
     auxendp = endp;
@@ -144,9 +143,9 @@ bool TypeLookupManager::assign_remote_endpoints(
     if (auxendp != 0 && builtin_reply_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote writer to the local Builtin Reply Reader");
-        temp_writer_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
-        temp_writer_proxy_data_.persistence_guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
-        builtin_reply_reader_->matched_writer_add(temp_writer_proxy_data_);
+        temp_writer_proxy_data_->guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
+        temp_writer_proxy_data_->persistence_guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
+        builtin_reply_reader_->matched_writer_add(*temp_writer_proxy_data_);
     }
 
     auxendp = endp;
@@ -155,8 +154,8 @@ bool TypeLookupManager::assign_remote_endpoints(
     if (auxendp != 0 && builtin_request_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Request Writer");
-        temp_reader_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
-        builtin_request_writer_->matched_reader_add(temp_reader_proxy_data_);
+        temp_reader_proxy_data_->guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
+        builtin_request_writer_->matched_reader_add(*temp_reader_proxy_data_);
     }
 
     auxendp = endp;
@@ -165,8 +164,8 @@ bool TypeLookupManager::assign_remote_endpoints(
     if (auxendp != 0 && builtin_reply_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Reply Writer");
-        temp_reader_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_reader;
-        builtin_reply_writer_->matched_reader_add(temp_reader_proxy_data_);
+        temp_reader_proxy_data_->guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_reader;
+        builtin_reply_writer_->matched_reader_add(*temp_reader_proxy_data_);
     }
 
     return true;
@@ -230,7 +229,6 @@ fastrtps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies(
 
     TypeLookup_getTypeDependencies_In in;
     in.type_ids() = id_seq;
-    (void) id_seq;
     TypeLookup_RequestPubSubType type;
     TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
     request->data().getTypeDependencies(in);
@@ -250,7 +248,6 @@ fastrtps::rtps::SampleIdentity TypeLookupManager::get_types(
 
     TypeLookup_getTypes_In in;
     in.type_ids() = id_seq;
-    (void) id_seq;
     TypeLookup_RequestPubSubType type;
     TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
     request->data().getTypes(in);
