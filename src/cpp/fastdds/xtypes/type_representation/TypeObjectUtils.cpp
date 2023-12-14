@@ -21,13 +21,15 @@
 
 #include <fastcdr/exceptions/BadParamException.h>
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/xtypes/common.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/md5.h>
+
+#include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
+#include <rtps/RTPSDomainImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -50,6 +52,11 @@ constexpr const UnionDiscriminatorFlag union_discriminator_flag_mask = MemberFla
 constexpr const EnumeratedLiteralFlag enum_literal_flag_mask = MemberFlagBits::TRY_CONSTRUCT1 |
         MemberFlagBits::TRY_CONSTRUCT2 | MemberFlagBits::IS_EXTERNAL | MemberFlagBits::IS_OPTIONAL |
         MemberFlagBits::IS_MUST_UNDERSTAND | MemberFlagBits::IS_KEY;
+
+fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer()
+{
+    return eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer();
+}
 
 const TypeObjectHashId TypeObjectUtils::build_type_object_hash_id(
         uint8_t discriminator,
@@ -373,8 +380,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_string_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.string_sdefn(string);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-                   type_identifier);
+    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_string_type_identifier(
@@ -386,8 +392,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_string_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.string_ldefn(string);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-                   type_identifier);
+    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_s_sequence_type_identifier(
@@ -399,8 +404,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_sequence_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.seq_sdefn(plain_seq);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-                   type_identifier);
+    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_sequence_type_identifier(
@@ -412,8 +416,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_sequence_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.seq_ldefn(plain_seq);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-                   type_identifier);
+    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_s_array_type_identifier(
@@ -425,8 +428,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_array_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.array_sdefn(plain_array);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-                   type_identifier);
+    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_array_type_identifier(
@@ -438,8 +440,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_array_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.array_ldefn(plain_array);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-                   type_identifier);
+    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_s_map_type_identifier(
@@ -451,8 +452,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_map_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.map_sdefn(plain_map);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-                   type_identifier);
+    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_map_type_identifier(
@@ -464,8 +464,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_map_type_identifier(
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.map_ldefn(plain_map);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier(type_name,
-                   type_identifier);
+    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_scc_type_identifier(
@@ -475,8 +474,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_scc_type_identifier(
     /*
         TypeIdentifier type_identifier;
         type_identifier.sc_component_id(scc);
-        return DomainParticipantFactory::get_instance()->type_object_registry()->register_type_identifier(type_name,
-            type_identifier);
+        return type_object_registry_observer()->register_type_identifier(type_name, type_identifier);
      */
     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "StronglyConnectedComponents not yet supported.");
     static_cast<void>(scc);
@@ -674,7 +672,7 @@ const AppliedAnnotation TypeObjectUtils::build_applied_annotation(
     {
         applied_annotation_parameter_seq_consistency(param_seq.value());
     }
-    if (DomainParticipantFactory::get_instance()->type_object_registry().is_builtin_annotation(annotation_typeid))
+    if (type_object_registry_observer().is_builtin_annotation(annotation_typeid))
     {
         throw InvalidArgumentError("Found builtin annotation in custom annotation sequence");
     }
@@ -1717,8 +1715,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_alias_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.alias_type(alias_type);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-                   type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_annotation_type_object(
@@ -1730,8 +1727,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_annotation_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.annotation_type(annotation_type);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-                   type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_struct_type_object(
@@ -1743,8 +1739,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_struct_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.struct_type(struct_type);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-                   type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_union_type_object(
@@ -1756,8 +1751,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_union_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.union_type(union_type);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-                   type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_bitset_type_object(
@@ -1769,8 +1763,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_bitset_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.bitset_type(bitset_type);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-                   type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_sequence_type_object(
@@ -1782,8 +1775,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_sequence_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.sequence_type(sequence_type);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-                   type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_array_type_object(
@@ -1795,8 +1787,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_array_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.array_type(array_type);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-                   type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_map_type_object(
@@ -1808,8 +1799,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_map_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.map_type(map_type);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-                   type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_enumerated_type_object(
@@ -1821,8 +1811,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_enumerated_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.enumerated_type(enumerated_type);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-                   type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_bitmask_type_object(
@@ -1834,8 +1823,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_bitmask_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.bitmask_type(bitmask_type);
-    return DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(type_name,
-                   type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object);
 }
 
 const NameHash TypeObjectUtils::name_hash(
@@ -2099,8 +2087,7 @@ void TypeObjectUtils::map_key_type_identifier_consistency(
     {
         TypeObject type_object;
         if (eprosima::fastdds::dds::RETCODE_OK ==
-                DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(key_identifier,
-                type_object))
+                type_object_registry_observer().get_type_object(key_identifier, type_object))
         {
             if (EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
             {
@@ -2202,15 +2189,12 @@ void TypeObjectUtils::direct_hash_type_identifier_consistency(
         const TypeIdentifier& type_id)
 {
     TypeObject type_object;
-    if (eprosima::fastdds::dds::RETCODE_OK !=
-            DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
+    if (eprosima::fastdds::dds::RETCODE_OK != type_object_registry_observer().get_type_object(type_id, type_object))
     {
         throw InvalidArgumentError("TypeIdentifier unknown to TypeObjectRegistry");
     }
     uint32_t dummy = 0;
-    if (type_id !=
-            DomainParticipantFactory::get_instance()->type_object_registry().calculate_type_identifier(type_object,
-            dummy))
+    if (type_id != type_object_registry_observer().calculate_type_identifier(type_object, dummy))
     {
         throw InvalidArgumentError("Inconsistent TypeIdentifier with registered TypeObject");
     }
@@ -2294,8 +2278,7 @@ void TypeObjectUtils::applied_annotation_type_identifier_consistency(
         throw InvalidArgumentError("Applied Annotation TypeIdentifier is not direct HASH");
     }
     TypeObject type_object;
-    ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-        annotation_type_id, type_object);
+    ReturnCode_t ret_code = type_object_registry_observer().get_type_object(annotation_type_id, type_object);
     if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
     {
         if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ANNOTATION) ||
@@ -2318,7 +2301,7 @@ void TypeObjectUtils::applied_annotation_consistency(
     {
         applied_annotation_parameter_seq_consistency(applied_annotation.param_seq().value());
     }
-    if (DomainParticipantFactory::get_instance()->type_object_registry().is_builtin_annotation(
+    if (type_object_registry_observer().is_builtin_annotation(
                 applied_annotation.annotation_typeid()))
     {
         throw InvalidArgumentError("Builtin annotation cannot be defined as custom annotation");
@@ -2477,8 +2460,7 @@ void TypeObjectUtils::structure_base_type_consistency(
         throw InvalidArgumentError("Structure base_type TypeIdentifier is not direct HASH");
     }
     TypeObject type_object;
-    ReturnCode_t ret_code = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(base_type,
-                    type_object);
+    ReturnCode_t ret_code = type_object_registry_observer().get_type_object(base_type, type_object);
     if (ret_code == eprosima::fastdds::dds::RETCODE_OK &&
             EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
     {
@@ -2632,8 +2614,7 @@ void TypeObjectUtils::common_discriminator_member_type_identifier_consistency(
     TypeObject type_object;
     if (is_direct_hash_type_identifier(type_id))
     {
-        if (eprosima::fastdds::dds::RETCODE_OK ==
-                DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id, type_object))
+        if (eprosima::fastdds::dds::RETCODE_OK == type_object_registry_observer().get_type_object(type_id, type_object))
         {
             if (EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
             {
@@ -2721,8 +2702,7 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         if (value._d() == TK_ENUM)
         {
             if (eprosima::fastdds::dds::RETCODE_OK ==
-                    DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(type_id,
-                    type_object))
+                    type_object_registry_observer().get_type_object(type_id, type_object))
             {
                 if (EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
                 {

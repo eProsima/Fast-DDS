@@ -27,7 +27,7 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
+#include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 
@@ -304,11 +304,11 @@ public:
             fastrtps::types::DynamicTypeBuilder*& type);
 
     /**
-     * @brief Return the TypeObjectRegistry member to access the API.
+     * @brief Return the TypeObjectRegistry member to access the public API.
      *
      * @return const xtypes::TypeObjectRegistry reference.
      */
-    FASTDDS_EXPORTED_API xtypes::TypeObjectRegistry& type_object_registry();
+    FASTDDS_EXPORTED_API xtypes::ITypeObjectRegistry& type_object_registry();
 
 protected:
 
@@ -356,8 +356,6 @@ protected:
     std::shared_ptr<fastrtps::rtps::RTPSDomainImpl> rtps_domain_;
 
     std::shared_ptr<detail::LogResources> log_resources_;
-
-    xtypes::TypeObjectRegistry type_object_registry_;
 
     /**
      * This mutex guards the access to load the profiles.

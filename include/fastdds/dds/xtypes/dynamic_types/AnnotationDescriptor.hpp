@@ -17,7 +17,7 @@
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -25,7 +25,7 @@ namespace dds {
 
 class DynamicType;
 
-class RTPS_DllAPI AnnotationDescriptor
+class FASTDDS_EXPORTED_API AnnotationDescriptor
 {
 public:
 

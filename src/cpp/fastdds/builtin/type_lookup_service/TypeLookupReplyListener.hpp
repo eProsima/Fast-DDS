@@ -26,11 +26,6 @@
 
 namespace eprosima {
 namespace fastrtps {
-
-namespace types {
-class TypeObjectFactory;
-} // namespace types
-
 namespace rtps {
 
 class RTPSReader;
@@ -87,9 +82,6 @@ private:
 
     //! A pointer to the typelookup manager
     TypeLookupManager* tlm_;
-
-    //! A pointer to the TypeObject factory.
-    fastrtps::types::TypeObjectFactory* factory_;
 };
 
 } /* namespace builtin */

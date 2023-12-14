@@ -924,6 +924,16 @@ bool RTPSDomainImpl::get_topic_attributes_from_profile(
     return false;
 }
 
+fastdds::dds::xtypes::ITypeObjectRegistry& RTPSDomainImpl::type_object_registry()
+{
+    return get_instance()->type_object_registry_;
+}
+
+fastdds::dds::xtypes::TypeObjectRegistry& RTPSDomainImpl::type_object_registry_observer()
+{
+    return get_instance()->type_object_registry_;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
