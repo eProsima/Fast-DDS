@@ -71,8 +71,14 @@ public:
     ReturnCode_t copy_from(
             traits<AnnotationDescriptor>::ref_type descriptor) noexcept override;
 
+    ReturnCode_t copy_from(
+            AnnotationDescriptorImpl& descriptor) noexcept;
+
     bool equals(
             traits<AnnotationDescriptor>::ref_type descriptor) noexcept override;
+
+    bool equals(
+            AnnotationDescriptorImpl& descriptor) noexcept;
 
     bool is_consistent() noexcept override;
 };
