@@ -33,12 +33,9 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
-<<<<<<< HEAD
-=======
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
->>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -307,13 +304,9 @@ int fastdds_discovery_server(
     }
     else
     {
-<<<<<<< HEAD
-        if (nullptr != pOp)
-=======
         // UDP address has been specified
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
         while (pOp)
->>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
         {
             participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
             while (pOp)
@@ -373,8 +366,6 @@ int fastdds_discovery_server(
         }
     }
 
-<<<<<<< HEAD
-=======
     // Add TCP default locators addresses
     Locator locator_tcp_4(LOCATOR_KIND_TCPv4, rtps::DEFAULT_TCP_SERVER_PORT);
     Locator locator_tcp_6(LOCATOR_KIND_TCPv6, rtps::DEFAULT_TCP_SERVER_PORT);
@@ -524,7 +515,6 @@ int fastdds_discovery_server(
 
     fastrtps::rtps::GuidPrefix_t guid_prefix = participantQos.wire_protocol().prefix;
 
->>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
     // Create the server
     int return_value = 0;
     DomainParticipant* pServer = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);

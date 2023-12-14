@@ -104,9 +104,6 @@ public:
 
 typedef std::list<RemoteServerAttributes> RemoteServerList_t;
 
-<<<<<<< HEAD
-// port use if the ros environment variable doesn't specified one
-=======
 template<class charT>
 struct server_ostream_separators
 {
@@ -152,7 +149,6 @@ std::basic_ostream<charT>& operator <<(
 }
 
 // port used if the ros environment variable doesn't specify one
->>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
 constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
 // default server base guidPrefix
 const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.49.4d.41";

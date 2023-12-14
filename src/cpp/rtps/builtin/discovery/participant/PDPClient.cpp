@@ -646,13 +646,6 @@ bool load_environment_server_info(
         return true;
     }
 
-<<<<<<< HEAD
-    /* Parsing ancillary regex */
-    // Address should be <letter,numbers,dots>:<number>. We do not need to verify that the first part
-    // is an IPv4 address, as it is done latter.
-    const std::regex ROS2_ADDRESS_PATTERN(R"(^([A-Za-z0-9-.]+)?:?(?:(\d+))?$)");
-    const std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
-=======
     /* Parsing ancillary regex
      * Addresses should be ; separated. IPLocator functions are used to identify them in the order:
      * IPv4, IPv6 or try dns resolution.
@@ -713,7 +706,6 @@ bool load_environment_server_info(
 
                 attributes.push_back(std::move(server_att));
             };
->>>>>>> 2653efb95 (TCP support for Discovery server CLI and env var (#4097))
 
     try
     {
