@@ -23,6 +23,8 @@ namespace dds {
 
 class AnnotationDescriptorImpl : public virtual AnnotationDescriptor
 {
+    friend class DynamicTypeMemberImpl;
+
     //! Reference to the annotation type.
     traits<DynamicType>::ref_type type_;
 
