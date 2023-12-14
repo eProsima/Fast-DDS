@@ -20,6 +20,7 @@
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/AnnotationDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/VerbatimTextDescriptor.hpp>
 #include <fastrtps/fastrtps_dll.h>
 
@@ -49,9 +50,11 @@ public:
      * Provides a summary of the state of this type overwriting a provided object (see [standard] 7.5.2.6.2)
      * @param[inout] descriptor @ref MemberDescriptor reference where copied the information.
      * @return standard @ref ReturnCode_t
+     * @retval RETCODE_OK when the copy was successful.
+     * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
      */
     virtual ReturnCode_t get_descriptor(
-            traits<MemberDescriptor>::ref_type md) = 0;
+            traits<MemberDescriptor>::ref_type descriptor) = 0;
 
     /*!
      * Returns the number of applied annotations to the member.
@@ -61,7 +64,7 @@ public:
 
     /*!
      * Returns an applied annotation by index.
-     * @param[inout] descriptor @ref AnnotationDescriptor reference where copied the information.
+     * @param[inout] descriptor @ref AnnotationDescriptor reference where the information is copied.
      * @param[in] idx Index.
      * @return standard @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
@@ -69,7 +72,7 @@ public:
      */
     virtual ReturnCode_t get_annotation(
             traits<AnnotationDescriptor>::ref_type descriptor,
-            const uint32_t idx) = 0;
+            uint32_t idx) = 0;
 
     /*!
      * Returns the number of applied verbatim text to the member.
@@ -87,18 +90,18 @@ public:
      */
     virtual ReturnCode_t get_verbatim_text(
             traits<VerbatimTextDescriptor>::ref_type descriptor,
-            const uint32_t idx) = 0;
+            uint32_t idx) = 0;
 
     /**
      * State comparison according with the [standard] sections \b 7.5.2.6.3
-     * @param[in] descriptor @DynamicTypeMember reference to compare to
+     * @param[in] other @DynamicTypeMember reference to compare to
      * @return \b bool `true` on equality
      */
     virtual bool equals(
-            traits<DynamicTypeMember>::ref_type descriptor) = 0;
+            traits<DynamicTypeMember>::ref_type other) = 0;
 
     /**
-     * Getter for @b id property (see [standard] table 52)
+     * Getter for @b id property according with the [standard] section \b 7.5.2.6.4
      * @return @ref MemberId
      */
     virtual MemberId get_id()  = 0;

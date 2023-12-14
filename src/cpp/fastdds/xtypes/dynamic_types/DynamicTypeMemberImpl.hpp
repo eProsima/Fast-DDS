@@ -38,16 +38,16 @@ public:
 
     ReturnCode_t get_annotation(
             traits<AnnotationDescriptor>::ref_type descriptor,
-            const uint32_t idx) noexcept override;
+            uint32_t idx) noexcept override;
 
     uint32_t get_verbatim_text_count() noexcept override;
 
     ReturnCode_t get_verbatim_text(
             traits<VerbatimTextDescriptor>::ref_type descriptor,
-            const uint32_t idx) noexcept override;
+            uint32_t idx) noexcept override;
 
     bool equals(
-            traits<DynamicTypeMember>::ref_type descriptor) noexcept override;
+            traits<DynamicTypeMember>::ref_type other) noexcept override;
 
     MemberId get_id() noexcept override;
 
