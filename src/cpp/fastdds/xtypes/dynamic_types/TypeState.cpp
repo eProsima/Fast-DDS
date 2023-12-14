@@ -566,17 +566,6 @@ std::map<std::string, const DynamicTypeMemberImpl*> TypeState::get_all_members_b
     return res;
 }
 
-DynamicTypeMembersByName TypeState::get_all_members_by_name(
-        ReturnCode_t* ec) const noexcept
-{
-    if (ec != nullptr)
-    {
-        *ec = ReturnCode_t{};
-    }
-
-    return DynamicTypeMembersByName{get_all_members_by_name()};
-}
-
 std::map<MemberId, const DynamicTypeMemberImpl*> TypeState::get_all_members_by_id() const
 {
     std::map<MemberId, const DynamicTypeMemberImpl*> res;
@@ -591,17 +580,6 @@ std::map<MemberId, const DynamicTypeMemberImpl*> TypeState::get_all_members_by_i
     res.insert(member_by_id_.begin(), member_by_id_.end());
 
     return res;
-}
-
-DynamicTypeMembersById TypeState::get_all_members_by_id(
-        ReturnCode_t* ec) const noexcept
-{
-    if (ec != nullptr)
-    {
-        *ec = ReturnCode_t{};
-    }
-
-    return DynamicTypeMembersById{get_all_members_by_id()};
 }
 
 const DynamicTypeMemberImpl& TypeState::get_member_by_index(
@@ -674,7 +652,7 @@ const DynamicTypeMember* TypeState::get_member_by_name(
             *ec = RETCODE_OK;
         }
 
-        return &get_member_by_name(name).get_interface();
+        //TODO(richiware) return &get_member_by_name(name).get_interface();
     }
     catch (std::system_error& e)
     {
@@ -734,7 +712,7 @@ MemberId TypeState::get_member_id_by_name(
 
     if (it != member_by_name_.end())
     {
-        return it->second->id();
+        //TODO(richiware) return it->second->id();
     }
     else if (base_type_)
     {
@@ -917,7 +895,7 @@ std::ostream& operator <<(
         os << manips << "members:";
         for (const DynamicTypeMemberImpl* m : td.get_all_members())
         {
-            os << *m;
+            //TODO(richiware) os << *m;
         }
 
         os.pword(DynamicTypeBuilderFactoryImpl::object_index) = nullptr;

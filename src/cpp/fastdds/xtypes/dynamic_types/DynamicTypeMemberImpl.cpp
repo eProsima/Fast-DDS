@@ -12,94 +12,92 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <cassert>
-#include <iomanip>
-#include <tuple>
-
-#include <fastdds/dds/log/Log.hpp>
-#include "AnnotationDescriptorImpl.hpp"
-#include "DynamicTypeBuilderFactoryImpl.hpp"
 #include "DynamicTypeMemberImpl.hpp"
-#include "MemberDescriptorImpl.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-bool DynamicTypeMemberImpl::operator ==(
-        const DynamicTypeMemberImpl& other) const
+ReturnCode_t DynamicTypeMemberImpl::get_descriptor(
+        traits<MemberDescriptor>::ref_type md) noexcept
 {
-    //TODO(richiware) return get_descriptor() == other.get_descriptor() && AnnotationManager::operator ==(other);
-}
-
-std::string DynamicTypeMemberImpl::get_default_value() const
-{
-    // Fallback to annotation
-    std::string res = MemberDescriptorImpl::default_value();
-    return res.empty() ? annotation_get_default().c_str() : res;
-}
-
-bool DynamicTypeMemberImpl::is_consistent(
-        TypeKind parentKind) const
-{
-    /*TODO(richiware)
-       if (!MemberDescriptorImpl::is_consistent(parentKind))
-       {
-        return false;
-       }
-
-       // checks based on annotations
-
-       // Structures and unions allow it for @external. This condition can only
-       // be check in the DynamicTypeMemberImpl override
-       if ((parentKind == TK_STRUCTURE || parentKind == TK_UNION) &&
-            !type_ && !annotation_is_external())
-       {
-        return false;
-       }
-
-       // Bitset non-anonymous elements must have position and bound
-       if (parentKind == TK_BITSET && 0 != name_.size() &&
-            (!annotation_is_bit_bound() || !annotation_is_position()))
-       {
-        return false;
-       }
-     */
-
-    return true;
-}
-
-std::ostream& operator <<(
-        std::ostream& os,
-        const DynamicTypeMemberImpl& dm)
-{
-    using namespace std;
-
-    // delegate into the base class
-    //TODO(richiware) os << static_cast<const MemberDescriptorImpl&>(dm);
-
-    // Show the annotations if any
-    if (dm.get_annotation_count())
+    if (!md)
     {
-        // indentation increment
-        ++os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
-
-        auto manips = [](ostream& os) -> ostream&
-                {
-                    long indent = os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
-                    return os << string(indent, '\t') << setw(10) << left;
-                };
-
-        os << manips << "member annotations:" << endl;
-        for (const AnnotationDescriptorImpl& d : dm.get_all_annotations())
-        {
-        }
-
-        // indentation decrement
-        --os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
+        return RETCODE_BAD_PARAMETER;
     }
 
-    return os;
+    traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(md)->copy_from(member_descriptor_);
+    return RETCODE_OK;
+}
+
+uint32_t DynamicTypeMemberImpl::get_annotation_count() noexcept
+{
+    return static_cast<uint32_t>(annotation_.size());
+}
+
+ReturnCode_t DynamicTypeMemberImpl::get_annotation(
+        traits<AnnotationDescriptor>::ref_type descriptor,
+        const uint32_t idx) noexcept
+{
+    if (!descriptor || idx >= annotation_.size())
+    {
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    traits<AnnotationDescriptor>::narrow<AnnotationDescriptorImpl>(descriptor)->copy_from(annotation_.at(idx));
+    return RETCODE_OK;
+}
+
+uint32_t DynamicTypeMemberImpl::get_verbatim_text_count() noexcept
+{
+    return static_cast<uint32_t>(verbatim_.size());
+}
+
+ReturnCode_t DynamicTypeMemberImpl::get_verbatim_text(
+        traits<VerbatimTextDescriptor>::ref_type descriptor,
+        const uint32_t idx) noexcept
+{
+    if (!descriptor || idx >= verbatim_.size())
+    {
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    traits<VerbatimTextDescriptor>::narrow<VerbatimTextDescriptorImpl>(descriptor)->copy_from(verbatim_.at(idx));
+    return RETCODE_OK;
+}
+
+bool DynamicTypeMemberImpl::equals(
+        traits<DynamicTypeMember>::ref_type descriptor) noexcept
+{
+    bool ret_value = true;
+    auto impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(descriptor);
+
+    if (annotation_.size() == impl->annotation_.size())
+    {
+        for (size_t count {0}; count < annotation_.size(); ++count)
+        {
+            ret_value &= annotation_.at(count).equals(impl->annotation_.at(count));
+        }
+    }
+
+    ret_value &= member_descriptor_.equals(impl->member_descriptor_);
+
+    return ret_value;
+}
+
+MemberId DynamicTypeMemberImpl::get_id() noexcept
+{
+    return member_descriptor_.id();
+}
+
+ObjectName DynamicTypeMemberImpl::get_name() noexcept
+{
+    return member_descriptor_.name();
+}
+
+traits<DynamicTypeMember>::ref_type DynamicTypeMemberImpl::_this ()
+{
+    return shared_from_this();
 }
 
 } // namespace dds

@@ -60,12 +60,6 @@ const DynamicTypeMember* DynamicType::get_member_by_name(
     return DynamicTypeImpl::get_implementation(*this).get_member_by_name(name, ec);
 }
 
-DynamicTypeMembersByName DynamicType::get_all_members_by_name(
-        ReturnCode_t* ec /*= nullptr*/) const noexcept
-{
-    return DynamicTypeImpl::get_implementation(*this).get_all_members_by_name(ec);
-}
-
 const DynamicTypeMember* DynamicType::get_member(
         MemberId id,
         ReturnCode_t* ec /*= nullptr*/) const noexcept
@@ -77,7 +71,7 @@ const DynamicTypeMember* DynamicType::get_member(
             *ec = ReturnCode_t{};
         }
 
-        return &DynamicTypeImpl::get_implementation(*this).get_member(id).get_interface();
+        //TODO(richware) return &DynamicTypeImpl::get_implementation(*this).get_member(id).get_interface();
     }
     catch (std::system_error& e)
     {
@@ -90,12 +84,6 @@ const DynamicTypeMember* DynamicType::get_member(
 
         return nullptr;
     }
-}
-
-DynamicTypeMembersById DynamicType::get_all_members(
-        ReturnCode_t* ec /*= nullptr*/) const noexcept
-{
-    return DynamicTypeImpl::get_implementation(*this).get_all_members_by_id(ec);
 }
 
 uint32_t DynamicType::get_member_count() const noexcept
@@ -114,7 +102,7 @@ const DynamicTypeMember* DynamicType::get_member_by_index(
             *ec = ReturnCode_t{};
         }
 
-        return &DynamicTypeImpl::get_implementation(*this).get_member_by_index(index).get_interface();
+        //TODO(richware) return &DynamicTypeImpl::get_implementation(*this).get_member_by_index(index).get_interface();
     }
     catch (std::system_error& e)
     {

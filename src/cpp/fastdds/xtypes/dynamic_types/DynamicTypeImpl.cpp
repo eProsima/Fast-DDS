@@ -1302,11 +1302,13 @@ void DynamicTypeImpl::serialize_discriminator(
 
     try
     {
-        auto& lbls = get_member(data.union_id_).label();
-        if (!lbls.empty())
-        {
+        /*TODO(richiware)
+           auto& lbls = get_member(data.union_id_).label();
+           if (!lbls.empty())
+           {
             label = *lbls.begin();
-        }
+           }
+         */
     }
     catch (const std::system_error&)
     {

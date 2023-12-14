@@ -155,18 +155,24 @@ ReturnCode_t MemberDescriptorImpl::copy_from(
         return RETCODE_BAD_PARAMETER;
     }
 
-    name_ = descriptor->name();
-    id_ = descriptor->id();
-    type_ = descriptor->type();
-    default_value_ = descriptor->default_value();
-    index_ = descriptor->index();
-    label_ = descriptor->label();
-    try_construct_kind_ = descriptor->try_construct_kind();
-    is_key_ = descriptor->is_key();
-    is_optional_ = descriptor->is_optional();
-    is_must_understand_ = descriptor->is_must_understand();
-    is_shared_ = descriptor->is_shared();
-    is_default_label_ = descriptor->is_default_label();
+    return copy_from(*traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(descriptor));
+}
+
+ReturnCode_t MemberDescriptorImpl::copy_from(
+        MemberDescriptorImpl& descriptor) noexcept
+{
+    name_ = descriptor.name_;
+    id_ = descriptor.id_;
+    type_ = descriptor.type_;
+    default_value_ = descriptor.default_value_;
+    index_ = descriptor.index_;
+    label_ = descriptor.label_;
+    try_construct_kind_ = descriptor.try_construct_kind_;
+    is_key_ = descriptor.is_key_;
+    is_optional_ = descriptor.is_optional_;
+    is_must_understand_ = descriptor.is_must_understand_;
+    is_shared_ = descriptor.is_shared_;
+    is_default_label_ = descriptor.is_default_label_;
 
     return RETCODE_OK;
 }
@@ -174,18 +180,24 @@ ReturnCode_t MemberDescriptorImpl::copy_from(
 bool MemberDescriptorImpl::equals(
         traits<MemberDescriptor>::ref_type descriptor) noexcept
 {
-    return name_ == descriptor->name() &&
-           id_ == descriptor->id() &&
-           type_ == descriptor->type() && // TODO(richiware) change when dynamictype has equals.
-           default_value_ == descriptor->default_value() &&
-           index_ == descriptor->index() &&
-           label_ == descriptor->label() &&
-           try_construct_kind_ == descriptor->try_construct_kind() &&
-           is_key_ == descriptor->is_key() &&
-           is_optional_ == descriptor->is_optional() &&
-           is_must_understand_ == descriptor->is_must_understand() &&
-           is_shared_ == descriptor->is_shared() &&
-           is_default_label_ == descriptor->is_default_label();
+    return equals(*traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(descriptor));
+}
+
+bool MemberDescriptorImpl::equals(
+        MemberDescriptorImpl& descriptor) noexcept
+{
+    return name_ == descriptor.name_ &&
+           id_ == descriptor.id_ &&
+           type_ == descriptor.type_ && // TODO(richiware) change when dynamictype has equals.
+           default_value_ == descriptor.default_value_ &&
+           index_ == descriptor.index_ &&
+           label_ == descriptor.label_ &&
+           try_construct_kind_ == descriptor.try_construct_kind_ &&
+           is_key_ == descriptor.is_key_ &&
+           is_optional_ == descriptor.is_optional_ &&
+           is_must_understand_ == descriptor.is_must_understand_ &&
+           is_shared_ == descriptor.is_shared_ &&
+           is_default_label_ == descriptor.is_default_label_;
 }
 
 bool MemberDescriptorImpl::is_consistent() noexcept

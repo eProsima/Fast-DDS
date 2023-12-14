@@ -59,14 +59,26 @@ ReturnCode_t AnnotationDescriptorImpl::copy_from(
         return RETCODE_BAD_PARAMETER;
     }
 
-    type_ = descriptor->type();
+    return copy_from(*traits<AnnotationDescriptor>::narrow<AnnotationDescriptorImpl>(descriptor));
+}
+
+ReturnCode_t AnnotationDescriptorImpl::copy_from(
+        AnnotationDescriptorImpl& descriptor) noexcept
+{
+    type_ = descriptor.type_;
     value_.clear();
-    descriptor->get_all_value(value_);
+    value_ = descriptor.value_;
     return RETCODE_OK;
 }
 
 bool AnnotationDescriptorImpl::equals(
         traits<AnnotationDescriptor>::ref_type descriptor) noexcept
+{
+    return equals(*traits<AnnotationDescriptor>::narrow<AnnotationDescriptorImpl>(descriptor));
+}
+
+bool AnnotationDescriptorImpl::equals(
+        AnnotationDescriptorImpl& descriptor) noexcept
 {
     //TODO: Check consistency of value_
     return true;
