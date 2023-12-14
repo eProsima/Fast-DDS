@@ -20,7 +20,7 @@
 #include <vector>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
-#include <fastdds/dds/xtypes/Types.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
