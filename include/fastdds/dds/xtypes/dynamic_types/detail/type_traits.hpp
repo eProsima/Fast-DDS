@@ -24,8 +24,33 @@ namespace dds {
 template<typename T>
 struct traits
 {
-    typedef ::std::shared_ptr<T>  ref_type;
-    typedef ::std::weak_ptr<T>    weak_ref_type;
+    using ref_type = typename ::std::shared_ptr<T>;
+    using weak_ref_type = typename ::std::weak_ptr<T>;
+
+    template<typename _Tp, typename = typename
+            std::enable_if<std::is_base_of<T, _Tp>::value>::type>
+    inline static std::shared_ptr<_Tp> narrow (
+            ref_type obj)
+    {
+        return std::dynamic_pointer_cast<_Tp>(obj);
+    }
+
+};
+
+template<typename T>
+struct object_traits
+{
+    using ref_type = typename ::std::shared_ptr<T>;
+    using weak_ref_type = typename ::std::weak_ptr<T>;
+
+    template<typename _Tp, typename = typename
+            std::enable_if<std::is_base_of<T, _Tp>::value>::type>
+    inline static std::shared_ptr<_Tp> narrow (
+            ref_type obj)
+    {
+        return std::dynamic_pointer_cast<_Tp>(obj);
+    }
+
 };
 
 } // namespace dds
