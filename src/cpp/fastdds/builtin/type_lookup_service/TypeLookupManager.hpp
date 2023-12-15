@@ -172,6 +172,7 @@ public:
      * @param callback AsyncGetTypeCallback called when the negotiation is complete.
      * @return ReturnCode_t RETCODE_OK if negotiation is correctly initiated.
      *                      RETCODE_ERROR if negotiation can not be initiated.
+     *                      //TODO add more explicit ReturnCode_t
      */
     ReturnCode_t async_get_type(
             xtypes::TypeInformation typeinformation,
