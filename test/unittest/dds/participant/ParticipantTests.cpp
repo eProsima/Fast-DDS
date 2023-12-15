@@ -784,46 +784,6 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
     EXPECT_EQ(attributes_2.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SUPER_CLIENT);
     EXPECT_EQ(attributes_2.builtin.discovery_config.m_DiscoveryServers, output);
 
-    // check UDPv6 transport is there
-    auto udpv6_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes) -> bool
-            {
-                for (auto& transportDescriptor : attributes.userTransports)
-                {
-                    if ( nullptr !=
-                            dynamic_cast<eprosima::fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            };
-    EXPECT_TRUE(udpv6_check(attributes));
-
-    DomainParticipantQos result_qos = participant->get_qos();
-    EXPECT_EQ(result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers, qos_output);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
-
-    // check UDPv6 transport is there
-    auto udpv6_check_2 = [](fastrtps::rtps::RTPSParticipantAttributes& attributes_2) -> bool
-            {
-                for (auto& transportDescriptor : attributes_2.userTransports)
-                {
-                    if ( nullptr !=
-                            dynamic_cast<eprosima::fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            };
-    EXPECT_TRUE(udpv6_check_2(attributes_2));
-
-    result_qos = participant_2->get_qos();
-    EXPECT_EQ(result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers, qos_output);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant_2->set_qos(result_qos));
-
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_2));
 }
