@@ -4229,11 +4229,11 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
                     {
                         hasSHM=true;
                     }
-                    if ( nullptr != dynamic_cast<fastdds::rtps::UDPv4TransportDescriptor*>(transportDescriptor.get()))
+                    else if ( nullptr != dynamic_cast<fastdds::rtps::UDPv4TransportDescriptor*>(transportDescriptor.get()))
                     {
                         hasUDP=true;
                     }
-                    if ( nullptr != dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(transportDescriptor.get()))
+                    else if ( nullptr != dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(transportDescriptor.get()))
                     {
                         hasTCP=true;
                     }
@@ -4267,11 +4267,11 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
                     {
                         hasSHM=true;
                     }
-                    if ( nullptr != dynamic_cast<fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
+                    else if ( nullptr != dynamic_cast<fastdds::rtps::UDPv6TransportDescriptor*>(transportDescriptor.get()))
                     {
                         hasUDP=true;
                     }
-                    if ( nullptr != dynamic_cast<fastdds::rtps::TCPv6TransportDescriptor*>(transportDescriptor.get()))
+                    else if ( nullptr != dynamic_cast<fastdds::rtps::TCPv6TransportDescriptor*>(transportDescriptor.get()))
                     {
                         hasTCP=true;
                     }
