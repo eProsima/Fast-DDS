@@ -186,7 +186,6 @@ UnionTypeFlag TypeObjectUtils::build_union_type_flag(
 const StringSTypeDefn TypeObjectUtils::build_string_s_type_defn(
         SBound bound)
 {
-    bound_consistency(bound);
     StringSTypeDefn string_s_type_defn;
     string_s_type_defn.bound(bound);
     return string_s_type_defn;
@@ -224,7 +223,6 @@ const PlainSequenceSElemDefn TypeObjectUtils::build_plain_sequence_s_elem_defn(
     plain_collection_header_consistency(header);
     type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
-    bound_consistency(bound);
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
     PlainSequenceSElemDefn plain_sequence_s_elem_defn;
     plain_sequence_s_elem_defn.header(header);
@@ -299,7 +297,6 @@ const PlainMapSTypeDefn TypeObjectUtils::build_plain_map_s_type_defn(
     type_identifier_consistency(*element_identifier);
     collection_element_flag_consistency(key_flags);
 #endif // !defined(NDEBUG)
-    bound_consistency(bound);
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
     map_key_type_identifier_consistency(*key_identifier);
     PlainMapSTypeDefn plain_map_s_type_defn;
@@ -359,9 +356,6 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_string_type_identifier(
         const std::string& type_name,
         bool wstring)
 {
-#if !defined(NDEBUG)
-    string_sdefn_consistency(string);
-#endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.string_sdefn(string);
     if (wstring)
@@ -1293,7 +1287,6 @@ const CompleteCollectionElement TypeObjectUtils::build_complete_collection_eleme
 const CommonCollectionHeader TypeObjectUtils::build_common_collection_header(
         LBound bound)
 {
-    bound_consistency(bound);
     CommonCollectionHeader common_collection_header;
     common_collection_header.bound(bound);
     return common_collection_header;
@@ -1304,7 +1297,6 @@ const CompleteCollectionHeader TypeObjectUtils::build_complete_collection_header
         const eprosima::fastcdr::optional<CompleteTypeDetail>& detail)
 {
 #if !defined(NDEBUG)
-    common_collection_header_consistency(common);
     if (detail.has_value())
     {
         complete_type_detail_consistency(detail.value());
@@ -2103,12 +2095,6 @@ void TypeObjectUtils::map_key_type_identifier_consistency(
 #endif // !defined(NDEBUG)
 }
 
-void TypeObjectUtils::string_sdefn_consistency(
-        const StringSTypeDefn& string)
-{
-    bound_consistency(string.bound());
-}
-
 void TypeObjectUtils::string_ldefn_consistency(
         const StringLTypeDefn& string)
 {
@@ -2119,7 +2105,6 @@ void TypeObjectUtils::seq_sdefn_consistency(
         const PlainSequenceSElemDefn& plain_seq)
 {
     plain_collection_header_consistency(plain_seq.header());
-    bound_consistency(plain_seq.bound());
     type_identifier_consistency(*plain_seq.element_identifier());
     plain_collection_type_identifier_header_consistency(plain_seq.header(), *plain_seq.element_identifier());
 }
@@ -2155,7 +2140,6 @@ void TypeObjectUtils::map_sdefn_consistency(
         const PlainMapSTypeDefn& plain_map)
 {
     plain_collection_header_consistency(plain_map.header());
-    bound_consistency(plain_map.bound());
     type_identifier_consistency(*plain_map.element_identifier());
     plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
     collection_element_flag_consistency(plain_map.key_flags());
@@ -2196,9 +2180,6 @@ void TypeObjectUtils::type_identifier_consistency(
         case TK_NONE:
             throw InvalidArgumentError("Inconsistent TypeIdentifier: non-initialized");
 
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
-            string_sdefn_consistency(type_identifier.string_sdefn());
             break;
 
         case TI_STRING8_LARGE:
@@ -2239,7 +2220,7 @@ void TypeObjectUtils::type_identifier_consistency(
             direct_hash_type_identifier_consistency(type_identifier);
             break;
 
-        // Primitive TypeIdentifiers/ExtendedTypeDefn: no inconsistency rule apply.
+        // Primitive TypeIdentifiers/ExtendedTypeDefn/StringSTypeDefn: no inconsistency rule apply.
         default:
             break;
     }
@@ -2835,16 +2816,9 @@ void TypeObjectUtils::complete_collection_element_consistency(
     complete_element_detail_consistency(complete_collection_element.detail());
 }
 
-void TypeObjectUtils::common_collection_header_consistency(
-        const CommonCollectionHeader& common_collection_header)
-{
-    bound_consistency(common_collection_header.bound());
-}
-
 void TypeObjectUtils::complete_collection_header_consistency(
         const CompleteCollectionHeader& complete_collection_header)
 {
-    common_collection_header_consistency(complete_collection_header.common());
     if (complete_collection_header.detail().has_value())
     {
         complete_type_detail_consistency(complete_collection_header.detail().value());

@@ -1961,24 +1961,6 @@ protected:
      */
 
     /**
-     * @brief Check bound consistency: must be different from 0.
-     *
-     * @tparam Either SBound or LBound.
-     * @param[in] bound Bound to be checked.
-     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given bound is not
-     *            consistent.
-     */
-    template<typename T>
-    static void bound_consistency(
-            T bound)
-    {
-        if (INVALID_LBOUND == bound)
-        {
-            throw InvalidArgumentError("bound parameter must be greater than 0");
-        }
-    }
-
-    /**
      * @brief Check LBound consistency: must be greater than 255.
      *
      * @param[in] bound LBound to be checked.
@@ -2006,7 +1988,10 @@ protected:
         }
         for (auto bound : array)
         {
-            bound_consistency(bound);
+            if (INVALID_LBOUND == bound)
+            {
+                throw InvalidArgumentError("bound parameter must be greater than 0");
+            }
         }
     }
 
@@ -2148,16 +2133,6 @@ protected:
      */
     static void map_key_type_identifier_consistency(
             const TypeIdentifier& key_identifier);
-
-    /**
-     * @brief Check StringSTypeDefn consistency.
-     *
-     * @param[in] string Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given StringSTypeDefn is not
-     *            consistent.
-     */
-    static void string_sdefn_consistency(
-            const StringSTypeDefn& string);
 
     /**
      * @brief Check StringLTypeDefn consistency.
@@ -2655,16 +2630,6 @@ protected:
      */
     static void complete_collection_element_consistency(
             const CompleteCollectionElement& complete_collection_element);
-
-    /**
-     * @brief Check CommonCollectionHeader consistency.
-     *
-     * @param[in] common_collection_header Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
-     *            CommonCollectionHeader is not consistent.
-     */
-    static void common_collection_header_consistency(
-            const CommonCollectionHeader& common_collection_header);
 
     /**
      * @brief Check CompleteCollectionHeader consistency.
