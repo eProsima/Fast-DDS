@@ -476,8 +476,8 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv4)
  * 1. Correct parsing of a valid element.
  * 2. Check an empty definition of <physical_port> .
  * 3. Check an empty definition of <port>.
- * 5. Check an empty definition of <address>.
- * 6. Check an bad element as a child xml element.
+ * 4. Check an empty definition of <address>.
+ * 5. Check an bad element as a child xml element.
  */
 TEST_F(XMLParserTests, getXMLLocatorTCPv6)
 {
@@ -546,8 +546,8 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv6)
  * 1. Correct parsing of a valid descriptor present in the XmlProfileManager.
  * 2. Check a reference to a non existentTransportDescriptorInterface.
  * 3. Check an empty definition of <transport_id>.
- * 5. Check an empty definition of <transport_descriptor>.
- * 6. Check an empty list of transports.
+ * 4. Check an empty definition of <transport_descriptor>.
+ * 5. Check an empty list of transports.
  */
 TEST_F(XMLParserTests, getXMLTransports)
 {
@@ -612,13 +612,69 @@ TEST_F(XMLParserTests, getXMLTransports)
 }
 
 /*
+ * This test checks the proper parsing of the <builtinTransports> xml elements and negative cases.
+ * 1. Correct parsing of all valid values of BuiltinTransport.
+ * 2. Check a wrong definition of <builtinTransports>.
+ * 3. Check an empty definition of <builtinTransports>.
+ */
+TEST_F(XMLParserTests, getXMLbuiltinTransports)
+{
+    uint8_t ident = 1;
+    eprosima::fastdds::rtps::BuiltinTransports bt;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <builtinTransports>%s</builtinTransports>\
+            ";
+    constexpr size_t xml_len {500};
+    char xml[xml_len];
+
+    // Valid XML
+    std::vector<std::string> bt_list;
+    bt_list.push_back("NONE");
+    bt_list.push_back("DEFAULT");
+    bt_list.push_back("DEFAULTv6");
+    bt_list.push_back("SHM");
+    bt_list.push_back("UDPv4");
+    bt_list.push_back("UDPv6");
+    bt_list.push_back("LARGE_DATA");
+    bt_list.push_back("LARGE_DATAv6");
+
+    for (auto test_transport : bt_list)
+    {
+        snprintf(xml, xml_len, xml_p, test_transport.c_str());
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        ASSERT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident));
+    }
+
+    // Wrong ID
+    snprintf(xml, xml_len, xml_p, "WrongBuiltinTransport");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident));
+
+    // Missing data
+    snprintf(xml, xml_len, xml_p, "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident));
+
+    // Clean up
+    xmlparser::XMLProfileManager::DeleteInstance();
+}
+
+/*
  * This test checks the proper parsing of the <property_policy> xml elements to a PropertyPolicy object, and negative
  * cases.
  * 1. Correct parsing of a valid <property_policy>.
  * 2. Check missing values for the possible elemnts of the properties.
  * 3. Check an empty list of <properties>.
- * 5. Check an empty list of <binary_properties>.
- * 6. Check an wrong descriptor for properties.
+ * 4. Check an empty list of <binary_properties>.
+ * 5. Check an wrong descriptor for properties.
  */
 TEST_F(XMLParserTests, getXMLPropertiesPolicy)
 {
