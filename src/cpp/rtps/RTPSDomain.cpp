@@ -468,11 +468,11 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
             client_att.builtin.discovery_config.m_DiscoveryServers.empty())
     {
         // It's not an error, the environment variable may not be set. Any issue with environment
-        // variable syntax is EPROSIMA_LOG_ERROR already
+        // variable syntax is reported with a logError
         return nullptr;
     }
 
-    // Check if some server requires the UDPv6, TCPv4 or TCPv6 transport
+    // Check if some server requires the TCPv4 transport
     for (auto& server : server_list)
     {
         if (server.requires_transport<LOCATOR_KIND_TCPv4>())

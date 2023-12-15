@@ -680,7 +680,67 @@ bool load_environment_server_info(
                 // now we must parse the inner expression
                 std::smatch mr;
                 std::string locator(sm);
-                if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN, std::regex_constants::match_not_null))
+                // Try first with IPv4
+                if (std::regex_match(locator, mr, ROS2_IPV4_ADDRESSPORT_PATTERN, std::regex_constants::match_not_null))
+                {
+                    std::smatch::iterator it = mr.cbegin();
+
+                    while (++it != mr.cend())
+                    {
+                        std::string address = it->str();
+                        server_locator.kind = LOCATOR_KIND_UDPv4;
+                        server_locator.set_Invalid_Address();
+
+                        // Check whether the address is IPv4
+                        if (!IPLocator::setIPv4(server_locator, address))
+                        {
+                            std::stringstream ss;
+                            ss << "Wrong ipv4 address passed into the server's list " << address;
+                            throw std::invalid_argument(ss.str());
+                        }
+
+                        if (IPLocator::isAny(server_locator))
+                        {
+                            // A server cannot be reach in all interfaces, it's clearly a localhost call
+                            IPLocator::setIPv4(server_locator, "127.0.0.1");
+                        }
+
+                        if (++it != mr.cend())
+                        {
+                            // reset the locator to default
+                            IPLocator::setPhysicalPort(server_locator, DEFAULT_ROS2_SERVER_PORT);
+
+                            if (it->matched)
+                            {
+                                // note stoi throws also an invalid_argument
+                                int port = stoi(it->str());
+
+                                if (port > std::numeric_limits<uint16_t>::max())
+                                {
+                                    throw std::out_of_range("Too large udp port passed into the server's list");
+                                }
+
+                                if (!IPLocator::setPhysicalPort(server_locator, static_cast<uint16_t>(port)))
+                                {
+                                    std::stringstream ss;
+                                    ss << "Wrong udp port passed into the server's list " << it->str();
+                                    throw std::invalid_argument(ss.str());
+                                }
+                            }
+                        }
+                    }
+
+                    // add the server to the list
+                    if (!get_server_client_default_guidPrefix(server_id, server_att.guidPrefix))
+                    {
+                        throw std::invalid_argument("The maximum number of default discovery servers has been reached");
+                    }
+
+                    server_att.metatrafficUnicastLocatorList.clear();
+                    server_att.metatrafficUnicastLocatorList.push_back(server_locator);
+                    attributes.push_back(server_att);
+                }
+                else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN, std::regex_constants::match_not_null))
                 {
                     {
                         std::stringstream new_locator(locator,
@@ -709,6 +769,8 @@ bool load_environment_server_info(
                             while (++it != mr.cend())
                             {
                                 std::string address = it->str();
+                                server_locator.kind = LOCATOR_KIND_UDPv4;
+                                server_locator.set_Invalid_Address();
 
                                 // Check whether the address is IPv4
                                 if (!IPLocator::isIPv4(address))
@@ -800,6 +862,8 @@ bool load_environment_server_info(
                         case LOCATOR_KIND_INVALID:
                         {
                             std::smatch::iterator it = mr.cbegin();
+                            server_locator.kind = LOCATOR_KIND_TCPv4;
+                            server_locator.set_Invalid_Address();
 
                             while (++it != mr.cend())
                             {

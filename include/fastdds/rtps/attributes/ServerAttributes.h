@@ -112,7 +112,7 @@ public:
 
 typedef std::list<RemoteServerAttributes> RemoteServerList_t;
 
-// port use if the ros environment variable doesn't specified one
+// port used if the ros environment variable doesn't specified one
 constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
 // default server base guidPrefix
 const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.49.4d.41";

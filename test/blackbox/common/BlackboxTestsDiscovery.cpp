@@ -1599,6 +1599,23 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
+
+    // 13. Single TCPv4 dns specifying a custom listening port
+
+    text = "TCPv4:[localhost]:14520";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc_tcp, "127.0.0.1");
+    IPLocator::setPhysicalPort(loc_tcp, 14520);
+    IPLocator::setLogicalPort(loc_tcp, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc_tcp);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
 }
 
 TEST(Discovery, RemoteBuiltinEndpointHonoring)
