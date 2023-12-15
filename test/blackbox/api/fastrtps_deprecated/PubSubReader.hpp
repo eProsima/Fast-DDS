@@ -302,7 +302,8 @@ public:
             if (!participant_profile_.empty())
             {
                 // Need to specify ID in XML
-                participant_ = eprosima::fastrtps::Domain::createParticipant(participant_profile_, &participant_listener_);
+                participant_ = eprosima::fastrtps::Domain::createParticipant(participant_profile_,
+                                &participant_listener_);
                 ASSERT_NE(participant_, nullptr);
                 participant_attr = participant_->getAttributes();
                 subscriber_attr = subscriber_attr_;
@@ -730,7 +731,8 @@ public:
         return *this;
     }
 
-    PubSubReader& setup_transports(eprosima::fastdds::rtps::BuiltinTransports transports)
+    PubSubReader& setup_transports(
+            eprosima::fastdds::rtps::BuiltinTransports transports)
     {
         participant_attr_.rtps.setup_transports(transports);
         return *this;

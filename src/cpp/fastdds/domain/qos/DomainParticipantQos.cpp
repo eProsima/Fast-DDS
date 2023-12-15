@@ -40,7 +40,6 @@ void DomainParticipantQos::setup_transports(
     utils::set_qos_from_attributes(*this, attr);
 }
 
-
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

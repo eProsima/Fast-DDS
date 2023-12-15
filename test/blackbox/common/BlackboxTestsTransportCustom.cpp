@@ -327,8 +327,8 @@ TEST(ChainingTransportTests, builtin_transports_basic_test)
             PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
             writer.setup_transports(test_transport)
-                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-                .init();
+                    .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                    .init();
 
             ASSERT_TRUE(writer.isInitialized());
 
@@ -394,7 +394,7 @@ TEST(ChainingTransportTests, builtin_transports_env_var_test)
             PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
             writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-                .init();
+                    .init();
 
             ASSERT_TRUE(writer.isInitialized());
 

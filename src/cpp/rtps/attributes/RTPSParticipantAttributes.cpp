@@ -201,7 +201,7 @@ static void setup_transports_large_data(
     {
         auto shm_transport = create_shm_transport(att);
         att.userTransports.push_back(shm_transport);
-        
+
         auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
         att.builtin.metatrafficUnicastLocatorList.push_back(shm_loc);
         att.defaultUnicastLocatorList.push_back(shm_loc);
