@@ -375,7 +375,6 @@ TEST(ChainingTransportTests, builtin_transports_basic_test)
 TEST(ChainingTransportTests, builtin_transports_env_var_test)
 {
     const std::string env_var_name("FASTDDS_BUILTIN_TRANSPORTS");
-    std::string value("");
 
     std::vector<std::string> bt_list;
     bt_list.push_back("DEFAULT");
@@ -389,8 +388,7 @@ TEST(ChainingTransportTests, builtin_transports_env_var_test)
     for (auto test_transport : bt_list)
     {
         {
-            value = test_transport;
-            setenv(env_var_name.c_str(), value.c_str(), 1);
+            setenv(env_var_name.c_str(), test_transport.c_str(), 1);
 
             PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
             PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -418,12 +416,11 @@ TEST(ChainingTransportTests, builtin_transports_env_var_test)
             reader.block_for_all();
 
             // Check reception
-            // reader.wait_for_all_received(std::chrono::seconds(3), num_messages);
             EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
         }
     }
 
-    value = "NONE";
+    std::string value("NONE");
     setenv(env_var_name.c_str(), value.c_str(), 1);
 
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -480,7 +477,6 @@ TEST(ChainingTransportTests, builtin_transports_xml_test)
             reader.block_for_all();
 
             // Check reception
-            // reader.wait_for_all_received(std::chrono::seconds(3), num_messages);
             EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
         }
     }

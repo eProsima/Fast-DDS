@@ -13,8 +13,10 @@
             <rtps>
                 <name>Participant.builtin_transports_none</name>
                 <builtinTransports>NONE</builtinTransports>
-                <!-- Need to add at least one transport in -->
-                <!-- order to be able to create the participant -->
+                <!--
+                    Need to add at least one transport in
+                    order to be able to create the participant
+                -->
                 <userTransports>
                     <transport_id>transport</transport_id>
                 </userTransports>
