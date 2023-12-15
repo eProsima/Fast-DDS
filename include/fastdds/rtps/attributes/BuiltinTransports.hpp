@@ -20,6 +20,7 @@
 #define _FASTDDS_RTPS_ATTRIBUTES__BUILTINTRANSPORTS_HPP_
 
 #include <ostream>
+#include <cstdint>
 
 namespace eprosima {
 namespace fastdds {
@@ -28,16 +29,16 @@ namespace rtps {
 /**
  * Defines the kind of transports automatically instantiated upon the creation of a participant
  */
-enum class BuiltinTransports
+enum class BuiltinTransports : uint16_t
 {
     NONE = 0,      //< No transport will be instantiated
     DEFAULT = 1,   //< Default value that will instantiate UDPv4 and SHM transports
-    DEFAULTv6,     //< Instantiate UDPv6 and SHM transports
-    SHM,           //< Instantiate SHM transport only
-    UDPv4,         //< Instantiate UDPv4 transport only
-    UDPv6,         //< Instantiate UDPv6 transport only
-    LARGE_DATA,    //< Instantiate SHM, UDPv4 and TCPv4 transports, but UDPv4 is only used for bootstrapping discovery
-    LARGE_DATAv6   //< Instantiate SHM, UDPv6 and TCPv6 transports, but UDPv6 is only used for bootstrapping discovery
+    DEFAULTv6 = 2,     //< Instantiate UDPv6 and SHM transports
+    SHM = 3,           //< Instantiate SHM transport only
+    UDPv4 = 4,         //< Instantiate UDPv4 transport only
+    UDPv6 = 5,         //< Instantiate UDPv6 transport only
+    LARGE_DATA = 6,    //< Instantiate SHM, UDPv4 and TCPv4 transports, but UDPv4 is only used for bootstrapping discovery
+    LARGE_DATAv6 = 7   //< Instantiate SHM, UDPv6 and TCPv6 transports, but UDPv6 is only used for bootstrapping discovery
 };
 
 inline std::ostream& operator <<(
