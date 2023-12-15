@@ -946,7 +946,8 @@ public:
         return *this;
     }
 
-    PubSubWriter& setup_transports(eprosima::fastdds::rtps::BuiltinTransports transports)
+    PubSubWriter& setup_transports(
+            eprosima::fastdds::rtps::BuiltinTransports transports)
     {
         participant_qos_.setup_transports(transports);
         return *this;
