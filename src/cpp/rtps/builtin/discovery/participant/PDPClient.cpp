@@ -740,7 +740,8 @@ bool load_environment_server_info(
                     server_att.metatrafficUnicastLocatorList.push_back(server_locator);
                     attributes.push_back(server_att);
                 }
-                else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN, std::regex_constants::match_not_null))
+                else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN,
+                        std::regex_constants::match_not_null))
                 {
                     {
                         std::stringstream new_locator(locator,
