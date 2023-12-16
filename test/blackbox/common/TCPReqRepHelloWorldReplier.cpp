@@ -65,7 +65,7 @@ void TCPReqRepHelloWorldReplier::init(
         int domainId,
         uint16_t listeningPort,
         uint32_t maxInitialPeer,
-        const char* certs_path)
+        const char* certs_folder)
 {
     ParticipantAttributes pattr;
     pattr.domainId = domainId;
@@ -97,14 +97,14 @@ void TCPReqRepHelloWorldReplier::init(
     }
     descriptor->add_listener_port(listeningPort);
 
-    if (certs_path != nullptr)
+    if (certs_folder != nullptr)
     {
         using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
         using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
         descriptor->apply_security = true;
         descriptor->tls_config.password = "testkey";
-        descriptor->tls_config.cert_chain_file = std::string(certs_path) + "/mainsubcert.pem";
-        descriptor->tls_config.private_key_file = std::string(certs_path) + "/mainsubkey.pem";
+        descriptor->tls_config.cert_chain_file = std::string(certs_folder) + "/mainsubcert.pem";
+        descriptor->tls_config.private_key_file = std::string(certs_folder) + "/mainsubkey.pem";
         descriptor->tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
         descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
         descriptor->tls_config.add_option(TLSOptions::SINGLE_DH_USE);

@@ -125,7 +125,7 @@ public:
             int domainId,
             uint16_t listeningPort,
             uint32_t maxInitialPeer = 0,
-            const char* certs_path = nullptr);
+            const char* certs_folder = nullptr);
     bool isInitialized() const
     {
         return initialized_;

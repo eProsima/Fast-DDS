@@ -37,7 +37,7 @@ using namespace eprosima::fastrtps::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
-static const char* certs_path = nullptr;
+const char* certs_path = nullptr;
 
 enum communication_type
 {
