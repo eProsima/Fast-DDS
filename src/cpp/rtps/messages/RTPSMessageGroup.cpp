@@ -74,18 +74,29 @@ static bool data_exceeds_limitation(
 }
 
 static bool append_message(
+        RTPSParticipantImpl* participant,
         CDRMessage_t* full_msg,
         CDRMessage_t* submsg)
 {
-#ifndef FASTDDS_STATISTICS
-    return CDRMessage::appendMsg(full_msg, submsg);
-#else
+    static_cast<void>(participant);
+
+    uint32_t extra_size = 0;
+
+#if HAVE_SECURITY
+    // Avoid full message growing over estimated extra size for RTPS encryption
+    extra_size += participant->calculate_extra_size_for_rtps_message();
+#endif  // HAVE_SECURITY
+
+#ifdef FASTDDS_STATISTICS
     // Keep room for the statistics submessage by reducing max_size while appending submessage
-    full_msg->max_size -= eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+    extra_size += eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+#endif  // FASTDDS_STATISTICS
+
+    full_msg->max_size -= extra_size;
     bool ret_val = CDRMessage::appendMsg(full_msg, submsg);
-    full_msg->max_size += eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+    full_msg->max_size += extra_size;
+
     return ret_val;
-#endif // FASTDDS_STATISTICS
 }
 
 bool sort_changes_group (
@@ -337,13 +348,13 @@ bool RTPSMessageGroup::insert_submessage(
         const GuidPrefix_t& destination_guid_prefix,
         bool is_big_submessage)
 {
-    if (!append_message(full_msg_, submessage_msg_))
+    if (!append_message(participant_, full_msg_, submessage_msg_))
     {
         // Retry
         flush_and_reset();
         add_info_dst_in_buffer(full_msg_, destination_guid_prefix);
 
-        if (!append_message(full_msg_, submessage_msg_))
+        if (!append_message(participant_, full_msg_, submessage_msg_))
         {
             EPROSIMA_LOG_ERROR(RTPS_WRITER, "Cannot add RTPS submesage to the CDRMessage. Buffer too small");
             return false;
