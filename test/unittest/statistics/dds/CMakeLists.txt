@@ -297,7 +297,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
 
     set(STATISTICS_DOMAINPARTICIPANT_STATUS_QUERYABLE_TESTS_SOURCE
         StatisticsDomainParticipantStatusQueryableTests.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
