@@ -1579,10 +1579,13 @@ bool EDP::checkTypeIdentifier(
     coercion.m_force_type_validation = true;
     coercion.m_prevent_type_widening = true;
     coercion.m_ignore_sequence_bounds = false;
-    return wdata->type_id().m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE &&
-           wdata->type_id().m_type_identifier.consistent(
-        //rdata->type_id().m_type_identifier, rdata->m_qos.type_consistency);
-        rdata->type_id().m_type_identifier, coercion);
+    return wdata->type_id().m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE;
+    (void)rdata;
+    //TODO(XTypes)
+    //  &&
+    //        wdata->type_id().m_type_identifier.consistent(
+    //     //rdata->type_id().m_type_identifier, rdata->m_qos.type_consistency);
+    //     rdata->type_id().m_type_identifier, coercion);
 }
 
 bool EDP::hasTypeIdentifier(

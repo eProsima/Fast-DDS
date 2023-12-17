@@ -34,12 +34,13 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastrtps/types/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+using DomainId_t = uint32_t;
 
 /**
  * The identifier for each QosPolicy.
@@ -2288,7 +2289,7 @@ class TypeIdV1 : public Parameter_t, public QosPolicy
 public:
 
     //!Type Identifier
-    fastrtps::types::TypeIdentifier m_type_identifier;
+    xtypes::TypeIdentifier m_type_identifier;
 
 
     /**
@@ -2320,7 +2321,7 @@ public:
      * @param identifier TypeIdentifier to be set
      */
     RTPS_DllAPI TypeIdV1(
-            const fastrtps::types::TypeIdentifier& identifier)
+            const xtypes::TypeIdentifier& identifier)
         : Parameter_t(PID_TYPE_IDV1, 0)
         , QosPolicy(false)
         , m_type_identifier(identifier)
@@ -2375,7 +2376,7 @@ public:
     }
 
     RTPS_DllAPI TypeIdV1& operator =(
-            const fastrtps::types::TypeIdentifier& type_id)
+            const xtypes::TypeIdentifier& type_id)
     {
         m_type_identifier = type_id;
         return *this;
@@ -2386,7 +2387,7 @@ public:
      *
      * @return TypeIdentifier reference
      */
-    RTPS_DllAPI const fastrtps::types::TypeIdentifier& get() const
+    RTPS_DllAPI const xtypes::TypeIdentifier& get() const
     {
         return m_type_identifier;
     }
@@ -2401,7 +2402,7 @@ class TypeObjectV1 : public Parameter_t, public QosPolicy
 public:
 
     //!Type Object
-    fastrtps::types::TypeObject m_type_object;
+    xtypes::TypeObject m_type_object;
 
     /**
      * @brief Constructor
@@ -2432,7 +2433,7 @@ public:
      * @param type TypeObject to be set
      */
     RTPS_DllAPI TypeObjectV1(
-            const fastrtps::types::TypeObject& type)
+            const xtypes::TypeObject& type)
         : Parameter_t(PID_TYPE_OBJECTV1, 0)
         , QosPolicy(false)
         , m_type_object(type)
@@ -2487,7 +2488,7 @@ public:
     }
 
     RTPS_DllAPI TypeObjectV1& operator =(
-            const fastrtps::types::TypeObject& type_object)
+            const xtypes::TypeObject& type_object)
     {
         m_type_object = type_object;
         return *this;
@@ -2498,7 +2499,7 @@ public:
      *
      * @return TypeObject reference
      */
-    RTPS_DllAPI const fastrtps::types::TypeObject& get() const
+    RTPS_DllAPI const xtypes::TypeObject& get() const
     {
         return m_type_object;
     }

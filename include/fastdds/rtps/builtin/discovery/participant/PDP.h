@@ -40,6 +40,16 @@
 namespace eprosima {
 
 namespace fastdds {
+
+namespace dds {
+namespace xtypes {
+
+class TypeObject;
+class TypeIdentifier;
+
+} // namespace xtypes
+} // namespace dds
+
 namespace rtps {
 
 class PDPServerListener;
@@ -49,12 +59,6 @@ class PDPEndpoints;
 } // namespace fastdds
 
 namespace fastrtps {
-namespace types {
-
-class TypeObject;
-class TypeIdentifier;
-
-} // namespace types
 namespace rtps {
 
 class RTPSWriter;

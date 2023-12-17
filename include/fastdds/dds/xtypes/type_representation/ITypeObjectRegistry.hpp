@@ -18,7 +18,7 @@
  */
 
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
-
+#include <fastdds/dds/core/ReturnCode.hpp>
 
 #ifndef _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_ITYPEOBJECTREGISTRY_HPP_
 #define _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_ITYPEOBJECTREGISTRY_HPP_

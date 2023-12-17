@@ -93,6 +93,7 @@ bool TestPublisher::init(
     {
         return false;
     }
+
     mp_participant->enable();
 
     // CREATE THE PUBLISHER
@@ -105,11 +106,13 @@ bool TestPublisher::init(
         m_Type->auto_fill_type_information(false);
         if (type_object != nullptr)
         {
-            m_Type->type_object(*type_object);
+            //TODO(XTypes)
+            //m_Type->type_object(*type_object);
         }
         if (type_identifier != nullptr)
         {
-            m_Type->type_identifier(*type_identifier);
+            //TODO(XTypes)
+            //m_Type->type_identifier(*type_identifier);
         }
         if (type_info != nullptr)
         {
