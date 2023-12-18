@@ -1685,30 +1685,6 @@ ResourceEvent& DomainParticipantImpl::get_resource_event() const
     return get_rtps_participant()->get_resource_event();
 }
 
-//TODO(XTypes) this method will be removed
-fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_type_dependencies(
-        const fastrtps::types::TypeIdentifierSeq& in) const
-{
-    // const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
-    // return nullptr != rtps_participant ?
-    //        rtps_participant->typelookup_manager()->get_type_dependencies(in) :
-    //        builtin::INVALID_SAMPLE_IDENTITY;
-    (void) in;
-    return builtin::INVALID_SAMPLE_IDENTITY;
-}
-
-//TODO(XTypes) this method will be removed
-fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_types(
-        const fastrtps::types::TypeIdentifierSeq& in) const
-{
-    // const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
-    // return nullptr != rtps_participant ?
-    //        rtps_participant->typelookup_manager()->get_types(in) :
-    //        builtin::INVALID_SAMPLE_IDENTITY;
-    (void) in;
-    return builtin::INVALID_SAMPLE_IDENTITY;
-}
-
 ReturnCode_t DomainParticipantImpl::register_remote_type(
         const fastrtps::types::TypeInformation& type_information,
         const std::string& type_name,
@@ -1776,19 +1752,19 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
         // If any pending dependency exists, retrieve it.
         if (!dependencies.empty())
         {
-            request_dependencies = get_type_dependencies(dependencies);
+            //request_dependencies = get_type_dependencies(dependencies);
         }
 
         // If any pending TypeObject exists, retrieve it
         if (!retrieve_objects.empty())
         {
-            request_objects = get_types(retrieve_objects);
+            //request_objects = get_types(retrieve_objects);
         }
 
         // If no more dependencies but failed to create, probably we only need the TypeObject
         dependencies.clear(); // Reuse the same vector.
         dependencies.push_back(type_information.complete().typeid_with_size().type_id());
-        fastrtps::rtps::SampleIdentity requestId = get_types(dependencies);
+        fastrtps::rtps::SampleIdentity requestId; // = get_types(dependencies);
 
         // Add everything to maps
         register_callbacks_.emplace(std::make_pair(requestId, std::make_pair(type_name, callback)));
@@ -1935,7 +1911,7 @@ bool DomainParticipantImpl::check_get_dependencies_request(
             // If any pending dependency exists, retrieve it
             if (!next_dependencies.empty())
             {
-                fastrtps::rtps::SampleIdentity child_request = get_type_dependencies(next_dependencies);
+                fastrtps::rtps::SampleIdentity child_request; // = get_type_dependencies(next_dependencies);
                 std::vector<fastrtps::rtps::SampleIdentity> vector;
                 vector.push_back(child_request);
                 parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
@@ -1960,7 +1936,7 @@ bool DomainParticipantImpl::check_get_dependencies_request(
             // If any pending TypeObject exists, retrieve it
             if (!retrieve_objects.empty())
             {
-                fastrtps::rtps::SampleIdentity child_request = get_types(retrieve_objects);
+                fastrtps::rtps::SampleIdentity child_request; // = get_types(retrieve_objects);
                 std::vector<fastrtps::rtps::SampleIdentity> vector;
                 vector.push_back(child_request);
                 parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
@@ -1987,7 +1963,7 @@ bool DomainParticipantImpl::check_get_dependencies_request(
             // If any pending dependency exists, retrieve it
             if (!next_dependencies.empty())
             {
-                fastrtps::rtps::SampleIdentity child_request = get_type_dependencies(next_dependencies);
+                fastrtps::rtps::SampleIdentity child_request; // = get_type_dependencies(next_dependencies);
                 std::vector<fastrtps::rtps::SampleIdentity> vector;
                 vector.push_back(child_request);
                 parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
@@ -2012,7 +1988,7 @@ bool DomainParticipantImpl::check_get_dependencies_request(
             // If any pending TypeObject exists, retrieve it
             if (!retrieve_objects.empty())
             {
-                fastrtps::rtps::SampleIdentity child_request = get_types(retrieve_objects);
+                fastrtps::rtps::SampleIdentity child_request; // = get_types(retrieve_objects);
                 std::vector<fastrtps::rtps::SampleIdentity> vector;
                 vector.push_back(child_request);
                 parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));

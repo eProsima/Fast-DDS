@@ -576,22 +576,6 @@ public:
         return rtps_participant_->get_resource_event();
     }
 
-    fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const fastrtps::types::TypeIdentifierSeq& in) const
-    {
-        //TODO(XTypes) this method will be removed
-        (void) in;
-        return builtin::INVALID_SAMPLE_IDENTITY;
-    }
-
-    fastrtps::rtps::SampleIdentity get_types(
-            const fastrtps::types::TypeIdentifierSeq& in) const
-    {
-        //TODO(XTypes) this method will be removed
-        (void) in;
-        return builtin::INVALID_SAMPLE_IDENTITY;
-    }
-
     ReturnCode_t register_remote_type(
             const fastrtps::types::TypeInformation& /*type_information*/,
             const std::string& /*type_name*/,

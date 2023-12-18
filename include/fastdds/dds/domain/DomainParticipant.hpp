@@ -827,27 +827,6 @@ public:
     RTPS_DllAPI fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
     /**
-     * When a DomainParticipant receives an incomplete list of TypeIdentifiers in a
-     * PublicationBuiltinTopicData or SubscriptionBuiltinTopicData, it may request the additional type
-     * dependencies by invoking the getTypeDependencies operation.
-     *
-     * @param in TypeIdentifier sequence
-     * @return SampleIdentity
-     */
-    RTPS_DllAPI fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
-
-    /**
-     * A DomainParticipant may invoke the operation getTypes to retrieve the TypeObjects associated with a
-     * list of TypeIdentifiers.
-     *
-     * @param in TypeIdentifier sequence
-     * @return SampleIdentity
-     */
-    RTPS_DllAPI fastrtps::rtps::SampleIdentity get_types(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
-
-    /**
      * Helps the user to solve all dependencies calling internally to the type lookup service and
      * registers the resulting dynamic type.
      * The registration may be perform asynchronously, case in which the user will be notified

@@ -481,12 +481,6 @@ public:
 
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
-    fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
-
-    fastrtps::rtps::SampleIdentity get_types(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
-
     /**
      * Helps the user to solve all dependencies calling internally to the typelookup service and
      * registers the resulting dynamic type.

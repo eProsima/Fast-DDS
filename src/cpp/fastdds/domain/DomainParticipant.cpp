@@ -483,18 +483,6 @@ fastrtps::rtps::ResourceEvent& DomainParticipant::get_resource_event() const
     return impl_->get_resource_event();
 }
 
-fastrtps::rtps::SampleIdentity DomainParticipant::get_type_dependencies(
-        const fastrtps::types::TypeIdentifierSeq& in) const
-{
-    return impl_->get_type_dependencies(in);
-}
-
-fastrtps::rtps::SampleIdentity DomainParticipant::get_types(
-        const fastrtps::types::TypeIdentifierSeq& in) const
-{
-    return impl_->get_types(in);
-}
-
 ReturnCode_t DomainParticipant::register_remote_type(
         const fastrtps::types::TypeInformation& type_information,
         const std::string& type_name,
