@@ -120,6 +120,76 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
     TypeIdentifierPair type_identifiers;
     type_identifiers.type_identifier1(type_identifier);
 
+    switch (type_identifier._d())
+    {
+        case TI_PLAIN_SEQUENCE_SMALL:
+            if (EK_BOTH != type_identifier.seq_sdefn().header().equiv_kind())
+            {
+                type_identifiers.type_identifier2(type_identifier);
+                type_identifiers.type_identifier1().seq_sdefn().header().equiv_kind(EK_MINIMAL);
+                type_identifiers.type_identifier1().seq_sdefn().element_identifier(new TypeIdentifier(minimal_from_complete_type_identifier(
+                        *type_identifiers.type_identifier2().seq_sdefn().element_identifier())));
+            }
+            break;
+        case TI_PLAIN_SEQUENCE_LARGE:
+            if (EK_BOTH != type_identifier.seq_ldefn().header().equiv_kind())
+            {
+                type_identifiers.type_identifier2(type_identifier);
+                type_identifiers.type_identifier1().seq_ldefn().header().equiv_kind(EK_MINIMAL);
+                type_identifiers.type_identifier1().seq_ldefn().element_identifier(new TypeIdentifier(minimal_from_complete_type_identifier(
+                        *type_identifiers.type_identifier2().seq_ldefn().element_identifier())));
+            }
+            break;
+        case TI_PLAIN_ARRAY_SMALL:
+            if (EK_BOTH != type_identifier.array_sdefn().header().equiv_kind())
+            {
+                type_identifiers.type_identifier2(type_identifier);
+                type_identifiers.type_identifier1().array_sdefn().header().equiv_kind(EK_MINIMAL);
+                type_identifiers.type_identifier1().array_sdefn().element_identifier(new TypeIdentifier(minimal_from_complete_type_identifier(
+                        *type_identifiers.type_identifier2().array_sdefn().element_identifier())));
+            }
+            break;
+        case TI_PLAIN_ARRAY_LARGE:
+            if (EK_BOTH != type_identifier.array_ldefn().header().equiv_kind())
+            {
+                type_identifiers.type_identifier2(type_identifier);
+                type_identifiers.type_identifier1().array_ldefn().header().equiv_kind(EK_MINIMAL);
+                type_identifiers.type_identifier1().array_ldefn().element_identifier(new TypeIdentifier(minimal_from_complete_type_identifier(
+                        *type_identifiers.type_identifier2().array_ldefn().element_identifier())));
+            }
+            break;
+        case TI_PLAIN_MAP_SMALL:
+            if (EK_BOTH != type_identifier.map_sdefn().header().equiv_kind())
+            {
+                type_identifiers.type_identifier2(type_identifier);
+                type_identifiers.type_identifier1().map_sdefn().header().equiv_kind(EK_MINIMAL);
+                type_identifiers.type_identifier1().map_sdefn().element_identifier(new TypeIdentifier(minimal_from_complete_type_identifier(
+                        *type_identifiers.type_identifier2().map_sdefn().element_identifier())));
+            }
+            if (TypeObjectUtils::is_direct_hash_type_identifier(*type_identifier.map_sdefn().key_identifier()))
+            {
+                type_identifiers.type_identifier1().map_sdefn().key_identifier(new TypeIdentifier(minimal_from_complete_type_identifier(
+                        *type_identifiers.type_identifier2().map_sdefn().key_identifier())));
+            }
+            break;
+        case TI_PLAIN_MAP_LARGE:
+            if (EK_BOTH != type_identifier.map_ldefn().header().equiv_kind())
+            {
+                type_identifiers.type_identifier2(type_identifier);
+                type_identifiers.type_identifier1().map_ldefn().header().equiv_kind(EK_MINIMAL);
+                type_identifiers.type_identifier1().map_ldefn().element_identifier(new TypeIdentifier(minimal_from_complete_type_identifier(
+                        *type_identifiers.type_identifier2().map_ldefn().element_identifier())));
+            }
+            if (TypeObjectUtils::is_direct_hash_type_identifier(*type_identifier.map_ldefn().key_identifier()))
+            {
+                type_identifiers.type_identifier1().map_ldefn().key_identifier(new TypeIdentifier(minimal_from_complete_type_identifier(
+                        *type_identifiers.type_identifier2().map_ldefn().key_identifier())));
+            }
+            break;
+        default:
+            break;
+    }
+
     std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     auto result = local_type_identifiers_.insert({type_name, type_identifiers});
     if (!result.second)
