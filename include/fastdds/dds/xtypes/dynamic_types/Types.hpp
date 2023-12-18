@@ -68,5 +68,3 @@ struct traits<DynamicTypeMember> : public object_traits<DynamicTypeMember>
 } // namespace eprosima
 
 #endif // _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP_
-
-
