@@ -15,6 +15,7 @@
 #include <chrono>
 #include <iostream>
 #include <future>
+#include <memory>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <string>
@@ -27,6 +28,7 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
@@ -71,6 +73,11 @@ class TesterPDPEndpoints : public fastdds::rtps::PDPEndpoints
         return DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     }
 
+    const std::unique_ptr<fastrtps::rtps::ReaderListener>& main_listener() const override
+    {
+        return no_listener_;
+    }
+
     bool enable_pdp_readers(
             fastrtps::rtps::RTPSParticipantImpl*) override
     {
@@ -100,6 +107,8 @@ class TesterPDPEndpoints : public fastdds::rtps::PDPEndpoints
     {
 
     }
+
+    std::unique_ptr<fastrtps::rtps::ReaderListener> no_listener_;
 
 };
 

@@ -22,6 +22,7 @@
 #include <memory>
 
 #include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
 
 #include <rtps/history/ITopicPayloadPool.h>
 #include <rtps/history/PoolConfig.h>
@@ -52,6 +53,8 @@ struct BuiltinReader
                 payload_pool_->release_history(cfg, true);
             }
         }
+
+        listener_.reset();
     }
 
     void remove_from_history(
@@ -75,6 +78,8 @@ struct BuiltinReader
     std::unique_ptr<fastrtps::rtps::ReaderHistory> history_;
     //! Builtin RTPS reader
     TReader* reader_ = nullptr;
+    //! Listener for the builtin RTPS reader
+    std::unique_ptr<fastrtps::rtps::ReaderListener> listener_;
 };
 
 } // namespace rtps

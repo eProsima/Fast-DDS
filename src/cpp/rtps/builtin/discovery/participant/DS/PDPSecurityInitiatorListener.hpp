@@ -21,7 +21,7 @@
 #define _DS_PDP_SECURITY_INITIATOR_LISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
 #include <mutex>
@@ -36,7 +36,7 @@ class PDP;
  * Class PDPSecurityInitiatorListener, implementation for the secure discovery server handshake initiator.
  * @ingroup DISCOVERY_MODULE
  */
-class PDPSecurityInitiatorListener : public ReaderListener
+class PDPSecurityInitiatorListener : public PDPListener
 {
 
     using SecurityInitiatedCallback = std::function<void (const ParticipantProxyData& participant_data)>;
@@ -52,34 +52,14 @@ public:
 
     virtual ~PDPSecurityInitiatorListener() override = default;
 
-    /**
-     * New added cache
-     * @param reader
-     * @param change
-     */
-    void onNewCacheChangeAdded(
-            RTPSReader* reader,
-            const CacheChange_t* const change) override;
-
 protected:
 
-    /**
-     * Get the key of a CacheChange_t
-     * @param change Pointer to the CacheChange_t
-     * @return True on success
-     */
-    bool get_key(
-            CacheChange_t* change);
-
-    //!Pointer to the associated mp_SPDP;
-    PDP* parent_pdp_;
-
-    /**
-     * @brief Temporary data to avoid reallocations.
-     *
-     * @remarks This should be always accessed with the pdp_reader lock taken
-     */
-    ParticipantProxyData temp_participant_data_;
+    void process_alive_data(
+            ParticipantProxyData* old_data,
+            ParticipantProxyData& new_data,
+            GUID_t& writer_guid,
+            RTPSReader* reader,
+            std::unique_lock<std::recursive_mutex>& lock) override;
 
     //! What action to perform upon participant discovery
     SecurityInitiatedCallback response_cb_;
