@@ -115,7 +115,6 @@ private:
     eprosima::fastrtps::types::DynamicType_ptr disc_type_;
     eprosima::fastdds::dds::DataReaderQos reader_qos;
     bool using_typelookup_;
-    bool tls_callback_called_;
     std::string topic_name_;
     const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos_;
     const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos_;

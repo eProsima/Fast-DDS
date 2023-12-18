@@ -120,8 +120,6 @@ private:
 
     bool using_typelookup_;
 
-    bool tls_callback_called_;
-
     std::mutex m_mDiscovery;
 
     std::mutex mtx_type_discovery_;
