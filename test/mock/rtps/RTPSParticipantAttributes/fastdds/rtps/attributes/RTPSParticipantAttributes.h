@@ -38,6 +38,7 @@
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -494,6 +495,28 @@ public:
     void setup_transports(
             fastdds::rtps::BuiltinTransports /*transports*/)
     {
+        // Only include UDPv4 behavior for mock tests
+        setup_transports_default(*this);
+        useBuiltinTransports = false;
+    }
+
+    static void setup_transports_default(
+            RTPSParticipantAttributes& att)
+    {
+        auto descriptor = create_udpv4_transport(att);
+
+        att.userTransports.push_back(descriptor);
+    }
+
+    static std::shared_ptr<fastrtps::rtps::UDPv4TransportDescriptor> create_udpv4_transport(
+            const RTPSParticipantAttributes& att)
+    {
+        auto descriptor = std::make_shared<fastrtps::rtps::UDPv4TransportDescriptor>();
+        descriptor->sendBufferSize = att.sendSocketBufferSize;
+        descriptor->receiveBufferSize = att.listenSocketBufferSize;
+        descriptor->default_reception_threads(att.builtin_transports_reception_threads);
+
+        return descriptor;
     }
 
     /**
