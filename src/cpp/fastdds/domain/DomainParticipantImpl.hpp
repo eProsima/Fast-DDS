@@ -565,14 +565,6 @@ protected:
 
     TopicQos default_topic_qos_;
 
-    // Mutex for requests and callbacks maps.
-    std::mutex mtx_request_cb_;
-
-
-    // Relationship between child and parent request
-    std::map<fastrtps::rtps::SampleIdentity, fastrtps::rtps::SampleIdentity> child_requests_;
-
-
     std::atomic<uint32_t> id_counter_;
 
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener

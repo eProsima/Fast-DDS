@@ -137,6 +137,9 @@ public:
         {
         }
 
+        //TODO(Xtypes)
+        // Add new discovery methods
+
         TestSubscriber* parent_;
         std::atomic<bool> discovered_;
 
