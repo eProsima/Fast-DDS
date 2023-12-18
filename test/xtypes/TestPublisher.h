@@ -144,7 +144,7 @@ private:
 
     class PartListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
-public:
+    public:
 
         PartListener(
                 TestPublisher* parent)
@@ -157,28 +157,15 @@ public:
         {
         }
 
-        void on_type_discovery(
-                eprosima::fastdds::dds::DomainParticipant* participant,
-                const eprosima::fastrtps::rtps::SampleIdentity& request_sample_id,
-                const eprosima::fastrtps::string_255& topic,
-                const eprosima::fastrtps::types::TypeIdentifier* identifier,
-                const eprosima::fastrtps::types::TypeObject* object,
-                eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
-
-        void on_type_information_received(
-                eprosima::fastdds::dds::DomainParticipant* participant,
-                const eprosima::fastrtps::string_255 topic_name,
-                const eprosima::fastrtps::string_255 type_name,
-                const eprosima::fastrtps::types::TypeInformation& type_information) override;
-
         TestPublisher* parent_;
         std::atomic<bool> discovered_;
 
-    } part_listener_;
+    }
+    part_listener_;
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener()
         {
@@ -197,7 +184,8 @@ public:
 
         TestPublisher* mParent;
         int n_matched;
-    } m_pubListener;
+    }
+    m_pubListener;
 
     void runThread();
 };

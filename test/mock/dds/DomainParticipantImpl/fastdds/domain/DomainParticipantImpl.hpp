@@ -576,14 +576,6 @@ public:
         return rtps_participant_->get_resource_event();
     }
 
-    ReturnCode_t register_remote_type(
-            const fastrtps::types::TypeInformation& /*type_information*/,
-            const std::string& /*type_name*/,
-            std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& /*callback*/)
-    {
-        return RETCODE_OK;
-    }
-
     virtual void disable()
     {
         rtps_listener_.participant_ = nullptr;

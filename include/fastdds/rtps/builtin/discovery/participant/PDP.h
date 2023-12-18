@@ -542,22 +542,6 @@ private:
     void check_remote_participant_liveliness(
             ParticipantProxyData* remote_participant);
 
-    void check_and_notify_type_discovery(
-            RTPSParticipantListener* listener,
-            const WriterProxyData& wdata) const;
-
-    void check_and_notify_type_discovery(
-            RTPSParticipantListener* listener,
-            const ReaderProxyData& rdata) const;
-
-    void check_and_notify_type_discovery(
-            RTPSParticipantListener* listener,
-            const string_255& topic_name,
-            const string_255& type_name,
-            const types::TypeIdentifier* type_id,
-            const types::TypeObject* type_obj,
-            const xtypes::TypeInformationParameter* type_info) const;
-
     /**
      * Calculates the next announcement interval
      */

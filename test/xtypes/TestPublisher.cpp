@@ -248,43 +248,6 @@ void TestPublisher::PubListener::on_publication_matched(
     }
 }
 
-void TestPublisher::PartListener::on_type_discovery(
-        eprosima::fastdds::dds::DomainParticipant*,
-        const rtps::SampleIdentity&,
-        const eprosima::fastrtps::string_255& topic,
-        const eprosima::fastrtps::types::TypeIdentifier*,
-        const eprosima::fastrtps::types::TypeObject*,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
-{
-    if (!parent_->using_typelookup_ || parent_->tls_callback_called_)
-    {
-        std::cout << "Discovered type: " << dyn_type->get_name() << " on topic: " << topic << std::endl;
-        std::lock_guard<std::mutex> lock(parent_->mtx_type_discovery_);
-        discovered_ = true;
-        parent_->disc_type_ = dyn_type;
-        parent_->cv_type_discovery_.notify_one();
-    }
-}
-
-void TestPublisher::PartListener::on_type_information_received(
-        eprosima::fastdds::dds::DomainParticipant*,
-        const eprosima::fastrtps::string_255 topic_name,
-        const eprosima::fastrtps::string_255 type_name,
-        const eprosima::fastrtps::types::TypeInformation& type_information)
-{
-    std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-            [this, topic_name](const std::string&, const types::DynamicType_ptr type)
-            {
-                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
-                parent_->tls_callback_called_ = true;
-                on_type_discovery(nullptr, rtps::SampleIdentity(), topic_name, nullptr, nullptr, type);
-                parent_->tls_callback_called_ = false;
-            };
-
-    std::cout << "Received type information: " << type_name << " on topic: " << topic_name << std::endl;
-    parent_->mp_participant->register_remote_type(type_information, type_name.to_string(), callback);
-}
-
 void TestPublisher::runThread()
 {
     int iPrevCount = 0;

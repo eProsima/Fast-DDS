@@ -827,28 +827,6 @@ public:
     RTPS_DllAPI fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
     /**
-     * Helps the user to solve all dependencies calling internally to the type lookup service and
-     * registers the resulting dynamic type.
-     * The registration may be perform asynchronously, case in which the user will be notified
-     * through the given callback, which receives the type_name as unique argument.
-     *
-     * @param type_information
-     * @param type_name
-     * @param callback
-     * @return RETCODE_OK If the given type_information is enough to build the type without using
-     *         the typelookup service (callback will not be called).
-     * @return RETCODE_OK if the given type is already available (callback will not be called).
-     * @return RETCODE_NO_DATA if type is not available yet (the callback will be called if
-     *         negotiation is success, and ignored in other case).
-     * @return RETCODE_NOT_ENABLED if the DomainParticipant is not enabled.
-     * @return RETCODE_PRECONDITION_NOT_MET if the DomainParticipant type lookup service is disabled.
-     */
-    RTPS_DllAPI ReturnCode_t register_remote_type(
-            const fastrtps::types::TypeInformation& type_information,
-            const std::string& type_name,
-            std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
-
-    /**
      * Register a custom content filter factory, which can be used to create a ContentFilteredTopic.
      *
      * DDS specifies a SQL-like content filter to be used by content filtered topics.

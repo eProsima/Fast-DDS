@@ -483,14 +483,6 @@ fastrtps::rtps::ResourceEvent& DomainParticipant::get_resource_event() const
     return impl_->get_resource_event();
 }
 
-ReturnCode_t DomainParticipant::register_remote_type(
-        const fastrtps::types::TypeInformation& type_information,
-        const std::string& type_name,
-        std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback)
-{
-    return impl_->register_remote_type(type_information, type_name, callback);
-}
-
 bool DomainParticipant::has_active_entities()
 {
     return impl_->has_active_entities();
