@@ -35,6 +35,8 @@
 #include <rtps/transport/UDPv4Transport.h>
 #include <rtps/transport/UDPv6Transport.h>
 #include <rtps/transport/test_UDPv4Transport.h>
+#include <rtps/transport/TCPv4Transport.h>
+#include <rtps/transport/TCPv6Transport.h>
 
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -544,22 +546,94 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
     RemoteServerList_t& server_list = client_att.builtin.discovery_config.m_DiscoveryServers;
     if (load_environment_server_info(server_list) && server_list.empty())
     {
-        // it's not an error, the environment variable may not be set. Any issue with environment
+        // It's not an error, the environment variable may not be set. Any issue with environment
         // variable syntax is EPROSIMA_LOG_ERROR already
         return nullptr;
     }
 
-    // check if some server requires the UDPv6 transport
+    // Check if some server requires the UDPv6, TCPv4 or TCPv6 transport
     for (auto& server : server_list)
     {
         if (server.requires_transport<LOCATOR_KIND_UDPv6>())
         {
-            // extend builtin transports with the UDPv6 transport
+            // Extend builtin transports with the UDPv6 transport
             auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
             descriptor->sendBufferSize = client_att.sendSocketBufferSize;
             descriptor->receiveBufferSize = client_att.listenSocketBufferSize;
             client_att.userTransports.push_back(std::move(descriptor));
             break;
+        }
+        if (server.requires_transport<LOCATOR_KIND_TCPv4>())
+        {
+            // Check if a TCPv4 transport exists. Otherwise create it
+            fastdds::rtps::TCPTransportDescriptor* pT = nullptr;
+            std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> p4;
+            bool no_tcpv4 = true;
+
+            for (auto sp : client_att.userTransports)
+            {
+                pT = dynamic_cast<fastdds::rtps::TCPTransportDescriptor*>(sp.get());
+
+                if (pT != nullptr)
+                {
+                    if (!p4)
+                    {
+                        if ((p4 = std::dynamic_pointer_cast<fastdds::rtps::TCPv4TransportDescriptor>(sp)))
+                        {
+                            // TCPv4 transport already exists
+                            no_tcpv4 = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (no_tcpv4)
+            {
+                // Extend builtin transports with the TCPv4 transport
+                auto descriptor = std::make_shared<fastdds::rtps::TCPv4TransportDescriptor>();
+                // Add automatic port
+                descriptor->add_listener_port(0);
+                descriptor->sendBufferSize = client_att.sendSocketBufferSize;
+                descriptor->receiveBufferSize = client_att.listenSocketBufferSize;
+                client_att.userTransports.push_back(std::move(descriptor));
+            }
+
+        }
+        if (server.requires_transport<LOCATOR_KIND_TCPv6>())
+        {
+            // Check if a TCPv6 transport exists. Otherwise create it
+            fastdds::rtps::TCPTransportDescriptor* pT = nullptr;
+            std::shared_ptr<fastdds::rtps::TCPv6TransportDescriptor> p6;
+            bool no_tcpv6 = true;
+
+            for (auto sp : client_att.userTransports)
+            {
+                pT = dynamic_cast<fastdds::rtps::TCPTransportDescriptor*>(sp.get());
+
+                if (pT != nullptr)
+                {
+                    if (!p6)
+                    {
+                        // try to find a descriptor matching the listener port setup
+                        if ((p6 = std::dynamic_pointer_cast<fastdds::rtps::TCPv6TransportDescriptor>(sp)))
+                        {
+                            // TCPv6 transport already exists
+                            no_tcpv6 = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (no_tcpv6)
+            {
+                // Extend builtin transports with the TCPv6 transport
+                auto descriptor = std::make_shared<fastdds::rtps::TCPv6TransportDescriptor>();
+                // Add automatic port
+                descriptor->add_listener_port(0);
+                descriptor->sendBufferSize = client_att.sendSocketBufferSize;
+                descriptor->receiveBufferSize = client_att.listenSocketBufferSize;
+                client_att.userTransports.push_back(std::move(descriptor));
+            }
         }
     }
 
@@ -579,13 +653,13 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
     RTPSParticipant* part = createParticipant(domain_id, enabled, client_att, listen);
     if (nullptr != part)
     {
-        // client successfully created
+        // Client successfully created
         EPROSIMA_LOG_INFO(DOMAIN, "Auto default server-client setup. Default client created.");
         part->mp_impl->client_override(true);
         return part;
     }
 
-    // unable to create auto server-client default participants
+    // Unable to create auto server-client default participants
     EPROSIMA_LOG_ERROR(DOMAIN, "Auto default server-client setup. Unable to create the client.");
     return nullptr;
 }
