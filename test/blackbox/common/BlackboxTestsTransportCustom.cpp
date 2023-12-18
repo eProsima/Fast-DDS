@@ -388,7 +388,11 @@ TEST(ChainingTransportTests, builtin_transports_env_var_test)
     for (auto test_transport : bt_list)
     {
         {
-            setenv(env_var_name.c_str(), test_transport.c_str(), 1);
+            #ifdef _WIN32
+                _putenv_s(env_var_name.c_str(), test_transport.c_str());
+            #else
+                setenv(env_var_name.c_str(), test_transport.c_str(), 1);
+            #endif // _WIN32
 
             PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
             PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -421,7 +425,11 @@ TEST(ChainingTransportTests, builtin_transports_env_var_test)
     }
 
     std::string value("NONE");
-    setenv(env_var_name.c_str(), value.c_str(), 1);
+#ifdef _WIN32
+        _putenv_s(env_var_name.c_str(), value.c_str());
+#else
+        setenv(env_var_name.c_str(), value.c_str(), 1);
+#endif // _WIN32
 
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
