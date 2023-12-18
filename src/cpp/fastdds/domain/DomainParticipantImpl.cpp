@@ -1467,7 +1467,7 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
         const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(dpst->getName());
         if (id == nullptr)
         {
-            std::map<MemberId, DynamicTypeMember*> membersMap;
+            std::map<MemberId, fastrtps::types::DynamicTypeMember*> membersMap;
             dpst->GetDynamicType()->get_all_members(membersMap);
             std::vector<const MemberDescriptor*> members;
             for (auto it : membersMap)
