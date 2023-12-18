@@ -35,6 +35,7 @@ The following list of features are planned to be addressed in the medium term, t
 release(s) generated in the next **9 months** after next planned release:
 
 * Tier 1 support for QNX platforms
+* Tier 1 support for Android platforms
 * Support for Time-based filter QoS
 * Service aware DataWriter
 
