@@ -389,6 +389,22 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received_impl(
     }
 }
 
+void TypeLookupManager::notify_callbacks(
+        xtypes::TypeIdentfierWithSize type_identifier_with_size)
+{
+    // Check that type is not solved
+    auto callbacks_it = async_get_type_callbacks_.find(type_identifier_with_size);
+    if (callbacks_it != async_get_type_callbacks_.end())
+    {
+        for (AsyncGetTypeCallback& callback : callbacks_it->second)
+        {
+            callback();
+        }
+        // Erase the solved TypeIdentfierWithSize
+        remove_async_get_type_callback(type_identifier_with_size);
+    }
+}
+
 bool TypeLookupManager::add_async_get_type_request(
         const SampleIdentity& request,
         const xtypes::TypeIdentfierWithSize& type_identifier_with_size)
@@ -443,6 +459,23 @@ bool TypeLookupManager::remove_async_get_type_callback(
         // Log any exception that might occur during erasure
         EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
                 "Error in TypeLookupManager::remove_async_get_type_callback: " << e.what());
+        return false;
+    }
+}
+
+bool TypeLookupManager::remove_async_get_types_request(
+        SampleIdentity request)
+{
+    std::unique_lock<std::mutex> lock(async_get_types_mutex_);
+    try
+    {
+        async_get_type_requests_.erase(request);
+        return true;
+    }
+    catch (const std::exception& e)
+    {
+        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
+                "Error in TypeLookupManager::remove_async_get_types_request: " << e.what());
         return false;
     }
 }
