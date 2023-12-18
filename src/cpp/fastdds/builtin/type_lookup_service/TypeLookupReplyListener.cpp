@@ -28,15 +28,14 @@
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/RTPSDomainImpl.hpp>
 
 
 using eprosima::fastrtps::rtps::RTPSReader;
 using eprosima::fastrtps::rtps::CacheChange_t;
 using eprosima::fastdds::dds::Log;
-
 using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
 
-using namespace eprosima::fastrtps::types;
 
 namespace eprosima {
 namespace fastdds {
@@ -51,6 +50,63 @@ TypeLookupReplyListener::TypeLookupReplyListener(
 
 TypeLookupReplyListener::~TypeLookupReplyListener()
 {
+}
+
+void TypeLookupReplyListener::check_get_types_reply(
+        SampleIdentity request_id,
+        const TypeLookup_getTypes_Out& reply)
+{
+    // Check if we were waiting that reply SampleIdentity
+    auto requests_it = typelookup_manager_->async_get_type_requests_.find(request_id);
+    if (requests_it != typelookup_manager_->async_get_type_requests_.end())
+    {
+        for (xtypes::TypeIdentifierTypeObjectPair pair : reply.types())
+        {
+            if (RETCODE_OK == fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                            register_type_object(pair.type_identifier(), pair.type_object()))
+            {
+                typelookup_manager_->notify_callbacks(requests_it->second);
+            }
+        }
+        // Erase the processed SampleIdentity
+        typelookup_manager_->remove_async_get_types_request(request_id);
+    }
+}
+
+void TypeLookupReplyListener::check_get_type_dependencies_reply(
+        SampleIdentity request_id,
+        const TypeLookup_getTypeDependencies_Out& reply)
+{
+    // Check if we were waiting that reply SampleIdentity
+    auto requests_it = typelookup_manager_->async_get_type_requests_.find(request_id);
+    if (requests_it != typelookup_manager_->async_get_type_requests_.end())
+    {
+        bool are_dependencies_solved = true;
+        for (xtypes::TypeIdentfierWithSize type_id : reply.dependent_typeids())
+        {
+            ReturnCode_t solve_ret = typelookup_manager_->check_type_identifier_received(type_id);
+            if (RETCODE_OK != solve_ret)
+            {
+                are_dependencies_solved = false;
+            }
+        }
+
+        // If all dependencies are known, ask for the parent type
+        if (are_dependencies_solved)
+        {
+            xtypes::TypeIdentifierSeq uknown_type;
+            uknown_type.push_back(requests_it->second.type_id());
+
+            SampleIdentity get_types_request = typelookup_manager_->get_types(uknown_type);
+            if (builtin::INVALID_SAMPLE_IDENTITY != get_types_request)
+            {
+                // Store the sent request and associated TypeIdentfierWithSize
+                typelookup_manager_->add_async_get_type_request(get_types_request, requests_it->second);
+            }
+        }
+        // Erase the processed SampleIdentity
+        typelookup_manager_->remove_async_get_types_request(request_id);
+    }
 }
 
 void TypeLookupReplyListener::onNewCacheChangeAdded(
@@ -73,35 +129,14 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
         {
             case TypeLookup_getTypes_HashId:
             {
-                const TypeLookup_getTypes_Out types = reply.return_value().getType().result();
-                for (auto pair : types.types())
-                {
-                    if (pair.type_object()._d() == EK_COMPLETE) // Just in case
-                    {
-                        // TODO (adelcampo) Change to xtypes with TypeObjectRegistry
-                        // If build_dynamic_type failed, just sent the nullptr already contained on it.
-                        // tlm_->participant_->getListener()->on_type_discovery(
-                        //     tlm_->participant_->getUserRTPSParticipant(),
-                        //     reply.header.requestId,
-                        //     "", // No topic_name available
-                        //     &pair.type_identifier(),
-                        //     &pair.type_object(),
-                        //     DynamicType_ptr(nullptr));
-                    }
-                }
-                // TODO Call a callback once the job is done
+                check_get_types_reply(reply.header().relatedRequestId(),
+                        reply.return_value().getType().result());
                 break;
             }
             case TypeLookup_getDependencies_HashId:
             {
-                //const TypeLookup_getTypeDependencies_Out dependencies =
-                //    reply.return_value.getTypeDependencies().result();
-
-                // TODO (adelcampo) Change to xtypes with TypeObjectRegistry
-                // tlm_->get_RTPS_participant()->getListener()->on_type_dependencies_reply(
-                //     tlm_->builtin_protocols_->mp_participantImpl->getUserRTPSParticipant(),
-                //     reply.header().relatedRequestId(),
-                //     reply.return_value().getTypeDependencies().result().dependent_typeids());
+                check_get_type_dependencies_reply(reply.header().relatedRequestId(),
+                        reply.return_value().getTypeDependencies().result());
                 break;
             }
             default:
