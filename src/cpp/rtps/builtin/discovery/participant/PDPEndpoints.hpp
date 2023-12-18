@@ -45,6 +45,8 @@ public:
      */
     virtual fastrtps::rtps::BuiltinEndpointSet_t builtin_endpoints() const = 0;
 
+    virtual const std::unique_ptr<fastrtps::rtps::ReaderListener>& main_listener() const = 0;
+
     virtual bool enable_pdp_readers(
             fastrtps::rtps::RTPSParticipantImpl* participant) = 0;
     virtual void disable_pdp_readers(

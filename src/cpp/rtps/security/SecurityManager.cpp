@@ -692,6 +692,11 @@ bool SecurityManager::discovered_participant(
         {
             return false;
         }
+
+        if (remote_participant_info->auth_status_ == AUTHENTICATION_FAILED)
+        {
+            remote_participant_info->auth_status_ = AUTHENTICATION_REQUEST_NOT_SEND;
+        }
     }
 
     bool returnedValue = true;
@@ -858,6 +863,7 @@ bool SecurityManager::on_process_handshake(
 
     if (ret == VALIDATION_FAILED)
     {
+        remote_participant_info->auth_status_ = AUTHENTICATION_FAILED;
         on_validation_failed(participant_data, exception);
         return false;
     }
@@ -4192,9 +4198,13 @@ void SecurityManager::resend_handshake_message_token(
         {
             if (remote_participant_info->handshake_requests_sent_ >= DiscoveredParticipantInfo::MAX_HANDSHAKE_REQUESTS)
             {
-                SecurityException exception;
-                remote_participant_info->event_->cancel_timer();
-                on_validation_failed(dp_it->second->participant_data(), exception);
+                if (remote_participant_info->auth_status_ != AUTHENTICATION_FAILED)
+                {
+                    SecurityException exception;
+                    remote_participant_info->event_->cancel_timer();
+                    remote_participant_info->auth_status_ = AUTHENTICATION_FAILED;
+                    on_validation_failed(dp_it->second->participant_data(), exception);
+                }
             }
             else
             {
