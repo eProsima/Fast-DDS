@@ -50,9 +50,6 @@ namespace fastdds {
 namespace dds {
 namespace builtin {
 
-const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
-
-
 TypeLookupManager::TypeLookupManager()
 {
 }
@@ -236,10 +233,10 @@ void TypeLookupManager::remove_remote_endpoints(
     }
 }
 
-fastrtps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies(
+SampleIdentity TypeLookupManager::get_type_dependencies(
         const xtypes::TypeIdentifierSeq& id_seq) const
 {
-    fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
+    SampleIdentity id = builtin::INVALID_SAMPLE_IDENTITY;
 
     TypeLookup_getTypeDependencies_In in;
     in.type_ids() = id_seq;
@@ -249,16 +246,16 @@ fastrtps::rtps::SampleIdentity TypeLookupManager::get_type_dependencies(
 
     if (send_request(*request))
     {
-        id = get_rtps_sample_identity(request->header().requestId());
+        id = request->header().requestId();
     }
     type.deleteData(request);
     return id;
 }
 
-fastrtps::rtps::SampleIdentity TypeLookupManager::get_types(
+SampleIdentity TypeLookupManager::get_types(
         const xtypes::TypeIdentifierSeq& id_seq) const
 {
-    fastrtps::rtps::SampleIdentity id = INVALID_SAMPLE_IDENTITY;
+    SampleIdentity id = builtin::INVALID_SAMPLE_IDENTITY;
 
     TypeLookup_getTypes_In in;
     in.type_ids() = id_seq;
@@ -268,95 +265,118 @@ fastrtps::rtps::SampleIdentity TypeLookupManager::get_types(
 
     if (send_request(*request))
     {
-        id = get_rtps_sample_identity(request->header().requestId());
+        id = request->header().requestId();
     }
     type.deleteData(request);
     return id;
 }
 
 ReturnCode_t TypeLookupManager::async_get_type(
-        xtypes::TypeInformation typeinformation,
+        xtypes::TypeInformation type_inf,
         fastrtps::rtps::GuidPrefix_t type_server,
         AsyncGetTypeCallback& callback)
 {
     (void) type_server;
+    // Lock the mutex to ensure exclusive access to the callbacks map
+    std::lock_guard<std::mutex> lock(async_get_types_mutex_);
 
-    if (solve_types(typeinformation) && solve_dependencies(typeinformation))
+    if (solve_type(type_inf))
     {
+        // The type is already known, invoke the callback and return success
         callback();
-        return RETCODE_UNSUPPORTED;
+        return RETCODE_OK;
+    }
+
+    // Check if TypeInformation already exists in the map
+    auto it = async_get_types_callbacks_.find(type_inf);
+    if (it != async_get_types_callbacks_.end())
+    {
+        // TypeInformation exists, add the callback
+        it->second.push_back(callback);
     }
     else
     {
-        // Check if TypeInformation already exists in the map
-        auto it = async_get_types_callbacks_.find(typeinformation);
-
-        if (it != async_get_types_callbacks_.end())
-        {
-            // TypeInformation exists, add the callback to the vector
-            it->second.push_back(callback);
-        }
-        else
-        {
-            // TypeInformation doesn't exist, create a new vector with the callback
-            std::vector<AsyncGetTypeCallback> cbs_vector;
-            cbs_vector.push_back(callback);
-            async_get_types_callbacks_[typeinformation] = cbs_vector;
-        }
+        // TypeInformation doesn't exist, create a new entry
+        async_get_types_callbacks_.emplace(type_inf, std::vector<AsyncGetTypeCallback>{std::move(callback)});
     }
-    return RETCODE_UNSUPPORTED;
+    return RETCODE_NO_DATA;
 }
 
-bool TypeLookupManager::solve_dependencies(
-        xtypes::TypeInformation typeinformation)
+ReturnCode_t TypeLookupManager::solve_type(
+        xtypes::TypeInformation type_inf)
 {
-    xtypes::TypeIdentifierSeq uknown_dependencies;
-    for (const xtypes::TypeIdentfierWithSize& typeid_ws : typeinformation.complete().dependent_typeids())
+    xtypes::TypeIdentifierSeq uknown_types;
+
+    // Check if the TypeObject is known
+    xtypes::TypeObject object;
+    ReturnCode_t object_ret = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                    get_type_object(type_inf.complete().typeid_with_size().type_id(), object);
+    if (RETCODE_NO_DATA == object_ret)
     {
-        // Check that we don't know that dependency
+        uknown_types.push_back(type_inf.complete().typeid_with_size().type_id());
+    }
+    else if (RETCODE_PRECONDITION_NOT_MET == object_ret)
+    {
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    xtypes::TypeIdentifierSeq uknown_dependencies;
+    for (const xtypes::TypeIdentfierWithSize& typeid_ws : type_inf.complete().dependent_typeids())
+    {
+        // Check if each dependent TypeIdentifier is known
         if (!fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().is_type_identifier_known(
                     typeid_ws.type_id()))
         {
             uknown_dependencies.push_back(typeid_ws.type_id());
         }
-    }
 
-    fastrtps::rtps::SampleIdentity request_dependencies;
-    if (!uknown_dependencies.empty())
-    {
-        request_dependencies = get_type_dependencies(uknown_dependencies);
-        if (builtin::INVALID_SAMPLE_IDENTITY != request_dependencies)
+        // Check if the TypeObject for each dependency is known
+        ReturnCode_t object_ret = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                        get_type_object(typeid_ws.type_id(), object);
+        if (RETCODE_NO_DATA == object_ret)
         {
-            // Check if TypeInformation already exists in the map
-            auto it = get_types_dependencies_requests_.find(typeinformation);
-
-            if (it != get_types_dependencies_requests_.end())
-            {
-                // TypeInformation exists, add the request to the vector
-                it->second.push_back(request_dependencies);
-            }
-            else
-            {
-                // TypeInformation doesn't exist, create a new vector with the request
-                std::vector<fastrtps::rtps::SampleIdentity> requests_vector;
-                requests_vector.push_back(request_dependencies);
-                get_types_dependencies_requests_[typeinformation] = requests_vector;
-            }
+            uknown_types.push_back(typeid_ws.type_id());
+        }
+        else if (RETCODE_PRECONDITION_NOT_MET == object_ret)
+        {
+            return RETCODE_PRECONDITION_NOT_MET;
         }
     }
-    return uknown_dependencies.empty();
-}
 
-bool TypeLookupManager::solve_types(
-        xtypes::TypeInformation typeinformation)
-{
-    xtypes::TypeIdentifierSeq uknown_type;
-    if (!fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().is_type_identifier_known(
-                typeinformation.complete().typeid_with_size().type_id()))
+    // If there are uknown TypeObject, send request
+    if (!uknown_types.empty())
     {
-        uknown_type.push_back(typeinformation.complete().typeid_with_size().type_id());
+        SampleIdentity get_types_request = get_types(uknown_types);
+        if (builtin::INVALID_SAMPLE_IDENTITY != get_types_request)
+        {
+            // Store the sent request and associated TypeInformation
+            sent_requests_.emplace(get_types_request, type_inf);
+        }
+        else
+        {
+            // Failed to get_types, return error
+            return RETCODE_ERROR;
+        }
     }
-    return uknown_type.empty();
+
+    // If there are uknown dependencies, send request
+    if (!uknown_dependencies.empty())
+    {
+        SampleIdentity get_type_dependencies_request = get_type_dependencies(uknown_dependencies);
+        if (builtin::INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
+        {
+            // Store the sent request and associated TypeInformation
+            sent_requests_.emplace(get_type_dependencies_request, type_inf);
+        }
+        else
+        {
+            // Failed to get_type_dependencies, return error
+            return RETCODE_ERROR;
+        }
+    }
+
+    // If there are no unknown types or dependencies, return success
+    return (uknown_types.empty() && uknown_dependencies.empty()) ? RETCODE_OK : RETCODE_NO_DATA;
 }
 
 bool TypeLookupManager::create_endpoints()

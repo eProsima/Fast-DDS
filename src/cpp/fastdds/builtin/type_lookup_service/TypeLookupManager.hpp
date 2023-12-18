@@ -20,9 +20,9 @@
 #ifndef _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
 #define _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
 
-#include <vector>
 #include <mutex>
 #include <unordered_map>
+#include <vector>
 
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -44,6 +44,37 @@ struct hash<eprosima::fastdds::dds::xtypes::TypeInformation>
         return (static_cast<size_t>(k.complete().typeid_with_size().type_id().equivalence_hash()[0]) << 16) |
                (static_cast<size_t>(k.complete().typeid_with_size().type_id().equivalence_hash()[1]) << 8) |
                (static_cast<size_t>(k.complete().typeid_with_size().type_id().equivalence_hash()[2]));
+    }
+
+};
+
+template <>
+struct hash<eprosima::fastdds::dds::SampleIdentity>
+{
+    std::size_t operator ()(
+            const eprosima::fastdds::dds::SampleIdentity& k) const
+    {
+        std::size_t hash_value = 0;
+
+        // Hash m_writer_guid
+        for (const auto& byte : k.writer_guid().guidPrefix())
+        {
+            hash_value ^= std::hash<uint8_t>{}(byte);
+        }
+
+        hash_value ^= std::hash<uint8_t>{}(k.writer_guid().entityId().entityKind());
+
+        // Hash m_entityKey of m_writer_guid's EntityId_t
+        for (const auto& byte : k.writer_guid().entityId().entityKey())
+        {
+            hash_value ^= std::hash<uint8_t>{}(byte);
+        }
+
+        // Hash m_sequence_number
+        hash_value ^= std::hash<int32_t>{}(k.sequence_number().high());
+        hash_value ^= std::hash<uint32_t>{}(k.sequence_number().low());
+
+        return hash_value;
     }
 
 };
@@ -70,7 +101,7 @@ namespace fastdds {
 namespace dds {
 namespace builtin {
 
-extern const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
+const SampleIdentity INVALID_SAMPLE_IDENTITY;
 
 using AsyncGetTypeCallback = std::function<void ()>;
 
@@ -170,7 +201,7 @@ public:
      * @param id_seq[in] Sequence of TypeIdentifiers for which dependencies are needed.
      * @return The SampleIdentity of the request sended.
      */
-    fastrtps::rtps::SampleIdentity get_type_dependencies(
+    SampleIdentity get_type_dependencies(
             const xtypes::TypeIdentifierSeq& id_seq) const;
 
     /**
@@ -179,40 +210,35 @@ public:
      * @param id_seq[in] Sequence of TypeIdentifiers for which TypeObjects are to be retrieved.
      * @return The SampleIdentity of the request sended.
      */
-    fastrtps::rtps::SampleIdentity get_types(
+    SampleIdentity get_types(
             const xtypes::TypeIdentifierSeq& id_seq) const;
 
     /**
      * Use builtin TypeLookup service to solve the type and dependencies of a given TypeInformation.
      * It receives a callback that will be used to notify when the negotiation is complete.
-     * @param typeinformation[in] TypeInformation that requires solving.
+     * @param type_inf[in] TypeInformation that requires solving.
      * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
      * @param callback AsyncGetTypeCallback called when the negotiation is complete.
-     * @return ReturnCode_t RETCODE_OK if negotiation is correctly initiated.
-     *                      RETCODE_ERROR if negotiation can not be initiated.
-     *                      //TODO add more explicit ReturnCode_t
+     * @return ReturnCode_t RETCODE_OK if the type was known.
+     *                      RETCODE_NO_DATA if type was not known, and a negotiation was started.
+     *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not a direct hash.
+     *                      RETCODE_ERROR if any request was not sent correctly.
      */
     ReturnCode_t async_get_type(
-            xtypes::TypeInformation typeinformation,
+            xtypes::TypeInformation type_inf,
             fastrtps::rtps::GuidPrefix_t type_server,
             AsyncGetTypeCallback& callback);
 
 private:
 
     /**
-     * Solve get_type_dependencies
-     * @param typeinformation[in] typeinformation for which dependencies are needed.
-     * @return true if all dependencies are solved, false otherwise.
-     */
-    bool solve_dependencies(
-            xtypes::TypeInformation typeinformation);
-    /**
      * Solve get_types
-     * @param typeinformation[in] typeinformation for which TypeObjects are to be retrieved.
-     * @return true if type is solved, false otherwise.
+     * @param type_inf[in] TypeInformation for which TypeObjects are to be retrieved.
+     * @return ReturnCode_t RETCODE_OK if type was known.
+     *                      RETCODE_NO_DATA if negotiation can not be initiated.
      */
-    bool solve_types(
-            xtypes::TypeInformation typeinformation);
+    ReturnCode_t solve_type(
+            xtypes::TypeInformation type_inf);
 
     //! Aux method to send requests
     bool send_request(
@@ -286,7 +312,7 @@ private:
     //!Reply Listener object.
     TypeLookupReplyListener* reply_listener_ = nullptr;
 
-    //!Mutex to protect acces to temp_reader_proxy_data_ and temp_writer_proxy_data_
+    //!Mutex to protect access to temp_reader_proxy_data_ and temp_writer_proxy_data_
     std::mutex temp_data_lock_;
 
     //!Pointer to the temp ReaderProxyData used for assigments
@@ -299,9 +325,9 @@ private:
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
 
+    std::mutex async_get_types_mutex_;
     std::unordered_map<xtypes::TypeInformation, std::vector<AsyncGetTypeCallback>> async_get_types_callbacks_;
-    std::unordered_map<xtypes::TypeInformation,
-            std::vector<fastrtps::rtps::SampleIdentity>> get_types_dependencies_requests_;
+    std::unordered_map<SampleIdentity, xtypes::TypeInformation> sent_requests_;
 };
 
 } /* namespace builtin */
