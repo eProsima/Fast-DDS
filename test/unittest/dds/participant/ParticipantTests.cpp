@@ -56,7 +56,7 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/SystemInfo.hpp>
 
@@ -736,6 +736,56 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfiguration)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+}
+
+
+/**
+ * Test that a SIMPLE participant is transformed into a CLIENT if the variable ROS_SUPER_CLIENT is false and into a SUPERCLIENT if it's true.
+ * It also checks that the environment variable has priority over the coded QoS settings.
+ */
+TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
+{
+    set_environment_variable();
+
+#ifdef _WIN32
+    ASSERT_EQ(0, _putenv_s(rtps::ROS_SUPER_CLIENT, "false"));
+#else
+    ASSERT_EQ(0, setenv(rtps::ROS_SUPER_CLIENT, "false", 1));
+#endif // _WIN32
+
+    rtps::RemoteServerList_t output;
+    rtps::RemoteServerList_t qos_output;
+    expected_remote_server_list_output(output);
+
+    DomainParticipantQos qos;
+    set_participant_qos(qos, qos_output);
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+        0, qos);
+    ASSERT_NE(nullptr, participant);
+
+    fastrtps::rtps::RTPSParticipantAttributes attributes;
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
+    EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
+
+#ifdef _WIN32
+    ASSERT_EQ(0, _putenv_s(rtps::ROS_SUPER_CLIENT, "true"));
+#else
+    ASSERT_EQ(0, setenv(rtps::ROS_SUPER_CLIENT, "true", 1));
+#endif // _WIN32
+
+    DomainParticipant* participant_2 = DomainParticipantFactory::get_instance()->create_participant(
+        0, qos);
+    ASSERT_NE(nullptr, participant_2);
+
+    fastrtps::rtps::RTPSParticipantAttributes attributes_2;
+    get_rtps_attributes(participant_2, attributes_2);
+    EXPECT_EQ(attributes_2.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SUPER_CLIENT);
+    EXPECT_EQ(attributes_2.builtin.discovery_config.m_DiscoveryServers, output);
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_2));
 }
 
 /**
