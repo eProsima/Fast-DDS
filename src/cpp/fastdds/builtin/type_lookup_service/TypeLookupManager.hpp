@@ -226,7 +226,7 @@ private:
      * @param reply[out] TypeLookup_Reply after deserialize
      * @return true if the request is deserialized and the reply's recipient is us, false otherwise.
      */
-    bool receive_request(
+    bool receive_reply(
             fastrtps::rtps::CacheChange_t& change,
             TypeLookup_Reply& reply) const;
 
@@ -239,7 +239,7 @@ private:
         return participant_;
     }
 
-    //! Get out instanceName as defined in 7.6.3.3.4 the XTypes 1.3 document
+    //! Get instanceName as defined in 7.6.3.3.4 the XTypes 1.3 document
     std::string get_instanceName() const;
 
     /**
@@ -297,9 +297,14 @@ private:
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
 
+    //!Mutex to protect access to async_get_types_callbacks_ and async_get_types_requests_
     std::mutex async_get_types_mutex_;
+
+    //!Collection of all the callbacks related to a TypeInformation, hashed by its TypeInformation.
     std::unordered_map<xtypes::TypeInformation, std::vector<AsyncGetTypeCallback>> async_get_types_callbacks_;
-    std::unordered_map<SampleIdentity, xtypes::TypeInformation> sent_requests_;
+
+    //!Collection SampleIdentity and the TypeInformation it originated from, hashed by its SampleIdentity.
+    std::unordered_map<SampleIdentity, xtypes::TypeInformation> async_get_types_requests_;
 };
 
 } /* namespace builtin */

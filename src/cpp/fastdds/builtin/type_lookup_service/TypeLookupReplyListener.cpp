@@ -67,7 +67,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Received new cache change");
 
     TypeLookup_Reply reply;
-    if (typelookup_manager_->reply_reception(*change, reply))
+    if (typelookup_manager_->receive_reply(*change, reply))
     {
         switch (reply.return_value()._d())
         {

@@ -389,7 +389,7 @@ ReturnCode_t TypeLookupManager::solve_type(
         if (builtin::INVALID_SAMPLE_IDENTITY != get_types_request)
         {
             // Store the sent request and associated TypeInformation
-            sent_requests_.emplace(get_types_request, type_inf);
+            async_get_types_requests_.emplace(get_types_request, type_inf);
         }
         else
         {
@@ -405,7 +405,7 @@ ReturnCode_t TypeLookupManager::solve_type(
         if (builtin::INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
         {
             // Store the sent request and associated TypeInformation
-            sent_requests_.emplace(get_type_dependencies_request, type_inf);
+            async_get_types_requests_.emplace(get_type_dependencies_request, type_inf);
         }
         else
         {
@@ -675,7 +675,7 @@ bool TypeLookupManager::receive_request(
     return result;
 }
 
-bool TypeLookupManager::receive_request(
+bool TypeLookupManager::receive_reply(
         fastrtps::rtps::CacheChange_t& change,
         TypeLookup_Reply& reply) const
 {
