@@ -81,7 +81,7 @@ public:
      * @param[out] payload Pointer to the payload
      * @return True if correct.
      */
-    FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
+    // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
     RTPS_DllAPI virtual bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload) = 0;
