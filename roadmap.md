@@ -23,20 +23,19 @@ Disclaimer:
 The following list of features are planned to be addressed in the short term, and incorporated into the following
 minor release of the product:
 
-* Complete support for dynamic network interfaces
 * DDS-XTypes 1.3
-* Monitor service to keep track of discovery events.
-* Tier 1 support for QNX platforms.
-* Ignore local endpoints configured at endpoint level.
-* Thread configuration QoS.
-* Extend network interfaces to enable mask filtering.
-* Refactor whitelist feature to allowed and blocked network interfaces.
+* Ignore local endpoints configured at endpoint level
+* Refactor whitelist feature to allowed and blocked network interfaces
+* Extend network interfaces to enable mask filtering
+* Complete support for dynamic network interfaces
 
 ## Medium term
 
 The following list of features are planned to be addressed in the medium term, typically within the subsequent
 release(s) generated in the next **9 months** after next planned release:
 
+* Tier 1 support for QNX platforms
+* Tier 1 support for Android platforms
 * Support for Time-based filter QoS
 * Service aware DataWriter
 
