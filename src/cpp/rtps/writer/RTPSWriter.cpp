@@ -154,13 +154,14 @@ void RTPSWriter::deinit()
         {
             flow_controller_->remove_change(*it);
         }
-    }
-    for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
-    {
-        release_change(*it);
-    }
 
-    mp_history->m_changes.clear();
+        for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
+        {
+            release_change(*it);
+        }
+
+        mp_history->m_changes.clear();
+    }
     flow_controller_->unregister_writer(this);
 }
 
