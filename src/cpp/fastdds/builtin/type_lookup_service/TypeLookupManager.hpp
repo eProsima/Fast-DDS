@@ -105,55 +105,6 @@ const SampleIdentity INVALID_SAMPLE_IDENTITY;
 
 using AsyncGetTypeCallback = std::function<void ()>;
 
-inline SequenceNumber_t get_sequence_number_from_rtps(
-        fastrtps::rtps::SequenceNumber_t seq_number)
-{
-    SequenceNumber_t dds_seq_number;
-    dds_seq_number.low() = seq_number.low;
-    dds_seq_number.high() = seq_number.high;
-
-    return dds_seq_number;
-}
-
-inline GUID_t get_guid_from_rtps(
-        const fastrtps::rtps::GUID_t& rtps_guid)
-{
-    GUID_t guid;
-    std::memcpy(guid.guidPrefix().data(), rtps_guid.guidPrefix.value, 12);
-    for (size_t i = 0; i < 3; i++)
-    {
-        guid.entityId().entityKey()[i] = rtps_guid.entityId.value[i + 1];
-    }
-    guid.entityId().entityKind() = rtps_guid.entityId.value[0];
-
-    return guid;
-}
-
-inline fastrtps::rtps::GUID_t get_rtps_guid(
-        const GUID_t& guid)
-{
-    fastrtps::rtps::GUID_t rtps_guid;
-    std::memcpy(rtps_guid.guidPrefix.value, guid.guidPrefix().data(), 12);
-    for (size_t i = 0; i < 3; i++)
-    {
-        rtps_guid.entityId.value[i + 1] = guid.entityId().entityKey()[i];
-    }
-    rtps_guid.entityId.value[0] = guid.entityId().entityKind();
-
-    return rtps_guid;
-}
-
-inline fastrtps::rtps::SampleIdentity get_rtps_sample_identity(
-        const SampleIdentity& sampleid)
-{
-    fastrtps::rtps::SampleIdentity rtps_sampleid;
-    rtps_sampleid.writer_guid(get_rtps_guid(sampleid.writer_guid()));
-    rtps_sampleid.sequence_number().high = sampleid.sequence_number().high();
-    rtps_sampleid.sequence_number().low = sampleid.sequence_number().low();
-
-    return rtps_sampleid;
-}
-
 /**
  * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.3 specification.
  * @ingroup XTYPES
@@ -232,29 +183,50 @@ public:
 private:
 
     /**
-     * Solve get_types
-     * @param type_inf[in] TypeInformation for which TypeObjects are to be retrieved.
+     * Checks if the dependencies and TypeObject fot a given TypeInformation are known by the TypeObjectRegistry.
+     * Uses get_type_dependencies() and get_types() to get those that are not known.
+     * @param type_inf[in] TypeInformation to check.
      * @return ReturnCode_t RETCODE_OK if type was known.
-     *                      RETCODE_NO_DATA if negotiation can not be initiated.
+     *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not a direct hash.
+     *                      RETCODE_ERROR if any request was not sent correctly.
      */
     ReturnCode_t solve_type(
             xtypes::TypeInformation type_inf);
 
-    //! Aux method to send requests
+    /**
+     * Complete requests common fields, create CacheChange, serialize request and add change to writer history.
+     * @param request[in] TypeLookup_Request to be send.
+     * @return true if request was sent, false otherwise.
+     */
     bool send_request(
             TypeLookup_Request& request) const;
 
-    //! Aux method to send replies
+    /**
+     * Complete reply common fields, create CacheChange, serialize request and add change to writer history.
+     * @param reply[in] TypeLookup_Reply to be send.
+     * @return The SampleIdentity of the request sended.
+     * @return true if reply was sent, false otherwise.
+     */
     bool send_reply(
             TypeLookup_Reply& reply) const;
 
-    //! Aux method to received requests
-    bool recv_request(
+    /**
+     * Used for request reception. Deserialize the request and check that it was not sent by us.
+     * @param change[in] CacheChange_t of the request
+     * @param request[out] TypeLookup_Request after deserialize
+     * @return true if the request is deserialized and not from ourselves, false otherwise.
+     */
+    bool receive_request(
             fastrtps::rtps::CacheChange_t& change,
             TypeLookup_Request& request) const;
 
-    //! Aux method to received replies
-    bool recv_reply(
+    /**
+     * Used for reply reception. Deserialize and check that the reply's recipient is us.
+     * @param change[in] CacheChange_t of the reply
+     * @param reply[out] TypeLookup_Reply after deserialize
+     * @return true if the request is deserialized and the reply's recipient is us, false otherwise.
+     */
+    bool receive_request(
             fastrtps::rtps::CacheChange_t& change,
             TypeLookup_Reply& reply) const;
 

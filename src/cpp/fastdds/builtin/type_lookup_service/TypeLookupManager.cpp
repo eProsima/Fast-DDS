@@ -50,6 +50,45 @@ namespace fastdds {
 namespace dds {
 namespace builtin {
 
+
+inline SequenceNumber_t rtps_2_dds(
+        fastrtps::rtps::SequenceNumber_t seq_number)
+{
+    SequenceNumber_t dds_seq_number;
+    dds_seq_number.low() = seq_number.low;
+    dds_seq_number.high() = seq_number.high;
+
+    return dds_seq_number;
+}
+
+inline GUID_t rtps_2_dds(
+        const fastrtps::rtps::GUID_t& rtps_guid)
+{
+    GUID_t guid;
+    std::memcpy(guid.guidPrefix().data(), rtps_guid.guidPrefix.value, 12);
+    for (size_t i = 0; i < 3; i++)
+    {
+        guid.entityId().entityKey()[i] = rtps_guid.entityId.value[i + 1];
+    }
+    guid.entityId().entityKind() = rtps_guid.entityId.value[0];
+
+    return guid;
+}
+
+inline fastrtps::rtps::GUID_t dds_2_rtps(
+        const GUID_t& guid)
+{
+    fastrtps::rtps::GUID_t rtps_guid;
+    std::memcpy(rtps_guid.guidPrefix.value, guid.guidPrefix().data(), 12);
+    for (size_t i = 0; i < 3; i++)
+    {
+        rtps_guid.entityId.value[i + 1] = guid.entityId().entityKey()[i];
+    }
+    rtps_guid.entityId.value[0] = guid.entityId().entityKind();
+
+    return rtps_guid;
+}
+
 TypeLookupManager::TypeLookupManager()
 {
 }
@@ -517,8 +556,8 @@ bool TypeLookupManager::send_request(
         TypeLookup_Request& request) const
 {
     request.header().instanceName() = get_instanceName();
-    request.header().requestId().writer_guid(get_guid_from_rtps(builtin_request_writer_->getGuid()));
-    request.header().requestId().sequence_number(get_sequence_number_from_rtps(request_seq_number_));
+    request.header().requestId().writer_guid(rtps_2_dds(builtin_request_writer_->getGuid()));
+    request.header().requestId().sequence_number(rtps_2_dds(request_seq_number_));
     request_seq_number_++;
 
     CacheChange_t* change = builtin_request_writer_->new_change(
@@ -599,7 +638,7 @@ bool TypeLookupManager::send_reply(
     return false;
 }
 
-bool TypeLookupManager::recv_request(
+bool TypeLookupManager::receive_request(
         fastrtps::rtps::CacheChange_t& change,
         TypeLookup_Request& request) const
 {
@@ -628,10 +667,15 @@ bool TypeLookupManager::recv_request(
     payload.data = change.serializedPayload.data + 4;
     bool result = request_type_.deserialize(&payload, &request);
     payload.data = nullptr;
+    if (result && dds_2_rtps(request.header().requestId().writer_guid()) == builtin_request_writer_->getGuid())
+    {
+        // Message from our selves.
+        result = false;
+    }
     return result;
 }
 
-bool TypeLookupManager::recv_reply(
+bool TypeLookupManager::receive_request(
         fastrtps::rtps::CacheChange_t& change,
         TypeLookup_Reply& reply) const
 {
@@ -660,6 +704,11 @@ bool TypeLookupManager::recv_reply(
     payload.data = change.serializedPayload.data + 4;
     bool result = reply_type_.deserialize(&payload, &reply);
     payload.data = nullptr;
+    if (result && dds_2_rtps(reply.header().relatedRequestId().writer_guid()) != builtin_request_writer_->getGuid())
+    {
+        // This reply isn't for us.
+        result = false;
+    }
     return result;
 }
 
