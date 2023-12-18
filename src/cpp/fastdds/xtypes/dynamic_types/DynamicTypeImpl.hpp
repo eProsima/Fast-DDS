@@ -73,6 +73,10 @@ public:
     bool equals(
             traits<DynamicType>::ref_type other) noexcept override;
 
+protected:
+
+    traits<DynamicType>::ref_type _this();
+
 private:
 
     std::vector<AnnotationDescriptorImpl> annotation_;

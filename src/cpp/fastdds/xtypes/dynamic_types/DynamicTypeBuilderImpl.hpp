@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_XTYPES_DYNAMIE_TYPES_DYNAMICTYPEBUILDERIMPL_HPP
-#define FASTDDS_XTYPES_DYNAMIE_TYPES_DYNAMICTYPEBUILDERIMPL_HPP
+#ifndef FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEBUILDERIMPL_HPP
+#define FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEBUILDERIMPL_HPP
 
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 
@@ -105,4 +105,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_XTYPES_DYNAMIE_TYPES_DYNAMICTYPEBUILDERIMPL_HPP
+#endif // FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEBUILDERIMPL_HPP

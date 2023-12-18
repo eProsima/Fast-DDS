@@ -28,12 +28,12 @@ namespace dds {
 
 constexpr MemberId MEMBER_ID_INVALID {0x0FFFFFFF};
 
-class DynamicTypeMember;
+class DynamicType;
 
 template<>
-struct traits<DynamicTypeMember> : public object_traits<DynamicTypeMember>
+struct traits<DynamicType> : public object_traits<DynamicType>
 {
-    using base_type = DynamicTypeMember;
+    using base_type = DynamicType;
 };
 
 class DynamicTypeBuilder;
@@ -44,12 +44,12 @@ struct traits<DynamicTypeBuilder> : public object_traits<DynamicTypeBuilder>
     using base_type = DynamicTypeBuilder;
 };
 
-class DynamicType;
+class DynamicTypeMember;
 
 template<>
-struct traits<DynamicType> : public object_traits<DynamicType>
+struct traits<DynamicTypeMember> : public object_traits<DynamicTypeMember>
 {
-    using base_type = DynamicType;
+    using base_type = DynamicTypeMember;
 };
 
 } // namespace dds

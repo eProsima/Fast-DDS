@@ -142,7 +142,7 @@ public:
      * the DynamicTypeMember class.
      * @param[in] descriptor @ref MemberDescriptor reference used for the new member.
      * @return ReturnCode_t
-     * @retval RETCODE_OK when the member was created successful.
+     * @retval RETCODE_OK when the member was created successfully.
      * @retval RETCODE_BAD_PARAMETER when there is an inconsistency.
      */
     virtual ReturnCode_t add_member(
