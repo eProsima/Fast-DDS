@@ -168,6 +168,10 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
             }
             if (TypeObjectUtils::is_direct_hash_type_identifier(*type_identifier.map_sdefn().key_identifier()))
             {
+                if (TK_NONE == type_identifiers.type_identifier2()._d())
+                {
+                    type_identifiers.type_identifier2(type_identifier);
+                }
                 type_identifiers.type_identifier1().map_sdefn().key_identifier(new TypeIdentifier(minimal_from_complete_type_identifier(
                         *type_identifiers.type_identifier2().map_sdefn().key_identifier())));
             }
@@ -182,6 +186,10 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
             }
             if (TypeObjectUtils::is_direct_hash_type_identifier(*type_identifier.map_ldefn().key_identifier()))
             {
+                if (TK_NONE == type_identifiers.type_identifier2()._d())
+                {
+                    type_identifiers.type_identifier2(type_identifier);
+                }
                 type_identifiers.type_identifier1().map_ldefn().key_identifier(new TypeIdentifier(minimal_from_complete_type_identifier(
                         *type_identifiers.type_identifier2().map_ldefn().key_identifier())));
             }
