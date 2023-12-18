@@ -24,6 +24,8 @@
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 
+#include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -59,6 +61,14 @@ public:
      * @brief Destructor
      */
     virtual ~TypeLookupReplyListener() override;
+
+    void check_get_types_reply(
+            SampleIdentity request_id,
+            const TypeLookup_getTypes_Out& reply);
+
+    void check_get_type_dependencies_reply(
+            SampleIdentity request_id,
+            const TypeLookup_getTypeDependencies_Out& reply);
 
     /**
      * @brief Method call when this class is notified of a new cache change
