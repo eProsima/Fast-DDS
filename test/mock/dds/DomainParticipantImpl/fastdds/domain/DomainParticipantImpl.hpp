@@ -579,13 +579,17 @@ public:
     fastrtps::rtps::SampleIdentity get_type_dependencies(
             const fastrtps::types::TypeIdentifierSeq& in) const
     {
-        return rtps_participant_->typelookup_manager().get_type_dependencies(in);
+        //TODO(XTypes) this method will be removed
+        (void) in;
+        return builtin::INVALID_SAMPLE_IDENTITY;
     }
 
     fastrtps::rtps::SampleIdentity get_types(
             const fastrtps::types::TypeIdentifierSeq& in) const
     {
-        return rtps_participant_->typelookup_manager().get_types(in);
+        //TODO(XTypes) this method will be removed
+        (void) in;
+        return builtin::INVALID_SAMPLE_IDENTITY;
     }
 
     ReturnCode_t register_remote_type(
