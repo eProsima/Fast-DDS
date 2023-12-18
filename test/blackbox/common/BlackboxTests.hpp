@@ -49,6 +49,7 @@ extern void blackbox_security_init();
 extern void tls_init();
 #endif // if TLS_FOUND
 
+extern const char* certs_path;
 extern uint16_t global_port;
 extern bool enable_datasharing;
 extern bool use_pull_mode;
