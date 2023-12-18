@@ -878,7 +878,13 @@ void TypeObjectRegistry::register_primitive_type_identifiers()
 const TypeIdentifier TypeObjectRegistry::minimal_from_complete_type_identifier(
         const TypeIdentifier& type_id)
 {
-    if (EK_COMPLETE == type_id._d())
+    if (EK_COMPLETE == type_id._d() ||
+            (TI_PLAIN_SEQUENCE_SMALL == type_id._d() && type_id.seq_sdefn().header().equiv_kind() == EK_COMPLETE) ||
+            (TI_PLAIN_SEQUENCE_LARGE == type_id._d() && type_id.seq_ldefn().header().equiv_kind() == EK_COMPLETE) ||
+            (TI_PLAIN_ARRAY_SMALL == type_id._d() && type_id.array_sdefn().header().equiv_kind() == EK_COMPLETE) ||
+            (TI_PLAIN_ARRAY_LARGE == type_id._d() && type_id.array_ldefn().header().equiv_kind() == EK_COMPLETE) ||
+            (TI_PLAIN_MAP_SMALL == type_id._d() && type_id.map_sdefn().header().equiv_kind() == EK_COMPLETE) ||
+            (TI_PLAIN_MAP_LARGE == type_id._d() && type_id.map_ldefn().header().equiv_kind() == EK_COMPLETE))
     {
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         for (const auto& it : local_type_identifiers_)
