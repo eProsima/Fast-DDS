@@ -159,7 +159,7 @@ ReturnCode_t MemberDescriptorImpl::copy_from(
 }
 
 ReturnCode_t MemberDescriptorImpl::copy_from(
-        MemberDescriptorImpl& descriptor) noexcept
+        const MemberDescriptorImpl& descriptor) noexcept
 {
     name_ = descriptor.name_;
     id_ = descriptor.id_;
@@ -173,6 +173,7 @@ ReturnCode_t MemberDescriptorImpl::copy_from(
     is_must_understand_ = descriptor.is_must_understand_;
     is_shared_ = descriptor.is_shared_;
     is_default_label_ = descriptor.is_default_label_;
+    parent_kind_ = descriptor.parent_kind_;
 
     return RETCODE_OK;
 }
@@ -202,33 +203,36 @@ bool MemberDescriptorImpl::equals(
 
 bool MemberDescriptorImpl::is_consistent() noexcept
 {
-    /* TODO(richiware) how do this witout parent
-       // The type field is mandatory in every type except bitmasks and enums.
-       // Structures and unions allow it for @external. This condition can only
-       // be check in the DynamicTypeMember override
-       if ((TK_BITMASK != parentKind != && parentKind != TK_ENUM &&
-            parentKind != TK_STRUCTURE && parentKind != TK_UNION) && !type_)
-       {
+    if (TK_NONE == parent_kind_)
+    {
         return false;
-       }
+    }
 
-       // Only enums, bitmaks and aggregated types must use the ID value.
-       if (id_ != MEMBER_ID_INVALID && parentKind != TK_UNION &&
-            parentKind != TK_STRUCTURE && parentKind != TK_BITSET &&
-            parentKind != TK_ANNOTATION && parentKind != TK_ENUM &&
-            parentKind != TK_BITMASK)
-       {
+    // type_ cannot be nil.
+    if (!type_)
+    {
         return false;
-       }
-     */
+    }
 
-    //TODO(richiware) when dynamic_type has is_consisten.
-    /*
-       if (!type_ || !type_->is_consistent())
-       {
+    // Only aggregated types must use the ID value.
+    if ((MEMBER_ID_INVALID == id_ && (TK_UNION == parent_kind_ || TK_STRUCTURE == parent_kind_)) ||
+            MEMBER_ID_INVALID != id_)
+    {
         return false;
-       }
-     */
+    }
+
+    // Check default_label.
+    if (is_default_label_ && TK_UNION != parent_kind_)
+    {
+        return false;
+    }
+
+    // Check labels
+    if ((TK_UNION != parent_kind_ && 0 < label_.size()) ||
+            (TK_UNION == parent_kind_ && !is_default_label_ && 0 == label_.size()))
+    {
+        return false;
+    }
 
     if (!is_default_value_consistent(type_->get_kind(), default_value_))
     {

@@ -87,6 +87,6 @@ void DDSFilterExpression::clear()
 void DDSFilterExpression::set_type(
         const DynamicType* const type)
 {
-    dyn_type_.reset(type);
+    //TODO(richiware) dyn_type_.reset(type);
     dyn_data_.reset(DynamicDataFactory::get_instance().create_data(*type));
 }

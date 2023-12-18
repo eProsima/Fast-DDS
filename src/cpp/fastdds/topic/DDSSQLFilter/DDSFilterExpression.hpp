@@ -74,7 +74,7 @@ public:
 private:
 
     /// The Dynamic type used to deserialize the payloads
-    std::unique_ptr<const DynamicType> dyn_type_;
+    traits<DynamicType>::ref_type dyn_type_;
     /// The Dynamic data used to deserialize the payloads
     std::unique_ptr<DynamicData> dyn_data_;
 };

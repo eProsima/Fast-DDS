@@ -29,7 +29,12 @@ namespace dds {
 
 class DynamicTypeImpl : public virtual traits<DynamicType>::base_type
 {
+    friend class DynamicTypeBuilderImpl;
+
 public:
+
+    DynamicTypeImpl(
+            const TypeDescriptorImpl& descriptor) noexcept;
 
     ReturnCode_t get_descriptor(
             traits<TypeDescriptor>::ref_type descriptor) noexcept override;
@@ -84,6 +89,8 @@ private:
     DynamicTypeMembersById member_;
 
     DynamicTypeMembersByName member_by_name_;
+
+    std::vector<traits<DynamicTypeMember>::ref_type> members_;
 
     TypeDescriptorImpl type_descriptor_;
 

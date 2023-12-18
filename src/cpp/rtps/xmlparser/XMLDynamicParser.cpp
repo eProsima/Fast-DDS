@@ -349,7 +349,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
             const char* name = p_root->Attribute(NAME);
             if (name != nullptr)
             {
-                const DynamicType* value_type {valueBuilder->build()};
+                traits<DynamicType>::ref_type value_type {valueBuilder->build()};
                 eprosima::fastdds::dds::DynamicTypeBuilder* typeBuilder{DynamicTypeBuilderFactory::get_instance().
                                                                                 create_alias_type(*value_type,
                                                                                 name)};
