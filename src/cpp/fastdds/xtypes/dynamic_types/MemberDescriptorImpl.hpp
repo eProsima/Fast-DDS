@@ -59,6 +59,9 @@ class MemberDescriptorImpl : public virtual MemberDescriptor
     //! If the union member is default.
     bool is_default_label_ {false};
 
+    //! Kind of the DynamicType which will contains this member.
+    TypeKind parent_kind_ {TK_NONE};
+
 public:
 
     MemberDescriptorImpl() noexcept = default;
@@ -185,6 +188,22 @@ public:
         label_ = std::move(label);
     }
 
+    TypeKind parent_kind() const noexcept
+    {
+        return parent_kind_;
+    }
+
+    TypeKind& parent_kind() noexcept
+    {
+        return parent_kind_;
+    }
+
+    void parent_kind(
+            TypeKind parent_kind) noexcept
+    {
+        parent_kind_ = parent_kind;
+    }
+
     TryConstructKind try_construct_kind() const noexcept override
     {
         return try_construct_kind_;
@@ -285,7 +304,7 @@ public:
             traits<MemberDescriptor>::ref_type descriptor) noexcept override;
 
     ReturnCode_t copy_from(
-            MemberDescriptorImpl& descriptor) noexcept;
+            const MemberDescriptorImpl& descriptor) noexcept;
 
     bool equals(
             traits<MemberDescriptor>::ref_type descriptor) noexcept override;

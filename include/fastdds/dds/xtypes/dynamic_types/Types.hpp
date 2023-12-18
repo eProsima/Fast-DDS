@@ -36,6 +36,14 @@ struct traits<DynamicTypeMember> : public object_traits<DynamicTypeMember>
     using base_type = DynamicTypeMember;
 };
 
+class DynamicTypeBuilder;
+
+template<>
+struct traits<DynamicTypeBuilder> : public object_traits<DynamicTypeBuilder>
+{
+    using base_type = DynamicTypeBuilder;
+};
+
 class DynamicType;
 
 template<>
