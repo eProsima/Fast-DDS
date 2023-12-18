@@ -37,11 +37,8 @@ using namespace eprosima::fastrtps::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
-<<<<<<< HEAD
 static const char* certs_path = nullptr;
 
-=======
->>>>>>> fae8f1e22 (Fix build with TLS, but not security (#4156))
 enum communication_type
 {
     TRANSPORT,
