@@ -99,7 +99,7 @@ ReturnCode_t TypeDescriptorImpl::copy_from(
 }
 
 ReturnCode_t TypeDescriptorImpl::copy_from(
-        TypeDescriptorImpl& descriptor) noexcept
+        const TypeDescriptorImpl& descriptor) noexcept
 {
     kind_ = descriptor.kind_;
     name_ = descriptor.name_;

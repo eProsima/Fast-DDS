@@ -18,6 +18,12 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+DynamicTypeMemberImpl::DynamicTypeMemberImpl(
+        const MemberDescriptorImpl& descriptor) noexcept
+{
+    member_descriptor_.copy_from(descriptor);
+}
+
 ReturnCode_t DynamicTypeMemberImpl::get_descriptor(
         traits<MemberDescriptor>::ref_type descriptor) noexcept
 {

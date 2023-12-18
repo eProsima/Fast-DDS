@@ -669,7 +669,7 @@ bool XMLProfileManager::insertDynamicTypeByName(
 {
     if (dynamic_types_.find(type_name) == dynamic_types_.end())
     {
-        dynamic_types_[type_name].reset(type);
+        //TODO(richiware)dynamic_types_[type_name].reset(type);
         return true;
     }
     EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding the type " << type_name << ". There is other type with the same name.");
@@ -714,8 +714,10 @@ XMLP_ret XMLProfileManager::getDynamicTypeByName(
     types::TypeObject obj;
     types::TypeIdentifier id;
 
-    eprosima::fastdds::dds::DynamicTypeBuilderFactory::get_instance().build_type_object(*p, obj);
-    eprosima::fastdds::dds::DynamicTypeBuilderFactory::get_instance().build_type_identifier(*p, id);
+    /*TODO(richiware)
+       eprosima::fastdds::dds::DynamicTypeBuilderFactory::get_instance().build_type_object(*p, obj);
+       eprosima::fastdds::dds::DynamicTypeBuilderFactory::get_instance().build_type_identifier(*p, id);
+     */
 
     // Build old dynamic type
     types::DynamicType_ptr ptr;

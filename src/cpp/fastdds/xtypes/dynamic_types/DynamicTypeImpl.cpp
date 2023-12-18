@@ -14,9 +14,17 @@
 
 #include "DynamicTypeImpl.hpp"
 
+#include <cassert>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+DynamicTypeImpl::DynamicTypeImpl(
+        const TypeDescriptorImpl& descriptor) noexcept
+{
+    type_descriptor_.copy_from(descriptor);
+}
 
 ReturnCode_t DynamicTypeImpl::get_descriptor(
         traits<TypeDescriptor>::ref_type descriptor) noexcept
@@ -86,27 +94,19 @@ ReturnCode_t DynamicTypeImpl::get_all_members(
 
 uint32_t DynamicTypeImpl::get_member_count() noexcept
 {
-    return member_by_name_.size();
+    return members_.size();
 }
 
 ReturnCode_t DynamicTypeImpl::get_member_by_index(
         traits<DynamicTypeMember>::ref_type member,
         uint32_t index) noexcept
 {
-    if (index >= member_by_name_.size())
+    if (index >= members_.size())
     {
         return RETCODE_BAD_PARAMETER;
     }
 
-    uint32_t count = 0;
-    auto it = member_by_name_.begin();
-
-    while (count < index)
-    {
-        ++it;
-    }
-
-    member = it->second;
+    member = members_.at(index);
     return RETCODE_OK;
 }
 
@@ -152,40 +152,60 @@ bool DynamicTypeImpl::equals(
     bool ret_value = true;
     auto impl = traits<DynamicType>::narrow<DynamicTypeImpl>(other);
 
-    if (annotation_.size() == impl->annotation_.size())
+    if (ret_value &= type_descriptor_.equals(impl->type_descriptor_))
     {
-        for (size_t count {0}; ret_value && count < annotation_.size(); ++count)
+        if (annotation_.size() == impl->annotation_.size())
         {
-            ret_value &= annotation_.at(count).equals(impl->annotation_.at(count));
+            for (size_t count {0}; ret_value && count < annotation_.size(); ++count)
+            {
+                ret_value &= annotation_.at(count).equals(impl->annotation_.at(count));
+            }
         }
-    }
 
-    ret_value &= member_.size() == impl->member_.size();
+        ret_value &= member_.size() == impl->member_.size();
+        assert(TK_STRUCTURE == type_descriptor_.kind() ||
+                TK_UNION ==  type_descriptor_.kind() ||
+                0 == member_.size());
+        assert(TK_STRUCTURE == impl->type_descriptor_.kind() ||
+                TK_UNION ==  impl->type_descriptor_.kind() ||
+                0 == impl->member_.size());
+        assert((TK_STRUCTURE != type_descriptor_.kind() &&
+                TK_UNION &&  type_descriptor_.kind()) ||
+                0 < member_.size());
+        assert((TK_STRUCTURE != impl->type_descriptor_.kind() &&
+                TK_UNION &&  impl->type_descriptor_.kind()) ||
+                0 < member_.size());
 
-    if (member_by_name_.size() == impl->member_by_name_.size())
-    {
-        auto it = member_by_name_.begin();
-        auto impl_it = impl->member_by_name_.begin();
-
-        while (ret_value && member_by_name_.end() != it)
+        assert(member_by_name_.size() == members_.size());
+        assert(impl->member_by_name_.size() == impl->members_.size());
+        if (member_by_name_.size() == impl->member_by_name_.size())
         {
-            ret_value &= it->second->equals(impl_it->second);
-            ++it;
-            ++impl_it;
+            auto it = member_by_name_.begin();
+            auto impl_it = impl->member_by_name_.begin();
+
+            while (ret_value && member_by_name_.end() != it)
+            {
+                ret_value &= it->second->equals(impl_it->second);
+                ++it;
+                ++impl_it;
+            }
         }
-    }
 
-    ret_value &= type_descriptor_.equals(impl->type_descriptor_);
-
-    if (verbatim_.size() == impl->verbatim_.size())
-    {
-        for (size_t count {0}; ret_value && count < verbatim_.size(); ++count)
+        if (verbatim_.size() == impl->verbatim_.size())
         {
-            ret_value &= verbatim_.at(count).equals(impl->verbatim_.at(count));
+            for (size_t count {0}; ret_value && count < verbatim_.size(); ++count)
+            {
+                ret_value &= verbatim_.at(count).equals(impl->verbatim_.at(count));
+            }
         }
     }
 
     return ret_value;
+}
+
+traits<DynamicType>::ref_type DynamicTypeImpl::_this ()
+{
+    return shared_from_this();
 }
 
 } // namespace dds
