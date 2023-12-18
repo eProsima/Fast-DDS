@@ -194,6 +194,20 @@ private:
      * Uses get_type_dependencies() and get_types() to get those that are not known.
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
      * TypeIdentfierWithSize was not in the map before
+     * @param type_identifier_with_size[in] TypeIdentfierWithSize to check.
+     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
+     * @return ReturnCode_t RETCODE_OK if type is known.
+     *                      RETCODE_NO_DATA if the type is being discovered.
+     *                      RETCODE_ERROR if the request was not sent or the callback was not added correctly.
+     */
+    ReturnCode_t check_type_identifier_received(
+            const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
+            const fastrtps::rtps::GuidPrefix_t& type_server);
+    /**
+     * Checks if the given TypeIdentfierWithSize is known by the TypeObjectRegistry.
+     * Uses get_type_dependencies() and get_types() to get those that are not known.
+     * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
+     * TypeIdentfierWithSize was not in the map before
      * @param temp_proxy_data[in] Temporary Writer/Reader ProxyData that originated the request.
      * @param callback[in] Callback to add.
      * @return ReturnCode_t RETCODE_OK if type is known.
@@ -229,6 +243,13 @@ private:
             AsyncCallback>>>& async_get_type_callbacks);
 
     /**
+     *  Notifies callbacks for a given TypeIdentfierWithSize
+     * @param type_identifier_with_size[in] TypeIdentfierWithSize of the callbacks to notify.
+     */
+    void notify_callbacks(
+            xtypes::TypeIdentfierWithSize type_identifier_with_size);
+
+    /**
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
      * TypeIdentfierWithSize was not in the map before
      * @param request[in] SampleIdentity of the request
@@ -246,6 +267,14 @@ private:
      */
     bool remove_async_get_type_callback(
             const xtypes::TypeIdentfierWithSize& type_identifier_with_size);
+
+    /**
+     * Removes a SampleIdentity from the async_get_type_callbacks_.
+     * @param request[in] SampleIdentity to be removed.
+     * @return true if removed. false otherwise
+     */
+    bool remove_async_get_types_request(
+            SampleIdentity request);
 
     /**
      * Complete requests common fields, create CacheChange, serialize request and add change to writer history.
