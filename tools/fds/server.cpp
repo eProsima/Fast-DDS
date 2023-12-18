@@ -300,66 +300,62 @@ int fastdds_discovery_server(
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
     }
-    else
+    else if (nullptr != pOp)
     {
         // UDP address has been specified
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
         while (pOp)
         {
-            participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
-            while (pOp)
+            // Get next address
+            std::string address = std::string(pOp->arg);
+
+            // Check whether the address is IPv4
+            if (!IPLocator::isIPv4(address))
             {
-                // Get next address
-                std::string address = std::string(pOp->arg);
+                auto response = IPLocator::resolveNameDNS(address);
 
-                // Check whether the address is IPv4
-                if (!IPLocator::isIPv4(address))
+                // Add the first valid IPv4 address that we can find
+                if (response.first.size() > 0)
                 {
-                    auto response = IPLocator::resolveNameDNS(address);
-
-                    // Add the first valid IPv4 address that we can find
-                    if (response.first.size() > 0)
-                    {
-                        address = response.first.begin()->data();
-                    }
+                    address = response.first.begin()->data();
                 }
+            }
 
-                // Update locator address
-                if (!IPLocator::setIPv4(locator, address))
+            // Update locator address
+            if (!IPLocator::setIPv4(locator, address))
+            {
+                std::cout << "Invalid listening locator address specified:" << address << std::endl;
+                return 1;
+            }
+
+            // Update UDP port
+            if (nullptr != pO_port)
+            {
+                std::stringstream is;
+                is << pO_port->arg;
+                uint16_t id;
+
+                if (!(is >> id
+                        && is.eof()
+                        && IPLocator::setPhysicalPort(locator, id)))
                 {
-                    std::cout << "Invalid listening locator address specified:" << address << std::endl;
+                    std::cout << "Invalid listening locator port specified:" << id << std::endl;
                     return 1;
                 }
+            }
 
-                // Update UDP port
-                if (nullptr != pO_port)
-                {
-                    std::stringstream is;
-                    is << pO_port->arg;
-                    uint16_t id;
+            // Add the locator
+            participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
 
-                    if (!(is >> id
-                            && is.eof()
-                            && IPLocator::setPhysicalPort(locator, id)))
-                    {
-                        std::cout << "Invalid listening locator port specified:" << id << std::endl;
-                        return 1;
-                    }
-                }
-
-                // Add the locator
-                participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
-
-                pOp = pOp->next();
-                if (pO_port)
-                {
-                    pO_port = pO_port->next();
-                }
-                else
-                {
-                    std::cout << "Warning: the number of specified ports doesn't match the ip" << std::endl
-                              << "         addresses provided. Locators share its port number." << std::endl;
-                }
+            pOp = pOp->next();
+            if (pO_port)
+            {
+                pO_port = pO_port->next();
+            }
+            else
+            {
+                std::cout << "Warning: the number of specified ports doesn't match the ip" << std::endl
+                            << "         addresses provided. Locators share its port number." << std::endl;
             }
         }
     }
