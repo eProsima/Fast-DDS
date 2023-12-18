@@ -355,7 +355,7 @@ int fastdds_discovery_server(
             else
             {
                 std::cout << "Warning: the number of specified ports doesn't match the ip" << std::endl
-                            << "         addresses provided. Locators share its port number." << std::endl;
+                          << "         addresses provided. Locators share its port number." << std::endl;
             }
         }
     }
