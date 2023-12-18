@@ -46,13 +46,13 @@
 #include <functional>
 
 #if HAVE_SECURITY
-extern const char* certs_path;
 extern void blackbox_security_init();
 #endif // if HAVE_SECURITY
 #if TLS_FOUND
 extern void tls_init();
 #endif // if TLS_FOUND
 
+extern const char* certs_path;
 extern uint16_t global_port;
 extern bool enable_datasharing;
 extern bool use_pull_mode;
