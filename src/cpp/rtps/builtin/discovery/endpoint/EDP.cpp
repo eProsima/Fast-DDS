@@ -570,14 +570,6 @@ bool EDP::valid_matching(
         return false;
     }
 
-    // Type Consistency Enforcement QosPolicy
-    if (!checkTypeValidation(wdata, rdata))
-    {
-        // TODO Trigger INCONSISTENT_TOPIC status change
-        reason.set(MatchingFailureMask::inconsistent_topic);
-        return false;
-    }
-
     if (wdata->topicKind() != rdata->topicKind())
     {
         EPROSIMA_LOG_WARNING(RTPS_EDP, "INCOMPATIBLE QOS:Remote Reader " << rdata->guid() << " is publishing in topic "
@@ -766,25 +758,6 @@ bool EDP::checkDataRepresentationQos(
     return compatible;
 }
 
-bool EDP::checkTypeValidation(
-        const WriterProxyData* wdata,
-        const ReaderProxyData* rdata) const
-{
-    // Step 1: Both specify a TypeObject
-    if (hasTypeObject(wdata, rdata))
-    {
-        return checkTypeObject(wdata, rdata);
-    }
-    // Not explicitely said in the standard, but is not done, what's the intention of TypeIdV1?
-    if (hasTypeIdentifier(wdata, rdata))
-    {
-        return checkTypeIdentifier(wdata, rdata);
-    }
-
-    // Step 2: Writer or reader doesn't specify a TypeObject
-    return !rdata->m_qos.type_consistency.m_force_type_validation && (wdata->typeName() == rdata->typeName());
-}
-
 bool EDP::validMatching(
         const ReaderProxyData* rdata,
         const WriterProxyData* wdata)
@@ -806,14 +779,6 @@ bool EDP::valid_matching(
     if (rdata->topicName() != wdata->topicName())
     {
         reason.set(MatchingFailureMask::different_topic);
-        return false;
-    }
-
-    // Type Consistency Enforcement QosPolicy
-    if (!checkTypeValidation(wdata, rdata))
-    {
-        // TODO Trigger INCONSISTENT_TOPIC status change
-        reason.set(MatchingFailureMask::inconsistent_topic);
         return false;
     }
 
@@ -1566,151 +1531,6 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
 }
 
 #endif // if HAVE_SECURITY
-
-bool EDP::checkTypeIdentifier(
-        const WriterProxyData* wdata,
-        const ReaderProxyData* rdata) const
-{
-    // TODO - Remove once XCDR or XCDR2 is implemented.
-    TypeConsistencyEnforcementQosPolicy coercion;
-    coercion.m_kind = DISALLOW_TYPE_COERCION;
-    coercion.m_ignore_member_names = false;
-    coercion.m_ignore_string_bounds = false;
-    coercion.m_force_type_validation = true;
-    coercion.m_prevent_type_widening = true;
-    coercion.m_ignore_sequence_bounds = false;
-    return wdata->type_id().m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE;
-    (void)rdata;
-    //TODO(XTypes)
-    //  &&
-    //        wdata->type_id().m_type_identifier.consistent(
-    //     //rdata->type_id().m_type_identifier, rdata->m_qos.type_consistency);
-    //     rdata->type_id().m_type_identifier, coercion);
-}
-
-bool EDP::hasTypeIdentifier(
-        const WriterProxyData* wdata,
-        const ReaderProxyData* rdata) const
-{
-    return wdata->has_type_id() && wdata->type_id().m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE &&
-           rdata->has_type_id() && rdata->type_id().m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE;
-}
-
-bool EDP::checkTypeObject(
-        const WriterProxyData* wdata,
-        const ReaderProxyData* rdata) const
-{
-    if (wdata->has_type_information() && wdata->type_information().assigned() &&
-            rdata->has_type_information() && rdata->type_information().assigned())
-    {
-        const fastdds::dds::xtypes::TypeIdentifier* rtype = nullptr;
-        const fastdds::dds::xtypes::TypeIdentifier* wtype = nullptr;
-
-        if (wdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
-                fastdds::dds::xtypes::TK_NONE &&
-                rdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
-                fastdds::dds::xtypes::TK_NONE)
-        {
-            rtype = &rdata->type_information().type_information.complete().typeid_with_size().type_id();
-            wtype = &wdata->type_information().type_information.complete().typeid_with_size().type_id();
-        }
-        else if (wdata->type_information().type_information.minimal().typeid_with_size().type_id()._d() !=
-                fastdds::dds::xtypes::TK_NONE &&
-                rdata->type_information().type_information.minimal().typeid_with_size().type_id()._d() !=
-                fastdds::dds::xtypes::TK_NONE)
-        {
-            rtype = &rdata->type_information().type_information.minimal().typeid_with_size().type_id();
-            wtype = &wdata->type_information().type_information.minimal().typeid_with_size().type_id();
-        }
-
-        if (wtype != nullptr)
-        {
-            // TODO - Remove once XCDR or XCDR2 is implemented.
-            /*
-             * Currently consistency checks are applied to type structure and compatibility,
-             * but doesn't check about annotations behavior.
-             * This may cause false matching cases with annotations @key or @non_serialize,
-             * for example.
-             * Once XCDR or XCDR2 is implemented, is it doesn't solve this cases, we must
-             * think about this problem and how consistency could solve it.
-             */
-            TypeConsistencyEnforcementQosPolicy coercion;
-            coercion.m_kind = DISALLOW_TYPE_COERCION;
-            coercion.m_ignore_member_names = false;
-            coercion.m_ignore_string_bounds = false;
-            coercion.m_force_type_validation = true;
-            coercion.m_prevent_type_widening = true;
-            coercion.m_ignore_sequence_bounds = false;
-            //return wtype->consistent(*rtype, rdata->m_qos.type_consistency);
-            //TODO(XTypes)
-            //return wtype->consistent(*rtype, coercion);
-            (void)rtype;
-            return true;
-        }
-
-        return false;
-    }
-
-    if (wdata->has_type() && wdata->type().m_type_object._d() != fastdds::dds::xtypes::TK_NONE &&
-            rdata->has_type() && rdata->type().m_type_object._d() != fastdds::dds::xtypes::TK_NONE)
-    {
-        // TODO - Remove once XCDR or XCDR2 is implemented.
-        /*
-         * Currently consistency checks are applied to type structure and compatibility,
-         * but doesn't check about annotations behavior.
-         * This may cause false matching cases with annotations @key or @non_serialize,
-         * for example.
-         * Once XCDR or XCDR2 is implemented, is it doesn't solve this cases, we must
-         * think about this problem and how consistency could solve it.
-         */
-        TypeConsistencyEnforcementQosPolicy coercion;
-        coercion.m_kind = DISALLOW_TYPE_COERCION;
-        coercion.m_ignore_member_names = false;
-        coercion.m_ignore_string_bounds = false;
-        coercion.m_force_type_validation = true;
-        coercion.m_prevent_type_widening = true;
-        coercion.m_ignore_sequence_bounds = false;
-        //return wdata->type().m_type_object.consistent(rdata->type().m_type_object, rdata->m_qos.type_consistency);
-        //TODO(XTypes)
-        // return wdata->type().m_type_object.consistent(rdata->type().m_type_object, coercion);
-        return true;
-    }
-
-    return false;
-}
-
-bool EDP::hasTypeObject(
-        const WriterProxyData* wdata,
-        const ReaderProxyData* rdata) const
-{
-    if (wdata->has_type_information() && wdata->type_information().assigned() &&
-            rdata->has_type_information() && rdata->type_information().assigned())
-    {
-        if (wdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
-                fastdds::dds::xtypes::TK_NONE &&
-                rdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
-                fastdds::dds::xtypes::TK_NONE)
-        {
-            return true;
-        }
-        else if (wdata->type_information().type_information.minimal().typeid_with_size().type_id()._d() !=
-                fastdds::dds::xtypes::TK_NONE &&
-                rdata->type_information().type_information.minimal().typeid_with_size().type_id()._d() !=
-                fastdds::dds::xtypes::TK_NONE)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    if (wdata->has_type() && wdata->type().m_type_object._d() != fastdds::dds::xtypes::TK_NONE &&
-            rdata->has_type() && rdata->type().m_type_object._d() != fastdds::dds::xtypes::TK_NONE)
-    {
-        return true;
-    }
-
-    return false;
-}
 
 const SubscriptionMatchedStatus& EDP::update_subscription_matched_status(
         const GUID_t& reader_guid,
