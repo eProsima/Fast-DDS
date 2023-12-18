@@ -396,14 +396,15 @@ TEST(DDSDataWriter, HeartbeatWhileDestruction)
         ASSERT_TRUE(reader.isInitialized());
 
         writer.reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS).history_kind(
-            KEEP_LAST_HISTORY_QOS).history_depth(n_samples).heartbeat_period_seconds(0).heartbeat_period_nanosec(
+            KEEP_LAST_HISTORY_QOS).history_depth(static_cast<int32_t>(n_samples)).heartbeat_period_seconds(0).
+                heartbeat_period_nanosec(
             20 * 1000).init();
         ASSERT_TRUE(writer.isInitialized());
 
         reader.wait_discovery();
         writer.wait_discovery();
 
-        auto data = default_helloworld_data_generator(1000);
+        auto data = default_helloworld_data_generator(n_samples);
         reader.startReception(data);
         writer.send(data);
 
