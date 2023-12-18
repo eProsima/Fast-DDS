@@ -3079,7 +3079,7 @@ void TypeObjectUtils::complete_bitfield_seq_consistency(
     std::set<uint16_t> positions;
     for (const CompleteBitfield& bitfield : complete_bitfield_seq)
     {
-        if (bitfield.detail().name().size() != 0 && !bitfield_names.insert(bitfield.detail().name()).second)
+        if (!bitfield_names.insert(bitfield.detail().name()).second)
         {
             throw InvalidArgumentError("Repeated bitfield name");
         }
