@@ -19,6 +19,8 @@
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
 
+#include <future>
+#include <unordered_set>
 #include <utility>
 
 #include <fastdds/dds/log/Log.hpp>
@@ -26,8 +28,8 @@
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 
-#include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+#include <rtps/RTPSDomainImpl.hpp>
 
 using eprosima::fastrtps::rtps::RTPSReader;
 using eprosima::fastrtps::rtps::CacheChange_t;
@@ -50,6 +52,54 @@ TypeLookupRequestListener::~TypeLookupRequestListener()
 {
 }
 
+void TypeLookupRequestListener::check_get_types_request(
+        SampleIdentity request_id,
+        const TypeLookup_getTypes_In& request)
+{
+    TypeLookup_getTypes_Out out;
+    for (const xtypes::TypeIdentifier& type_id : request.type_ids())
+    {
+        xtypes::TypeObject obj;
+        if (RETCODE_OK == fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                        get_type_object(type_id, obj))
+        {
+            xtypes::TypeIdentifierTypeObjectPair pair;
+            pair.type_identifier(type_id);
+            pair.type_object(obj);
+            out.types().push_back(std::move(pair));
+        }
+    }
+    TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
+    TypeLookup_getTypes_Result result;
+    result.result(out);
+    reply->return_value().getType(result);
+    reply->header().relatedRequestId() = request_id;
+
+    typelookup_manager_->send_reply(*reply);
+    typelookup_manager_->reply_type_.deleteData(reply);
+}
+
+void TypeLookupRequestListener::check_get_type_dependencies_request(
+        SampleIdentity request_id,
+        const TypeLookup_getTypeDependencies_In& request)
+{
+    TypeLookup_getTypeDependencies_Out out;
+
+    std::unordered_set<xtypes::TypeIdentfierWithSize> type_dependencies;
+    if (RETCODE_OK == fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                    get_type_dependencies(request.type_ids(), type_dependencies))
+    {
+        TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
+        TypeLookup_getTypeDependencies_Result result;
+        result.result(out);
+        reply->return_value().getTypeDependencies(result);
+        reply->header().relatedRequestId() = request_id;
+
+        typelookup_manager_->send_reply(*reply);
+        typelookup_manager_->reply_type_.deleteData(reply);
+    }
+}
+
 void TypeLookupRequestListener::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const changeIN)
@@ -70,63 +120,17 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
         {
             case TypeLookup_getTypes_HashId:
             {
-                const TypeLookup_getTypes_In in = request.data().getTypes();
-                TypeLookup_getTypes_Out out;
-
-                for (const xtypes::TypeIdentifier& type_id : in.type_ids())
-                {
-                    xtypes::TypeObject obj;
-                    // TODO (adelcampo) Change to xtypes
-                    // const TypeIdentifier* obj_ident = factory_->typelookup_get_type(type_id, obj);
-                    xtypes::TypeIdentifier* obj_ident = nullptr;
-
-                    if (obj_ident != nullptr && obj._d() != 0)
-                    {
-                        xtypes::TypeIdentifierTypeObjectPair pair;
-                        pair.type_identifier(type_id);
-                        pair.type_object(obj);
-                        out.types().push_back(std::move(pair));
-                    }
-
-                    if (obj_ident != nullptr && !(type_id == *obj_ident))
-                    {
-                        xtypes::TypeIdentifierPair pair;
-                        pair.type_identifier1(*obj_ident);
-                        pair.type_identifier2(type_id);
-                        out.complete_to_minimal().push_back(std::move(pair));
-                    }
-                }
-
-                TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
-                TypeLookup_getTypes_Result result;
-                result.result(out);
-                reply->return_value().getType(result);
-                reply->header().relatedRequestId() = request.header().requestId();
-
-                typelookup_manager_->send_reply(*reply);
-                typelookup_manager_->reply_type_.deleteData(reply);
+                std::async(std::launch::async,
+                        &TypeLookupRequestListener::check_get_types_request, this,
+                        request.header().requestId(), request.data().getTypes());
 
                 break;
             }
             case TypeLookup_getDependencies_HashId:
             {
-                const TypeLookup_getTypeDependencies_In in = request.data().getTypeDependencies();
-                TypeLookup_getTypeDependencies_Out out;
-                //for (size_t index = 0; index < in.type_ids.size(); ++index)
-                {
-                    // TODO (adelcampo) Change to xtypes
-                    // out.dependent_typeids = factory_->typelookup_get_type_dependencies(
-                    //     in.type_ids, in.continuation_point, out.continuation_point, 255); // TODO: Make configurable?
-                }
-
-                TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
-                TypeLookup_getTypeDependencies_Result result;
-                result.result(out);
-                reply->return_value().getTypeDependencies(result);
-                reply->header().relatedRequestId() = request.header().requestId();
-
-                typelookup_manager_->send_reply(*reply);
-                typelookup_manager_->reply_type_.deleteData(reply);
+                std::async(std::launch::async,
+                        &TypeLookupRequestListener::check_get_type_dependencies_request, this,
+                        request.header().requestId(), request.data().getTypeDependencies());
 
                 break;
             }

@@ -22,6 +22,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
+#include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -57,6 +59,24 @@ public:
      * @brief Destructor
      */
     virtual ~TypeLookupRequestListener() override;
+
+    /**
+     * @brief Gets TypeObject from TypeObjectRegistry, creates and sends reply
+     * @param request_id[in] The SampleIdentity of the request
+     * @param request[in] The request data
+     */
+    void check_get_types_request(
+            SampleIdentity request_id,
+            const TypeLookup_getTypes_In& request);
+
+    /**
+     * @brief Gets type dependencies from TypeObjectRegistry, creates and sends reply
+     * @param request_id[in] The SampleIdentity of the request
+     * @param request[in] The request data
+     */
+    void check_get_type_dependencies_request(
+            SampleIdentity request_id,
+            const TypeLookup_getTypeDependencies_In& request);
 
     /**
      * @brief Method call when this class is notified of a new cache change
