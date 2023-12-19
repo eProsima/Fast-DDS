@@ -87,6 +87,14 @@ bool is_type_name_consistent(
     return true;
 }
 
+TypeDescriptorImpl::TypeDescriptorImpl(
+        TypeKind kind,
+        const ObjectName& name)
+    : kind_(kind)
+    , name_(name)
+{
+}
+
 ReturnCode_t TypeDescriptorImpl::copy_from(
         traits<TypeDescriptor>::ref_type descriptor) noexcept
 {

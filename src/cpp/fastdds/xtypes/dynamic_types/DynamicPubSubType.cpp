@@ -29,14 +29,7 @@ namespace fastdds {
 namespace dds {
 
 DynamicPubSubType::DynamicPubSubType(
-        const DynamicType& type)
-    : dynamic_type_(DynamicTypeBuilderFactory::get_instance().create_copy(type))
-{
-    UpdateDynamicTypeInfo();
-}
-
-DynamicPubSubType::DynamicPubSubType(
-        const DynamicType* type)
+        traits<DynamicType>::ref_type type)
     : dynamic_type_(type)
 {
     UpdateDynamicTypeInfo();
@@ -48,32 +41,19 @@ DynamicPubSubType::~DynamicPubSubType()
     {
         free(m_keyBuffer);
     }
-
-    CleanDynamicType();
 }
 
-void DynamicPubSubType::CleanDynamicType()
+traits<DynamicType>::ref_type DynamicPubSubType::GetDynamicType() const
 {
-    if (dynamic_type_ != nullptr)
-    {
-        DynamicTypeBuilderFactory::get_instance().delete_type(dynamic_type_);
-    }
-
-    dynamic_type_ = nullptr;
-}
-
-const DynamicType* DynamicPubSubType::GetDynamicType() const
-{
-    return nullptr == dynamic_type_ ? nullptr :
-           DynamicTypeBuilderFactory::get_instance().create_copy(*dynamic_type_);
+    return dynamic_type_;
 }
 
 ReturnCode_t DynamicPubSubType::SetDynamicType(
         const DynamicData& data)
 {
-    if (nullptr == dynamic_type_)
+    if (!dynamic_type_)
     {
-        return SetDynamicType(data.get_type());
+        //TODO(richiware) return SetDynamicType(data.get_type());
     }
     else
     {
@@ -83,23 +63,9 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 }
 
 ReturnCode_t DynamicPubSubType::SetDynamicType(
-        const DynamicType& type)
+        traits<DynamicType>::ref_type type)
 {
-    if (nullptr == dynamic_type_)
-    {
-        return SetDynamicType(DynamicTypeBuilderFactory::get_instance().create_copy(type));
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
-        return RETCODE_BAD_PARAMETER;
-    }
-}
-
-ReturnCode_t DynamicPubSubType::SetDynamicType(
-        const DynamicType* type)
-{
-    if (nullptr == dynamic_type_)
+    if (!dynamic_type_)
     {
         dynamic_type_ = type;
         UpdateDynamicTypeInfo();

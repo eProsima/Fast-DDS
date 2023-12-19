@@ -655,7 +655,7 @@ protected:
             InstanceHandle_t& handle);
 
     ReturnCode_t register_dynamic_type(
-            const DynamicType* dyn_type);
+            traits<DynamicType>::ref_type dyn_type);
 
     virtual PublisherImpl* create_publisher_impl(
             const PublisherQos& qos,

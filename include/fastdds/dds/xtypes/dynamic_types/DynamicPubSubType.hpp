@@ -32,8 +32,10 @@ protected:
 
     void UpdateDynamicTypeInfo();
 
-    const DynamicType* dynamic_type_ = nullptr;
+    traits<DynamicType>::ref_type dynamic_type_;
+
     MD5 m_md5;
+
     unsigned char* m_keyBuffer = nullptr;
 
 public:
@@ -46,15 +48,7 @@ public:
      * @remark Ownership is not transferred.
      */
     FASTDDS_EXPORTED_API DynamicPubSubType(
-            const DynamicType& type);
-
-    /*
-     * Constructs a @ref DynamicPubSubType from a @ref DynamicType
-     * @param type @ref DynamicType object associated to the data
-     * @remark Ownership is transferred.
-     */
-    FASTDDS_EXPORTED_API DynamicPubSubType(
-            const DynamicType* type);
+            traits<DynamicType>::ref_type type);
 
     FASTDDS_EXPORTED_API virtual ~DynamicPubSubType();
 
@@ -128,15 +122,12 @@ public:
             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
             fastdds::dds::DataRepresentationId_t data_representation) override;
 
-    //! Deletes the internal @ref DynamicType object
-    FASTDDS_EXPORTED_API void CleanDynamicType();
-
     /*
      * Returns a copy of the internal  @ref DynamicType object
      * @return pointer to the new object
      * @remark Ownership is transferred. This object must be removed using @ref deleteData
      */
-    FASTDDS_EXPORTED_API const DynamicType* GetDynamicType() const;
+    FASTDDS_EXPORTED_API traits<DynamicType>::ref_type GetDynamicType() const;
 
     /*
      * Sets up the internal @ref DynamicType object
@@ -154,16 +145,7 @@ public:
      * @remark Ownership is not transferred.
      */
     FASTDDS_EXPORTED_API ReturnCode_t SetDynamicType(
-            const DynamicType& type);
-
-    /*
-     * Sets up the internal @ref DynamicType object
-     * @param @ref DynamicType to keep
-     * @return @ref ReturnCode_t with operation status
-     * @remark Ownership is transferred.
-     */
-    FASTDDS_EXPORTED_API ReturnCode_t SetDynamicType(
-            const DynamicType* type);
+            traits<DynamicType>::ref_type type);
 };
 
 } // namespace dds
