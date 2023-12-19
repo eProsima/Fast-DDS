@@ -259,18 +259,11 @@ void PDP::initializeParticipantProxyData(
         }
 #endif // if HAVE_SECURITY
     }
+    participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
+    participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
 
-    if (attributes.builtin.typelookup_config.use_server)
-    {
-        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
-        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
-    }
-
-    if (attributes.builtin.typelookup_config.use_client)
-    {
-        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
-        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
-    }
+    participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
+    participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
 
 #if HAVE_SECURITY
     if (mp_RTPSParticipant->is_secure())
@@ -838,7 +831,6 @@ ReaderProxyData* PDP::addReaderProxyData(
                     ReaderDiscoveryInfo info(*ret_val);
                     info.status = ReaderDiscoveryInfo::CHANGED_QOS_READER;
                     listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                    check_and_notify_type_discovery(listener, *ret_val);
                 }
 
                 return ret_val;
@@ -889,7 +881,6 @@ ReaderProxyData* PDP::addReaderProxyData(
                 ReaderDiscoveryInfo info(*ret_val);
                 info.status = ReaderDiscoveryInfo::DISCOVERED_READER;
                 listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                check_and_notify_type_discovery(listener, *ret_val);
             }
 
             return ret_val;
@@ -937,7 +928,6 @@ WriterProxyData* PDP::addWriterProxyData(
                     WriterDiscoveryInfo info(*ret_val);
                     info.status = WriterDiscoveryInfo::CHANGED_QOS_WRITER;
                     listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                    check_and_notify_type_discovery(listener, *ret_val);
                 }
 
                 return ret_val;
@@ -987,7 +977,6 @@ WriterProxyData* PDP::addWriterProxyData(
                 WriterDiscoveryInfo info(*ret_val);
                 info.status = WriterDiscoveryInfo::DISCOVERED_WRITER;
                 listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                check_and_notify_type_discovery(listener, *ret_val);
             }
 
             return ret_val;
@@ -1211,10 +1200,7 @@ bool PDP::remove_remote_participant(
             this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
         }
 
-        if (mp_builtin->tlm_ != nullptr)
-        {
-            mp_builtin->tlm_->remove_remote_endpoints(pdata);
-        }
+        mp_builtin->typelookup_manager_.remove_remote_endpoints(pdata);
 
         this->mp_EDP->removeRemoteEndpoints(pdata);
         this->removeRemoteEndpoints(pdata);
@@ -1352,81 +1338,6 @@ void PDP::check_remote_participant_liveliness(
         remote_participant->lease_duration_event->update_interval_millisec(
             (double)std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
         remote_participant->lease_duration_event->restart_timer();
-    }
-}
-
-void PDP::check_and_notify_type_discovery(
-        RTPSParticipantListener* listener,
-        const WriterProxyData& wdata) const
-{
-    check_and_notify_type_discovery(
-        listener,
-        wdata.topicName(),
-        wdata.typeName(),
-        wdata.has_type_id() ? &wdata.type_id().m_type_identifier : nullptr,
-        wdata.has_type() ? &wdata.type().m_type_object : nullptr,
-        wdata.has_type_information() ? &wdata.type_information() : nullptr);
-}
-
-void PDP::check_and_notify_type_discovery(
-        RTPSParticipantListener* listener,
-        const ReaderProxyData& rdata) const
-{
-    check_and_notify_type_discovery(
-        listener,
-        rdata.topicName(),
-        rdata.typeName(),
-        rdata.has_type_id() ? &rdata.type_id().m_type_identifier : nullptr,
-        rdata.has_type() ? &rdata.type().m_type_object : nullptr,
-        rdata.has_type_information() ? &rdata.type_information() : nullptr);
-}
-
-void PDP::check_and_notify_type_discovery(
-        RTPSParticipantListener* listener,
-        const string_255& topic_name,
-        const string_255& type_name,
-        const types::TypeIdentifier* type_id,
-        const types::TypeObject* type_obj,
-        const xtypes::TypeInformationParameter* type_info) const
-{
-    // Notify about type_info
-    if (type_info && type_info->assigned())
-    {
-        listener->on_type_information_received(
-            mp_RTPSParticipant->getUserRTPSParticipant(), topic_name, type_name, type_info->type_information);
-    }
-
-    // Are we discovering a type?
-    types::DynamicType_ptr dyn_type;
-    if (type_obj && type_obj->_d() == types::EK_COMPLETE) // Writer shares a Complete TypeObject
-    {
-        // TODO Change to new API
-        // dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-        //     type_name.to_string(), type_id, type_obj);
-    }
-    else if (type_id && type_id->_d() != static_cast<octet>(0x00)
-            && type_id->_d() < types::EK_MINIMAL) // Writer shares a TypeIdentifier that doesn't need TypeObject
-    {
-        // TODO Change to new API
-        // dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-        //     type_name.to_string(), type_id);
-    }
-
-    if (dyn_type != nullptr)
-    {
-        types::DynamicPubSubType type_support(dyn_type);
-
-        if (!mp_RTPSParticipant->check_type(type_name.to_string()))
-        {
-            // Discovering a type
-            listener->on_type_discovery(
-                mp_RTPSParticipant->getUserRTPSParticipant(),
-                fastdds::dds::builtin::INVALID_SAMPLE_IDENTITY,
-                topic_name,
-                type_id,
-                type_obj,
-                dyn_type);
-        }
     }
 }
 

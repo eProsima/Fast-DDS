@@ -48,7 +48,7 @@ namespace builtin {
 
 TypeLookupRequestListener::TypeLookupRequestListener(
         TypeLookupManager* manager)
-    : tlm_(manager)
+    : typelookup_manager_(manager)
 {
 }
 
@@ -70,10 +70,11 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
 
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Received new cache change");
     TypeLookup_Request request;
-    if (tlm_->recv_request(*change, request))
+    if (typelookup_manager_->recv_request(*change, request))
     {
         // TODO checks?
-        if (get_rtps_guid(request.header().requestId().writer_guid()) == tlm_->builtin_request_writer_->getGuid())
+        if (get_rtps_guid(request.header().requestId().writer_guid()) ==
+                typelookup_manager_->builtin_request_writer_->getGuid())
         {
             // Message from our selves.
             return;
@@ -111,14 +112,14 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                     }
                 }
 
-                TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(tlm_->reply_type_.createData());
+                TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
                 TypeLookup_getTypes_Result result;
                 result.result(out);
                 reply->return_value().getType(result);
                 reply->header().relatedRequestId() = request.header().requestId();
 
-                tlm_->send_reply(*reply);
-                tlm_->reply_type_.deleteData(reply);
+                typelookup_manager_->send_reply(*reply);
+                typelookup_manager_->reply_type_.deleteData(reply);
 
                 break;
             }
@@ -133,14 +134,14 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                     //     in.type_ids, in.continuation_point, out.continuation_point, 255); // TODO: Make configurable?
                 }
 
-                TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(tlm_->reply_type_.createData());
+                TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
                 TypeLookup_getTypeDependencies_Result result;
                 result.result(out);
                 reply->return_value().getTypeDependencies(result);
                 reply->header().relatedRequestId() = request.header().requestId();
 
-                tlm_->send_reply(*reply);
-                tlm_->reply_type_.deleteData(reply);
+                typelookup_manager_->send_reply(*reply);
+                typelookup_manager_->reply_type_.deleteData(reply);
 
                 break;
             }

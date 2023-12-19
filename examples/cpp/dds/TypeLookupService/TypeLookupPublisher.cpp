@@ -67,7 +67,6 @@ bool TypeLookupPublisher::init()
     pqos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
     pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    pqos.wire_protocol().builtin.typelookup_config.use_server = true;
     pqos.wire_protocol().builtin.use_WriterLivelinessProtocol = false;
     pqos.wire_protocol().builtin.discovery_config.leaseDuration = c_TimeInfinite;
     pqos.name("Participant_pub");
@@ -80,7 +79,6 @@ bool TypeLookupPublisher::init()
 
     //REGISTER THE TYPE
     m_type.get()->auto_fill_type_information(true);
-    m_type.get()->auto_fill_type_object(false);
     m_type.register_type(mp_participant);
 
     //CREATE THE PUBLISHER

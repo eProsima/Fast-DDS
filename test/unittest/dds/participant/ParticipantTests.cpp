@@ -1504,20 +1504,6 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
-    // Check changing wire_protocol().builtin.typelookup_config.use_client is NOT OK
-    participant->get_qos(qos);
-    qos.wire_protocol().builtin.typelookup_config.use_client ^= true;
-    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
-    participant->get_qos(set_qos);
-    ASSERT_FALSE(set_qos == qos);
-
-    // Check changing wire_protocol().builtin.typelookup_config.use_server is NOT OK
-    participant->get_qos(qos);
-    qos.wire_protocol().builtin.typelookup_config.use_server ^= true;
-    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
-    participant->get_qos(set_qos);
-    ASSERT_FALSE(set_qos == qos);
-
     // Check changing wire_protocol().builtin.metatrafficUnicastLocatorList is NOT OK
     participant->get_qos(qos);
     qos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(loc);
@@ -3174,10 +3160,9 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactories)
     DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
     // Register the type
     TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    // Activating the auto_fill_type_information or the auto_fill_type_object settings, the participant will try to
+    // Activating the auto_fill_type_information settings, the participant will try to
     // add the type dynamic type factories
     type->auto_fill_type_information(true);
-    type->auto_fill_type_object(true);
     ASSERT_EQ(type.register_type(participant), RETCODE_OK);
 
     // Remove the participant
@@ -3213,7 +3198,6 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotFillTypeInfo)
     // Register the type
     TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
     type->auto_fill_type_information(false);
-    type->auto_fill_type_object(true);
     ASSERT_EQ(type.register_type(participant), RETCODE_OK);
 
     // Remove the participant
@@ -3270,7 +3254,6 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
     // Register the type
     TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
     type->auto_fill_type_information(true);
-    type->auto_fill_type_object(true);
     type.register_type(participant);
 
     TypeSupport ret_type = participant->find_type("my_dynamic_type");
@@ -3282,301 +3265,6 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
     delete myDescriptor;
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-/*
- * This test create a sequence of TypeIdentifiers to call the get_types() DomainParticipant function. It should return
- * the TypeObjects associated with the TypeIdentifiers. Finally, the test checks that the writer guid prefix given by
- * the TypeObject is the same as the DomainPartipant guid prefix.
- */
-TEST(ParticipantTests, GetTypes)
-{
-    // Create the participant
-    DomainParticipantQos pqos;
-    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, pqos);
-
-    // Create the dynamic type builder
-    DynamicTypeBuilder_ptr builder_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder(100);
-    // Create the dynamic type
-    DynamicType_ptr dyn_type_string = builder_string->build();
-    TypeSupport type_string(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type_string));
-    // Create the data instance
-    DynamicData_ptr data_string(DynamicDataFactory::get_instance()->create_data(dyn_type_string));
-    data_string->set_string_value("Dynamic String");
-
-    // Register the type
-    type_string->auto_fill_type_information(true);
-    type_string->auto_fill_type_object(true);
-    type_string.register_type(participant);
-
-    // Create the sequence of TypeIdentifiers
-    const fastrtps::types::TypeIdentifier* indentifier_string =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-        type_string.get_type_name());
-
-    fastrtps::types::TypeIdentifierSeq types;
-    types.push_back(*indentifier_string);
-
-    // Checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant guid prefix
-    ASSERT_EQ(participant->guid().guidPrefix, participant->get_types(types).writer_guid().guidPrefix);
-
-    // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-/*
- * This test create a sequence of TypeIdentifiers to call the get_type_dependencies() DomainParticipant function.
- * Finally, the test checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant
- * guid prefix.
- */
-TEST(ParticipantTests, GetTypeDependencies)
-{
-    // Create the participant
-    DomainParticipantQos pqos;
-    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, pqos);
-
-    // Create the dynamic type builder
-    DynamicTypeBuilder_ptr builder_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder(100);
-    // Create the dynamic type
-    DynamicType_ptr dyn_type_string = builder_string->build();
-    TypeSupport type_string(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type_string));
-    // Create the data instance
-    DynamicData_ptr data_string(DynamicDataFactory::get_instance()->create_data(dyn_type_string));
-    data_string->set_string_value("Dynamic String");
-
-    // Register the type
-    type_string->auto_fill_type_information(true);
-    type_string->auto_fill_type_object(true);
-    type_string.register_type(participant);
-
-    // Create the sequence of TypeIdentifiers
-    const fastrtps::types::TypeIdentifier* indentifier_string =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-        type_string.get_type_name());
-
-    fastrtps::types::TypeIdentifierSeq types;
-    types.push_back(*indentifier_string);
-
-    // Checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant guid prefix
-    ASSERT_EQ(participant->guid().guidPrefix, participant->get_type_dependencies(types).writer_guid().guidPrefix);
-
-    // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-/*
- * This test create two participants which will share a complete dynamic type.
- * 1. The remote participant registers a dynamic type
- * 2. The local participant register the dynamic type of the remote participant using the TypeInformation and the type
- *    name
- * 3. Check that the type is not registered if the local participant is disabled
- * 4. Check that the type is registered if the local participant is enabled
- */
-TEST(ParticipantTests, RegisterRemoteTypeComplete)
-{
-    // Do not enable entities on creation
-    DomainParticipantFactoryQos factory_qos;
-    factory_qos.entity_factory().autoenable_created_entities = false;
-    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
-    uint32_t domain_id = (uint32_t)GET_PID() % 230;
-
-    // Create the remote participant and enable it
-    DomainParticipant* remote_participant =
-            DomainParticipantFactory::get_instance()->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
-    EXPECT_EQ(RETCODE_OK, remote_participant->enable());
-    EXPECT_TRUE(remote_participant->is_enabled());
-
-    // Create the local participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
-
-    // Create the complete dynamic type builder
-    DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
-    DynamicTypeBuilder_ptr seqLong_builder =
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(int32_builder.get());
-    DynamicTypeBuilder_ptr mySequenceLong_builder =
-            DynamicTypeBuilderFactory::get_instance()->create_alias_builder(seqLong_builder.get(), "MySequenceLong");
-    // Build the dynamic type
-    DynamicType_ptr dyn_type = mySequenceLong_builder->build();
-
-    // Register the type
-    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    type.register_type(remote_participant);
-
-    // Retrieve the Typeidentifier, the type name and the TypeInformation from the TypeObjectFactory
-    const fastrtps::types::TypeIdentifier* identifier =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-        type.get_type_name());
-
-    std::string type_name = fastrtps::types::TypeObjectFactory::get_instance()->get_type_name(identifier);
-
-    const fastrtps::types::TypeInformation* type_information =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_information(type_name);
-
-    Topic* topic = remote_participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-
-    // Create the functor for the remote type registration
-    std::string topic_name = "footopic";
-    std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
-            [topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
-            {
-                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
-            };
-
-    // Register the remote type in the disabled local participant. This should return a RETCODE_NOT_ENABLED return code
-    ASSERT_EQ(participant->register_remote_type(*type_information, type.get_type_name(), callback),
-            RETCODE_NOT_ENABLED);
-
-    // Enable the local participant
-    EXPECT_EQ(RETCODE_OK, participant->enable());
-    EXPECT_TRUE(participant->is_enabled());
-
-    // Register the remote type in the disabled local participant
-    ASSERT_EQ(participant->register_remote_type(*type_information, type_name, callback),
-            RETCODE_OK);
-
-    // Remove the topic and both participants
-    ASSERT_EQ(remote_participant->delete_topic(topic), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
-            RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-/*
- * This test create two participants which will share a minimal dynamic type.
- * 1. The remote participant registers a dynamic type
- * 2. The local participant register the dynamic type of the remote participant using the TypeInformation and the type
- *    name
- * 3. Check that the type is not registered if the local participant is disabled
- * 4. Check that the type is registered if the local participant is enabled
- */
-TEST(ParticipantTests, RegisterRemoteTypeMinimal)
-{
-    // Do not enable entities on creation
-    DomainParticipantFactoryQos factory_qos;
-    factory_qos.entity_factory().autoenable_created_entities = false;
-    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
-    uint32_t domain_id = (uint32_t)GET_PID() % 230;
-
-    // Create the remote participant and enable it
-    DomainParticipant* remote_participant =
-            DomainParticipantFactory::get_instance()->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
-    EXPECT_EQ(RETCODE_OK, remote_participant->enable());
-    EXPECT_TRUE(remote_participant->is_enabled());
-
-    // Create the local participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
-
-    // Create the minimal dynamic type builder
-    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance()->create_char16_builder();
-    // Build the dynamic type
-    DynamicType_ptr dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type(builder.get());
-    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
-    data->set_string_value("Dynamic Char16");
-
-    // Register the type
-    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    type.register_type(remote_participant);
-
-    // Retrieve the Typeidentifier, the type name and the TypeInformation from the TypeObjectFactory
-    const fastrtps::types::TypeIdentifier* identifier =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-        type.get_type_name());
-
-    std::string type_name = fastrtps::types::TypeObjectFactory::get_instance()->get_type_name(identifier);
-
-    const fastrtps::types::TypeInformation* type_information =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_information(type_name);
-
-    Topic* topic = remote_participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-
-    // Create the functor for the remote type registration
-    std::string topic_name = "footopic";
-    std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
-            [topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
-            {
-                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
-            };
-
-    // Register the remote type in the disabled local participant. This should return a RETCODE_NOT_ENABLED return code
-    ASSERT_EQ(participant->register_remote_type(*type_information, type.get_type_name(), callback),
-            RETCODE_NOT_ENABLED);
-
-    // Enable the local participant
-    EXPECT_EQ(RETCODE_OK, participant->enable());
-    EXPECT_TRUE(participant->is_enabled());
-
-    // Register the remote type in the disabled local participant
-    ASSERT_EQ(participant->register_remote_type(*type_information, type_name, callback),
-            RETCODE_OK);
-
-    // Remove the topic and both participants
-    ASSERT_EQ(remote_participant->delete_topic(topic), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
-            RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-/*
- * This test checks that a RETCODE_PRECONDITION_NOT_MET error code is returned when registering a dynamic remote type
- * with an empty TypeInformation
- */
-TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
-{
-    uint32_t domain_id = (uint32_t)GET_PID() % 230;
-
-    // Create the remote participant
-    DomainParticipant* remote_participant =
-            DomainParticipantFactory::get_instance()->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
-
-    // Create the local participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
-
-    // Create the type builder
-    DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
-    DynamicTypeBuilder_ptr seqLong_builder =
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(int32_builder.get());
-    DynamicTypeBuilder_ptr mySequenceLong_builder =
-            DynamicTypeBuilderFactory::get_instance()->create_alias_builder(seqLong_builder.get(), "MySequenceLong");
-    // Build the dynamic type
-    DynamicType_ptr dyn_type = mySequenceLong_builder->build();
-
-    // Register the type
-    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    type.register_type(remote_participant);
-
-    Topic* topic = remote_participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-
-    // Create the functor for the remote type registration
-    std::string topic_name = "footopic";
-    std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
-            [topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
-            {
-                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
-            };
-
-    // Create an empty TypeInformation
-    fastrtps::types::TypeInformation info = fastrtps::types::TypeInformation();
-    // Check that register_remote_type() returns RETCODE_PRECONDITION_NOT_MET if the TypeInformation is empty
-    ASSERT_EQ(participant->register_remote_type(info, type.get_type_name(), callback),
-            RETCODE_PRECONDITION_NOT_MET);
-
-    // Remove the topic and both participants
-    ASSERT_EQ(remote_participant->delete_topic(topic), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
-            RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 

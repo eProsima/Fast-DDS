@@ -1746,7 +1746,6 @@ fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
     {
         topic_att.type_information = *type_->type_information();
     }
-    topic_att.auto_fill_type_object = type_->auto_fill_type_object();
     topic_att.auto_fill_type_information = type_->auto_fill_type_information();
 
     return topic_att;

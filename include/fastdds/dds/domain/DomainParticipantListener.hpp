@@ -184,59 +184,6 @@ public:
         static_cast<void>(should_be_ignored);
     }
 
-    /*!
-     * This method is called when a participant discovers a new Type
-     * The ownership of all object belongs to the caller so if needs to be used after the
-     * method ends, a full copy should be perform (except for dyn_type due to its shared_ptr nature.
-     * For example:
-     * fastrtps::types::TypeIdentifier new_type_id = \*identifier;
-     */
-    virtual void on_type_discovery(
-            DomainParticipant* participant,
-            const fastrtps::rtps::SampleIdentity& request_sample_id,
-            const fastrtps::string_255& topic,
-            const fastrtps::types::TypeIdentifier* identifier,
-            const fastrtps::types::TypeObject* object,
-            fastrtps::types::DynamicType_ptr dyn_type)
-    {
-        static_cast<void>(participant);
-        static_cast<void>(request_sample_id);
-        static_cast<void>(topic);
-        static_cast<void>(identifier);
-        static_cast<void>(object);
-        static_cast<void>(dyn_type);
-    }
-
-    /*!
-     * This method is called when the typelookup client received a reply to a getTypeDependencies request.
-     * The user may want to retrieve these new types using the getTypes request and create a new
-     * DynamicType using the retrieved TypeObject.
-     */
-    virtual void on_type_dependencies_reply(
-            DomainParticipant* participant,
-            const fastrtps::rtps::SampleIdentity& request_sample_id,
-            const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
-    {
-        static_cast<void>(participant);
-        static_cast<void>(request_sample_id);
-        static_cast<void>(dependencies);
-    }
-
-    /*!
-     * This method is called when a participant receives a TypeInformation while discovering another participant.
-     */
-    virtual void on_type_information_received(
-            DomainParticipant* participant,
-            const fastrtps::string_255 topic_name,
-            const fastrtps::string_255 type_name,
-            const fastrtps::types::TypeInformation& type_information)
-    {
-        static_cast<void>(participant);
-        static_cast<void>(topic_name);
-        static_cast<void>(type_name);
-        static_cast<void>(type_information);
-    }
-
     // TODO: Methods in DomainParticipantListener (p.33 - DDS)
 };
 
