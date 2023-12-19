@@ -225,6 +225,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/ExternalLocatorsProcessor.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/ReceiverResource.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/RTPSParticipantAttributes.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/participant/RTPSParticipant.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/participant/RTPSParticipantImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
@@ -645,6 +646,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         StatisticsDomainParticipantStatusQueryableTests/mock/
         ${PROJECT_SOURCE_DIR}/test/mock/dds/Publisher/
         ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantImpl/
+        ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantAttributes
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}/include
         ${Asio_INCLUDE_DIR}

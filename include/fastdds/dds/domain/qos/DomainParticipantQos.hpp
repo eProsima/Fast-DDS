@@ -23,6 +23,7 @@
 #include <string>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastrtps/fastrtps_dll.h>
@@ -347,6 +348,14 @@ public:
     {
         return builtin_controllers_sender_thread_;
     }
+
+    /**
+     * Provides a way of easily configuring transport related configuration on certain pre-defined scenarios.
+     *
+     * @param transports Defines the transport configuration scenario to setup.
+     */
+    RTPS_DllAPI void setup_transports(
+            rtps::BuiltinTransports transports);
 
     /**
      * Setter for the builtin flow controllers sender threads ThreadSettings

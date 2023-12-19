@@ -156,6 +156,7 @@ target_include_directories(XMLProfileParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantAttributes
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${Asio_INCLUDE_DIR}
@@ -257,6 +258,7 @@ target_include_directories(XMLParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantAttributes
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
