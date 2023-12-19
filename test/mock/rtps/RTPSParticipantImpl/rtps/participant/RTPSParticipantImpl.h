@@ -310,6 +310,8 @@ public:
 
     MOCK_METHOD(bool, should_match_local_endpoints, ());
 
+    MOCK_METHOD(bool, ignore_participant, (const GuidPrefix_t&));
+
 private:
 
     MockParticipantListener listener_;
