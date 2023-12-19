@@ -69,7 +69,6 @@ public:
     RTPS_DllAPI TopicDataType()
         : m_typeSize(0)
         , m_isGetKeyDefined(false)
-        , auto_fill_type_object_(true)
         , auto_fill_type_information_(true)
     {
     }
@@ -198,27 +197,6 @@ public:
     RTPS_DllAPI inline const char* getName() const
     {
         return m_topicDataTypeName.c_str();
-    }
-
-    /**
-     * Get the type object auto-fill configuration
-     *
-     * @return true if the type object should be auto-filled
-     */
-    RTPS_DllAPI inline bool auto_fill_type_object() const
-    {
-        return auto_fill_type_object_;
-    }
-
-    /**
-     * Set the type object auto-fill configuration
-     *
-     * @param auto_fill_type_object new value to set
-     */
-    RTPS_DllAPI inline void auto_fill_type_object(
-            bool auto_fill_type_object)
-    {
-        auto_fill_type_object_ = auto_fill_type_object;
     }
 
     /**
@@ -397,8 +375,7 @@ private:
 
     //! Data Type Name.
     std::string m_topicDataTypeName;
-
-    bool auto_fill_type_object_;
+    //TODO(XTypes)
     bool auto_fill_type_information_;
 
     friend class fastdds::dds::TypeSupport;

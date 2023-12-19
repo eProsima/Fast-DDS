@@ -131,20 +131,6 @@ void HelloWorldSubscriber::SubListener::on_data_available(
     }
 }
 
-void HelloWorldSubscriber::SubListener::on_type_discovery(
-        DomainParticipant*,
-        const eprosima::fastrtps::rtps::SampleIdentity&,
-        const eprosima::fastrtps::string_255& topic_name,
-        const eprosima::fastrtps::types::TypeIdentifier*,
-        const eprosima::fastrtps::types::TypeObject*,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
-{
-    std::cout << "Discovered type: " << dyn_type->get_name() << " from topic " << topic_name << std::endl;
-    received_type_ = dyn_type;
-    reception_flag_.store(true);
-    types_cv_.notify_one();
-}
-
 void HelloWorldSubscriber::initialize_entities()
 {
     auto type = m_listener.received_type_;

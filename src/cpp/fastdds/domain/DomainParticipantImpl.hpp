@@ -481,34 +481,6 @@ public:
 
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
-    fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
-
-    fastrtps::rtps::SampleIdentity get_types(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
-
-    /**
-     * Helps the user to solve all dependencies calling internally to the typelookup service and
-     * registers the resulting dynamic type.
-     * The registration may be perform asynchronously, case in which the user will be notified
-     * through the given callback, which receives the type_name as unique argument.
-     *
-     * @param type_information
-     * @param type_name
-     * @param callback
-     * @return RETCODE_OK If the given type_information is enough to build the type without using
-     *         the typelookup service (callback will not be called).
-     * @return RETCODE_OK if the given type is already available (callback will not be called).
-     * @return RETCODE_NO_DATA if type is not available yet (the callback will be called if
-     *         negotiation is success, and ignored in other case).
-     * @return RETCODE_NOT_ENABLED if the DomainParticipant is not enabled.
-     * @return RETCODE_PRECONDITION_NOT_MET if the DomainParticipant type lookup service is disabled.
-     */
-    ReturnCode_t register_remote_type(
-            const fastrtps::types::TypeInformation& type_information,
-            const std::string& type_name,
-            std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
-
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     virtual void disable();
 
@@ -592,21 +564,6 @@ protected:
     std::condition_variable cond_topics_;
 
     TopicQos default_topic_qos_;
-
-    // Mutex for requests and callbacks maps.
-    std::mutex mtx_request_cb_;
-
-    // register_remote_type parent request, type_name, callback relationship.
-    std::map<fastrtps::rtps::SampleIdentity,
-            std::pair<std::string, std::function<void(
-                const std::string& name,
-                const fastrtps::types::DynamicType_ptr)>>> register_callbacks_;
-
-    // Relationship between child and parent request
-    std::map<fastrtps::rtps::SampleIdentity, fastrtps::rtps::SampleIdentity> child_requests_;
-
-    // All parent's child requests
-    std::map<fastrtps::rtps::SampleIdentity, std::vector<fastrtps::rtps::SampleIdentity>> parent_requests_;
 
     std::atomic<uint32_t> id_counter_;
 
@@ -693,25 +650,6 @@ protected:
                 fastrtps::rtps::RTPSParticipant* participant,
                 fastrtps::rtps::WriterDiscoveryInfo&& info) override;
 
-        void on_type_discovery(
-                fastrtps::rtps::RTPSParticipant* participant,
-                const fastrtps::rtps::SampleIdentity& request_sample_id,
-                const fastrtps::string_255& topic,
-                const fastrtps::types::TypeIdentifier* identifier,
-                const fastrtps::types::TypeObject* object,
-                fastrtps::types::DynamicType_ptr dyn_type) override;
-
-        void on_type_dependencies_reply(
-                fastrtps::rtps::RTPSParticipant* participant,
-                const fastrtps::rtps::SampleIdentity& request_sample_id,
-                const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies) override;
-
-        void on_type_information_received(
-                fastrtps::rtps::RTPSParticipant* participant,
-                const fastrtps::string_255& topic_name,
-                const fastrtps::string_255& type_name,
-                const fastrtps::types::TypeInformation& type_information) override;
-
         DomainParticipantImpl* participant_;
         int callback_counter_ = 0;
 
@@ -727,16 +665,6 @@ protected:
     bool register_dynamic_type_to_factories(
             const TypeSupport& type) const;
 
-    bool check_get_type_request(
-            const fastrtps::rtps::SampleIdentity& requestId,
-            const fastrtps::types::TypeIdentifier* identifier,
-            const fastrtps::types::TypeObject* object,
-            fastrtps::types::DynamicType_ptr dyn_type);
-
-    bool check_get_dependencies_request(
-            const fastrtps::rtps::SampleIdentity& requestId,
-            const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies);
-
     virtual PublisherImpl* create_publisher_impl(
             const PublisherQos& qos,
             PublisherListener* listener);
@@ -744,26 +672,6 @@ protected:
     virtual SubscriberImpl* create_subscriber_impl(
             const SubscriberQos& qos,
             SubscriberListener* listener);
-
-    // Always call it with the mutex already taken
-    void remove_parent_request(
-            const fastrtps::rtps::SampleIdentity& request);
-
-    // Always call it with the mutex already taken
-    void remove_child_request(
-            const fastrtps::rtps::SampleIdentity& request);
-
-    // Always call it with the mutex already taken
-    void on_child_requests_finished(
-            const fastrtps::rtps::SampleIdentity& parent);
-
-    void fill_pending_dependencies(
-            const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies,
-            fastrtps::types::TypeIdentifierSeq& pending_identifiers,
-            fastrtps::types::TypeIdentifierSeq& pending_objects) const;
-
-    std::string get_inner_type_name(
-            const fastrtps::rtps::SampleIdentity& id) const;
 
     IContentFilterFactory* find_content_filter_factory(
             const char* filter_class_name);
