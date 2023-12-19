@@ -203,7 +203,6 @@ static void setup_transports_large_data(
         att.userTransports.push_back(shm_transport);
 
         auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
-        att.builtin.metatrafficUnicastLocatorList.push_back(shm_loc);
         att.defaultUnicastLocatorList.push_back(shm_loc);
 
         auto tcp_transport = create_tcpv4_transport(att);
@@ -240,7 +239,6 @@ static void setup_transports_large_datav6(
         att.userTransports.push_back(shm_transport);
 
         auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
-        att.builtin.metatrafficUnicastLocatorList.push_back(shm_loc);
         att.defaultUnicastLocatorList.push_back(shm_loc);
 
         auto tcp_transport = create_tcpv6_transport(att);
