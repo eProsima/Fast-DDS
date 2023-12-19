@@ -16,8 +16,10 @@
 #define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_HPP
 
 #include <memory>
+#include <string>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastrtps/fastrtps_dll.h>
@@ -45,13 +47,14 @@ public:
      * Resets the singleton reference.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK is always returned.
+     * @retval RETCODE_BAD_PARAMETER if singleton reference is currently nil.
      */
     static ReturnCode_t delete_instance();
 
     /*!
      * Retrieves the cached @ref DynamicType reference associated to a given primitive
      * @param[in] kind Type identifying the primitive type to retrieve.
-     * @return @ref DynamicType reference
+     * @return @ref DynamicType reference. Nil reference returned in error case.
      */
     virtual traits<DynamicType>::ref_type get_primitive_type(
             TypeKind kind) = 0;
@@ -59,7 +62,7 @@ public:
     /*!
      * Creates a new @ref DynamicTypeBuilder reference based on the given @ref TypeDescriptor state.
      * @param[in] descriptor @ref TypeDescriptor to be copied.
-     * @return New @ref DynamicTypeBuilder reference.
+     * @return New @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
     virtual traits<DynamicTypeBuilder>::ref_type create_type(
             traits<TypeDescriptor>::ref_type descriptor) = 0;
@@ -67,7 +70,7 @@ public:
     /*!
      * Creates a new @ref DynamicTypeBuilder reference based on the given @ref DynamicType reference.
      * @param[in] type @ref DynamicType reference to be used.
-     * @return New @ref DynamicTypeBuilder reference
+     * @return New @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
     virtual traits<DynamicTypeBuilder>::ref_type create_type_copy(
             traits<DynamicType>::ref_type type) = 0;
@@ -76,7 +79,7 @@ public:
      * Creates a new @ref DynamicTypeBuilder reference based on the given @ref TypeObject instance.
      * @remark Not implemented yet.
      * @param[in] type_object @ref TypeObject instance to be used.
-     * @return New @ref DynamicTypeBuilder reference
+     * @return New @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
     virtual traits<DynamicTypeBuilder>::ref_type create_type_w_type_object(
             const xtypes::TypeObject& type_object) = 0;
@@ -85,7 +88,7 @@ public:
      * Creates a new @ref DynamicTypeBuilder reference representing a bounded string type.
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * If the value is equal to LENGTH_UNLIMITED, the string type shall be considered to be unbounded.
-     * @return new @ref DynamicTypeBuilder reference.
+     * @return new @ref DynamicTypeBuilder reference.. Nil reference returned in error case.
      */
     virtual traits<DynamicTypeBuilder>::ref_type create_string_type(
             uint32_t bound) = 0;
@@ -94,7 +97,7 @@ public:
      * Creates a new @ref DynamicTypeBuilder reference representing a bounded wstring type.
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * If the value is equal to LENGTH_UNLIMITED, the wstring type shall be considered to be unbounded.
-     * @return new @ref DynamicTypeBuilder reference.
+     * @return new @ref DynamicTypeBuilder reference.. Nil reference returned in error case.
      */
     virtual traits<DynamicTypeBuilder>::ref_type create_wstring_type(
             uint32_t bound) = 0;
@@ -104,7 +107,7 @@ public:
      * @param[in] element_type @ref DynamicType reference which becomes the element type
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * If the value is equal to LENGTH_UNLIMITED, the sequence type shall be considered to be unbounded.
-     * @return new @ref DynamicTypeBuilder reference
+     * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
     virtual traits<DynamicTypeBuilder>::ref_type create_sequence_type(
             traits<DynamicType>::ref_type element_type,
@@ -114,7 +117,7 @@ public:
      * Creates a new @ref DynamicTypeBuilder reference representing an array.
      * @param[in] element_type @ref DynamicType reference which becomes the element type
      * @param[in] bounds `uint32_t` representing the desired dimensions.
-     * @return new @ref DynamicTypeBuilder reference.
+     * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
     virtual traits<DynamicTypeBuilder>::ref_type create_array_type(
             traits<DynamicType>::ref_type element_type,
@@ -126,7 +129,7 @@ public:
      * @param[in] value_type @ref DynamicType reference which becomes the map's value type
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * If the value is equal to LENGTH_UNLIMITED, the map type shall be considered to be unbounded.
-     * @return new @ref DynamicTypeBuilder reference
+     * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
     virtual traits<DynamicTypeBuilder>::ref_type create_map_type(
             traits<DynamicType>::ref_type key_element_type,
@@ -136,7 +139,7 @@ public:
     /*!
      * Creates a new @ref DynamicTypeBuilder reference representing a bitmask
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
-     * @return new @ref DynamicTypeBuilder reference
+     * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
     virtual traits<DynamicTypeBuilder>::ref_type create_bitmask_type(
             uint32_t bound) = 0;
@@ -148,7 +151,7 @@ public:
      * @param[in] type_name Fully qualified name of the type to be loaded from the document.
      * @param[in] include_paths A collection of URLs to directories to be searched for additional type description
      * documents.
-     * @return new @ref DynamicTypeBuilder reference.
+     * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
     virtual traits<DynamicTypeBuilder>::ref_type create_type_w_uri(
             const std::string& document_url,
@@ -162,7 +165,7 @@ public:
      * @param[in] type_name Fully qualified name of the type to be loaded from the string.
      * @param[in] include_paths A collection of URLs to directories to be searched for additional type description
      * documents.
-     * @return new @ref DynamicTypeBuilder reference.
+     * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
     virtual traits<DynamicTypeBuilder>::ref_type create_type_w_document(
             const std::string& document,

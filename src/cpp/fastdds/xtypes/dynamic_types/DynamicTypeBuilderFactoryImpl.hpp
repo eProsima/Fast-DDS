@@ -26,7 +26,7 @@ namespace fastdds {
 namespace dds {
 
 /**
- * This class is conceived as a singleton charged of creation of @ref DynamicTypeBuilderImpl objects.
+ * This class is conceived as a singleton in charged of creating the @ref DynamicTypeBuilderImpl objects.
  * For simplicity direct primitive types instantiation is also possible.
  */
 class DynamicTypeBuilderFactoryImpl : public traits<DynamicTypeBuilderFactory>::base_type

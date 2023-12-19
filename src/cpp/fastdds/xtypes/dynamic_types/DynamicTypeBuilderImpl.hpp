@@ -20,7 +20,6 @@
 #include <vector>
 
 #include "AnnotationDescriptorImpl.hpp"
-#include "DynamicTypeImpl.hpp"
 #include "TypeDescriptorImpl.hpp"
 
 namespace eprosima {
@@ -29,8 +28,6 @@ namespace dds {
 
 class DynamicTypeBuilderImpl : public traits<DynamicTypeBuilder>::base_type
 {
-    friend class DynamicTypeBuilderFactoryImpl;
-
 public:
 
     DynamicTypeBuilderImpl(
@@ -84,9 +81,6 @@ public:
             traits<AnnotationDescriptor>::ref_type descriptor) noexcept override;
 
     traits<DynamicType>::ref_type build() noexcept override;
-
-    ReturnCode_t copy_from(
-            traits<DynamicTypeImpl>::ref_type type);
 
 protected:
 
