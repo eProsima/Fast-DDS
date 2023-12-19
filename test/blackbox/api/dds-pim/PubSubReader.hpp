@@ -928,6 +928,13 @@ public:
         return *this;
     }
 
+    PubSubReader& setup_transports(
+            eprosima::fastdds::rtps::BuiltinTransports transports)
+    {
+        participant_qos_.setup_transports(transports);
+        return *this;
+    }
+
     PubSubReader& disable_builtin_transport()
     {
         participant_qos_.transport().use_builtin_transports = false;

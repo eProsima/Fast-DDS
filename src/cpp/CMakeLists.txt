@@ -77,6 +77,7 @@ set(${PROJECT_NAME}_source_files
     rtps/messages/submessages/HeartbeatMsg.hpp
     rtps/network/NetworkFactory.cpp
     rtps/network/ReceiverResource.cpp
+    rtps/attributes/RTPSParticipantAttributes.cpp
     rtps/participant/RTPSParticipant.cpp
     rtps/participant/RTPSParticipantImpl.cpp
     rtps/RTPSDomain.cpp

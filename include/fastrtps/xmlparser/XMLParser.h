@@ -598,6 +598,31 @@ protected:
             tinyxml2::XMLElement* elem,
             SubscriberAttributes& subscriber,
             uint8_t ident);
+<<<<<<< HEAD
+=======
+
+    RTPS_DllAPI static XMLP_ret getXMLThreadSettings(
+            tinyxml2::XMLElement& elem,
+            fastdds::rtps::ThreadSettings& thread_setting);
+
+    /*
+        Return XMLP_ret::XML_OK when OK, XMLP_ret::XML_NOK when port attribute is not present, and
+        XMLP_ret::XML_ERROR if error
+     */
+    RTPS_DllAPI static XMLP_ret getXMLThreadSettingsWithPort(
+            tinyxml2::XMLElement& elem,
+            fastdds::rtps::ThreadSettings& thread_setting,
+            uint32_t& port);
+
+    RTPS_DllAPI static XMLP_ret getXMLEntityFactoryQos(
+            tinyxml2::XMLElement& elem,
+            fastdds::dds::EntityFactoryQosPolicy& entity_factory);
+
+    RTPS_DllAPI static XMLP_ret getXMLBuiltinTransports(
+            tinyxml2::XMLElement* elem,
+            eprosima::fastdds::rtps::BuiltinTransports* bt,
+            uint8_t ident);
+>>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 };
 
 } // namespace xmlparser

@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,9 +19,6 @@
 #ifndef _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
 #define _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
 
-<<<<<<< HEAD
-#include <fastdds/rtps/common/Time_t.h>
-=======
 #include <memory>
 #include <sstream>
 
@@ -31,20 +28,17 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/PortParameters.h>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
-#include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastrtps/utils/fixed_size_string.hpp>
-#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/attributes/ServerAttributes.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
-
-#include <memory>
-#include <sstream>
+#include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
+#include <fastdds/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastrtps/fastrtps_dll.h>
+#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -383,17 +377,23 @@ public:
     //! Discovery protocol related attributes
     DiscoverySettings discovery_config;
 
-    //!Indicates to use the WriterLiveliness protocol.
+    //! Indicates to use the WriterLiveliness protocol.
     bool use_WriterLivelinessProtocol = true;
 
-    //!TypeLookup Service settings
+    //! TypeLookup Service settings
     TypeLookupSettings typelookup_config;
 
-    //!Metatraffic Unicast Locator List
+    //! Network Configuration
+    NetworkConfigSet_t network_configuration;
+
+    //! Metatraffic Unicast Locator List
     LocatorList_t metatrafficUnicastLocatorList;
 
-    //!Metatraffic Multicast Locator List.
+    //! Metatraffic Multicast Locator List.
     LocatorList_t metatrafficMulticastLocatorList;
+
+    //! The collection of external locators to use for communication on metatraffic topics.
+    fastdds::rtps::ExternalLocators metatraffic_external_unicast_locators;
 
     //! Initial peers.
     LocatorList_t initialPeersList;
@@ -415,7 +415,7 @@ public:
     //! Mutation tries if the port is being used.
     uint32_t mutation_tries = 100u;
 
-    //!Set to true to avoid multicast traffic on builtin endpoints
+    //! Set to true to avoid multicast traffic on builtin endpoints
     bool avoid_builtin_multicast = true;
 
     BuiltinAttributes() = default;
@@ -429,8 +429,10 @@ public:
                (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
                (typelookup_config.use_client == b.typelookup_config.use_client) &&
                (typelookup_config.use_server == b.typelookup_config.use_server) &&
+               (this->network_configuration == b.network_configuration) &&
                (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
                (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
+               (this->metatraffic_external_unicast_locators == b.metatraffic_external_unicast_locators) &&
                (this->initialPeersList == b.initialPeersList) &&
                (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
                (this->readerPayloadSize == b.readerPayloadSize) &&
@@ -462,6 +464,8 @@ public:
         return (this->name == b.name) &&
                (this->defaultUnicastLocatorList == b.defaultUnicastLocatorList) &&
                (this->defaultMulticastLocatorList == b.defaultMulticastLocatorList) &&
+               (this->default_external_unicast_locators == b.default_external_unicast_locators) &&
+               (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
                (this->sendSocketBufferSize == b.sendSocketBufferSize) &&
                (this->listenSocketBufferSize == b.listenSocketBufferSize) &&
                (this->builtin == b.builtin) &&
@@ -472,7 +476,15 @@ public:
                (this->useBuiltinTransports == b.useBuiltinTransports) &&
                (this->properties == b.properties) &&
                (this->prefix == b.prefix) &&
-               (this->flow_controllers == b.flow_controllers);
+               (this->flow_controllers == b.flow_controllers) &&
+               (this->builtin_controllers_sender_thread == b.builtin_controllers_sender_thread) &&
+               (this->timed_events_thread == b.timed_events_thread) &&
+#if HAVE_SECURITY
+               (this->security_log_thread == b.security_log_thread) &&
+#endif // if HAVE_SECURITY
+               (this->discovery_server_thread == b.discovery_server_thread) &&
+               (this->builtin_transports_reception_threads == b.builtin_transports_reception_threads);
+
     }
 
     /**
@@ -480,8 +492,32 @@ public:
      *
      * @param transports Defines the transport configuration scenario to setup.
      */
-    RTPS_DllAPI void setup_transports(
-            fastdds::rtps::BuiltinTransports transports);
+    void setup_transports(
+            fastdds::rtps::BuiltinTransports /*transports*/)
+    {
+        // Only include UDPv4 behavior for mock tests
+        setup_transports_default(*this);
+        useBuiltinTransports = false;
+    }
+
+    static void setup_transports_default(
+            RTPSParticipantAttributes& att)
+    {
+        auto descriptor = create_udpv4_transport(att);
+
+        att.userTransports.push_back(descriptor);
+    }
+
+    static std::shared_ptr<fastrtps::rtps::UDPv4TransportDescriptor> create_udpv4_transport(
+            const RTPSParticipantAttributes& att)
+    {
+        auto descriptor = std::make_shared<fastrtps::rtps::UDPv4TransportDescriptor>();
+        descriptor->sendBufferSize = att.sendSocketBufferSize;
+        descriptor->receiveBufferSize = att.listenSocketBufferSize;
+        descriptor->default_reception_threads(att.builtin_transports_reception_threads);
+
+        return descriptor;
+    }
 
     /**
      * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
@@ -491,9 +527,19 @@ public:
 
     /**
      * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the
-     * case that it was defined with NO UnicastLocators. This is usually left empty.
+     * case that it was defined with NO MulticastLocators. This is usually left empty.
      */
     LocatorList_t defaultMulticastLocatorList;
+
+    /**
+     * The collection of external locators to use for communication on user created topics.
+     */
+    fastdds::rtps::ExternalLocators default_external_unicast_locators;
+
+    /**
+     * Whether locators that don't match with the announced locators should be kept.
+     */
+    bool ignore_non_matching_locators = false;
 
     /*!
      * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
@@ -518,19 +564,14 @@ public:
     //! Builtin parameters.
     BuiltinAttributes builtin;
 
-    //!Port Parameters
+    //! Port Parameters
     PortParameters port;
 
-    //!User Data of the participant
+    //! User Data of the participant
     std::vector<octet> userData;
 
-<<<<<<< HEAD
-    //!Participant ID
-    int32_t participantID;
-=======
     //! Participant ID
     int32_t participantID = -1;
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 
     /**
      * @brief Throughput controller parameters. Leave default for uncontrolled flow.
@@ -539,32 +580,26 @@ public:
      */
     ThroughputControllerDescriptor throughputController;
 
-    //!User defined transports to use alongside or in place of builtins.
+    //! User defined transports to use alongside or in place of builtins.
     std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> userTransports;
 
-<<<<<<< HEAD
-    //!Set as false to disable the default UDPv4 implementation.
-    bool useBuiltinTransports;
-    //!Holds allocation limits affecting collections managed by a participant.
-=======
     //! Set as false to disable the creation of the default transports.
     bool useBuiltinTransports = true;
 
     //! Holds allocation limits affecting collections managed by a participant.
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
     RTPSParticipantAllocationAttributes allocation;
 
     //! Property policies
     PropertyPolicy properties;
 
-    //!Set the name of the participant.
+    //! Set the name of the participant.
     inline void setName(
             const char* nam)
     {
         name = nam;
     }
 
-    //!Get the name of the participant.
+    //! Get the name of the participant.
     inline const char* getName() const
     {
         return name.c_str();
@@ -573,15 +608,27 @@ public:
     //! Flow controllers.
     FlowControllerDescriptorList flow_controllers;
 
+    //! Thread settings for the builtin flow controllers sender threads
+    fastdds::rtps::ThreadSettings builtin_controllers_sender_thread;
+
+    //! Thread settings for the timed events thread
+    fastdds::rtps::ThreadSettings timed_events_thread;
+
+    //! Thread settings for the discovery server thread
+    fastdds::rtps::ThreadSettings discovery_server_thread;
+
+    //! Thread settings for the builtin transports reception threads
+    fastdds::rtps::ThreadSettings builtin_transports_reception_threads;
+
+#if HAVE_SECURITY
+    //! Thread settings for the security log thread
+    fastdds::rtps::ThreadSettings security_log_thread;
+#endif // if HAVE_SECURITY
+
 private:
 
-<<<<<<< HEAD
-    //!Name of the participant.
-    string_255 name;
-=======
     //! Name of the participant.
     string_255 name{"RTPSParticipant"};
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 };
 
 }  // namespace rtps

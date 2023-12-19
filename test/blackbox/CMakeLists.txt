@@ -333,8 +333,15 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StatisticsDomainParticipant.xml
     ${CMAKE_CURRENT_BINARY_DIR}/StatisticsDomainParticipant.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utils/check_guid.py
     ${CMAKE_CURRENT_BINARY_DIR}/check_guid.py)
+<<<<<<< HEAD
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partitions.xml
     ${CMAKE_CURRENT_BINARY_DIR}/partitions.xml)
+=======
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partitions_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/partitions_profile.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/builtin_transports_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/builtin_transports_profile.xml)
+>>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/datagrams" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 if(FASTRTPS_API_TESTS)

@@ -35,4 +35,15 @@ target_include_directories(ParticipantTests PRIVATE
 target_link_libraries(ParticipantTests fastrtps fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
+<<<<<<< HEAD
 add_gtest(ParticipantTests SOURCES ${PARTICIPANTTESTS_SOURCE})
+=======
+
+if(EPROSIMA_TEST_DNS_NOT_SET_UP)
+    set(dns_filter "ParticipantTests.SimpleParticipantRemoteServerListConfigurationDNS")
+endif()
+
+gtest_discover_tests(ParticipantTests TEST_FILTER ${dns_filter})
+
+unset(dns_filter)
+>>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))

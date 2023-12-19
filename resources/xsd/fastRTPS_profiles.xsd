@@ -37,14 +37,1106 @@
         <xs:restriction base="xs:unsignedShort"/>
     </xs:simpleType>
 
+<<<<<<< HEAD
     <xs:simpleType name="octetType">
         <xs:restriction base="xs:unsignedByte"/>
     </xs:simpleType>
+=======
+    <!--Participant:
+        | ╠ att. profile_name       [string] REQ,
+        | ╚ att. is_default_profile [bool],
+        |
+        ├ domainID [uint32], (0~232)
+        └ rtps     [0~1]
+            ├ name                                 [string],
+            ├ defaultUnicastLocatorList            [0~1],
+            ├ defaultMulticastLocatorList          [0~1],
+            ├ default_external_unicast_locators    [0~1],
+            ├ ignore_non_matching_locators         [bool],
+            ├ sendSocketBufferSize                 [uint32],
+            ├ listenSocketBufferSize               [uint32],
+            ├ builtin                              [0~1],
+            ├ port                                 [0~1],
+            ├ participantID                        [int32],
+            ├ userTransports                       [0~1],
+            |   └ transport_id                     [1~*] [string],
+            ├ useBuiltinTransports                 [bool],
+            ├ builtinTransports                    [0~1][string]
+            ├ propertiesPolicy                     [0~1],
+            ├ allocation                           [0~1],
+            ├ userData                             [0~1],
+            ├ prefix                               [0~1],
+            ├ builtin_controllers_sender_thread    [threadSettingsType],
+            ├ timed_events_thread                  [threadSettingsType],
+            ├ discovery_server_thread              [threadSettingsType],
+            ├ builtin_transports_reception_threads [threadSettingsType],
+            └ security_log_thread                  [threadSettingsType]-->
+    <!-- TODO:  How to ensure that the userTransports identifiers exist in transport descriptors in the XML file? -->
+    <xs:complexType name="participantProfileType">
+        <xs:all>
+            <xs:element name="domainId" type="domainIDType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="rtps" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="name" type="string" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="default_external_unicast_locators" type="externalLocatorListType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="ignore_non_matching_locators" type="boolean" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="sendSocketBufferSize" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="listenSocketBufferSize" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtin" type="builtinAttributesType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="port" type="portType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="participantID" type="int32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="userTransports" minOccurs="0" maxOccurs="1">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="transport_id" type="string" minOccurs="1" maxOccurs="unbounded"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="useBuiltinTransports" type="boolean" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtinTransports" minOccurs="0" maxOccurs="1">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="NONE"/>
+                                    <xs:enumeration value="DEFAULT"/>
+                                    <xs:enumeration value="DEFAULTv6"/>
+                                    <xs:enumeration value="SHM"/>
+                                    <xs:enumeration value="UDPv4"/>
+                                    <xs:enumeration value="UDPv6"/>
+                                    <xs:enumeration value="LARGE_DATA"/>
+                                    <xs:enumeration value="LARGE_DATAv6"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType"  minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="prefix" type="prefixType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtin_controllers_sender_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="timed_events_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="discovery_server_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtin_transports_reception_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="security_log_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="profile_name" type="string" use="required"/>
+        <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+    </xs:complexType>
+>>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 
     <xs:simpleType name="boolType">
         <xs:restriction base="xs:boolean"/> <!-- {true, false} -->
     </xs:simpleType>
 
+<<<<<<< HEAD
+=======
+    <!--Data reader / subscriber:
+        | ╠ att. profile_name       [string] REQ,
+        | ╚ att. is_default_profile [bool],
+        |
+        ├ topic                        [0~1],
+        ├ qos                          [0~1],
+        ├ times                        [0~1],
+        ├ unicastLocatorList           [0~1],
+        ├ multicastLocatorList         [0~1],
+        ├ external_unicast_locators    [0~1],
+        ├ ignore_non_matching_locators [bool],
+        ├ expectsInlineQos             [bool],
+        ├ historyMemoryPolicy          [0~1],
+        ├ propertiesPolicy             [0~1],
+        ├ userDefinedID                [int16],
+        ├ entityID                     [int16],
+        └ matchedPublishersAllocation  [0~1]-->
+    <xs:complexType name="subscriberProfileType">
+        <xs:all minOccurs="0">
+            <xs:element name="topic" type="topicElementType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="qos" type="dataReaderQosPoliciesType" minOccurs="0"/>
+            <xs:element name="times" type="readerTimesType" minOccurs="0"/>
+            <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
+            <xs:element name="ignore_non_matching_locators" type="boolean" minOccurs="0"/>
+            <xs:element name="expectsInlineQos" type="boolean" minOccurs="0"/>
+            <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+            <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
+            <xs:element name="userDefinedID" type="int16" minOccurs="0"/>
+            <xs:element name="entityID" type="int16" minOccurs="0"/>
+            <xs:element name="matchedPublishersAllocation" type="allocationConfigType" minOccurs="0"/>
+        </xs:all>
+        <xs:attribute name="profile_name" type="string" use="required"/>
+        <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+    </xs:complexType>
+
+    <!--Transport descriptor list:
+        └ transport_descriptor [1~*]-->
+    <xs:complexType name="TransportDescriptorListType">
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="transport_descriptor" type="transportDescriptorType" minOccurs="1" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+
+    <!--Topic (profile):
+        | ╠ att. profile_name       [string] REQ,
+        | ╚ att. is_default_profile [bool],
+        |
+        ├ historyQoS        [0~1],
+        └ resourceLimitsQos [0~1],
+            ├ max_samples              [uint32],
+            ├ max_instances            [uint32],
+            ├ max_samples_per_instance [uint32],
+            ├ allocated_samples        [uint32],
+            └ extra_samples            [uint32] -->
+    <xs:complexType name="topicProfileType">
+        <xs:all>
+            <xs:element name="historyQos" type="historyQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="resourceLimitsQos" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="max_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max_instances" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max_samples_per_instance" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="allocated_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="extra_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="profile_name" type="string" use="required"/>
+        <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+    </xs:complexType>
+
+    <!--Topic:
+        ├ historyQoS        [0~1],
+        └ resourceLimitsQos [0~1],
+            ├ max_samples              [uint32],
+            ├ max_instances            [uint32],
+            ├ max_samples_per_instance [uint32],
+            ├ allocated_samples        [uint32],
+            └ extra_samples            [uint32] -->
+    <xs:complexType name="topicElementType">
+        <xs:all>
+            <xs:element name="historyQos" type="historyQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="resourceLimitsQos" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="max_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max_instances" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max_samples_per_instance" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="allocated_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="extra_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+
+    <!--| DYNAMIC TYPES ELEMENTS |-->
+    <!--Type:
+        ├ enum    [0~*],
+        ├ typedef [0~*],
+        ├ struct  [0~*],
+        ├ union   [0~*],
+        ├ bitset  [0~*],
+        └ bitmask [0~*]-->
+    <xs:complexType name="typeType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="enum" type="enumDcl" maxOccurs="unbounded"/>
+                <xs:element name="typedef" type="typedefDcl" maxOccurs="unbounded"/>
+                <xs:element name="struct" type="structDcl" maxOccurs="unbounded"/>
+                <xs:element name="union" type="unionDcl" maxOccurs="unbounded"/>
+                <xs:element name="bitset" type="bitsetDcl" maxOccurs="unbounded"/>
+                <xs:element name="bitmask" type="bitmaskDcl" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--Enum:
+        | ╚ att. name [string] REQ
+        |
+        └ enumerator [1~*]
+              att. name  [string] REQ,
+              att. value [uint32]-->
+    <xs:complexType name="enumDcl">
+        <xs:sequence>
+            <xs:element name="enumerator" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="name" type="string" use="required"/>
+                    <xs:attribute name="value" type="uint32" use="optional"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="name" type="string" use="required"/>
+    </xs:complexType>
+
+    <!--Typedef:
+        ╠ att. name              [string] REQ,
+        ╠ att. type              [primitiveTypes or "nonBasic"] REQ,
+        ╠ att. nonBasicTypeName  [string],
+        ╠ att. arrayDimensions   [arrayDim],
+        ╠ att. sequenceMaxLength [int32],
+        ╠ att. mapMaxLength      [int32],
+        ╚ att. key_type          [string]-->
+    <!-- TODO:  How to ensure "nonBasicTypeName" is only used when type = "nonBasic"?
+                How to ensure "nonBasisTypeName" exists a a defined dynamic type in the XML file? -->
+    <xs:complexType name="typedefDcl">
+        <xs:attribute name="name" type="string" use="required"/>
+        <xs:attribute name="type" use="required">
+            <xs:simpleType>
+                <xs:union memberTypes="primitiveTypes nonBasicType"/>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="nonBasicTypeName" type="string" use="optional"/>
+        <xs:attribute name="arrayDimensions" type="arrayDim" use="optional"/>
+        <xs:attribute name="sequenceMaxLength" type="int32" use="optional"/>
+        <xs:attribute name="mapMaxLength" type="int32" use="optional"/>
+        <xs:attribute name="key_type" type="string" use="optional"/>
+    </xs:complexType>
+
+    <!--Struct:
+        | ╠ att. name     [string] REQ,
+        | ╚ att. baseType [string]
+        |
+        └ member          [1~*]-->
+    <!-- TODO:  How to ensure "baseType" exists a a defined dynamic type in the XML file? -->
+    <xs:complexType name="structDcl">
+        <xs:sequence>
+            <xs:element name="member" type="memberDcl" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="string" use="required"/>
+        <xs:attribute name="baseType" type="string" use="optional"/>
+    </xs:complexType>
+
+    <!--Union:
+        | ╚ att. name     [string] REQ,
+        |
+        ├ discriminator   [1],
+        |     ╚ att. type [primitiveTypes or "nonBasic"] REQ
+        |
+        └ case            [1~*]
+            ├ caseDiscriminator [1~*],
+            |   ╚ att. value    [string or "default"] REQ
+            |
+            └ member            [1]-->
+    <!-- TODO:  How to ensure caseDiscriminator value att. is the same type as discriminator type att. primitive type? -->
+    <xs:complexType name="unionDcl">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="discriminator" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:attribute name="type" use="required">
+                            <xs:simpleType>
+                                <xs:union memberTypes="primitiveTypes nonBasicType"/>
+                            </xs:simpleType>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="case" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                            <xs:choice minOccurs="1">
+                                <xs:element name="caseDiscriminator" minOccurs="0" maxOccurs="unbounded">
+                                    <xs:complexType>
+                                        <xs:attribute name="value" use="required">
+                                            <xs:simpleType>
+                                                <xs:union memberTypes="string defaultType"/>
+                                            </xs:simpleType>
+                                        </xs:attribute>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:element name="member" type="memberDcl" minOccurs="0" maxOccurs="1"/>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="name" type="string" use="required"/>
+    </xs:complexType>
+
+    <!--Bitset:
+        | ╠ att. name        [string] REQ,
+        | ╚ att. baseType    [string]
+        |
+        └ bitfield           [1~*]
+            ╠ att. bit_bound [int16] REQ (1~64),
+            ╠ att. name      [string],
+            ╚ att. type      [IntPrimitiveTypes]-->
+    <!-- TODO:  How to ensure "baseType" exists a defined Bitset type in the XML file? -->
+    <xs:complexType name="bitsetDcl">
+        <xs:sequence>
+            <xs:element name="bitfield" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="name" type="string" use="optional"/>
+                    <xs:attribute name="type" type="IntPrimitiveTypes" use="optional"/> <!-- Only INT primitive types -->
+                    <xs:attribute name="bit_bound" use="required">
+                        <xs:simpleType> <!-- Restriction to allow only values between 1 and 64 -->
+                            <xs:restriction base="xs:short">
+                                <xs:minInclusive value="1"/>
+                                <xs:maxInclusive value="64"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="name" type="string" use="required"/>
+        <xs:attribute name="baseType" type="string" use="optional"/>
+    </xs:complexType>
+
+    <!--Bitmask:
+        | ╠ att. name       [string] REQ,
+        | ╚ att. bit_bound  [int16] (1~64),
+        |
+        └ bit_value         [1~*]
+            ╠ att. name     [string] REQ,
+            ╚ att. position [uint16] (0~63)-->
+    <!-- TODO:  How to ensure "position" values are lower than "bit_bound" defined value?-->
+    <xs:complexType name="bitmaskDcl">
+        <xs:sequence>
+            <xs:element name="bit_value" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="name" type="string" use="required"/>
+                    <xs:attribute name="position" use="optional">
+                        <xs:simpleType> <!-- Restriction to allow only values between 0 and 63 -->
+                            <xs:restriction base="xs:unsignedShort">
+                                <xs:minInclusive value="0"/>
+                                <xs:maxInclusive value="63"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="name" use="required"/>
+        <xs:attribute name="bit_bound" use="optional">
+            <xs:simpleType> <!-- Restriction to allow only values between 1 and 64 -->
+                <xs:restriction base="xs:short">
+                    <xs:minInclusive value="1"/>
+                    <xs:maxInclusive value="64"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <!--member:
+        ╠ att. name              [string] REQ,
+        ╠ att. type              [primitiveTypes  or "nonBasic"] REQ,
+        ╠ att. nonBasicTypeName  [string],
+        ╠ att. stringMaxLength   [int32],
+        ╠ att. sequenceMaxLength [int32],
+        ╠ att. arrayDimensions   [arrayDim],
+        ╠ att. key_type          [string]
+        ╚ att. mapMaxLength      [int32]  -->
+    <!-- TODO:  How to ensure "nonBasicTypeName" is only used when type = "nonBasic"?
+                How to ensure "nonBasisTypeName" exists as a defined dynamic type in the XML file? -->
+    <xs:complexType name="memberDcl">
+        <xs:attribute name="name" type="string" use="required"/>
+        <xs:attribute name="type" use="required">
+            <xs:simpleType>
+                <xs:union memberTypes="primitiveTypes nonBasicType"/>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="nonBasicTypeName" type="string" use="optional"/>
+        <xs:attribute name="stringMaxLength" type="string" use="optional"/>
+        <xs:attribute name="sequenceMaxLength" type="int32" use="optional"/>
+        <xs:attribute name="arrayDimensions" type="arrayDim" use="optional"/>
+        <xs:attribute name="key_type" type="string" use="optional"/>
+        <xs:attribute name="mapMaxLength" type="int32" use="optional"/>
+    </xs:complexType>
+
+    <!--| LOG ELEMENTS |-->
+    <!--Log consumer:
+        ├ class         [string] ("StdoutConsumer" OR "StdoutErrConsumer" OR "FileConsumer"),
+        └ property      [0~*]-->
+    <!-- TODO:  How to ensure that class "StdoutConsumer" does NOT have properties? -->
+    <xs:complexType name="logConsumerType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="class" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="StdoutConsumer"/>
+                            <xs:enumeration value="StdoutErrConsumer"/>
+                            <xs:enumeration value="FileConsumer"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="property" type="logConsumerPropertyType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--Log consumer Property:
+        ├ name      [string] REQ,
+        ├ value     [string] REQ,
+        └ propagate [bool]
+     (Same struct as Basic Types Definition > Property Type) -->
+    <!-- TODO:  How to ensure that property name is set based on consumer class?
+                How to ensure that property value is set based on property name? -->
+    <xs:complexType name ="logConsumerPropertyType">
+        <xs:all>
+            <xs:element name="name" minOccurs="1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="filename"/>
+                        <xs:enumeration value="append"/>
+                        <xs:enumeration value="stderr_threshold"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="value" minOccurs="1">
+                <xs:simpleType>
+                    <xs:union>
+                        <xs:simpleType> <!-- FileConsumer: name = filename -->
+                            <xs:restriction base="xs:string"/>
+                        </xs:simpleType>
+                        <xs:simpleType> <!-- FileConsumer: name = append -->
+                            <xs:restriction base="xs:boolean"/>
+                        </xs:simpleType>
+                        <xs:simpleType> <!-- StdoutErrConsumer: name = stderr_threshold -->
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Log::Kind::Error"/>
+                                <xs:enumeration value="Log::Kind::Warning"/>
+                                <xs:enumeration value="Log::Kind::Info"/>
+                                <xs:enumeration value="error"/>
+                                <xs:enumeration value="warning"/>
+                                <xs:enumeration value="info"/>
+                                <xs:enumeration value="ERROR"/>
+                                <xs:enumeration value="WARNING"/>
+                                <xs:enumeration value="INFO"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:union>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="propagate" type="boolean" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
+
+
+
+    <!--| PROFILES DEFINITIONS   |-->
+    <!--| Participant rtps Definition |-->
+    <!--builtin:
+        ├ discovery_config                      [0~1],
+        ├ avoid_builtin_multicast               [bool],
+        ├ use_WriterLivelinessProtocol          [bool],
+        ├ metatrafficUnicastLocatorList         [0~1],
+        ├ metatrafficMulticastLocatorList       [0~1],
+        ├ initialPeersList                      [0~1],
+        ├ metatraffic_external_unicast_locators [0~1],
+        ├ readerHistoryMemoryPolicy             [0~1],
+        ├ writerHistoryMemoryPolicy             [0~1],
+        ├ readerPayloadSize                     [uint32],
+        ├ writerPayloadSize                     [uint32],
+        ├ mutation_tries                        [uint32],
+        └ typelookup_config                     [0~1]-->
+    <xs:complexType name="builtinAttributesType">
+        <xs:all>
+            <xs:element name="discovery_config" type="discoverySettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="avoid_builtin_multicast" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="use_WriterLivelinessProtocol" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="metatraffic_external_unicast_locators" type="externalLocatorListType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="initialPeersList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="readerPayloadSize" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="writerPayloadSize" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="mutation_tries" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="typelookup_config" type="typelookupSettingsType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--builtin Discovery Configuration:
+        ├ discoveryProtocol         [string] ("SIMPLE", "CLIENT", "SERVER", "BACKUP", "NONE"),
+        ├ discoveryServersList      [0~1],
+        |   └ RemoteServer          [1~*],
+        |      |   ╚ att. prefix    [string] REQ,
+        |      ├ metatrafficUnicastLocatorList   [0~1],
+        |      └ metatrafficMulticastLocatorList [0~1],
+        ├ ignoreParticipantFlags    [string] ("NO_FILTER", "FILTER_DIFFERENT_HOST", "FILTER_DIFFERENT_PROCESS", "FILTER_SAME_PROCESS", "FILTER_DIFFERENT_PROCESS | FILTER_SAME_PROCESS"),
+        ├ EDP                       [string] ("SIMPLE", "STATIC"),
+        ├ simpleEDP                 [0~1],
+        |   ├ PUBWRITER_SUBREADER   [bool],
+        |   └ PUBREADER_SUBWRITER   [bool],
+        ├ leaseDuration             [durationType],
+        ├ leaseAnnouncement         [durationType],
+        ├ initialAnnouncements      [0~1],
+        |   ├ count                 [uint32],
+        |   └ period                [durationType],
+        ├ clientAnnouncementPeriod  [durationType],
+        └ static_edp_xml_config     [0~*] [string] -->
+    <!-- TODO:  How to ensure that simpleEDP is defined only when EDP is set as "SIMPLE"?
+                How to ensure that static_edp_xml_config is defined only when EDP is set as "STATIC"? -->
+    <xs:complexType name="discoverySettingsType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="discoveryProtocol" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="SIMPLE"/>
+                            <xs:enumeration value="CLIENT"/>
+                            <xs:enumeration value="SERVER"/>
+                            <xs:enumeration value="BACKUP"/>
+                            <xs:enumeration value="NONE"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="discoveryServersList" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                            <xs:element name="RemoteServer" minOccurs="1" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:all>
+                                        <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+                                        <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+                                    </xs:all>
+                                    <xs:attribute name="prefix" type="prefixType" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="ignoreParticipantFlags" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:pattern value="((FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS|NO_FILTER)(\||\s)*)*" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="EDP" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="SIMPLE"/>
+                            <xs:enumeration value="STATIC"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="simpleEDP" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element name="PUBWRITER_SUBREADER" type="boolean" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="PUBREADER_SUBWRITER" type="boolean" minOccurs="0" maxOccurs="1"/>
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="leaseDuration" type="durationType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="leaseAnnouncement" type="durationType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="initialAnnouncements" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element name="count" type="uint32" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="period" type="durationType" minOccurs="0" maxOccurs="1"/>
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="clientAnnouncementPeriod" type="durationType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="static_edp_xml_config" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--builtin TypeLookup Configuration:
+        ├ use_client    [bool],
+        └ use_sever     [bool]-->
+    <xs:complexType name="typelookupSettingsType">
+        <xs:all minOccurs="0">
+            <xs:element name="use_client" type="boolean"/>
+            <xs:element name="use_server" type="boolean"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--port:
+        ├ portBase          [uint16],
+        ├ domainIDGain      [uint16],
+        ├ participantIDGain [uint16],
+        ├ offsetd0          [uint16],
+        ├ offsetd1          [uint16],
+        ├ offsetd2          [uint16],
+        └ offsetd3          [uint16] -->
+    <xs:complexType name="portType">
+        <xs:all>
+            <xs:element name="portBase" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="domainIDGain" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="participantIDGain" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="offsetd0" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="offsetd1" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="offsetd2" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="offsetd3" type="uint16" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--participant allocation type:
+        ├ remote_locators    [0~1],
+        |   ├ max_unicast_locators   [uint32],
+        |   └ max_multicast_locators [uint32],
+        ├ total_participants [0~1],
+        ├ total_readers      [0~1],
+        ├ total_writers      [0~1],
+        ├ send_buffers       [0~1],
+        ├ max_properties     [uint32],
+        ├ max_user_data      [uint32],
+        └ max_partitions     [uint32] -->
+    <xs:complexType name="rtpsParticipantAllocationAttributesType">
+        <xs:all>
+            <xs:element name="remote_locators" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="max_unicast_locators" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max_multicast_locators" type="uint32" minOccurs="0" maxOccurs="1"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="total_participants" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="total_readers" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="total_writers" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="send_buffers" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="preallocated_number" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="dynamic" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="max_properties" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="max_user_data" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="max_partitions" type="uint32" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+
+
+
+    <!--| Data Writer / Publisher  Definition |-->
+    <!--Data Writer Times:
+        ├ initialHeartbeatDelay  [durationType],
+        ├ heartbeatPeriod        [durationType],
+        ├ nackResponseDelay      [durationType],
+        └ nackSupressionDuration [durationType] -->
+    <xs:complexType name="writerTimesType">
+        <xs:all>
+            <xs:element name="initialHeartbeatDelay" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="heartbeatPeriod" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="nackResponseDelay" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="nackSupressionDuration" type="durationType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+
+    <!--| Data Reader / Subscriber Definition |-->
+    <!--Data Reader Times:
+        ├ initialAcknackDelay    [durationType],
+        └ heartbeatResponseDelay [durationType] -->
+    <xs:complexType name="readerTimesType">
+        <xs:all>
+            <xs:element name="initialAcknackDelay" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="heartbeatResponseDelay" type="durationType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+
+
+
+    <!--| Transport Descriptor Definition |-->
+    <!--Transport Descriptor:
+        ├ transport_id              [string],
+        ├ type                      [string] ("UDPv4", "UDPv6", "TCPv4", "TCPv6", "SHM"),
+        ├ sendBufferSize            [uint32],
+        ├ receiveBufferSize         [uint32],
+        ├ maxMessageSize            [uint32],
+        ├ maxInitialPeersRange      [uint32],
+        ├ interfaceWhiteList        [0~*],                     (NOT  available for   SHM type)
+        |   └ address               [ipv4Address|ipv6Address]
+        ├ TTL                       [uint8],                   (ONLY available for  UDP  type)
+        ├ non_blocking_send         [boolean],                 (ONLY available for  UDP  type)
+        ├ output_port               [uint16],                  (ONLY available for  UDP  type)
+        ├ wan_addr                  [ipv4AddressFormat],       (ONLY available for TCPv4 type)
+        ├ keep_alive_frequency_ms   [uint32],                  (ONLY available for TCP   type)
+        ├ keep_alive_timeout_ms     [uint32],                  (ONLY available for TCP   type)
+        ├ max_logical_port          [uint16],                  (ONLY available for TCP   type)
+        ├ logical_port_range        [uint16],                  (ONLY available for TCP   type)
+        ├ logical_port_increment    [uint16],                  (ONLY available for TCP   type)
+        ├ listening_ports           [0~*],                     (ONLY available for TCP   type)
+        |   └ port                  [uint16]                   (ONLY available for TCP   type)
+        ├ tls                       [0~1],                     (ONLY available for TCP   type)
+        ├ calculate_crc             [bool],                    (ONLY available for TCP   type)
+        ├ check_crc                 [bool],                    (ONLY available for TCP   type)
+        ├ enable_tcp_nodelay        [bool],                    (ONLY available for TCP   type)
+        ├ keep_alive_thread         [threadSettingsType],      (ONLY available for TCP   type)
+        ├ accept_thread             [threadSettingsType],      (ONLY available for TCP   type)
+        ├ segment_size              [uint32],                  (ONLY available for   SHM type)
+        ├ port_queue_capacity       [uint32],                  (ONLY available for   SHM type)
+        ├ healthy_check_timeout_ms  [uint32],                  (ONLY available for   SHM type)
+        ├ rtps_dump_file            [string]                   (ONLY available for   SHM type)
+        ├ default_reception_threads [threadSettingsType]
+        ├ reception_threads         [receptionThreadsListType] (ONLY available for   SHM type)
+        └ dump_thread               [threadSettingsType]       (ONLY available for   SHM type) -->
+    <!-- TODO:  How to ensure all elements are declared properly (UDP only, TCP only, etc...)? -->
+    <xs:complexType name="transportDescriptorType">
+        <xs:all minOccurs="0">
+            <xs:element name="transport_id" type="string"/>
+            <xs:element name="type" minOccurs="0" maxOccurs="1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="UDPv4"/>
+                        <xs:enumeration value="UDPv6"/>
+                        <xs:enumeration value="TCPv4"/>
+                        <xs:enumeration value="TCPv6"/>
+                        <xs:enumeration value="SHM"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="sendBufferSize" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="receiveBufferSize" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="maxMessageSize" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="maxInitialPeersRange" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="interfaceWhiteList" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                        <xs:choice minOccurs="1">
+                            <xs:element name="address" maxOccurs="unbounded">
+                                <xs:simpleType>
+                                    <xs:union memberTypes="ipv4Address ipv6Address"/>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="interface" type="string" maxOccurs="unbounded"/>
+                        </xs:choice>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="TTL" type="uint8" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="non_blocking_send" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="output_port" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="wan_addr" type="ipv4AddressFormat" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="keep_alive_frequency_ms" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="keep_alive_timeout_ms" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="max_logical_port" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="logical_port_range" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="logical_port_increment" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="listening_ports" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence  minOccurs="0" maxOccurs="unbounded">
+                        <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="calculate_crc" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="check_crc" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="enable_tcp_nodelay" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="keep_alive_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="accept_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="segment_size" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port_queue_capacity" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="healthy_check_timeout_ms" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="rtps_dump_file" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="default_reception_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="reception_threads" type="receptionThreadsListType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="dump_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--Transport Layer Security (TLS):
+        ├ password             [string],
+        ├ private_key_file     [string],
+        ├ rsa_private_key_file [string],
+        ├ cert_chain_file      [string],
+        ├ tmp_dh_file          [string],
+        ├ verify_file          [string],
+        ├ verify_mode          [0~*],
+        |   └ verify           [string] ("VERIFY_NONE", "VERIFY_PEER", "VERIFY_FAIL_IF_NO_PEER_CERT", "VERIFY_CLIENT_ONCE"),
+        ├ verify_paths         [0~*],
+        |   └ verify_path      [string]
+        ├ verify_depth         [uint32],
+        ├ default_verify_path  [bool],
+        ├ options              [0~*],
+        |   └ option           [string] ("DEFAULT_WORKAROUNDS", "NO_COMPRESSION", "NO_SSLV2", "NO_SSLV3", "NO_TLSV1", "NO_TLSV1_1", "NO_TLSV1_2", "NO_TLSV1_3", "SINGLE_DH_USE")
+        ├ handshake_role       [string] ("DEFAULT", "CLIENT", "SERVER"),
+        └ server_name          [string] -->
+    <xs:complexType name="tlsConfigType">
+        <xs:all minOccurs="0">
+            <xs:element name="password" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="private_key_file" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="rsa_private_key_file" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="cert_chain_file" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="tmp_dh_file" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="verify_file" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="verify_mode" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="verify" minOccurs="0" maxOccurs="unbounded">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="VERIFY_NONE"/>
+                                    <xs:enumeration value="VERIFY_PEER"/>
+                                    <xs:enumeration value="VERIFY_FAIL_IF_NO_PEER_CERT"/>
+                                    <xs:enumeration value="VERIFY_CLIENT_ONCE"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="verify_paths" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="verify_path" type="string" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="verify_depth" type="int32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="default_verify_path" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="options" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="option" minOccurs="0" maxOccurs="unbounded">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="DEFAULT_WORKAROUNDS"/>
+                                    <xs:enumeration value="NO_COMPRESSION"/>
+                                    <xs:enumeration value="NO_SSLV2"/>
+                                    <xs:enumeration value="NO_SSLV3"/>
+                                    <xs:enumeration value="NO_TLSV1"/>
+                                    <xs:enumeration value="NO_TLSV1_1"/>
+                                    <xs:enumeration value="NO_TLSV1_2"/>
+                                    <xs:enumeration value="NO_TLSV1_3"/>
+                                    <xs:enumeration value="SINGLE_DH_USE"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="handshake_role" minOccurs="0" maxOccurs="1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="DEFAULT"/>
+                        <xs:enumeration value="CLIENT"/>
+                        <xs:enumeration value="SERVER"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="server_name" type="string" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+
+    <!--+==================================================================================+-->
+
+
+
+
+
+
+    <!--| COMMON TYPES DEFINITION |-->
+    <!--Locator list:
+        └ locator [0~*]-->
+    <xs:complexType name="locatorListType">
+        <xs:sequence  minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="locator" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:choice minOccurs="1">
+                        <xs:element name="udpv4" type="udpv4LocatorType" maxOccurs="unbounded"/>
+                        <xs:element name="udpv6" type="udpv6LocatorType" maxOccurs="unbounded"/>
+                        <xs:element name="tcpv4" type="tcpv4LocatorType" maxOccurs="unbounded"/>
+                        <xs:element name="tcpv6" type="tcpv6LocatorType" maxOccurs="unbounded"/>
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--External Locator list:
+        ├ udpv4ExternalLocator [0~*],
+        └ udpv6ExternalLocator [0~*]-->
+    <xs:complexType name="externalLocatorListType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="udpv4" type="udpv4ExternalLocatorType" maxOccurs="unbounded"/>
+                <xs:element name="udpv6" type="udpv6ExternalLocatorType" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--Properties policy:
+        └ properties   [1]
+            └ property [1~*] -->
+    <xs:complexType name="propertyPolicyType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="properties" minOccurs="1" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                            <xs:element name="property" type="propertyType" minOccurs="1" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="binary_properties" minOccurs="1" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                            <xs:element name="property" type="binaryPropertyType" minOccurs="1" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--Duration Type:
+        ├ sec     [uint32 OR "DURATION_INFINITY" OR "DURATION_INFINITE_SEC"],
+        └ nanosec [uint32 OR "DURATION_INFINITY" OR "DURATION_INFINITE_NSEC"] -->
+    <xs:complexType name="durationType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="sec" minOccurs="0" maxOccurs="1" nillable="true">
+                    <xs:simpleType>
+                        <xs:union>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:minLength value="1"/>
+                                    <xs:enumeration value="DURATION_INFINITY"/>
+                                    <xs:enumeration value="DURATION_INFINITE_SEC"/>
+                                    <!-- <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*"/> -->
+                                </xs:restriction>
+                            </xs:simpleType>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:unsignedInt"/>
+                            </xs:simpleType>
+                        </xs:union>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="nanosec" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:union>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="DURATION_INFINITY"/>
+                                    <xs:enumeration value="DURATION_INFINITE_NSEC"/>
+                                    <!-- <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_NSEC)\s*"/> -->
+                                </xs:restriction>
+                            </xs:simpleType>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:unsignedInt"/>
+                            </xs:simpleType>
+                        </xs:union>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--DomainParticipantFactory QoS Policies:
+        ├ entity_factory      [0~1],
+        ├ shm_watchdog_thread [0~1],
+        └ file_watch_threads  [0~1] -->
+    <xs:complexType name="domainParticipantFactoryQosPoliciesType">
+        <xs:all>
+            <xs:element name="entity_factory" type="entityFactoryQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="shm_watchdog_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="file_watch_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--Data writer QoS Policies:
+        ├ data_sharing                [0~1],
+        ├ deadline                    [0~1],
+        ├ destination_order           [0~1] NOT SUPPORTED YET: COMMENTED,
+        ├ disable_heartbeat_piggyback [0~1],
+        ├ disablePositiveAcks         [0~1],
+        ├ durability                  [0~1],
+        ├ durabilityService           [0~1] NOT SUPPORTED YET: COMMENTED,
+        ├ entity_factory              [0~1] NOT SUPPORTED YET: COMMENTED,
+        ├ groupData                   [0~1],
+        ├ latencyBudget               [0~1],
+        ├ lifespan                    [0~1],
+        ├ liveliness                  [0~1],
+        ├ ownership                   [0~1],
+        ├ ownershipStrength           [0~1],
+        ├ partition                   [0~1],
+        ├ presentation                [0~1] NOT SUPPORTED YET: COMMENTED,
+        ├ publishMode                 [0~1],
+        ├ reliability                 [0~1],
+        ├ timeBasedFilter             [0~1],
+        ├ topicData                   [0~1],
+        └ userData                    [0~1] -->
+    <xs:complexType name="dataWriterQosPoliciesType">
+        <xs:all>
+            <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="deadline" type="deadlineQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="destination_order" type="destinationOrderQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="disable_heartbeat_piggyback" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="durability" type="durabilityQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="durabilityService" type="durabilityServiceQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="groupData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="latencyBudget" type="latencyBudgetQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="lifespan" type="lifespanQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="liveliness" type="livelinessQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ownership" type="ownershipQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ownershipStrength" type="ownershipStrengthQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="partition" type="partitionQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="presentation" type="presentationQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="publishMode" type="publishModeQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="reliability" type="reliabilityQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="timeBasedFilter" type="timeBasedFilterQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="topicData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--Data reader QoS Policies:
+        ├ data_sharing                [0~1],
+        ├ deadline                    [0~1],
+        ├ destination_order           [0~1] NOT SUPPORTED YET: COMMENTED,
+        ├ disablePositiveAcks         [0~1],
+        ├ durability                  [0~1],
+        ├ durabilityService           [0~1] NOT SUPPORTED YET: COMMENTED,
+        ├ entity_factory              [0~1] NOT SUPPORTED YET: COMMENTED,
+        ├ groupData                   [0~1],
+        ├ latencyBudget               [0~1],
+        ├ lifespan                    [0~1],
+        ├ liveliness                  [0~1],
+        ├ ownership                   [0~1],
+        ├ partition                   [0~1],
+        ├ presentation                [0~1] NOT SUPPORTED YET: COMMENTED,
+        ├ reliability                 [0~1],
+        ├ timeBasedFilter             [0~1],
+        ├ topicData                   [0~1],
+        └ userData                    [0~1] -->
+    <xs:complexType name="dataReaderQosPoliciesType">
+        <xs:all>
+            <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="deadline" type="deadlineQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="destination_order" type="destinationOrderQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="durability" type="durabilityQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="durabilityService" type="durabilityServiceQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="groupData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="latencyBudget" type="latencyBudgetQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="lifespan" type="lifespanQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="liveliness" type="livelinessQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ownership" type="ownershipQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="partition" type="partitionQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="presentation" type="presentationQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="reliability" type="reliabilityQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="timeBasedFilter" type="timeBasedFilterQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="topicData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--History memory Policy:
+         ("PREALLOCATED", "PREALLOCATED_WITH_REALLOC", "DYNAMIC", "DYNAMIC_REUSABLE")-->
+>>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
     <xs:simpleType name="historyMemoryPolicyType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="PREALLOCATED"/>

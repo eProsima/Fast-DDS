@@ -149,6 +149,7 @@ target_include_directories(ListenerTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomain
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantAttributes
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipant
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
