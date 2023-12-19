@@ -550,11 +550,6 @@ protected:
             rtps::DiscoverySettings& settings,
             uint8_t ident);
 
-    static XMLP_ret getXMLTypeLookupSettings(
-            tinyxml2::XMLElement* elem,
-            rtps::TypeLookupSettings& settings,
-            uint8_t ident);
-
     static XMLP_ret getXMLInitialAnnouncementsConfig(
             tinyxml2::XMLElement* elem,
             rtps::InitialAnnouncementConfig& config,

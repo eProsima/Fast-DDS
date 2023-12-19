@@ -182,27 +182,6 @@ public:
     }
 
     /**
-     * Get the type object auto-fill configuration
-     *
-     * @return true if the type object should be auto-filled
-     */
-    FASTDDS_EXPORTED_API inline bool auto_fill_type_object() const
-    {
-        return auto_fill_type_object_;
-    }
-
-    /**
-     * Set the type object auto-fill configuration
-     *
-     * @param auto_fill_type_object new value to set
-     */
-    FASTDDS_EXPORTED_API inline void auto_fill_type_object(
-            bool auto_fill_type_object)
-    {
-        auto_fill_type_object_ = auto_fill_type_object;
-    }
-
-    /**
      * Get the type information auto-fill configuration
      *
      * @return true if the type information should be auto-filled
@@ -378,8 +357,7 @@ private:
 
     //! Data Type Name.
     std::string m_topicDataTypeName;
-
-    bool auto_fill_type_object_;
+    //TODO(XTypes)
     bool auto_fill_type_information_;
 
     friend class fastdds::dds::TypeSupport;

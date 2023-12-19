@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_RTPS_BUILTINPROTOCOLS_H_
 #define _FASTDDS_RTPS_BUILTINPROTOCOLS_H_
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 
@@ -75,6 +76,9 @@ public:
 
     //!Pointer to the WLP
     WLP* mp_WLP;
+
+    //!The TypeLookupManager
+    fastdds::dds::builtin::TypeLookupManager typelookup_manager_;
 
     //!Pointer to the TypeLookupManager
     fastdds::dds::builtin::TypeLookupManager* tlm_;

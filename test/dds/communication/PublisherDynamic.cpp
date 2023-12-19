@@ -229,7 +229,6 @@ int main(
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("example_type_profile.xml");
 
     DomainParticipantQos participant_qos;
-    participant_qos.wire_protocol().builtin.typelookup_config.use_server = true;
     ParListener participant_listener(exit_on_lost_liveliness);
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(seed % 230, participant_qos,

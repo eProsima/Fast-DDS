@@ -33,13 +33,13 @@
 
 namespace eprosima {
 
-namespace fastdds {
-
 #ifdef FASTDDS_STATISTICS
 
+namespace fastdds {
 namespace statistics {
 
 class MonitorServiceStatusData;
+
 namespace rtps {
 
 struct IStatusQueryable;
@@ -47,17 +47,9 @@ struct IStatusObserver;
 
 } // namespace rtps
 } // namespace statistics
+} // namespace fastdds
 
 #endif //FASTDDS_STATISTICS
-
-namespace dds {
-namespace builtin {
-
-class TypeLookupManager;
-
-} // namespace builtin
-} // namespace dds
-} // namespace fastdds
 
 namespace fastrtps {
 
@@ -248,12 +240,6 @@ public:
      */
     void set_check_type_function(
             std::function<bool(const std::string&)>&& check_type);
-
-    /**
-     * @brief Retrieves the built-in typelookup service manager.
-     * @return
-     */
-    fastdds::dds::builtin::TypeLookupManager* typelookup_manager() const;
 
     /**
      * @brief Modifies the participant listener

@@ -127,10 +127,6 @@
                     <readerPayloadSize>${XML_PROFILES_ENV_VAR_51}</readerPayloadSize>
                     <writerPayloadSize>${XML_PROFILES_ENV_VAR_52}</writerPayloadSize>
                     <mutation_tries>${XML_PROFILES_ENV_VAR_53}</mutation_tries>
-                    <typelookup_config>
-                        <use_client>${XML_PROFILES_ENV_VAR_54}</use_client>
-                        <use_server>${XML_PROFILES_ENV_VAR_55}</use_server>
-                    </typelookup_config>
                 </builtin>
                 <port>
                     <portBase>${XML_PROFILES_ENV_VAR_56}</portBase>

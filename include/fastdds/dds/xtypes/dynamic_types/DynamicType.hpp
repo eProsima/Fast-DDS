@@ -23,13 +23,13 @@
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/VerbatimTextDescriptor.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class RTPS_DllAPI DynamicType : public std::enable_shared_from_this<DynamicType>
+class FASTDDS_EXPORTED_API DynamicType : public std::enable_shared_from_this<DynamicType>
 {
 public:
 

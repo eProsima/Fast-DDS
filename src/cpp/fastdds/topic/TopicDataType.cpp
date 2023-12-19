@@ -34,7 +34,6 @@ namespace dds {
 TopicDataType::TopicDataType()
     : m_typeSize(0)
     , m_isGetKeyDefined(false)
-    , auto_fill_type_object_(true)
     , auto_fill_type_information_(true)
 {
 }

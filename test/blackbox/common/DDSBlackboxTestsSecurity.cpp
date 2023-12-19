@@ -114,7 +114,6 @@ void test_big_message_corner_case(
 
     fastdds::TypeSupport type_support(new eprosima::fastrtps::types::DynamicPubSubType(array_type));
     type_support.get()->auto_fill_type_information(false);
-    type_support.get()->auto_fill_type_object(false);
     EXPECT_EQ(RETCODE_OK, participant->register_type(type_support));
 
     auto topic = participant->create_topic(name, name, fastdds::TOPIC_QOS_DEFAULT);
