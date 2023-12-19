@@ -38,8 +38,8 @@ public:
     /*!
      * Provides a summary of the state of this type overwriting a provided object (see [standard] 7.5.2.8.7)
      * @param[inout] descriptor @ref TypeDescriptor reference where copied the information.
-     * @return standard @ref ReturnCode_t
-     * @retval RETCODE_OK when the copy was succesful.
+     * @return @ref ReturnCode_t
+     * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
      */
     virtual ReturnCode_t get_descriptor(
@@ -128,7 +128,7 @@ public:
      * @param[in] idx Index.
      * @return standard @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
-     * @retval RETCODE_BAD_PARAMETER when index is out-of-range.
+     * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
      */
     virtual ReturnCode_t get_annotation(
             traits<AnnotationDescriptor>::ref_type descriptor,
@@ -146,7 +146,7 @@ public:
      * @param[in] idx Index.
      * @return standard @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
-     * @retval RETCODE_BAD_PARAMETER when index is out-of-range.
+     * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
      */
     virtual ReturnCode_t get_verbatim_text(
             traits<VerbatimTextDescriptor>::ref_type descriptor,
@@ -159,6 +159,28 @@ public:
      */
     virtual bool equals(
             traits<DynamicType>::ref_type other) = 0;
+
+protected:
+
+    DynamicType() = default;
+
+    virtual ~DynamicType() = default;
+
+    traits<DynamicType>::ref_type _this ();
+
+private:
+
+    DynamicType(
+            const DynamicType&) = delete;
+
+    DynamicType(
+            DynamicType&&) = delete;
+
+    DynamicType& operator =(
+            const DynamicType&) = delete;
+
+    DynamicType& operator =(
+            DynamicType&&) = delete;
 };
 
 } // namespace dds
