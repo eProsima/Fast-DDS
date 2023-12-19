@@ -82,49 +82,6 @@ public:
         }
     }
 
-    void on_type_information_received(
-            eprosima::fastdds::dds::DomainParticipant* participant,
-            const eprosima::fastrtps::string_255 topic_name,
-            const eprosima::fastrtps::string_255 type_name,
-            const eprosima::fastrtps::types::TypeInformation& type_information) override
-    {
-        using callback_type = std::function<void (const std::string& name,
-                        const eprosima::fastrtps::types::DynamicType_ptr type)>;
-
-        // once it is registered do ...
-        callback_type callback = [this, topic_name, type_name](
-            const std::string&,
-            const types::DynamicType_ptr)
-                {
-                    try
-                    {
-                        is_worth_a_type_.set_value(std::make_pair(topic_name.to_string(), type_name.to_string()));
-                    }
-                    catch (std::future_error&)
-                    {
-                        // Ignore if multiple callbacks are done for the same type
-                    }
-                };
-
-        // Check if the type is already registered
-        auto name = type_name.to_string();
-        types::DynamicType_ptr dummy;
-
-        if (participant->find_type(name))
-        {
-            // signal now
-            callback(name, dummy);
-        }
-        else
-        {
-            // signal on reception
-            participant->register_remote_type(
-                type_information,
-                type_name.to_string(),
-                callback);
-        }
-    }
-
 #if HAVE_SECURITY
     void onParticipantAuthentication(
             DomainParticipant* /*participant*/,
@@ -276,7 +233,6 @@ int main(
     {
 
         DomainParticipantQos participant_qos;
-        participant_qos.wire_protocol().builtin.typelookup_config.use_client = true;
         StatusMask participant_mask = StatusMask::none();
         participant =
                 DomainParticipantFactory::get_instance()->create_participant(seed % 230, participant_qos,

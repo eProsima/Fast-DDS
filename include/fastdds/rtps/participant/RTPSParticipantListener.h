@@ -159,63 +159,6 @@ public:
         static_cast<void>(should_be_ignored);
     }
 
-    /*!
-     * This method is called when a participant discovers a new Type
-     * The ownership of all object belongs to the caller so if needs to be used after the
-     * method ends, a full copy should be perform (except for dyn_type due to its shared_ptr nature.
-     * The field "topic" it is only available if the type was discovered using "Discovery-Time Data Typing",
-     * in which case the field request_sample_id will contain INVALID_SAMPLE_IDENTITY.
-     * If the type was discovered using TypeLookup Service then "topic" will be empty, but will have
-     * the request_sample_id of the petition that caused the discovery.
-     * For example:
-     * fastrtps::types::TypeIdentifier new_type_id = *identifier;
-     */
-    virtual void on_type_discovery(
-            RTPSParticipant* participant,
-            const SampleIdentity& request_sample_id,
-            const string_255& topic,
-            const types::TypeIdentifier* identifier,
-            const types::TypeObject* object,
-            types::DynamicType_ptr dyn_type)
-    {
-        static_cast<void>(participant);
-        static_cast<void>(request_sample_id);
-        static_cast<void>(topic);
-        static_cast<void>(identifier);
-        static_cast<void>(object);
-        static_cast<void>(dyn_type);
-    }
-
-    /*!
-     * This method is called when the typelookup client received a reply to a getTypeDependencies request.
-     * The user may want to retrieve these new types using the getTypes request and create a new
-     * DynamicType using the retrieved TypeObject.
-     */
-    virtual void on_type_dependencies_reply(
-            RTPSParticipant* participant,
-            const SampleIdentity& request_sample_id,
-            const types::TypeIdentifierWithSizeSeq& dependencies)
-    {
-        static_cast<void>(participant);
-        static_cast<void>(request_sample_id);
-        static_cast<void>(dependencies);
-    }
-
-    /*!
-     * This method is called when a participant receives a TypeInformation while discovering another participant.
-     */
-    virtual void on_type_information_received(
-            RTPSParticipant* participant,
-            const string_255& topic_name,
-            const string_255& type_name,
-            const types::TypeInformation& type_information)
-    {
-        static_cast<void>(participant);
-        static_cast<void>(topic_name);
-        static_cast<void>(type_name);
-        static_cast<void>(type_information);
-    }
-
 };
 
 } // namespace rtps

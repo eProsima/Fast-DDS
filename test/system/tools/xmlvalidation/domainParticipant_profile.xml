@@ -292,10 +292,6 @@
 
                 <mutation_tries>55</mutation_tries>
 
-                <typelookup_config>
-                    <use_client>true</use_client>
-                    <use_server>true</use_server>
-                </typelookup_config>
             </builtin>
 
             <port>

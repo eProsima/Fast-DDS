@@ -727,10 +727,7 @@ void PDPSimple::assign_low_level_remote_endpoints(
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, notify_secure_endpoints);
     }
 
-    if (mp_builtin->tlm_ != nullptr)
-    {
-        mp_builtin->tlm_->assign_remote_endpoints(pdata);
-    }
+    mp_builtin->typelookup_manager_.assign_remote_endpoints(pdata);
 }
 
 #if HAVE_SECURITY

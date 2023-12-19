@@ -28,15 +28,12 @@
 
 #include <fastrtps/utils/shared_mutex.hpp>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+
 namespace eprosima {
 
 namespace fastdds {
 namespace dds {
-namespace builtin {
-
-class TypeLookupManager;
-
-} // namespace builtin
 
 class ReaderQos;
 class WriterQos;
@@ -116,8 +113,8 @@ public:
     PDP* mp_PDP;
     //!Pointer to the WLP
     WLP* mp_WLP;
-    //!Pointer to the TypeLookupManager
-    fastdds::dds::builtin::TypeLookupManager* tlm_;
+    //!The TypeLookupManager
+    fastdds::dds::builtin::TypeLookupManager typelookup_manager_;
     //!Locator list for metatraffic
     LocatorList_t m_metatrafficMulticastLocatorList;
     //!Locator List for metatraffic unicast

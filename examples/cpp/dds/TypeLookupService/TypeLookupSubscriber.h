@@ -94,12 +94,6 @@ public:
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        void on_type_information_received(
-                eprosima::fastdds::dds::DomainParticipant* participant,
-                const eprosima::fastrtps::string_255 topic_name,
-                const eprosima::fastrtps::string_255 type_name,
-                const eprosima::fastrtps::types::TypeInformation& type_information) override;
-
         int n_matched;
 
         uint32_t n_samples;

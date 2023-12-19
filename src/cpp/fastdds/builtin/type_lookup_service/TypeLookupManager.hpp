@@ -19,10 +19,10 @@
 
 #ifndef _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
 #define _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <vector>
 #include <mutex>
+#include <unordered_map>
 
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -31,7 +31,6 @@
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h>
 #include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
-
 
 namespace eprosima {
 namespace fastrtps {
@@ -54,6 +53,8 @@ namespace dds {
 namespace builtin {
 
 extern const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
+
+using AsyncGetTypeCallback = std::function<void ()>;
 
 inline SequenceNumber_t get_sequence_number_from_rtps(
         fastrtps::rtps::SequenceNumber_t seq_number)
@@ -105,7 +106,7 @@ inline fastrtps::rtps::SampleIdentity get_rtps_sample_identity(
 }
 
 /**
- * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.2 specification.
+ * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.3 specification.
  * @ingroup XTYPES
  */
 class TypeLookupManager
@@ -117,21 +118,19 @@ public:
 
     /**
      * Constructor
-     * @param prot Pointer to the BuiltinProtocols object.
      */
-    TypeLookupManager(
-            fastrtps::rtps::BuiltinProtocols* prot);
+    TypeLookupManager();
 
     virtual ~TypeLookupManager();
 
     /**
-     * Initialize the TypeLookupManager protocol.
-     * @param p Pointer to the RTPS participant implementation.
-     * @return true if the initialziacion was successful.
+     * Stores pointers to the RTPSParticipantImpl and BuiltinProtocols and creates temp
+     * ReaderProxyData and WriterProxyData objects for the TypeLookupManager.
+     * @param prot Pointer to the BuiltinProtocols object.
+     * @return true if members and endpoints are created, false otherwise.
      */
-    bool init_typelookup_service(
-            fastrtps::rtps::RTPSParticipantImpl* p);
-
+    bool init(
+            fastrtps::rtps::BuiltinProtocols* protocols);
     /**
      * Assign the remote endpoints for a newly discovered RTPSParticipant.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
@@ -148,79 +147,37 @@ public:
             fastrtps::rtps::ParticipantProxyData* pdata);
 
     /**
-     * Get the builtin protocols
-     * @return Builtin protocols
+     * Create and send a request using the builtin TypeLookup Service to retrieve all the type dependencies
+     * associated with a sequence of TypeIdentifiers.
+     * @param id_seq[in] Sequence of TypeIdentifiers for which dependencies are needed.
+     * @return The SampleIdentity of the request sended.
      */
-    fastrtps::rtps::BuiltinProtocols* get_builtin_protocols()
-    {
-        return builtin_protocols_;
-    }
-
-    /**
-     * Get the builtin request writer
-     * @return stateful writer
-     */
-    fastrtps::rtps::StatefulWriter* get_builtin_request_writer();
-
-    /**
-     * Get the builtin reply writer
-     * @return stateful writer
-     */
-    fastrtps::rtps::StatefulWriter* get_builtin_reply_writer();
-
-    /**
-     * Get the builtin request writer's history
-     * @return writer history
-     */
-    fastrtps::rtps::WriterHistory* get_builtin_request_writer_history();
-
-    /**
-     * Get the builtin reply writer's history
-     * @return writer history
-     */
-    fastrtps::rtps::WriterHistory* get_builtin_reply_writer_history();
-
-    /**
-     * Get the builtin request reader
-     * @return stateful reader
-     */
-    fastrtps::rtps::StatefulReader* get_builtin_request_reader();
-
-    /**
-     * Get the builtin reply reader
-     * @return stateful reader
-     */
-    fastrtps::rtps::StatefulReader* get_builtin_reply_reader();
-
-    /**
-     * Get the builtin request reader's history
-     * @return reader history
-     */
-    fastrtps::rtps::ReaderHistory* get_builtin_request_reader_history();
-
-    /**
-     * Get the builtin reply reader's history
-     * @return reader history
-     */
-    fastrtps::rtps::ReaderHistory* get_builtin_reply_reader_history();
-
-    /* TODO Uncomment if security is implemented.
-     #if HAVE_SECURITY
-        bool pairing_remote_reader_with_local_writer_after_security(
-                const fastrtps::rtps::GUID_t& local_writer,
-                const fastrtps::rtps::ReaderProxyData& remote_reader_data);
-
-        bool pairing_remote_writer_with_local_reader_after_security(
-                const fastrtps::rtps::GUID_t& local_reader,
-                const fastrtps::rtps::WriterProxyData& remote_writer_data);
-     #endif
-     */
-
     fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
+            const xtypes::TypeIdentifierSeq& id_seq) const;
 
+    /**
+     * Create and send a request using the builtin TypeLookup Service to retrieve TypeObjects associated with a
+     * sequence of TypeIdentifiers.
+     * @param id_seq[in] Sequence of TypeIdentifiers for which TypeObjects are to be retrieved.
+     * @return The SampleIdentity of the request sended.
+     */
     fastrtps::rtps::SampleIdentity get_types(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
+            const xtypes::TypeIdentifierSeq& id_seq) const;
+
+    /**
+     * Use builtin TypeLookup service to solve the type and dependencies of a given TypeInformation.
+     * It receives a callback that will be used to notify when the negotiation is complete.
+     * @param typeinformation[in] TypeInformation that requires solving.
+     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
+     * @param callback AsyncGetTypeCallback called when the negotiation is complete.
+     * @return ReturnCode_t RETCODE_OK if negotiation is correctly initiated.
+     *                      RETCODE_ERROR if negotiation can not be initiated.
+     *                      //TODO add more explicit ReturnCode_t
+     */
+    ReturnCode_t async_get_type(
+            xtypes::TypeInformation typeinformation,
+            GuidPrefix_t type_server,
+            AsyncGetTypeCallback& callback);
 
 private:
 
@@ -229,6 +186,24 @@ private:
      * @return true if correct.
      */
     bool create_endpoints();
+
+    //! Aux method to send requests
+    bool send_request(
+            TypeLookup_Request& request) const;
+
+    //! Aux method to send replies
+    bool send_reply(
+            TypeLookup_Reply& reply) const;
+
+    //! Aux method to received requests
+    bool recv_request(
+            fastrtps::rtps::CacheChange_t& change,
+            TypeLookup_Request& request) const;
+
+    //! Aux method to received replies
+    bool recv_reply(
+            fastrtps::rtps::CacheChange_t& change,
+            TypeLookup_Reply& reply) const;
 
     /**
      * Get the RTPS participant
@@ -239,107 +214,61 @@ private:
         return participant_;
     }
 
-    //! Get out instanceName as defined in 7.6.2.3.4 of the XTypes 1.2 document
+    //! Get out instanceName as defined in 7.6.3.3.4 the XTypes 1.3 document
     std::string get_instanceName() const;
 
-    //! Aux method to send requests
-    bool send_request(
-            TypeLookup_Request& req) const;
-
-    //! Aux method to send replies
-    bool send_reply(
-            TypeLookup_Reply& rep) const;
-
-    //! Aux method to received requests
-    bool recv_request(
-            fastrtps::rtps::CacheChange_t& change,
-            TypeLookup_Request& req) const;
-
-    //! Aux method to received replies
-    bool recv_reply(
-            fastrtps::rtps::CacheChange_t& change,
-            TypeLookup_Reply& rep) const;
-
-    const fastrtps::rtps::GUID_t& get_builtin_request_writer_guid() const;
-
     //!Pointer to the local RTPSParticipant.
-    fastrtps::rtps::RTPSParticipantImpl* participant_;
+    fastrtps::rtps::RTPSParticipantImpl* participant_ = nullptr;
 
-    //!Pointer to the builtinprotocol class.
-    fastrtps::rtps::BuiltinProtocols* builtin_protocols_;
+    //!Pointer to the BuiltinProtocols class.
+    fastrtps::rtps::BuiltinProtocols* builtin_protocols_ = nullptr;
 
-    //!Pointer to the builtinRTPSParticipantMEssageWriter.
-    fastrtps::rtps::StatefulWriter* builtin_request_writer_;
+    //!Pointer to the RTPSWriter for the TypeLookup_Request.
+    fastrtps::rtps::StatefulWriter* builtin_request_writer_ = nullptr;
 
-    //!Pointer to the builtinRTPSParticipantMEssageReader.
-    fastrtps::rtps::StatefulReader* builtin_request_reader_;
+    //!Pointer to the RTPSReader for the TypeLookup_Request.
+    fastrtps::rtps::StatefulReader* builtin_request_reader_ = nullptr;
 
-    //!Pointer to the builtinRTPSParticipantMEssageWriter.
-    fastrtps::rtps::StatefulWriter* builtin_reply_writer_;
+    //!Pointer to the RTPSWriter for the TypeLookup_Reply.
+    fastrtps::rtps::StatefulWriter* builtin_reply_writer_ = nullptr;
 
-    //!Pointer to the builtinRTPSParticipantMEssageReader.
-    fastrtps::rtps::StatefulReader* builtin_reply_reader_;
+    //!Pointer to the RTPSReader for the TypeLookup_Reply.
+    fastrtps::rtps::StatefulReader* builtin_reply_reader_ = nullptr;
 
-    //!Writer History
-    fastrtps::rtps::WriterHistory* builtin_request_writer_history_;
+    //!Pointer to the Writer History of TypeLookup_Request
+    fastrtps::rtps::WriterHistory* builtin_request_writer_history_ = nullptr;
 
-    //!Writer History
-    fastrtps::rtps::WriterHistory* builtin_reply_writer_history_;
+    //!Pointer to the Writer History of TypeLookup_Reply
+    fastrtps::rtps::WriterHistory* builtin_reply_writer_history_ = nullptr;
 
-    //!Reader History
-    fastrtps::rtps::ReaderHistory* builtin_request_reader_history_;
+    //!Pointer to the Reader History of TypeLookup_Request
+    fastrtps::rtps::ReaderHistory* builtin_request_reader_history_ = nullptr;
 
-    //!Reader History
-    fastrtps::rtps::ReaderHistory* builtin_reply_reader_history_;
+    //!Pointer to the Reader History of TypeLookup_Reply
+    fastrtps::rtps::ReaderHistory* builtin_reply_reader_history_ = nullptr;
 
     //!Request Listener object.
-    TypeLookupRequestListener* request_listener_;
+    TypeLookupRequestListener* request_listener_ = nullptr;
 
     //!Reply Listener object.
-    TypeLookupReplyListener* reply_listener_;
+    TypeLookupReplyListener* reply_listener_ = nullptr;
 
+    //!Mutex to protect acces to temp_reader_proxy_data_ and temp_writer_proxy_data_
     std::mutex temp_data_lock_;
-    fastrtps::rtps::ReaderProxyData temp_reader_proxy_data_;
-    fastrtps::rtps::WriterProxyData temp_writer_proxy_data_;
+
+    //!Pointer to the temp ReaderProxyData used for assigments
+    fastrtps::rtps::ReaderProxyData* temp_reader_proxy_data_ = nullptr;
+
+    //!Pointer to the temp WriterProxyData used for assigments
+    fastrtps::rtps::WriterProxyData* temp_writer_proxy_data_ = nullptr;
 
     mutable fastrtps::rtps::SequenceNumber_t request_seq_number_;
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
-
-    /* TODO Uncomment if security is implemented.
-     #if HAVE_SECURITY
-        //!Pointer to the builtinRTPSParticipantMEssageWriter.
-        fastrtps::rtps::StatefulWriter* builtin_request_writer_secure_;
-
-        //!Pointer to the builtinRTPSParticipantMEssageWriter.
-        fastrtps::rtps::StatefulWriter* builtin_reply_writer_secure_;
-
-        //!Pointer to the builtinRTPSParticipantMEssageReader.
-        fastrtps::rtps::StatefulReader* builtin_request_reader_secure_;
-
-        //!Pointer to the builtinRTPSParticipantMEssageReader.
-        fastrtps::rtps::StatefulReader* builtin_reply_reader_secure_;
-
-        //!Writer History
-        fastrtps::rtps::WriterHistory* builtin_request_writer_secure_history_;
-
-        //!Writer History
-        fastrtps::rtps::WriterHistory* builtin_reply_writer_secure_history_;
-
-        //!Reader History
-        fastrtps::rtps::ReaderHistory* builtin_request_reader_secure_history_;
-
-        //!Reader History
-        fastrtps::rtps::ReaderHistory* builtin_reply_reader_secure_history_;
-
-        bool create_secure_endpoints();
-     #endif
-     */
 };
 
 } /* namespace builtin */
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP */

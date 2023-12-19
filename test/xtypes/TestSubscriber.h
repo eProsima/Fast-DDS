@@ -115,7 +115,6 @@ private:
     eprosima::fastrtps::types::DynamicType_ptr disc_type_;
     eprosima::fastdds::dds::DataReaderQos reader_qos;
     bool using_typelookup_;
-    bool tls_callback_called_;
     std::string topic_name_;
     const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos_;
     const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos_;
@@ -124,7 +123,7 @@ public:
 
     class PartListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
-public:
+    public:
 
         PartListener(
                 TestSubscriber* parent)
@@ -137,28 +136,18 @@ public:
         {
         }
 
-        void on_type_discovery(
-                eprosima::fastdds::dds::DomainParticipant* participant,
-                const eprosima::fastrtps::rtps::SampleIdentity& request_sample_id,
-                const eprosima::fastrtps::string_255& topic,
-                const eprosima::fastrtps::types::TypeIdentifier* identifier,
-                const eprosima::fastrtps::types::TypeObject* object,
-                eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
-
-        void on_type_information_received(
-                eprosima::fastdds::dds::DomainParticipant* participant,
-                const eprosima::fastrtps::string_255 topic_name,
-                const eprosima::fastrtps::string_255 type_name,
-                const eprosima::fastrtps::types::TypeInformation& type_information) override;
+        //TODO(Xtypes)
+        // Add new discovery methods
 
         TestSubscriber* parent_;
         std::atomic<bool> discovered_;
 
-    } part_listener_;
+    }
+    part_listener_;
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         SubListener()
         {
@@ -181,7 +170,8 @@ public:
         TestSubscriber* mParent;
         int n_matched;
         uint32_t n_samples;
-    } m_subListener;
+    }
+    m_subListener;
 };
 
 #endif /* _TEST_SUBSCRIBER_H_ */
