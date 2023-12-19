@@ -53,7 +53,9 @@ public:
 
     ObjectName get_name() noexcept override;
 
-    traits<DynamicTypeMember>::ref_type _this ();
+protected:
+
+    traits<DynamicTypeMember>::ref_type _this();
 
 private:
 

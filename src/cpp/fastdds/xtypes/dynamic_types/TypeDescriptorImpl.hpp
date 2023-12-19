@@ -220,7 +220,7 @@ public:
             traits<TypeDescriptor>::ref_type descriptor) noexcept override;
 
     ReturnCode_t copy_from(
-            TypeDescriptorImpl& descriptor) noexcept;
+            const TypeDescriptorImpl& descriptor) noexcept;
 
     bool equals(
             traits<TypeDescriptor>::ref_type descriptor) noexcept override;
