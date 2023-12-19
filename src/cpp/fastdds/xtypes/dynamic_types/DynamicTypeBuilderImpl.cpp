@@ -344,6 +344,21 @@ traits<DynamicType>::ref_type DynamicTypeBuilderImpl::build() noexcept
     return ret_val;
 }
 
+ReturnCode_t DynamicTypeBuilderImpl::copy_from(
+        traits<DynamicTypeImpl>::ref_type type)
+{
+    type_descriptor_.copy_from(type->type_descriptor_);
+    for (auto& annotation : type->annotation_)
+    {
+        annotation_.emplace_back();
+        annotation_.back().copy_from(annotation);
+    }
+    member_ = type->member_;
+    member_by_name_ = type->member_by_name_;
+    members_ = type->members_;
+    return RETCODE_OK;
+}
+
 } // namespace dds
 
 } // namespace fastdds

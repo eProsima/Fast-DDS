@@ -19,6 +19,7 @@
 #include "DynamicTypeImpl.hpp"
 #include "DynamicTypeBuilderFactoryImpl.hpp"
 
+#include <cassert>
 #include <tuple>
 
 namespace eprosima {

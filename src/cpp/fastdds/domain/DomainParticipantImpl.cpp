@@ -94,28 +94,6 @@ using fastrtps::rtps::EndpointKind_t;
 using fastrtps::rtps::ResourceEvent;
 using eprosima::fastdds::dds::Log;
 
-bool DomainParticipantImpl::version_1_3_state::find_callback(
-        const fastrtps::rtps::SampleIdentity& id)
-{
-    return register_callbacks_.find(id) != register_callbacks_.end();
-}
-
-void DomainParticipantImpl::version_1_3_state::remove_callback(
-        const fastrtps::rtps::SampleIdentity& id)
-{
-    register_callbacks_.erase(id);
-}
-
-void DomainParticipantImpl::version_1_3_state::empty_callback(
-        const fastrtps::rtps::SampleIdentity& id)
-{
-    auto it = register_callbacks_.find(id);
-    if (it != register_callbacks_.end())
-    {
-        it->second.second(it->second.first, {}); // Everything should be already registered
-    }
-}
-
 DomainParticipantImpl::DomainParticipantImpl(
         DomainParticipant* dp,
         DomainId_t did,
@@ -1601,9 +1579,9 @@ ResourceEvent& DomainParticipantImpl::get_resource_event() const
 }
 
 ReturnCode_t DomainParticipantImpl::register_dynamic_type(
-        const DynamicType* dyn_type)
+        traits<DynamicType>::ref_type dyn_type)
 {
-    TypeSupport type(new DynamicPubSubType(*dyn_type));
+    TypeSupport type(new DynamicPubSubType(dyn_type));
     return get_participant()->register_type(type);
 }
 

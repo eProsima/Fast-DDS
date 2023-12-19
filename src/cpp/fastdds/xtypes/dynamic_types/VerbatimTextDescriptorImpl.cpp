@@ -30,7 +30,7 @@ ReturnCode_t VerbatimTextDescriptorImpl::copy_from(
 }
 
 ReturnCode_t VerbatimTextDescriptorImpl::copy_from(
-        VerbatimTextDescriptorImpl& descriptor) noexcept
+        const VerbatimTextDescriptorImpl& descriptor) noexcept
 {
     placement_ = descriptor.placement_;
     text_ = descriptor.text_;
