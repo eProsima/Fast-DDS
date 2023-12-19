@@ -46,7 +46,7 @@ namespace builtin {
 
 TypeLookupReplyListener::TypeLookupReplyListener(
         TypeLookupManager* manager)
-    : tlm_(manager)
+    : typelookup_manager_(manager)
 {
 }
 
@@ -68,9 +68,10 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Received new cache change");
 
     TypeLookup_Reply reply;
-    if (tlm_->recv_reply(*change, reply))
+    if (typelookup_manager_->recv_reply(*change, reply))
     {
-        if (get_rtps_guid(reply.header().relatedRequestId().writer_guid()) != tlm_->builtin_request_writer_->getGuid())
+        if (get_rtps_guid(reply.header().relatedRequestId().writer_guid()) !=
+                typelookup_manager_->builtin_request_writer_->getGuid())
         {
             // This message isn't for us.
             return;
@@ -122,7 +123,7 @@ void TypeLookupReplyListener::onWriterChangeReceivedByAll(
         fastrtps::rtps::RTPSWriter*,
         fastrtps::rtps::CacheChange_t* change)
 {
-    tlm_->reply_cache_change_acked(change);
+    typelookup_manager_->reply_cache_change_acked(change);
 }
 
 } // namespace builtin
