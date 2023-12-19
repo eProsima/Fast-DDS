@@ -99,6 +99,7 @@
         |
         ├ domainID [uint32], (0~232)
         └ rtps     [0~1]
+<<<<<<< HEAD
             ├ name                              [string],
             ├ defaultUnicastLocatorList         [0~1],
             ├ defaultMulticastLocatorList       [0~1],
@@ -116,6 +117,31 @@
             ├ allocation                        [0~1],
             ├ userData                          [0~1],
             └ prefix                            [0~1]-->
+=======
+            ├ name                                 [string],
+            ├ defaultUnicastLocatorList            [0~1],
+            ├ defaultMulticastLocatorList          [0~1],
+            ├ default_external_unicast_locators    [0~1],
+            ├ ignore_non_matching_locators         [bool],
+            ├ sendSocketBufferSize                 [uint32],
+            ├ listenSocketBufferSize               [uint32],
+            ├ builtin                              [0~1],
+            ├ port                                 [0~1],
+            ├ participantID                        [int32],
+            ├ userTransports                       [0~1],
+            |   └ transport_id                     [1~*] [string],
+            ├ useBuiltinTransports                 [bool],
+            ├ builtinTransports                    [0~1][string]
+            ├ propertiesPolicy                     [0~1],
+            ├ allocation                           [0~1],
+            ├ userData                             [0~1],
+            ├ prefix                               [0~1],
+            ├ builtin_controllers_sender_thread    [threadSettingsType],
+            ├ timed_events_thread                  [threadSettingsType],
+            ├ discovery_server_thread              [threadSettingsType],
+            ├ builtin_transports_reception_threads [threadSettingsType],
+            └ security_log_thread                  [threadSettingsType]-->
+>>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
     <!-- TODO:  How to ensure that the userTransports identifiers exist in transport descriptors in the XML file? -->
     <xs:complexType name="participantProfileType">
         <xs:all>
@@ -141,6 +167,20 @@
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="useBuiltinTransports" type="boolean" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtinTransports" minOccurs="0" maxOccurs="1">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="NONE"/>
+                                    <xs:enumeration value="DEFAULT"/>
+                                    <xs:enumeration value="DEFAULTv6"/>
+                                    <xs:enumeration value="SHM"/>
+                                    <xs:enumeration value="UDPv4"/>
+                                    <xs:enumeration value="UDPv6"/>
+                                    <xs:enumeration value="LARGE_DATA"/>
+                                    <xs:enumeration value="LARGE_DATAv6"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
                         <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType"  minOccurs="0" maxOccurs="1"/>
                         <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -504,9 +544,6 @@
         <xs:attribute name="mapMaxLength" type="int32" use="optional"/>
     </xs:complexType>
 
-
-
-
     <!--| LOG ELEMENTS |-->
     <!--Log consumer:
         ├ class         [string] ("StdoutConsumer" OR "StdoutErrConsumer" OR "FileConsumer"),
@@ -853,12 +890,24 @@
             <xs:element name="maxInitialPeersRange" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="interfaceWhiteList" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
+<<<<<<< HEAD
                     <xs:sequence minOccurs="0" maxOccurs="unbounded">
                         <xs:element name="address" minOccurs="0" maxOccurs="unbounded">
                             <xs:simpleType>
                                 <xs:union memberTypes="ipv4Address ipv6Address"/>
                             </xs:simpleType>
                         </xs:element>
+=======
+                    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                        <xs:choice minOccurs="1">
+                            <xs:element name="address" maxOccurs="unbounded">
+                                <xs:simpleType>
+                                    <xs:union memberTypes="ipv4Address ipv6Address"/>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="interface" type="string" maxOccurs="unbounded"/>
+                        </xs:choice>
+>>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

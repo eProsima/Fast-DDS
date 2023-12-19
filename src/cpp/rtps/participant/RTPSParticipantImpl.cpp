@@ -24,6 +24,7 @@
 #include <sstream>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
@@ -61,6 +62,8 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
+#include <utils/SystemInfo.hpp>
+#include <utils/string_utilities.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -69,6 +72,35 @@ namespace rtps {
 using UDPv4TransportDescriptor = fastdds::rtps::UDPv4TransportDescriptor;
 using TCPTransportDescriptor = fastdds::rtps::TCPTransportDescriptor;
 using SharedMemTransportDescriptor = fastdds::rtps::SharedMemTransportDescriptor;
+using BuiltinTransports = fastdds::rtps::BuiltinTransports;
+
+/**
+ * Parse the environment variable specifying the transports to instantiate
+ */
+static BuiltinTransports get_builtin_transports_from_env_var()
+{
+    static constexpr const char* env_var_name = "FASTDDS_BUILTIN_TRANSPORTS";
+
+    BuiltinTransports ret_val = BuiltinTransports::DEFAULT;
+    std::string env_value;
+    if (SystemInfo::get_env(env_var_name, env_value) == ReturnCode_t::RETCODE_OK)
+    {
+        if (!get_element_enum_value(env_value.c_str(), ret_val,
+                "NONE", BuiltinTransports::NONE,
+                "DEFAULT", BuiltinTransports::DEFAULT,
+                "DEFAULTv6", BuiltinTransports::DEFAULTv6,
+                "SHM", BuiltinTransports::SHM,
+                "UDPv4", BuiltinTransports::UDPv4,
+                "UDPv6", BuiltinTransports::UDPv6,
+                "LARGE_DATA", BuiltinTransports::LARGE_DATA,
+                "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
+                    env_var_name << "'. Leaving as DEFAULT");
+        }
+    }
+    return ret_val;
+}
 
 static EntityId_t TrustedWriter(
         const EntityId_t& reader)
@@ -150,6 +182,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     {
         m_persistence_guid = GUID_t(persistence_guid, c_EntityId_RTPSParticipant);
     }
+<<<<<<< HEAD
     // Builtin transports by default
     if (PParam.useBuiltinTransports)
     {
@@ -177,10 +210,17 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             has_shm_transport_ |= m_network_Factory.RegisterTransport(&shm_transport);
         }
 #endif // ifdef SHM_TRANSPORT_BUILTIN
+=======
+
+    // Setup builtin transports
+    if (m_att.useBuiltinTransports)
+    {
+        m_att.setup_transports(get_builtin_transports_from_env_var());
+>>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
     }
 
     // BACKUP servers guid is its persistence one
-    if (PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+    if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
     {
         m_persistence_guid = m_guid;
     }
@@ -191,14 +231,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     guid_str_ = guid_sstr.str();
 
     // Client-server discovery protocol requires that every TCP transport has a listening port
-    switch (PParam.builtin.discovery_config.discoveryProtocol)
+    switch (m_att.builtin.discovery_config.discoveryProtocol)
     {
         case DiscoveryProtocol::BACKUP:
         case DiscoveryProtocol::CLIENT:
         case DiscoveryProtocol::SERVER:
         case DiscoveryProtocol::SUPER_CLIENT:
             // Verify if listening ports are provided
-            for (auto& transportDescriptor : PParam.userTransports)
+            for (auto& transportDescriptor : m_att.userTransports)
             {
                 TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
                 if (pT && pT->listening_ports.empty())
@@ -213,7 +253,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 
     // User defined transports
-    for (const auto& transportDescriptor : PParam.userTransports)
+    for (const auto& transportDescriptor : m_att.userTransports)
     {
         if (m_network_Factory.RegisterTransport(transportDescriptor.get(), &m_att.properties))
         {
@@ -339,7 +379,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // Start security
     if (!m_security_manager.init(
                 security_attributes_,
-                PParam.properties))
+                m_att.properties))
     {
         // Participant will be deleted, no need to allocate buffers or create builtin endpoints
         return;
@@ -392,12 +432,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     flow_controller_factory_.init(this);
 
     // Support old API
-    if (PParam.throughputController.bytesPerPeriod != UINT32_MAX && PParam.throughputController.periodMillisecs != 0)
+    if (m_att.throughputController.bytesPerPeriod != UINT32_MAX && m_att.throughputController.periodMillisecs != 0)
     {
         fastdds::rtps::FlowControllerDescriptor old_descriptor;
         old_descriptor.name = guid_str_.c_str();
-        old_descriptor.max_bytes_per_period = PParam.throughputController.bytesPerPeriod;
-        old_descriptor.period_ms = PParam.throughputController.periodMillisecs;
+        old_descriptor.max_bytes_per_period = m_att.throughputController.bytesPerPeriod;
+        old_descriptor.period_ms = m_att.throughputController.periodMillisecs;
         flow_controller_factory_.register_flow_controller(old_descriptor);
     }
 
