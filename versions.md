@@ -1,6 +1,19 @@
 Forthcoming
 -----------
 
+<<<<<<< HEAD
+=======
+* Enable configuration of thread setting for all threads.
+* Added monitor service feature.
+* Added the possibility to define interfaces in the whitelist by interface name.
+* Enable support for DataRepresentationQos to select the CDR encoding.
+* Added the possibility to define a listening port equal to 0 in TCP Transport
+* Added support for TCP to Fast DDS CLI and environment variable
+* Enable Discovery Server example through TCP
+* Added configuration of builtin transports through DomainParticipantQos, environment
+  variable and XML.
+
+>>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 Version 2.12.0
 --------------
 

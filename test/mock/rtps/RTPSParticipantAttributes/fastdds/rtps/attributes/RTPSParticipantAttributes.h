@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,17 +19,15 @@
 #ifndef _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
 #define _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
 
-<<<<<<< HEAD
-=======
 #include <memory>
 #include <sstream>
 
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/PortParameters.h>
 #include <fastdds/rtps/common/Time_t.h>
@@ -38,10 +36,9 @@
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/utils/fixed_size_string.hpp>
-
-#include <memory>
-#include <sstream>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -387,7 +384,7 @@ public:
     TypeLookupSettings typelookup_config;
 
     //! Network Configuration
-    NetworkConfigSet_t network_configuration = 0;
+    NetworkConfigSet_t network_configuration;
 
     //! Metatraffic Unicast Locator List
     LocatorList_t metatrafficUnicastLocatorList;
@@ -479,7 +476,15 @@ public:
                (this->useBuiltinTransports == b.useBuiltinTransports) &&
                (this->properties == b.properties) &&
                (this->prefix == b.prefix) &&
-               (this->flow_controllers == b.flow_controllers);
+               (this->flow_controllers == b.flow_controllers) &&
+               (this->builtin_controllers_sender_thread == b.builtin_controllers_sender_thread) &&
+               (this->timed_events_thread == b.timed_events_thread) &&
+#if HAVE_SECURITY
+               (this->security_log_thread == b.security_log_thread) &&
+#endif // if HAVE_SECURITY
+               (this->discovery_server_thread == b.discovery_server_thread) &&
+               (this->builtin_transports_reception_threads == b.builtin_transports_reception_threads);
+
     }
 
     /**
@@ -487,8 +492,32 @@ public:
      *
      * @param transports Defines the transport configuration scenario to setup.
      */
-    RTPS_DllAPI void setup_transports(
-            fastdds::rtps::BuiltinTransports transports);
+    void setup_transports(
+            fastdds::rtps::BuiltinTransports /*transports*/)
+    {
+        // Only include UDPv4 behavior for mock tests
+        setup_transports_default(*this);
+        useBuiltinTransports = false;
+    }
+
+    static void setup_transports_default(
+            RTPSParticipantAttributes& att)
+    {
+        auto descriptor = create_udpv4_transport(att);
+
+        att.userTransports.push_back(descriptor);
+    }
+
+    static std::shared_ptr<fastrtps::rtps::UDPv4TransportDescriptor> create_udpv4_transport(
+            const RTPSParticipantAttributes& att)
+    {
+        auto descriptor = std::make_shared<fastrtps::rtps::UDPv4TransportDescriptor>();
+        descriptor->sendBufferSize = att.sendSocketBufferSize;
+        descriptor->receiveBufferSize = att.listenSocketBufferSize;
+        descriptor->default_reception_threads(att.builtin_transports_reception_threads);
+
+        return descriptor;
+    }
 
     /**
      * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
@@ -578,6 +607,23 @@ public:
 
     //! Flow controllers.
     FlowControllerDescriptorList flow_controllers;
+
+    //! Thread settings for the builtin flow controllers sender threads
+    fastdds::rtps::ThreadSettings builtin_controllers_sender_thread;
+
+    //! Thread settings for the timed events thread
+    fastdds::rtps::ThreadSettings timed_events_thread;
+
+    //! Thread settings for the discovery server thread
+    fastdds::rtps::ThreadSettings discovery_server_thread;
+
+    //! Thread settings for the builtin transports reception threads
+    fastdds::rtps::ThreadSettings builtin_transports_reception_threads;
+
+#if HAVE_SECURITY
+    //! Thread settings for the security log thread
+    fastdds::rtps::ThreadSettings security_log_thread;
+#endif // if HAVE_SECURITY
 
 private:
 
