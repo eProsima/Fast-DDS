@@ -79,11 +79,25 @@ struct hash<eprosima::fastdds::dds::SampleIdentity>
 
 };
 
+#ifndef TYPE_IDENTIFIER_WITH_SIZE_HASH_SPECIALIZATION
+#define TYPE_IDENTIFIER_WITH_SIZE_HASH_SPECIALIZATION
+template<>
+struct hash<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>
+{
+    std::size_t operator ()(
+            const eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& k) const
+    {
+        return static_cast<size_t>(k.typeobject_serialized_size());
+    }
+
+};
+#endif // TYPE_IDENTIFIER_WITH_SIZE_HASH_SPECIALIZATION
+
+
 } // std
 
 namespace eprosima {
 namespace fastrtps {
-
 namespace rtps {
 
 class BuiltinProtocols;
@@ -183,15 +197,62 @@ public:
 private:
 
     /**
-     * Checks if the dependencies and TypeObject fot a given TypeInformation are known by the TypeObjectRegistry.
+     * Checks if the dependencies and TypeObject fot a given TypeIdentfierWithSize are known by the TypeObjectRegistry.
      * Uses get_type_dependencies() and get_types() to get those that are not known.
-     * @param type_inf[in] TypeInformation to check.
+     * @param type_id[in] TypeIdentfierWithSize to check.
      * @return ReturnCode_t RETCODE_OK if type was known.
+     *                      RETCODE_NO_DATA if the type is being solve.
      *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not a direct hash.
      *                      RETCODE_ERROR if any request was not sent correctly.
      */
     ReturnCode_t solve_type(
-            xtypes::TypeInformation type_inf);
+            xtypes::TypeIdentfierWithSize type_id);
+
+    /**
+     *  Notifies callbacks for a given TypeIdentfierWithSize
+     * @param type_id[in] TypeIdentfierWithSize of the callbacks to notify.
+     */
+    void notify_callbacks(
+            xtypes::TypeIdentfierWithSize type_id);
+    /**
+     * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
+     * TypeIdentfierWithSize was not in the map before
+     * @param type_id[in] TypeIdentfierWithSize to add the callback to
+     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeIdentfierWithSize is being solved.
+     * @param callback[in] AsyncGetTypeCallback to add.
+     * @return true if added. false otherwise
+     */
+    bool add_async_get_type_callback(
+            xtypes::TypeIdentfierWithSize type_id,
+            fastrtps::rtps::GuidPrefix_t type_server,
+            AsyncGetTypeCallback& callback);
+
+    /**
+     * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
+     * TypeIdentfierWithSize was not in the map before
+     * @param request[in] SampleIdentity of the request
+     * @param type_id[in] TypeIdentfierWithSize that originated the request.
+     * @return true if added. false otherwise
+     */
+    bool add_async_get_type_request(
+            SampleIdentity request,
+            xtypes::TypeIdentfierWithSize type_id );
+
+    /**
+     * Removes a TypeIdentfierWithSize from the async_get_type_callbacks_.
+     * @param type_id[in] TypeIdentfierWithSize to be removed.
+     * @return true if removed. false otherwise
+     */
+    bool remove_async_get_type_callback(
+            xtypes::TypeIdentfierWithSize type_id);
+
+    /**
+     * Removes a SampleIdentity from the async_get_type_callbacks_.
+     * @param request[in] SampleIdentity to be removed.
+     * @return true if removed. false otherwise
+     */
+    bool remove_async_get_types_request(
+            SampleIdentity request);
 
     /**
      * Complete requests common fields, create CacheChange, serialize request and add change to writer history.
@@ -297,14 +358,14 @@ private:
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
 
-    //!Mutex to protect access to async_get_types_callbacks_ and async_get_types_requests_
+    //!Mutex to protect access to async_get_type_callbacks_ and async_get_type_requests_
     std::mutex async_get_types_mutex_;
 
-    //!Collection of all the callbacks related to a TypeInformation, hashed by its TypeInformation.
-    std::unordered_map<xtypes::TypeInformation, std::vector<AsyncGetTypeCallback>> async_get_types_callbacks_;
+    //!Collection of all the callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
+    std::unordered_map<xtypes::TypeIdentfierWithSize, std::vector<AsyncGetTypeCallback>> async_get_type_callbacks_;
 
-    //!Collection SampleIdentity and the TypeInformation it originated from, hashed by its SampleIdentity.
-    std::unordered_map<SampleIdentity, xtypes::TypeInformation> async_get_types_requests_;
+    //!Collection SampleIdentity and the TypeIdentfierWithSize it originated from, hashed by its SampleIdentity.
+    std::unordered_map<SampleIdentity, xtypes::TypeIdentfierWithSize> async_get_type_requests_;
 };
 
 } /* namespace builtin */

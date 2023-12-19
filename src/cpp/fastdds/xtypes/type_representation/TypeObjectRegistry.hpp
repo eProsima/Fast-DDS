@@ -46,6 +46,8 @@ struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifier>
 
 };
 
+#ifndef TYPE_IDENTIFIER_WITH_SIZE_HASH_SPECIALIZATION
+#define TYPE_IDENTIFIER_WITH_SIZE_HASH_SPECIALIZATION
 template<>
 struct hash<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>
 {
@@ -56,6 +58,7 @@ struct hash<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>
     }
 
 };
+#endif // TYPE_IDENTIFIER_WITH_SIZE_HASH_SPECIALIZATION
 
 } // std
 

@@ -315,107 +315,145 @@ ReturnCode_t TypeLookupManager::async_get_type(
         fastrtps::rtps::GuidPrefix_t type_server,
         AsyncGetTypeCallback& callback)
 {
-    (void) type_server;
-    // Lock the mutex to ensure exclusive access to the callbacks map
-    std::lock_guard<std::mutex> lock(async_get_types_mutex_);
-
-    if (solve_type(type_inf))
+    ReturnCode_t solve_ret = solve_type(type_inf.complete().typeid_with_size());
+    if (RETCODE_OK == solve_ret)
     {
         // The type is already known, invoke the callback and return success
         callback();
-        return RETCODE_OK;
     }
-
-    // Check if TypeInformation already exists in the map
-    auto it = async_get_types_callbacks_.find(type_inf);
-    if (it != async_get_types_callbacks_.end())
+    else if (RETCODE_NO_DATA == solve_ret)
     {
-        // TypeInformation exists, add the callback
-        it->second.push_back(callback);
+        // The type is being solved, add callback to notify
+        add_async_get_type_callback(type_inf.complete().typeid_with_size(), type_server, callback);
     }
-    else
-    {
-        // TypeInformation doesn't exist, create a new entry
-        async_get_types_callbacks_.emplace(type_inf, std::vector<AsyncGetTypeCallback>{std::move(callback)});
-    }
-    return RETCODE_NO_DATA;
+    return solve_ret;
 }
 
 ReturnCode_t TypeLookupManager::solve_type(
-        xtypes::TypeInformation type_inf)
+        xtypes::TypeIdentfierWithSize type_id)
 {
-    xtypes::TypeIdentifierSeq uknown_types;
+    xtypes::TypeIdentifierSeq uknown_type;
 
-    // Check if the TypeObject is known
-    xtypes::TypeObject object;
-    ReturnCode_t object_ret = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                    get_type_object(type_inf.complete().typeid_with_size().type_id(), object);
-    if (RETCODE_NO_DATA == object_ret)
+    // Check if the type is known
+    if (fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                    is_type_identifier_known(type_id.type_id()))
     {
-        uknown_types.push_back(type_inf.complete().typeid_with_size().type_id());
+        return RETCODE_OK;
     }
-    else if (RETCODE_PRECONDITION_NOT_MET == object_ret)
+    else
     {
-        return RETCODE_PRECONDITION_NOT_MET;
-    }
-
-    xtypes::TypeIdentifierSeq uknown_dependencies;
-    for (const xtypes::TypeIdentfierWithSize& typeid_ws : type_inf.complete().dependent_typeids())
-    {
-        // Check if each dependent TypeIdentifier is known
-        if (!fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().is_type_identifier_known(
-                    typeid_ws.type_id()))
-        {
-            uknown_dependencies.push_back(typeid_ws.type_id());
-        }
-
-        // Check if the TypeObject for each dependency is known
-        ReturnCode_t object_ret = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                        get_type_object(typeid_ws.type_id(), object);
-        if (RETCODE_NO_DATA == object_ret)
-        {
-            uknown_types.push_back(typeid_ws.type_id());
-        }
-        else if (RETCODE_PRECONDITION_NOT_MET == object_ret)
-        {
-            return RETCODE_PRECONDITION_NOT_MET;
-        }
-    }
-
-    // If there are uknown TypeObject, send request
-    if (!uknown_types.empty())
-    {
-        SampleIdentity get_types_request = get_types(uknown_types);
-        if (builtin::INVALID_SAMPLE_IDENTITY != get_types_request)
-        {
-            // Store the sent request and associated TypeInformation
-            async_get_types_requests_.emplace(get_types_request, type_inf);
-        }
-        else
-        {
-            // Failed to get_types, return error
-            return RETCODE_ERROR;
-        }
-    }
-
-    // If there are uknown dependencies, send request
-    if (!uknown_dependencies.empty())
-    {
-        SampleIdentity get_type_dependencies_request = get_type_dependencies(uknown_dependencies);
+        uknown_type.push_back(type_id.type_id());
+        SampleIdentity get_type_dependencies_request = get_type_dependencies(uknown_type);
         if (builtin::INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
         {
-            // Store the sent request and associated TypeInformation
-            async_get_types_requests_.emplace(get_type_dependencies_request, type_inf);
+            // Store the sent requests and associated TypeIdentfierWithSize
+            add_async_get_type_request(get_type_dependencies_request, type_id);
         }
         else
         {
-            // Failed to get_type_dependencies, return error
+            // Failed to sed requests, return error
             return RETCODE_ERROR;
         }
+        return RETCODE_NO_DATA;
     }
+}
 
-    // If there are no unknown types or dependencies, return success
-    return (uknown_types.empty() && uknown_dependencies.empty()) ? RETCODE_OK : RETCODE_NO_DATA;
+void TypeLookupManager::notify_callbacks(
+        xtypes::TypeIdentfierWithSize type_id)
+{
+    // Check that type is not solved
+    auto callbacks_it = async_get_type_callbacks_.find(type_id);
+    if (callbacks_it != async_get_type_callbacks_.end())
+    {
+        for (AsyncGetTypeCallback& callback : callbacks_it->second)
+        {
+            callback();
+        }
+        // Erase the solved TypeInformation
+        remove_async_get_type_callback(type_id);
+    }
+}
+
+bool TypeLookupManager::add_async_get_type_callback(
+        xtypes::TypeIdentfierWithSize type_id,
+        fastrtps::rtps::GuidPrefix_t type_server,
+        AsyncGetTypeCallback& callback)
+{
+    std::unique_lock<std::mutex> lock(async_get_types_mutex_);
+    try
+    {
+        // Check if TypeIdentfierWithSize already exists in the map
+        auto it = async_get_type_callbacks_.find(type_id);
+        if (it != async_get_type_callbacks_.end())
+        {
+            // TypeIdentfierWithSize exists, add the callback
+            it->second.push_back(callback);
+        }
+        else
+        {
+            // TypeIdentfierWithSize doesn't exist, create a new entry
+            async_get_type_callbacks_.emplace(type_id, std::vector<AsyncGetTypeCallback>{std::move(callback)});
+        }
+        return true;
+    }
+    catch (const std::exception& e)
+    {
+        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
+                "Error in TypeLookupManager::add_async_get_type_callback: " << e.what());
+        return false;
+    }
+}
+
+bool TypeLookupManager::add_async_get_type_request(
+        SampleIdentity request,
+        xtypes::TypeIdentfierWithSize type_id)
+{
+    std::unique_lock<std::mutex> lock(async_get_types_mutex_);
+    try
+    {
+        async_get_type_requests_.emplace(request, type_id);
+        return true;
+    }
+    catch (const std::exception& e)
+    {
+        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
+                "Error in TypeLookupManager::add_async_get_type_request: " << e.what());
+        return false;
+    }
+}
+
+bool TypeLookupManager::remove_async_get_type_callback(
+        xtypes::TypeIdentfierWithSize type_id)
+{
+    std::unique_lock<std::mutex> lock(async_get_types_mutex_);
+    try
+    {
+        async_get_type_callbacks_.erase(type_id);
+        return true;
+    }
+    catch (const std::exception& e)
+    {
+        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
+                "Error in TypeLookupManager::remove_async_get_type_callback: " << e.what());
+        return false;
+    }
+}
+
+bool TypeLookupManager::remove_async_get_types_request(
+        SampleIdentity request)
+{
+    std::unique_lock<std::mutex> lock(async_get_types_mutex_);
+    try
+    {
+        async_get_type_requests_.erase(request);
+        return true;
+    }
+    catch (const std::exception& e)
+    {
+        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
+                "Error in TypeLookupManager::remove_async_get_types_request: " << e.what());
+        return false;
+    }
 }
 
 bool TypeLookupManager::create_endpoints()
@@ -659,7 +697,7 @@ bool TypeLookupManager::receive_request(
         return false;
     }
     change.serializedPayload.encapsulation = static_cast<uint16_t>(encapsulation);
-    msg.pos += 2; // Skip encapsulation options.
+    msg.pos += 2;     // Skip encapsulation options.
 
     SerializedPayload_t payload;
     payload.max_size = change.serializedPayload.max_size - 4;
@@ -696,7 +734,7 @@ bool TypeLookupManager::receive_reply(
         return false;
     }
     change.serializedPayload.encapsulation = static_cast<uint16_t>(encapsulation);
-    msg.pos += 2; // Skip encapsulation options.
+    msg.pos += 2;     // Skip encapsulation options.
 
     SerializedPayload_t payload;
     payload.max_size = change.serializedPayload.max_size - 4;
@@ -727,6 +765,7 @@ std::string TypeLookupManager::get_instanceName() const
 }
 
 } // namespace builtin
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
