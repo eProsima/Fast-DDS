@@ -318,7 +318,9 @@ TEST(ChainingTransportTests, builtin_transports_basic_test)
     bt_list.push_back(BuiltinTransports::UDPv4);
     bt_list.push_back(BuiltinTransports::UDPv6);
     bt_list.push_back(BuiltinTransports::LARGE_DATA);
+#ifndef __APPLE__
     bt_list.push_back(BuiltinTransports::LARGE_DATAv6);
+#endif // __APPLE__
 
     for (auto test_transport : bt_list)
     {
@@ -383,16 +385,18 @@ TEST(ChainingTransportTests, builtin_transports_env_var_test)
     bt_list.push_back("UDPv4");
     bt_list.push_back("UDPv6");
     bt_list.push_back("LARGE_DATA");
+#ifndef __APPLE__
     bt_list.push_back("LARGE_DATAv6");
+#endif // __APPLE__
 
     for (auto test_transport : bt_list)
     {
         {
-            #ifdef _WIN32
+#ifdef _WIN32
             _putenv_s(env_var_name.c_str(), test_transport.c_str());
-            #else
+#else
             setenv(env_var_name.c_str(), test_transport.c_str(), 1);
-            #endif // _WIN32
+#endif // _WIN32
 
             PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
             PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -453,7 +457,9 @@ TEST(ChainingTransportTests, builtin_transports_xml_test)
     bt_list.push_back("participant_udp");
     bt_list.push_back("participant_udpv6");
     bt_list.push_back("participant_largedata");
+#ifndef __APPLE__
     bt_list.push_back("participant_largedatav6");
+#endif // __APPLE__
 
     for (auto test_transport : bt_list)
     {
