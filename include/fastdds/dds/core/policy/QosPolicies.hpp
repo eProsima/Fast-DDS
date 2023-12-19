@@ -20,6 +20,7 @@
 #ifndef _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
 #define _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
 
+#include <bitset>
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
