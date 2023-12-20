@@ -30,6 +30,7 @@ using namespace eprosima::fastrtps::rtps;
 
 //#define cout "Use Log instead!"
 
+const char* certs_path = nullptr;
 uint16_t global_port = 0;
 bool enable_datasharing;
 bool use_pull_mode;
