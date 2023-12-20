@@ -576,6 +576,7 @@ bool WriterProxyData::writeToCDRMessage(
         {
             return false;
         }
+        std::cout << "TypeInformationParameter>::add_to_cdr_message" << std::endl;
     }
     if (m_properties.size() > 0)
     {

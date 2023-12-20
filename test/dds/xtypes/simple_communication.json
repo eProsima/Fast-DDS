@@ -1,0 +1,11 @@
+{
+    "description": "Simple test to communicate a publisher and a subscriber with default values",
+    "participants": [
+        {
+            "kind": "subscriber"
+        },
+        {
+            "kind": "publisher"
+        }
+    ]
+}
