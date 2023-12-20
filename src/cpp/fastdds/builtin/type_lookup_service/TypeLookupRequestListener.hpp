@@ -48,7 +48,7 @@ public:
 
     /**
      * @brief Constructor
-     * @param pwlp Pointer to the TypeLookupManager
+     * @param manager Pointer to the TypeLookupManager
      */
     TypeLookupRequestListener(
             TypeLookupManager* manager);

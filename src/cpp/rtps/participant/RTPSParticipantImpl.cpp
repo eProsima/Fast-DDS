@@ -71,7 +71,6 @@
 #include <statistics/rtps/monitor-service/MonitorService.hpp>
 #endif // ifdef FASTDDS_STATISTICS
 
-
 #if HAVE_SECURITY
 #include <security/logging/LogTopic.h>
 #endif  // HAVE_SECURITY

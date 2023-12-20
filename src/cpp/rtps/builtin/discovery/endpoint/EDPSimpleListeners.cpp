@@ -33,6 +33,7 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <rtps/network/NetworkFactory.h>
 

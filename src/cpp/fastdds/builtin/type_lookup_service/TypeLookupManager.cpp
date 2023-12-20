@@ -51,7 +51,7 @@ namespace dds {
 namespace builtin {
 
 
-inline SequenceNumber_t rtps_2_dds(
+inline SequenceNumber_t sequence_number_rtps_2_dds(
         fastrtps::rtps::SequenceNumber_t seq_number)
 {
     SequenceNumber_t dds_seq_number;
@@ -61,7 +61,7 @@ inline SequenceNumber_t rtps_2_dds(
     return dds_seq_number;
 }
 
-inline GUID_t rtps_2_dds(
+inline GUID_t guid_rtps_2_dds(
         const fastrtps::rtps::GUID_t& rtps_guid)
 {
     GUID_t guid;
@@ -75,7 +75,7 @@ inline GUID_t rtps_2_dds(
     return guid;
 }
 
-inline fastrtps::rtps::GUID_t dds_2_rtps(
+inline fastrtps::rtps::GUID_t guid_dds_2_rtps(
         const GUID_t& guid)
 {
     fastrtps::rtps::GUID_t rtps_guid;
@@ -275,7 +275,7 @@ void TypeLookupManager::remove_remote_endpoints(
 SampleIdentity TypeLookupManager::get_type_dependencies(
         const xtypes::TypeIdentifierSeq& id_seq) const
 {
-    SampleIdentity id = builtin::INVALID_SAMPLE_IDENTITY;
+    SampleIdentity id = INVALID_SAMPLE_IDENTITY;
 
     TypeLookup_getTypeDependencies_In in;
     in.type_ids() = id_seq;
@@ -294,7 +294,7 @@ SampleIdentity TypeLookupManager::get_type_dependencies(
 SampleIdentity TypeLookupManager::get_types(
         const xtypes::TypeIdentifierSeq& id_seq) const
 {
-    SampleIdentity id = builtin::INVALID_SAMPLE_IDENTITY;
+    SampleIdentity id = INVALID_SAMPLE_IDENTITY;
 
     TypeLookup_getTypes_In in;
     in.type_ids() = id_seq;
@@ -311,79 +311,70 @@ SampleIdentity TypeLookupManager::get_types(
 }
 
 ReturnCode_t TypeLookupManager::async_get_type(
-        xtypes::TypeInformation type_inf,
+        xtypes::TypeInformation type_information,
         fastrtps::rtps::GuidPrefix_t type_server,
         AsyncGetTypeCallback& callback)
 {
-    ReturnCode_t solve_ret = solve_type(type_inf.complete().typeid_with_size());
+    ReturnCode_t solve_ret = check_type_identifier_received(type_information.complete().typeid_with_size());
     if (RETCODE_OK == solve_ret)
     {
-        // The type is already known, invoke the callback and return success
+        // The type is already known, invoke the callback
         callback();
     }
     else if (RETCODE_NO_DATA == solve_ret)
     {
-        // The type is being solved, add callback to notify
-        add_async_get_type_callback(type_inf.complete().typeid_with_size(), type_server, callback);
+        // The type needs to be queried, add callback to notify once the remote type has been discovered.
+        add_async_get_type_callback(type_information.complete().typeid_with_size(), type_server, callback);
     }
+
     return solve_ret;
 }
 
-ReturnCode_t TypeLookupManager::solve_type(
-        xtypes::TypeIdentfierWithSize type_id)
+ReturnCode_t TypeLookupManager::check_type_identifier_received(
+        xtypes::TypeIdentfierWithSize type_identifier_with_size)
 {
-    xtypes::TypeIdentifierSeq uknown_type;
-
     // Check if the type is known
     if (fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                    is_type_identifier_known(type_id.type_id()))
+                    is_type_identifier_known(type_identifier_with_size))
     {
         return RETCODE_OK;
     }
-    else
+
+    // Check if the TypeInformation was received before
+    if (async_get_type_callbacks_.find(type_identifier_with_size) != async_get_type_callbacks_.end())
     {
-        uknown_type.push_back(type_id.type_id());
-        SampleIdentity get_type_dependencies_request = get_type_dependencies(uknown_type);
-        if (builtin::INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
-        {
-            // Store the sent requests and associated TypeIdentfierWithSize
-            add_async_get_type_request(get_type_dependencies_request, type_id);
-        }
-        else
-        {
-            // Failed to sed requests, return error
-            return RETCODE_ERROR;
-        }
+        // Return without sending new request
         return RETCODE_NO_DATA;
     }
-}
 
-void TypeLookupManager::notify_callbacks(
-        xtypes::TypeIdentfierWithSize type_id)
-{
-    // Check that type is not solved
-    auto callbacks_it = async_get_type_callbacks_.find(type_id);
-    if (callbacks_it != async_get_type_callbacks_.end())
+    // TypeInformation is unknown
+    xtypes::TypeIdentifierSeq unknown_type;
+    unknown_type.push_back(type_identifier_with_size.type_id());
+    SampleIdentity get_type_dependencies_request = get_type_dependencies(unknown_type);
+    if (INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
     {
-        for (AsyncGetTypeCallback& callback : callbacks_it->second)
-        {
-            callback();
-        }
-        // Erase the solved TypeInformation
-        remove_async_get_type_callback(type_id);
+        // Store the sent requests and associated TypeIdentfierWithSize
+        add_async_get_type_request(get_type_dependencies_request, type_identifier_with_size);
+        return RETCODE_NO_DATA;
+    }
+    else
+    {
+        // Failed to send request, return error
+        return RETCODE_ERROR;
     }
 }
 
 bool TypeLookupManager::add_async_get_type_callback(
-        xtypes::TypeIdentfierWithSize type_id,
+        xtypes::TypeIdentfierWithSize type_identifier_with_size,
         fastrtps::rtps::GuidPrefix_t type_server,
         AsyncGetTypeCallback& callback)
 {
+    (void)type_server;
     std::unique_lock<std::mutex> lock(async_get_types_mutex_);
     try
     {
         // Check if TypeIdentfierWithSize already exists in the map
-        auto it = async_get_type_callbacks_.find(type_id);
+        auto it = async_get_type_callbacks_.find(type_identifier_with_size);
         if (it != async_get_type_callbacks_.end())
         {
             // TypeIdentfierWithSize exists, add the callback
@@ -392,7 +383,8 @@ bool TypeLookupManager::add_async_get_type_callback(
         else
         {
             // TypeIdentfierWithSize doesn't exist, create a new entry
-            async_get_type_callbacks_.emplace(type_id, std::vector<AsyncGetTypeCallback>{std::move(callback)});
+            async_get_type_callbacks_.emplace(type_identifier_with_size,
+                    std::vector<AsyncGetTypeCallback>{std::move(callback)});
         }
         return true;
     }
@@ -423,35 +415,18 @@ bool TypeLookupManager::add_async_get_type_request(
 }
 
 bool TypeLookupManager::remove_async_get_type_callback(
-        xtypes::TypeIdentfierWithSize type_id)
+        xtypes::TypeIdentfierWithSize type_identifier_with_size)
 {
     std::unique_lock<std::mutex> lock(async_get_types_mutex_);
     try
     {
-        async_get_type_callbacks_.erase(type_id);
+        async_get_type_callbacks_.erase(type_identifier_with_size);
         return true;
     }
     catch (const std::exception& e)
     {
         EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
                 "Error in TypeLookupManager::remove_async_get_type_callback: " << e.what());
-        return false;
-    }
-}
-
-bool TypeLookupManager::remove_async_get_types_request(
-        SampleIdentity request)
-{
-    std::unique_lock<std::mutex> lock(async_get_types_mutex_);
-    try
-    {
-        async_get_type_requests_.erase(request);
-        return true;
-    }
-    catch (const std::exception& e)
-    {
-        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
-                "Error in TypeLookupManager::remove_async_get_types_request: " << e.what());
         return false;
     }
 }
@@ -594,8 +569,8 @@ bool TypeLookupManager::send_request(
         TypeLookup_Request& request) const
 {
     request.header().instanceName() = get_instanceName();
-    request.header().requestId().writer_guid(rtps_2_dds(builtin_request_writer_->getGuid()));
-    request.header().requestId().sequence_number(rtps_2_dds(request_seq_number_));
+    request.header().requestId().writer_guid(guid_rtps_2_dds(builtin_request_writer_->getGuid()));
+    request.header().requestId().sequence_number(sequence_number_rtps_2_dds(request_seq_number_));
     request_seq_number_++;
 
     CacheChange_t* change = builtin_request_writer_->new_change(
@@ -705,7 +680,7 @@ bool TypeLookupManager::receive_request(
     payload.data = change.serializedPayload.data + 4;
     bool result = request_type_.deserialize(&payload, &request);
     payload.data = nullptr;
-    if (result && dds_2_rtps(request.header().requestId().writer_guid()) == builtin_request_writer_->getGuid())
+    if (result && guid_dds_2_rtps(request.header().requestId().writer_guid()) == builtin_request_writer_->getGuid())
     {
         // Message from our selves.
         result = false;
@@ -742,7 +717,8 @@ bool TypeLookupManager::receive_reply(
     payload.data = change.serializedPayload.data + 4;
     bool result = reply_type_.deserialize(&payload, &reply);
     payload.data = nullptr;
-    if (result && dds_2_rtps(reply.header().relatedRequestId().writer_guid()) != builtin_request_writer_->getGuid())
+    if (result &&
+            guid_dds_2_rtps(reply.header().relatedRequestId().writer_guid()) != builtin_request_writer_->getGuid())
     {
         // This reply isn't for us.
         result = false;

@@ -26,12 +26,12 @@
 
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/types/TypeObject.h>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h>
 #include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
+#include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
 
 namespace std {
 
@@ -78,21 +78,6 @@ struct hash<eprosima::fastdds::dds::SampleIdentity>
     }
 
 };
-
-#ifndef TYPE_IDENTIFIER_WITH_SIZE_HASH_SPECIALIZATION
-#define TYPE_IDENTIFIER_WITH_SIZE_HASH_SPECIALIZATION
-template<>
-struct hash<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>
-{
-    std::size_t operator ()(
-            const eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& k) const
-    {
-        return static_cast<size_t>(k.typeobject_serialized_size());
-    }
-
-};
-#endif // TYPE_IDENTIFIER_WITH_SIZE_HASH_SPECIALIZATION
-
 
 } // std
 
@@ -181,49 +166,41 @@ public:
     /**
      * Use builtin TypeLookup service to solve the type and dependencies of a given TypeInformation.
      * It receives a callback that will be used to notify when the negotiation is complete.
-     * @param type_inf[in] TypeInformation that requires solving.
+     * @param type_information[in] TypeInformation that requires solving.
      * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
      * @param callback AsyncGetTypeCallback called when the negotiation is complete.
-     * @return ReturnCode_t RETCODE_OK if the type was known.
-     *                      RETCODE_NO_DATA if type was not known, and a negotiation was started.
-     *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not a direct hash.
+     * @return ReturnCode_t RETCODE_OK if the type is already known.
+     *                      RETCODE_NO_DATA if type is not known, and a negotiation has been started.
      *                      RETCODE_ERROR if any request was not sent correctly.
      */
     ReturnCode_t async_get_type(
-            xtypes::TypeInformation type_inf,
+            xtypes::TypeInformation type_information,
             fastrtps::rtps::GuidPrefix_t type_server,
             AsyncGetTypeCallback& callback);
 
 private:
 
     /**
-     * Checks if the dependencies and TypeObject fot a given TypeIdentfierWithSize are known by the TypeObjectRegistry.
+     * Checks if the given TypeIdentfierWithSize is known by the TypeObjectRegistry.
      * Uses get_type_dependencies() and get_types() to get those that are not known.
-     * @param type_id[in] TypeIdentfierWithSize to check.
-     * @return ReturnCode_t RETCODE_OK if type was known.
-     *                      RETCODE_NO_DATA if the type is being solve.
-     *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not a direct hash.
+     * @param type_identifier_with_size[in] TypeIdentfierWithSize to check.
+     * @return ReturnCode_t RETCODE_OK if type is known.
+     *                      RETCODE_NO_DATA if the type is being discovered.
      *                      RETCODE_ERROR if any request was not sent correctly.
      */
-    ReturnCode_t solve_type(
-            xtypes::TypeIdentfierWithSize type_id);
+    ReturnCode_t check_type_identifier_received(
+            xtypes::TypeIdentfierWithSize type_identifier_with_size);
 
-    /**
-     *  Notifies callbacks for a given TypeIdentfierWithSize
-     * @param type_id[in] TypeIdentfierWithSize of the callbacks to notify.
-     */
-    void notify_callbacks(
-            xtypes::TypeIdentfierWithSize type_id);
     /**
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
      * TypeIdentfierWithSize was not in the map before
-     * @param type_id[in] TypeIdentfierWithSize to add the callback to
+     * @param type_identifier_with_size[in] TypeIdentfierWithSize to add the callback to
      * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeIdentfierWithSize is being solved.
      * @param callback[in] AsyncGetTypeCallback to add.
      * @return true if added. false otherwise
      */
     bool add_async_get_type_callback(
-            xtypes::TypeIdentfierWithSize type_id,
+            xtypes::TypeIdentfierWithSize type_identifier_with_size,
             fastrtps::rtps::GuidPrefix_t type_server,
             AsyncGetTypeCallback& callback);
 
@@ -240,30 +217,22 @@ private:
 
     /**
      * Removes a TypeIdentfierWithSize from the async_get_type_callbacks_.
-     * @param type_id[in] TypeIdentfierWithSize to be removed.
+     * @param type_identifier_with_size[in] TypeIdentfierWithSize to be removed.
      * @return true if removed. false otherwise
      */
     bool remove_async_get_type_callback(
-            xtypes::TypeIdentfierWithSize type_id);
-
-    /**
-     * Removes a SampleIdentity from the async_get_type_callbacks_.
-     * @param request[in] SampleIdentity to be removed.
-     * @return true if removed. false otherwise
-     */
-    bool remove_async_get_types_request(
-            SampleIdentity request);
+            xtypes::TypeIdentfierWithSize type_identifier_with_size);
 
     /**
      * Complete requests common fields, create CacheChange, serialize request and add change to writer history.
-     * @param request[in] TypeLookup_Request to be send.
+     * @param request[in] TypeLookup_Request to be sent.
      * @return true if request was sent, false otherwise.
      */
     bool send_request(
             TypeLookup_Request& request) const;
 
     /**
-     * Complete reply common fields, create CacheChange, serialize request and add change to writer history.
+     * Complete reply common fields, create CacheChange, serialize reply and add change to writer history.
      * @param reply[in] TypeLookup_Reply to be send.
      * @return The SampleIdentity of the request sended.
      * @return true if reply was sent, false otherwise.
@@ -272,17 +241,17 @@ private:
             TypeLookup_Reply& reply) const;
 
     /**
-     * Used for request reception. Deserialize the request and check that it was not sent by us.
+     * Used for request reception. Deserialize the request and check if it is directed to the local DomainParticipant.
      * @param change[in] CacheChange_t of the request
-     * @param request[out] TypeLookup_Request after deserialize
-     * @return true if the request is deserialized and not from ourselves, false otherwise.
+     * @param request[out] TypeLookup_Request after deserialization
+     * @return true if the request is deserialized and directed to the local participant, false otherwise.
      */
     bool receive_request(
             fastrtps::rtps::CacheChange_t& change,
             TypeLookup_Request& request) const;
 
     /**
-     * Used for reply reception. Deserialize and check that the reply's recipient is us.
+     * Used for reply reception. Deserialize and check that the reply's recipient is the local participant.
      * @param change[in] CacheChange_t of the reply
      * @param reply[out] TypeLookup_Reply after deserialize
      * @return true if the request is deserialized and the reply's recipient is us, false otherwise.
@@ -304,7 +273,7 @@ private:
     std::string get_instanceName() const;
 
     /**
-     * Create the endpoints used in the TypeLookupManager.
+     * Create the builtin endpoints used in the TypeLookupManager.
      * @return true if correct.
      */
     bool create_endpoints();

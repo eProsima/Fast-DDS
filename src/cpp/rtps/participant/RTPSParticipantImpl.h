@@ -50,7 +50,6 @@
 #include <fastrtps/utils/shared_mutex.hpp>
 
 #include "../flowcontrol/FlowControllerFactory.hpp"
-#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <rtps/messages/RTPSMessageGroup_t.hpp>
 #include <rtps/messages/SendBuffersManager.hpp>
 #include <rtps/network/NetworkFactory.h>
