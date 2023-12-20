@@ -24,6 +24,7 @@
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastdds/dds/core/Types.hpp>
 #include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
@@ -40,8 +41,6 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-using DomainId_t = uint32_t;
 
 /**
  * The identifier for each QosPolicy.
