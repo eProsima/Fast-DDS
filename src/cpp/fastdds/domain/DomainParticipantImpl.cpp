@@ -1464,7 +1464,8 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
     if (dpst != nullptr) // Registering a dynamic type.
     {
         TypeObjectFactory* objectFactory = TypeObjectFactory::get_instance();
-        DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
+        eprosima::fastrtps::types::DynamicTypeBuilderFactory* dynFactory =
+                eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance();
         const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(dpst->getName());
         if (id == nullptr)
         {

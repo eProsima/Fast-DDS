@@ -15,6 +15,8 @@
 #ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_TYPE_BUILDER_HPP
 #define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_TYPE_BUILDER_HPP
 
+#include <memory>
+
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/AnnotationDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp>
