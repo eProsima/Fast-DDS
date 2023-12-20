@@ -19,13 +19,7 @@
 #ifndef _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
 #define _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
 
-<<<<<<< HEAD
-=======
-#include <memory>
-#include <sstream>
-
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
