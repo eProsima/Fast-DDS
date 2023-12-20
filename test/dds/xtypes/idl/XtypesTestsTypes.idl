@@ -1,0 +1,5 @@
+struct BasicStruct
+{
+	unsigned short index;
+	string<128> message;
+};

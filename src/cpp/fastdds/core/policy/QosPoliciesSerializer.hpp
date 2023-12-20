@@ -1109,8 +1109,11 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::read_conten
         deser >> qos_policy.type_information;
         qos_policy.assigned(true);
     }
-    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    //catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& exception)
     {
+        //TODO(adelcampo)
+        std::cout << "read_content_from_cdr_message not assigned: " << exception.what() << std::endl;
         qos_policy.assigned(false);
     }
 

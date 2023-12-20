@@ -562,6 +562,7 @@ bool WriterProxyData::writeToCDRMessage(
         {
             return false;
         }
+        std::cout << "TypeInformationParameter>::add_to_cdr_message" << std::endl;
     }
     if (m_properties.size() > 0)
     {
@@ -933,6 +934,7 @@ bool WriterProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_TYPE_INFORMATION:
                     {
+                        std::cout << "WRITER PID_TYPE_INFORMATION" << std::endl;
                         if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::
                                 read_from_cdr_message(type_information(), msg, plength))
                         {
