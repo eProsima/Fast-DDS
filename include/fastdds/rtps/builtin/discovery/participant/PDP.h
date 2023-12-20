@@ -321,9 +321,9 @@ public:
      * Get a pointer to the local RTPSParticipant ParticipantProxyData object.
      * @return Pointer to the local RTPSParticipant ParticipantProxyData object.
      */
-    ParticipantProxyData* getLocalParticipantProxyData()
+    ParticipantProxyData* getLocalParticipantProxyData() const
     {
-        return participant_proxies_.front();
+        return participant_proxies_.empty() ? nullptr : participant_proxies_.front();
     }
 
     /**
@@ -413,7 +413,15 @@ public:
         return temp_writer_proxies_;
     }
 
+    ReaderAttributes create_builtin_reader_attributes() const;
+
+    WriterAttributes create_builtin_writer_attributes() const;
+
 #if HAVE_SECURITY
+    void add_builtin_security_attributes(
+            ReaderAttributes& ratt,
+            WriterAttributes& watt) const;
+
     virtual bool pairing_remote_writer_with_local_reader_after_security(
             const GUID_t& local_reader,
             const WriterProxyData& remote_writer_data);
@@ -451,8 +459,6 @@ protected:
     ResourceLimitedVector<WriterProxyData*> writer_proxies_pool_;
     //!Variable to indicate if any parameter has changed.
     std::atomic_bool m_hasChangedLocalPDP;
-    //!Listener for the SPDP messages.
-    ReaderListener* mp_listener;
     //! ProxyPool for temporary reader proxies
     ProxyPool<ReaderProxyData> temp_reader_proxies_;
     //! ProxyPool for temporary writer proxies
@@ -523,6 +529,10 @@ protected:
      * Called after creating the builtin endpoints to update the metatraffic unicast locators of BuiltinProtocols
      */
     virtual void update_builtin_locators() = 0;
+
+    void notify_and_maybe_ignore_new_participant(
+            ParticipantProxyData* pdata,
+            bool& should_be_ignored);
 
 private:
 
