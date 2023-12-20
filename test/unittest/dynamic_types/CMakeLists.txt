@@ -106,19 +106,17 @@ target_compile_definitions(DynamicTypesTests PRIVATE
     )
 target_include_directories(DynamicTypesTests PRIVATE
     ${Asio_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
-<<<<<<< HEAD
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
-=======
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantAttributes
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
     $<$<BOOL:${TINYXML2_INCLUDE_DIR}>:${TINYXML2_INCLUDE_DIR}>
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(DynamicTypesTests GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>

@@ -53,7 +53,6 @@ static std::shared_ptr<fastdds::rtps::SharedMemTransportDescriptor> create_shm_t
     auto segment_size_udp_equivalent =
             std::max(att.sendSocketBufferSize, att.listenSocketBufferSize) * 2;
     descriptor->segment_size(segment_size_udp_equivalent);
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     return descriptor;
 }
 
@@ -64,7 +63,6 @@ static std::shared_ptr<fastdds::rtps::UDPv4TransportDescriptor> create_udpv4_tra
     auto descriptor = std::make_shared<fastdds::rtps::UDPv4TransportDescriptor>();
     descriptor->sendBufferSize = att.sendSocketBufferSize;
     descriptor->receiveBufferSize = att.listenSocketBufferSize;
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     if (intraprocess_only)
     {
         // Avoid multicast leaving the host for intraprocess-only participants
@@ -80,7 +78,6 @@ static std::shared_ptr<fastdds::rtps::UDPv6TransportDescriptor> create_udpv6_tra
     auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
     descriptor->sendBufferSize = att.sendSocketBufferSize;
     descriptor->receiveBufferSize = att.listenSocketBufferSize;
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     if (intraprocess_only)
     {
         // Avoid multicast leaving the host for intraprocess-only participants
@@ -102,9 +99,6 @@ static std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> create_tcpv4_tra
     descriptor->apply_security = false;
     descriptor->enable_tcp_nodelay = true;
 
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
-    descriptor->accept_thread = att.builtin_transports_reception_threads;
-    descriptor->keep_alive_thread = att.builtin_transports_reception_threads;
     return descriptor;
 }
 
@@ -121,9 +115,6 @@ static std::shared_ptr<fastdds::rtps::TCPv6TransportDescriptor> create_tcpv6_tra
     descriptor->apply_security = false;
     descriptor->enable_tcp_nodelay = true;
 
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
-    descriptor->accept_thread = att.builtin_transports_reception_threads;
-    descriptor->keep_alive_thread = att.builtin_transports_reception_threads;
     return descriptor;
 }
 
@@ -169,7 +160,7 @@ static void setup_transports_shm(
         RTPSParticipantAttributes& att)
 {
 #ifdef FASTDDS_SHM_TRANSPORT_DISABLED
-    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Trying to configure SHM transport only, " <<
+    logError(RTPS_PARTICIPANT, "Trying to configure SHM transport only, " <<
             "but Fast DDS was built without SHM transport support.");
 #else
     auto descriptor = create_shm_transport(att);
@@ -305,7 +296,7 @@ void RTPSParticipantAttributes::setup_transports(
             break;
 
         default:
-            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+            logError(RTPS_PARTICIPANT,
                     "Setup for '" << transports << "' transport configuration not yet supported.");
             return;
     }

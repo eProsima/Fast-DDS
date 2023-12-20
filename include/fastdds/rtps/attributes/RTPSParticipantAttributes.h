@@ -19,19 +19,8 @@
 #ifndef _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
 #define _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
 
-<<<<<<< HEAD
 #include <fastdds/rtps/common/Time_t.h>
-=======
-#include <memory>
-#include <sstream>
-
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
-#include <fastdds/rtps/attributes/ExternalLocators.hpp>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/attributes/ServerAttributes.h>
-#include <fastdds/rtps/attributes/ThreadSettings.hpp>
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/PortParameters.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
@@ -524,13 +513,8 @@ public:
     //!User Data of the participant
     std::vector<octet> userData;
 
-<<<<<<< HEAD
-    //!Participant ID
-    int32_t participantID;
-=======
     //! Participant ID
     int32_t participantID = -1;
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 
     /**
      * @brief Throughput controller parameters. Leave default for uncontrolled flow.
@@ -542,16 +526,10 @@ public:
     //!User defined transports to use alongside or in place of builtins.
     std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> userTransports;
 
-<<<<<<< HEAD
-    //!Set as false to disable the default UDPv4 implementation.
-    bool useBuiltinTransports;
-    //!Holds allocation limits affecting collections managed by a participant.
-=======
     //! Set as false to disable the creation of the default transports.
     bool useBuiltinTransports = true;
 
     //! Holds allocation limits affecting collections managed by a participant.
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
     RTPSParticipantAllocationAttributes allocation;
 
     //! Property policies
@@ -575,13 +553,8 @@ public:
 
 private:
 
-<<<<<<< HEAD
-    //!Name of the participant.
-    string_255 name;
-=======
     //! Name of the participant.
     string_255 name{"RTPSParticipant"};
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 };
 
 }  // namespace rtps

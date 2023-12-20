@@ -23,11 +23,9 @@
 #include <sstream>
 
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
-#include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
-#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/PortParameters.h>
 #include <fastdds/rtps/common/Time_t.h>
@@ -383,17 +381,11 @@ public:
     //! TypeLookup Service settings
     TypeLookupSettings typelookup_config;
 
-    //! Network Configuration
-    NetworkConfigSet_t network_configuration;
-
     //! Metatraffic Unicast Locator List
     LocatorList_t metatrafficUnicastLocatorList;
 
     //! Metatraffic Multicast Locator List.
     LocatorList_t metatrafficMulticastLocatorList;
-
-    //! The collection of external locators to use for communication on metatraffic topics.
-    fastdds::rtps::ExternalLocators metatraffic_external_unicast_locators;
 
     //! Initial peers.
     LocatorList_t initialPeersList;
@@ -429,10 +421,8 @@ public:
                (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
                (typelookup_config.use_client == b.typelookup_config.use_client) &&
                (typelookup_config.use_server == b.typelookup_config.use_server) &&
-               (this->network_configuration == b.network_configuration) &&
                (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
                (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
-               (this->metatraffic_external_unicast_locators == b.metatraffic_external_unicast_locators) &&
                (this->initialPeersList == b.initialPeersList) &&
                (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
                (this->readerPayloadSize == b.readerPayloadSize) &&
@@ -464,7 +454,6 @@ public:
         return (this->name == b.name) &&
                (this->defaultUnicastLocatorList == b.defaultUnicastLocatorList) &&
                (this->defaultMulticastLocatorList == b.defaultMulticastLocatorList) &&
-               (this->default_external_unicast_locators == b.default_external_unicast_locators) &&
                (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
                (this->sendSocketBufferSize == b.sendSocketBufferSize) &&
                (this->listenSocketBufferSize == b.listenSocketBufferSize) &&
@@ -476,14 +465,7 @@ public:
                (this->useBuiltinTransports == b.useBuiltinTransports) &&
                (this->properties == b.properties) &&
                (this->prefix == b.prefix) &&
-               (this->flow_controllers == b.flow_controllers) &&
-               (this->builtin_controllers_sender_thread == b.builtin_controllers_sender_thread) &&
-               (this->timed_events_thread == b.timed_events_thread) &&
-#if HAVE_SECURITY
-               (this->security_log_thread == b.security_log_thread) &&
-#endif // if HAVE_SECURITY
-               (this->discovery_server_thread == b.discovery_server_thread) &&
-               (this->builtin_transports_reception_threads == b.builtin_transports_reception_threads);
+               (this->flow_controllers == b.flow_controllers);
 
     }
 
@@ -514,7 +496,6 @@ public:
         auto descriptor = std::make_shared<fastrtps::rtps::UDPv4TransportDescriptor>();
         descriptor->sendBufferSize = att.sendSocketBufferSize;
         descriptor->receiveBufferSize = att.listenSocketBufferSize;
-        descriptor->default_reception_threads(att.builtin_transports_reception_threads);
 
         return descriptor;
     }
@@ -530,11 +511,6 @@ public:
      * case that it was defined with NO MulticastLocators. This is usually left empty.
      */
     LocatorList_t defaultMulticastLocatorList;
-
-    /**
-     * The collection of external locators to use for communication on user created topics.
-     */
-    fastdds::rtps::ExternalLocators default_external_unicast_locators;
 
     /**
      * Whether locators that don't match with the announced locators should be kept.
@@ -607,23 +583,6 @@ public:
 
     //! Flow controllers.
     FlowControllerDescriptorList flow_controllers;
-
-    //! Thread settings for the builtin flow controllers sender threads
-    fastdds::rtps::ThreadSettings builtin_controllers_sender_thread;
-
-    //! Thread settings for the timed events thread
-    fastdds::rtps::ThreadSettings timed_events_thread;
-
-    //! Thread settings for the discovery server thread
-    fastdds::rtps::ThreadSettings discovery_server_thread;
-
-    //! Thread settings for the builtin transports reception threads
-    fastdds::rtps::ThreadSettings builtin_transports_reception_threads;
-
-#if HAVE_SECURITY
-    //! Thread settings for the security log thread
-    fastdds::rtps::ThreadSettings security_log_thread;
-#endif // if HAVE_SECURITY
 
 private:
 

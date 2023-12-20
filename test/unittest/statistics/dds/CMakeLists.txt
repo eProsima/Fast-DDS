@@ -142,6 +142,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TypeSupport.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/TopicQos.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/utils/QosConverters.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/BuiltinProtocols.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/ParticipantProxyData.cpp
@@ -354,58 +355,5 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
             iphlpapi Shlwapi
             )
     endif()
-<<<<<<< HEAD
     add_gtest(StatisticsDomainParticipantMockTests SOURCES ${STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE})
 endif(SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
-=======
-
-    gtest_discover_tests(StatisticsDomainParticipantMockTests)
-
-    add_executable(StatisticsDomainParticipantStatusQueryableTests ${STATISTICS_DOMAINPARTICIPANT_STATUS_QUERYABLE_TESTS_SOURCE})
-    target_compile_definitions(StatisticsDomainParticipantStatusQueryableTests PRIVATE FASTRTPS_NO_LIB
-        BOOST_ASIO_STANDALONE
-        ASIO_STANDALONE
-        SQLITE_WIN32_GETVERSIONEX=0
-        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-        $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
-        $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
-        $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
-        $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
-        $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
-        $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
-        $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
-        $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
-        )
-    target_include_directories(StatisticsDomainParticipantStatusQueryableTests PRIVATE
-        $<$<BOOL:${OPENSSL_INCLUDE_DIR}>:${OPENSSL_INCLUDE_DIR}>
-        StatisticsDomainParticipantStatusQueryableTests/mock/
-        ${PROJECT_SOURCE_DIR}/test/mock/dds/Publisher/
-        ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantImpl/
-        ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantAttributes
-        ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_BINARY_DIR}/include
-        ${Asio_INCLUDE_DIR}
-        ${PROJECT_SOURCE_DIR}/src/cpp
-        ${THIRDPARTY_BOOST_INCLUDE_DIR})
-    target_link_libraries(StatisticsDomainParticipantStatusQueryableTests ${PRIVACY}
-        fastcdr
-        foonathan_memory
-        GTest::gmock
-        ${CMAKE_DL_LIBS}
-        ${TINYXML2_LIBRARY}
-        $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
-        $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-        ${THIRDPARTY_BOOST_LINK_LIBS}
-        eProsima_atomic
-        )
-    if(MSVC OR MSVC_IDE)
-        target_link_libraries(StatisticsDomainParticipantStatusQueryableTests ${PRIVACY}
-            iphlpapi Shlwapi
-            )
-    endif()
-    gtest_discover_tests(StatisticsDomainParticipantStatusQueryableTests)
-
-endif (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
-
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))

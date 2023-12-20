@@ -22,13 +22,7 @@
 
 #include <string>
 
-<<<<<<< HEAD
-=======
-#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
-#include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
@@ -328,28 +322,6 @@ public:
         return flow_controllers_;
     }
 
-<<<<<<< HEAD
-=======
-    /**
-     * Getter for builtin flow controllers sender threads ThreadSettings
-     *
-     * @return rtps::ThreadSettings reference
-     */
-    rtps::ThreadSettings& builtin_controllers_sender_thread()
-    {
-        return builtin_controllers_sender_thread_;
-    }
-
-    /**
-     * Getter for builtin flow controllers sender threads ThreadSettings
-     *
-     * @return rtps::ThreadSettings reference
-     */
-    const rtps::ThreadSettings& builtin_controllers_sender_thread() const
-    {
-        return builtin_controllers_sender_thread_;
-    }
-
     /**
      * Provides a way of easily configuring transport related configuration on certain pre-defined scenarios.
      *
@@ -358,114 +330,6 @@ public:
     RTPS_DllAPI void setup_transports(
             rtps::BuiltinTransports transports);
 
-    /**
-     * Setter for the builtin flow controllers sender threads ThreadSettings
-     *
-     * @param value New ThreadSettings to be set
-     */
-    void builtin_controllers_sender_thread(
-            const rtps::ThreadSettings& value)
-    {
-        builtin_controllers_sender_thread_ = value;
-    }
-
-    /**
-     * Getter for timed event ThreadSettings
-     *
-     * @return rtps::ThreadSettings reference
-     */
-    rtps::ThreadSettings& timed_events_thread()
-    {
-        return timed_events_thread_;
-    }
-
-    /**
-     * Getter for timed event ThreadSettings
-     *
-     * @return rtps::ThreadSettings reference
-     */
-    const rtps::ThreadSettings& timed_events_thread() const
-    {
-        return timed_events_thread_;
-    }
-
-    /**
-     * Setter for the timed event ThreadSettings
-     *
-     * @param value New ThreadSettings to be set
-     */
-    void timed_events_thread(
-            const rtps::ThreadSettings& value)
-    {
-        timed_events_thread_ = value;
-    }
-
-    /**
-     * Getter for discovery server ThreadSettings
-     *
-     * @return rtps::ThreadSettings reference
-     */
-    rtps::ThreadSettings& discovery_server_thread()
-    {
-        return discovery_server_thread_;
-    }
-
-    /**
-     * Getter for discovery server ThreadSettings
-     *
-     * @return rtps::ThreadSettings reference
-     */
-    const rtps::ThreadSettings& discovery_server_thread() const
-    {
-        return discovery_server_thread_;
-    }
-
-    /**
-     * Setter for the discovery server ThreadSettings
-     *
-     * @param value New ThreadSettings to be set
-     */
-    void discovery_server_thread(
-            const rtps::ThreadSettings& value)
-    {
-        discovery_server_thread_ = value;
-    }
-
-#if HAVE_SECURITY
-    /**
-     * Getter for security log ThreadSettings
-     *
-     * @return rtps::ThreadSettings reference
-     */
-    rtps::ThreadSettings& security_log_thread()
-    {
-        return security_log_thread_;
-    }
-
-    /**
-     * Getter for security log ThreadSettings
-     *
-     * @return rtps::ThreadSettings reference
-     */
-    const rtps::ThreadSettings& security_log_thread() const
-    {
-        return security_log_thread_;
-    }
-
-    /**
-     * Setter for the security log ThreadSettings
-     *
-     * @param value New ThreadSettings to be set
-     */
-    void security_log_thread(
-            const rtps::ThreadSettings& value)
-    {
-        security_log_thread_ = value;
-    }
-
-#endif // if HAVE_SECURITY
-
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
 private:
 
     //!UserData Qos, implemented in the library.

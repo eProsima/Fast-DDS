@@ -92,7 +92,7 @@ static BuiltinTransports get_builtin_transports_from_env_var()
                 "LARGE_DATA", BuiltinTransports::LARGE_DATA,
                 "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6))
         {
-            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
+            logError(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
                     env_var_name << "'. Leaving as DEFAULT");
         }
     }
@@ -178,41 +178,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     {
         m_persistence_guid = GUID_t(persistence_guid, c_EntityId_RTPSParticipant);
     }
-<<<<<<< HEAD
-    // Builtin transports by default
-    if (PParam.useBuiltinTransports)
-    {
-        UDPv4TransportDescriptor descriptor;
-        descriptor.sendBufferSize = m_att.sendSocketBufferSize;
-        descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
-        if (is_intraprocess_only())
-        {
-            // Avoid multicast leaving the host for intraprocess-only participants
-            descriptor.TTL = 0;
-        }
-        m_network_Factory.RegisterTransport(&descriptor, &m_att.properties);
-
-#ifdef SHM_TRANSPORT_BUILTIN
-        if (!is_intraprocess_only())
-        {
-            SharedMemTransportDescriptor shm_transport;
-            // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
-            // the equivalent segment size in SHM would be socket buffer size x 2
-            auto segment_size_udp_equivalent =
-                    std::max(m_att.sendSocketBufferSize, m_att.listenSocketBufferSize) * 2;
-            shm_transport.segment_size(segment_size_udp_equivalent);
-            // Use same default max_message_size on both UDP and SHM
-            shm_transport.max_message_size(descriptor.max_message_size());
-            has_shm_transport_ |= m_network_Factory.RegisterTransport(&shm_transport);
-        }
-#endif // ifdef SHM_TRANSPORT_BUILTIN
-=======
 
     // Setup builtin transports
     if (m_att.useBuiltinTransports)
     {
         m_att.setup_transports(get_builtin_transports_from_env_var());
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
     }
 
     // BACKUP servers guid is its persistence one

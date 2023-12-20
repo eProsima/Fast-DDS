@@ -20,78 +20,9 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastdds/dds/log/Log.hpp>
-
-<<<<<<< HEAD
-using namespace eprosima::fastrtps;
-=======
-#include <rtps/xmlparser/XMLParserUtils.hpp>
-#include <utils/SystemInfo.hpp>
 #include <utils/string_utilities.hpp>
 
-namespace eprosima {
-namespace fastdds {
-namespace xml {
-namespace detail {
-
-static std::string process_environment(
-        const std::string& input)
-{
-    std::string ret_val = input;
-    /* From [IEEE Std 1003.1]:(https://pubs.opengroup.org/onlinepubs/000095399/basedefs/xbd_chap08.html)
-     * Environment variable names used ... consist solely of uppercase letters, digits, and the '_' (underscore)
-     * from the characters defined in Portable Character Set and do not begin with a digit.
-     */
-    std::regex expression("\\$\\{([A-Z_][A-Z0-9_]*)\\}");
-    std::smatch match;
-
-    do
-    {
-        std::regex_search(ret_val, match, expression);
-        if (!match.empty())
-        {
-            std::string var_name = match[1];
-            std::string value;
-            if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(var_name, value))
-            {
-                ret_val = match.prefix().str() + value + match.suffix().str();
-            }
-            else
-            {
-                ret_val = match.prefix().str() + match.suffix().str();
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Could not find a value for environment variable " << var_name);
-            }
-        }
-    } while (!match.empty());
-
-    return ret_val;
-}
-
-std::string get_element_text(
-        tinyxml2::XMLElement* element)
-{
-    std::string ret_val{};
-
-    assert(nullptr != element);
-    const char* text = element->GetText();
-    if (nullptr != text)
-    {
-        ret_val = process_environment(text);
-    }
-
-    return ret_val;
-}
-
-}  // namespace detail
-}  // namespace xml
-}  // namespace fastdds
-}  // namespace eprosima
-
-
-namespace eprosima {
-namespace fastrtps {
-namespace xmlparser {
-
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
+using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::xmlparser;
 
@@ -4099,199 +4030,6 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
 
     return XMLP_ret::XML_OK;
 }
-<<<<<<< HEAD
-=======
-
-XMLP_ret XMLParser::getXMLThreadSettings(
-        tinyxml2::XMLElement& elem,
-        fastdds::rtps::ThreadSettings& thread_setting)
-{
-    /*
-        <xs:complexType name="threadSettingsType">
-            <xs:all>
-                <xs:element name="scheduling_policy" type="int32" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="priority" type="int32" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="affinity" type="uint32" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="stack_size" type="int32" minOccurs="0" maxOccurs="1"/>
-            </xs:all>
-        </xs:complexType>
-     */
-    uint32_t port = 0;
-    return getXMLThreadSettingsWithPort(elem, thread_setting,
-                   port) != XMLP_ret::XML_ERROR ? XMLP_ret::XML_OK : XMLP_ret::XML_ERROR;
-}
-
-XMLP_ret XMLParser::getXMLThreadSettingsWithPort(
-        tinyxml2::XMLElement& elem,
-        fastdds::rtps::ThreadSettings& thread_setting,
-        uint32_t& port)
-{
-    /*
-        <xs:complexType name="threadSettingsWithPortType">
-            <xs:complexContent>
-                <xs:extension base="threadSettingsType">
-                    <xs:attribute name="port" type="uint32" use="optional"/>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-     */
-
-    /*
-     * The are 4 allowed elements, all their min occurrences are 0, and their max are 1.
-     * In case port is not present, return NOK instead of ERROR
-     */
-    XMLP_ret ret = XMLP_ret::XML_OK;
-    bool port_found = false;
-    for (const tinyxml2::XMLAttribute* attrib = elem.FirstAttribute(); attrib != nullptr; attrib = attrib->Next())
-    {
-        if (strcmp(attrib->Name(), PORT) == 0)
-        {
-            try
-            {
-                std::string temp = attrib->Value();
-                temp.erase(std::remove_if(temp.begin(), temp.end(), [](unsigned char c)
-                        {
-                            return std::isspace(c);
-                        }), temp.end());
-                if (attrib->Value()[0] == '-')
-                {
-                    throw std::invalid_argument("Negative value detected");
-                }
-                port = static_cast<uint32_t>(std::stoul(attrib->Value()));
-                port_found = true;
-            }
-            catch (std::invalid_argument& except)
-            {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Found wrong value " << attrib->Value() << " for port attribute. " <<
-                        except.what());
-                ret = XMLP_ret::XML_ERROR;
-                break;
-            }
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Found wrong attribute " << attrib->Name() << " in 'thread_settings");
-            ret = XMLP_ret::XML_ERROR;
-            break;
-        }
-    }
-
-    // Set ret to NOK is port attribute was not present
-    if (ret == XMLP_ret::XML_OK && !port_found)
-    {
-        ret = XMLP_ret::XML_NOK;
-    }
-
-    const uint8_t ident = 1;
-    std::set<std::string> tags_present;
-
-    for (tinyxml2::XMLElement* current_elem = elem.FirstChildElement();
-            current_elem != nullptr && ret != XMLP_ret::XML_ERROR;
-            current_elem = current_elem->NextSiblingElement())
-    {
-        const char* name = current_elem->Name();
-        if (tags_present.count(name) != 0)
-        {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'thread_settings'. Tag: " << name);
-            ret = XMLP_ret::XML_ERROR;
-            break;
-        }
-        tags_present.emplace(name);
-
-        if (strcmp(current_elem->Name(), SCHEDULING_POLICY) == 0)
-        {
-            // scheduling_policy - int32Type
-            if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.scheduling_policy, ident) ||
-                    thread_setting.scheduling_policy < -1)
-            {
-                ret = XMLP_ret::XML_ERROR;
-                break;
-            }
-        }
-        else if (strcmp(current_elem->Name(), PRIORITY) == 0)
-        {
-            // priority - int32Type
-            if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.priority, ident))
-            {
-                ret = XMLP_ret::XML_ERROR;
-                break;
-            }
-        }
-        else if (strcmp(current_elem->Name(), AFFINITY) == 0)
-        {
-            // affinity - uint64Type
-            if (XMLP_ret::XML_OK != getXMLUint(current_elem, &thread_setting.affinity, ident))
-            {
-                ret = XMLP_ret::XML_ERROR;
-                break;
-            }
-        }
-        else if (strcmp(current_elem->Name(), STACK_SIZE) == 0)
-        {
-            // stack_size - int32Type
-            if (XMLP_ret::XML_OK != getXMLInt(current_elem, &thread_setting.stack_size, ident) ||
-                    thread_setting.stack_size < -1)
-            {
-                ret = XMLP_ret::XML_ERROR;
-                break;
-            }
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Found incorrect tag '" << current_elem->Name() << "'");
-            ret = XMLP_ret::XML_ERROR;
-            break;
-        }
-    }
-    return ret;
-}
-
-XMLP_ret XMLParser::getXMLEntityFactoryQos(
-        tinyxml2::XMLElement& elem,
-        fastdds::dds::EntityFactoryQosPolicy& entity_factory)
-{
-    /*
-        <xs:complexType name="entityFactoryQosPolicyType">
-            <xs:all>
-                <xs:element name="autoenable_created_entities" type="boolean" minOccurs="0" maxOccurs="1"/>
-            </xs:all>
-        </xs:complexType>
-     */
-
-    /*
-     * The only allowed element is autoenable_created_entities, its min occurrences is 0, and its max is 1.
-     */
-    const uint8_t ident = 1;
-    std::set<std::string> tags_present;
-
-    for (tinyxml2::XMLElement* current_elem = elem.FirstChildElement(); current_elem != nullptr;
-            current_elem = current_elem->NextSiblingElement())
-    {
-        const char* name = current_elem->Name();
-        if (tags_present.count(name) != 0)
-        {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'entityFactoryQosPolicyType'. Tag: " << name);
-            return XMLP_ret::XML_ERROR;
-        }
-        tags_present.emplace(name);
-
-        if (strcmp(current_elem->Name(), AUTOENABLE_CREATED_ENTITIES) == 0)
-        {
-            // autoenable_created_entities - boolean
-            if (XMLP_ret::XML_OK != getXMLBool(current_elem, &entity_factory.autoenable_created_entities, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Found incorrect tag '" << current_elem->Name() << "'");
-            return XMLP_ret::XML_ERROR;
-        }
-    }
-    return XMLP_ret::XML_OK;
-}
 
 XMLP_ret XMLParser::getXMLBuiltinTransports(
         tinyxml2::XMLElement* elem,
@@ -4312,14 +4050,14 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
             </xs:restriction>
         </xs:simpleType>
      */
-    std::string text = get_element_text(elem);
-    if (text.empty())
+    const char* text = elem->GetText();
+    if (nullptr == text)
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
+        logError(XMLPARSER, "Node '" << KIND << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
-    if (!get_element_enum_value(text.c_str(), *bt,
+    if (!get_element_enum_value(text, *bt,
             NONE, eprosima::fastdds::rtps::BuiltinTransports::NONE,
             DEFAULT_C, eprosima::fastdds::rtps::BuiltinTransports::DEFAULT,
             DEFAULTv6, eprosima::fastdds::rtps::BuiltinTransports::DEFAULTv6,
@@ -4329,14 +4067,9 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
             LARGE_DATA, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA,
             LARGE_DATAv6, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATAv6))
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' bad content");
+        logError(XMLPARSER, "Node '" << KIND << "' bad content");
         return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
 }
-
-}  // namespace xmlparser
-}  // namespace fastrtps
-}  // namespace eprosima
->>>>>>> 8cbd46144 (Methods to configure transport scenarios (#4098))
