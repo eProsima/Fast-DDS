@@ -53,6 +53,10 @@ public:
     TypeDescriptorImpl() noexcept = default;
 
     TypeDescriptorImpl(
+            TypeKind kind,
+            const ObjectName& name);
+
+    TypeDescriptorImpl(
             const TypeDescriptorImpl& type) noexcept = default;
 
     TypeDescriptorImpl(
