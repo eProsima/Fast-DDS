@@ -98,7 +98,7 @@ static std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> create_tcpv4_tra
     descriptor->check_crc = false;
     descriptor->apply_security = false;
     descriptor->enable_tcp_nodelay = true;
-    
+
     return descriptor;
 }
 
@@ -115,7 +115,7 @@ static std::shared_ptr<fastdds::rtps::TCPv6TransportDescriptor> create_tcpv6_tra
     descriptor->apply_security = false;
     descriptor->enable_tcp_nodelay = true;
 
-     return descriptor;
+    return descriptor;
 }
 
 static void setup_transports_default(

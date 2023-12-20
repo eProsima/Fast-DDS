@@ -330,7 +330,6 @@ public:
     RTPS_DllAPI void setup_transports(
             rtps::BuiltinTransports transports);
 
-
 private:
 
     //!UserData Qos, implemented in the library.

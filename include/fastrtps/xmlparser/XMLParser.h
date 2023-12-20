@@ -608,7 +608,7 @@ protected:
             tinyxml2::XMLElement* elem,
             SubscriberAttributes& subscriber,
             uint8_t ident);
-            
+
     RTPS_DllAPI static XMLP_ret getXMLEntityFactoryQos(
             tinyxml2::XMLElement& elem,
             fastdds::dds::EntityFactoryQosPolicy& entity_factory);

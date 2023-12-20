@@ -4340,7 +4340,6 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
     return XMLP_ret::XML_OK;
 }
 
-
 XMLP_ret XMLParser::getXMLBuiltinTransports(
         tinyxml2::XMLElement* elem,
         eprosima::fastdds::rtps::BuiltinTransports* bt,
