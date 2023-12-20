@@ -53,7 +53,6 @@ static std::shared_ptr<fastdds::rtps::SharedMemTransportDescriptor> create_shm_t
     auto segment_size_udp_equivalent =
             std::max(att.sendSocketBufferSize, att.listenSocketBufferSize) * 2;
     descriptor->segment_size(segment_size_udp_equivalent);
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     return descriptor;
 }
 
@@ -64,7 +63,6 @@ static std::shared_ptr<fastdds::rtps::UDPv4TransportDescriptor> create_udpv4_tra
     auto descriptor = std::make_shared<fastdds::rtps::UDPv4TransportDescriptor>();
     descriptor->sendBufferSize = att.sendSocketBufferSize;
     descriptor->receiveBufferSize = att.listenSocketBufferSize;
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     if (intraprocess_only)
     {
         // Avoid multicast leaving the host for intraprocess-only participants
@@ -80,7 +78,6 @@ static std::shared_ptr<fastdds::rtps::UDPv6TransportDescriptor> create_udpv6_tra
     auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
     descriptor->sendBufferSize = att.sendSocketBufferSize;
     descriptor->receiveBufferSize = att.listenSocketBufferSize;
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     if (intraprocess_only)
     {
         // Avoid multicast leaving the host for intraprocess-only participants
@@ -101,10 +98,7 @@ static std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> create_tcpv4_tra
     descriptor->check_crc = false;
     descriptor->apply_security = false;
     descriptor->enable_tcp_nodelay = true;
-
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
-    descriptor->accept_thread = att.builtin_transports_reception_threads;
-    descriptor->keep_alive_thread = att.builtin_transports_reception_threads;
+    
     return descriptor;
 }
 
@@ -121,10 +115,7 @@ static std::shared_ptr<fastdds::rtps::TCPv6TransportDescriptor> create_tcpv6_tra
     descriptor->apply_security = false;
     descriptor->enable_tcp_nodelay = true;
 
-    descriptor->default_reception_threads(att.builtin_transports_reception_threads);
-    descriptor->accept_thread = att.builtin_transports_reception_threads;
-    descriptor->keep_alive_thread = att.builtin_transports_reception_threads;
-    return descriptor;
+     return descriptor;
 }
 
 static void setup_transports_default(
