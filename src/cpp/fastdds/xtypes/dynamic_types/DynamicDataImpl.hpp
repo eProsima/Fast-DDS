@@ -30,6 +30,12 @@ namespace dds {
 
 class DynamicDataImpl : public traits<DynamicData>::base_type
 {
+    traits<DynamicTypeImpl>::ref_type type_;
+
+    std::map<MemberId, std::shared_ptr<void>> value_;
+
+    std::vector<MemberId> loaned_values_;
+
 public:
 
     DynamicDataImpl(
@@ -347,9 +353,44 @@ public:
             MemberId id,
             const WstringSeq& value) noexcept override;
 
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr) const noexcept;
+
+    bool deserialize(
+            eprosima::fastcdr::Cdr& cdr) noexcept;
+
+    void serialize_key(
+            eprosima::fastcdr::Cdr& cdr) const noexcept;
+
+    static size_t get_key_max_cdr_serialized_size(
+            traits<DynamicType>::ref_type type,
+            size_t current_alignment = 0);
+
+    static size_t get_max_cdr_serialized_size(
+            traits<DynamicType>::ref_type type,
+            size_t current_alignment = 0);
+
+    size_t get_cdr_serialized_size(
+            size_t current_alignment = 0) noexcept;
+
 protected:
 
     traits<DynamicDataImpl>::ref_type _this();
+
+private:
+
+    void add_value(
+            TypeKind kind,
+            MemberId id) noexcept;
+
+    void set_value(
+            const ObjectName& value,
+            MemberId id) noexcept;
+
+    void set_default_value(
+            MemberId id) noexcept;
+
+    ReturnCode_t clear_data() noexcept;
 
 };
 
