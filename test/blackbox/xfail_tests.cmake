@@ -9,6 +9,17 @@ set(XFAIL_DDS_PIM_TESTS
     LivelinessQos/LivelinessQos.ThreeWriters_ThreeReaders/Transport
     LivelinessQos/LivelinessQos.TwoWriters_OneReader_ManualByParticipant/Intraprocess
     PersistenceLargeData/PersistenceLargeData.PubSubAsReliablePubPersistentWithFrag/Transport
+
+    ##########################################################
+    # These test are here because of TCP instabilities
+    ##########################################################
+    ChainingTransportTests.builtin_transports_api_large_data
+    ChainingTransportTests.builtin_transports_api_large_datav6
+    ChainingTransportTests.builtin_transports_env_large_data
+    ChainingTransportTests.builtin_transports_env_large_datav6
+    ChainingTransportTests.builtin_transports_xml_large_data
+    ChainingTransportTests.builtin_transports_xml_large_datav6
+    ##########################################################
     )
 
 set_tests_properties(${XFAIL_DDS_PIM_TESTS}
