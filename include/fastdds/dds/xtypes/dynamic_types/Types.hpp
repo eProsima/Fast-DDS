@@ -31,6 +31,22 @@ const char* const CONST_FALSE = "false";
 
 constexpr MemberId MEMBER_ID_INVALID {0x0FFFFFFF};
 
+class DynamicData;
+
+template<>
+struct traits<DynamicData> : public object_traits<DynamicData>
+{
+    using base_type = DynamicData;
+};
+
+class DynamicDataFactory;
+
+template<>
+struct traits<DynamicDataFactory> : public object_traits<DynamicDataFactory>
+{
+    using base_type = DynamicDataFactory;
+};
+
 class DynamicType;
 
 template<>

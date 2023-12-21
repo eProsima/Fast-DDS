@@ -33,6 +33,8 @@ class FASTDDS_EXPORTED_API MemberDescriptor
 {
 public:
 
+    using _ref_type = typename traits<MemberDescriptor>::ref_type;
+
     /*!
      * Returns the name of this member.
      * @return Member's name.

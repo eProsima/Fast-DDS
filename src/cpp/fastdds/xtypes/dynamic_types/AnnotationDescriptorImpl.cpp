@@ -21,6 +21,12 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+template<>
+traits<AnnotationDescriptor>::ref_type traits<AnnotationDescriptor>::make_shared()
+{
+    return std::make_shared<AnnotationDescriptorImpl>();
+}
+
 ReturnCode_t AnnotationDescriptorImpl::get_value(
         ObjectName& value,
         const ObjectName& key) noexcept

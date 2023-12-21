@@ -18,6 +18,12 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+template<>
+traits<VerbatimTextDescriptor>::ref_type traits<VerbatimTextDescriptor>::make_shared()
+{
+    return std::make_shared<VerbatimTextDescriptorImpl>();
+}
+
 ReturnCode_t VerbatimTextDescriptorImpl::copy_from(
         traits<VerbatimTextDescriptor>::ref_type descriptor) noexcept
 {

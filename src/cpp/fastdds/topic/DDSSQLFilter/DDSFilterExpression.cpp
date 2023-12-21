@@ -24,6 +24,9 @@
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/exceptions/Exception.h>
 
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+
 #include "DDSFilterCondition.hpp"
 #include "DDSFilterExpression.hpp"
 #include "DDSFilterField.hpp"
@@ -66,7 +69,7 @@ bool DDSFilterExpression::evaluate(
             it != fields.end() && DDSFilterConditionState::UNDECIDED == root->get_state();
             ++it)
     {
-        if (!it->second->set_value(*dyn_data_))
+        if (!it->second->set_value(dyn_data_))
         {
             return false;
         }
@@ -77,16 +80,16 @@ bool DDSFilterExpression::evaluate(
 
 void DDSFilterExpression::clear()
 {
-    dyn_data_.reset();
-    dyn_type_.reset();
+    DynamicDataFactory::get_instance()->delete_data(dyn_data_);
+    DynamicTypeBuilderFactory::get_instance()->delete_type(dyn_type_);
     parameters.clear();
     fields.clear();
     root.reset();
 }
 
 void DDSFilterExpression::set_type(
-        const DynamicType* const type)
+        traits<DynamicType>::ref_type type)
 {
-    //TODO(richiware) dyn_type_.reset(type);
-    dyn_data_.reset(DynamicDataFactory::get_instance().create_data(*type));
+    dyn_type_ = type;
+    dyn_data_ = traits<DynamicData>::narrow<DynamicDataImpl>(DynamicDataFactory::get_instance()->create_data(type));
 }

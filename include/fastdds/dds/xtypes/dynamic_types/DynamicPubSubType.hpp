@@ -136,7 +136,7 @@ public:
      * @remark Ownership is not transferred.
      */
     FASTDDS_EXPORTED_API ReturnCode_t SetDynamicType(
-            const DynamicData& data);
+            traits<DynamicData>::ref_type data);
 
     /*
      * Sets up the internal @ref DynamicType object

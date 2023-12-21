@@ -13,58 +13,22 @@
 // limitations under the License.
 
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
-#include "DynamicTypeImpl.hpp"
-#include "DynamicDataImpl.hpp"
+
 #include "DynamicDataFactoryImpl.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-DynamicDataFactory& DynamicDataFactory::get_instance() noexcept
+traits<DynamicDataFactory>::ref_type DynamicDataFactory::get_instance()
 {
-    // C++11 guarantees the construction to be atomic
-    static DynamicDataFactory instance;
-    return instance;
+    return DynamicDataFactoryImpl::get_instance();
 }
 
-ReturnCode_t DynamicDataFactory::delete_instance() noexcept
+ReturnCode_t DynamicDataFactory::delete_instance()
 {
     // Delegate into the implementation class
     return DynamicDataFactoryImpl::delete_instance();
-}
-
-DynamicData* DynamicDataFactory::create_data(
-        const DynamicType& type) noexcept
-{
-    // Delegate into the implementation class
-    auto data = DynamicDataFactoryImpl::get_instance().create_data(DynamicTypeImpl::get_implementation(type));
-    return &data->get_interface();
-
-}
-
-DynamicData* DynamicDataFactory::create_copy(
-        const DynamicData& data) noexcept
-{
-    return &DynamicDataFactoryImpl::get_instance()
-                   .create_copy(DynamicDataImpl::get_implementation(data))->get_interface();
-}
-
-ReturnCode_t DynamicDataFactory::delete_data(
-        const DynamicData* pData) noexcept
-{
-    if (nullptr == pData)
-    {
-        return RETCODE_PRECONDITION_NOT_MET;
-    }
-
-    const auto& ti = DynamicDataImpl::get_implementation(*pData);
-    return DynamicDataFactoryImpl::get_instance().delete_data(ti);
-}
-
-bool DynamicDataFactory::is_empty() const noexcept
-{
-    return DynamicDataFactoryImpl::get_instance().is_empty();
 }
 
 } // namespace dds

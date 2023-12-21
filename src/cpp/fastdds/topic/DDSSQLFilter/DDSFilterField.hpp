@@ -104,7 +104,7 @@ public:
      * @post Method @c has_value returns true.
      */
     inline bool set_value(
-            DynamicData& data_value)
+            traits<DynamicData>::ref_type data_value)
     {
         return set_value(data_value, 0);
     }
@@ -120,7 +120,7 @@ public:
      * @post Method @c has_value returns true.
      */
     bool set_value(
-            DynamicData& data,
+            traits<DynamicData>::ref_type data,
             size_t n);
 
 protected:
@@ -134,8 +134,8 @@ protected:
 
 private:
 
-    bool set_value(
-            const DynamicData* data,
+    bool set_value_using_member_id(
+            traits<DynamicData>::ref_type data,
             MemberId member_id);
 
     bool has_value_ = false;

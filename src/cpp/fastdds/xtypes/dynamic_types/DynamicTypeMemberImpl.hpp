@@ -58,6 +58,14 @@ public:
 
     ObjectName get_name() noexcept override;
 
+    const MemberDescriptorImpl& get_descriptor() const noexcept
+    {
+        return member_descriptor_;
+    }
+
+    bool annotation_get_default(
+            ObjectName& default_value);
+
 protected:
 
     traits<DynamicTypeMember>::ref_type _this();

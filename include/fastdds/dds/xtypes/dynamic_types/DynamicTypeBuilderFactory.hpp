@@ -36,6 +36,8 @@ class FASTDDS_EXPORTED_API DynamicTypeBuilderFactory : public std::enable_shared
 {
 public:
 
+    using _ref_type = typename traits<DynamicTypeBuilderFactory>::ref_type;
+
     /*!
      * Returns the singleton factory object
      * @remark This method is non thread-safe.

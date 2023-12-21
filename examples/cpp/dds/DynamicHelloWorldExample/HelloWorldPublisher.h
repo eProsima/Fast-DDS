@@ -47,7 +47,7 @@ public:
 
 private:
 
-    eprosima::fastdds::dds::DynamicData* m_Hello {nullptr};
+    eprosima::fastdds::dds::DynamicData::_ref_type m_Hello;
 
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
 

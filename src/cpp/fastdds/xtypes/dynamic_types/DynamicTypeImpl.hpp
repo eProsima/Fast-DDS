@@ -78,6 +78,16 @@ public:
     bool equals(
             traits<DynamicType>::ref_type other) noexcept override;
 
+    const DynamicTypeMembersById& get_all_members() const
+    {
+        return member_;
+    }
+
+    const TypeDescriptorImpl& get_descriptor() const noexcept
+    {
+        return type_descriptor_;
+    }
+
 protected:
 
     traits<DynamicType>::ref_type _this();
@@ -95,6 +105,8 @@ private:
     TypeDescriptorImpl type_descriptor_;
 
     std::vector<VerbatimTextDescriptorImpl> verbatim_;
+
+    int32_t default_union_label_ {0};
 };
 
 } // namespace dds

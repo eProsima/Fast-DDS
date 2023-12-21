@@ -21,6 +21,12 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+template<>
+traits<MemberDescriptor>::ref_type traits<MemberDescriptor>::make_shared()
+{
+    return std::make_shared<MemberDescriptorImpl>();
+}
+
 bool is_default_value_consistent(
         TypeKind kind,
         const std::string& default_value)
@@ -217,6 +223,12 @@ bool MemberDescriptorImpl::is_consistent() noexcept
     // Only aggregated types must use the ID value.
     if ((MEMBER_ID_INVALID == id_ && (TK_UNION == parent_kind_ || TK_STRUCTURE == parent_kind_)) ||
             MEMBER_ID_INVALID != id_)
+    {
+        return false;
+    }
+
+    // A union member cannot have the MemberId 0 because this value is for the discriminator
+    if (TK_UNION == parent_kind_ && 0 == id_)
     {
         return false;
     }

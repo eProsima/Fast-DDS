@@ -32,9 +32,9 @@
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
-#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
@@ -243,16 +243,15 @@ int main(
         return 1;
     }
 
-    DynamicTypeBuilder* dyn_type_build {nullptr};
+    DynamicType::_ref_type dyn_type;
     if (RETCODE_OK !=
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("TypeLookup",
-            dyn_type_builder))
+            dyn_type))
     {
         std::cout << "Error getting dynamic type from XML file" << std::endl;
         return 1;
     }
 
-    auto dyn_type = dyn_type_build->build();
     TypeSupport type(new DynamicPubSubType(dyn_type));
     type.register_type(participant);
 
@@ -303,15 +302,15 @@ int main(
                 });
     }
 
-    DynamicData* data {DynamicDataFactory::get_instance().create_data(*dyn_type)};
-    data->set_string_value("Hello DDS Dynamic World", 0);
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(dyn_type)};
+    data->set_string_value(0, "Hello DDS Dynamic World");
     data->set_uint32_value(1, 1);
-    DynamicData* inner {data->loan_value(2)};
-    inner->set_byte_value(10, 0);
+    DynamicData::_ref_type inner {data->loan_value(2)};
+    inner->set_byte_value(0, 10);
 
     while (run)
     {
-        writer->write(data);
+        writer->write(&data);
 
         uint32_t index;
         data->get_uint32_value(index, 1);
@@ -322,13 +321,13 @@ int main(
         }
         else
         {
-            data->set_uint32_value(index + 1, 1);
+            data->set_uint32_value(1, index + 1);
         }
 
         inner = data->loan_value(2);
         octet inner_count;
         inner->get_byte_value(inner_count, 0);
-        inner->set_byte_value(inner_count + 1, 0);
+        inner->set_byte_value(0, inner_count + 1);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }

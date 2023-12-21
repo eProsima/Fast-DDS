@@ -26,8 +26,8 @@
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
-#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -155,6 +155,11 @@ public:
      * @remarks This loan shall be returned by the @ref DynamicData::return_loaned_value operation
      * @param[in] id identifier of the object to retrieve
      * @return @ref DynamicData reference loaned or \b nil on outstanding loaned data
+     */
+    virtual traits<DynamicData>::ref_type loan_value(
+            MemberId id) = 0;
+
+    /*!
      * Returns a loan retrieved using @ref DynamicData::loan_value.
      * @param[in] value @ref DynamicData reference previously loaned
      * @retval RETCODE_OK when the loan was returned successfully.

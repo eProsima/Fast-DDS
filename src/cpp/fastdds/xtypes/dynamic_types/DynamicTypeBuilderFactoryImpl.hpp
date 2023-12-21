@@ -90,35 +90,28 @@ private:
 
     // Cached primitive types.
     traits<DynamicTypeImpl>::ref_type bool_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_BOOLEAN,
-                                                                                                       xtypes::boolean_type_name})};
-    traits<DynamicTypeImpl>::ref_type byte_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_BYTE,
-                                                                                                       xtypes::byte_type_name})};
-    traits<DynamicTypeImpl>::ref_type int16_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_INT16,
-                                                                                                        xtypes::int16_type_name})};
-    traits<DynamicTypeImpl>::ref_type int32_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_INT32,
-                                                                                                        xtypes::int32_type_name})};
-    traits<DynamicTypeImpl>::ref_type int64_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_INT64,
-                                                                                                        xtypes::int64_type_name})};
+                                                                                                       ""})};
+    traits<DynamicTypeImpl>::ref_type byte_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_BYTE, ""})};
+    traits<DynamicTypeImpl>::ref_type int16_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_INT16, ""})};
+    traits<DynamicTypeImpl>::ref_type int32_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_INT32, ""})};
+    traits<DynamicTypeImpl>::ref_type int64_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_INT64, ""})};
     traits<DynamicTypeImpl>::ref_type uint16_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_UINT16,
-                                                                                                         xtypes::uint16_type_name})};
+                                                                                                         ""})};
     traits<DynamicTypeImpl>::ref_type uint32_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_UINT32,
-                                                                                                         xtypes::uint32_type_name})};
+                                                                                                         ""})};
     traits<DynamicTypeImpl>::ref_type uint64_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_UINT64,
-                                                                                                         xtypes::uint64_type_name})};
+                                                                                                         ""})};
     traits<DynamicTypeImpl>::ref_type float32_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_FLOAT32,
-                                                                                                          xtypes::float32_type_name})};
+                                                                                                          ""})};
     traits<DynamicTypeImpl>::ref_type float64_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_FLOAT64,
-                                                                                                          xtypes::float64_type_name})};
+                                                                                                          ""})};
     traits<DynamicTypeImpl>::ref_type float128_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_FLOAT128,
-                                                                                                           xtypes::float128_type_name})};
-    traits<DynamicTypeImpl>::ref_type int8_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_INT8,
-                                                                                                       xtypes::int8_type_name})};
-    traits<DynamicTypeImpl>::ref_type uint8_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_UINT8,
-                                                                                                        xtypes::uint8_type_name})};
-    traits<DynamicTypeImpl>::ref_type char8_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_CHAR8,
-                                                                                                        xtypes::char8_type_name})};
+                                                                                                           ""})};
+    traits<DynamicTypeImpl>::ref_type int8_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_INT8, ""})};
+    traits<DynamicTypeImpl>::ref_type uint8_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_UINT8, ""})};
+    traits<DynamicTypeImpl>::ref_type char8_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_CHAR8, ""})};
     traits<DynamicTypeImpl>::ref_type char16_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_CHAR16,
-                                                                                                         xtypes::char16_type_name})};
+                                                                                                         ""})};
 
 };
 
