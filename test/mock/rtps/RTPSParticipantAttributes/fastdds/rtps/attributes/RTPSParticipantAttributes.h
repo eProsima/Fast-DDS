@@ -598,11 +598,6 @@ public:
     //! Flow controllers.
     FlowControllerDescriptorList flow_controllers;
 
-#if HAVE_SECURITY
-    //! Thread settings for the security log thread
-    fastdds::rtps::ThreadSettings security_log_thread;
-#endif // if HAVE_SECURITY
-
 private:
 
     //! Name of the participant.
