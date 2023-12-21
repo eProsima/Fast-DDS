@@ -5,7 +5,8 @@ files_to_exclude=(
     )
 
 files_not_needing_typeobject=(
-    './include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.idl'
+    './include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.idl'
+    './src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.idl'
     )
 
 files_needing_case_sensitive=(
