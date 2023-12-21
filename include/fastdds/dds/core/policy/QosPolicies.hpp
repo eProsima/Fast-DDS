@@ -1710,9 +1710,6 @@ public:
     int32_t depth;
 };
 
-//! A special value indicating an unlimited quantity
-constexpr int32_t LENGTH_UNLIMITED = -1;
-
 /**
  * Specifies the resources that the Service can consume in order to meet the requested QoS
  *
