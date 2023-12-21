@@ -25,14 +25,10 @@
 #include <vector>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/core/Types.hpp>
 #include <fastdds/rtps/common/Types.h>
 
 namespace eprosima {
-namespace fastdds {
-namespace dds {
-using DomainId_t = uint32_t;
-} // dds
-} // namespace fastdds
 
 namespace fastcdr {
 class Cdr;
