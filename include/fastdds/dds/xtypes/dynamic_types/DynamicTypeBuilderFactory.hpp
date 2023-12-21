@@ -22,7 +22,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -32,7 +32,7 @@ namespace xtypes {
 class TypeObject;
 } // namespace xtypes
 
-class RTPS_DllAPI DynamicTypeBuilderFactory : public std::enable_shared_from_this<DynamicTypeBuilderFactory>
+class FASTDDS_EXPORTED_API DynamicTypeBuilderFactory : public std::enable_shared_from_this<DynamicTypeBuilderFactory>
 {
 public:
 

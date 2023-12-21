@@ -1541,7 +1541,7 @@ public:
 
 };
 
-namespace types {
+namespace xtypes {
 class TypeInformation;
 } // namespace types
 
@@ -1599,12 +1599,12 @@ public:
     }
 
     FASTDDS_EXPORTED_API TypeInformationParameter& operator =(
-            const types::TypeInformation&)
+            const xtypes::TypeInformation&)
     {
         return *this;
     }
 
-    FASTDDS_EXPORTED_API const types::TypeInformation* get() const
+    FASTDDS_EXPORTED_API const xtypes::TypeInformation* get() const
     {
         return nullptr;
     }

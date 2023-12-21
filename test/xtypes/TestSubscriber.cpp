@@ -61,7 +61,7 @@ bool TestSubscriber::init(
         eprosima::fastdds::dds::TypeSupport type,
         const eprosima::fastrtps::types::TypeObject* type_object,
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
-        const eprosima::fastrtps::types::TypeInformation* type_info,
+        const eprosima::fastdds::dds::xtypes::TypeInformation* type_info,
         const std::string& name,
         const eprosima::fastdds::dds::DataRepresentationQosPolicy* dataRepresentationQos,
         const eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos,
@@ -100,11 +100,13 @@ bool TestSubscriber::init(
     {
         if (type_object != nullptr)
         {
-            m_Type->type_object(*type_object);
+            //TODO(XTypes)
+            //m_Type->type_object(*type_object);
         }
         if (type_identifier != nullptr)
         {
-            m_Type->type_identifier(*type_identifier);
+            //TODO(XTypes)
+            //m_Type->type_identifier(*type_identifier);
         }
         if (type_info != nullptr)
         {
