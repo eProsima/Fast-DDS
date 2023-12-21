@@ -52,7 +52,7 @@ namespace builtin {
 
 
 inline SequenceNumber_t sequence_number_rtps_2_dds(
-        fastrtps::rtps::SequenceNumber_t seq_number)
+        const fastrtps::rtps::SequenceNumber_t seq_number)
 {
     SequenceNumber_t dds_seq_number;
     dds_seq_number.low() = seq_number.low;
@@ -128,6 +128,8 @@ bool TypeLookupManager::init(
 {
     participant_ = protocols->mp_participantImpl;
     builtin_protocols_ = protocols;
+
+    own_instance_name_ = get_instance_name(participant_->getGuid().guidPrefix);
 
     temp_reader_proxy_data_ = new fastrtps::rtps::ReaderProxyData(
         protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
@@ -273,7 +275,8 @@ void TypeLookupManager::remove_remote_endpoints(
 }
 
 SampleIdentity TypeLookupManager::get_type_dependencies(
-        const xtypes::TypeIdentifierSeq& id_seq) const
+        const xtypes::TypeIdentifierSeq& id_seq,
+        const fastrtps::rtps::GuidPrefix_t& type_server) const
 {
     SampleIdentity id = INVALID_SAMPLE_IDENTITY;
 
@@ -283,7 +286,7 @@ SampleIdentity TypeLookupManager::get_type_dependencies(
     TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
     request->data().getTypeDependencies(in);
 
-    if (send_request(*request))
+    if (send_request(type_server, *request))
     {
         id = request->header().requestId();
     }
@@ -292,7 +295,8 @@ SampleIdentity TypeLookupManager::get_type_dependencies(
 }
 
 SampleIdentity TypeLookupManager::get_types(
-        const xtypes::TypeIdentifierSeq& id_seq) const
+        const xtypes::TypeIdentifierSeq& id_seq,
+        const fastrtps::rtps::GuidPrefix_t& type_server) const
 {
     SampleIdentity id = INVALID_SAMPLE_IDENTITY;
 
@@ -302,7 +306,7 @@ SampleIdentity TypeLookupManager::get_types(
     TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
     request->data().getTypes(in);
 
-    if (send_request(*request))
+    if (send_request(type_server, *request))
     {
         id = request->header().requestId();
     }
@@ -311,11 +315,12 @@ SampleIdentity TypeLookupManager::get_types(
 }
 
 ReturnCode_t TypeLookupManager::async_get_type(
-        xtypes::TypeInformation type_information,
-        fastrtps::rtps::GuidPrefix_t type_server,
-        AsyncGetTypeCallback& callback)
+        const xtypes::TypeInformation& type_information,
+        const fastrtps::rtps::GuidPrefix_t& type_server,
+        const AsyncGetTypeCallback& callback)
 {
-    ReturnCode_t solve_ret = check_type_identifier_received(type_information.complete().typeid_with_size());
+    ReturnCode_t solve_ret = check_type_identifier_received(
+        type_information.complete().typeid_with_size(), type_server);
     if (RETCODE_OK == solve_ret)
     {
         // The type is already known, invoke the callback
@@ -331,7 +336,8 @@ ReturnCode_t TypeLookupManager::async_get_type(
 }
 
 ReturnCode_t TypeLookupManager::check_type_identifier_received(
-        xtypes::TypeIdentfierWithSize type_identifier_with_size)
+        const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
+        const fastrtps::rtps::GuidPrefix_t& type_server)
 {
     // Check if the type is known
     if (fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
@@ -350,7 +356,7 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
     // TypeInformation is unknown
     xtypes::TypeIdentifierSeq unknown_type;
     unknown_type.push_back(type_identifier_with_size.type_id());
-    SampleIdentity get_type_dependencies_request = get_type_dependencies(unknown_type);
+    SampleIdentity get_type_dependencies_request = get_type_dependencies(unknown_type, type_server);
     if (INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
     {
         // Store the sent requests and associated TypeIdentfierWithSize
@@ -365,9 +371,9 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
 }
 
 bool TypeLookupManager::add_async_get_type_callback(
-        xtypes::TypeIdentfierWithSize type_identifier_with_size,
-        fastrtps::rtps::GuidPrefix_t type_server,
-        AsyncGetTypeCallback& callback)
+        const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
+        const fastrtps::rtps::GuidPrefix_t& type_server,
+        const AsyncGetTypeCallback& callback)
 {
     (void)type_server;
     std::unique_lock<std::mutex> lock(async_get_types_mutex_);
@@ -397,8 +403,8 @@ bool TypeLookupManager::add_async_get_type_callback(
 }
 
 bool TypeLookupManager::add_async_get_type_request(
-        SampleIdentity request,
-        xtypes::TypeIdentfierWithSize type_id)
+        const SampleIdentity& request,
+        const xtypes::TypeIdentfierWithSize& type_id)
 {
     std::unique_lock<std::mutex> lock(async_get_types_mutex_);
     try
@@ -415,7 +421,7 @@ bool TypeLookupManager::add_async_get_type_request(
 }
 
 bool TypeLookupManager::remove_async_get_type_callback(
-        xtypes::TypeIdentfierWithSize type_identifier_with_size)
+        const xtypes::TypeIdentfierWithSize& type_identifier_with_size)
 {
     std::unique_lock<std::mutex> lock(async_get_types_mutex_);
     try
@@ -566,9 +572,10 @@ bool TypeLookupManager::create_endpoints()
 }
 
 bool TypeLookupManager::send_request(
+        const fastrtps::rtps::GuidPrefix_t& type_server,
         TypeLookup_Request& request) const
 {
-    request.header().instanceName() = get_instanceName();
+    request.header().instanceName() = get_instance_name(type_server);
     request.header().requestId().writer_guid(guid_rtps_2_dds(builtin_request_writer_->getGuid()));
     request.header().requestId().sequence_number(sequence_number_rtps_2_dds(request_seq_number_));
     request_seq_number_++;
@@ -680,7 +687,7 @@ bool TypeLookupManager::receive_request(
     payload.data = change.serializedPayload.data + 4;
     bool result = request_type_.deserialize(&payload, &request);
     payload.data = nullptr;
-    if (result && guid_dds_2_rtps(request.header().requestId().writer_guid()) == builtin_request_writer_->getGuid())
+    if (result && request.header().instanceName() == own_instance_name_)
     {
         // Message from our selves.
         result = false;
@@ -726,17 +733,17 @@ bool TypeLookupManager::receive_reply(
     return result;
 }
 
-std::string TypeLookupManager::get_instanceName() const
+std::string TypeLookupManager::get_instance_name(
+        const fastrtps::rtps::GuidPrefix_t guid) const
 {
     std::stringstream ss;
-    ss << participant_->getGuid();
+    ss << guid;
     std::string str = ss.str();
     std::transform(str.begin(), str.end(), str.begin(),
             [](unsigned char c)
             {
-                return static_cast<unsigned char>(std::tolower(c));
+                return (c == '.') ? '\0' : static_cast<unsigned char>(std::tolower(c));
             });
-    str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
     return "dds.builtin.TOS." + str;
 }
 

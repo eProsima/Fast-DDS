@@ -149,19 +149,23 @@ public:
      * Create and send a request using the builtin TypeLookup Service to retrieve all the type dependencies
      * associated with a sequence of TypeIdentifiers.
      * @param id_seq[in] Sequence of TypeIdentifiers for which dependencies are needed.
+     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
      * @return The SampleIdentity of the request sended.
      */
     SampleIdentity get_type_dependencies(
-            const xtypes::TypeIdentifierSeq& id_seq) const;
+            const xtypes::TypeIdentifierSeq& id_seq,
+            const fastrtps::rtps::GuidPrefix_t& type_server) const;
 
     /**
      * Create and send a request using the builtin TypeLookup Service to retrieve TypeObjects associated with a
      * sequence of TypeIdentifiers.
      * @param id_seq[in] Sequence of TypeIdentifiers for which TypeObjects are to be retrieved.
+     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
      * @return The SampleIdentity of the request sended.
      */
     SampleIdentity get_types(
-            const xtypes::TypeIdentifierSeq& id_seq) const;
+            const xtypes::TypeIdentifierSeq& id_seq,
+            const fastrtps::rtps::GuidPrefix_t& type_server) const;
 
     /**
      * Use builtin TypeLookup service to solve the type and dependencies of a given TypeInformation.
@@ -174,9 +178,9 @@ public:
      *                      RETCODE_ERROR if any request was not sent correctly.
      */
     ReturnCode_t async_get_type(
-            xtypes::TypeInformation type_information,
-            fastrtps::rtps::GuidPrefix_t type_server,
-            AsyncGetTypeCallback& callback);
+            const xtypes::TypeInformation& type_information,
+            const fastrtps::rtps::GuidPrefix_t& type_server,
+            const AsyncGetTypeCallback& callback);
 
 private:
 
@@ -184,12 +188,14 @@ private:
      * Checks if the given TypeIdentfierWithSize is known by the TypeObjectRegistry.
      * Uses get_type_dependencies() and get_types() to get those that are not known.
      * @param type_identifier_with_size[in] TypeIdentfierWithSize to check.
+     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
      * @return ReturnCode_t RETCODE_OK if type is known.
      *                      RETCODE_NO_DATA if the type is being discovered.
      *                      RETCODE_ERROR if any request was not sent correctly.
      */
     ReturnCode_t check_type_identifier_received(
-            xtypes::TypeIdentfierWithSize type_identifier_with_size);
+            const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
+            const fastrtps::rtps::GuidPrefix_t& type_server);
 
     /**
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
@@ -200,9 +206,9 @@ private:
      * @return true if added. false otherwise
      */
     bool add_async_get_type_callback(
-            xtypes::TypeIdentfierWithSize type_identifier_with_size,
-            fastrtps::rtps::GuidPrefix_t type_server,
-            AsyncGetTypeCallback& callback);
+            const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
+            const fastrtps::rtps::GuidPrefix_t& type_server,
+            const AsyncGetTypeCallback& callback);
 
     /**
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
@@ -212,8 +218,8 @@ private:
      * @return true if added. false otherwise
      */
     bool add_async_get_type_request(
-            SampleIdentity request,
-            xtypes::TypeIdentfierWithSize type_id );
+            const SampleIdentity& request,
+            const xtypes::TypeIdentfierWithSize& type_id );
 
     /**
      * Removes a TypeIdentfierWithSize from the async_get_type_callbacks_.
@@ -221,20 +227,21 @@ private:
      * @return true if removed. false otherwise
      */
     bool remove_async_get_type_callback(
-            xtypes::TypeIdentfierWithSize type_identifier_with_size);
+            const xtypes::TypeIdentfierWithSize& type_identifier_with_size);
 
     /**
      * Complete requests common fields, create CacheChange, serialize request and add change to writer history.
+     * @param type_id[in] TypeIdentfierWithSize that originated the request.
      * @param request[in] TypeLookup_Request to be sent.
      * @return true if request was sent, false otherwise.
      */
     bool send_request(
+            const fastrtps::rtps::GuidPrefix_t& type_server,
             TypeLookup_Request& request) const;
 
     /**
      * Complete reply common fields, create CacheChange, serialize reply and add change to writer history.
      * @param reply[in] TypeLookup_Reply to be send.
-     * @return The SampleIdentity of the request sended.
      * @return true if reply was sent, false otherwise.
      */
     bool send_reply(
@@ -269,8 +276,13 @@ private:
         return participant_;
     }
 
-    //! Get instanceName as defined in 7.6.3.3.4 the XTypes 1.3 document
-    std::string get_instanceName() const;
+    /**
+     * Create instance name as defined in 7.6.3.3.4 the XTypes 1.3 document
+     * @param guid[in] GuidPrefix_t to be included in the instance name
+     * @return The instance name.
+     */
+    std::string get_instance_name(
+            const fastrtps::rtps::GuidPrefix_t guid) const;
 
     /**
      * Create the builtin endpoints used in the TypeLookupManager.
@@ -280,6 +292,9 @@ private:
 
     //!Pointer to the local RTPSParticipant.
     fastrtps::rtps::RTPSParticipantImpl* participant_ = nullptr;
+
+    //!Own instance name
+    std::string own_instance_name_;
 
     //!Pointer to the BuiltinProtocols class.
     fastrtps::rtps::BuiltinProtocols* builtin_protocols_ = nullptr;
