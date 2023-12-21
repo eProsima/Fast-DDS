@@ -15,6 +15,7 @@
 #ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_PUB_SUB_TYPE_HPP
 #define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_PUB_SUB_TYPE_HPP
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/xtypes/Types.hpp>
 #include <fastrtps/utils/md5.h>
