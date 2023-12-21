@@ -31,12 +31,6 @@
 
 using eprosima::fastrtps::rtps::RTPSReader;
 using eprosima::fastrtps::rtps::CacheChange_t;
-using eprosima::fastrtps::types::TypeIdentifier;
-using eprosima::fastrtps::types::TypeObject;
-using eprosima::fastrtps::types::TypeIdentifierTypeObjectPair;
-using eprosima::fastrtps::types::TypeIdentifierPair;
-using eprosima::fastrtps::types::TypeIdentifierWithSize;
-using eprosima::fastrtps::types::TypeIdentifierWithSizeSeq;
 using eprosima::fastdds::dds::Log;
 
 using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_request_writer;

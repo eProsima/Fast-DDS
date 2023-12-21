@@ -1540,7 +1540,7 @@ public:
 
 };
 
-namespace types {
+namespace xtypes {
 class TypeInformation;
 } // namespace types
 
@@ -1598,12 +1598,12 @@ public:
     }
 
     RTPS_DllAPI TypeInformationParameter& operator =(
-            const types::TypeInformation&)
+            const xtypes::TypeInformation&)
     {
         return *this;
     }
 
-    RTPS_DllAPI const types::TypeInformation* get() const
+    RTPS_DllAPI const xtypes::TypeInformation* get() const
     {
         return nullptr;
     }
