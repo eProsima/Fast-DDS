@@ -53,7 +53,7 @@ TypeLookupReplyListener::~TypeLookupReplyListener()
 }
 
 void TypeLookupReplyListener::check_get_types_reply(
-        SampleIdentity request_id,
+        const SampleIdentity& request_id,
         const TypeLookup_getTypes_Out& reply)
 {
     // Check if we were waiting that reply SampleIdentity
@@ -74,7 +74,8 @@ void TypeLookupReplyListener::check_get_types_reply(
 }
 
 void TypeLookupReplyListener::check_get_type_dependencies_reply(
-        SampleIdentity request_id,
+        const SampleIdentity& request_id,
+        const fastrtps::rtps::GuidPrefix_t type_server,
         const TypeLookup_getTypeDependencies_Out& reply)
 {
     // Check if we were waiting that reply SampleIdentity
@@ -84,7 +85,7 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
         bool are_dependencies_solved = true;
         for (xtypes::TypeIdentfierWithSize type_id : reply.dependent_typeids())
         {
-            ReturnCode_t solve_ret = typelookup_manager_->check_type_identifier_received(type_id);
+            ReturnCode_t solve_ret = typelookup_manager_->check_type_identifier_received(type_id, type_server);
             if (RETCODE_OK != solve_ret)
             {
                 are_dependencies_solved = false;
@@ -97,7 +98,7 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
             xtypes::TypeIdentifierSeq uknown_type;
             uknown_type.push_back(requests_it->second.type_id());
 
-            SampleIdentity get_types_request = typelookup_manager_->get_types(uknown_type);
+            SampleIdentity get_types_request = typelookup_manager_->get_types(uknown_type, type_server);
             if (builtin::INVALID_SAMPLE_IDENTITY != get_types_request)
             {
                 // Store the sent request and associated TypeIdentfierWithSize
@@ -111,9 +112,9 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
 
 void TypeLookupReplyListener::onNewCacheChangeAdded(
         RTPSReader* reader,
-        const CacheChange_t* const changeIN)
+        const CacheChange_t* const change_in)
 {
-    CacheChange_t* change = const_cast<CacheChange_t*>(changeIN);
+    CacheChange_t* change = const_cast<CacheChange_t*>(change_in);
 
     if (change->writerGUID.entityId != c_EntityId_TypeLookup_reply_writer)
     {
@@ -129,13 +130,12 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
         {
             case TypeLookup_getTypes_HashId:
             {
-                check_get_types_reply(reply.header().relatedRequestId(),
-                        reply.return_value().getType().result());
+                check_get_types_reply(reply.header().relatedRequestId(), reply.return_value().getType().result());
                 break;
             }
             case TypeLookup_getDependencies_HashId:
             {
-                check_get_type_dependencies_reply(reply.header().relatedRequestId(),
+                check_get_type_dependencies_reply(reply.header().relatedRequestId(), change->writerGUID.guidPrefix,
                         reply.return_value().getTypeDependencies().result());
                 break;
             }

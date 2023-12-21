@@ -60,16 +60,32 @@ public:
      */
     virtual ~TypeLookupReplyListener() override;
 
+    /**
+     * @brief Registers TypeIdentifier and TypeObject in TypeObjectRegistry.
+     * Also notifies all callbacks for the type and removes the current SampleIdentity from the list.
+     * @param request_id[in] The SampleIdentity of the request
+     * @param reply[in] The reply data
+     */
     void check_get_types_reply(
-            SampleIdentity request_id,
+            const SampleIdentity& request_id,
             const TypeLookup_getTypes_Out& reply);
 
+    /**
+     * @brief Checks if all dependencies are solved.
+     * If they are not, sends next request and adds it to the list..
+     * If they are, sends get_types request and adds it to the list.
+     * Also removes the current SampleIdentity from the list.
+     * @param request_id[in] The SampleIdentity of the request
+     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
+     * @param reply[in] The reply data
+     */
     void check_get_type_dependencies_reply(
-            SampleIdentity request_id,
+            const SampleIdentity& request_id,
+            const fastrtps::rtps::GuidPrefix_t type_server,
             const TypeLookup_getTypeDependencies_Out& reply);
 
     /**
-     * @brief Method call when this class is notified of a new cache change
+     * @brief Method called when this class is notified of a new cache change
      * @param reader The reader receiving the cache change
      * @param change The cache change
      */
