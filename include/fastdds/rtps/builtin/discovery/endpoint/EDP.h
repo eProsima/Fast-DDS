@@ -391,26 +391,6 @@ private:
             const WriterProxyData* wdata,
             const ReaderProxyData* rdata) const;
 
-    bool checkTypeValidation(
-            const WriterProxyData* wdata,
-            const ReaderProxyData* rdata) const;
-
-    bool checkTypeIdentifier(
-            const WriterProxyData* wdata,
-            const ReaderProxyData* rdata) const;
-
-    bool hasTypeIdentifier(
-            const WriterProxyData* wdata,
-            const ReaderProxyData* rdata) const;
-
-    bool checkTypeObject(
-            const WriterProxyData* wdata,
-            const ReaderProxyData* rdata) const;
-
-    bool hasTypeObject(
-            const WriterProxyData* wdata,
-            const ReaderProxyData* rdata) const;
-
     using pool_allocator_t =
             foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
 
