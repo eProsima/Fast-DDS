@@ -46,8 +46,6 @@ namespace eprosima
             namespace detail
             {
 
-
-
                 /*!
                  * @brief This class represents the TopicDataType of the type EntityId_s defined by the user in the IDL file.
                  * @ingroup types
@@ -135,8 +133,6 @@ namespace eprosima
                     unsigned char* m_keyBuffer;
 
                 };
-
-
 
                 /*!
                  * @brief This class represents the TopicDataType of the type GuidPrefix_s defined by the user in the IDL file.
@@ -226,8 +222,6 @@ namespace eprosima
 
                 };
 
-
-
                 /*!
                  * @brief This class represents the TopicDataType of the type GUID_s defined by the user in the IDL file.
                  * @ingroup types
@@ -315,8 +309,6 @@ namespace eprosima
                     unsigned char* m_keyBuffer;
 
                 };
-
-
 
                 /*!
                  * @brief This class represents the TopicDataType of the type SequenceNumber_s defined by the user in the IDL file.
@@ -406,8 +398,6 @@ namespace eprosima
 
                 };
 
-
-
                 /*!
                  * @brief This class represents the TopicDataType of the type SampleIdentity_s defined by the user in the IDL file.
                  * @ingroup types
@@ -495,8 +485,6 @@ namespace eprosima
                     unsigned char* m_keyBuffer;
 
                 };
-
-
 
                 /*!
                  * @brief This class represents the TopicDataType of the type Locator_s defined by the user in the IDL file.
@@ -587,8 +575,6 @@ namespace eprosima
                 };
             } // namespace detail
 
-
-
             /*!
              * @brief This class represents the TopicDataType of the type DiscoveryTime defined by the user in the IDL file.
              * @ingroup types
@@ -676,8 +662,6 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
-
-
 
             /*!
              * @brief This class represents the TopicDataType of the type EntityCount defined by the user in the IDL file.
@@ -767,8 +751,6 @@ namespace eprosima
 
             };
 
-
-
             /*!
              * @brief This class represents the TopicDataType of the type SampleIdentityCount defined by the user in the IDL file.
              * @ingroup types
@@ -856,8 +838,6 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
-
-
 
             /*!
              * @brief This class represents the TopicDataType of the type Entity2LocatorTraffic defined by the user in the IDL file.
@@ -947,8 +927,6 @@ namespace eprosima
 
             };
 
-
-
             /*!
              * @brief This class represents the TopicDataType of the type WriterReaderData defined by the user in the IDL file.
              * @ingroup types
@@ -1036,8 +1014,6 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
-
-
 
             /*!
              * @brief This class represents the TopicDataType of the type Locator2LocatorData defined by the user in the IDL file.
@@ -1127,8 +1103,6 @@ namespace eprosima
 
             };
 
-
-
             /*!
              * @brief This class represents the TopicDataType of the type EntityData defined by the user in the IDL file.
              * @ingroup types
@@ -1217,8 +1191,6 @@ namespace eprosima
 
             };
 
-
-
             /*!
              * @brief This class represents the TopicDataType of the type PhysicalData defined by the user in the IDL file.
              * @ingroup types
@@ -1306,7 +1278,6 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
-
 
 
         } // namespace statistics

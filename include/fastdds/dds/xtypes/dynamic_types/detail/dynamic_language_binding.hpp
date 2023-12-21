@@ -30,6 +30,8 @@
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
+#include "dynamic_language_bindingTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -97,8 +99,6 @@ const TypeKind TK_BITSET = 0x53;
 const TypeKind TK_SEQUENCE = 0x60;
 const TypeKind TK_ARRAY = 0x61;
 const TypeKind TK_MAP = 0x62;
-
-
 typedef std::map<ObjectName, ObjectName> Parameters;
 
 /*!

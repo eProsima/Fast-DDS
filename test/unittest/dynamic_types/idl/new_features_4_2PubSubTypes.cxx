@@ -29,8 +29,6 @@ using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
-
-
 NewAliasesPubSubType::NewAliasesPubSubType()
 {
     setName("NewAliases");
@@ -222,12 +220,7 @@ bool NewAliasesPubSubType::getKey(
 
 
 
-
-
-
 namespace bitmodule {
-
-
     BitsetBitmaskPubSubType::BitsetBitmaskPubSubType()
     {
         setName("bitmodule::BitsetBitmask");
@@ -415,8 +408,6 @@ namespace bitmodule {
         }
         return true;
     }
-
-
 
     BM2PubSubType::BM2PubSubType()
     {
@@ -607,8 +598,6 @@ namespace bitmodule {
     }
 
 } // namespace bitmodule
-
-
 
 StructTestPubSubType::StructTestPubSubType()
 {

@@ -26,6 +26,8 @@
 #include <cstdint>
 #include <utility>
 
+#include "LoanableHelloWorldTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -50,8 +52,6 @@
 #define LOANABLEHELLOWORLD_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure LoanableHelloWorld defined by the user in the IDL file.
  * @ingroup LoanableHelloWorld
@@ -65,6 +65,8 @@ public:
      */
     eProsima_user_DllExport LoanableHelloWorld()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_LoanableHelloWorld_type_objects();
     }
 
     /*!

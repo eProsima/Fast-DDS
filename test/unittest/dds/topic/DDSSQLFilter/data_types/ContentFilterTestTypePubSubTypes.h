@@ -38,8 +38,6 @@
 #endif  // GEN_API_VER
 
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type StructType defined by the user in the IDL file.
  * @ingroup ContentFilterTestType
@@ -127,8 +125,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 
 

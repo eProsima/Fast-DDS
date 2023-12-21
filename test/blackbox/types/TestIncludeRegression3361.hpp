@@ -27,7 +27,7 @@
 #include <utility>
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include "TestIncludeRegression3361TypeObject.h"
+#include "TestIncludeRegression3361TypeObjectSupport.hpp"
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)

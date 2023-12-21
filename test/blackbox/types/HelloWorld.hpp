@@ -27,7 +27,7 @@
 #include <utility>
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include "HelloWorldTypeObject.h"
+#include "HelloWorldTypeObjectSupport.hpp"
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -53,8 +53,6 @@
 #define HELLOWORLD_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure HelloWorld defined by the user in the IDL file.
  * @ingroup HelloWorld
@@ -68,8 +66,8 @@ public:
      */
     eProsima_user_DllExport HelloWorld()
     {
-        // Just to register all known types
-        registerHelloWorldTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_HelloWorld_type_objects();
     }
 
     /*!

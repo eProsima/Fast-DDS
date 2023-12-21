@@ -26,6 +26,8 @@
 #include <cstdint>
 #include <utility>
 
+#include "FlowControlExampleTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -50,8 +52,6 @@
 #define FLOWCONTROLEXAMPLE_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure FlowControlExample defined by the user in the IDL file.
  * @ingroup FlowControlExample
@@ -65,6 +65,8 @@ public:
      */
     eProsima_user_DllExport FlowControlExample()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_FlowControlExample_type_objects();
     }
 
     /*!
@@ -218,7 +220,7 @@ public:
 
 private:
 
-    std::array<char, 600000> m_message;
+    std::array<char, 600000> m_message{0};
     char m_wasFast{0};
 
 };

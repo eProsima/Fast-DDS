@@ -27,6 +27,8 @@
 #include <vector>
 
 
+#include "Data64kbTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -51,8 +53,6 @@
 #define DATA64KB_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure Data64kb defined by the user in the IDL file.
  * @ingroup Data64kb
@@ -66,6 +66,8 @@ public:
      */
     eProsima_user_DllExport Data64kb()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Data64kb_type_objects();
     }
 
     /*!

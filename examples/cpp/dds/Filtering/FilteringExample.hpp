@@ -25,6 +25,8 @@
 #include <cstdint>
 #include <utility>
 
+#include "FilteringExampleTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -49,8 +51,6 @@
 #define FILTERINGEXAMPLE_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure FilteringExample defined by the user in the IDL file.
  * @ingroup FilteringExample
@@ -64,6 +64,8 @@ public:
      */
     eProsima_user_DllExport FilteringExample()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_FilteringExample_type_objects();
     }
 
     /*!

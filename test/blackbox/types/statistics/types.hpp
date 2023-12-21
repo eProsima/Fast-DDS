@@ -30,6 +30,8 @@
 #include <fastcdr/exceptions/BadParamException.h>
 
 
+#include "typesTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -62,8 +64,6 @@ namespace statistics {
 
 namespace detail {
 
-
-
 /*!
  * @brief This class represents the structure EntityId_s defined by the user in the IDL file.
  * @ingroup types
@@ -77,6 +77,8 @@ public:
      */
     eProsima_user_DllExport EntityId_s()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -197,8 +199,6 @@ private:
     std::array<uint8_t, 4> m_value{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure GuidPrefix_s defined by the user in the IDL file.
  * @ingroup types
@@ -212,6 +212,8 @@ public:
      */
     eProsima_user_DllExport GuidPrefix_s()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -332,8 +334,6 @@ private:
     std::array<uint8_t, 12> m_value{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure GUID_s defined by the user in the IDL file.
  * @ingroup types
@@ -347,6 +347,8 @@ public:
      */
     eProsima_user_DllExport GUID_s()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -514,8 +516,6 @@ private:
     EntityId_s m_entityId;
 
 };
-
-
 /*!
  * @brief This class represents the structure SequenceNumber_s defined by the user in the IDL file.
  * @ingroup types
@@ -529,6 +529,8 @@ public:
      */
     eProsima_user_DllExport SequenceNumber_s()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -676,8 +678,6 @@ private:
     uint32_t m_low{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure SampleIdentity_s defined by the user in the IDL file.
  * @ingroup types
@@ -691,6 +691,8 @@ public:
      */
     eProsima_user_DllExport SampleIdentity_s()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -858,8 +860,6 @@ private:
     SequenceNumber_s m_sequence_number;
 
 };
-
-
 /*!
  * @brief This class represents the structure Locator_s defined by the user in the IDL file.
  * @ingroup types
@@ -873,6 +873,8 @@ public:
      */
     eProsima_user_DllExport Locator_s()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -1069,8 +1071,6 @@ private:
 };
 
 } // namespace detail
-
-
 /*!
  * @brief This class represents the structure DiscoveryTime defined by the user in the IDL file.
  * @ingroup types
@@ -1084,6 +1084,8 @@ public:
      */
     eProsima_user_DllExport DiscoveryTime()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -1429,8 +1431,6 @@ private:
     std::string m_process;
 
 };
-
-
 /*!
  * @brief This class represents the structure EntityCount defined by the user in the IDL file.
  * @ingroup types
@@ -1444,6 +1444,8 @@ public:
      */
     eProsima_user_DllExport EntityCount()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -1601,8 +1603,6 @@ private:
     uint64_t m_count{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure SampleIdentityCount defined by the user in the IDL file.
  * @ingroup types
@@ -1616,6 +1616,8 @@ public:
      */
     eProsima_user_DllExport SampleIdentityCount()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -1773,8 +1775,6 @@ private:
     uint64_t m_count{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure Entity2LocatorTraffic defined by the user in the IDL file.
  * @ingroup types
@@ -1788,6 +1788,8 @@ public:
      */
     eProsima_user_DllExport Entity2LocatorTraffic()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -2066,8 +2068,6 @@ private:
     int16_t m_byte_magnitude_order{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure WriterReaderData defined by the user in the IDL file.
  * @ingroup types
@@ -2081,6 +2081,8 @@ public:
      */
     eProsima_user_DllExport WriterReaderData()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -2285,8 +2287,6 @@ private:
     float m_data{0.0};
 
 };
-
-
 /*!
  * @brief This class represents the structure Locator2LocatorData defined by the user in the IDL file.
  * @ingroup types
@@ -2300,6 +2300,8 @@ public:
      */
     eProsima_user_DllExport Locator2LocatorData()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -2504,8 +2506,6 @@ private:
     float m_data{0.0};
 
 };
-
-
 /*!
  * @brief This class represents the structure EntityData defined by the user in the IDL file.
  * @ingroup types
@@ -2519,6 +2519,8 @@ public:
      */
     eProsima_user_DllExport EntityData()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -2676,8 +2678,6 @@ private:
     float m_data{0.0};
 
 };
-
-
 /*!
  * @brief This class represents the structure PhysicalData defined by the user in the IDL file.
  * @ingroup types
@@ -2691,6 +2691,8 @@ public:
      */
     eProsima_user_DllExport PhysicalData()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!
@@ -2977,8 +2979,6 @@ enum EventKindBits : uint32_t
     PHYSICAL_DATA = 0x01ull << 16
 };
 typedef uint32_t EventKind;
-
-
 /*!
  * @brief This class represents the union Data defined by the user in the IDL file.
  * @ingroup types
@@ -2993,6 +2993,9 @@ public:
     eProsima_user_DllExport Data()
     {
         m__d = HISTORY2HISTORY_LATENCY;
+
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_types_type_objects();
     }
 
     /*!

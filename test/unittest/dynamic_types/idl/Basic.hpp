@@ -34,7 +34,7 @@
 #include <fastcdr/exceptions/BadParamException.h>
 
 
-#include "BasicTypeObject.h"
+#include "BasicTypeObjectSupport.hpp"
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -74,8 +74,6 @@ typedef MyEnum MyAliasEnum;
 
 typedef MyAliasEnum MyAliasAliasEnum;
 
-
-
 /*!
  * @brief This class represents the structure EnumStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -89,8 +87,8 @@ public:
      */
     eProsima_user_DllExport EnumStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -201,8 +199,6 @@ private:
     MyEnum m_my_enum{MyEnum::A};
 
 };
-
-
 /*!
  * @brief This class represents the structure AliasStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -216,8 +212,8 @@ public:
      */
     eProsima_user_DllExport AliasStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -328,8 +324,6 @@ private:
     MyAliasEnum m_my_alias{MyEnum::A};
 
 };
-
-
 /*!
  * @brief This class represents the structure AliasAliasStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -343,8 +337,8 @@ public:
      */
     eProsima_user_DllExport AliasAliasStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -455,8 +449,6 @@ private:
     MyAliasAliasEnum m_my_alias_alias{MyEnum::A};
 
 };
-
-
 /*!
  * @brief This class represents the structure BoolStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -470,8 +462,8 @@ public:
      */
     eProsima_user_DllExport BoolStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -582,8 +574,6 @@ private:
     bool m_my_bool{false};
 
 };
-
-
 /*!
  * @brief This class represents the structure OctetStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -597,8 +587,8 @@ public:
      */
     eProsima_user_DllExport OctetStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -709,8 +699,6 @@ private:
     uint8_t m_my_octet{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure ShortStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -724,8 +712,8 @@ public:
      */
     eProsima_user_DllExport ShortStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -836,8 +824,6 @@ private:
     int16_t m_my_int16{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure LongStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -851,8 +837,8 @@ public:
      */
     eProsima_user_DllExport LongStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -963,8 +949,6 @@ private:
     int32_t m_my_int32{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure LongLongStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -978,8 +962,8 @@ public:
      */
     eProsima_user_DllExport LongLongStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -1090,8 +1074,6 @@ private:
     int64_t m_my_int64{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure UShortStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1105,8 +1087,8 @@ public:
      */
     eProsima_user_DllExport UShortStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -1217,8 +1199,6 @@ private:
     uint16_t m_my_uint16{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure ULongStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1232,8 +1212,8 @@ public:
      */
     eProsima_user_DllExport ULongStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -1344,8 +1324,6 @@ private:
     uint32_t m_my_uint32{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure ULongLongStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1359,8 +1337,8 @@ public:
      */
     eProsima_user_DllExport ULongLongStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -1471,8 +1449,6 @@ private:
     uint64_t m_my_uint64{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure FloatStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1486,8 +1462,8 @@ public:
      */
     eProsima_user_DllExport FloatStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -1598,8 +1574,6 @@ private:
     float m_my_float32{0.0};
 
 };
-
-
 /*!
  * @brief This class represents the structure DoubleStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1613,8 +1587,8 @@ public:
      */
     eProsima_user_DllExport DoubleStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -1725,8 +1699,6 @@ private:
     double m_my_float64{0.0};
 
 };
-
-
 /*!
  * @brief This class represents the structure LongDoubleStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1740,8 +1712,8 @@ public:
      */
     eProsima_user_DllExport LongDoubleStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -1852,8 +1824,6 @@ private:
     long double m_my_float128{0.0};
 
 };
-
-
 /*!
  * @brief This class represents the structure CharStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1867,8 +1837,8 @@ public:
      */
     eProsima_user_DllExport CharStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -1979,8 +1949,6 @@ private:
     char m_my_char{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure WCharStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -1994,8 +1962,8 @@ public:
      */
     eProsima_user_DllExport WCharStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -2106,8 +2074,6 @@ private:
     wchar_t m_my_wchar{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure StringStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2121,8 +2087,8 @@ public:
      */
     eProsima_user_DllExport StringStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -2243,8 +2209,6 @@ private:
     std::string m_my_string;
 
 };
-
-
 /*!
  * @brief This class represents the structure WStringStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2258,8 +2222,8 @@ public:
      */
     eProsima_user_DllExport WStringStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -2380,8 +2344,6 @@ private:
     std::wstring m_my_wstring;
 
 };
-
-
 /*!
  * @brief This class represents the structure LargeStringStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2395,8 +2357,8 @@ public:
      */
     eProsima_user_DllExport LargeStringStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -2517,8 +2479,6 @@ private:
     eprosima::fastcdr::fixed_string<41925> m_my_large_string;
 
 };
-
-
 /*!
  * @brief This class represents the structure LargeWStringStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2532,8 +2492,8 @@ public:
      */
     eProsima_user_DllExport LargeWStringStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -2654,8 +2614,6 @@ private:
     std::wstring m_my_large_wstring;
 
 };
-
-
 /*!
  * @brief This class represents the structure ArraytStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2669,8 +2627,8 @@ public:
      */
     eProsima_user_DllExport ArraytStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -2793,8 +2751,6 @@ private:
 };
 typedef std::array<std::array<int32_t, 2>, 2> MyArray;
 
-
-
 /*!
  * @brief This class represents the structure ArrayArrayStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2808,8 +2764,8 @@ public:
      */
     eProsima_user_DllExport ArrayArrayStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -2930,8 +2886,6 @@ private:
     std::array<std::array<MyArray, 2>, 2> m_my_array_array{ {{ {{ {{0}} }} }} };
 
 };
-
-
 /*!
  * @brief This class represents the structure SequenceStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -2945,8 +2899,8 @@ public:
      */
     eProsima_user_DllExport SequenceStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -3067,8 +3021,6 @@ private:
     std::vector<int32_t> m_my_sequence;
 
 };
-
-
 /*!
  * @brief This class represents the structure SequenceSequenceStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -3082,8 +3034,8 @@ public:
      */
     eProsima_user_DllExport SequenceSequenceStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -3204,10 +3156,6 @@ private:
     std::vector<std::vector<int32_t>> m_my_sequence_sequence;
 
 };
-
-
-
-
 /*!
  * @brief This class represents the structure MapStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -3221,8 +3169,8 @@ public:
      */
     eProsima_user_DllExport MapStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -3343,11 +3291,6 @@ private:
     std::map<int32_t, int32_t> m_my_map;
 
 };
-
-
-
-
-
 /*!
  * @brief This class represents the structure MapMapStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -3361,8 +3304,8 @@ public:
      */
     eProsima_user_DllExport MapMapStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -3496,8 +3439,6 @@ public:
      */
     eProsima_user_DllExport MyBitset()
     {
-        // Just to register all known types
-        registerBasicTypes();
     }
 
     /*!
@@ -3579,7 +3520,7 @@ public:
      * @param _a New value for member a
      */
     eProsima_user_DllExport void a(
-            char _a)
+            uint8_t _a)
     {
         int base = 0;
         int size = 2;
@@ -3595,7 +3536,7 @@ public:
      * @brief This function returns the value of member a
      * @return Value of member a
      */
-    eProsima_user_DllExport char a() const
+    eProsima_user_DllExport uint8_t a() const
     {
         int base = 0;
         int size = 2;
@@ -3604,10 +3545,9 @@ public:
         {
             aux.set(i, m_bitset.test(i + base));
         }
-        return static_cast<char>(aux.to_ullong());
+        return static_cast<uint8_t>(aux.to_ullong());
 
     }
-
 
 
     /*!
@@ -3670,8 +3610,6 @@ private:
 
     std::bitset<30> m_bitset;
 };
-
-
 /*!
  * @brief This class represents the structure BitsetStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -3685,8 +3623,8 @@ public:
      */
     eProsima_user_DllExport BitsetStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -3807,8 +3745,6 @@ private:
     MyBitset m_a;
 
 };
-
-
 /*!
  * @brief This class represents the structure StructStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -3822,8 +3758,8 @@ public:
      */
     eProsima_user_DllExport StructStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -3971,8 +3907,6 @@ private:
     int64_t m_b{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure StructStructStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -3986,8 +3920,8 @@ public:
      */
     eProsima_user_DllExport StructStructStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -4145,8 +4079,6 @@ private:
     int64_t m_child_int64{0};
 
 };
-
-
 /*!
  * @brief This class represents the union SimpleUnion defined by the user in the IDL file.
  * @ingroup Basic
@@ -4161,6 +4093,9 @@ public:
     eProsima_user_DllExport SimpleUnion()
     {
         m__d = 0;
+
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -4516,8 +4451,6 @@ private:
     int32_t m_first{0};
     int64_t m_second{0};
 };
-
-
 /*!
  * @brief This class represents the union UnionUnion defined by the user in the IDL file.
  * @ingroup Basic
@@ -4532,6 +4465,9 @@ public:
     eProsima_user_DllExport UnionUnion()
     {
         m__d = 0;
+
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -4901,8 +4837,6 @@ private:
     int32_t m_first{0};
     SimpleUnion m_second;
 };
-
-
 /*!
  * @brief This class represents the union WCharUnion defined by the user in the IDL file.
  * @ingroup Basic
@@ -4917,6 +4851,9 @@ public:
     eProsima_user_DllExport WCharUnion()
     {
         m__d = 'A';
+
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -5272,8 +5209,6 @@ private:
     int32_t m_first{0};
     int64_t m_second{0};
 };
-
-
 /*!
  * @brief This class represents the structure SimpleUnionStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -5287,8 +5222,8 @@ public:
      */
     eProsima_user_DllExport SimpleUnionStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -5409,8 +5344,6 @@ private:
     SimpleUnion m_my_union;
 
 };
-
-
 /*!
  * @brief This class represents the structure UnionUnionUnionStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -5424,8 +5357,8 @@ public:
      */
     eProsima_user_DllExport UnionUnionUnionStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!
@@ -5546,8 +5479,6 @@ private:
     UnionUnion m_my_union;
 
 };
-
-
 /*!
  * @brief This class represents the structure WCharUnionStruct defined by the user in the IDL file.
  * @ingroup Basic
@@ -5561,8 +5492,8 @@ public:
      */
     eProsima_user_DllExport WCharUnionStruct()
     {
-        // Just to register all known types
-        registerBasicTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Basic_type_objects();
     }
 
     /*!

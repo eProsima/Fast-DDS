@@ -27,6 +27,8 @@
 #include <utility>
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
+#include "StringTestTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -51,8 +53,6 @@
 #define STRINGTEST_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure StringTest defined by the user in the IDL file.
  * @ingroup StringTest
@@ -66,6 +66,8 @@ public:
      */
     eProsima_user_DllExport StringTest()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_StringTest_type_objects();
     }
 
     /*!

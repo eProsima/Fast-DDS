@@ -27,7 +27,7 @@
 #include <fastcdr/exceptions/BadParamException.h>
 
 
-#include "WideEnumTypeObject.h"
+#include "WideEnumTypeObjectSupport.hpp"
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -64,8 +64,6 @@ enum class MyEnumWide : uint32_t
     C,
     D
 };
-
-
 /*!
  * @brief This class represents the structure MyEnumWideStruct defined by the user in the IDL file.
  * @ingroup WideEnum
@@ -79,8 +77,8 @@ public:
      */
     eProsima_user_DllExport MyEnumWideStruct()
     {
-        // Just to register all known types
-        registerWideEnumTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_WideEnum_type_objects();
     }
 
     /*!
@@ -191,8 +189,6 @@ private:
     MyEnumWide m_my_enum_wide{MyEnumWide::A};
 
 };
-
-
 /*!
  * @brief This class represents the union SimpleWideUnion defined by the user in the IDL file.
  * @ingroup WideEnum
@@ -207,6 +203,9 @@ public:
     eProsima_user_DllExport SimpleWideUnion()
     {
         m__d = MyEnumWide::A;
+
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_WideEnum_type_objects();
     }
 
     /*!
@@ -665,8 +664,6 @@ private:
     int64_t m_second{0};
     uint8_t m_third{0};
 };
-
-
 /*!
  * @brief This class represents the structure SimpleWideUnionStruct defined by the user in the IDL file.
  * @ingroup WideEnum
@@ -680,8 +677,8 @@ public:
      */
     eProsima_user_DllExport SimpleWideUnionStruct()
     {
-        // Just to register all known types
-        registerWideEnumTypes();
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_WideEnum_type_objects();
     }
 
     /*!

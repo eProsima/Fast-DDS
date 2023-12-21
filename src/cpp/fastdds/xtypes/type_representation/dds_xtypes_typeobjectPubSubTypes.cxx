@@ -39,119 +39,6 @@ namespace dds {
 namespace xtypes {
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 StringSTypeDefnPubSubType::StringSTypeDefnPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::StringSTypeDefn");
@@ -339,8 +226,6 @@ bool StringSTypeDefnPubSubType::getKey(
     }
     return true;
 }
-
-
 
 StringLTypeDefnPubSubType::StringLTypeDefnPubSubType()
 {
@@ -530,8 +415,6 @@ bool StringLTypeDefnPubSubType::getKey(
     return true;
 }
 
-
-
 PlainCollectionHeaderPubSubType::PlainCollectionHeaderPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::PlainCollectionHeader");
@@ -719,8 +602,6 @@ bool PlainCollectionHeaderPubSubType::getKey(
     }
     return true;
 }
-
-
 
 PlainSequenceSElemDefnPubSubType::PlainSequenceSElemDefnPubSubType()
 {
@@ -910,8 +791,6 @@ bool PlainSequenceSElemDefnPubSubType::getKey(
     return true;
 }
 
-
-
 PlainSequenceLElemDefnPubSubType::PlainSequenceLElemDefnPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn");
@@ -1099,8 +978,6 @@ bool PlainSequenceLElemDefnPubSubType::getKey(
     }
     return true;
 }
-
-
 
 PlainArraySElemDefnPubSubType::PlainArraySElemDefnPubSubType()
 {
@@ -1290,8 +1167,6 @@ bool PlainArraySElemDefnPubSubType::getKey(
     return true;
 }
 
-
-
 PlainArrayLElemDefnPubSubType::PlainArrayLElemDefnPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn");
@@ -1479,8 +1354,6 @@ bool PlainArrayLElemDefnPubSubType::getKey(
     }
     return true;
 }
-
-
 
 PlainMapSTypeDefnPubSubType::PlainMapSTypeDefnPubSubType()
 {
@@ -1670,8 +1543,6 @@ bool PlainMapSTypeDefnPubSubType::getKey(
     return true;
 }
 
-
-
 PlainMapLTypeDefnPubSubType::PlainMapLTypeDefnPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn");
@@ -1859,8 +1730,6 @@ bool PlainMapLTypeDefnPubSubType::getKey(
     }
     return true;
 }
-
-
 
 StronglyConnectedComponentIdPubSubType::StronglyConnectedComponentIdPubSubType()
 {
@@ -2243,9 +2112,6 @@ bool ExtendedTypeDefnPubSubType::getKey(
 
 
 
-
-
-
 ExtendedAnnotationParameterValuePubSubType::ExtendedAnnotationParameterValuePubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue");
@@ -2433,9 +2299,6 @@ bool ExtendedAnnotationParameterValuePubSubType::getKey(
     }
     return true;
 }
-
-
-
 
 
 AppliedAnnotationParameterPubSubType::AppliedAnnotationParameterPubSubType()
@@ -2627,9 +2490,6 @@ bool AppliedAnnotationParameterPubSubType::getKey(
 }
 
 
-
-
-
 AppliedAnnotationPubSubType::AppliedAnnotationPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::AppliedAnnotation");
@@ -2817,9 +2677,6 @@ bool AppliedAnnotationPubSubType::getKey(
     }
     return true;
 }
-
-
-
 
 
 AppliedVerbatimAnnotationPubSubType::AppliedVerbatimAnnotationPubSubType()
@@ -3010,8 +2867,6 @@ bool AppliedVerbatimAnnotationPubSubType::getKey(
     return true;
 }
 
-
-
 AppliedBuiltinMemberAnnotationsPubSubType::AppliedBuiltinMemberAnnotationsPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations");
@@ -3199,8 +3054,6 @@ bool AppliedBuiltinMemberAnnotationsPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CommonStructMemberPubSubType::CommonStructMemberPubSubType()
 {
@@ -3390,8 +3243,6 @@ bool CommonStructMemberPubSubType::getKey(
     return true;
 }
 
-
-
 CompleteMemberDetailPubSubType::CompleteMemberDetailPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteMemberDetail");
@@ -3580,8 +3431,6 @@ bool CompleteMemberDetailPubSubType::getKey(
     return true;
 }
 
-
-
 MinimalMemberDetailPubSubType::MinimalMemberDetailPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalMemberDetail");
@@ -3769,8 +3618,6 @@ bool MinimalMemberDetailPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteStructMemberPubSubType::CompleteStructMemberPubSubType()
 {
@@ -3961,9 +3808,6 @@ bool CompleteStructMemberPubSubType::getKey(
 }
 
 
-
-
-
 MinimalStructMemberPubSubType::MinimalStructMemberPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalStructMember");
@@ -4151,9 +3995,6 @@ bool MinimalStructMemberPubSubType::getKey(
     }
     return true;
 }
-
-
-
 
 
 AppliedBuiltinTypeAnnotationsPubSubType::AppliedBuiltinTypeAnnotationsPubSubType()
@@ -4532,8 +4373,6 @@ bool MinimalTypeDetailPubSubType::getKey(
     return true;
 }
 
-
-
 CompleteTypeDetailPubSubType::CompleteTypeDetailPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteTypeDetail");
@@ -4721,8 +4560,6 @@ bool CompleteTypeDetailPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteStructHeaderPubSubType::CompleteStructHeaderPubSubType()
 {
@@ -4912,8 +4749,6 @@ bool CompleteStructHeaderPubSubType::getKey(
     return true;
 }
 
-
-
 MinimalStructHeaderPubSubType::MinimalStructHeaderPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalStructHeader");
@@ -5102,8 +4937,6 @@ bool MinimalStructHeaderPubSubType::getKey(
     return true;
 }
 
-
-
 CompleteStructTypePubSubType::CompleteStructTypePubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteStructType");
@@ -5291,8 +5124,6 @@ bool CompleteStructTypePubSubType::getKey(
     }
     return true;
 }
-
-
 
 MinimalStructTypePubSubType::MinimalStructTypePubSubType()
 {
@@ -5483,9 +5314,6 @@ bool MinimalStructTypePubSubType::getKey(
 }
 
 
-
-
-
 CommonUnionMemberPubSubType::CommonUnionMemberPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CommonUnionMember");
@@ -5674,8 +5502,6 @@ bool CommonUnionMemberPubSubType::getKey(
     return true;
 }
 
-
-
 CompleteUnionMemberPubSubType::CompleteUnionMemberPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteUnionMember");
@@ -5863,9 +5689,6 @@ bool CompleteUnionMemberPubSubType::getKey(
     }
     return true;
 }
-
-
-
 
 
 MinimalUnionMemberPubSubType::MinimalUnionMemberPubSubType()
@@ -6057,9 +5880,6 @@ bool MinimalUnionMemberPubSubType::getKey(
 }
 
 
-
-
-
 CommonDiscriminatorMemberPubSubType::CommonDiscriminatorMemberPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember");
@@ -6247,8 +6067,6 @@ bool CommonDiscriminatorMemberPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteDiscriminatorMemberPubSubType::CompleteDiscriminatorMemberPubSubType()
 {
@@ -6438,8 +6256,6 @@ bool CompleteDiscriminatorMemberPubSubType::getKey(
     return true;
 }
 
-
-
 MinimalDiscriminatorMemberPubSubType::MinimalDiscriminatorMemberPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember");
@@ -6627,8 +6443,6 @@ bool MinimalDiscriminatorMemberPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteUnionHeaderPubSubType::CompleteUnionHeaderPubSubType()
 {
@@ -6818,8 +6632,6 @@ bool CompleteUnionHeaderPubSubType::getKey(
     return true;
 }
 
-
-
 MinimalUnionHeaderPubSubType::MinimalUnionHeaderPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalUnionHeader");
@@ -7007,8 +6819,6 @@ bool MinimalUnionHeaderPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteUnionTypePubSubType::CompleteUnionTypePubSubType()
 {
@@ -7198,8 +7008,6 @@ bool CompleteUnionTypePubSubType::getKey(
     return true;
 }
 
-
-
 MinimalUnionTypePubSubType::MinimalUnionTypePubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalUnionType");
@@ -7388,8 +7196,6 @@ bool MinimalUnionTypePubSubType::getKey(
     return true;
 }
 
-
-
 CommonAnnotationParameterPubSubType::CommonAnnotationParameterPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CommonAnnotationParameter");
@@ -7577,8 +7383,6 @@ bool CommonAnnotationParameterPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteAnnotationParameterPubSubType::CompleteAnnotationParameterPubSubType()
 {
@@ -7769,9 +7573,6 @@ bool CompleteAnnotationParameterPubSubType::getKey(
 }
 
 
-
-
-
 MinimalAnnotationParameterPubSubType::MinimalAnnotationParameterPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter");
@@ -7959,9 +7760,6 @@ bool MinimalAnnotationParameterPubSubType::getKey(
     }
     return true;
 }
-
-
-
 
 
 CompleteAnnotationHeaderPubSubType::CompleteAnnotationHeaderPubSubType()
@@ -8340,8 +8138,6 @@ bool MinimalAnnotationHeaderPubSubType::getKey(
     return true;
 }
 
-
-
 CompleteAnnotationTypePubSubType::CompleteAnnotationTypePubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteAnnotationType");
@@ -8529,8 +8325,6 @@ bool CompleteAnnotationTypePubSubType::getKey(
     }
     return true;
 }
-
-
 
 MinimalAnnotationTypePubSubType::MinimalAnnotationTypePubSubType()
 {
@@ -8720,8 +8514,6 @@ bool MinimalAnnotationTypePubSubType::getKey(
     return true;
 }
 
-
-
 CommonAliasBodyPubSubType::CommonAliasBodyPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CommonAliasBody");
@@ -8909,8 +8701,6 @@ bool CommonAliasBodyPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteAliasBodyPubSubType::CompleteAliasBodyPubSubType()
 {
@@ -9100,8 +8890,6 @@ bool CompleteAliasBodyPubSubType::getKey(
     return true;
 }
 
-
-
 MinimalAliasBodyPubSubType::MinimalAliasBodyPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalAliasBody");
@@ -9289,8 +9077,6 @@ bool MinimalAliasBodyPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteAliasHeaderPubSubType::CompleteAliasHeaderPubSubType()
 {
@@ -9668,8 +9454,6 @@ bool MinimalAliasHeaderPubSubType::getKey(
     return true;
 }
 
-
-
 CompleteAliasTypePubSubType::CompleteAliasTypePubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteAliasType");
@@ -9857,8 +9641,6 @@ bool CompleteAliasTypePubSubType::getKey(
     }
     return true;
 }
-
-
 
 MinimalAliasTypePubSubType::MinimalAliasTypePubSubType()
 {
@@ -10048,8 +9830,6 @@ bool MinimalAliasTypePubSubType::getKey(
     return true;
 }
 
-
-
 CompleteElementDetailPubSubType::CompleteElementDetailPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteElementDetail");
@@ -10237,8 +10017,6 @@ bool CompleteElementDetailPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CommonCollectionElementPubSubType::CommonCollectionElementPubSubType()
 {
@@ -10428,8 +10206,6 @@ bool CommonCollectionElementPubSubType::getKey(
     return true;
 }
 
-
-
 CompleteCollectionElementPubSubType::CompleteCollectionElementPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteCollectionElement");
@@ -10617,8 +10393,6 @@ bool CompleteCollectionElementPubSubType::getKey(
     }
     return true;
 }
-
-
 
 MinimalCollectionElementPubSubType::MinimalCollectionElementPubSubType()
 {
@@ -10808,8 +10582,6 @@ bool MinimalCollectionElementPubSubType::getKey(
     return true;
 }
 
-
-
 CommonCollectionHeaderPubSubType::CommonCollectionHeaderPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CommonCollectionHeader");
@@ -10997,8 +10769,6 @@ bool CommonCollectionHeaderPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteCollectionHeaderPubSubType::CompleteCollectionHeaderPubSubType()
 {
@@ -11188,8 +10958,6 @@ bool CompleteCollectionHeaderPubSubType::getKey(
     return true;
 }
 
-
-
 MinimalCollectionHeaderPubSubType::MinimalCollectionHeaderPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalCollectionHeader");
@@ -11377,8 +11145,6 @@ bool MinimalCollectionHeaderPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteSequenceTypePubSubType::CompleteSequenceTypePubSubType()
 {
@@ -11568,8 +11334,6 @@ bool CompleteSequenceTypePubSubType::getKey(
     return true;
 }
 
-
-
 MinimalSequenceTypePubSubType::MinimalSequenceTypePubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalSequenceType");
@@ -11757,8 +11521,6 @@ bool MinimalSequenceTypePubSubType::getKey(
     }
     return true;
 }
-
-
 
 CommonArrayHeaderPubSubType::CommonArrayHeaderPubSubType()
 {
@@ -11948,8 +11710,6 @@ bool CommonArrayHeaderPubSubType::getKey(
     return true;
 }
 
-
-
 CompleteArrayHeaderPubSubType::CompleteArrayHeaderPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteArrayHeader");
@@ -12137,8 +11897,6 @@ bool CompleteArrayHeaderPubSubType::getKey(
     }
     return true;
 }
-
-
 
 MinimalArrayHeaderPubSubType::MinimalArrayHeaderPubSubType()
 {
@@ -12328,8 +12086,6 @@ bool MinimalArrayHeaderPubSubType::getKey(
     return true;
 }
 
-
-
 CompleteArrayTypePubSubType::CompleteArrayTypePubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteArrayType");
@@ -12517,8 +12273,6 @@ bool CompleteArrayTypePubSubType::getKey(
     }
     return true;
 }
-
-
 
 MinimalArrayTypePubSubType::MinimalArrayTypePubSubType()
 {
@@ -12708,8 +12462,6 @@ bool MinimalArrayTypePubSubType::getKey(
     return true;
 }
 
-
-
 CompleteMapTypePubSubType::CompleteMapTypePubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteMapType");
@@ -12897,8 +12649,6 @@ bool CompleteMapTypePubSubType::getKey(
     }
     return true;
 }
-
-
 
 MinimalMapTypePubSubType::MinimalMapTypePubSubType()
 {
@@ -13089,9 +12839,6 @@ bool MinimalMapTypePubSubType::getKey(
 }
 
 
-
-
-
 CommonEnumeratedLiteralPubSubType::CommonEnumeratedLiteralPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral");
@@ -13280,8 +13027,6 @@ bool CommonEnumeratedLiteralPubSubType::getKey(
     return true;
 }
 
-
-
 CompleteEnumeratedLiteralPubSubType::CompleteEnumeratedLiteralPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral");
@@ -13469,9 +13214,6 @@ bool CompleteEnumeratedLiteralPubSubType::getKey(
     }
     return true;
 }
-
-
-
 
 
 MinimalEnumeratedLiteralPubSubType::MinimalEnumeratedLiteralPubSubType()
@@ -13663,9 +13405,6 @@ bool MinimalEnumeratedLiteralPubSubType::getKey(
 }
 
 
-
-
-
 CommonEnumeratedHeaderPubSubType::CommonEnumeratedHeaderPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader");
@@ -13853,8 +13592,6 @@ bool CommonEnumeratedHeaderPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteEnumeratedHeaderPubSubType::CompleteEnumeratedHeaderPubSubType()
 {
@@ -14044,8 +13781,6 @@ bool CompleteEnumeratedHeaderPubSubType::getKey(
     return true;
 }
 
-
-
 MinimalEnumeratedHeaderPubSubType::MinimalEnumeratedHeaderPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader");
@@ -14233,8 +13968,6 @@ bool MinimalEnumeratedHeaderPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteEnumeratedTypePubSubType::CompleteEnumeratedTypePubSubType()
 {
@@ -14424,8 +14157,6 @@ bool CompleteEnumeratedTypePubSubType::getKey(
     return true;
 }
 
-
-
 MinimalEnumeratedTypePubSubType::MinimalEnumeratedTypePubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalEnumeratedType");
@@ -14614,8 +14345,6 @@ bool MinimalEnumeratedTypePubSubType::getKey(
     return true;
 }
 
-
-
 CommonBitflagPubSubType::CommonBitflagPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CommonBitflag");
@@ -14803,8 +14532,6 @@ bool CommonBitflagPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteBitflagPubSubType::CompleteBitflagPubSubType()
 {
@@ -14995,9 +14722,6 @@ bool CompleteBitflagPubSubType::getKey(
 }
 
 
-
-
-
 MinimalBitflagPubSubType::MinimalBitflagPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalBitflag");
@@ -15185,9 +14909,6 @@ bool MinimalBitflagPubSubType::getKey(
     }
     return true;
 }
-
-
-
 
 
 CommonBitmaskHeaderPubSubType::CommonBitmaskHeaderPubSubType()
@@ -15380,10 +15101,6 @@ bool CommonBitmaskHeaderPubSubType::getKey(
 
 
 
-
-
-
-
 CompleteBitmaskTypePubSubType::CompleteBitmaskTypePubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteBitmaskType");
@@ -15571,8 +15288,6 @@ bool CompleteBitmaskTypePubSubType::getKey(
     }
     return true;
 }
-
-
 
 MinimalBitmaskTypePubSubType::MinimalBitmaskTypePubSubType()
 {
@@ -15762,8 +15477,6 @@ bool MinimalBitmaskTypePubSubType::getKey(
     return true;
 }
 
-
-
 CommonBitfieldPubSubType::CommonBitfieldPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CommonBitfield");
@@ -15951,8 +15664,6 @@ bool CommonBitfieldPubSubType::getKey(
     }
     return true;
 }
-
-
 
 CompleteBitfieldPubSubType::CompleteBitfieldPubSubType()
 {
@@ -16143,9 +15854,6 @@ bool CompleteBitfieldPubSubType::getKey(
 }
 
 
-
-
-
 MinimalBitfieldPubSubType::MinimalBitfieldPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalBitfield");
@@ -16333,9 +16041,6 @@ bool MinimalBitfieldPubSubType::getKey(
     }
     return true;
 }
-
-
-
 
 
 CompleteBitsetHeaderPubSubType::CompleteBitsetHeaderPubSubType()
@@ -16714,8 +16419,6 @@ bool MinimalBitsetHeaderPubSubType::getKey(
     return true;
 }
 
-
-
 CompleteBitsetTypePubSubType::CompleteBitsetTypePubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::CompleteBitsetType");
@@ -16903,8 +16606,6 @@ bool CompleteBitsetTypePubSubType::getKey(
     }
     return true;
 }
-
-
 
 MinimalBitsetTypePubSubType::MinimalBitsetTypePubSubType()
 {
@@ -17283,7 +16984,6 @@ bool CompleteExtendedTypePubSubType::getKey(
 }
 
 
-
 MinimalExtendedTypePubSubType::MinimalExtendedTypePubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::MinimalExtendedType");
@@ -17471,12 +17171,6 @@ bool MinimalExtendedTypePubSubType::getKey(
     }
     return true;
 }
-
-
-
-
-
-
 
 
 
@@ -17671,9 +17365,6 @@ bool TypeIdentifierTypeObjectPairPubSubType::getKey(
 }
 
 
-
-
-
 TypeIdentifierPairPubSubType::TypeIdentifierPairPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::TypeIdentifierPair");
@@ -17861,9 +17552,6 @@ bool TypeIdentifierPairPubSubType::getKey(
     }
     return true;
 }
-
-
-
 
 
 TypeIdentfierWithSizePubSubType::TypeIdentfierWithSizePubSubType()
@@ -18055,9 +17743,6 @@ bool TypeIdentfierWithSizePubSubType::getKey(
 }
 
 
-
-
-
 TypeIdentifierWithDependenciesPubSubType::TypeIdentifierWithDependenciesPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies");
@@ -18247,9 +17932,6 @@ bool TypeIdentifierWithDependenciesPubSubType::getKey(
 }
 
 
-
-
-
 TypeInformationPubSubType::TypeInformationPubSubType()
 {
     setName("eprosima::fastdds::dds::xtypes::TypeInformation");
@@ -18437,7 +18119,6 @@ bool TypeInformationPubSubType::getKey(
     }
     return true;
 }
-
 
 
 

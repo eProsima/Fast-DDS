@@ -38,8 +38,6 @@
 #endif  // GEN_API_VER
 
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type KeyedData1mb defined by the user in the IDL file.
  * @ingroup KeyedData1mb

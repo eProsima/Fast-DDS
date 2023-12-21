@@ -29,14 +29,6 @@ using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
-
-
-
-
-
-
-
-
 BasicStructPubSubType::BasicStructPubSubType()
 {
     setName("BasicStruct");
@@ -224,13 +216,6 @@ bool BasicStructPubSubType::getKey(
     }
     return true;
 }
-
-
-
-
-
-
-
 
 
 
@@ -427,10 +412,6 @@ bool ComplexStructPubSubType::getKey(
 
 
 
-
-
-
-
 CompleteStructPubSubType::CompleteStructPubSubType()
 {
     setName("CompleteStruct");
@@ -618,8 +599,6 @@ bool CompleteStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 KeyedStructPubSubType::KeyedStructPubSubType()
 {

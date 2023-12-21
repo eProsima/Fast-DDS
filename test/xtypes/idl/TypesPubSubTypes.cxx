@@ -29,8 +29,6 @@ using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
-
-
 MyEnumStructPubSubType::MyEnumStructPubSubType()
 {
     setName("MyEnumStruct");
@@ -218,8 +216,6 @@ bool MyEnumStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 MyBadEnumStructPubSubType::MyBadEnumStructPubSubType()
 {
@@ -410,9 +406,6 @@ bool MyBadEnumStructPubSubType::getKey(
 }
 
 
-
-
-
 MyAliasEnumStructPubSubType::MyAliasEnumStructPubSubType()
 {
     setName("MyAliasEnumStruct");
@@ -600,8 +593,6 @@ bool MyAliasEnumStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 BasicStructPubSubType::BasicStructPubSubType()
 {
@@ -791,8 +782,6 @@ bool BasicStructPubSubType::getKey(
     return true;
 }
 
-
-
 BasicNamesStructPubSubType::BasicNamesStructPubSubType()
 {
     setName("BasicNamesStruct");
@@ -980,8 +969,6 @@ bool BasicNamesStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 BasicBadStructPubSubType::BasicBadStructPubSubType()
 {
@@ -1171,8 +1158,6 @@ bool BasicBadStructPubSubType::getKey(
     return true;
 }
 
-
-
 BasicWideStructPubSubType::BasicWideStructPubSubType()
 {
     setName("BasicWideStruct");
@@ -1360,8 +1345,6 @@ bool BasicWideStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 BadBasicWideStructPubSubType::BadBasicWideStructPubSubType()
 {
@@ -1551,8 +1534,6 @@ bool BadBasicWideStructPubSubType::getKey(
     return true;
 }
 
-
-
 StringStructPubSubType::StringStructPubSubType()
 {
     setName("StringStruct");
@@ -1740,8 +1721,6 @@ bool StringStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 LargeStringStructPubSubType::LargeStringStructPubSubType()
 {
@@ -1931,8 +1910,6 @@ bool LargeStringStructPubSubType::getKey(
     return true;
 }
 
-
-
 WStringStructPubSubType::WStringStructPubSubType()
 {
     setName("WStringStruct");
@@ -2120,8 +2097,6 @@ bool WStringStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 LargeWStringStructPubSubType::LargeWStringStructPubSubType()
 {
@@ -2311,8 +2286,6 @@ bool LargeWStringStructPubSubType::getKey(
     return true;
 }
 
-
-
 ArrayStructPubSubType::ArrayStructPubSubType()
 {
     setName("ArrayStruct");
@@ -2500,8 +2473,6 @@ bool ArrayStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 ArrayStructEqualPubSubType::ArrayStructEqualPubSubType()
 {
@@ -2691,8 +2662,6 @@ bool ArrayStructEqualPubSubType::getKey(
     return true;
 }
 
-
-
 ArrayBadStructPubSubType::ArrayBadStructPubSubType()
 {
     setName("ArrayBadStruct");
@@ -2880,8 +2849,6 @@ bool ArrayBadStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 ArrayDimensionsStructPubSubType::ArrayDimensionsStructPubSubType()
 {
@@ -3071,8 +3038,6 @@ bool ArrayDimensionsStructPubSubType::getKey(
     return true;
 }
 
-
-
 ArraySizeStructPubSubType::ArraySizeStructPubSubType()
 {
     setName("ArraySizeStruct");
@@ -3260,8 +3225,6 @@ bool ArraySizeStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 SequenceStructPubSubType::SequenceStructPubSubType()
 {
@@ -3451,8 +3414,6 @@ bool SequenceStructPubSubType::getKey(
     return true;
 }
 
-
-
 SequenceStructEqualPubSubType::SequenceStructEqualPubSubType()
 {
     setName("SequenceStructEqual");
@@ -3640,8 +3601,6 @@ bool SequenceStructEqualPubSubType::getKey(
     }
     return true;
 }
-
-
 
 SequenceBadStructPubSubType::SequenceBadStructPubSubType()
 {
@@ -3831,8 +3790,6 @@ bool SequenceBadStructPubSubType::getKey(
     return true;
 }
 
-
-
 SequenceBoundsStructPubSubType::SequenceBoundsStructPubSubType()
 {
     setName("SequenceBoundsStruct");
@@ -4020,8 +3977,6 @@ bool SequenceBoundsStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 SequenceSequenceStructPubSubType::SequenceSequenceStructPubSubType()
 {
@@ -4211,8 +4166,6 @@ bool SequenceSequenceStructPubSubType::getKey(
     return true;
 }
 
-
-
 SequenceSequenceBoundsStructPubSubType::SequenceSequenceBoundsStructPubSubType()
 {
     setName("SequenceSequenceBoundsStruct");
@@ -4400,10 +4353,6 @@ bool SequenceSequenceBoundsStructPubSubType::getKey(
     }
     return true;
 }
-
-
-
-
 
 MapStructPubSubType::MapStructPubSubType()
 {
@@ -4593,10 +4542,6 @@ bool MapStructPubSubType::getKey(
     return true;
 }
 
-
-
-
-
 MapStructEqualPubSubType::MapStructEqualPubSubType()
 {
     setName("MapStructEqual");
@@ -4784,10 +4729,6 @@ bool MapStructEqualPubSubType::getKey(
     }
     return true;
 }
-
-
-
-
 
 MapBadKeyStructPubSubType::MapBadKeyStructPubSubType()
 {
@@ -4977,10 +4918,6 @@ bool MapBadKeyStructPubSubType::getKey(
     return true;
 }
 
-
-
-
-
 MapBadElemStructPubSubType::MapBadElemStructPubSubType()
 {
     setName("MapBadElemStruct");
@@ -5168,10 +5105,6 @@ bool MapBadElemStructPubSubType::getKey(
     }
     return true;
 }
-
-
-
-
 
 MapBoundsStructPubSubType::MapBoundsStructPubSubType()
 {
@@ -5361,11 +5294,6 @@ bool MapBoundsStructPubSubType::getKey(
     return true;
 }
 
-
-
-
-
-
 MapMapStructPubSubType::MapMapStructPubSubType()
 {
     setName("MapMapStruct");
@@ -5553,11 +5481,6 @@ bool MapMapStructPubSubType::getKey(
     }
     return true;
 }
-
-
-
-
-
 
 MapMapBoundsStructPubSubType::MapMapBoundsStructPubSubType()
 {
@@ -5752,13 +5675,6 @@ bool MapMapBoundsStructPubSubType::getKey(
 
 
 
-
-
-
-
-
-
-
 SimpleUnionStructPubSubType::SimpleUnionStructPubSubType()
 {
     setName("SimpleUnionStruct");
@@ -5946,8 +5862,6 @@ bool SimpleUnionStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 SimpleUnionStructEqualPubSubType::SimpleUnionStructEqualPubSubType()
 {
@@ -6137,8 +6051,6 @@ bool SimpleUnionStructEqualPubSubType::getKey(
     return true;
 }
 
-
-
 SimpleUnionNamesStructPubSubType::SimpleUnionNamesStructPubSubType()
 {
     setName("SimpleUnionNamesStruct");
@@ -6326,8 +6238,6 @@ bool SimpleUnionNamesStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 SimpleTypeUnionStructPubSubType::SimpleTypeUnionStructPubSubType()
 {
@@ -6517,8 +6427,6 @@ bool SimpleTypeUnionStructPubSubType::getKey(
     return true;
 }
 
-
-
 SimpleBadUnionStructPubSubType::SimpleBadUnionStructPubSubType()
 {
     setName("SimpleBadUnionStruct");
@@ -6706,8 +6614,6 @@ bool SimpleBadUnionStructPubSubType::getKey(
     }
     return true;
 }
-
-
 
 SimplBadDiscUnionStructPubSubType::SimplBadDiscUnionStructPubSubType()
 {

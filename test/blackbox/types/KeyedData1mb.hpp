@@ -27,6 +27,8 @@
 #include <vector>
 
 
+#include "KeyedData1mbTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -51,8 +53,6 @@
 #define KEYEDDATA1MB_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure KeyedData1mb defined by the user in the IDL file.
  * @ingroup KeyedData1mb
@@ -66,6 +66,8 @@ public:
      */
     eProsima_user_DllExport KeyedData1mb()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_KeyedData1mb_type_objects();
     }
 
     /*!

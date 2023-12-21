@@ -25,6 +25,8 @@
 #include <cstdint>
 #include <utility>
 
+#include "FixedSizedTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -49,8 +51,6 @@
 #define FIXEDSIZED_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure FixedSized defined by the user in the IDL file.
  * @ingroup FixedSized
@@ -64,6 +64,8 @@ public:
      */
     eProsima_user_DllExport FixedSized()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_FixedSized_type_objects();
     }
 
     /*!

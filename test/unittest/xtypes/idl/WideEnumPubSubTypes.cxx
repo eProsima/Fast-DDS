@@ -29,8 +29,6 @@ using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
-
-
 MyEnumWideStructPubSubType::MyEnumWideStructPubSubType()
 {
     setName("MyEnumWideStruct");
@@ -218,9 +216,6 @@ bool MyEnumWideStructPubSubType::getKey(
     }
     return true;
 }
-
-
-
 
 
 SimpleWideUnionStructPubSubType::SimpleWideUnionStructPubSubType()

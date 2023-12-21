@@ -33,8 +33,6 @@ namespace eprosima {
     namespace fastdds {
         namespace statistics {
             namespace detail {
-
-
                 EntityId_sPubSubType::EntityId_sPubSubType()
                 {
                     setName("eprosima::fastdds::statistics::detail::EntityId_s");
@@ -222,8 +220,6 @@ namespace eprosima {
                     }
                     return true;
                 }
-
-
 
                 GuidPrefix_sPubSubType::GuidPrefix_sPubSubType()
                 {
@@ -413,8 +409,6 @@ namespace eprosima {
                     return true;
                 }
 
-
-
                 GUID_sPubSubType::GUID_sPubSubType()
                 {
                     setName("eprosima::fastdds::statistics::detail::GUID_s");
@@ -602,8 +596,6 @@ namespace eprosima {
                     }
                     return true;
                 }
-
-
 
                 SequenceNumber_sPubSubType::SequenceNumber_sPubSubType()
                 {
@@ -793,8 +785,6 @@ namespace eprosima {
                     return true;
                 }
 
-
-
                 SampleIdentity_sPubSubType::SampleIdentity_sPubSubType()
                 {
                     setName("eprosima::fastdds::statistics::detail::SampleIdentity_s");
@@ -982,8 +972,6 @@ namespace eprosima {
                     }
                     return true;
                 }
-
-
 
                 Locator_sPubSubType::Locator_sPubSubType()
                 {
@@ -1175,8 +1163,6 @@ namespace eprosima {
 
             } // namespace detail
 
-
-
             DiscoveryTimePubSubType::DiscoveryTimePubSubType()
             {
                 setName("eprosima::fastdds::statistics::DiscoveryTime");
@@ -1364,8 +1350,6 @@ namespace eprosima {
                 }
                 return true;
             }
-
-
 
             EntityCountPubSubType::EntityCountPubSubType()
             {
@@ -1555,8 +1539,6 @@ namespace eprosima {
                 return true;
             }
 
-
-
             SampleIdentityCountPubSubType::SampleIdentityCountPubSubType()
             {
                 setName("eprosima::fastdds::statistics::SampleIdentityCount");
@@ -1744,8 +1726,6 @@ namespace eprosima {
                 }
                 return true;
             }
-
-
 
             Entity2LocatorTrafficPubSubType::Entity2LocatorTrafficPubSubType()
             {
@@ -1935,8 +1915,6 @@ namespace eprosima {
                 return true;
             }
 
-
-
             WriterReaderDataPubSubType::WriterReaderDataPubSubType()
             {
                 setName("eprosima::fastdds::statistics::WriterReaderData");
@@ -2124,8 +2102,6 @@ namespace eprosima {
                 }
                 return true;
             }
-
-
 
             Locator2LocatorDataPubSubType::Locator2LocatorDataPubSubType()
             {
@@ -2315,8 +2291,6 @@ namespace eprosima {
                 return true;
             }
 
-
-
             EntityDataPubSubType::EntityDataPubSubType()
             {
                 setName("eprosima::fastdds::statistics::EntityData");
@@ -2505,8 +2479,6 @@ namespace eprosima {
                 return true;
             }
 
-
-
             PhysicalDataPubSubType::PhysicalDataPubSubType()
             {
                 setName("eprosima::fastdds::statistics::PhysicalData");
@@ -2694,7 +2666,6 @@ namespace eprosima {
                 }
                 return true;
             }
-
 
 
 

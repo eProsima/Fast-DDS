@@ -38,8 +38,6 @@
 #endif  // GEN_API_VER
 
 
-
-
 #ifndef SWIG
 namespace detail {
 

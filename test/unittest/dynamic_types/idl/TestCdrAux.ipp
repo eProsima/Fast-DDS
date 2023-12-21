@@ -34,14 +34,6 @@ using namespace eprosima::fastcdr::exception;
 namespace eprosima {
 namespace fastcdr {
 
-
-
-
-
-
-
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -212,13 +204,6 @@ void serialize_key(
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
-
-
-
-
-
-
-
 
 
 
@@ -454,8 +439,6 @@ void serialize_key(
 }
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -548,11 +531,19 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case MyEnum::A:
+                                                            if (mid != 1)
+                                                            {
+                                                                throw BadParamException("Deserializing union member basic the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.basic();
                                                             break;
 
                                                         case MyEnum::B:
                                                         case MyEnum::C:
+                                                            if (mid != 2)
+                                                            {
+                                                                throw BadParamException("Deserializing union member complex the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.complex();
                                                             break;
 
@@ -565,8 +556,6 @@ eProsima_user_DllExport void deserialize(
                 return ret_value;
             });
 }
-
-
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -667,14 +656,26 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case 0:
+                                                            if (mid != 1)
+                                                            {
+                                                                throw BadParamException("Deserializing union member uno the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.uno();
                                                             break;
 
                                                         case 1:
+                                                            if (mid != 2)
+                                                            {
+                                                                throw BadParamException("Deserializing union member imString the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.imString();
                                                             break;
 
                                                         case 2:
+                                                            if (mid != 3)
+                                                            {
+                                                                throw BadParamException("Deserializing union member tres the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.tres();
                                                             break;
 
@@ -687,8 +688,6 @@ eProsima_user_DllExport void deserialize(
                 return ret_value;
             });
 }
-
-
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -772,8 +771,6 @@ void serialize_key(
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
-
-
 
 
 template<>

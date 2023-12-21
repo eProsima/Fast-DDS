@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 namespace eprosima {
 namespace fastcdr {
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -110,8 +108,6 @@ void serialize_key(
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
-
-
 
 
 template<>
@@ -213,14 +209,26 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case MyEnumWide::A:
+                                                            if (mid != 1)
+                                                            {
+                                                                throw BadParamException("Deserializing union member first the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.first();
                                                             break;
 
                                                         case MyEnumWide::B:
+                                                            if (mid != 2)
+                                                            {
+                                                                throw BadParamException("Deserializing union member second the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.second();
                                                             break;
 
                                                         case MyEnumWide::D:
+                                                            if (mid != 3)
+                                                            {
+                                                                throw BadParamException("Deserializing union member third the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.third();
                                                             break;
 
@@ -233,8 +241,6 @@ eProsima_user_DllExport void deserialize(
                 return ret_value;
             });
 }
-
-
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(

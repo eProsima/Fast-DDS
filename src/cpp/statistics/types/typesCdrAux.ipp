@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 namespace eprosima {
 namespace fastcdr {
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -120,8 +118,6 @@ void serialize_key(
 }
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -204,8 +200,6 @@ void serialize_key(
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
-
-
 
 
 template<>
@@ -300,8 +294,6 @@ void serialize_key(
 }
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -394,8 +386,6 @@ void serialize_key(
 }
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -486,8 +476,6 @@ void serialize_key(
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
-
-
 
 
 template<>
@@ -588,8 +576,6 @@ void serialize_key(
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
-
-
 
 
 template<>
@@ -724,8 +710,6 @@ void serialize_key(
 }
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -821,8 +805,6 @@ void serialize_key(
 }
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -916,8 +898,6 @@ void serialize_key(
 
 
 }
-
-
 
 
 template<>
@@ -1043,8 +1023,6 @@ void serialize_key(
 }
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -1148,8 +1126,6 @@ void serialize_key(
 
 
 }
-
-
 
 
 template<>
@@ -1257,8 +1233,6 @@ void serialize_key(
 }
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -1352,8 +1326,6 @@ void serialize_key(
 
 
 }
-
-
 
 
 template<>
@@ -1467,8 +1439,6 @@ void serialize_key(
 
 
 }
-
-
 
 
 
@@ -1640,20 +1610,36 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case HISTORY2HISTORY_LATENCY:
+                                                            if (mid != 1)
+                                                            {
+                                                                throw BadParamException("Deserializing union member writer_reader_data the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.writer_reader_data();
                                                             break;
 
                                                         case NETWORK_LATENCY:
+                                                            if (mid != 2)
+                                                            {
+                                                                throw BadParamException("Deserializing union member locator2locator_data the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.locator2locator_data();
                                                             break;
 
                                                         case PUBLICATION_THROUGHPUT:
                                                         case SUBSCRIPTION_THROUGHPUT:
+                                                            if (mid != 3)
+                                                            {
+                                                                throw BadParamException("Deserializing union member entity_data the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.entity_data();
                                                             break;
 
                                                         case RTPS_SENT:
                                                         case RTPS_LOST:
+                                                            if (mid != 4)
+                                                            {
+                                                                throw BadParamException("Deserializing union member entity2locator_traffic the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.entity2locator_traffic();
                                                             break;
 
@@ -1665,18 +1651,34 @@ eProsima_user_DllExport void deserialize(
                                                         case DATA_COUNT:
                                                         case PDP_PACKETS:
                                                         case EDP_PACKETS:
+                                                            if (mid != 5)
+                                                            {
+                                                                throw BadParamException("Deserializing union member entity_count the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.entity_count();
                                                             break;
 
                                                         case DISCOVERED_ENTITY:
+                                                            if (mid != 6)
+                                                            {
+                                                                throw BadParamException("Deserializing union member discovery_time the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.discovery_time();
                                                             break;
 
                                                         case SAMPLE_DATAS:
+                                                            if (mid != 7)
+                                                            {
+                                                                throw BadParamException("Deserializing union member sample_identity_count the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.sample_identity_count();
                                                             break;
 
                                                         case PHYSICAL_DATA:
+                                                            if (mid != 8)
+                                                            {
+                                                                throw BadParamException("Deserializing union member physical_data the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.physical_data();
                                                             break;
 

@@ -27,6 +27,8 @@
 #include <vector>
 
 
+#include "Data1mbTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -51,8 +53,6 @@
 #define DATA1MB_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure Data1mb defined by the user in the IDL file.
  * @ingroup Data1mb
@@ -66,6 +66,8 @@ public:
      */
     eProsima_user_DllExport Data1mb()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Data1mb_type_objects();
     }
 
     /*!

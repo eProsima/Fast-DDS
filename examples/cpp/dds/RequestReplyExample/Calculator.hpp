@@ -25,6 +25,8 @@
 #include <cstdint>
 #include <utility>
 
+#include "CalculatorTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -60,8 +62,6 @@ enum class OperationType : uint32_t
     MULTIPLICATION,
     DIVISION
 };
-
-
 /*!
  * @brief This class represents the structure RequestType defined by the user in the IDL file.
  * @ingroup Calculator
@@ -75,6 +75,8 @@ public:
      */
     eProsima_user_DllExport RequestType()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Calculator_type_objects();
     }
 
     /*!
@@ -259,8 +261,6 @@ private:
     int32_t m_y{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure ReplyType defined by the user in the IDL file.
  * @ingroup Calculator
@@ -274,6 +274,8 @@ public:
      */
     eProsima_user_DllExport ReplyType()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_Calculator_type_objects();
     }
 
     /*!

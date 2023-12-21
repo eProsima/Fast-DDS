@@ -25,6 +25,8 @@
 #include <cstdint>
 #include <utility>
 
+#include "DDSReturnCodeTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
