@@ -733,7 +733,7 @@ void sample_lost_test_dw_init(
 
                 // generate losses
                 if ((writerID.value[3] & 0xC0) == 0 // only user endpoints
-                    && (1 == first_fragment)        // only first fragment
+                        && (1 == first_fragment)    // only first fragment
                         && (sn == SequenceNumber_t{0, 2} ||
                         sn == SequenceNumber_t(0, 3) ||
                         sn == SequenceNumber_t(0, 4) ||

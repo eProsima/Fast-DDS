@@ -722,8 +722,9 @@ bool StatelessReader::processDataFragMsg(
                             {
                                 assert(previous_seq < updated_seq);
                                 uint64_t tmp = (updated_seq - previous_seq).to64long();
-                                int32_t lost_samples = tmp > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) ?
-                                    std::numeric_limits<int32_t>::max() : static_cast<int32_t>(tmp);
+                                int32_t lost_samples =
+                                        tmp > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) ?
+                                        std::numeric_limits<int32_t>::max() : static_cast<int32_t>(tmp);
                                 assert (0 < lost_samples);
                                 listener->on_sample_lost(this, lost_samples);
                             }
