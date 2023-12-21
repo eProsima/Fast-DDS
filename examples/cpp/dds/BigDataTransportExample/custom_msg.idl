@@ -1,0 +1,10 @@
+struct Timestamp {
+  unsigned long long sec;
+  unsigned long nanosec;
+};
+
+struct BigData {
+  Timestamp timestamp_value;
+  unsigned long index;
+  sequence<octet> data; // Provisioning for 4K images
+};

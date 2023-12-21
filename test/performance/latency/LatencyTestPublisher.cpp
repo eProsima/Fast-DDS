@@ -658,8 +658,8 @@ void LatencyTestPublisher::run()
 
     // Print a summary table with the measurements
     printf("Printing round-trip times in us, statistics for %d samples\n", samples_);
-    printf("   Bytes, Samples,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
-    printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
+    printf("    Bytes, Samples,     stdev,      mean,       min,       50%%,       90%%,       99%%,    99.99%%,       max\n");
+    printf("---------,--------,----------,----------,----------,----------,----------,----------,----------,----------,\n");
     for (uint16_t i = 0; i < stats_.size(); i++)
     {
         print_stats(DATA_BASE_INDEX + i, stats_[i]);

@@ -68,12 +68,12 @@ inline void print_results(
     printf(
         "[            TEST           ][                    PUBLISHER                      ][                            SUBSCRIBER                        ]\n");
     printf(
-        "[ Bytes,Demand,Recovery Time][Sent Samples,Send Time(us),   Packs/sec,  MBits/sec][Rec Samples,Lost Samples,Rec Time(us),   Packs/sec,  MBits/sec]\n");
+        "[   Bytes,Demand,Recovery Time][Sent Samples,Send Time(us),   Packs/sec,  MBits/sec][Rec Samples,Lost Samples,Rec Time(us),   Packs/sec,  MBits/sec]\n");
     printf(
-        "[------,------,-------------][------------,-------------,------------,-----------][-----------,------------,------------,------------,-----------]\n");
+        "[--------,------,-------------][------------,-------------,------------,-----------][-----------,------------,------------,------------,-----------]\n");
     for (uint32_t i = 0; i < results.size(); i++)
     {
-        printf("%7u,%6u,%13u,%13.0f,%13.0f,%12.3f,%11.3f,%12.0f,%12.0f,%12.0f,%12.3f,%11.3f\n",
+        printf("%9u,%6u,%13u,%13.0f,%13.0f,%12.3f,%11.3f,%12.0f,%12.0f,%12.0f,%12.3f,%11.3f\n",
                 results[i].payload_size,
                 results[i].demand,
                 results[i].recovery_time_ms,

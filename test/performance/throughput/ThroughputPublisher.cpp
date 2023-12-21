@@ -254,6 +254,7 @@ bool ThroughputPublisher::init(
     {
         rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
         dw_qos_.reliability(rp);
+        dw_qos_.history().kind = KEEP_ALL_HISTORY_QOS;
 
         RTPSReliableWriterQos rw_qos;
         rw_qos.times.heartbeatPeriod.seconds = 0;
