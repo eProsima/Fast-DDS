@@ -20,9 +20,12 @@
 #ifndef _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
 #define _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
 
+#include <bitset>
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastdds/dds/core/Types.hpp>
+#include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
@@ -33,7 +36,6 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastrtps/types/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
@@ -2287,7 +2289,7 @@ class TypeIdV1 : public Parameter_t, public QosPolicy
 public:
 
     //!Type Identifier
-    fastrtps::types::TypeIdentifier m_type_identifier;
+    xtypes::TypeIdentifier m_type_identifier;
 
 
     /**
@@ -2319,7 +2321,7 @@ public:
      * @param identifier TypeIdentifier to be set
      */
     RTPS_DllAPI TypeIdV1(
-            const fastrtps::types::TypeIdentifier& identifier)
+            const xtypes::TypeIdentifier& identifier)
         : Parameter_t(PID_TYPE_IDV1, 0)
         , QosPolicy(false)
         , m_type_identifier(identifier)
@@ -2374,7 +2376,7 @@ public:
     }
 
     RTPS_DllAPI TypeIdV1& operator =(
-            const fastrtps::types::TypeIdentifier& type_id)
+            const xtypes::TypeIdentifier& type_id)
     {
         m_type_identifier = type_id;
         return *this;
@@ -2385,7 +2387,7 @@ public:
      *
      * @return TypeIdentifier reference
      */
-    RTPS_DllAPI const fastrtps::types::TypeIdentifier& get() const
+    RTPS_DllAPI const xtypes::TypeIdentifier& get() const
     {
         return m_type_identifier;
     }
@@ -2400,7 +2402,7 @@ class TypeObjectV1 : public Parameter_t, public QosPolicy
 public:
 
     //!Type Object
-    fastrtps::types::TypeObject m_type_object;
+    xtypes::TypeObject m_type_object;
 
     /**
      * @brief Constructor
@@ -2431,7 +2433,7 @@ public:
      * @param type TypeObject to be set
      */
     RTPS_DllAPI TypeObjectV1(
-            const fastrtps::types::TypeObject& type)
+            const xtypes::TypeObject& type)
         : Parameter_t(PID_TYPE_OBJECTV1, 0)
         , QosPolicy(false)
         , m_type_object(type)
@@ -2486,7 +2488,7 @@ public:
     }
 
     RTPS_DllAPI TypeObjectV1& operator =(
-            const fastrtps::types::TypeObject& type_object)
+            const xtypes::TypeObject& type_object)
     {
         m_type_object = type_object;
         return *this;
@@ -2497,7 +2499,7 @@ public:
      *
      * @return TypeObject reference
      */
-    RTPS_DllAPI const fastrtps::types::TypeObject& get() const
+    RTPS_DllAPI const xtypes::TypeObject& get() const
     {
         return m_type_object;
     }
@@ -2514,7 +2516,7 @@ class TypeInformationParameter : public Parameter_t, public QosPolicy
 public:
 
     //!Type Information
-    fastrtps::types::TypeInformation type_information;
+    TypeInformation type_information;
 
     /**
      * @brief Constructor
@@ -2542,12 +2544,12 @@ public:
     }
 
     /**
-     * @brief Constructor using a fastrtps::types::TypeInformation
+     * @brief Constructor using a TypeInformation
      *
-     * @param info fastrtps::types::TypeInformation to be set
+     * @param info TypeInformation to be set
      */
     RTPS_DllAPI TypeInformationParameter(
-            const fastrtps::types::TypeInformation& info)
+            const TypeInformation& info)
         : Parameter_t(PID_TYPE_INFORMATION, 0)
         , QosPolicy(false)
         , type_information(info)
@@ -2627,7 +2629,7 @@ public:
     }
 
     RTPS_DllAPI TypeInformationParameter& operator =(
-            const fastrtps::types::TypeInformation& type_info)
+            const TypeInformation& type_info)
     {
         type_information = type_info;
         assigned_ = true;

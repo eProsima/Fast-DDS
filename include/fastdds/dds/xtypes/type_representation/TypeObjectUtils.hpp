@@ -25,6 +25,7 @@
 #include <fastcdr/cdr/fixed_size_string.hpp>
 #include <fastcdr/xcdr/optional.hpp>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/common.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/dds/xtypes/exception/Exception.hpp>

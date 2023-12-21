@@ -50,7 +50,7 @@ public:
             eprosima::fastdds::dds::TypeSupport type,
             const eprosima::fastrtps::types::TypeObject* type_object,
             const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
-            const eprosima::fastrtps::types::TypeInformation* type_info,
+            const eprosima::fastdds::dds::xtypes::TypeInformation* type_info,
             const std::string& name,
             const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
             const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos,
