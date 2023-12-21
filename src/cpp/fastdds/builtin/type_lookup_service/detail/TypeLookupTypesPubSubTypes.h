@@ -50,8 +50,6 @@ namespace dds {
 namespace builtin
 {
 
-
-
     /*!
      * @brief This class represents the TopicDataType of the type TypeLookup_getTypes_In defined by the user in the IDL file.
      * @ingroup TypeLookupTypes
@@ -139,8 +137,6 @@ namespace builtin
         unsigned char* m_keyBuffer;
 
     };
-
-
 
     /*!
      * @brief This class represents the TopicDataType of the type TypeLookup_getTypes_Out defined by the user in the IDL file.
@@ -231,9 +227,6 @@ namespace builtin
     };
 
 
-
-
-
     /*!
      * @brief This class represents the TopicDataType of the type TypeLookup_getTypeDependencies_In defined by the user in the IDL file.
      * @ingroup TypeLookupTypes
@@ -321,8 +314,6 @@ namespace builtin
         unsigned char* m_keyBuffer;
 
     };
-
-
 
     /*!
      * @brief This class represents the TopicDataType of the type TypeLookup_getTypeDependencies_Out defined by the user in the IDL file.
@@ -414,10 +405,6 @@ namespace builtin
 
 
 
-
-
-
-
     /*!
      * @brief This class represents the TopicDataType of the type TypeLookup_Request defined by the user in the IDL file.
      * @ingroup TypeLookupTypes
@@ -505,9 +492,6 @@ namespace builtin
         unsigned char* m_keyBuffer;
 
     };
-
-
-
 
 
     /*!

@@ -30,8 +30,6 @@
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include "dynamic_language_bindingTypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )

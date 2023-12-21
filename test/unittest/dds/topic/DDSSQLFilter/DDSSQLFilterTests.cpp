@@ -31,7 +31,7 @@
 
 #include "data_types/ContentFilterTestType.hpp"
 #include "data_types/ContentFilterTestTypePubSubTypes.h"
-#include "data_types/ContentFilterTestTypeTypeObject.h"
+#include "data_types/ContentFilterTestTypeTypeObjectSupport.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -2089,7 +2089,7 @@ int main(
         char** argv)
 {
     testing::InitGoogleMock(&argc, argv);
-    registerContentFilterTestTypeTypes();
+    register_ContentFilterTestType_type_objects();
     eprosima::fastdds::dds::Log::ClearConsumers();
     return RUN_ALL_TESTS();
 }

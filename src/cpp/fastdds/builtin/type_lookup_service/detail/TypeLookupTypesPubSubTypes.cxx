@@ -37,8 +37,6 @@ namespace dds {
 
 
 namespace builtin {
-
-
     TypeLookup_getTypes_InPubSubType::TypeLookup_getTypes_InPubSubType()
     {
         setName("eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In");
@@ -226,8 +224,6 @@ namespace builtin {
         }
         return true;
     }
-
-
 
     TypeLookup_getTypes_OutPubSubType::TypeLookup_getTypes_OutPubSubType()
     {
@@ -418,9 +414,6 @@ namespace builtin {
     }
 
 
-
-
-
     TypeLookup_getTypeDependencies_InPubSubType::TypeLookup_getTypeDependencies_InPubSubType()
     {
         setName("eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In");
@@ -608,8 +601,6 @@ namespace builtin {
         }
         return true;
     }
-
-
 
     TypeLookup_getTypeDependencies_OutPubSubType::TypeLookup_getTypeDependencies_OutPubSubType()
     {
@@ -801,10 +792,6 @@ namespace builtin {
 
 
 
-
-
-
-
     TypeLookup_RequestPubSubType::TypeLookup_RequestPubSubType()
     {
         setName("eprosima::fastdds::dds::builtin::TypeLookup_Request");
@@ -992,9 +979,6 @@ namespace builtin {
         }
         return true;
     }
-
-
-
 
 
     TypeLookup_ReplyPubSubType::TypeLookup_ReplyPubSubType()

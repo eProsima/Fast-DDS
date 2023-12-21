@@ -26,8 +26,6 @@
 #include <utility>
 #include "DDSReturnCode.hpp"
 
-#include "DDSSecurityReturnCodeTypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )

@@ -29,7 +29,7 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 
-#include "HelloWorldTypeObject.h"
+#include "HelloWorldTypeObjectSupport.hpp"
 
 using namespace eprosima::fastdds::dds;
 

@@ -36,10 +36,6 @@ namespace fastdds {
 namespace dds {
 
 
-
-
-
-
 EntityId_tPubSubType::EntityId_tPubSubType()
 {
     setName("eprosima::fastdds::dds::EntityId_t");
@@ -227,8 +223,6 @@ bool EntityId_tPubSubType::getKey(
     }
     return true;
 }
-
-
 
 GUID_tPubSubType::GUID_tPubSubType()
 {
@@ -418,8 +412,6 @@ bool GUID_tPubSubType::getKey(
     return true;
 }
 
-
-
 SequenceNumber_tPubSubType::SequenceNumber_tPubSubType()
 {
     setName("eprosima::fastdds::dds::SequenceNumber_t");
@@ -607,8 +599,6 @@ bool SequenceNumber_tPubSubType::getKey(
     }
     return true;
 }
-
-
 
 SampleIdentityPubSubType::SampleIdentityPubSubType()
 {
@@ -799,17 +789,6 @@ bool SampleIdentityPubSubType::getKey(
 }
 
 namespace rpc {
-
-
-
-
-
-
-
-
-
-
-
     RequestHeaderPubSubType::RequestHeaderPubSubType()
     {
         setName("eprosima::fastdds::dds::rpc::RequestHeader");
@@ -997,8 +976,6 @@ namespace rpc {
         }
         return true;
     }
-
-
 
     ReplyHeaderPubSubType::ReplyHeaderPubSubType()
     {

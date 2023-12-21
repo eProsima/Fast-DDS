@@ -29,7 +29,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 #include "idl/new_features_4_2PubSubTypes.h"
-#include "idl/new_features_4_2TypeObject.h"
+#include "idl/new_features_4_2TypeObjectSupport.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -53,7 +53,6 @@ public:
 
     virtual void TearDown() override
     {
-        TypeObjectFactory::delete_instance();
         DynamicDataFactory::delete_instance();
         DynamicTypeBuilderFactory::delete_instance();
     }
@@ -245,9 +244,10 @@ TEST_F(DynamicTypes_4_2_Tests, New_Union_Discriminators)
      */
 }
 
+/* TODO(jlbueno): XTypes v1.3 PENDING implementation DynamicTypeBuilderFactory::create_type_w_type_object
 TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
 {
-    registernew_features_4_2Types();
+    register_new_features_4_2_type_objects();
 
     // TODO Bitset serialization isn't compatible.
     const TypeIdentifier* identifier = GetStructTestIdentifier(true);
@@ -291,6 +291,7 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     //dynamic_type in `build_dynamic_type()`.
 
     // DEBUG Printing payloads
+*/
     /*
        std::cout << "Payload: " << std::endl;
        for (int i = 0; i < payload_size; ++i)
@@ -305,13 +306,15 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
        }
        std::cout << "--------------------------" << std::endl;
      */
+/*
     ASSERT_TRUE(dyn_data_from_static->equals(dyn_data_from_dynamic.get()));
 }
+*/
 
 /* TODO(richiware) Bitsets are not serialized correctly currently by DynamicData.
    TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
    {
-   registernew_features_4_2Types();
+   register_new_features_4_2_type_objects();
 
    const TypeIdentifier* identifier = GetStructTestIdentifier(true);
    const TypeObject* object = GetCompleteStructTestObject();

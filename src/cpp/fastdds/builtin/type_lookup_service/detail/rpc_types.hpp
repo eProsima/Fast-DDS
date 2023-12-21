@@ -28,6 +28,8 @@
 #include <utility>
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
+#include "rpc_typesTypeObjectSupport.hpp"
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -61,8 +63,6 @@ namespace dds {
 
 typedef std::array<uint8_t, 12> GuidPrefix_t;
 
-
-
 /*!
  * @brief This class represents the structure EntityId_t defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -76,6 +76,8 @@ public:
      */
     eProsima_user_DllExport EntityId_t()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_rpc_types_type_objects();
     }
 
     /*!
@@ -233,8 +235,6 @@ private:
     uint8_t m_entityKind{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure GUID_t defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -248,6 +248,8 @@ public:
      */
     eProsima_user_DllExport GUID_t()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_rpc_types_type_objects();
     }
 
     /*!
@@ -415,8 +417,6 @@ private:
     EntityId_t m_entityId;
 
 };
-
-
 /*!
  * @brief This class represents the structure SequenceNumber_t defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -430,6 +430,8 @@ public:
      */
     eProsima_user_DllExport SequenceNumber_t()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_rpc_types_type_objects();
     }
 
     /*!
@@ -577,8 +579,6 @@ private:
     uint32_t m_low{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure SampleIdentity defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -592,6 +592,8 @@ public:
      */
     eProsima_user_DllExport SampleIdentity()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_rpc_types_type_objects();
     }
 
     /*!
@@ -782,8 +784,6 @@ enum class RemoteExceptionCode_t : uint32_t
 };
 typedef eprosima::fastcdr::fixed_string<255> InstanceName;
 
-
-
 /*!
  * @brief This class represents the structure RequestHeader defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -797,6 +797,8 @@ public:
      */
     eProsima_user_DllExport RequestHeader()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_rpc_types_type_objects();
     }
 
     /*!
@@ -964,8 +966,6 @@ private:
     InstanceName m_instanceName;
 
 };
-
-
 /*!
  * @brief This class represents the structure ReplyHeader defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -979,6 +979,8 @@ public:
      */
     eProsima_user_DllExport ReplyHeader()
     {
+        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
+        register_rpc_types_type_objects();
     }
 
     /*!

@@ -32,7 +32,7 @@ set(CFT_COMMON_SOURCES
     ContentFilteredTopicExamplePublisher.cpp
     ContentFilteredTopicExampleSubscriber.cpp
     HelloWorldPubSubTypes.cxx
-    HelloWorldTypeObject.cxx
+    HelloWorldTypeObjectSupport.cxx
     )
 
 add_executable(DDSContentFilteredTopicExample ${CFT_COMMON_SOURCES})

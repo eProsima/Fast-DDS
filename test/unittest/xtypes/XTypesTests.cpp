@@ -15,8 +15,8 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastdds/dds/log/Log.hpp>
-#include "idl/TypesTypeObject.h"
-#include "idl/WideEnumTypeObject.h"
+#include "idl/TypesTypeObjectSupport.hpp"
+#include "idl/WideEnumTypeObjectSupport.hpp"
 #include <gtest/gtest.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>

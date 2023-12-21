@@ -57,7 +57,7 @@ endif()
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorldPubSubTypes.cxx
-    types/HelloWorldTypeObject.cxx
+    types/HelloWorldTypeObjectSupport.cxx
     types/KeyedHelloWorldPubSubTypes.cxx
     types/StringTestPubSubTypes.cxx
     types/Data64kbPubSubTypes.cxx
@@ -89,16 +89,16 @@ gtest_discover_tests(BlackboxTests_RTPS
 file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
 set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorldPubSubTypes.cxx
-    types/HelloWorldTypeObject.cxx
+    types/HelloWorldTypeObjectSupport.cxx
     types/KeyedHelloWorldPubSubTypes.cxx
     types/StringTestPubSubTypes.cxx
     types/Data64kbPubSubTypes.cxx
     types/Data1mbPubSubTypes.cxx
     types/KeyedData1mbPubSubTypes.cxx
     types/FixedSizedPubSubTypes.cxx
-    types/TestIncludeRegression3361TypeObject.cxx
+    types/TestIncludeRegression3361TypeObjectSupport.cxx
     types/TestRegression3361PubSubTypes.cxx
-    types/TestRegression3361TypeObject.cxx
+    types/TestRegression3361TypeObjectSupport.cxx
 
     utils/data_generators.cpp
     utils/lambda_functions.cpp

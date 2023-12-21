@@ -29,9 +29,11 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
+#include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
-#include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
+
+#include "HelloWorld.hpp"
 
 
 using namespace eprosima::fastdds::dds::xtypes;
@@ -139,7 +141,7 @@ void register_HelloWorld_type_identifier()
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -176,6 +178,7 @@ void register_HelloWorld_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())

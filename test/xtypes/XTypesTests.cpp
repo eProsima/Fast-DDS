@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include "idl/TypesPubSubTypes.h"
-#include "idl/TypesTypeObject.h"
+#include "idl/TypesTypeObjectSupport.hpp"
 
 #include <thread>
 

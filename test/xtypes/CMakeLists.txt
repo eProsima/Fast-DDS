@@ -23,7 +23,7 @@ endif()
 ###############################################################################
 set(XTYPES_TESTS_SOURCE XTypesTests.cpp
     idl/TypesPubSubTypes.cxx
-    idl/TypesTypeObject.cxx
+    idl/TypesTypeObjectSupport.cxx
     TestPublisher.cpp
     TestSubscriber.cpp
     )

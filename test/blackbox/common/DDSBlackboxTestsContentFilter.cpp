@@ -24,9 +24,9 @@
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include "../types/HelloWorldTypeObject.h"
+#include "../types/HelloWorldTypeObjectSupport.hpp"
 #include "../types/TestRegression3361PubSubTypes.h"
-#include "../types/TestRegression3361TypeObject.h"
+#include "../types/TestRegression3361TypeObjectSupport.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"

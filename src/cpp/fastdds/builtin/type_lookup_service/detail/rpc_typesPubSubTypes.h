@@ -46,8 +46,6 @@ namespace dds {
 
 typedef std::array<uint8_t, 12> GuidPrefix_t;
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type EntityId_t defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -135,8 +133,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type GUID_t defined by the user in the IDL file.
@@ -226,8 +222,6 @@ public:
 
 };
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type SequenceNumber_t defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -315,8 +309,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type SampleIdentity defined by the user in the IDL file.
@@ -413,8 +405,6 @@ namespace rpc
 
     typedef eprosima::fastcdr::fixed_string<255> InstanceName;
 
-
-
     /*!
      * @brief This class represents the TopicDataType of the type RequestHeader defined by the user in the IDL file.
      * @ingroup rpc_types
@@ -502,8 +492,6 @@ namespace rpc
         unsigned char* m_keyBuffer;
 
     };
-
-
 
     /*!
      * @brief This class represents the TopicDataType of the type ReplyHeader defined by the user in the IDL file.

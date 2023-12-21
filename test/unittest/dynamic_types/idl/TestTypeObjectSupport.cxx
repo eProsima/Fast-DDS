@@ -29,9 +29,11 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
+#include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
-#include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
+
+#include "Test.hpp"
 
 
 using namespace eprosima::fastdds::dds::xtypes;
@@ -2213,7 +2215,7 @@ void register_ComplexStruct_type_identifier()
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -2250,6 +2252,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -3202,7 +3205,7 @@ void register_ComplexStruct_type_identifier()
                         }
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -3239,6 +3242,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -3348,7 +3352,7 @@ void register_ComplexStruct_type_identifier()
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -3385,6 +3389,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -3519,7 +3524,7 @@ void register_ComplexStruct_type_identifier()
                                 "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
-                    TypeIdentifier* element_identifier;
+                    TypeIdentifier* element_identifier {nullptr};
                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -3556,6 +3561,7 @@ void register_ComplexStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Array element TypeIdentifier inconsistent.");
+                        return;
                     }
                     EquivalenceKind equiv_kind = EK_COMPLETE;
                     if (TK_NONE == type_ids.type_identifier2()._d())
@@ -4571,7 +4577,7 @@ void register_ComplexStruct_type_identifier()
                         }
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -4608,6 +4614,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -4721,7 +4728,7 @@ void register_ComplexStruct_type_identifier()
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -4758,6 +4765,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_uint8_t_int16_t_unbounded inconsistent element TypeIdentifier.");
+                    return;
                 }
                 return_code =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -4769,7 +4777,7 @@ void register_ComplexStruct_type_identifier()
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* key_identifier;
+                TypeIdentifier* key_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -4806,6 +4814,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_uint8_t_int16_t_unbounded inconsistent key TypeIdentifier.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_BOTH;
                 if (EK_COMPLETE == element_identifier->_d() ||
@@ -5768,7 +5777,7 @@ void register_ComplexStruct_type_identifier()
                         }
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5805,6 +5814,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_BasicStruct_unbounded inconsistent element TypeIdentifier.");
+                    return;
                 }
                 return_code =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -5816,7 +5826,7 @@ void register_ComplexStruct_type_identifier()
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* key_identifier;
+                TypeIdentifier* key_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5853,6 +5863,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_BasicStruct_unbounded inconsistent key TypeIdentifier.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_BOTH;
                 if (EK_COMPLETE == element_identifier->_d() ||
@@ -5984,7 +5995,7 @@ void register_ComplexStruct_type_identifier()
                                     "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                             return;
                         }
-                        TypeIdentifier* element_identifier;
+                        TypeIdentifier* element_identifier {nullptr};
                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6021,6 +6032,7 @@ void register_ComplexStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Sequence element TypeIdentifier inconsistent.");
+                            return;
                         }
                         EquivalenceKind equiv_kind = EK_COMPLETE;
                         if (TK_NONE == type_ids.type_identifier2()._d())
@@ -6064,7 +6076,7 @@ void register_ComplexStruct_type_identifier()
                             return;
                         }
                     }
-                    TypeIdentifier* element_identifier;
+                    TypeIdentifier* element_identifier {nullptr};
                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6101,6 +6113,7 @@ void register_ComplexStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier inconsistent.");
+                        return;
                     }
                     EquivalenceKind equiv_kind = EK_COMPLETE;
                     if (TK_NONE == type_ids.type_identifier2()._d())
@@ -6144,7 +6157,7 @@ void register_ComplexStruct_type_identifier()
                         return;
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6181,6 +6194,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_anonymous_sequence_anonymous_sequence_uint8_t_unbounded_unbounded_unbounded inconsistent element TypeIdentifier.");
+                    return;
                 }
                 return_code =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6192,7 +6206,7 @@ void register_ComplexStruct_type_identifier()
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* key_identifier;
+                TypeIdentifier* key_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6229,6 +6243,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_anonymous_sequence_anonymous_sequence_uint8_t_unbounded_unbounded_unbounded inconsistent key TypeIdentifier.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_BOTH;
                 if (EK_COMPLETE == element_identifier->_d() ||
@@ -6367,7 +6382,7 @@ void register_ComplexStruct_type_identifier()
                                     "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                             return;
                         }
-                        TypeIdentifier* element_identifier;
+                        TypeIdentifier* element_identifier {nullptr};
                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6404,6 +6419,7 @@ void register_ComplexStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Array element TypeIdentifier inconsistent.");
+                            return;
                         }
                         EquivalenceKind equiv_kind = EK_COMPLETE;
                         if (TK_NONE == type_ids.type_identifier2()._d())
@@ -6510,7 +6526,7 @@ void register_ComplexStruct_type_identifier()
                         return;
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6547,6 +6563,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_anonymous_array_uint8_t_500_unbounded inconsistent element TypeIdentifier.");
+                    return;
                 }
                 return_code =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6558,7 +6575,7 @@ void register_ComplexStruct_type_identifier()
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* key_identifier;
+                TypeIdentifier* key_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6595,6 +6612,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_anonymous_array_uint8_t_500_unbounded inconsistent key TypeIdentifier.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_BOTH;
                 if (EK_COMPLETE == element_identifier->_d() ||
@@ -7582,7 +7600,7 @@ void register_ComplexStruct_type_identifier()
                                     }
                                 }
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7619,6 +7637,7 @@ void register_ComplexStruct_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Array element TypeIdentifier inconsistent.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_COMPLETE;
                             if (TK_NONE == type_ids.type_identifier2()._d())
@@ -7725,7 +7744,7 @@ void register_ComplexStruct_type_identifier()
                             return;
                         }
                     }
-                    TypeIdentifier* element_identifier;
+                    TypeIdentifier* element_identifier {nullptr};
                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7762,6 +7781,7 @@ void register_ComplexStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_map_uint8_t_anonymous_array_BasicStruct_5_unbounded inconsistent element TypeIdentifier.");
+                        return;
                     }
                     return_code =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7773,7 +7793,7 @@ void register_ComplexStruct_type_identifier()
                                 "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
-                    TypeIdentifier* key_identifier;
+                    TypeIdentifier* key_identifier {nullptr};
                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7810,6 +7830,7 @@ void register_ComplexStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_map_uint8_t_anonymous_array_BasicStruct_5_unbounded inconsistent key TypeIdentifier.");
+                        return;
                     }
                     EquivalenceKind equiv_kind = EK_BOTH;
                     if (EK_COMPLETE == element_identifier->_d() ||
@@ -7863,7 +7884,7 @@ void register_ComplexStruct_type_identifier()
                         return;
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7900,6 +7921,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_anonymous_map_uint8_t_anonymous_array_BasicStruct_5_unbounded_unbounded inconsistent element TypeIdentifier.");
+                    return;
                 }
                 return_code =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7911,7 +7933,7 @@ void register_ComplexStruct_type_identifier()
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* key_identifier;
+                TypeIdentifier* key_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7948,6 +7970,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_anonymous_map_uint8_t_anonymous_array_BasicStruct_5_unbounded_unbounded inconsistent key TypeIdentifier.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_BOTH;
                 if (EK_COMPLETE == element_identifier->_d() ||
@@ -8298,7 +8321,7 @@ void register_ComplexStruct_type_identifier()
                         return;
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -8335,6 +8358,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -8741,7 +8765,7 @@ void register_ComplexStruct_type_identifier()
                             return;
                         }
                     }
-                    TypeIdentifier* element_identifier;
+                    TypeIdentifier* element_identifier {nullptr};
                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -8778,6 +8802,7 @@ void register_ComplexStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Array element TypeIdentifier inconsistent.");
+                        return;
                     }
                     EquivalenceKind equiv_kind = EK_COMPLETE;
                     if (TK_NONE == type_ids.type_identifier2()._d())
@@ -8969,7 +8994,7 @@ void register_ComplexStruct_type_identifier()
                                     "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                             return;
                         }
-                        TypeIdentifier* element_identifier;
+                        TypeIdentifier* element_identifier {nullptr};
                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -9006,6 +9031,7 @@ void register_ComplexStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Array element TypeIdentifier inconsistent.");
+                            return;
                         }
                         EquivalenceKind equiv_kind = EK_COMPLETE;
                         if (TK_NONE == type_ids.type_identifier2()._d())
@@ -9112,7 +9138,7 @@ void register_ComplexStruct_type_identifier()
                         return;
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -9149,6 +9175,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -9281,7 +9308,7 @@ void register_ComplexStruct_type_identifier()
                                     "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                             return;
                         }
-                        TypeIdentifier* element_identifier;
+                        TypeIdentifier* element_identifier {nullptr};
                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -9318,6 +9345,7 @@ void register_ComplexStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Sequence element TypeIdentifier inconsistent.");
+                            return;
                         }
                         EquivalenceKind equiv_kind = EK_COMPLETE;
                         if (TK_NONE == type_ids.type_identifier2()._d())
@@ -9420,7 +9448,7 @@ void register_ComplexStruct_type_identifier()
                         return;
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -9457,6 +9485,7 @@ void register_ComplexStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -11895,7 +11924,7 @@ void register_MyUnion_type_identifier()
                                         "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                                 return;
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -11932,6 +11961,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Sequence element TypeIdentifier inconsistent.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_COMPLETE;
                             if (TK_NONE == type_ids.type_identifier2()._d())
@@ -12884,7 +12914,7 @@ void register_MyUnion_type_identifier()
                                     }
                                 }
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -12921,6 +12951,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Sequence element TypeIdentifier inconsistent.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_COMPLETE;
                             if (TK_NONE == type_ids.type_identifier2()._d())
@@ -13030,7 +13061,7 @@ void register_MyUnion_type_identifier()
                                         "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                                 return;
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -13067,6 +13098,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Array element TypeIdentifier inconsistent.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_COMPLETE;
                             if (TK_NONE == type_ids.type_identifier2()._d())
@@ -13201,7 +13233,7 @@ void register_MyUnion_type_identifier()
                                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                                     return;
                                 }
-                                TypeIdentifier* element_identifier;
+                                TypeIdentifier* element_identifier {nullptr};
                                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -13238,6 +13270,7 @@ void register_MyUnion_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Array element TypeIdentifier inconsistent.");
+                                    return;
                                 }
                                 EquivalenceKind equiv_kind = EK_COMPLETE;
                                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -14253,7 +14286,7 @@ void register_MyUnion_type_identifier()
                                     }
                                 }
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -14290,6 +14323,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Array element TypeIdentifier inconsistent.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_COMPLETE;
                             if (TK_NONE == type_ids.type_identifier2()._d())
@@ -14403,7 +14437,7 @@ void register_MyUnion_type_identifier()
                                         "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                                 return;
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -14440,6 +14474,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_map_uint8_t_int16_t_unbounded inconsistent element TypeIdentifier.");
+                                return;
                             }
                             return_code =
                                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -14451,7 +14486,7 @@ void register_MyUnion_type_identifier()
                                         "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                                 return;
                             }
-                            TypeIdentifier* key_identifier;
+                            TypeIdentifier* key_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -14488,6 +14523,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_map_uint8_t_int16_t_unbounded inconsistent key TypeIdentifier.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_BOTH;
                             if (EK_COMPLETE == element_identifier->_d() ||
@@ -15450,7 +15486,7 @@ void register_MyUnion_type_identifier()
                                     }
                                 }
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -15487,6 +15523,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_map_int32_t_BasicStruct_unbounded inconsistent element TypeIdentifier.");
+                                return;
                             }
                             return_code =
                                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -15498,7 +15535,7 @@ void register_MyUnion_type_identifier()
                                         "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                                 return;
                             }
-                            TypeIdentifier* key_identifier;
+                            TypeIdentifier* key_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -15535,6 +15572,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_map_int32_t_BasicStruct_unbounded inconsistent key TypeIdentifier.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_BOTH;
                             if (EK_COMPLETE == element_identifier->_d() ||
@@ -15666,7 +15704,7 @@ void register_MyUnion_type_identifier()
                                                 "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                                         return;
                                     }
-                                    TypeIdentifier* element_identifier;
+                                    TypeIdentifier* element_identifier {nullptr};
                                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -15703,6 +15741,7 @@ void register_MyUnion_type_identifier()
                                     {
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "Sequence element TypeIdentifier inconsistent.");
+                                        return;
                                     }
                                     EquivalenceKind equiv_kind = EK_COMPLETE;
                                     if (TK_NONE == type_ids.type_identifier2()._d())
@@ -15746,7 +15785,7 @@ void register_MyUnion_type_identifier()
                                         return;
                                     }
                                 }
-                                TypeIdentifier* element_identifier;
+                                TypeIdentifier* element_identifier {nullptr};
                                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -15783,6 +15822,7 @@ void register_MyUnion_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Sequence element TypeIdentifier inconsistent.");
+                                    return;
                                 }
                                 EquivalenceKind equiv_kind = EK_COMPLETE;
                                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -15826,7 +15866,7 @@ void register_MyUnion_type_identifier()
                                     return;
                                 }
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -15863,6 +15903,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_map_int32_t_anonymous_sequence_anonymous_sequence_uint8_t_unbounded_unbounded_unbounded inconsistent element TypeIdentifier.");
+                                return;
                             }
                             return_code =
                                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -15874,7 +15915,7 @@ void register_MyUnion_type_identifier()
                                         "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                                 return;
                             }
-                            TypeIdentifier* key_identifier;
+                            TypeIdentifier* key_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -15911,6 +15952,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_map_int32_t_anonymous_sequence_anonymous_sequence_uint8_t_unbounded_unbounded_unbounded inconsistent key TypeIdentifier.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_BOTH;
                             if (EK_COMPLETE == element_identifier->_d() ||
@@ -16049,7 +16091,7 @@ void register_MyUnion_type_identifier()
                                                 "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                                         return;
                                     }
-                                    TypeIdentifier* element_identifier;
+                                    TypeIdentifier* element_identifier {nullptr};
                                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -16086,6 +16128,7 @@ void register_MyUnion_type_identifier()
                                     {
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "Array element TypeIdentifier inconsistent.");
+                                        return;
                                     }
                                     EquivalenceKind equiv_kind = EK_COMPLETE;
                                     if (TK_NONE == type_ids.type_identifier2()._d())
@@ -16192,7 +16235,7 @@ void register_MyUnion_type_identifier()
                                     return;
                                 }
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -16229,6 +16272,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_map_int32_t_anonymous_array_uint8_t_500_unbounded inconsistent element TypeIdentifier.");
+                                return;
                             }
                             return_code =
                                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -16240,7 +16284,7 @@ void register_MyUnion_type_identifier()
                                         "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                                 return;
                             }
-                            TypeIdentifier* key_identifier;
+                            TypeIdentifier* key_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -16277,6 +16321,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_map_int32_t_anonymous_array_uint8_t_500_unbounded inconsistent key TypeIdentifier.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_BOTH;
                             if (EK_COMPLETE == element_identifier->_d() ||
@@ -17264,7 +17309,7 @@ void register_MyUnion_type_identifier()
                                                 }
                                             }
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -17301,6 +17346,7 @@ void register_MyUnion_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "Array element TypeIdentifier inconsistent.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_COMPLETE;
                                         if (TK_NONE == type_ids.type_identifier2()._d())
@@ -17407,7 +17453,7 @@ void register_MyUnion_type_identifier()
                                         return;
                                     }
                                 }
-                                TypeIdentifier* element_identifier;
+                                TypeIdentifier* element_identifier {nullptr};
                                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -17444,6 +17490,7 @@ void register_MyUnion_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "anonymous_map_uint8_t_anonymous_array_BasicStruct_5_unbounded inconsistent element TypeIdentifier.");
+                                    return;
                                 }
                                 return_code =
                                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -17455,7 +17502,7 @@ void register_MyUnion_type_identifier()
                                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                                     return;
                                 }
-                                TypeIdentifier* key_identifier;
+                                TypeIdentifier* key_identifier {nullptr};
                                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -17492,6 +17539,7 @@ void register_MyUnion_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "anonymous_map_uint8_t_anonymous_array_BasicStruct_5_unbounded inconsistent key TypeIdentifier.");
+                                    return;
                                 }
                                 EquivalenceKind equiv_kind = EK_BOTH;
                                 if (EK_COMPLETE == element_identifier->_d() ||
@@ -17545,7 +17593,7 @@ void register_MyUnion_type_identifier()
                                     return;
                                 }
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -17582,6 +17630,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_map_int32_t_anonymous_map_uint8_t_anonymous_array_BasicStruct_5_unbounded_unbounded inconsistent element TypeIdentifier.");
+                                return;
                             }
                             return_code =
                                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -17593,7 +17642,7 @@ void register_MyUnion_type_identifier()
                                         "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                                 return;
                             }
-                            TypeIdentifier* key_identifier;
+                            TypeIdentifier* key_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -17630,6 +17679,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_map_int32_t_anonymous_map_uint8_t_anonymous_array_BasicStruct_5_unbounded_unbounded inconsistent key TypeIdentifier.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_BOTH;
                             if (EK_COMPLETE == element_identifier->_d() ||
@@ -17980,7 +18030,7 @@ void register_MyUnion_type_identifier()
                                     return;
                                 }
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -18017,6 +18067,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Array element TypeIdentifier inconsistent.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_COMPLETE;
                             if (TK_NONE == type_ids.type_identifier2()._d())
@@ -18423,7 +18474,7 @@ void register_MyUnion_type_identifier()
                                         return;
                                     }
                                 }
-                                TypeIdentifier* element_identifier;
+                                TypeIdentifier* element_identifier {nullptr};
                                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -18460,6 +18511,7 @@ void register_MyUnion_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Array element TypeIdentifier inconsistent.");
+                                    return;
                                 }
                                 EquivalenceKind equiv_kind = EK_COMPLETE;
                                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -18651,7 +18703,7 @@ void register_MyUnion_type_identifier()
                                                 "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                                         return;
                                     }
-                                    TypeIdentifier* element_identifier;
+                                    TypeIdentifier* element_identifier {nullptr};
                                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -18688,6 +18740,7 @@ void register_MyUnion_type_identifier()
                                     {
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "Array element TypeIdentifier inconsistent.");
+                                        return;
                                     }
                                     EquivalenceKind equiv_kind = EK_COMPLETE;
                                     if (TK_NONE == type_ids.type_identifier2()._d())
@@ -18794,7 +18847,7 @@ void register_MyUnion_type_identifier()
                                     return;
                                 }
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -18831,6 +18884,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Array element TypeIdentifier inconsistent.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_COMPLETE;
                             if (TK_NONE == type_ids.type_identifier2()._d())
@@ -18963,7 +19017,7 @@ void register_MyUnion_type_identifier()
                                                 "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                                         return;
                                     }
-                                    TypeIdentifier* element_identifier;
+                                    TypeIdentifier* element_identifier {nullptr};
                                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -19000,6 +19054,7 @@ void register_MyUnion_type_identifier()
                                     {
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "Sequence element TypeIdentifier inconsistent.");
+                                        return;
                                     }
                                     EquivalenceKind equiv_kind = EK_COMPLETE;
                                     if (TK_NONE == type_ids.type_identifier2()._d())
@@ -19102,7 +19157,7 @@ void register_MyUnion_type_identifier()
                                     return;
                                 }
                             }
-                            TypeIdentifier* element_identifier;
+                            TypeIdentifier* element_identifier {nullptr};
                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -19139,6 +19194,7 @@ void register_MyUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Array element TypeIdentifier inconsistent.");
+                                return;
                             }
                             EquivalenceKind equiv_kind = EK_COMPLETE;
                             if (TK_NONE == type_ids.type_identifier2()._d())
@@ -21961,7 +22017,7 @@ void register_CompleteStruct_type_identifier()
                                                     "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                                             return;
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -21998,6 +22054,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "Sequence element TypeIdentifier inconsistent.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_COMPLETE;
                                         if (TK_NONE == type_ids.type_identifier2()._d())
@@ -22950,7 +23007,7 @@ void register_CompleteStruct_type_identifier()
                                                 }
                                             }
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -22987,6 +23044,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "Sequence element TypeIdentifier inconsistent.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_COMPLETE;
                                         if (TK_NONE == type_ids.type_identifier2()._d())
@@ -23096,7 +23154,7 @@ void register_CompleteStruct_type_identifier()
                                                     "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                                             return;
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -23133,6 +23191,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "Array element TypeIdentifier inconsistent.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_COMPLETE;
                                         if (TK_NONE == type_ids.type_identifier2()._d())
@@ -23267,7 +23326,7 @@ void register_CompleteStruct_type_identifier()
                                                         "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                                                 return;
                                             }
-                                            TypeIdentifier* element_identifier;
+                                            TypeIdentifier* element_identifier {nullptr};
                                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -23304,6 +23363,7 @@ void register_CompleteStruct_type_identifier()
                                             {
                                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "Array element TypeIdentifier inconsistent.");
+                                                return;
                                             }
                                             EquivalenceKind equiv_kind = EK_COMPLETE;
                                             if (TK_NONE == type_ids.type_identifier2()._d())
@@ -24319,7 +24379,7 @@ void register_CompleteStruct_type_identifier()
                                                 }
                                             }
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -24356,6 +24416,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "Array element TypeIdentifier inconsistent.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_COMPLETE;
                                         if (TK_NONE == type_ids.type_identifier2()._d())
@@ -24469,7 +24530,7 @@ void register_CompleteStruct_type_identifier()
                                                     "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                                             return;
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -24506,6 +24567,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "anonymous_map_uint8_t_int16_t_unbounded inconsistent element TypeIdentifier.");
+                                            return;
                                         }
                                         return_code =
                                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -24517,7 +24579,7 @@ void register_CompleteStruct_type_identifier()
                                                     "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                                             return;
                                         }
-                                        TypeIdentifier* key_identifier;
+                                        TypeIdentifier* key_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -24554,6 +24616,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "anonymous_map_uint8_t_int16_t_unbounded inconsistent key TypeIdentifier.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_BOTH;
                                         if (EK_COMPLETE == element_identifier->_d() ||
@@ -25516,7 +25579,7 @@ void register_CompleteStruct_type_identifier()
                                                 }
                                             }
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -25553,6 +25616,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "anonymous_map_int32_t_BasicStruct_unbounded inconsistent element TypeIdentifier.");
+                                            return;
                                         }
                                         return_code =
                                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -25564,7 +25628,7 @@ void register_CompleteStruct_type_identifier()
                                                     "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                                             return;
                                         }
-                                        TypeIdentifier* key_identifier;
+                                        TypeIdentifier* key_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -25601,6 +25665,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "anonymous_map_int32_t_BasicStruct_unbounded inconsistent key TypeIdentifier.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_BOTH;
                                         if (EK_COMPLETE == element_identifier->_d() ||
@@ -25732,7 +25797,7 @@ void register_CompleteStruct_type_identifier()
                                                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                                                     return;
                                                 }
-                                                TypeIdentifier* element_identifier;
+                                                TypeIdentifier* element_identifier {nullptr};
                                                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -25769,6 +25834,7 @@ void register_CompleteStruct_type_identifier()
                                                 {
                                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                         "Sequence element TypeIdentifier inconsistent.");
+                                                    return;
                                                 }
                                                 EquivalenceKind equiv_kind = EK_COMPLETE;
                                                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -25812,7 +25878,7 @@ void register_CompleteStruct_type_identifier()
                                                     return;
                                                 }
                                             }
-                                            TypeIdentifier* element_identifier;
+                                            TypeIdentifier* element_identifier {nullptr};
                                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -25849,6 +25915,7 @@ void register_CompleteStruct_type_identifier()
                                             {
                                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "Sequence element TypeIdentifier inconsistent.");
+                                                return;
                                             }
                                             EquivalenceKind equiv_kind = EK_COMPLETE;
                                             if (TK_NONE == type_ids.type_identifier2()._d())
@@ -25892,7 +25959,7 @@ void register_CompleteStruct_type_identifier()
                                                 return;
                                             }
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -25929,6 +25996,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "anonymous_map_int32_t_anonymous_sequence_anonymous_sequence_uint8_t_unbounded_unbounded_unbounded inconsistent element TypeIdentifier.");
+                                            return;
                                         }
                                         return_code =
                                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -25940,7 +26008,7 @@ void register_CompleteStruct_type_identifier()
                                                     "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                                             return;
                                         }
-                                        TypeIdentifier* key_identifier;
+                                        TypeIdentifier* key_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -25977,6 +26045,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "anonymous_map_int32_t_anonymous_sequence_anonymous_sequence_uint8_t_unbounded_unbounded_unbounded inconsistent key TypeIdentifier.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_BOTH;
                                         if (EK_COMPLETE == element_identifier->_d() ||
@@ -26115,7 +26184,7 @@ void register_CompleteStruct_type_identifier()
                                                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                                                     return;
                                                 }
-                                                TypeIdentifier* element_identifier;
+                                                TypeIdentifier* element_identifier {nullptr};
                                                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -26152,6 +26221,7 @@ void register_CompleteStruct_type_identifier()
                                                 {
                                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                         "Array element TypeIdentifier inconsistent.");
+                                                    return;
                                                 }
                                                 EquivalenceKind equiv_kind = EK_COMPLETE;
                                                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -26258,7 +26328,7 @@ void register_CompleteStruct_type_identifier()
                                                 return;
                                             }
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -26295,6 +26365,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "anonymous_map_int32_t_anonymous_array_uint8_t_500_unbounded inconsistent element TypeIdentifier.");
+                                            return;
                                         }
                                         return_code =
                                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -26306,7 +26377,7 @@ void register_CompleteStruct_type_identifier()
                                                     "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                                             return;
                                         }
-                                        TypeIdentifier* key_identifier;
+                                        TypeIdentifier* key_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -26343,6 +26414,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "anonymous_map_int32_t_anonymous_array_uint8_t_500_unbounded inconsistent key TypeIdentifier.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_BOTH;
                                         if (EK_COMPLETE == element_identifier->_d() ||
@@ -27330,7 +27402,7 @@ void register_CompleteStruct_type_identifier()
                                                             }
                                                         }
                                                     }
-                                                    TypeIdentifier* element_identifier;
+                                                    TypeIdentifier* element_identifier {nullptr};
                                                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -27367,6 +27439,7 @@ void register_CompleteStruct_type_identifier()
                                                     {
                                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                             "Array element TypeIdentifier inconsistent.");
+                                                        return;
                                                     }
                                                     EquivalenceKind equiv_kind = EK_COMPLETE;
                                                     if (TK_NONE == type_ids.type_identifier2()._d())
@@ -27473,7 +27546,7 @@ void register_CompleteStruct_type_identifier()
                                                     return;
                                                 }
                                             }
-                                            TypeIdentifier* element_identifier;
+                                            TypeIdentifier* element_identifier {nullptr};
                                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -27510,6 +27583,7 @@ void register_CompleteStruct_type_identifier()
                                             {
                                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "anonymous_map_uint8_t_anonymous_array_BasicStruct_5_unbounded inconsistent element TypeIdentifier.");
+                                                return;
                                             }
                                             return_code =
                                                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -27521,7 +27595,7 @@ void register_CompleteStruct_type_identifier()
                                                         "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                                                 return;
                                             }
-                                            TypeIdentifier* key_identifier;
+                                            TypeIdentifier* key_identifier {nullptr};
                                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -27558,6 +27632,7 @@ void register_CompleteStruct_type_identifier()
                                             {
                                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "anonymous_map_uint8_t_anonymous_array_BasicStruct_5_unbounded inconsistent key TypeIdentifier.");
+                                                return;
                                             }
                                             EquivalenceKind equiv_kind = EK_BOTH;
                                             if (EK_COMPLETE == element_identifier->_d() ||
@@ -27611,7 +27686,7 @@ void register_CompleteStruct_type_identifier()
                                                 return;
                                             }
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -27648,6 +27723,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "anonymous_map_int32_t_anonymous_map_uint8_t_anonymous_array_BasicStruct_5_unbounded_unbounded inconsistent element TypeIdentifier.");
+                                            return;
                                         }
                                         return_code =
                                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -27659,7 +27735,7 @@ void register_CompleteStruct_type_identifier()
                                                     "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                                             return;
                                         }
-                                        TypeIdentifier* key_identifier;
+                                        TypeIdentifier* key_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -27696,6 +27772,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "anonymous_map_int32_t_anonymous_map_uint8_t_anonymous_array_BasicStruct_5_unbounded_unbounded inconsistent key TypeIdentifier.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_BOTH;
                                         if (EK_COMPLETE == element_identifier->_d() ||
@@ -28046,7 +28123,7 @@ void register_CompleteStruct_type_identifier()
                                                 return;
                                             }
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -28083,6 +28160,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "Array element TypeIdentifier inconsistent.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_COMPLETE;
                                         if (TK_NONE == type_ids.type_identifier2()._d())
@@ -28489,7 +28567,7 @@ void register_CompleteStruct_type_identifier()
                                                     return;
                                                 }
                                             }
-                                            TypeIdentifier* element_identifier;
+                                            TypeIdentifier* element_identifier {nullptr};
                                             if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                     EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -28526,6 +28604,7 @@ void register_CompleteStruct_type_identifier()
                                             {
                                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "Array element TypeIdentifier inconsistent.");
+                                                return;
                                             }
                                             EquivalenceKind equiv_kind = EK_COMPLETE;
                                             if (TK_NONE == type_ids.type_identifier2()._d())
@@ -28717,7 +28796,7 @@ void register_CompleteStruct_type_identifier()
                                                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                                                     return;
                                                 }
-                                                TypeIdentifier* element_identifier;
+                                                TypeIdentifier* element_identifier {nullptr};
                                                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -28754,6 +28833,7 @@ void register_CompleteStruct_type_identifier()
                                                 {
                                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                         "Array element TypeIdentifier inconsistent.");
+                                                    return;
                                                 }
                                                 EquivalenceKind equiv_kind = EK_COMPLETE;
                                                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -28860,7 +28940,7 @@ void register_CompleteStruct_type_identifier()
                                                 return;
                                             }
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -28897,6 +28977,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "Array element TypeIdentifier inconsistent.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_COMPLETE;
                                         if (TK_NONE == type_ids.type_identifier2()._d())
@@ -29029,7 +29110,7 @@ void register_CompleteStruct_type_identifier()
                                                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                                                     return;
                                                 }
-                                                TypeIdentifier* element_identifier;
+                                                TypeIdentifier* element_identifier {nullptr};
                                                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -29066,6 +29147,7 @@ void register_CompleteStruct_type_identifier()
                                                 {
                                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                         "Sequence element TypeIdentifier inconsistent.");
+                                                    return;
                                                 }
                                                 EquivalenceKind equiv_kind = EK_COMPLETE;
                                                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -29168,7 +29250,7 @@ void register_CompleteStruct_type_identifier()
                                                 return;
                                             }
                                         }
-                                        TypeIdentifier* element_identifier;
+                                        TypeIdentifier* element_identifier {nullptr};
                                         if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -29205,6 +29287,7 @@ void register_CompleteStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "Array element TypeIdentifier inconsistent.");
+                                            return;
                                         }
                                         EquivalenceKind equiv_kind = EK_COMPLETE;
                                         if (TK_NONE == type_ids.type_identifier2()._d())

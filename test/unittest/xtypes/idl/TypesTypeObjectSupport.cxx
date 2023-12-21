@@ -29,9 +29,11 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
+#include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
-#include <fastdds/dds/xtypes/type_representation/TypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
+
+#include "Types.hpp"
 
 
 using namespace eprosima::fastdds::dds::xtypes;
@@ -2762,7 +2764,7 @@ void register_ArrayStruct_type_identifier()
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -2799,6 +2801,7 @@ void register_ArrayStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -2944,7 +2947,7 @@ void register_ArrayStructEqual_type_identifier()
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -2981,6 +2984,7 @@ void register_ArrayStructEqual_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -3126,7 +3130,7 @@ void register_ArrayBadStruct_type_identifier()
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -3163,6 +3167,7 @@ void register_ArrayBadStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -3308,7 +3313,7 @@ void register_ArrayDimensionsStruct_type_identifier()
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -3345,6 +3350,7 @@ void register_ArrayDimensionsStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -3494,7 +3500,7 @@ void register_ArraySizeStruct_type_identifier()
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -3531,6 +3537,7 @@ void register_ArraySizeStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -3676,7 +3683,7 @@ void register_SequenceStruct_type_identifier()
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -3713,6 +3720,7 @@ void register_SequenceStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -3854,7 +3862,7 @@ void register_SequenceStructEqual_type_identifier()
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -3891,6 +3899,7 @@ void register_SequenceStructEqual_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -4032,7 +4041,7 @@ void register_SequenceBadStruct_type_identifier()
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -4069,6 +4078,7 @@ void register_SequenceBadStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -4210,7 +4220,7 @@ void register_SequenceBoundsStruct_type_identifier()
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -4247,6 +4257,7 @@ void register_SequenceBoundsStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -4394,7 +4405,7 @@ void register_SequenceSequenceStruct_type_identifier()
                                 "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
-                    TypeIdentifier* element_identifier;
+                    TypeIdentifier* element_identifier {nullptr};
                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -4431,6 +4442,7 @@ void register_SequenceSequenceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier inconsistent.");
+                        return;
                     }
                     EquivalenceKind equiv_kind = EK_COMPLETE;
                     if (TK_NONE == type_ids.type_identifier2()._d())
@@ -4474,7 +4486,7 @@ void register_SequenceSequenceStruct_type_identifier()
                         return;
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -4511,6 +4523,7 @@ void register_SequenceSequenceStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -4658,7 +4671,7 @@ void register_SequenceSequenceBoundsStruct_type_identifier()
                                 "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
-                    TypeIdentifier* element_identifier;
+                    TypeIdentifier* element_identifier {nullptr};
                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -4695,6 +4708,7 @@ void register_SequenceSequenceBoundsStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier inconsistent.");
+                        return;
                     }
                     EquivalenceKind equiv_kind = EK_COMPLETE;
                     if (TK_NONE == type_ids.type_identifier2()._d())
@@ -4738,7 +4752,7 @@ void register_SequenceSequenceBoundsStruct_type_identifier()
                         return;
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -4775,6 +4789,7 @@ void register_SequenceSequenceBoundsStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_COMPLETE;
                 if (TK_NONE == type_ids.type_identifier2()._d())
@@ -4916,7 +4931,7 @@ void register_MapStruct_type_identifier()
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -4953,6 +4968,7 @@ void register_MapStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_int32_t_2 inconsistent element TypeIdentifier.");
+                    return;
                 }
                 return_code =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -4964,7 +4980,7 @@ void register_MapStruct_type_identifier()
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* key_identifier;
+                TypeIdentifier* key_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5001,6 +5017,7 @@ void register_MapStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_int32_t_2 inconsistent key TypeIdentifier.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_BOTH;
                 if (EK_COMPLETE == element_identifier->_d() ||
@@ -5152,7 +5169,7 @@ void register_MapStructEqual_type_identifier()
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5189,6 +5206,7 @@ void register_MapStructEqual_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_int32_t_2 inconsistent element TypeIdentifier.");
+                    return;
                 }
                 return_code =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -5200,7 +5218,7 @@ void register_MapStructEqual_type_identifier()
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* key_identifier;
+                TypeIdentifier* key_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5237,6 +5255,7 @@ void register_MapStructEqual_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_int32_t_2 inconsistent key TypeIdentifier.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_BOTH;
                 if (EK_COMPLETE == element_identifier->_d() ||
@@ -5388,7 +5407,7 @@ void register_MapBadKeyStruct_type_identifier()
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5425,6 +5444,7 @@ void register_MapBadKeyStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_uint8_t_int32_t_2 inconsistent element TypeIdentifier.");
+                    return;
                 }
                 return_code =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -5436,7 +5456,7 @@ void register_MapBadKeyStruct_type_identifier()
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* key_identifier;
+                TypeIdentifier* key_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5473,6 +5493,7 @@ void register_MapBadKeyStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_uint8_t_int32_t_2 inconsistent key TypeIdentifier.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_BOTH;
                 if (EK_COMPLETE == element_identifier->_d() ||
@@ -5624,7 +5645,7 @@ void register_MapBadElemStruct_type_identifier()
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5661,6 +5682,7 @@ void register_MapBadElemStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_int64_t_2 inconsistent element TypeIdentifier.");
+                    return;
                 }
                 return_code =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -5672,7 +5694,7 @@ void register_MapBadElemStruct_type_identifier()
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* key_identifier;
+                TypeIdentifier* key_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5709,6 +5731,7 @@ void register_MapBadElemStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_int64_t_2 inconsistent key TypeIdentifier.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_BOTH;
                 if (EK_COMPLETE == element_identifier->_d() ||
@@ -5860,7 +5883,7 @@ void register_MapBoundsStruct_type_identifier()
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5897,6 +5920,7 @@ void register_MapBoundsStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_int32_t_4 inconsistent element TypeIdentifier.");
+                    return;
                 }
                 return_code =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -5908,7 +5932,7 @@ void register_MapBoundsStruct_type_identifier()
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* key_identifier;
+                TypeIdentifier* key_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5945,6 +5969,7 @@ void register_MapBoundsStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_int32_t_4 inconsistent key TypeIdentifier.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_BOTH;
                 if (EK_COMPLETE == element_identifier->_d() ||
@@ -6102,7 +6127,7 @@ void register_MapMapStruct_type_identifier()
                                 "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
-                    TypeIdentifier* element_identifier;
+                    TypeIdentifier* element_identifier {nullptr};
                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6139,6 +6164,7 @@ void register_MapMapStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_map_int32_t_int32_t_2 inconsistent element TypeIdentifier.");
+                        return;
                     }
                     return_code =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6150,7 +6176,7 @@ void register_MapMapStruct_type_identifier()
                                 "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
-                    TypeIdentifier* key_identifier;
+                    TypeIdentifier* key_identifier {nullptr};
                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6187,6 +6213,7 @@ void register_MapMapStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_map_int32_t_int32_t_2 inconsistent key TypeIdentifier.");
+                        return;
                     }
                     EquivalenceKind equiv_kind = EK_BOTH;
                     if (EK_COMPLETE == element_identifier->_d() ||
@@ -6240,7 +6267,7 @@ void register_MapMapStruct_type_identifier()
                         return;
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6277,6 +6304,7 @@ void register_MapMapStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2 inconsistent element TypeIdentifier.");
+                    return;
                 }
                 return_code =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6288,7 +6316,7 @@ void register_MapMapStruct_type_identifier()
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* key_identifier;
+                TypeIdentifier* key_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6325,6 +6353,7 @@ void register_MapMapStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2 inconsistent key TypeIdentifier.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_BOTH;
                 if (EK_COMPLETE == element_identifier->_d() ||
@@ -6482,7 +6511,7 @@ void register_MapMapBoundsStruct_type_identifier()
                                 "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
-                    TypeIdentifier* element_identifier;
+                    TypeIdentifier* element_identifier {nullptr};
                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6519,6 +6548,7 @@ void register_MapMapBoundsStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_map_int32_t_int32_t_3 inconsistent element TypeIdentifier.");
+                        return;
                     }
                     return_code =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6530,7 +6560,7 @@ void register_MapMapBoundsStruct_type_identifier()
                                 "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
-                    TypeIdentifier* key_identifier;
+                    TypeIdentifier* key_identifier {nullptr};
                     if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                             (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                             EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6567,6 +6597,7 @@ void register_MapMapBoundsStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_map_int32_t_int32_t_3 inconsistent key TypeIdentifier.");
+                        return;
                     }
                     EquivalenceKind equiv_kind = EK_BOTH;
                     if (EK_COMPLETE == element_identifier->_d() ||
@@ -6620,7 +6651,7 @@ void register_MapMapBoundsStruct_type_identifier()
                         return;
                     }
                 }
-                TypeIdentifier* element_identifier;
+                TypeIdentifier* element_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6657,6 +6688,7 @@ void register_MapMapBoundsStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3 inconsistent element TypeIdentifier.");
+                    return;
                 }
                 return_code =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6668,7 +6700,7 @@ void register_MapMapBoundsStruct_type_identifier()
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* key_identifier;
+                TypeIdentifier* key_identifier {nullptr};
                 if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
                         (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6705,6 +6737,7 @@ void register_MapMapBoundsStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3 inconsistent key TypeIdentifier.");
+                    return;
                 }
                 EquivalenceKind equiv_kind = EK_BOTH;
                 if (EK_COMPLETE == element_identifier->_d() ||

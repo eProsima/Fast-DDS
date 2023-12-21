@@ -27,7 +27,7 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
-#include "HelloWorldTypeObject.h"
+#include "HelloWorldTypeObjectSupport.hpp"
 
 using namespace eprosima::fastdds::dds;
 
