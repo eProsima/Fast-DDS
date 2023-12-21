@@ -673,11 +673,17 @@ bool load_environment_server_info(
         return true;
     }
 
-    /* Parsing ancillary regex */
-    // Address should be <letter,numbers,dots>:<number>. We do not need to verify that the first part
-    // is an IPv4 address, as it is done latter.
-    const std::regex ROS2_ADDRESS_PATTERN(R"(^([A-Za-z0-9-.]+)?:?(?:(\d+))?$)");
-    const std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
+    /* Parsing ancillary regex
+     * Addresses should be ; separated. IPLocator functions are used to identify them in the order:
+     * IPv4 or try dns resolution.
+     **/
+    const static std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
+    const static std::regex ROS2_IPV4_ADDRESSPORT_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
+    // Regex to handle DNS and UDPv4/6 expressions
+    const static std::regex ROS2_DNS_DOMAINPORT_PATTERN(R"(^(UDPv[4]?:\[[\w\.-]{0,63}\]|[\w\.-]{0,63}):?(?:(\d+))?$)");
+    // Regex to handle TCPv4/6 expressions
+    const static std::regex ROS2_DNS_DOMAINPORT_PATTERN_TCP(
+        R"(^(TCPv[4]?:\[[\w\.-]{0,63}\]):?(?:(\d+))?$)");
 
     try
     {
@@ -701,26 +707,18 @@ bool load_environment_server_info(
                 // now we must parse the inner expression
                 std::smatch mr;
                 std::string locator(sm);
-                if (std::regex_match(locator, mr, ROS2_ADDRESS_PATTERN, std::regex_constants::match_not_null))
+                // Try first with IPv4
+                if (std::regex_match(locator, mr, ROS2_IPV4_ADDRESSPORT_PATTERN, std::regex_constants::match_not_null))
                 {
                     std::smatch::iterator it = mr.cbegin();
 
                     while (++it != mr.cend())
                     {
                         std::string address = it->str();
+                        server_locator.kind = LOCATOR_KIND_UDPv4;
+                        server_locator.set_Invalid_Address();
 
                         // Check whether the address is IPv4
-                        if (!IPLocator::isIPv4(address))
-                        {
-                            auto response = rtps::IPLocator::resolveNameDNS(address);
-
-                            // Add the first valid IPv4 address that we can find
-                            if (response.first.size() > 0)
-                            {
-                                address = response.first.begin()->data();
-                            }
-                        }
-
                         if (!IPLocator::setIPv4(server_locator, address))
                         {
                             std::stringstream ss;
@@ -754,6 +752,198 @@ bool load_environment_server_info(
                                     std::stringstream ss;
                                     ss << "Wrong udp port passed into the server's list " << it->str();
                                     throw std::invalid_argument(ss.str());
+                                }
+                            }
+                        }
+                    }
+
+                    // add the server to the list
+                    if (!get_server_client_default_guidPrefix(server_id, server_att.guidPrefix))
+                    {
+                        throw std::invalid_argument("The maximum number of default discovery servers has been reached");
+                    }
+
+                    server_att.metatrafficUnicastLocatorList.clear();
+                    server_att.metatrafficUnicastLocatorList.push_back(server_locator);
+                    attributes.push_back(server_att);
+                }
+                else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN,
+                        std::regex_constants::match_not_null))
+                {
+                    {
+                        std::stringstream new_locator(locator,
+                                std::ios_base::in |
+                                std::ios_base::out |
+                                std::ios_base::ate);
+
+                        // first try the formal notation, add default port if necessary
+                        if (!mr[2].matched)
+                        {
+                            new_locator << ":" << DEFAULT_ROS2_SERVER_PORT;
+                        }
+
+                        new_locator >> server_locator;
+                    }
+
+                    // Otherwise add all resolved locators
+                    switch ( server_locator.kind )
+                    {
+                        case LOCATOR_KIND_UDPv4:
+                            break;
+                        case LOCATOR_KIND_INVALID:
+                        {
+                            std::smatch::iterator it = mr.cbegin();
+
+                            while (++it != mr.cend())
+                            {
+                                std::string address = it->str();
+                                server_locator.kind = LOCATOR_KIND_UDPv4;
+                                server_locator.set_Invalid_Address();
+
+                                // Check whether the address is IPv4
+                                if (!IPLocator::isIPv4(address))
+                                {
+                                    auto response = rtps::IPLocator::resolveNameDNS(address);
+
+                                    // Add the first valid IPv4 address that we can find
+                                    if (response.first.size() > 0)
+                                    {
+                                        address = response.first.begin()->data();
+                                    }
+                                }
+
+                                if (!IPLocator::setIPv4(server_locator, address))
+                                {
+                                    std::stringstream ss;
+                                    ss << "Wrong ipv4 address passed into the server's list " << address;
+                                    throw std::invalid_argument(ss.str());
+                                }
+
+                                if (IPLocator::isAny(server_locator))
+                                {
+                                    // A server cannot be reach in all interfaces, it's clearly a localhost call
+                                    IPLocator::setIPv4(server_locator, "127.0.0.1");
+                                }
+
+                                if (++it != mr.cend())
+                                {
+                                    // reset the locator to default
+                                    IPLocator::setPhysicalPort(server_locator, DEFAULT_ROS2_SERVER_PORT);
+
+                                    if (it->matched)
+                                    {
+                                        // note stoi throws also an invalid_argument
+                                        int port = stoi(it->str());
+
+                                        if (port > std::numeric_limits<uint16_t>::max())
+                                        {
+                                            throw std::out_of_range("Too large udp port passed into the server's list");
+                                        }
+
+                                        if (!IPLocator::setPhysicalPort(server_locator, static_cast<uint16_t>(port)))
+                                        {
+                                            std::stringstream ss;
+                                            ss << "Wrong udp port passed into the server's list " << it->str();
+                                            throw std::invalid_argument(ss.str());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // add the server to the list
+                    if (!get_server_client_default_guidPrefix(server_id, server_att.guidPrefix))
+                    {
+                        throw std::invalid_argument("The maximum number of default discovery servers has been reached");
+                    }
+
+                    server_att.metatrafficUnicastLocatorList.clear();
+                    server_att.metatrafficUnicastLocatorList.push_back(server_locator);
+                    attributes.push_back(server_att);
+                }
+                // try resolve TCP DNS
+                else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN_TCP,
+                        std::regex_constants::match_not_null))
+                {
+                    {
+                        std::stringstream new_locator(locator,
+                                std::ios_base::in |
+                                std::ios_base::out |
+                                std::ios_base::ate);
+
+                        // first try the formal notation, add default port if necessary
+                        if (!mr[2].matched)
+                        {
+                            new_locator << ":" << DEFAULT_TCP_SERVER_PORT;
+                        }
+
+                        new_locator >> server_locator;
+                    }
+
+                    // Otherwise add all resolved locators
+                    switch ( server_locator.kind )
+                    {
+                        case LOCATOR_KIND_TCPv4:
+                            IPLocator::setLogicalPort(server_locator, static_cast<uint16_t>(server_locator.port));
+                            break;
+                        case LOCATOR_KIND_INVALID:
+                        {
+                            std::smatch::iterator it = mr.cbegin();
+                            server_locator.kind = LOCATOR_KIND_TCPv4;
+                            server_locator.set_Invalid_Address();
+
+                            while (++it != mr.cend())
+                            {
+                                std::string address = it->str();
+
+                                // Check whether the address is IPv4
+                                if (!IPLocator::isIPv4(address))
+                                {
+                                    auto response = rtps::IPLocator::resolveNameDNS(address);
+
+                                    // Add the first valid IPv4 address that we can find
+                                    if (response.first.size() > 0)
+                                    {
+                                        address = response.first.begin()->data();
+                                    }
+                                }
+
+                                if (!IPLocator::setIPv4(server_locator, address))
+                                {
+                                    std::stringstream ss;
+                                    ss << "Wrong ipv4 address passed into the server's list " << address;
+                                    throw std::invalid_argument(ss.str());
+                                }
+
+                                if (IPLocator::isAny(server_locator))
+                                {
+                                    // A server cannot be reach in all interfaces, it's clearly a localhost call
+                                    IPLocator::setIPv4(server_locator, "127.0.0.1");
+                                }
+
+                                if (++it != mr.cend())
+                                {
+                                    // reset the locator to default
+                                    IPLocator::setPhysicalPort(server_locator, DEFAULT_ROS2_SERVER_PORT);
+
+                                    if (it->matched)
+                                    {
+                                        // note stoi throws also an invalid_argument
+                                        int port = stoi(it->str());
+
+                                        if (port > std::numeric_limits<uint16_t>::max())
+                                        {
+                                            throw std::out_of_range("Too large udp port passed into the server's list");
+                                        }
+
+                                        if (!IPLocator::setPhysicalPort(server_locator, static_cast<uint16_t>(port)))
+                                        {
+                                            std::stringstream ss;
+                                            ss << "Wrong udp port passed into the server's list " << it->str();
+                                            throw std::invalid_argument(ss.str());
+                                        }
+                                    }
                                 }
                             }
                         }

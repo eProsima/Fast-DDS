@@ -31,8 +31,8 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <rtps/transport/UDPv4Transport.h>
-#include <rtps/transport/UDPv6Transport.h>
 #include <rtps/transport/test_UDPv4Transport.h>
+#include <rtps/transport/TCPv4Transport.h>
 
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -463,17 +463,58 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     RTPSParticipantAttributes client_att(att);
 
     // Retrieve the info from the environment variable
-    // TODO(jlbueno) This should be protected with the PDP mutex.
+    RemoteServerList_t& server_list = client_att.builtin.discovery_config.m_DiscoveryServers;
     if (load_environment_server_info(client_att.builtin.discovery_config.m_DiscoveryServers) &&
             client_att.builtin.discovery_config.m_DiscoveryServers.empty())
     {
-        // it's not an error, the environment variable may not be set. Any issue with environment
-        // variable syntax is logError already
+        // It's not an error, the environment variable may not be set. Any issue with environment
+        // variable syntax is reported with a logError
         return nullptr;
     }
 
+    // Check if some server requires the TCPv4 transport
+    for (auto& server : server_list)
+    {
+        if (server.requires_transport<LOCATOR_KIND_TCPv4>())
+        {
+            // Check if a TCPv4 transport exists. Otherwise create it
+            fastdds::rtps::TCPTransportDescriptor* pT = nullptr;
+            std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> p4;
+            bool no_tcpv4 = true;
+
+            for (auto sp : client_att.userTransports)
+            {
+                pT = dynamic_cast<fastdds::rtps::TCPTransportDescriptor*>(sp.get());
+
+                if (pT != nullptr)
+                {
+                    if (!p4)
+                    {
+                        if ((p4 = std::dynamic_pointer_cast<fastdds::rtps::TCPv4TransportDescriptor>(sp)))
+                        {
+                            // TCPv4 transport already exists
+                            no_tcpv4 = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (no_tcpv4)
+            {
+                // Extend builtin transports with the TCPv4 transport
+                auto descriptor = std::make_shared<fastdds::rtps::TCPv4TransportDescriptor>();
+                // Add automatic port
+                descriptor->add_listener_port(0);
+                descriptor->sendBufferSize = client_att.sendSocketBufferSize;
+                descriptor->receiveBufferSize = client_att.listenSocketBufferSize;
+                client_att.userTransports.push_back(std::move(descriptor));
+            }
+
+        }
+    }
+
     logInfo(DOMAIN, "Detected auto client-server environment variable."
-            "Trying to create client with the default server setup.");
+            << "Trying to create client with the default server setup");
 
     client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
     // RemoteServerAttributes already fill in above
