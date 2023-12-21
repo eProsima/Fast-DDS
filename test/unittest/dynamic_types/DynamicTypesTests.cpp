@@ -35,23 +35,10 @@
 #include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
-#include <fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactoryImpl.hpp>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/DynamicTypePtr.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "idl/BasicPubSubTypes.h"
-#include "idl/BasicTypeObjectSupport.hpp"
+#include "idl/BasicTypeObject.h"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -59,116 +46,29 @@ using namespace eprosima::fastdds::dds;
 
 using eprosima::fastrtps::types::TypeKind;
 
-// Testing reference counting utils
-
-class dummy
-    : public eprosima::detail::external_reference_counting<dummy>
-{
-public:
-
-    using base = eprosima::detail::external_reference_counting<dummy>;
-
-    using base::use_count;
-    using base::add_ref;
-    using base::release;
-};
-
-TEST(DynamicTypesUtilsTests, basic_reference_counting)
-{
-    const int N = 1000l;
-    auto sp = std::make_shared<dummy>();
-    dummy& a = *sp;
-
-    auto ar = [N, &a]()
-            {
-                for (int i = 0; i < N; ++i)
-                {
-                    a.add_ref();
-                }
-            };
-
-    auto rl = [N, &a]()
-            {
-                for (int i = 0; i < N; ++i)
-                {
-                    a.release();
-                }
-            };
-
-    ASSERT_EQ(a.use_count(), 0l);
-    ASSERT_EQ(sp.use_count(), 1l);
-    ar();
-    ASSERT_EQ(a.use_count(), N);
-    ASSERT_EQ(sp.use_count(), 2l);
-    rl();
-    ASSERT_EQ(a.use_count(), 0l);
-    ASSERT_EQ(sp.use_count(), 1l);
-}
-
-TEST(DynamicTypesUtilsTests, concurrent_reference_counting)
-{
-    const int N = 1000;
-    auto sp = std::make_shared<dummy>();
-    dummy& a = *sp;
-
-    ASSERT_EQ(a.use_count(), 0l);
-    ASSERT_EQ(sp.use_count(), 1l);
-
-    auto loop = [N, &a]()
-            {
-                for (int i = 0; i < N; ++i)
-                {
-                    // spin to assure overlap
-                    while (a.use_count() > 3)
-                    {
-                    }
-
-                    a.add_ref();
-                    a.release();
-                }
-            };
-
-    // Now let's test with multiple threads
-    std::thread pool[N];
-
-    for (int i = 0; i < N; ++i)
-    {
-        pool[i] = std::thread{ loop };
-    }
-
-    for (int i = 0; i < N; ++i)
-    {
-        pool[i].join();
-    }
-
-    ASSERT_EQ(a.use_count(), 0l);
-    ASSERT_EQ(sp.use_count(), 1l);
-}
-
-// common types
-using eprosima::fastrtps::types::TypeIdentifier;
-
 // Ancillary gtest formatters
 
-void PrintTo(
+/*TODO(richiware)
+   void PrintTo(
         const MemberDescriptor& md,
         std::ostream* os)
-{
+   {
     if (os)
     {
-        *os << md;
+ * os << md;
     }
-}
+   }
 
-void PrintTo(
+   void PrintTo(
         const TypeDescriptor& md,
         std::ostream* os)
-{
+   {
     if (os)
     {
-        *os << md;
+ * os << md;
     }
-}
+   }
+ */
 
 using primitive_builder_api = const DynamicTypeBuilder * (DynamicTypeBuilderFactory::* )();
 using primitive_type_api = const DynamicType * (DynamicTypeBuilderFactory::* )();
@@ -176,213 +76,108 @@ using primitive_type_api = const DynamicType * (DynamicTypeBuilderFactory::* )()
 // Testing the primitive creation APIS
 // and get_primitive_type() and create_primitive_type()
 class DynamicTypesPrimitiveTestsAPIs
-    : public testing::TestWithParam<std::tuple<TypeKind, primitive_builder_api, primitive_type_api>>
+    : public testing::TestWithParam <TypeKind>
 {
 };
 
 TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
 {
     // Get the factory singleton
-    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-    bool track_active = selected_mode > type_tracking::none;
+    traits<DynamicTypeBuilderFactory>::ref_type factory = DynamicTypeBuilderFactory::get_instance();
 
     // Retrieve parameters
-    TypeKind kind;
-    primitive_builder_api bapi;
-    primitive_type_api tapi;
-    std::tie(kind, bapi, tapi) = GetParam();
+    TypeKind kind {GetParam()};
 
     // Create the primitive builder,
     // note that create_xxx_type rely on create_primitive_type<TK_xxxx>()
-    std::unique_ptr<const DynamicTypeBuilder> builder1 {(factory.*bapi)()};
-    ASSERT_TRUE(builder1);
-
-    // It must be the right builder
-    EXPECT_EQ(builder1->get_kind(), kind);
-
-    // It must be consistent
-    EXPECT_TRUE(builder1->is_consistent());
-
-    // The primitive builder is statically allocated and must always be the same instance
-    std::unique_ptr<const DynamicTypeBuilder> builder2 { (factory.*bapi)()};
-    ASSERT_TRUE(builder2);
-    EXPECT_EQ(builder1, builder2);
-
-    // It must match the one created by the generic api
-    std::unique_ptr<const DynamicTypeBuilder> builder3 { factory.create_primitive_type(kind)};
-    ASSERT_TRUE(builder3);
-    EXPECT_EQ(builder1, builder3);
-
-    // The builder must be able to generate the associated type
-    std::unique_ptr<const DynamicType> type1 {builder1->build()};
+    traits<DynamicType>::ref_type type1 {factory->get_primitive_type(kind)};
     ASSERT_TRUE(type1);
 
-    // It must be the right type
-    EXPECT_EQ(type1->get_kind(), kind);
+    // It must be the right builder
+    ASSERT_EQ(type1->get_kind(), kind);
 
-    // It must share the same state with the builder
-    EXPECT_TRUE(*type1 == *builder1->build());
-    EXPECT_TRUE(builder1->build()->equals(*type1));
-
-    // It must return always the same type instance
-    //TODO(richiware) EXPECT_EQ(type1, builder1->build());
-    //TODO(richiware) EXPECT_EQ(type1, builder2->build());
-    //TODO(richiware) EXPECT_EQ(type1, builder3->build());
-
-    // The primitives types can be retrieved directly from the factory
-    std::unique_ptr<const DynamicType> type2 {factory.get_primitive_type(kind)};
+    // The primitive builder is statically allocated and must always be the same instance
+    traits<DynamicType>::ref_type type2 {factory->get_primitive_type(kind)};
     ASSERT_TRUE(type2);
-
-    // and must be the very same instance
-    EXPECT_EQ(type1, type2);
-
-    // It must match the ones return by the factory primitive api calls
-    std::unique_ptr<const DynamicType> type3 { (factory.*tapi)()};
-    ASSERT_TRUE(type3);
-    EXPECT_EQ(type1, type3);
-    EXPECT_EQ(type2, type3);
-
-    // All the instances are static, not dynamic ones should have been allocated
-    EXPECT_TRUE(factory.is_empty());
+    ASSERT_EQ(type1, type2);
+    ASSERT_TRUE(type1->equals(type2));
 
     // It must be possible to create a custom builder from a primitive one
-    std::unique_ptr<DynamicTypeBuilder> custom_builder { factory.create_type_copy(*builder1)};
+    traits<DynamicTypeBuilder>::ref_type custom_builder {factory->create_type_copy(type1)};
     ASSERT_TRUE(custom_builder);
 
-    // It must not be the static instance
-    EXPECT_NE(builder1, custom_builder);
     // but must share its state
-    EXPECT_TRUE(*custom_builder == *builder1);
+    EXPECT_TRUE(custom_builder->equals(type1));
 
-    // It must be customizable
-    const char* name = "custom_type_name";
-    custom_builder->set_name(name);
-    EXPECT_EQ(custom_builder->get_name(), name);
-
-    // no longer share the state
-    EXPECT_FALSE(*custom_builder == *builder1);
-
-    // the custom type must not be a static instance
-    if (track_active)
-    {
-        // The custom instance must be able to create a new type
-        EXPECT_FALSE(factory.is_empty());
-    }
-
-    std::unique_ptr<const DynamicType> custom_type1 {custom_builder->build()};
+    traits<DynamicType>::ref_type custom_type1 {custom_builder->build()};
     ASSERT_TRUE(custom_type1);
 
     // It must share the state with the builder
-    EXPECT_TRUE(custom_builder->equals(*custom_type1));
+    ASSERT_TRUE(custom_builder->equals(custom_type1));
 
     // It must return a cached instances if there are not changes
-    std::unique_ptr<const DynamicType> custom_type2 {custom_builder->build()};
+    traits<DynamicType>::ref_type custom_type2 {custom_builder->build()};
     ASSERT_TRUE(custom_type2);
-    EXPECT_EQ(custom_type1, custom_type2);
-
-    // If there are state changes it must provide a new instance
-    name = "another_name";
-    custom_builder->set_name(name);
-    EXPECT_EQ(custom_builder->get_name(), name);
-
-    std::unique_ptr<const DynamicType> custom_type3 {custom_builder->build()};
-    ASSERT_TRUE(custom_type3);
-    EXPECT_NE(custom_type1, custom_type3);
-
-    // The new types shouldn't be static
-    custom_builder.reset();
-
-    if (track_active)
-    {
-        EXPECT_FALSE(factory.is_empty());
-    }
-
-    // All resources should be freed out of scope
-    custom_type1.reset();
-    custom_type2.reset();
-    custom_type1.reset();
+    ASSERT_TRUE(custom_type1->equals(custom_type2));
 }
 
 INSTANTIATE_TEST_SUITE_P(CheckingGetPrimitiveType,
         DynamicTypesPrimitiveTestsAPIs,
         testing::Values(
-            std::make_tuple(eprosima::fastdds::dds::TK_INT32,
-            &DynamicTypeBuilderFactory::create_int32_type,
-            &DynamicTypeBuilderFactory::get_int32_type),
-            std::make_tuple(eprosima::fastdds::dds::TK_UINT32,
-            &DynamicTypeBuilderFactory::create_uint32_type,
-            &DynamicTypeBuilderFactory::get_uint32_type),
-            std::make_tuple(eprosima::fastdds::dds::TK_INT16,
-            &DynamicTypeBuilderFactory::create_int16_type,
-            &DynamicTypeBuilderFactory::get_int16_type),
-            std::make_tuple(eprosima::fastdds::dds::TK_UINT16,
-            &DynamicTypeBuilderFactory::create_uint16_type,
-            &DynamicTypeBuilderFactory::get_uint16_type),
-            std::make_tuple(eprosima::fastdds::dds::TK_INT64,
-            &DynamicTypeBuilderFactory::create_int64_type,
-            &DynamicTypeBuilderFactory::get_int64_type),
-            std::make_tuple(eprosima::fastdds::dds::TK_UINT64,
-            &DynamicTypeBuilderFactory::create_uint64_type,
-            &DynamicTypeBuilderFactory::get_uint64_type),
-            std::make_tuple(eprosima::fastdds::dds::TK_FLOAT32,
-            &DynamicTypeBuilderFactory::create_float32_type,
-            &DynamicTypeBuilderFactory::get_float32_type),
-            std::make_tuple(eprosima::fastdds::dds::TK_FLOAT64,
-            &DynamicTypeBuilderFactory::create_float64_type,
-            &DynamicTypeBuilderFactory::get_float64_type),
-            std::make_tuple(eprosima::fastdds::dds::TK_FLOAT128,
-            &DynamicTypeBuilderFactory::create_float128_type,
-            &DynamicTypeBuilderFactory::get_float128_type),
-            std::make_tuple(eprosima::fastdds::dds::TK_CHAR8,
-            &DynamicTypeBuilderFactory::create_char8_type,
-            &DynamicTypeBuilderFactory::get_char8_type),
-            std::make_tuple(eprosima::fastdds::dds::TK_CHAR16,
-            &DynamicTypeBuilderFactory::create_char16_type,
-            &DynamicTypeBuilderFactory::get_char16_type),
-            std::make_tuple(eprosima::fastdds::dds::TK_BOOLEAN,
-            &DynamicTypeBuilderFactory::create_bool_type,
-            &DynamicTypeBuilderFactory::get_bool_type),
-            std::make_tuple(eprosima::fastdds::dds::TK_BYTE,
-            &DynamicTypeBuilderFactory::create_byte_type,
-            &DynamicTypeBuilderFactory::get_byte_type)));
+            eprosima::fastdds::dds::TK_INT8,
+            eprosima::fastdds::dds::TK_UINT8,
+            eprosima::fastdds::dds::TK_INT16,
+            eprosima::fastdds::dds::TK_UINT16,
+            eprosima::fastdds::dds::TK_INT32,
+            eprosima::fastdds::dds::TK_UINT32,
+            eprosima::fastdds::dds::TK_INT64,
+            eprosima::fastdds::dds::TK_UINT64,
+            eprosima::fastdds::dds::TK_FLOAT32,
+            eprosima::fastdds::dds::TK_FLOAT64,
+            eprosima::fastdds::dds::TK_FLOAT128,
+            eprosima::fastdds::dds::TK_CHAR8,
+            eprosima::fastdds::dds::TK_CHAR16,
+            eprosima::fastdds::dds::TK_BOOLEAN,
+            eprosima::fastdds::dds::TK_BYTE));
 
-// Testing create_primitive_type<TypeKind>
+/*
+   // Testing create_primitive_type<TypeKind>
 
-// ancillary class, gtest only allows parametrized tests on types
-template<TypeKind> struct TypeKindType {};
+   // ancillary class, gtest only allows parametrized tests on types
+   template<TypeKind> struct TypeKindType {};
 
-#define GTEST_CONST2TYPE(type)                   \
+ #define GTEST_CONST2TYPE(type)                   \
     template<>                                       \
     struct TypeKindType<type>              \
     {                                                \
         static const TypeKind kind = type; \
     };
 
-// specializations
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_BOOLEAN)
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_BYTE)
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT16)
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT32)
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT64)
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_UINT16)
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_UINT32)
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_UINT64)
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_FLOAT32)
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_FLOAT64)
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_FLOAT128)
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_CHAR8)
-GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_CHAR16)
+   // specializations
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_BOOLEAN)
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_BYTE)
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT16)
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT32)
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT64)
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_UINT16)
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_UINT32)
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_UINT64)
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_FLOAT32)
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_FLOAT64)
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_FLOAT128)
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_CHAR8)
+   GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_CHAR16)
 
-template<class T>
-class StaticTypesPrimitiveTests
+   template<class T>
+   class StaticTypesPrimitiveTests
     : public testing::Test
-{
-};
+   {
+   };
 
-#undef GTEST_CONST2TYPE
-#define GTEST_CONST2TYPE(type) TypeKindType<type>
+ #undef GTEST_CONST2TYPE
+ #define GTEST_CONST2TYPE(type) TypeKindType<type>
 
-using TypeKindTypes = ::testing::Types<
+   using TypeKindTypes = ::testing::Types<
     GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_BOOLEAN),
     GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_BYTE),
     GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_INT16),
@@ -397,10 +192,10 @@ using TypeKindTypes = ::testing::Types<
     GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_CHAR8),
     GTEST_CONST2TYPE(eprosima::fastdds::dds::TK_CHAR16)>;
 
-TYPED_TEST_SUITE(StaticTypesPrimitiveTests, TypeKindTypes, );
+   TYPED_TEST_SUITE(StaticTypesPrimitiveTests, TypeKindTypes, );
 
-TYPED_TEST(StaticTypesPrimitiveTests, create_primitive_template_unit_tests)
-{
+   TYPED_TEST(StaticTypesPrimitiveTests, create_primitive_template_unit_tests)
+   {
     // Get the factory singleton
     DynamicTypeBuilderFactoryImpl& factory_impl = DynamicTypeBuilderFactoryImpl::get_instance();
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
@@ -414,15 +209,15 @@ TYPED_TEST(StaticTypesPrimitiveTests, create_primitive_template_unit_tests)
     std::unique_ptr<const DynamicTypeBuilder> builder2 { factory.create_primitive_type(TypeParam::kind)};
     ASSERT_TRUE(builder2);
     //TODO(richiware) EXPECT_EQ(builder1, builder2);
-}
+   }
 
-#undef GTEST_CONST2TYPE
+ #undef GTEST_CONST2TYPE
 
-class DynamicTypesTests : public ::testing::Test
-{
+   class DynamicTypesTests : public ::testing::Test
+   {
     const std::string config_file_ = "types_profile.xml";
 
-public:
+   public:
 
     DynamicTypesTests()
     {
@@ -459,10 +254,10 @@ public:
         }
 
     };
-};
+   };
 
-TEST_F(DynamicTypesTests, member_unit_tests)
-{
+   TEST_F(DynamicTypesTests, member_unit_tests)
+   {
     // Check construction
     // • Using specific literals
     MemberId id1 = 1;
@@ -765,10 +560,10 @@ TEST_F(DynamicTypesTests, member_unit_tests)
     // compare deserialized values
     EXPECT_EQ(id1, 1);
     EXPECT_EQ(badid, MEMBER_ID_INVALID);
-}
+   }
 
-TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
-{
+   TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
+   {
     // Do not use the TypeDescriptor to:
     // + Get primitive types. Use the DynamicTypeBuilderFactory instead.
     // + Create new types. Use a Builder instead.
@@ -823,10 +618,10 @@ TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
     EXPECT_EQ("TEST_INT32", builder->get_name());
 
     //TODO(richiware)EXPECT_NE(type, builder->build()); // cache is invalidated after changes
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Create basic types
@@ -991,10 +786,10 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
         md = MemberDescriptor(7, "dup_bool", factory.get_bool_type());
         EXPECT_NE(eprosima::fastdds::dds::RETCODE_OK, struct_type_builder->add_member(md));
     }
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Try to create with invalid values
@@ -1023,10 +818,10 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
     ASSERT_TRUE(type->equals(*type2));
     EXPECT_EQ(*type, *type2);
     EXPECT_EQ(type, type2); // type objects are cached
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_int32_type()};
@@ -1118,10 +913,10 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_uint32_type()};
@@ -1213,10 +1008,10 @@ TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_int16_type()};
@@ -1308,10 +1103,10 @@ TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_uint16_type()};
@@ -1403,10 +1198,10 @@ TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_int64_type()};
@@ -1498,10 +1293,10 @@ TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_uint64_type()};
@@ -1593,10 +1388,10 @@ TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_float32_type()};
@@ -1688,10 +1483,10 @@ TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_float64_type()};
@@ -1783,10 +1578,10 @@ TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_float128_type()};
@@ -1878,10 +1673,10 @@ TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_char8_type()};
@@ -1973,9 +1768,9 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-/* TODO Commented because deprecated xtypes 1.1 will not be fix. Uncomment in future xtypes 1.3 api.
+   // TODO Commented because deprecated xtypes 1.1 will not be fix. Uncomment in future xtypes 1.3 api.
    TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
    {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
@@ -2071,10 +1866,9 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
    }
- */
 
-TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_byte_type()};
@@ -2166,10 +1960,10 @@ TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_bool_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_bool_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_bool_type()};
@@ -2261,10 +2055,10 @@ TEST_F(DynamicTypesTests, DynamicType_bool_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<DynamicTypeBuilder> created_builder { factory.create_enum_type()};
@@ -2396,10 +2190,10 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
     EXPECT_EQ(data->clear_all_values(), eprosima::fastdds::dds::RETCODE_OK);
     EXPECT_EQ(data2->clear_all_values(), eprosima::fastdds::dds::RETCODE_OK);
     EXPECT_EQ(data3->clear_all_values(), eprosima::fastdds::dds::RETCODE_OK);
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> created_builder { factory.create_string_type()};
@@ -2511,9 +2305,9 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-/* TODO Commented because deprecated xtypes 1.1 will not be fix. Uncomment in future xtypes 1.3 api.
+   // TODO Commented because deprecated xtypes 1.1 will not be fix. Uncomment in future xtypes 1.3 api.
    TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
    {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
@@ -2626,10 +2420,9 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
    }
- */
 
-TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     const char* name = "ALIAS";
@@ -2684,10 +2477,10 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*aliasData));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
+   {
     // Check alias comparison in dependent types
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -2732,7 +2525,6 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
     // • Checking nesting at various levels
     unsigned int levels = 10;
 
-    /* TODO (richiware) Think how do this with new api
        do
        {
         MemberId id{levels + 1u};
@@ -2795,11 +2587,10 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
        ASSERT_EQ(alias_payload.length, payloadSize);
        ASSERT_TRUE(pubsubAliasType.deserialize(&alias_payload, data2.get()));
        ASSERT_TRUE(data2->equals(*data));
-     */
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     uint32_t length = 15;
@@ -2843,10 +2634,10 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
         ASSERT_NE(aliasData->set_string_value("TEST_OVER_LENGTH_LIMITS",
                 MEMBER_ID_INVALID), eprosima::fastdds::dds::RETCODE_OK);
     }
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> base_type_builder { factory.create_byte_type()};
@@ -2863,7 +2654,6 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
     // Add members to the struct.
     ASSERT_EQ(bitset_type_builder->add_member({0, "int2", base_type}), eprosima::fastdds::dds::RETCODE_OK);
     ASSERT_EQ(bitset_type_builder->add_member({1, "int20", base_type2}), eprosima::fastdds::dds::RETCODE_OK);
-    /*! TODO(richiware) Change after refactor
        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             bitset_type_builder->apply_annotation_to_member(0, {ANNOTATION_BIT_BOUND, "value", "2"}));
        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
@@ -2872,7 +2662,6 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
             bitset_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND, "value", "20"));
        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             bitset_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION, "value", "10")); // 8 bits empty
-     */
 
     auto bitset_type = bitset_type_builder->build();
     ASSERT_TRUE(bitset_type);
@@ -2902,10 +2691,10 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
 
     // Bitset serialization
     // Tested in DynamicTypes_4_2_Tests
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     uint32_t limit = 5;
@@ -2930,7 +2719,6 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     std::unique_ptr<DynamicData> data {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(data != nullptr);
 
-    /*
        MemberId testId = data->get_member_by_name("TEST");
        EXPECT_NE(testId, MEMBER_ID_INVALID);
        EXPECT_EQ(testId, 0);
@@ -2978,7 +2766,6 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
        ASSERT_TRUE(data->get_bool_value("TEST"));
        ASSERT_FALSE(data->get_bool_value("TEST2"));
        ASSERT_FALSE(data->get_bool_value("TEST4"));
-     */
 
     ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
     ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
@@ -3041,10 +2828,10 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     std::unique_ptr<DynamicData> data2 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2.get()));
     ASSERT_TRUE(data2->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     uint32_t length = 2;
@@ -3053,7 +2840,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     std::unique_ptr<const DynamicTypeBuilder> base_type_builder { factory.create_int32_type()};
     ASSERT_TRUE(base_type_builder);
     std::unique_ptr<DynamicTypeBuilder> seq_type_builder {factory.create_sequence_type(
-                                                              *base_type_builder->build(), length)};
+ * base_type_builder->build(), length)};
     ASSERT_TRUE(seq_type_builder);
     std::unique_ptr<const DynamicType> seq_type {seq_type_builder->build()};
     ASSERT_TRUE(seq_type);
@@ -3065,7 +2852,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     // Try to write on an empty position
     ASSERT_FALSE(data->set_int32_value(234, 1) == eprosima::fastdds::dds::RETCODE_OK);
 
-    /* TODO (richiware) update
        MemberId newId;
        ASSERT_TRUE(data->insert_sequence_data(newId) == eprosima::fastdds::dds::RETCODE_OK);
        MemberId newId2;
@@ -3085,7 +2871,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
        int32_t test2(0);
        ASSERT_TRUE(data->get_int32_value(test2, newId2) == eprosima::fastdds::dds::RETCODE_OK);
        ASSERT_TRUE(test1 == test2);
-     */
 
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(seq_type.get());
@@ -3099,7 +2884,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     ASSERT_TRUE(data2->equals(*data));
 
     // Remove the elements.
-    /* TODO(richiware) update
        ASSERT_TRUE(data->remove_sequence_data(newId) == eprosima::fastdds::dds::RETCODE_OK);
        ASSERT_TRUE(data->clear_all_values() == eprosima::fastdds::dds::RETCODE_OK);
 
@@ -3111,7 +2895,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
 
        // Check that the sequence is empty.
        ASSERT_FALSE(data->get_int32_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
-     */
 
     ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
     ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
@@ -3178,10 +2961,10 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*seq_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     uint32_t sequence_length = 2;
@@ -3192,13 +2975,13 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
     ASSERT_TRUE(base_type_builder);
 
     std::unique_ptr<DynamicTypeBuilder> seq_type_builder { factory.create_sequence_type(
-                                                               *base_type_builder->build(), sequence_length)};
+ * base_type_builder->build(), sequence_length)};
     ASSERT_TRUE(seq_type_builder);
     std::unique_ptr<const DynamicType> seq_type {seq_type_builder->build()};
     ASSERT_TRUE(seq_type);
 
     std::unique_ptr<DynamicTypeBuilder> seq_seq_type_builder { factory.create_sequence_type(
-                                                                   *seq_type_builder->build(), sup_sequence_length)};
+ * seq_type_builder->build(), sup_sequence_length)};
     ASSERT_TRUE(seq_seq_type_builder);
     std::unique_ptr<const DynamicType> seq_seq_type {seq_seq_type_builder->build()};
     ASSERT_TRUE(seq_seq_type);
@@ -3207,7 +2990,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
     ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
     ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
-    /* TODO (richiware) update
        MemberId newId;
        ASSERT_TRUE(data->insert_sequence_data(newId) == eprosima::fastdds::dds::RETCODE_OK);
        MemberId newId2;
@@ -3226,7 +3008,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
        int32_t test2(0);
        ASSERT_TRUE(seq_data->get_int32_value(test2, newSeqId) == eprosima::fastdds::dds::RETCODE_OK);
        ASSERT_TRUE(test1 == test2);
-     */
 
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(seq_seq_type.get());
@@ -3320,10 +3101,10 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
     //TODO(richiware) ASSERT_TRUE(test1 == test2);
     //TODO(richiware) ASSERT_TRUE(data->insert_complex_value(seq_data, newId) == eprosima::fastdds::dds::RETCODE_OK);
     ASSERT_TRUE(data->clear_all_values() == eprosima::fastdds::dds::RETCODE_OK);
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::vector<uint32_t> sequence_lengths = { 2, 2, 2 };
@@ -3334,7 +3115,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     std::unique_ptr<const DynamicType> base_type {base_type_builder->build()};
 
     std::unique_ptr<DynamicTypeBuilder> array_type_builder {factory.create_array_type(
-                                                                *base_type_builder->build(),
+ * base_type_builder->build(),
                                                                 sequence_lengths.data(), sequence_lengths.size())};
     ASSERT_TRUE(array_type_builder);
     auto array_type = array_type_builder->build();
@@ -3458,10 +3239,10 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*array_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::vector<uint32_t> sequence_lengths = { 2, 2 };
@@ -3471,14 +3252,14 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
     std::unique_ptr<const DynamicType> base_type {base_type_builder->build()};
 
     std::unique_ptr<DynamicTypeBuilder> array_type_builder {factory.create_array_type(
-                                                                *base_type_builder->build(),
+ * base_type_builder->build(),
                                                                 sequence_lengths.data(), sequence_lengths.size())};
     ASSERT_TRUE(array_type_builder);
     auto array_type = array_type_builder->build();
     ASSERT_TRUE(array_type);
 
     std::unique_ptr<DynamicTypeBuilder> parent_array_type_builder { factory.create_array_type(
-                                                                        *array_type_builder->build(),
+ * array_type_builder->build(),
                                                                         sequence_lengths.data(),
                                                                         sequence_lengths.size())};
     ASSERT_TRUE(parent_array_type_builder);
@@ -3605,10 +3386,10 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*parent_array_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     uint32_t map_length = 2;
@@ -3746,10 +3527,10 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*map_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     uint32_t map_length = 2;
@@ -3888,10 +3669,10 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*map_map_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> base_type_builder { factory.create_int32_type()};
@@ -3957,9 +3738,8 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*struct_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*struct_data));
-}
+   }
 
-/*
    TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
    {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
@@ -4133,10 +3913,9 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2.get()));
     ASSERT_TRUE(data2->equals(*struct_data));
    }
- */
 
-TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> base_type_builder {factory.create_int32_type()};
@@ -4226,10 +4005,10 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*parent_struct_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*struct_data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> discriminant_builder { factory.create_int32_type()};
@@ -4248,7 +4027,6 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     // Add members to the union.
     // A plain braced-init-list cannot be used for the labels because that would inhibit
     // template argument deduction, see § 14.8.2.5/5 of the C++11 standard
-    /* TODO(richiware)
        ASSERT_EQ(union_type_builder.add_member(0, "first",
             discriminant_type.get(), "", std::vector<uint64_t>{ 0 }, true),
             eprosima::fastdds::dds::RETCODE_OK);
@@ -4269,7 +4047,6 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
                 std::vector<uint64_t>{ 1 },
                 false) == eprosima::fastdds::dds::RETCODE_OK);
        }
-     */
 
     // Create a data of this union
     std::unique_ptr<const DynamicType> union_type {union_type_builder->build()};
@@ -4333,10 +4110,10 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*union_type)};
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
     ASSERT_TRUE(data3->equals(*union_data));
-}
+   }
 
-TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
-{
+   TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
+   {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::unique_ptr<const DynamicTypeBuilder> base_type_builder { factory.create_int32_type()};
@@ -4351,7 +4128,6 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
     ASSERT_TRUE(union_type_builder);
 
     // Add members to the union.
-    /*TODO(richiware)
        ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", std::vector<uint64_t>{ 0 },
             true) == eprosima::fastdds::dds::RETCODE_OK);
        ASSERT_TRUE(union_type_builder->add_member(1, "second", base_type2, "", std::vector<uint64_t>{ 1 },
@@ -4368,7 +4144,6 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
         ASSERT_FALSE(union_type_builder->add_member(4, "third", base_type, "", std::vector<uint64_t>{ 1 },
                 false) == eprosima::fastdds::dds::RETCODE_OK);
        }
-     */
 
     // Create a data of this union
     std::unique_ptr<const DynamicType> union_type {union_type_builder->build()};
@@ -4378,17 +4153,15 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
     ASSERT_TRUE(parent_union_type_builder);
 
     // Add Members to the parent union
-    /*TODO(richiware)
        ASSERT_TRUE(parent_union_type_builder->add_member(0, "first", base_type, "", std::vector<uint64_t>{ 0 },
             true) == eprosima::fastdds::dds::RETCODE_OK);
        ASSERT_TRUE(parent_union_type_builder->add_member(1, "second", union_type, "", std::vector<uint64_t>{ 1 },
             false) == eprosima::fastdds::dds::RETCODE_OK);
-     */
 
     std::unique_ptr<const DynamicType> created_type {parent_union_type_builder->build()};
     ASSERT_TRUE(created_type);
     std::unique_ptr<DynamicData> union_data {DynamicDataFactory::get_instance().create_data(
-                                                 *parent_union_type_builder.get()->build())};
+ * parent_union_type_builder.get()->build())};
     ASSERT_TRUE(union_data != nullptr);
 
     // Set and get the child values.
@@ -4435,9 +4208,8 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
     std::unique_ptr<DynamicData> data2 {DynamicDataFactory::get_instance().create_data(*created_type)};
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2.get()));
     ASSERT_TRUE(data2->equals(*union_data));
-}
+   }
 
-/*
    TEST_F(DynamicTypesTests, DynamicType_XML_EnumStruct_test)
    {
     using namespace xmlparser;

@@ -20,6 +20,8 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+traits<DynamicTypeBuilderFactoryImpl>::ref_type DynamicTypeBuilderFactoryImpl::instance_;
+
 traits<DynamicTypeBuilderFactory>::ref_type DynamicTypeBuilderFactoryImpl::get_instance() noexcept
 {
     if (!instance_)
@@ -32,6 +34,10 @@ traits<DynamicTypeBuilderFactory>::ref_type DynamicTypeBuilderFactoryImpl::get_i
 
 ReturnCode_t DynamicTypeBuilderFactoryImpl::delete_instance() noexcept
 {
+    if (!instance_)
+    {
+        return RETCODE_BAD_PARAMETER;
+    }
     instance_.reset();
     return RETCODE_OK;
 }

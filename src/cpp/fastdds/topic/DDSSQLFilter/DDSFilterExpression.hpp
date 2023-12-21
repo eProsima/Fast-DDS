@@ -25,13 +25,14 @@
 #include <vector>
 
 #include <fastdds/dds/topic/IContentFilter.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 
 #include "DDSFilterCondition.hpp"
 #include "DDSFilterField.hpp"
 #include "DDSFilterParameter.hpp"
+
+#include "../../xtypes/dynamic_types/DynamicDataImpl.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -62,7 +63,7 @@ public:
      * @param [in] type  The DynamicType to assign.
      */
     void set_type(
-            const DynamicType* const type);
+            traits<DynamicType>::ref_type type);
 
     /// The root condition of the expression tree.
     std::unique_ptr<DDSFilterCondition> root;
@@ -76,7 +77,7 @@ private:
     /// The Dynamic type used to deserialize the payloads
     traits<DynamicType>::ref_type dyn_type_;
     /// The Dynamic data used to deserialize the payloads
-    std::unique_ptr<DynamicData> dyn_data_;
+    traits<DynamicDataImpl>::ref_type dyn_data_;
 };
 
 }  // namespace DDSSQLFilter

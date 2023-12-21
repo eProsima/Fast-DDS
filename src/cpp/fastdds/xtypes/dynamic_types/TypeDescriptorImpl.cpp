@@ -21,6 +21,12 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+template<>
+traits<TypeDescriptor>::ref_type traits<TypeDescriptor>::make_shared()
+{
+    return std::make_shared<TypeDescriptorImpl>();
+}
+
 enum FSM_INPUTS
 {
     LETTER = 1,
@@ -179,6 +185,8 @@ bool TypeDescriptorImpl::is_consistent() noexcept
     {
         return false;
     }
+    // TODO(richiware) if union, check discriminator kind and the type is a integer (labels are UINT64).
+    //boolean, byte, char8, char16, int8, uint8, int16, uint16, int32, uint32, enumera, alias
 
     // ElementType is used by these types to set the "value" type of the element, otherwise it should be null.
     if (!element_type_ && (

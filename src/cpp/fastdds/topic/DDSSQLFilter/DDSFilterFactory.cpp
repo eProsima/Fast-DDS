@@ -26,6 +26,8 @@
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 
@@ -531,7 +533,7 @@ ReturnCode_t DDSFilterFactory::create_content_filter(
             if (node)
             {
                 // TODO(XTypes): PENDING implementation DynamicTypeBuilderFactory::create_type_w_type_object
-                eprosima::fastrtps::types::DynamicType_ptr dyn_type; //= TypeObjectFactory::get_instance()->build_dynamic_type(type_name, type_id, type_object);
+                DynamicType::_ref_type ret_type dyn_type; //= TypeObjectFactory::get_instance()->build_dynamic_type(type_name, type_id, type_object);
                 DDSFilterExpression* expr = get_expression();
                 expr->set_type(dyn_type);
                 size_t n_params = filter_parameters.length();

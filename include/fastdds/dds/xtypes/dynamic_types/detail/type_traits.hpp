@@ -35,6 +35,8 @@ struct traits
         return std::dynamic_pointer_cast<_Tp>(obj);
     }
 
+    static std::shared_ptr<T> make_shared();
+
 };
 
 template<typename T>

@@ -267,7 +267,7 @@ int main(
         auto& topic_name = remote_names.first;
         auto& type_name = remote_names.second;
 
-        const DynamicType* type {nullptr};
+        DynamicType::_ref_type type;
 
         {
             TypeObjectPair type_objects;
@@ -283,13 +283,11 @@ int main(
             // TODO(XTypes): PENDING DynamicTypeBuilderFactory::create_type_w_type_object
             // type = types::TypeObjectFactory::get_instance()->build_dynamic_type(type_name, ident, obj);
 
-            if (type == nullptr)
+            if (!type)
             {
                 std::cout << "ERROR: DynamicType cannot be created for type: " << type_name << std::endl;
                 throw 1;
             }
-
-            type = ret_type;
         }
 
         // Create the Topic & DataReader
@@ -324,7 +322,7 @@ int main(
         while ((notexit || number_samples < samples ) && listener.run_)
         {
             // loop taking samples
-            DynamicPubSubType pst(*type);
+            DynamicPubSubType pst(type);
             DynamicData* sample {static_cast<DynamicData*>(pst.createData())};
             eprosima::fastdds::dds::SampleInfo info;
 
@@ -338,10 +336,10 @@ int main(
 
                     ++number_samples;
 
-                    message = sample->get_string_value(0);
-                    index = sample->get_uint32_value(1);
+                    sample->get_string_value(message, 0);
+                    sample->get_uint32_value(index, 1);
 
-                    DynamicData* inner {sample->loan_value(2)};
+                    DynamicData::_ref_type inner {sample->loan_value(2)};
                     inner->get_byte_value(count, 0);
 
                     std::cout << "Received sample: index(" << index << "), message("

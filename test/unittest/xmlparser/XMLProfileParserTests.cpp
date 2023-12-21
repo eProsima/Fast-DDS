@@ -28,6 +28,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
@@ -1769,7 +1770,9 @@ TEST_F(XMLProfileParserBasicTests, insertTransportByIdNegativeClauses)
  */
 TEST_F(XMLProfileParserBasicTests, getDynamicTypeByNameNegativeClausesNegativeClauses)
 {
-    EXPECT_EQ(nullptr, xmlparser::XMLProfileManager::getDynamicTypeByName("wrong_type"));
+    eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicType>::ref_type type;
+    EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::getDynamicTypeByName(type, "wrong_type"));
+    ASSERT_TRUE(type);
 }
 
 /*

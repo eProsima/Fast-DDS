@@ -105,6 +105,8 @@ private:
     TypeDescriptorImpl type_descriptor_;
 
     uint32_t next_index_ {0};
+
+    int32_t default_union_label_ {0};
 };
 
 } // namespace dds

@@ -36,52 +36,52 @@ namespace dds {
 namespace DDSSQLFilter {
 
 bool DDSFilterField::set_value(
-        DynamicData& data,
+        traits<DynamicData>::ref_type data,
         size_t n)
 {
     uint32_t index = static_cast<uint32_t>(access_path_[n].member_index);
-    auto member_id = data.get_member_id_at_index(index);
+    auto member_id = data->get_member_id_at_index(index);
     bool last_step = access_path_.size() - 1 == n;
     bool ret = false;
 
     if (access_path_[n].array_index != MEMBER_ID_INVALID)
     {
-        DynamicData* array_data = data.loan_value(member_id);
-        if (nullptr != array_data)
+        traits<DynamicData>::ref_type array_data = data->loan_value(member_id);
+        if (array_data)
         {
             member_id = access_path_[n].array_index;
             if (array_data->get_item_count() > member_id)
             {
                 if (last_step)
                 {
-                    ret = set_value(array_data, member_id);
+                    ret = set_value_using_member_id(array_data, member_id);
                 }
                 else
                 {
-                    DynamicData* struct_data = array_data->loan_value(member_id);
-                    if (nullptr != struct_data)
+                    traits<DynamicData>::ref_type struct_data = array_data->loan_value(member_id);
+                    if (struct_data)
                     {
-                        ret = set_value(*struct_data, n + 1);
+                        ret = set_value(struct_data, n + 1);
                         array_data->return_loaned_value(struct_data);
                     }
                 }
             }
-            data.return_loaned_value(array_data);
+            data->return_loaned_value(array_data);
         }
     }
     else
     {
         if (last_step)
         {
-            ret = set_value(&data, member_id);
+            ret = set_value_using_member_id(data, member_id);
         }
         else
         {
-            DynamicData* struct_data = data.loan_value(member_id);
-            if (nullptr != struct_data)
+            traits<DynamicData>::ref_type struct_data = data->loan_value(member_id);
+            if (struct_data)
             {
-                ret = set_value(*struct_data, n + 1);
-                data.return_loaned_value(struct_data);
+                ret = set_value(struct_data, n + 1);
+                data->return_loaned_value(struct_data);
             }
         }
     }
@@ -101,98 +101,115 @@ bool DDSFilterField::set_value(
     return ret;
 }
 
-bool DDSFilterField::set_value(
-        const DynamicData* data,
+bool DDSFilterField::set_value_using_member_id(
+        traits<DynamicData>::ref_type data,
         MemberId member_id)
 {
     using namespace eprosima::fastrtps::types;
 
-    bool ret = true;
-    try
+    bool ret = false;
+    switch (type_id_->_d())
     {
-        switch (type_id_->_d())
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
+            ret = RETCODE_OK == data->get_boolean_value(boolean_value, member_id);
+            break;
+
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
+            ret = RETCODE_OK == data->get_char8_value(char_value, member_id);
+            break;
+
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TI_STRING8_SMALL:
+        case eprosima::fastdds::dds::xtypes::TI_STRING8_LARGE:
         {
-            case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
-                boolean_value = data->get_bool_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_CHAR8:
-                char_value = data->get_char8_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_STRING8:
-            case eprosima::fastdds::dds::xtypes::TI_STRING8_SMALL:
-            case eprosima::fastdds::dds::xtypes::TI_STRING8_LARGE:
-                string_value = data->get_string_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_INT8:
-                signed_integer_value = data->get_int8_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_INT16:
-                signed_integer_value = data->get_int16_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_INT32:
-                signed_integer_value = data->get_int32_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_INT64:
-                signed_integer_value = data->get_int64_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_BYTE:
-            case eprosima::fastdds::dds::xtypes::TK_UINT8:
-                unsigned_integer_value = data->get_uint8_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_UINT16:
-                unsigned_integer_value = data->get_uint16_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_UINT32:
-                unsigned_integer_value = data->get_uint32_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_UINT64:
-                unsigned_integer_value = data->get_uint64_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
-                float_value = data->get_float32_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
-                float_value = data->get_float64_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
-                float_value = data->get_float128_value(member_id);
-                break;
-
-            case eprosima::fastdds::dds::xtypes::EK_COMPLETE:
-            {
-                uint32_t enum_value;
-                ret = RETCODE_OK == data->get_enum_value(enum_value, member_id);
-                signed_integer_value = enum_value;
-                break;
-            }
-
-            default:
-                ret = false;
-                break;
         }
-    }
-    catch (...)
-    {
-        ret = false;
+        break;
+
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
+        {
+            int16_t value16 {0};
+            ret = RETCODE_OK == data->get_int16_value(value16, member_id);
+            signed_integer_value = value16;
+        }
+        break;
+
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
+        {
+            int32_t value32 {0};
+            ret = RETCODE_OK == data->get_int32_value(value32, member_id);
+            signed_integer_value = value32;
+        }
+        break;
+
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
+            ret = RETCODE_OK == data->get_int64_value(signed_integer_value, member_id);
+            break;
+
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
+        {
+            uint8_t valueu8 {0};
+            ret = RETCODE_OK == data->get_uint8_value(valueu8, member_id);
+            unsigned_integer_value = valueu8;
+        }
+        break;
+
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
+        {
+            uint16_t valueu16 {0};
+            ret = RETCODE_OK == data->get_uint16_value(valueu16, member_id);
+            unsigned_integer_value = valueu16;
+        }
+        break;
+
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
+        {
+            uint32_t valueu32 {0};
+            ret = RETCODE_OK == data->get_uint32_value(valueu32, member_id);
+            unsigned_integer_value = valueu32;
+        }
+        break;
+
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
+            ret = RETCODE_OK == data->get_uint64_value(unsigned_integer_value, member_id);
+            break;
+
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
+        {
+            float valuef32 {0};
+            ret = RETCODE_OK == data->get_float32_value(valuef32, member_id);
+            float_value = valuef32;
+        }
+        break;
+
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
+        {
+            double valuef64 {0};
+            ret = RETCODE_OK == data->get_float64_value(valuef64, member_id);
+            float_value = valuef64;
+        }
+        break;
+
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
+            ret = RETCODE_OK == data->get_float128_value(float_value, member_id);
+            break;
+
+        case eprosima::fastdds::dds::xtypes::EK_COMPLETE:
+        {
+            uint32_t valueenum {0};
+            ret = RETCODE_OK == data->get_uint32_value(valueenum, member_id);
+            signed_integer_value = valueenum;
+            break;
+        }
+
+        default:
+            break;
     }
 
     return ret;
 }
 
 }  // namespace DDSSQLFilter
+
 }  // namespace dds
 }  // namespace fastdds
 }  // namespace eprosima

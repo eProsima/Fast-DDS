@@ -33,9 +33,8 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::dds::xtypes;
+using namespace eprosima::fastrtps::rtps;
 
 LatencyTestSubscriber::LatencyTestSubscriber()
     : latency_command_type_(new TestCommandDataType())
@@ -653,7 +652,7 @@ bool LatencyTestSubscriber::test(
     {
         // Create the data sample
         MemberId id;
-        dynamic_data_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
+        dynamic_data_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->createData());
 
         if (nullptr == dynamic_data_)
         {
@@ -663,8 +662,8 @@ bool LatencyTestSubscriber::test(
         }
 
         // Modify the data Sample
-        DynamicData* member_data = dynamic_data_->loan_value(
-            dynamic_data_->get_member_id_at_index(1));
+        DynamicData::_ref_type member_data = (*dynamic_data_)->loan_value(
+            (*dynamic_data_)->get_member_id_at_index(1));
 
         // fill until complete the desired payload size
         uint32_t padding = datasize - 4; // sequence number is a DWORD
@@ -672,9 +671,9 @@ bool LatencyTestSubscriber::test(
         for (uint32_t i = 0; i < padding; ++i)
         {
             //TODO(richiware)member_data->insert_sequence_data(id);
-            member_data->set_byte_value(0, id);
+            member_data->set_byte_value(id, 0);
         }
-        dynamic_data_->return_loaned_value(member_data);
+        (*dynamic_data_)->return_loaned_value(member_data);
     }
     // Create the static type for the given buffer size and the endpoints
     else if (init_static_types(datasize) && create_data_endpoints())
@@ -795,17 +794,23 @@ bool LatencyTestSubscriber::init_dynamic_types()
     }
 
     // Dummy type registration
-    auto& factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
     // Create basic builders
-    DynamicTypeBuilder* struct_type_builder {factory.create_struct_type()};
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name(LatencyDataType::type_name_);
+
+    DynamicTypeBuilder::_ref_type struct_type_builder {factory->create_type(type_descriptor)};
 
     // Add members to the struct.
-    //TODO(richiware) types not released, also in publisher
-    struct_type_builder->add_member({0, "seqnum", factory.create_uint32_type()->build()});
-    struct_type_builder->add_member({1, "data", factory.create_sequence_type(
-                                         *factory.create_byte_type()->build(),
-                                         eprosima::fastdds::dds::BOUND_UNLIMITED)->build()});
-    struct_type_builder->set_name(LatencyDataType::type_name_.c_str());
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->name("seqnum");
+    member_descriptor->type(factory->get_primitive_type(TK_UINT32));
+    struct_type_builder->add_member(member_descriptor);
+    member_descriptor->name("data");
+    member_descriptor->type(factory->create_sequence_type(
+                factory->get_primitive_type(TK_UINT32), LENGTH_UNLIMITED)->build());
+    struct_type_builder->add_member(member_descriptor);
     dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
 
     // Register the data type

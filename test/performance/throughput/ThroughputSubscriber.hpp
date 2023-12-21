@@ -119,7 +119,7 @@ private:
     ThroughputType* throughput_data_ = nullptr;
     eprosima::fastdds::dds::TypeSupport throughput_data_type_;
     // Dynamic Data
-    eprosima::fastdds::dds::DynamicData* dynamic_data_ {nullptr};
+    eprosima::fastdds::dds::DynamicData::_ref_type* dynamic_data_ {nullptr};
     eprosima::fastdds::dds::TypeSupport dynamic_pub_sub_type_;
     // QoS Profiles
     eprosima::fastdds::dds::DataReaderQos dr_qos_;

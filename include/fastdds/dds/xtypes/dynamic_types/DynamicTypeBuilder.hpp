@@ -32,6 +32,8 @@ class RTPS_DllAPI DynamicTypeBuilder : public std::enable_shared_from_this<Dynam
 {
 public:
 
+    using _ref_type = typename traits<DynamicTypeBuilder>::ref_type;
+
     /*!
      * Provides a summary of the state of this type overwriting a provided object.
      * @param[inout] descriptor @ref TypeDescriptor

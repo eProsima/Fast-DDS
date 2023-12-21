@@ -203,15 +203,31 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
     auto descriptor_impl = traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(descriptor);
 
-    // Check that there isn't any member as default label and that there isn't any member with the same case.
-    if (TK_UNION == type_descriptor_kind && descriptor_impl->is_default_label())
+    if (TK_UNION == type_descriptor_kind)
     {
         for (auto member : members_)
         {
             auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
-            if (member_impl->member_descriptor_.is_default_label())
+
+            // Check that there isn't any member as default label and that there isn't any member with the same case.
+            if (descriptor_impl->is_default_label() && member_impl->member_descriptor_.is_default_label())
             {
                 return RETCODE_BAD_PARAMETER;
+            }
+            for (const int32_t new_label : descriptor_impl->label())
+            {
+                for (const int32_t label : member_impl->member_descriptor_.label())
+                {
+                    if (new_label == label)
+                    {
+                        return false;
+                    }
+                }
+
+                if (new_label >= default_union_label_)
+                {
+                    default_union_label_ = new_label + 1;
+                }
             }
         }
     }
@@ -339,6 +355,7 @@ traits<DynamicType>::ref_type DynamicTypeBuilderImpl::build() noexcept
         ret_val->member_ = member_;
         ret_val->member_by_name_ = member_by_name_;
         ret_val->members_ = members_;
+        ret_val->default_union_label_ = default_union_label_;
     }
 
     return ret_val;

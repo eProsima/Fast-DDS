@@ -42,6 +42,8 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
@@ -3010,53 +3012,20 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactories)
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
 
     // Create the dynamic type builder
-    std::unique_ptr<const DynamicTypeBuilder> base_type {DynamicTypeBuilderFactory::get_instance().create_uint32_type()};
-    std::unique_ptr<DynamicTypeBuilder> builder {DynamicTypeBuilderFactory::get_instance().create_struct_type()};
-    builder->add_member({0, "uint", base_type->build()});
+    traits<TypeDescriptor>::ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name("mystruct");
+    traits<DynamicTypeBuilder>::ref_type builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    traits<MemberDescriptor>::ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+    member_descriptor->name("myuint");
+    builder->add_member(member_descriptor);
     // Build the complete dynamic type
-    std::unique_ptr<const DynamicType> dyn_type {builder->build()};
+    traits<DynamicType>::ref_type dyn_type {builder->build()};
     // Create the data instance
-    std::unique_ptr<DynamicData> data {DynamicDataFactory::get_instance().create_data(*dyn_type)};
+    traits<DynamicData>::ref_type data {DynamicDataFactory::get_instance()->create_data(dyn_type)};
     // Register the type
-    TypeSupport type(new DynamicPubSubType(*dyn_type));
-    // Activating the auto_fill_type_information or the auto_fill_type_object settings, the participant will try to
-    // add the type dynamic type factories
-    type->auto_fill_type_information(true);
-    ASSERT_EQ(type.register_type(participant), RETCODE_OK);
-
-    // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-/*
- * This test adds a complete dynamic type to the participant dynamic type factories without enabling the
- * auto_fill_type_information setting
- */
-TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotFillTypeInfo)
-{
-    // Do not enable entities on creation
-    DomainParticipantFactoryQos factory_qos;
-    factory_qos.entity_factory().autoenable_created_entities = false;
-    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
-
-    // Create a disabled participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    // Create the dynamic type builder
-    std::unique_ptr<const DynamicTypeBuilder> base_type {DynamicTypeBuilderFactory::get_instance().create_uint32_type()};
-    std::unique_ptr<DynamicTypeBuilder> builder {DynamicTypeBuilderFactory::get_instance().create_struct_type()};
-    builder->add_member({0, "uint", base_type->build()});
-
-    // Build the complete dynamic type
-    std::unique_ptr<const DynamicType> dyn_type {builder->build()};
-    // Create the data instance
-    std::unique_ptr<DynamicData> data {DynamicDataFactory::get_instance().create_data(*dyn_type)};
-
-    // Register the type
-    TypeSupport type(new DynamicPubSubType(*dyn_type));
-    type->auto_fill_type_information(false);
+    TypeSupport type(new DynamicPubSubType(dyn_type));
     ASSERT_EQ(type.register_type(participant), RETCODE_OK);
 
     // Remove the participant

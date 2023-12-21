@@ -14,6 +14,9 @@
 
 #include "DynamicTypeMemberImpl.hpp"
 
+#include <fastdds/dds/xtypes/common.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -112,6 +115,24 @@ ObjectName DynamicTypeMemberImpl::get_name() noexcept
 traits<DynamicTypeMember>::ref_type DynamicTypeMemberImpl::_this ()
 {
     return shared_from_this();
+}
+
+bool DynamicTypeMemberImpl::annotation_get_default(
+        ObjectName& default_value)
+{
+    bool ret_value = false;
+
+    for (auto& annotation : annotation_)
+    {
+        if (0 == annotation.type()->get_name().compare(xtypes::default_annotation_name))
+        {
+            ret_value = RETCODE_OK == annotation.get_value(default_value, xtypes::value_annotation_name);
+            break;
+        }
+
+    }
+
+    return ret_value;
 }
 
 } // namespace dds

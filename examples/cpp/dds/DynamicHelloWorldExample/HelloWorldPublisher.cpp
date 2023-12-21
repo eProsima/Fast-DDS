@@ -52,20 +52,18 @@ bool HelloWorldPublisher::init()
         return false;
     }
 
-    DynamicTypeBuilder* dyn_builder {nullptr};
-    if ( XMLProfileManager::getDynamicTypeByName(dyn_builder, "HelloWorld") != XMLP_ret::XML_OK )
+    DynamicType::_ref_type dyn_type;
+    if (XMLProfileManager::getDynamicTypeByName(dyn_type, "HelloWorld") != XMLP_ret::XML_OK )
     {
         return false;
     }
 
-    //TODO(richiware) delete type
-    const DynamicType* dyn_type {dyn_builder->build()};
-    TypeSupport m_type(new DynamicPubSubType(*dyn_type));
-    m_Hello = DynamicDataFactory::get_instance().create_data(*dyn_type);
-    m_Hello->set_string_value("Hello DDS Dynamic World", 0);
-    m_Hello->set_uint32_value(0, 1);
+    TypeSupport m_type(new DynamicPubSubType(dyn_type));
+    m_Hello = DynamicDataFactory::get_instance()->create_data(dyn_type);
+    m_Hello->set_string_value(0, "Hello DDS Dynamic World");
+    m_Hello->set_uint32_value(1, 0);
 
-    DynamicData* array {m_Hello->loan_value(2)};
+    DynamicData::_ref_type array {m_Hello->loan_value(2)};
 
     /*TODO(richiware)
        array->set_uint32_value(10, array.get_array_index({0, 0}));
@@ -171,11 +169,13 @@ void HelloWorldPublisher::runThread(
         {
             if (publish(false))
             {
-                std::string message = m_Hello->get_string_value(0);
-                uint32_t index = m_Hello->get_uint32_value(1);
+                std::string message;
+                m_Hello->get_string_value(message, 0);
+                uint32_t index {0};
+                m_Hello->get_uint32_value(index, 1);
                 std::string aux_array = "[";
 
-                DynamicData* array {m_Hello->loan_value(2)};
+                DynamicData::_ref_type array {m_Hello->loan_value(2)};
 
                 for (uint32_t i = 0; i < 5; ++i)
                 {
@@ -205,11 +205,12 @@ void HelloWorldPublisher::runThread(
             }
             else
             {
-                std::string message = m_Hello->get_string_value(0);
-                uint32_t index;
+                std::string message;
+                m_Hello->get_string_value(message, 0);
+                uint32_t index {0};
                 m_Hello->get_uint32_value(index, 1);
                 std::string aux_array = "[";
-                DynamicData* array {m_Hello->loan_value(2)};
+                DynamicData::_ref_type array {m_Hello->loan_value(2)};
                 for (uint32_t i = 0; i < 5; ++i)
                 {
                     aux_array += "[";
@@ -255,9 +256,9 @@ bool HelloWorldPublisher::publish(
     {
         uint32_t index;
         m_Hello->get_uint32_value(index, 1);
-        m_Hello->set_uint32_value(index + 1, 1);
+        m_Hello->set_uint32_value(1, index + 1);
 
-        DynamicData* array {m_Hello->loan_value(2)};
+        DynamicData::_ref_type array {m_Hello->loan_value(2)};
 
         /*TODO(richiware)
            array->set_uint32_value(10 + index, array.get_array_index({0, 0}));
@@ -272,7 +273,7 @@ bool HelloWorldPublisher::publish(
            array->set_uint32_value(100 + index, array.get_array_index({4, 1}));
          */
 
-        writer_->write(m_Hello);
+        writer_->write(&m_Hello);
         return true;
     }
     return false;

@@ -149,7 +149,7 @@ private:
     eprosima::fastdds::dds::TypeSupport latency_command_type_;
 
     /* Dynamic Types */
-    eprosima::fastdds::dds::DynamicData* dynamic_data_ {nullptr};
+    eprosima::fastdds::dds::DynamicData::_ref_type* dynamic_data_ {nullptr};
     eprosima::fastdds::dds::TypeSupport dynamic_pub_sub_type_;
 
     std::vector<uint32_t> data_size_sub_;
