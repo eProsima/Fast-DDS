@@ -199,23 +199,24 @@ const option::Descriptor usage[] = {
     { TOPIC_NAME, 0, "t", "topic",                  Arg::String,
       "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: TypeIntrospectionTopic)." },
     { DATA_TYPE, 0, "x", "type",                  Arg::DataType,
-      "  -x <data_type_name> \t--type=<data_type_name>  \tTopic Data Type name (Default: hw). "
-      "hw            -> HelloWorld data type (one string and one integer). "
-      "array         -> Data type with an array (one uint and an array of size 3 integer). "
-      "seq           -> Data type with a sequence (one uint and a sequence of size 3 shorts). "
-      "struct        -> Complex data type with an internal struct (3 integers). "
-      "plain         -> HelloWorld struct (index and string) but string is an array of 20 chars, so data type is "
-      "Plain. "
-      "key           -> Struct with an index, a keyed string value and 1 integer. "
-      "complex_array -> Data type with an array of non-primitive objects. "
-      "complex_seq   -> Data type with a sequence of non-primitive objects.  "
-      "super_complex -> Complex data type composed of several of the other types at multiple levels.  "
+      "  -x <data_type_name> \t--type=<data_type_name>  \tTopic Data Type name (Default: hw)."
+      "\n    - hw            -> HelloWorld data type (one string and one integer)."
+      "\n    - array         -> Data type with an array (one uint and an array of size 3"
+      "\n                       integer)."
+      "\n    - seq           -> Data type with a sequence (one uint and a sequence of size 3 shorts)."
+      "\n    - struct        -> Complex data type with an internal struct (3 integers)."
+      "\n    - plain         -> HelloWorld struct (index and string) but string is an array of 20 chars, so data"
+      "\n                       type is Plain."
+      "\n    - key           -> Struct with an index, a keyed string value and 1 integer."
+      "\n    - complex_array -> Data type with an array of non-primitive objects."
+      "\n    - complex_seq   -> Data type with a sequence of non-primitive objects.  "
+      "\n    - super_complex -> Complex data type composed of several of the other types at multiple levels.\n"
     },
     { DATA_TYPE_GENERATOR, 0, "g", "generator",                  Arg::Generator,
-      "  -g <generator_name> \t--generator=<generator_name>  \tData Type Generator (Default: gen). "
-      "gen   -> Use IDL file and Fast DDS Gen to generate Data Type introspection information. "
-      "xml   -> Use XML file to generate Data Type introspection information. "
-      "code  -> Use DynamicTypes API to generate Data Type introspection information. "
+      "  -g <generator_name> \t--generator=<generator_name>  \tData Type Generator (Default: gen)."
+      "\n    - gen   -> Use IDL file and Fast DDS Gen to generate Data Type introspection information."
+      "\n    - xml   -> Use XML file to generate Data Type introspection information."
+      "\n    - code  -> Use DynamicTypes API to generate Data Type introspection information.\n"
     },
     { DOMAIN_ID, 0, "d", "domain",                Arg::Numeric,
       "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
