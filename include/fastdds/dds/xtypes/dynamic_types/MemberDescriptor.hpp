@@ -138,6 +138,13 @@ public:
     virtual uint32_t& index() = 0;
 
     /*!
+     * Modifies the underlying order.
+     * @param[in] index Index.
+     */
+    virtual void index(
+            uint32_t index) = 0;
+
+    /*!
      * Returns the labels the member belongs to.
      * @return @ref UnionCaseLabelSeq.
      */

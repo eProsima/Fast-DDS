@@ -677,7 +677,7 @@ traits<DynamicType>::ref_type DynamicDataImpl::type() noexcept
 }
 
 ReturnCode_t DynamicDataImpl::get_descriptor(
-        traits<MemberDescriptor>::ref_type value,
+        traits<MemberDescriptor>::ref_type& value,
         MemberId id) noexcept
 {
     traits<DynamicTypeMember>::ref_type member;

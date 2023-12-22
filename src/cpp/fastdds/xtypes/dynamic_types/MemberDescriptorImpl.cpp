@@ -14,6 +14,7 @@
 
 #include "MemberDescriptorImpl.hpp"
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
@@ -211,31 +212,37 @@ bool MemberDescriptorImpl::is_consistent() noexcept
 {
     if (TK_NONE == parent_kind_)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "To check consistency the descriptor should be added as member");
         return false;
     }
 
     // type_ cannot be nil.
     if (!type_)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor has no type and it is mandatory");
         return false;
     }
 
     // Only aggregated types must use the ID value.
     if ((MEMBER_ID_INVALID == id_ && (TK_UNION == parent_kind_ || TK_STRUCTURE == parent_kind_)) ||
-            MEMBER_ID_INVALID != id_)
+            (MEMBER_ID_INVALID != id_ && TK_UNION != parent_kind_ && TK_STRUCTURE != parent_kind_))
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor has a wrong MemberId " << id_);
         return false;
     }
 
     // A union member cannot have the MemberId 0 because this value is for the discriminator
     if (TK_UNION == parent_kind_ && 0 == id_)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                "Descriptor describes a UNION and the MemberId 0 is reserved to the discriminator");
         return false;
     }
 
     // Check default_label.
     if (is_default_label_ && TK_UNION != parent_kind_)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor doesn't describe a UNION and it has set is_default_label");
         return false;
     }
 
@@ -243,11 +250,13 @@ bool MemberDescriptorImpl::is_consistent() noexcept
     if ((TK_UNION != parent_kind_ && 0 < label_.size()) ||
             (TK_UNION == parent_kind_ && !is_default_label_ && 0 == label_.size()))
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor is not consistent with its labels");
         return false;
     }
 
     if (!is_default_value_consistent(type_->get_kind(), default_value_))
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor name is not a valid full qualified name");
         return false;
     }
 

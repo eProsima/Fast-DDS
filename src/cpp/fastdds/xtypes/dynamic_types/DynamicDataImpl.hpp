@@ -44,7 +44,7 @@ public:
     traits<DynamicType>::ref_type type() noexcept override;
 
     ReturnCode_t get_descriptor(
-            traits<MemberDescriptor>::ref_type value,
+            traits<MemberDescriptor>::ref_type& value,
             MemberId id) noexcept override;
 
     bool equals(

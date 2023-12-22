@@ -27,7 +27,7 @@ DynamicTypeImpl::DynamicTypeImpl(
 }
 
 ReturnCode_t DynamicTypeImpl::get_descriptor(
-        traits<TypeDescriptor>::ref_type descriptor) noexcept
+        traits<TypeDescriptor>::ref_type& descriptor) noexcept
 {
     if (!descriptor)
     {
@@ -49,7 +49,7 @@ TypeKind DynamicTypeImpl::get_kind() noexcept
 }
 
 ReturnCode_t DynamicTypeImpl::get_member_by_name(
-        traits<DynamicTypeMember>::ref_type member,
+        traits<DynamicTypeMember>::ref_type& member,
         const ObjectName& name) noexcept
 {
     auto it = member_by_name_.find(name);
@@ -71,7 +71,7 @@ ReturnCode_t DynamicTypeImpl::get_all_members_by_name(
 }
 
 ReturnCode_t DynamicTypeImpl::get_member(
-        traits<DynamicTypeMember>::ref_type member,
+        traits<DynamicTypeMember>::ref_type& member,
         MemberId id) noexcept
 {
     auto it = member_.find(id);
@@ -98,7 +98,7 @@ uint32_t DynamicTypeImpl::get_member_count() noexcept
 }
 
 ReturnCode_t DynamicTypeImpl::get_member_by_index(
-        traits<DynamicTypeMember>::ref_type member,
+        traits<DynamicTypeMember>::ref_type& member,
         uint32_t index) noexcept
 {
     if (index >= members_.size())
@@ -116,7 +116,7 @@ uint32_t DynamicTypeImpl::get_annotation_count() noexcept
 }
 
 ReturnCode_t DynamicTypeImpl::get_annotation(
-        traits<AnnotationDescriptor>::ref_type descriptor,
+        traits<AnnotationDescriptor>::ref_type& descriptor,
         uint32_t idx) noexcept
 {
     if (!descriptor || idx >= annotation_.size())
@@ -134,7 +134,7 @@ uint32_t DynamicTypeImpl::get_verbatim_text_count() noexcept
 }
 
 ReturnCode_t DynamicTypeImpl::get_verbatim_text(
-        traits<VerbatimTextDescriptor>::ref_type descriptor,
+        traits<VerbatimTextDescriptor>::ref_type& descriptor,
         uint32_t idx) noexcept
 {
     if (!descriptor || idx >= verbatim_.size())
