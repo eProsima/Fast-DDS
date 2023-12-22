@@ -1169,7 +1169,7 @@ TEST_P(Discovery, TwentyParticipantsSeveralEndpointsUnicast)
     discoverParticipantsSeveralEndpointsTest(true, 10, 10, 10, TEST_TOPIC_NAME);
 #else
     discoverParticipantsSeveralEndpointsTest(true, 20, 20, 20, TEST_TOPIC_NAME);
-#endif
+#endif // if defined(__APPLE__)
 }
 
 //! Regression test for support case 7552 (CRM #353)
@@ -1391,7 +1391,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     Locator_t loc, loc6(LOCATOR_KIND_UDPv6, 0);
 
     // We are going to use several test string and check they are properly parsed and turn into RemoteServerList_t
-    // 1. single server address without specific port provided
+    // 1. Single server address without specific port provided
     string text = "192.168.36.34";
 
     att.clear();
@@ -1406,7 +1406,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 2. single server IPv6 address without specific port provided
+    // 2. Single server IPv6 address without specific port provided
     text = "2a02:26f0:dd:499::356e";
 
     att.clear();
@@ -1421,7 +1421,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 3. single server address specifying a custom listening port
+    // 3. Single server address specifying a custom listening port
     text = "192.168.36.34:14520";
 
     att.clear();
@@ -1436,7 +1436,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 4. single server IPv6 address specifying a custom listening port
+    // 4. Single server IPv6 address specifying a custom listening port
     text = "[2001:470:142:5::116]:14520";
 
     att.clear();
@@ -1451,7 +1451,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 5. check any locator is turned into localhost
+    // 5. Check any locator is turned into localhost
     text = "0.0.0.0:14520;[::]:14520";
 
     att.clear();
@@ -1473,20 +1473,20 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 6. check empty string scenario is handled
+    // 6. Check empty string scenario is handled
     text = "";
     output.clear();
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_TRUE(output.empty());
 
-    // 7. check at least one server be present scenario is hadled
+    // 7. Check at least one server be present scenario is hadled
     text = ";;;;";
     output.clear();
 
     ASSERT_FALSE(load_environment_server_info(text, output));
 
-    // 8. check several server scenario
+    // 8. Check several server scenario
     text = "192.168.36.34:14520;172.29.55.77:8783;172.30.80.1:31090";
 
     output.clear();
@@ -1516,7 +1516,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 9. check several server scenario with IPv6 addresses too
+    // 9. Check several server scenario with IPv6 addresses too
     text = "192.168.36.34:14520;[2a02:ec80:600:ed1a::3]:8783;172.30.80.1:31090";
 
     output.clear();
@@ -1546,7 +1546,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 10. check multicast addresses are identified as such
+    // 10. Check multicast addresses are identified as such
     text = "239.255.0.1;ff1e::ffff:efff:1";
 
     output.clear();
@@ -1569,7 +1569,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 11. check ignore some servers scenario
+    // 11. Check ignore some servers scenario
     text = ";192.168.36.34:14520;;172.29.55.77:8783;172.30.80.1:31090;";
 
     output.clear();
@@ -1658,6 +1658,79 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
+
+    // TCP transport
+
+    Locator_t loc_tcp(LOCATOR_KIND_TCPv4, 0);
+    Locator_t loc_tcp_6(LOCATOR_KIND_TCPv6, 0);
+
+    // 15. Single TCPv4 address without specifying a custom listening port
+
+    text = "TCPv4:[192.168.36.34]";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc_tcp, "192.168.36.34");
+    IPLocator::setPhysicalPort(loc_tcp, DEFAULT_TCP_SERVER_PORT);
+    IPLocator::setLogicalPort(loc_tcp, DEFAULT_TCP_SERVER_PORT);
+    att.metatrafficUnicastLocatorList.push_back(loc_tcp);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 16. Single TCPv6 address without specifying a custom listening port
+
+    text = "TCPv6:[2a02:26f0:dd:499::356e]";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv6(loc_tcp_6, "2a02:26f0:dd:499::356e");
+    IPLocator::setPhysicalPort(loc_tcp_6, DEFAULT_TCP_SERVER_PORT);
+    IPLocator::setLogicalPort(loc_tcp_6, DEFAULT_TCP_SERVER_PORT);
+    att.metatrafficUnicastLocatorList.push_back(loc_tcp_6);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 17. Single TCPv4 address specifying a custom listening port
+
+    text = "TCPv4:[192.168.36.34]:14520";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc_tcp, "192.168.36.34");
+    IPLocator::setPhysicalPort(loc_tcp, 14520);
+    IPLocator::setLogicalPort(loc_tcp, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc_tcp);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 18. Single TCPv6 address specifying a custom listening port
+
+    text = "TCPv6:[2a02:26f0:dd:499::356e]:14520";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv6(loc_tcp_6, "2a02:26f0:dd:499::356e");
+    IPLocator::setPhysicalPort(loc_tcp_6, 14520);
+    IPLocator::setLogicalPort(loc_tcp_6, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc_tcp_6);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
 }
 
 //! Tests the server-client setup using environment variable works fine using DNS
@@ -1669,6 +1742,9 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     RemoteServerList_t output, standard;
     RemoteServerAttributes att;
     Locator_t loc, loc6(LOCATOR_KIND_UDPv6, 0);
+
+    Locator_t loc_tcp(LOCATOR_KIND_TCPv4, 0);
+    Locator_t loc_tcp_6(LOCATOR_KIND_TCPv6, 0);
 
     // 1. single server DNS address resolution without specific port provided
     std::string text = "www.acme.com.test";
@@ -1737,6 +1813,38 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
+    // TCPv4
+    text = "TCPv4:[www.acme.com.test]";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc_tcp, "216.58.215.164");
+    IPLocator::setPhysicalPort(loc_tcp, DEFAULT_TCP_SERVER_PORT);
+    IPLocator::setLogicalPort(loc_tcp, DEFAULT_TCP_SERVER_PORT);
+    att.metatrafficUnicastLocatorList.push_back(loc_tcp);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // TCPv6
+    text = "TCPv6:[www.acme.com.test]";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv6(loc_tcp_6, "2a00:1450:400e:803::2004");
+    IPLocator::setPhysicalPort(loc_tcp_6, DEFAULT_TCP_SERVER_PORT);
+    IPLocator::setLogicalPort(loc_tcp_6, DEFAULT_TCP_SERVER_PORT);
+    att.metatrafficUnicastLocatorList.push_back(loc_tcp_6);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
     // 4. single server DNS address specifying a custom locator type and listening port
     // UDPv4
     text = "UDPv4:[www.acme.com.test]:14520";
@@ -1768,8 +1876,40 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // Any other Locator kind should fail
-    text = "TCPv4:[www.acme.com.test]";
+    // TCPv4
+    text = "TCPv4:[www.acme.com.test]:14520";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv4(loc_tcp, "216.58.215.164");
+    IPLocator::setPhysicalPort(loc_tcp, 14520);
+    IPLocator::setLogicalPort(loc_tcp, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc_tcp);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // TCPv6
+    text = "TCPv6:[www.acme.com.test]:14520";
+
+    att.clear();
+    output.clear();
+    standard.clear();
+    IPLocator::setIPv6(loc_tcp_6, "2a00:1450:400e:803::2004");
+    IPLocator::setPhysicalPort(loc_tcp_6, 14520);
+    IPLocator::setLogicalPort(loc_tcp_6, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc_tcp_6);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // SHM Locator kind should fail
+    text = "SHM:[www.acme.com.test]";
 
     output.clear();
     ASSERT_FALSE(load_environment_server_info(text, output));
