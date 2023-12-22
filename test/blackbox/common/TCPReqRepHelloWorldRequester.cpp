@@ -68,7 +68,7 @@ void TCPReqRepHelloWorldRequester::init(
         int domainId,
         uint16_t listeningPort,
         uint32_t maxInitialPeer,
-        const char* certs_path,
+        const char* certs_folder,
         bool force_localhost)
 {
     ParticipantAttributes pattr;
@@ -133,13 +133,13 @@ void TCPReqRepHelloWorldRequester::init(
         descriptor->maxInitialPeersRange = maxInitialPeer;
     }
 
-    if (certs_path != nullptr)
+    if (certs_folder != nullptr)
     {
         using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
         using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
         descriptor->apply_security = true;
         //descriptor->tls_config.password = "testkey";
-        descriptor->tls_config.verify_file = std::string(certs_path) + "/maincacert.pem";
+        descriptor->tls_config.verify_file = std::string(certs_folder) + "/maincacert.pem";
         descriptor->tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
         descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
         descriptor->tls_config.add_option(TLSOptions::SINGLE_DH_USE);
