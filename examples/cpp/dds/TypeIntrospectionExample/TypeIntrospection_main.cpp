@@ -46,10 +46,10 @@ int main(
     }
     else
     {
-        columns = 80;
+        columns = 120;
     }
 #else
-    columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
+    columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 120;
 #endif // if defined(_WIN32)
 
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
