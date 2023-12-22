@@ -222,21 +222,6 @@ void TCPTransportInterface::bind_socket(
     auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
     assert(it_remove != unbound_channel_resources_.end());
     unbound_channel_resources_.erase(it_remove);
-
-    unbound_lock.unlock();
-
-    // Look for an existing channel that matches this physical locator
-    auto existing_channel = channel_resources_.find(channel->locator());
-    // If the channel exists, check if the channel reference wait until it finishes its tasks
-    if (existing_channel != channel_resources_.end())
-    {
-        // Disconnect the old channel
-        existing_channel->second->disconnect();
-        scopedLock.unlock();
-        existing_channel->second->clear();
-        scopedLock.lock();
-    }
-
     channel_resources_[channel->locator()] = channel;
 
 }
@@ -645,6 +630,9 @@ bool TCPTransportInterface::OpenOutputChannel(
                 if (existing_channel != channel_resources_.end() &&
                         existing_channel->second != tcp_sender_resource->channel())
                 {
+                    // Disconnect the old channel
+                    tcp_sender_resource->channel()->disconnect();
+                    tcp_sender_resource->channel()->clear();
                     // Update sender resource with new channel
                     tcp_sender_resource->channel() = existing_channel->second;
                 }
@@ -864,17 +852,10 @@ void TCPTransportInterface::perform_listen_operation(
             {
                 TransportReceiverInterface* receiver = it->second.first;
                 ReceiverInUseCV* receiver_in_use = it->second.second;
-                receiver_in_use->cv.wait(scopedLock, [&]()
-                        {
-                            return receiver_in_use->in_use == false;
-                        });
-                if (TCPChannelResource::eConnectionStatus::eConnecting < channel->connection_status())
-                {
-                    receiver_in_use->in_use = true;
-                    scopedLock.unlock();
-                    receiver->OnDataReceived(msg.buffer, msg.length, channel->locator(), remote_locator);
-                    scopedLock.lock();
-                }
+                receiver_in_use->in_use = true;
+                scopedLock.unlock();
+                receiver->OnDataReceived(msg.buffer, msg.length, channel->locator(), remote_locator);
+                scopedLock.lock();
                 receiver_in_use->in_use = false;
                 receiver_in_use->cv.notify_one();
             }
