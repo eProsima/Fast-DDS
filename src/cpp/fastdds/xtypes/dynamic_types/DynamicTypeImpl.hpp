@@ -37,21 +37,21 @@ public:
             const TypeDescriptorImpl& descriptor) noexcept;
 
     ReturnCode_t get_descriptor(
-            traits<TypeDescriptor>::ref_type descriptor) noexcept override;
+            traits<TypeDescriptor>::ref_type& descriptor) noexcept override;
 
     ObjectName get_name() noexcept override;
 
     TypeKind get_kind() noexcept override;
 
     ReturnCode_t get_member_by_name(
-            traits<DynamicTypeMember>::ref_type member,
+            traits<DynamicTypeMember>::ref_type& member,
             const ObjectName& name) noexcept override;
 
     ReturnCode_t get_all_members_by_name(
             DynamicTypeMembersByName& member) noexcept override;
 
     ReturnCode_t get_member(
-            traits<DynamicTypeMember>::ref_type member,
+            traits<DynamicTypeMember>::ref_type& member,
             MemberId id) noexcept override;
 
     ReturnCode_t get_all_members(
@@ -60,19 +60,19 @@ public:
     uint32_t get_member_count() noexcept override;
 
     ReturnCode_t get_member_by_index(
-            traits<DynamicTypeMember>::ref_type member,
+            traits<DynamicTypeMember>::ref_type& member,
             uint32_t index) noexcept override;
 
     uint32_t get_annotation_count() noexcept override;
 
     ReturnCode_t get_annotation(
-            traits<AnnotationDescriptor>::ref_type descriptor,
+            traits<AnnotationDescriptor>::ref_type& descriptor,
             uint32_t idx) noexcept override;
 
     uint32_t get_verbatim_text_count() noexcept override;
 
     ReturnCode_t get_verbatim_text(
-            traits<VerbatimTextDescriptor>::ref_type descriptor,
+            traits<VerbatimTextDescriptor>::ref_type& descriptor,
             uint32_t idx) noexcept override;
 
     bool equals(

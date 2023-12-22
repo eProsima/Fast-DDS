@@ -47,7 +47,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
      */
     virtual ReturnCode_t get_descriptor(
-            traits<MemberDescriptor>::ref_type descriptor) = 0;
+            traits<MemberDescriptor>::ref_type& descriptor) = 0;
 
     /*!
      * Returns the number of applied annotations to the member.
@@ -64,7 +64,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
      */
     virtual ReturnCode_t get_annotation(
-            traits<AnnotationDescriptor>::ref_type descriptor,
+            traits<AnnotationDescriptor>::ref_type& descriptor,
             uint32_t idx) = 0;
 
     /*!
@@ -82,7 +82,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
      */
     virtual ReturnCode_t get_verbatim_text(
-            traits<VerbatimTextDescriptor>::ref_type descriptor,
+            traits<VerbatimTextDescriptor>::ref_type& descriptor,
             uint32_t idx) = 0;
 
     /**

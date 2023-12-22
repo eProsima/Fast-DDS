@@ -36,7 +36,7 @@ class MemberDescriptorImpl : public virtual MemberDescriptor
     std::string default_value_;
 
     //! Definition order of the member inside its parent.
-    uint32_t index_ {0};
+    uint32_t index_ {0xFFFFFFFF};
 
     //! Case Labels for unions.
     UnionCaseLabelSeq label_;
@@ -161,7 +161,7 @@ public:
     }
 
     void index(
-            uint32_t index) noexcept
+            uint32_t index) noexcept override
     {
         index_ = index;
     }

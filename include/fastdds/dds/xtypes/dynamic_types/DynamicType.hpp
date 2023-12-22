@@ -43,7 +43,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
      */
     virtual ReturnCode_t get_descriptor(
-            traits<TypeDescriptor>::ref_type descriptor) = 0;
+            traits<TypeDescriptor>::ref_type& descriptor) = 0;
 
     /*!
      * Returns the fully qualified name of this type
@@ -65,7 +65,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when the member doesn't exists.
      */
     virtual ReturnCode_t get_member_by_name(
-            traits<DynamicTypeMember>::ref_type member,
+            traits<DynamicTypeMember>::ref_type& member,
             const ObjectName& name) = 0;
 
     /*!
@@ -86,7 +86,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when the member doesn't exists.
      */
     virtual ReturnCode_t get_member(
-            traits<DynamicTypeMember>::ref_type member,
+            traits<DynamicTypeMember>::ref_type& member,
             MemberId id) = 0;
 
     /*!
@@ -113,7 +113,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when the index is out-of-range.
      */
     virtual ReturnCode_t get_member_by_index(
-            traits<DynamicTypeMember>::ref_type member,
+            traits<DynamicTypeMember>::ref_type& member,
             uint32_t index) = 0;
 
     /*!
@@ -131,7 +131,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
      */
     virtual ReturnCode_t get_annotation(
-            traits<AnnotationDescriptor>::ref_type descriptor,
+            traits<AnnotationDescriptor>::ref_type& descriptor,
             uint32_t idx) = 0;
 
     /*!
@@ -149,7 +149,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
      */
     virtual ReturnCode_t get_verbatim_text(
-            traits<VerbatimTextDescriptor>::ref_type descriptor,
+            traits<VerbatimTextDescriptor>::ref_type& descriptor,
             uint32_t idx) = 0;
 
     /**

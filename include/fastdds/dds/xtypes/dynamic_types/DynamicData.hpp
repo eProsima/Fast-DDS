@@ -53,7 +53,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
      */
     virtual ReturnCode_t get_descriptor(
-            traits<MemberDescriptor>::ref_type value,
+            traits<MemberDescriptor>::ref_type& value,
             MemberId id) = 0;
 
     /*!

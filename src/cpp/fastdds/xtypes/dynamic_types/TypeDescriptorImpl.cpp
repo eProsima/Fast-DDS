@@ -14,6 +14,7 @@
 
 #include "TypeDescriptorImpl.hpp"
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
@@ -154,18 +155,22 @@ bool TypeDescriptorImpl::is_consistent() noexcept
     // Alias Types need the base type to indicate what type has been aliased.
     if (TK_ALIAS == kind_ && !base_type_)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes an ALIAS but the base_type was not set");
         return false;
     }
 
     // Alias must have base type, and structures and bitsets optionally can have it.
     if (base_type_ && TK_ALIAS != kind_ && TK_STRUCTURE != kind_ && TK_BITSET != kind_)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                "Descriptor doesn't describe an ALIAS|STRUCTURE|BITSET but the base_type was set");
         return false;
     }
 
     // Arrays need one or more bound fields with the lenghts of each dimension.
     if (TK_ARRAY == kind_ && 0 == bound_.size())
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes an ARRAY but bound is empty");
         return false;
     }
 
@@ -177,12 +182,15 @@ bool TypeDescriptorImpl::is_consistent() noexcept
                 TK_STRING8 == kind_   ||
                 TK_STRING16 == kind_))
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                "Descriptor describes an SEQUENCE|MAP|BITMASK|STRING but bound doesn't contain only one element");
         return false;
     }
 
     // Only union types need the discriminator of the union
     if (TK_UNION == kind_ && !discriminator_type_)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes an UNION but discriminant_type was not set");
         return false;
     }
     // TODO(richiware) if union, check discriminator kind and the type is a integer (labels are UINT64).
@@ -197,23 +205,28 @@ bool TypeDescriptorImpl::is_consistent() noexcept
                 TK_MAP == kind_      ||
                 TK_BITMASK == kind_))
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                "Descriptor describes an ARRAY|SEQUENCE|MAP|BITMASK|STRING but element_type was not set");
         return false;
     }
 
     // For Bitmask types is mandatory that this element is boolean.
     if (TK_BITMASK == kind_ && TK_BOOLEAN != element_type_->get_kind())
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes a BITMASK but element_type is not of BOOLEAN type");
         return false;
     }
 
     // Only map types need the keyElementType to store the "Key" type of the pair.
     if (TK_MAP == kind_ && !key_element_type_)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes a MAP but key_element_type was not set");
         return false;
     }
 
     if (!is_type_name_consistent(name_))
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor name is not a fully qualified name");
         return false;
     }
 

@@ -16,6 +16,8 @@
 
 #include <cassert>
 
+#include <fastdds/dds/log/Log.hpp>
+
 #include "DynamicTypeImpl.hpp"
 #include "DynamicTypeMemberImpl.hpp"
 #include "MemberDescriptorImpl.hpp"
@@ -28,13 +30,32 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
         const TypeDescriptorImpl& type_descriptor) noexcept
 {
     type_descriptor_.copy_from(type_descriptor);
+
+    if ((TK_STRUCTURE == type_descriptor_.kind() || TK_UNION == type_descriptor_.kind()) &&
+            type_descriptor_.base_type())
+    {
+        // Get last member_id from the base type.
+        auto parent = type_descriptor_.base_type();
+        traits<DynamicTypeMember>::ref_type member;
+        parent->get_member_by_index(member, parent->get_member_count() - 1);
+        traits<DynamicTypeMemberImpl>::ref_type member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
+                                                                 member)};
+        assert(MEMBER_ID_INVALID != member_impl->get_descriptor().id());
+        next_id = member_impl->get_descriptor().id() + 1;
+    }
+    else if (TK_UNION == type_descriptor_.kind())
+    {
+        // MemberId 0 is reserved to discriminator.
+        next_id = 1;
+    }
 }
 
 ReturnCode_t DynamicTypeBuilderImpl::get_descriptor(
-        traits<TypeDescriptor>::ref_type descriptor) noexcept
+        traits<TypeDescriptor>::ref_type& descriptor) noexcept
 {
     if (!descriptor)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor reference is nil");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -53,13 +74,14 @@ TypeKind DynamicTypeBuilderImpl::get_kind() noexcept
 }
 
 ReturnCode_t DynamicTypeBuilderImpl::get_member_by_name(
-        traits<DynamicTypeMember>::ref_type member,
+        traits<DynamicTypeMember>::ref_type& member,
         const ObjectName& name) noexcept
 {
     auto it = member_by_name_.find(name);
 
     if (member_by_name_.end() == it)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot find a member with name " << name.c_str());
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -75,13 +97,14 @@ ReturnCode_t DynamicTypeBuilderImpl::get_all_members_by_name(
 }
 
 ReturnCode_t DynamicTypeBuilderImpl::get_member(
-        traits<DynamicTypeMember>::ref_type member,
+        traits<DynamicTypeMember>::ref_type& member,
         MemberId id) noexcept
 {
     auto it = member_.find(id);
 
     if (member_.end() == it)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot find a member with MemberId " << id);
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -102,11 +125,12 @@ uint32_t DynamicTypeBuilderImpl::get_member_count() noexcept
 }
 
 ReturnCode_t DynamicTypeBuilderImpl::get_member_by_index(
-        traits<DynamicTypeMember>::ref_type member,
+        traits<DynamicTypeMember>::ref_type& member,
         uint32_t index) noexcept
 {
     if (index >= members_.size())
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Index " << index << " out-of-range");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -120,11 +144,12 @@ uint32_t DynamicTypeBuilderImpl::get_annotation_count() noexcept
 }
 
 ReturnCode_t DynamicTypeBuilderImpl::get_annotation(
-        traits<AnnotationDescriptor>::ref_type descriptor,
+        traits<AnnotationDescriptor>::ref_type& descriptor,
         uint32_t idx) noexcept
 {
     if (!descriptor || idx >= annotation_.size())
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor reference is nil or index is out-of-range");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -193,11 +218,13 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             TK_STRUCTURE != type_descriptor_kind &&
             TK_UNION != type_descriptor_kind)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type of kind " << type_descriptor_kind << " not supports adding members");
         return RETCODE_BAD_PARAMETER;
     }
 
     if (!descriptor)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor reference is nil");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -212,6 +239,9 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             // Check that there isn't any member as default label and that there isn't any member with the same case.
             if (descriptor_impl->is_default_label() && member_impl->member_descriptor_.is_default_label())
             {
+                EPROSIMA_LOG_ERROR(DYN_TYPES,
+                        "Member " << member_impl->member_descriptor_.name().c_str() <<
+                        " already defined a default_label");
                 return RETCODE_BAD_PARAMETER;
             }
             for (const int32_t new_label : descriptor_impl->label())
@@ -220,6 +250,9 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
                 {
                     if (new_label == label)
                     {
+                        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                                "Member " << member_impl->member_descriptor_.name().c_str() << " already contains the label " <<
+                                label);
                         return false;
                     }
                 }
@@ -246,33 +279,47 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     auto it_by_name = member_by_name_.find(member_name);
     if (member_by_name_.end() != it_by_name)
     {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "There is already a member with name " << member_name);
         return RETCODE_BAD_PARAMETER;
     }
 
-    descriptor_impl->parent_kind(type_descriptor_kind); // Set before calling is_consistent().
+    traits<DynamicTypeMemberImpl>::ref_type dyn_member = std::make_shared<DynamicTypeMemberImpl>(*descriptor_impl);
+    dyn_member->get_descriptor().parent_kind(type_descriptor_kind); // Set before calling is_consistent().
 
-    descriptor_impl->index(next_index_++);
-    //TODO(richiware) if memberid is invalid in aggregated types, find a new one.
-    //TODO(richiware) set index
+    auto member_id = dyn_member->get_descriptor().id();
 
-    if (!descriptor_impl->is_consistent())
-    {
-        return RETCODE_BAD_PARAMETER;
-    }
-
-    // Check there is already a member with same id.
-    auto member_id = descriptor_impl->id();
+    // If member_id is MEMBER_ID_INVALID when aggregated type, find a new one.
     if (TK_STRUCTURE == type_descriptor_kind || TK_UNION == type_descriptor_kind)
     {
+        if (MEMBER_ID_INVALID == member_id)
+        {
+            dyn_member->get_descriptor().id(next_id++);
+        }
+
+        // Check there is already a member with same id.
         auto it_by_id = member_.find(member_id);
         if (member_.end() != it_by_id)
         {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "There is already a member with MemberId " << member_id);
             return RETCODE_BAD_PARAMETER;
         }
     }
-    else
+    else if (MEMBER_ID_INVALID != member_id)
     {
-        assert(MEMBER_ID_INVALID == member_id);
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "MemberId must be MEMBER_ID_INVALID");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    // Set index
+    if (dyn_member->get_descriptor().index() >= next_index_)
+    {
+        dyn_member->get_descriptor().index(next_index_++);
+    }
+
+    if (!dyn_member->get_descriptor().is_consistent())
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor is not consistent");
+        return RETCODE_BAD_PARAMETER;
     }
 
     /*TODO(richiware) think
@@ -285,9 +332,24 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
        }
      */
 
-    traits<DynamicTypeMember>::ref_type dyn_member = std::make_shared<DynamicTypeMemberImpl>(*descriptor_impl);
-
-    members_.push_back(dyn_member); //TODO(richiware) review if index set by user.
+    assert(dyn_member->get_descriptor().index() <= members_.size());
+    if (dyn_member->get_descriptor().index() < members_.size())
+    {
+        auto it = members_.begin() + dyn_member->get_descriptor().index();
+        it = members_.insert(it, dyn_member);
+        for (auto next_it {++it}; next_it != members_.end(); ++next_it)
+        {
+            auto next_member = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(*next_it);
+            next_member->get_descriptor().index(next_member->get_descriptor().index() + 1);
+        }
+        assert(next_index_ == traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
+                    *members_.rbegin())->get_descriptor().index());
+        ++next_index_;
+    }
+    else
+    {
+        members_.push_back(dyn_member);
+    }
     member_by_name_.emplace(std::make_pair(member_name, dyn_member));
     if (TK_STRUCTURE == type_descriptor_kind || TK_UNION == type_descriptor_kind)
     {
