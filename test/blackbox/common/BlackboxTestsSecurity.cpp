@@ -3848,83 +3848,43 @@ TEST(Security, AllowUnauthenticatedParticipants_TwoParticipantsDifferentCertific
     ASSERT_FALSE(writer.is_matched());
 }
 
-// Regresion test for Refs #20166
+// Regresion test for redmine issue 20166
 TEST(Security, InANonSecureParticipantWithTwoSecureParticipantScenario_TheTwoSecureParticipantsCorrectlyCommunicate)
 {
-    //! Create
+    // Create
     PubSubReader<HelloWorldPubSubType> non_secure_reader("HelloWorldTopic");
     PubSubReader<HelloWorldPubSubType> secure_reader("HelloWorldTopic");
     PubSubWriter<HelloWorldPubSubType> secure_writer("HelloWorldTopic");
 
-    non_secure_reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            // Force a high number of announcements. Publish 1 every 1 ms
-            initial_announcements(1e6, {0, 1000000u}).init();
-
-    PropertyPolicy pub_property_policy, sub_property_policy;
-
-    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-            "builtin.PKI-DH"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-            "file://" + std::string(certs_path) + "/mainpubcert.pem"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-            "file://" + std::string(certs_path) + "/mainpubkey.pem"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-            "builtin.AES-GCM-GMAC"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
-            "builtin.Access-Permissions"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
-            "file://" + std::string(certs_path) + "/governance_helloworld_all_enable.smime"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-            "file://" + std::string(certs_path) + "/permissions_helloworld.smime"));
+    // Configure security
+    const std::string governance_file("governance_helloworld_all_enable.smime");
+    const std::string permissions_file("permissions_helloworld.smime");
+    CommonPermissionsConfigure(secure_reader, secure_writer, governance_file, permissions_file);
 
     secure_writer.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            property_policy(pub_property_policy).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(secure_writer.isInitialized());
 
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    non_secure_reader.history_depth(10).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
-    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-            "builtin.PKI-DH"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-            "file://" + std::string(certs_path) + "/mainsubcert.pem"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-            "file://" + std::string(certs_path) + "/mainsubkey.pem"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-            "builtin.AES-GCM-GMAC"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
-            "builtin.Access-Permissions"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
-            "file://" + std::string(certs_path) +
-            "/governance_helloworld_all_enable.smime"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-            "file://" + std::string(certs_path) + "/permissions_helloworld.smime"));
+    ASSERT_TRUE(non_secure_reader.isInitialized());
 
     secure_reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_property_policy).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(secure_reader.isInitialized());
 
-    //! Wait for the authorization
+    // Wait for the authorization
     secure_reader.waitAuthorized();
     secure_writer.waitAuthorized();
 
-    //! Wait for discovery
+    // Wait for discovery
     secure_writer.wait_discovery(std::chrono::seconds(5));
     secure_reader.wait_discovery(std::chrono::seconds(5));
 
-    //! Data is correctly sent and received
+    // Data is correctly sent and received
     auto data = default_helloworld_data_generator();
 
     secure_reader.startReception(data);
@@ -3935,6 +3895,7 @@ TEST(Security, InANonSecureParticipantWithTwoSecureParticipantScenario_TheTwoSec
     ASSERT_TRUE(data.empty());
 
     secure_reader.block_for_all();
+    EXPECT_EQ(non_secure_reader.getReceivedCount(), 0u);
 }
 
 // *INDENT-OFF*
