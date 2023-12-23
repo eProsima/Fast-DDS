@@ -14,15 +14,19 @@
 
 #include "BlackboxTests.hpp"
 
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
+#include <string>
+
+#include <gtest/gtest.h>
 
 #include <fastdds/rtps/transport/ChainingTransportDescriptor.h>
 #include <fastdds/rtps/transport/ChainingTransport.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 
-#include <gtest/gtest.h>
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+
+using BuiltinTransports = eprosima::fastdds::rtps::BuiltinTransports;
 
 class TestChainingTransportDescriptor : public eprosima::fastdds::rtps::ChainingTransportDescriptor
 {
@@ -111,6 +115,181 @@ eprosima::fastdds::rtps::TransportInterface* TestChainingTransportDescriptor::cr
 {
     return new TestChainingTransport(*this);
 }
+
+class BuiltinTransportsTest
+{
+public:
+
+    static void test_xml(
+            const std::string& profiles_file,
+            const std::string& participant_profile)
+    {
+        run_test(profiles_file, participant_profile, "", BuiltinTransports::NONE);
+    }
+
+    static void test_env(
+            const std::string& env_var_value)
+    {
+        if (env_var_value == "NONE")
+        {
+#ifdef _WIN32
+            _putenv_s(env_var_name_.c_str(), env_var_value.c_str());
+#else
+            setenv(env_var_name_.c_str(), env_var_value.c_str(), 1);
+#endif // _WIN32
+
+            PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+            PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+            writer.init();
+            ASSERT_FALSE(writer.isInitialized());
+
+            reader.init();
+            ASSERT_FALSE(reader.isInitialized());
+
+        }
+        else
+        {
+            run_test("", "", env_var_value, BuiltinTransports::NONE);
+        }
+    }
+
+    static void test_api(
+            const BuiltinTransports& builtin_transports)
+    {
+        if (builtin_transports == BuiltinTransports::NONE)
+        {
+            PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+            PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+            writer.setup_transports(builtin_transports).init();
+            ASSERT_FALSE(writer.isInitialized());
+
+            reader.setup_transports(builtin_transports).init();
+            ASSERT_FALSE(reader.isInitialized());
+        }
+        else
+        {
+            run_test("", "", "", builtin_transports);
+        }
+    }
+
+private:
+
+    static void run_test(
+            const std::string& profiles_file,
+            const std::string& participant_profile,
+            const std::string& env_var_value,
+            const BuiltinTransports& builtin_transports)
+    {
+        enum class BuiltinTransportsTestCase : uint8_t
+        {
+            NONE,
+            XML,
+            ENV,
+            API
+        };
+
+        BuiltinTransportsTestCase test_case = BuiltinTransportsTestCase::NONE;
+
+        /* Validate input */
+        if (profiles_file != "")
+        {
+            ASSERT_NE(participant_profile, "");
+            ASSERT_EQ(builtin_transports, BuiltinTransports::NONE);
+            ASSERT_EQ(env_var_value, "");
+            test_case = BuiltinTransportsTestCase::XML;
+        }
+        else if (env_var_value != "")
+        {
+            ASSERT_EQ(profiles_file, "");
+            ASSERT_EQ(participant_profile, "");
+            ASSERT_EQ(builtin_transports, BuiltinTransports::NONE);
+            test_case = BuiltinTransportsTestCase::ENV;
+        }
+        else if (builtin_transports != BuiltinTransports::NONE)
+        {
+            ASSERT_EQ(profiles_file, "");
+            ASSERT_EQ(participant_profile, "");
+            ASSERT_EQ(env_var_value, "");
+            test_case = BuiltinTransportsTestCase::API;
+        }
+
+        ASSERT_NE(test_case, BuiltinTransportsTestCase::NONE);
+
+        /* Test configuration */
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+        PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+        // Reliable keep all to wait of all acked as end condition
+        writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
+
+        reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
+
+        // Builtin transport configuration according to test_case
+        switch (test_case)
+        {
+            case BuiltinTransportsTestCase::XML:
+            {
+                writer.set_xml_filename(profiles_file);
+                writer.set_participant_profile(participant_profile);
+
+                reader.set_xml_filename(profiles_file);
+                reader.set_participant_profile(participant_profile);
+                break;
+            }
+            case BuiltinTransportsTestCase::ENV:
+            {
+#ifdef _WIN32
+                _putenv_s(env_var_name_.c_str(), env_var_name_.c_str());
+#else
+                setenv(env_var_name_.c_str(), env_var_name_.c_str(), 1);
+#endif // _WIN32
+                break;
+            }
+            case BuiltinTransportsTestCase::API:
+            {
+                writer.setup_transports(builtin_transports);
+                reader.setup_transports(builtin_transports);
+                break;
+            }
+            default:
+            {
+                FAIL();
+            }
+        }
+
+        /* Run test */
+        // Init writer
+        writer.init();
+        ASSERT_TRUE(writer.isInitialized());
+
+        // Init reader
+        reader.init();
+        ASSERT_TRUE(reader.isInitialized());
+
+        // Wait for discovery
+        writer.wait_discovery();
+        reader.wait_discovery();
+
+        // Send data
+        auto data = default_helloworld_data_generator();
+        reader.startReception(data);
+        writer.send(data);
+        ASSERT_TRUE(data.empty());
+
+        // Wait for reception acknowledgement
+        reader.block_for_all();
+        EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
+    }
+
+    static const std::string env_var_name_;
+};
+
+// Static const member of non-integral types cannot be in-class initialized
+const std::string BuiltinTransportsTest::env_var_name_ = "FASTDDS_BUILTIN_TRANSPORTS";
 
 TEST(ChainingTransportTests, basic_test)
 {
@@ -306,3 +485,129 @@ TEST(ChainingTransportTests, tcp_client_server_with_wan_correct_sender_resources
     ASSERT_LE(times_writer_send_function_called.load(), 30);
     ASSERT_LE(times_reader_receive_function_called.load(), 30);
 }
+
+TEST(ChainingTransportTests, builtin_transports_api_none)
+{
+    BuiltinTransportsTest::test_api(BuiltinTransports::NONE);
+}
+
+TEST(ChainingTransportTests, builtin_transports_api_default)
+{
+    BuiltinTransportsTest::test_api(BuiltinTransports::DEFAULT);
+}
+
+TEST(ChainingTransportTests, builtin_transports_api_defaultv6)
+{
+    BuiltinTransportsTest::test_api(BuiltinTransports::DEFAULTv6);
+}
+
+TEST(ChainingTransportTests, builtin_transports_api_shm)
+{
+    BuiltinTransportsTest::test_api(BuiltinTransports::SHM);
+}
+
+TEST(ChainingTransportTests, builtin_transports_api_udpv4)
+{
+    BuiltinTransportsTest::test_api(BuiltinTransports::UDPv4);
+}
+
+TEST(ChainingTransportTests, builtin_transports_api_udpv6)
+{
+    BuiltinTransportsTest::test_api(BuiltinTransports::UDPv6);
+}
+
+TEST(ChainingTransportTests, builtin_transports_api_large_data)
+{
+    BuiltinTransportsTest::test_api(BuiltinTransports::LARGE_DATA);
+}
+
+#ifndef __APPLE__
+TEST(ChainingTransportTests, builtin_transports_api_large_datav6)
+{
+    BuiltinTransportsTest::test_api(BuiltinTransports::LARGE_DATAv6);
+}
+#endif // __APPLE__
+
+TEST(ChainingTransportTests, builtin_transports_env_none)
+{
+    BuiltinTransportsTest::test_env("NONE");
+}
+
+TEST(ChainingTransportTests, builtin_transports_env_default)
+{
+    BuiltinTransportsTest::test_env("DEFAULT");
+}
+
+TEST(ChainingTransportTests, builtin_transports_env_defaultv6)
+{
+    BuiltinTransportsTest::test_env("DEFAULTv6");
+}
+
+TEST(ChainingTransportTests, builtin_transports_env_shm)
+{
+    BuiltinTransportsTest::test_env("SHM");
+}
+
+TEST(ChainingTransportTests, builtin_transports_env_udpv4)
+{
+    BuiltinTransportsTest::test_env("UDPv4");
+}
+
+TEST(ChainingTransportTests, builtin_transports_env_udpv6)
+{
+    BuiltinTransportsTest::test_env("UDPv6");
+}
+
+TEST(ChainingTransportTests, builtin_transports_env_large_data)
+{
+    BuiltinTransportsTest::test_env("LARGE_DATA");
+}
+
+#ifndef __APPLE__
+TEST(ChainingTransportTests, builtin_transports_env_large_datav6)
+{
+    BuiltinTransportsTest::test_env("LARGE_DATAv6");
+}
+#endif // __APPLE__
+
+TEST(ChainingTransportTests, builtin_transports_xml_none)
+{
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_none");
+}
+
+TEST(ChainingTransportTests, builtin_transports_xml_default)
+{
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_default");
+}
+
+TEST(ChainingTransportTests, builtin_transports_xml_defaultv6)
+{
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_defaultv6");
+}
+
+TEST(ChainingTransportTests, builtin_transports_xml_shm)
+{
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_shm");
+}
+
+TEST(ChainingTransportTests, builtin_transports_xml_udpv4)
+{
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_udp");
+}
+
+TEST(ChainingTransportTests, builtin_transports_xml_udpv6)
+{
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_udpv6");
+}
+
+TEST(ChainingTransportTests, builtin_transports_xml_large_data)
+{
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_largedata");
+}
+
+#ifndef __APPLE__
+TEST(ChainingTransportTests, builtin_transports_xml_large_datav6)
+{
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_largedatav6");
+}
+#endif // __APPLE__

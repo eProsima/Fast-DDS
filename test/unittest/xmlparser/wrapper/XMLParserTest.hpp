@@ -134,6 +134,14 @@ public:
         return getXMLTransports(elem, transports, ident);
     }
 
+    static XMLP_ret getXMLBuiltinTransports_wrapper(
+            tinyxml2::XMLElement* elem,
+            eprosima::fastdds::rtps::BuiltinTransports* bt,
+            uint8_t ident)
+    {
+        return getXMLBuiltinTransports(elem, bt, ident);
+    }
+
     static XMLP_ret getXMLguidPrefix_wrapper(
             tinyxml2::XMLElement* elem,
             GuidPrefix_t& prefix,

@@ -720,6 +720,20 @@
             <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
             <xs:element name="userTransports" type="stringListType" minOccurs="0"/>
             <xs:element name="useBuiltinTransports" type="boolType" minOccurs="0"/>
+            <xs:element name="builtinTransports" minOccurs="0" maxOccurs="1">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="NONE"/>
+                                    <xs:enumeration value="DEFAULT"/>
+                                    <xs:enumeration value="DEFAULTv6"/>
+                                    <xs:enumeration value="SHM"/>
+                                    <xs:enumeration value="UDPv4"/>
+                                    <xs:enumeration value="UDPv6"/>
+                                    <xs:enumeration value="LARGE_DATA"/>
+                                    <xs:enumeration value="LARGE_DATAv6"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
             <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
             <xs:element name="name" type="stringType" minOccurs="0"/>
         </xs:all>

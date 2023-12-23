@@ -20,6 +20,7 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastdds/dds/log/Log.hpp>
+#include <utils/string_utilities.hpp>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -4025,6 +4026,49 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
             logError(XMLPARSER, "Invalid element found into 'subscriberProfileType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
         }
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLBuiltinTransports(
+        tinyxml2::XMLElement* elem,
+        eprosima::fastdds::rtps::BuiltinTransports* bt,
+        uint8_t /*ident*/)
+{
+    /*
+        <xs:simpleType name="builtinTransports">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="NONE"/>
+                <xs:enumeration value="DEFAULT"/>
+                <xs:enumeration value="DEFAULTv6"/>
+                <xs:enumeration value="SHM"/>
+                <xs:enumeration value="UDPv4"/>
+                <xs:enumeration value="UDPv6"/>
+                <xs:enumeration value="LARGE_DATA"/>
+                <xs:enumeration value="LARGE_DATAv6"/>
+            </xs:restriction>
+        </xs:simpleType>
+     */
+    const char* text = elem->GetText();
+    if (nullptr == text)
+    {
+        logError(XMLPARSER, "Node '" << KIND << "' without content");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    if (!get_element_enum_value(text, *bt,
+            NONE, eprosima::fastdds::rtps::BuiltinTransports::NONE,
+            DEFAULT_C, eprosima::fastdds::rtps::BuiltinTransports::DEFAULT,
+            DEFAULTv6, eprosima::fastdds::rtps::BuiltinTransports::DEFAULTv6,
+            SHM, eprosima::fastdds::rtps::BuiltinTransports::SHM,
+            UDPv4, eprosima::fastdds::rtps::BuiltinTransports::UDPv4,
+            UDPv6, eprosima::fastdds::rtps::BuiltinTransports::UDPv6,
+            LARGE_DATA, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA,
+            LARGE_DATAv6, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATAv6))
+    {
+        logError(XMLPARSER, "Node '" << KIND << "' bad content");
+        return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
