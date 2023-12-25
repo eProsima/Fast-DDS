@@ -287,6 +287,49 @@ TEST(DDSDataWriter, OfferedDeadlineMissedListener)
     ASSERT_TRUE(ret);
 }
 
+/**
+ * Regression test for EasyRedmine issue https://eprosima.easyredmine.com/issues/20059
+ *
+ * The test creates a writer and reader that communicate with transient_local reliable QoS.
+ * The issue corresponds to a race condition involving writer's history destruction and heartbeat delivery, so in order
+ * to increment the probability of occurrence a high history depth and heartbeat frequency are used.
+ *
+ * Note:
+ *   - Only affects TRANSPORT case (UDP or SHM communication, data_sharing and intraprocess disabled)
+ *   - Destruction order matters: writer must be destroyed before reader (otherwise heartbeats would no be sent while
+ *     destroying the writer)
+ */
+TEST(DDSDataWriter, HeartbeatWhileDestruction)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Force writer to be destroyed before reader, so they are still matched, and heartbeats are sent while writer is destroyed
+    {
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        // A high number of samples increases the probability of the data race to occur
+        size_t n_samples = 1000;
+
+        reader.reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS).init();
+        ASSERT_TRUE(reader.isInitialized());
+
+        writer.reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS).history_kind(
+            KEEP_LAST_HISTORY_QOS).history_depth(static_cast<int32_t>(n_samples)).heartbeat_period_seconds(0).
+                heartbeat_period_nanosec(
+            20 * 1000).init();
+        ASSERT_TRUE(writer.isInitialized());
+
+        reader.wait_discovery();
+        writer.wait_discovery();
+
+        auto data = default_helloworld_data_generator(n_samples);
+        reader.startReception(data);
+        writer.send(data);
+
+        EXPECT_TRUE(data.empty());
+    }
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
