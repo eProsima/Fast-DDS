@@ -56,7 +56,7 @@ void PDPListener::onNewCacheChangeAdded(
 {
     CacheChange_t* change = const_cast<CacheChange_t*>(change_in);
     GUID_t writer_guid = change->writerGUID;
-    logInfo(RTPS_PDP, "SPDP Message received from: " << change_in->writerGUID);
+    logInfo(RTPS_PDP, "SPDP Message received from: " << writer_guid);
 
     // Make sure we have an instance handle (i.e GUID)
     if (change->instanceHandle == c_InstanceHandle_Unknown)
@@ -119,85 +119,10 @@ void PDPListener::onNewCacheChangeAdded(
                 }
             }
 
-            auto status = (pdata == nullptr) ? ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT :
-                    ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
-
-            if (pdata == nullptr)
-            {
-                // Create a new one when not found
-                pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, writer_guid);
-
-                reader->getMutex().unlock();
-                lock.unlock();
-
-                if (pdata != nullptr)
-                {
-                    logInfo(RTPS_PDP_DISCOVERY, "New participant "
-                            << pdata->m_guid << " at "
-                            << "MTTLoc: " << pdata->metatraffic_locators
-                            << " DefLoc:" << pdata->default_locators);
-
-                    RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
-                    if (listener != nullptr)
-                    {
-                        std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-                        ParticipantDiscoveryInfo info(*pdata);
-                        info.status = status;
-
-                        listener->onParticipantDiscovery(
-                            parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
-                            std::move(info));
-                    }
-
-                    // Assigning remote endpoints implies sending a DATA(p) to all matched and fixed readers, since
-                    // StatelessWriter::matched_reader_add marks the entire history as unsent if the added reader's
-                    // durability is bigger or equal to TRANSIENT_LOCAL_DURABILITY_QOS (TRANSIENT_LOCAL or TRANSIENT),
-                    // which is the case of ENTITYID_BUILTIN_SDP_PARTICIPANT_READER (TRANSIENT_LOCAL). If a remote
-                    // participant is discovered before creating the first DATA(p) change (which happens at the end of
-                    // BuiltinProtocols::initBuiltinProtocols), then StatelessWriter::matched_reader_add ends up marking
-                    // no changes as unsent (since the history is empty), which is OK because this can only happen if a
-                    // participant is discovered in the middle of BuiltinProtocols::initBuiltinProtocols, which will
-                    // create the first DATA(p) upon finishing, thus triggering the sent to all fixed and matched
-                    // readers anyways.
-                    parent_pdp_->assignRemoteEndpoints(pdata);
-                }
-            }
-            else
-            {
-                pdata->updateData(temp_participant_data_);
-                pdata->isAlive = true;
-                reader->getMutex().unlock();
-
-                logInfo(RTPS_PDP_DISCOVERY, "Update participant "
-                        << pdata->m_guid << " at "
-                        << "MTTLoc: " << pdata->metatraffic_locators
-                        << " DefLoc:" << pdata->default_locators);
-
-                if (parent_pdp_->updateInfoMatchesEDP())
-                {
-                    parent_pdp_->mp_EDP->assignRemoteEndpoints(*pdata, true);
-                }
-
-                lock.unlock();
-
-                RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
-                if (listener != nullptr)
-                {
-                    std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-                    ParticipantDiscoveryInfo info(*pdata);
-                    info.status = status;
-
-                    listener->onParticipantDiscovery(
-                        parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
-                        std::move(info));
-                }
-            }
-
-            // Take again the reader lock
-            reader->getMutex().lock();
+            process_alive_data(pdata, temp_participant_data_, writer_guid, reader, lock);
         }
     }
-    else
+    else if (reader->matched_writer_is_matched(writer_guid))
     {
         reader->getMutex().unlock();
         if (parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
@@ -211,6 +136,76 @@ void PDPListener::onNewCacheChangeAdded(
 
     //Remove change form history.
     parent_pdp_->builtin_endpoints_->remove_from_pdp_reader_history(change);
+}
+
+void PDPListener::process_alive_data(
+        ParticipantProxyData* old_data,
+        ParticipantProxyData& new_data,
+        GUID_t& writer_guid,
+        RTPSReader* reader,
+        std::unique_lock<std::recursive_mutex>& lock)
+{
+    GUID_t participant_guid = new_data.m_guid;
+    static_cast<void>(participant_guid);
+
+    if (old_data == nullptr)
+    {
+        // Create a new one when not found
+        old_data = parent_pdp_->createParticipantProxyData(new_data, writer_guid);
+
+        reader->getMutex().unlock();
+        lock.unlock();
+
+        if (old_data != nullptr)
+        {
+            // Assigning remote endpoints implies sending a DATA(p) to all matched and fixed readers, since
+            // StatelessWriter::matched_reader_add marks the entire history as unsent if the added reader's
+            // durability is bigger or equal to TRANSIENT_LOCAL_DURABILITY_QOS (TRANSIENT_LOCAL or TRANSIENT),
+            // which is the case of ENTITYID_BUILTIN_SDP_PARTICIPANT_READER (TRANSIENT_LOCAL). If a remote
+            // participant is discovered before creating the first DATA(p) change (which happens at the end of
+            // BuiltinProtocols::initBuiltinProtocols), then StatelessWriter::matched_reader_add ends up marking
+            // no changes as unsent (since the history is empty), which is OK because this can only happen if a
+            // participant is discovered in the middle of BuiltinProtocols::initBuiltinProtocols, which will
+            // create the first DATA(p) upon finishing, thus triggering the sent to all fixed and matched
+            // readers anyways.
+            parent_pdp_->assignRemoteEndpoints(old_data);
+        }
+    }
+    else
+    {
+        old_data->updateData(new_data);
+        old_data->isAlive = true;
+        reader->getMutex().unlock();
+
+        logInfo(RTPS_PDP_DISCOVERY, "Update participant "
+                << participant_guid << " at "
+                << "MTTLoc: " << old_data->metatraffic_locators
+                << " DefLoc:" << old_data->default_locators);
+
+        if (parent_pdp_->updateInfoMatchesEDP())
+        {
+            parent_pdp_->mp_EDP->assignRemoteEndpoints(*old_data, true);
+        }
+
+        lock.unlock();
+
+        RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
+        if (listener != nullptr)
+        {
+            {
+                std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
+                ParticipantDiscoveryInfo info(*old_data);
+                info.status = ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
+
+                listener->onParticipantDiscovery(
+                    parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
+                    std::move(info));
+            }
+        }
+    }
+
+    // Take again the reader lock
+    reader->getMutex().lock();
 }
 
 bool PDPListener::get_key(

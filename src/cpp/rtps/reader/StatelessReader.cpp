@@ -262,12 +262,30 @@ bool StatelessReader::change_received(
     // TODO Revisar si no hay que incluirlo.
     if (!thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
     {
+        bool update_notified = true;
+
+        decltype(matched_writers_)::iterator writer = matched_writers_.end();
+        if (m_trustedWriterEntityId == change->writerGUID.entityId)
+        {
+            writer = std::find_if(matched_writers_.begin(), matched_writers_.end(),
+                            [change](const RemoteWriterInfo_t& item)
+                            {
+                                return item.guid == change->writerGUID;
+                            });
+            bool is_matched = matched_writers_.end() != writer;
+            update_notified = is_matched;
+        }
+
         if (mp_history->received_change(change, 0))
         {
             auto payload_length = change->serializedPayload.length;
 
             Time_t::now(change->reader_info.receptionTimestamp);
-            SequenceNumber_t previous_seq = update_last_notified(change->writerGUID, change->sequenceNumber);
+            SequenceNumber_t previous_seq{ 0, 0 };
+            if (update_notified)
+            {
+                previous_seq = update_last_notified(change->writerGUID, change->sequenceNumber);
+            }
             ++total_unread_;
 
             on_data_notify(change->writerGUID, change->sourceTimestamp);

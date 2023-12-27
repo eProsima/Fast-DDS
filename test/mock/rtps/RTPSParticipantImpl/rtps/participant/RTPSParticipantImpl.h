@@ -307,6 +307,8 @@ public:
         return f;
     }
 
+    MOCK_METHOD(bool, ignore_participant, (const GuidPrefix_t&));
+
 private:
 
     MockParticipantListener listener_;

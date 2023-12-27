@@ -189,7 +189,7 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
 
         for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-		    if (data_matches_with_prefix(svr.guidPrefix, participant_data))
+            if (data_matches_with_prefix(svr.guidPrefix, participant_data))
             {
                 is_server = true;
             }
@@ -269,26 +269,20 @@ bool PDPClient::create_ds_pdp_best_effort_reader(
     ratt.endpoint.durabilityKind = VOLATILE;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
 
-    endpoints.stateless_listener.reset(new PDPSecurityInitiatorListener(this));
+    endpoints.stateless_reader.listener_.reset(new PDPSecurityInitiatorListener(this));
 
     // Create PDP Reader
     RTPSReader* reader = nullptr;
     if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints.stateless_reader.history_.get(),
-            endpoints.stateless_listener.get(), c_EntityId_SPDPReader, true, false))
+            endpoints.stateless_reader.listener_.get(), c_EntityId_SPDPReader, true, false))
     {
         endpoints.stateless_reader.reader_ = dynamic_cast<fastrtps::rtps::StatelessReader*>(reader);
-
-        // Enable unknown clients to reach this reader
-        reader->enableMessagesFromUnkownWriters(true);
-
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
     }
     // Could not create PDP Reader, so return false
     else
     {
         logError(RTPS_PDP_SERVER, "PDPServer security initiation Reader creation failed");
-
-        endpoints.stateless_listener.reset();
         endpoints.stateless_reader.release();
         return false;
     }
@@ -349,7 +343,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     }
 #endif // HAVE_SECURITY
 
-    mp_listener = new PDPListener(this);
+    endpoints.reader.listener_.reset(new PDPListener(this));
 
     RTPSReader* reader = nullptr;
 #if HAVE_SECURITY
@@ -358,7 +352,8 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 #else
     EntityId_t reader_entity = c_EntityId_SPDPReader;
 #endif // if HAVE_SECURITY
-    if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints.reader.history_.get(), mp_listener,
+    if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints.reader.history_.get(),
+            endpoints.reader.listener_.get(),
             reader_entity, true, false))
     {
         endpoints.reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
@@ -370,8 +365,6 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     else
     {
         logError(RTPS_PDP, "PDPClient Reader creation failed");
-        delete mp_listener;
-        mp_listener = nullptr;
         endpoints.reader.release();
         return false;
     }
@@ -470,25 +463,30 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 void PDPClient::assignRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
+    bool ignored = false;
+    notify_and_maybe_ignore_new_participant(pdata, ignored);
+    if (!ignored)
     {
-        eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
-
-        // Verify if this participant is a server
-        for (auto& svr : mp_builtin->m_DiscoveryServers)
         {
-            if (data_matches_with_prefix(svr.guidPrefix, *pdata))
+            eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
+
+            // Verify if this participant is a server
+            for (auto& svr : mp_builtin->m_DiscoveryServers)
             {
-                std::unique_lock<std::recursive_mutex> lock(*getMutex());
-                svr.proxy = pdata;
+                if (data_matches_with_prefix(svr.guidPrefix, *pdata))
+                {
+                    std::unique_lock<std::recursive_mutex> lock(*getMutex());
+                    svr.proxy = pdata;
+                }
             }
         }
-    }
 
 #if HAVE_SECURITY
-    if (mp_RTPSParticipant->security_manager().discovered_participant(*pdata))
+        if (mp_RTPSParticipant->security_manager().discovered_participant(*pdata))
 #endif // HAVE_SECURITY
-    {
-        perform_builtin_endpoints_matching(*pdata);
+        {
+            perform_builtin_endpoints_matching(*pdata);
+        }
     }
 }
 
