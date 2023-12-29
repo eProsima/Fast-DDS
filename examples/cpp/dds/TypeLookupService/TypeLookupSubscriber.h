@@ -102,7 +102,6 @@ public:
 
         std::map<std::string, std::string> topic_type_map_;
 
-        eprosima::fastrtps::types::TypeInformation type_info_;
     }
     m_listener;
 

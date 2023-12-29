@@ -30,7 +30,6 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicDataHelper.hpp>
-#include <fastrtps/types/TypeObjectFactory.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;

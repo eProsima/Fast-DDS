@@ -37,7 +37,7 @@ bool ContentFilteredTopicExamplePublisher::init()
 {
     // The default filter class requires the TypeObject to be registered
     // (see https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/topic/contentFilteredTopic/createContentFilteredTopic.html)
-    registerHelloWorldTypes();
+    register_HelloWorld_type_objects();
 
     // Initialize internal variables
     matched_ = 0;

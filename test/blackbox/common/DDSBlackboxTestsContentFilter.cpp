@@ -160,7 +160,7 @@ public:
         }
 
         using_transport_communication_ = (communication_type::TRANSPORT == GetParam());
-        registerHelloWorldTypes();
+        register_HelloWorld_type_objects();
     }
 
     void TearDown() override
