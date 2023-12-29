@@ -15,7 +15,7 @@
 #ifndef TYPES_DYNAMIC_DATA_FACTORY_H
 #define TYPES_DYNAMIC_DATA_FACTORY_H
 
-#include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicType.h>

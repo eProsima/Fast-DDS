@@ -40,6 +40,13 @@ eProsima_user_DllExport void register_rpc_types_type_objects();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+namespace eprosima {
+
+namespace fastdds {
+
+namespace dds {
+
+
 /**
  * @brief Register eprosima_fastdds_dds_EntityId_t related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -90,6 +97,13 @@ void register_eprosima_fastdds_dds_rpc_RequestHeader_type_identifier();
 void register_eprosima_fastdds_dds_rpc_ReplyHeader_type_identifier();
 
 } // namespace rpc
+
+
+} // namespace dds
+
+} // namespace fastdds
+
+} // namespace eprosima
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

@@ -28,7 +28,7 @@
 #include <fastcdr/xcdr/optional.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
+#include <fastdds/dds/xtypes/common.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
@@ -131,7 +131,7 @@ void register_Types_type_objects()
 void register_MyEnumStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -143,7 +143,7 @@ void register_MyEnumStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -283,7 +283,7 @@ void register_MyEnumStruct_type_identifier()
 void register_MyBadEnumStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -295,7 +295,7 @@ void register_MyBadEnumStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -435,7 +435,7 @@ void register_MyBadEnumStruct_type_identifier()
 void register_MyAliasEnumStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -447,7 +447,7 @@ void register_MyAliasEnumStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -659,7 +659,7 @@ void register_MyAliasEnumStruct_type_identifier()
 void register_BasicStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -671,7 +671,7 @@ void register_BasicStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -731,7 +731,7 @@ void register_BasicStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -791,7 +791,7 @@ void register_BasicStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -908,7 +908,7 @@ void register_BasicStruct_type_identifier()
 void register_BasicNamesStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -920,7 +920,7 @@ void register_BasicNamesStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -980,7 +980,7 @@ void register_BasicNamesStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1040,7 +1040,7 @@ void register_BasicNamesStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1157,7 +1157,7 @@ void register_BasicNamesStruct_type_identifier()
 void register_BasicBadStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -1169,7 +1169,7 @@ void register_BasicBadStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1229,7 +1229,7 @@ void register_BasicBadStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1289,7 +1289,7 @@ void register_BasicBadStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1406,7 +1406,7 @@ void register_BasicBadStruct_type_identifier()
 void register_BasicWideStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -1418,7 +1418,7 @@ void register_BasicWideStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1478,7 +1478,7 @@ void register_BasicWideStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1538,7 +1538,7 @@ void register_BasicWideStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1635,7 +1635,7 @@ void register_BasicWideStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1695,7 +1695,7 @@ void register_BasicWideStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1812,7 +1812,7 @@ void register_BasicWideStruct_type_identifier()
 void register_BadBasicWideStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -1824,7 +1824,7 @@ void register_BadBasicWideStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1884,7 +1884,7 @@ void register_BadBasicWideStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1981,7 +1981,7 @@ void register_BadBasicWideStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -2041,7 +2041,7 @@ void register_BadBasicWideStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -2101,7 +2101,7 @@ void register_BadBasicWideStruct_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq, member);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -2218,7 +2218,7 @@ void register_BadBasicWideStruct_type_identifier()
 void register_StringStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -2230,7 +2230,7 @@ void register_StringStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -2347,7 +2347,7 @@ void register_StringStruct_type_identifier()
 void register_LargeStringStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -2359,7 +2359,7 @@ void register_LargeStringStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -2476,7 +2476,7 @@ void register_LargeStringStruct_type_identifier()
 void register_WStringStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -2488,7 +2488,7 @@ void register_WStringStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -2605,7 +2605,7 @@ void register_WStringStruct_type_identifier()
 void register_LargeWStringStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -2617,7 +2617,7 @@ void register_LargeWStringStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -2734,7 +2734,7 @@ void register_LargeWStringStruct_type_identifier()
 void register_ArrayStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -2746,7 +2746,7 @@ void register_ArrayStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -2917,7 +2917,7 @@ void register_ArrayStruct_type_identifier()
 void register_ArrayStructEqual_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -2929,7 +2929,7 @@ void register_ArrayStructEqual_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -3100,7 +3100,7 @@ void register_ArrayStructEqual_type_identifier()
 void register_ArrayBadStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -3112,7 +3112,7 @@ void register_ArrayBadStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -3283,7 +3283,7 @@ void register_ArrayBadStruct_type_identifier()
 void register_ArrayDimensionsStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -3295,7 +3295,7 @@ void register_ArrayDimensionsStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -3470,7 +3470,7 @@ void register_ArrayDimensionsStruct_type_identifier()
 void register_ArraySizeStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -3482,7 +3482,7 @@ void register_ArraySizeStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -3653,7 +3653,7 @@ void register_ArraySizeStruct_type_identifier()
 void register_SequenceStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -3665,7 +3665,7 @@ void register_SequenceStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -3832,7 +3832,7 @@ void register_SequenceStruct_type_identifier()
 void register_SequenceStructEqual_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -3844,7 +3844,7 @@ void register_SequenceStructEqual_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -4011,7 +4011,7 @@ void register_SequenceStructEqual_type_identifier()
 void register_SequenceBadStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -4023,7 +4023,7 @@ void register_SequenceBadStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -4190,7 +4190,7 @@ void register_SequenceBadStruct_type_identifier()
 void register_SequenceBoundsStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -4202,7 +4202,7 @@ void register_SequenceBoundsStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -4369,7 +4369,7 @@ void register_SequenceBoundsStruct_type_identifier()
 void register_SequenceSequenceStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -4381,7 +4381,7 @@ void register_SequenceSequenceStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -4635,7 +4635,7 @@ void register_SequenceSequenceStruct_type_identifier()
 void register_SequenceSequenceBoundsStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -4647,7 +4647,7 @@ void register_SequenceSequenceBoundsStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -4901,7 +4901,7 @@ void register_SequenceSequenceBoundsStruct_type_identifier()
 void register_MapStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -4913,7 +4913,7 @@ void register_MapStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -5139,7 +5139,7 @@ void register_MapStruct_type_identifier()
 void register_MapStructEqual_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -5151,7 +5151,7 @@ void register_MapStructEqual_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -5377,7 +5377,7 @@ void register_MapStructEqual_type_identifier()
 void register_MapBadKeyStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -5389,7 +5389,7 @@ void register_MapBadKeyStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -5615,7 +5615,7 @@ void register_MapBadKeyStruct_type_identifier()
 void register_MapBadElemStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -5627,7 +5627,7 @@ void register_MapBadElemStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -5853,7 +5853,7 @@ void register_MapBadElemStruct_type_identifier()
 void register_MapBoundsStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -5865,7 +5865,7 @@ void register_MapBoundsStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6091,7 +6091,7 @@ void register_MapBoundsStruct_type_identifier()
 void register_MapMapStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -6103,7 +6103,7 @@ void register_MapMapStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6475,7 +6475,7 @@ void register_MapMapStruct_type_identifier()
 void register_MapMapBoundsStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -6487,7 +6487,7 @@ void register_MapMapBoundsStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6861,14 +6861,14 @@ void register_SimpleUnion_type_identifier()
     {
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
-        UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::NOT_APPLIED,
+        UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         QualifiedTypeName type_name = "SimpleUnion";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
         CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
         CompleteUnionHeader header = TypeObjectUtils::build_complete_union_header(detail);
-        UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(TryConstructKind::NOT_APPLIED,
+        UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                 false);
         return_code =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6901,7 +6901,7 @@ void register_SimpleUnion_type_identifier()
                 type_ann_builtin, ann_custom);
         CompleteUnionMemberSeq member_seq;
         {
-            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6965,7 +6965,7 @@ void register_SimpleUnion_type_identifier()
             TypeObjectUtils::add_complete_union_member(member_seq, member);
         }
         {
-            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7052,14 +7052,14 @@ void register_SimpleUnionNames_type_identifier()
     {
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
-        UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::NOT_APPLIED,
+        UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         QualifiedTypeName type_name = "SimpleUnionNames";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
         CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
         CompleteUnionHeader header = TypeObjectUtils::build_complete_union_header(detail);
-        UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(TryConstructKind::NOT_APPLIED,
+        UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                 false);
         return_code =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7092,7 +7092,7 @@ void register_SimpleUnionNames_type_identifier()
                 type_ann_builtin, ann_custom);
         CompleteUnionMemberSeq member_seq;
         {
-            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7156,7 +7156,7 @@ void register_SimpleUnionNames_type_identifier()
             TypeObjectUtils::add_complete_union_member(member_seq, member);
         }
         {
-            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7243,14 +7243,14 @@ void register_SimpleTypeUnion_type_identifier()
     {
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
-        UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::NOT_APPLIED,
+        UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         QualifiedTypeName type_name = "SimpleTypeUnion";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
         CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
         CompleteUnionHeader header = TypeObjectUtils::build_complete_union_header(detail);
-        UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(TryConstructKind::NOT_APPLIED,
+        UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                 false);
         return_code =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7283,7 +7283,7 @@ void register_SimpleTypeUnion_type_identifier()
                 type_ann_builtin, ann_custom);
         CompleteUnionMemberSeq member_seq;
         {
-            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7347,7 +7347,7 @@ void register_SimpleTypeUnion_type_identifier()
             TypeObjectUtils::add_complete_union_member(member_seq, member);
         }
         {
-            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7434,14 +7434,14 @@ void register_SimpleBadUnion_type_identifier()
     {
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
-        UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::NOT_APPLIED,
+        UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         QualifiedTypeName type_name = "SimpleBadUnion";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
         CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
         CompleteUnionHeader header = TypeObjectUtils::build_complete_union_header(detail);
-        UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(TryConstructKind::NOT_APPLIED,
+        UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                 false);
         return_code =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7474,7 +7474,7 @@ void register_SimpleBadUnion_type_identifier()
                 type_ann_builtin, ann_custom);
         CompleteUnionMemberSeq member_seq;
         {
-            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7538,7 +7538,7 @@ void register_SimpleBadUnion_type_identifier()
             TypeObjectUtils::add_complete_union_member(member_seq, member);
         }
         {
-            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7625,14 +7625,14 @@ void register_SimpleBadDiscUnion_type_identifier()
     {
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
-        UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::NOT_APPLIED,
+        UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         QualifiedTypeName type_name = "SimpleBadDiscUnion";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
         CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
         CompleteUnionHeader header = TypeObjectUtils::build_complete_union_header(detail);
-        UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(TryConstructKind::NOT_APPLIED,
+        UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                 false);
         return_code =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7665,7 +7665,7 @@ void register_SimpleBadDiscUnion_type_identifier()
                 type_ann_builtin, ann_custom);
         CompleteUnionMemberSeq member_seq;
         {
-            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7729,7 +7729,7 @@ void register_SimpleBadDiscUnion_type_identifier()
             TypeObjectUtils::add_complete_union_member(member_seq, member);
         }
         {
-            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7814,7 +7814,7 @@ void register_SimpleBadDiscUnion_type_identifier()
 void register_SimpleUnionStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -7826,7 +7826,7 @@ void register_SimpleUnionStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7837,14 +7837,14 @@ void register_SimpleUnionStruct_type_identifier()
                 {
                     ReturnCode_t return_code;
                     TypeIdentifierPair type_ids;
-                    UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::NOT_APPLIED,
+                    UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                             false, false);
                     QualifiedTypeName type_name = "SimpleUnion";
                     eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
                     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                     CompleteUnionHeader header = TypeObjectUtils::build_complete_union_header(detail);
-                    UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(TryConstructKind::NOT_APPLIED,
+                    UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                             false);
                     return_code =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7877,7 +7877,7 @@ void register_SimpleUnionStruct_type_identifier()
                             type_ann_builtin, ann_custom);
                     CompleteUnionMemberSeq member_seq;
                     {
-                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false);
                         return_code =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7941,7 +7941,7 @@ void register_SimpleUnionStruct_type_identifier()
                         TypeObjectUtils::add_complete_union_member(member_seq, member);
                     }
                     {
-                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false);
                         return_code =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8091,7 +8091,7 @@ void register_SimpleUnionStruct_type_identifier()
 void register_SimpleUnionStructEqual_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -8103,7 +8103,7 @@ void register_SimpleUnionStructEqual_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8114,14 +8114,14 @@ void register_SimpleUnionStructEqual_type_identifier()
                 {
                     ReturnCode_t return_code;
                     TypeIdentifierPair type_ids;
-                    UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::NOT_APPLIED,
+                    UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                             false, false);
                     QualifiedTypeName type_name = "SimpleUnion";
                     eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
                     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                     CompleteUnionHeader header = TypeObjectUtils::build_complete_union_header(detail);
-                    UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(TryConstructKind::NOT_APPLIED,
+                    UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                             false);
                     return_code =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8154,7 +8154,7 @@ void register_SimpleUnionStructEqual_type_identifier()
                             type_ann_builtin, ann_custom);
                     CompleteUnionMemberSeq member_seq;
                     {
-                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false);
                         return_code =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8218,7 +8218,7 @@ void register_SimpleUnionStructEqual_type_identifier()
                         TypeObjectUtils::add_complete_union_member(member_seq, member);
                     }
                     {
-                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false);
                         return_code =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8368,7 +8368,7 @@ void register_SimpleUnionStructEqual_type_identifier()
 void register_SimpleUnionNamesStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -8380,7 +8380,7 @@ void register_SimpleUnionNamesStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8391,14 +8391,14 @@ void register_SimpleUnionNamesStruct_type_identifier()
                 {
                     ReturnCode_t return_code;
                     TypeIdentifierPair type_ids;
-                    UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::NOT_APPLIED,
+                    UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                             false, false);
                     QualifiedTypeName type_name = "SimpleUnionNames";
                     eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
                     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                     CompleteUnionHeader header = TypeObjectUtils::build_complete_union_header(detail);
-                    UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(TryConstructKind::NOT_APPLIED,
+                    UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                             false);
                     return_code =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8431,7 +8431,7 @@ void register_SimpleUnionNamesStruct_type_identifier()
                             type_ann_builtin, ann_custom);
                     CompleteUnionMemberSeq member_seq;
                     {
-                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false);
                         return_code =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8495,7 +8495,7 @@ void register_SimpleUnionNamesStruct_type_identifier()
                         TypeObjectUtils::add_complete_union_member(member_seq, member);
                     }
                     {
-                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false);
                         return_code =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8645,7 +8645,7 @@ void register_SimpleUnionNamesStruct_type_identifier()
 void register_SimpleTypeUnionStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -8657,7 +8657,7 @@ void register_SimpleTypeUnionStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8668,14 +8668,14 @@ void register_SimpleTypeUnionStruct_type_identifier()
                 {
                     ReturnCode_t return_code;
                     TypeIdentifierPair type_ids;
-                    UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::NOT_APPLIED,
+                    UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                             false, false);
                     QualifiedTypeName type_name = "SimpleTypeUnion";
                     eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
                     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                     CompleteUnionHeader header = TypeObjectUtils::build_complete_union_header(detail);
-                    UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(TryConstructKind::NOT_APPLIED,
+                    UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                             false);
                     return_code =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8708,7 +8708,7 @@ void register_SimpleTypeUnionStruct_type_identifier()
                             type_ann_builtin, ann_custom);
                     CompleteUnionMemberSeq member_seq;
                     {
-                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false);
                         return_code =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8772,7 +8772,7 @@ void register_SimpleTypeUnionStruct_type_identifier()
                         TypeObjectUtils::add_complete_union_member(member_seq, member);
                     }
                     {
-                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false);
                         return_code =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8922,7 +8922,7 @@ void register_SimpleTypeUnionStruct_type_identifier()
 void register_SimpleBadUnionStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -8934,7 +8934,7 @@ void register_SimpleBadUnionStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8945,14 +8945,14 @@ void register_SimpleBadUnionStruct_type_identifier()
                 {
                     ReturnCode_t return_code;
                     TypeIdentifierPair type_ids;
-                    UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::NOT_APPLIED,
+                    UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                             false, false);
                     QualifiedTypeName type_name = "SimpleBadUnion";
                     eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
                     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                     CompleteUnionHeader header = TypeObjectUtils::build_complete_union_header(detail);
-                    UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(TryConstructKind::NOT_APPLIED,
+                    UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                             false);
                     return_code =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -8985,7 +8985,7 @@ void register_SimpleBadUnionStruct_type_identifier()
                             type_ann_builtin, ann_custom);
                     CompleteUnionMemberSeq member_seq;
                     {
-                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false);
                         return_code =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -9049,7 +9049,7 @@ void register_SimpleBadUnionStruct_type_identifier()
                         TypeObjectUtils::add_complete_union_member(member_seq, member);
                     }
                     {
-                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false);
                         return_code =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -9199,7 +9199,7 @@ void register_SimpleBadUnionStruct_type_identifier()
 void register_SimplBadDiscUnionStruct_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
@@ -9211,7 +9211,7 @@ void register_SimplBadDiscUnionStruct_type_identifier()
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
         CompleteStructMemberSeq member_seq;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             return_code =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -9222,14 +9222,14 @@ void register_SimplBadDiscUnionStruct_type_identifier()
                 {
                     ReturnCode_t return_code;
                     TypeIdentifierPair type_ids;
-                    UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(ExtensibilityKind::NOT_APPLIED,
+                    UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                             false, false);
                     QualifiedTypeName type_name = "SimpleBadDiscUnion";
                     eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
                     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                     CompleteUnionHeader header = TypeObjectUtils::build_complete_union_header(detail);
-                    UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(TryConstructKind::NOT_APPLIED,
+                    UnionDiscriminatorFlag member_flags = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                             false);
                     return_code =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -9262,7 +9262,7 @@ void register_SimplBadDiscUnionStruct_type_identifier()
                             type_ann_builtin, ann_custom);
                     CompleteUnionMemberSeq member_seq;
                     {
-                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false);
                         return_code =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -9326,7 +9326,7 @@ void register_SimplBadDiscUnionStruct_type_identifier()
                         TypeObjectUtils::add_complete_union_member(member_seq, member);
                     }
                     {
-                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(TryConstructKind::NOT_APPLIED,
+                        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false);
                         return_code =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(

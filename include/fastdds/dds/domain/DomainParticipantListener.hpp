@@ -20,16 +20,12 @@
 #ifndef __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_HPP__
 #define __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_HPP__
 
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
-#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
-
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypeObject.h>
-#include <fastrtps/types/DynamicTypePtr.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 
 namespace eprosima {
 namespace fastdds {

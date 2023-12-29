@@ -114,6 +114,22 @@ public:
     virtual RTPS_DllAPI ReturnCode_t get_type_identifiers(
             const std::string& type_name,
             TypeIdentifierPair& type_identifiers) = 0;
+
+    /**
+     * @brief Get the TypeObject related to the given TypeIdentifier.
+     *
+     * @pre TypeIdentifier must be a direct hash TypeIdentifier.
+     *
+     * @param[in] type_identifier TypeIdentifier being queried.
+     * @param[out] type_object TypeObject related with the given TypeIdentifier.
+     * @return ReturnCode_t RETCODE_OK if the TypeObject is found within the registry.
+     *                      RETCODE_NO_DATA if the given TypeIdentifier is not found in the registry.
+     *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not a direct hash.
+     */
+    virtual RTPS_DllAPI ReturnCode_t get_type_object(
+            const TypeIdentifier& type_identifier,
+            TypeObject& type_object) = 0;
+
 };
 
 

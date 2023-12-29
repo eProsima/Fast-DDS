@@ -37,11 +37,17 @@
 #define MATCH_FAILURE_REASON_COUNT size_t(16)
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
+namespace xtypes {
 
-namespace types {
 class TypeIdentifier;
-} // namespace types
+
+} // namespace xtypes
+} // namespace dds
+} // namespace fastdds
+
+namespace fastrtps {
 
 class TopicAttributes;
 

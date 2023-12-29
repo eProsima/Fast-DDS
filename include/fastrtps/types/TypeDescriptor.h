@@ -15,6 +15,10 @@
 #ifndef TYPES_TYPE_DESCRIPTOR_H
 #define TYPES_TYPE_DESCRIPTOR_H
 
+#include <string>
+#include <vector>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypesBase.h>
@@ -25,6 +29,8 @@ class DynamicType;
 namespace eprosima {
 namespace fastrtps {
 namespace types {
+
+using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
 class TypeDescriptor
 {

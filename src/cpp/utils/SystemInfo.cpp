@@ -34,7 +34,9 @@
 #include <time.h>
 
 #include <nlohmann/json.hpp>
-#include <fastrtps/types/TypesBase.h>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
+
 #include <utils/threading.hpp>
 
 namespace eprosima {

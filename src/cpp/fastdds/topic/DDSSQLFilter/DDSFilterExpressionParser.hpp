@@ -21,7 +21,7 @@
 
 #include <memory>
 
-#include <fastrtps/types/TypeObject.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 
 #include "DDSFilterParseNode.hpp"
 
@@ -42,7 +42,7 @@ namespace parser {
  */
 std::unique_ptr<ParseNode> parse_filter_expression(
         const char* expression,
-        const eprosima::fastrtps::types::TypeObject* type_object);
+        const eprosima::fastdds::dds::xtypes::TypeObject* type_object);
 
 /**
  * Performs parsing of a string containing a literal value.

@@ -34,7 +34,6 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeMember.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
@@ -78,7 +77,6 @@ void Domain::stopAll()
     // Deletes DynamicTypes and TypeObject factories
     types::DynamicTypeBuilderFactory::delete_instance();
     types::DynamicDataFactory::delete_instance();
-    types::TypeObjectFactory::delete_instance();
     XMLProfileManager::DeleteInstance();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -350,47 +348,47 @@ bool Domain::registerType(
     return false;
 }
 
-bool Domain::registerDynamicType(
-        Participant* part,
-        types::DynamicPubSubType* type)
-{
-    using namespace eprosima::fastrtps::types;
-    TypeObjectFactory* typeFactory = TypeObjectFactory::get_instance();
+// bool Domain::registerDynamicType(
+//         Participant* part,
+//         types::DynamicPubSubType* type)
+// {
+//     using namespace eprosima::fastrtps::types;
+//     TypeObjectFactory* typeFactory = TypeObjectFactory::get_instance();
 
-    const TypeIdentifier* type_id_min = typeFactory->get_type_identifier(type->getName());
+//     const TypeIdentifier* type_id_min = typeFactory->get_type_identifier(type->getName());
 
-    if (type_id_min == nullptr)
-    {
-        DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
-        std::map<MemberId, DynamicTypeMember*> membersMap;
-        type->GetDynamicType()->get_all_members(membersMap);
-        std::vector<const MemberDescriptor*> members;
-        for (auto it : membersMap)
-        {
-            members.push_back(it.second->get_descriptor());
-        }
-        TypeObject typeObj;
-        dynFactory->build_type_object(type->GetDynamicType()->get_type_descriptor(), typeObj, &members);
-        // Minimal too
-        dynFactory->build_type_object(type->GetDynamicType()->get_type_descriptor(), typeObj, &members, false);
-        const TypeIdentifier* type_id2 = typeFactory->get_type_identifier(type->getName());
-        const TypeObject* type_obj = typeFactory->get_type_object(type->getName());
-        if (type_id2 == nullptr)
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot register dynamic type " << type->getName());
-        }
-        else
-        {
-            typeFactory->add_type_object(type->getName(), type_id2, type_obj);
+//     if (type_id_min == nullptr)
+//     {
+//         DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
+//         std::map<MemberId, DynamicTypeMember*> membersMap;
+//         type->GetDynamicType()->get_all_members(membersMap);
+//         std::vector<const MemberDescriptor*> members;
+//         for (auto it : membersMap)
+//         {
+//             members.push_back(it.second->get_descriptor());
+//         }
+//         TypeObject typeObj;
+//         dynFactory->build_type_object(type->GetDynamicType()->get_type_descriptor(), typeObj, &members);
+//         // Minimal too
+//         dynFactory->build_type_object(type->GetDynamicType()->get_type_descriptor(), typeObj, &members, false);
+//         const TypeIdentifier* type_id2 = typeFactory->get_type_identifier(type->getName());
+//         const TypeObject* type_obj = typeFactory->get_type_object(type->getName());
+//         if (type_id2 == nullptr)
+//         {
+//             EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot register dynamic type " << type->getName());
+//         }
+//         else
+//         {
+//             typeFactory->add_type_object(type->getName(), type_id2, type_obj);
 
-            // Complete, just to make sure it is generated
-            const TypeIdentifier* type_id_complete = typeFactory->get_type_identifier(type->getName(), true);
-            const TypeObject* type_obj_complete = typeFactory->get_type_object(type->getName(), true);
-            typeFactory->add_type_object(type->getName(), type_id_complete, type_obj_complete); // Add complete
-        }
-    }
-    return registerType(part, type);
-}
+//             // Complete, just to make sure it is generated
+//             const TypeIdentifier* type_id_complete = typeFactory->get_type_identifier(type->getName(), true);
+//             const TypeObject* type_obj_complete = typeFactory->get_type_object(type->getName(), true);
+//             typeFactory->add_type_object(type->getName(), type_id_complete, type_obj_complete); // Add complete
+//         }
+//     }
+//     return registerType(part, type);
+// }
 
 bool Domain::unregisterType(
         Participant* part,

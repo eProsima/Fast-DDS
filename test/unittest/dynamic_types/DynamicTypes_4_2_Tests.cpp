@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/TypesBase.h>
 #include <gtest/gtest.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicTypePtr.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/TypeObjectFactory.h>
-#include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicDataPtr.h>
+#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeDescriptor.h>
+
 #include "idl/new_features_4_2PubSubTypes.h"
 #include "idl/new_features_4_2TypeObjectSupport.hpp"
 

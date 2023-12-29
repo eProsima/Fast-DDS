@@ -17,8 +17,6 @@ file(GLOB DDSSQLFILTER_SOURCES ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQ
 set(LISTENERTESTS_SOURCE ListenerTests.cpp
     ${DDSSQLFILTER_SOURCES}
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicData.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataPtr.cpp
@@ -31,13 +29,6 @@ set(LISTENERTESTS_SOURCE ListenerTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypePtr.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/MemberDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifier.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifierTypes.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeNamesGenerator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObject.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusCondition.cpp
@@ -87,7 +78,6 @@ set(LISTENERTESTS_SOURCE ListenerTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp

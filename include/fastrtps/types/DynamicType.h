@@ -15,8 +15,13 @@
 #ifndef TYPES_DYNAMIC_TYPE_H
 #define TYPES_DYNAMIC_TYPE_H
 
-#include <fastrtps/types/TypesBase.h>
+#include <map>
+#include <string>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 
@@ -28,6 +33,8 @@ class DomainParticipantImpl;
 
 namespace fastrtps {
 namespace types {
+
+using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
 class AnnotationDescriptor;
 class TypeDescriptor;

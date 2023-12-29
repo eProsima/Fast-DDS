@@ -15,12 +15,16 @@
 #ifndef TYPES_ANNOTATION_DESCRIPTOR_H
 #define TYPES_ANNOTATION_DESCRIPTOR_H
 
-#include <fastrtps/types/TypesBase.h>
+#include <map>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima{
 namespace fastrtps{
 namespace types{
+
+using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
 class MemberDescriptor;
 class DynamicType;
