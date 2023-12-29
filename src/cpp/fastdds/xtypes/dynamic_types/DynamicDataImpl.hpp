@@ -371,7 +371,7 @@ public:
             size_t current_alignment = 0);
 
     size_t get_cdr_serialized_size(
-            size_t current_alignment = 0) noexcept;
+            size_t current_alignment = 0) const noexcept;
 
 protected:
 
@@ -383,6 +383,21 @@ private:
             TypeKind kind,
             MemberId id) noexcept;
 
+    ReturnCode_t clear_data() noexcept;
+
+    bool compare_values(
+            TypeKind kind,
+            std::shared_ptr<void> left,
+            std::shared_ptr<void> right) const noexcept;
+
+    bool deserialize(
+            eprosima::fastcdr::Cdr& cdr,
+            traits<DynamicTypeImpl>::ref_type type) noexcept;
+
+    size_t get_cdr_serialized_size(
+            traits<DynamicTypeImpl>::ref_type type,
+            size_t current_alignment = 0) const noexcept;
+
     void set_value(
             const ObjectName& value,
             MemberId id) noexcept;
@@ -390,7 +405,9 @@ private:
     void set_default_value(
             MemberId id) noexcept;
 
-    ReturnCode_t clear_data() noexcept;
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr,
+            traits<DynamicTypeImpl>::ref_type type) const noexcept;
 
 };
 

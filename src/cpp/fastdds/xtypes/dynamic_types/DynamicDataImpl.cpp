@@ -693,6 +693,82 @@ ReturnCode_t DynamicDataImpl::get_descriptor(
 bool DynamicDataImpl::equals(
         traits<DynamicData>::ref_type other) noexcept
 {
+    auto other_data = traits<DynamicData>::narrow<DynamicDataImpl>(other);
+
+    if (type_->equals(other_data->type_))
+    {
+        // Optimization for unions, only check the selected element.
+        /*TODO(richiware)
+           if (get_kind() == TK_UNION)
+           {
+            if (union_id_ != other.union_id_)
+            {
+                return false;
+            }
+            else if (union_id_ != MEMBER_ID_INVALID)
+            {
+         #ifdef DYNAMIC_TYPES_CHECKING
+                auto it = complex_value_.find(union_id_);
+                auto otherIt = other.complex_value_.find(union_id_);
+         #else
+                auto it = value_.find(union_id_);
+                auto otherIt = other.value_.find(union_id_);
+         #endif // ifdef DYNAMIC_TYPES_CHECKING
+
+                return it->second == otherIt->second ||
+         * std::static_pointer_cast<DynamicDataImpl>(it->second) ==
+         * std::static_pointer_cast<DynamicDataImpl>(otherIt->second);
+            }
+           }
+           else
+         */
+        {
+            if (TK_ENUM == type_->get_kind())
+            {
+                return compare_values(TK_UINT32, value_.begin()->second, other_data->value_.begin()->second);
+            }
+            /*TODO(richiware)
+               else if (TK_BITMASK == type_->get_kind())
+               {
+                TypeKind bitmask_kind = TK_BYTE;
+                size_t type_size = type_->get_size();
+                switch (type_size)
+                {
+                    case 1: bitmask_kind = TK_BYTE; break;
+                    case 2: bitmask_kind = TK_UINT16; break;
+                    case 4: bitmask_kind = TK_UINT32; break;
+                    case 8: bitmask_kind = TK_UINT64; break;
+                }
+
+                assert(value_.size() && other.value_.size());
+
+                return compare_values(bitmask_kind, value_.begin()->second, other.value_.begin()->second);
+               }
+             */
+            else if (is_complex_kind(type_->get_kind()))
+            {
+                // array, map, sequence, structure, bitset, anotation
+                return value_.size() == other_data->value_.size() &&
+                       std::equal(
+                    value_.begin(),
+                    value_.end(),
+                    other_data->value_.begin(),
+                    [](const decltype(value_)::value_type& l, const decltype(value_)::value_type& r)
+                    {
+                        return std::static_pointer_cast<DynamicDataImpl>(l.second)->equals(
+                            std::static_pointer_cast<DynamicDataImpl>(r.second));
+                    });
+            }
+            else
+            {
+                // primitives
+                return compare_values(type_->get_kind(), value_.begin()->second, other_data->value_.begin()->second);
+            }
+        }
+
+        return true;
+    }
+
     return false;
 }
 
@@ -2799,11 +2875,568 @@ ReturnCode_t DynamicDataImpl::set_wstring_values(
 void DynamicDataImpl::serialize(
         eprosima::fastcdr::Cdr& cdr) const noexcept
 {
+    serialize(cdr, type_);
+}
+
+void DynamicDataImpl::serialize(
+        eprosima::fastcdr::Cdr& cdr,
+        traits<DynamicTypeImpl>::ref_type type) const noexcept
+{
+    /*TODO(richware)
+       if (annotation_is_non_serialized())
+       {
+        return;
+       }
+     */
+
+    switch (type->get_kind())
+    {
+        default:
+            break;
+        case TK_INT32:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<int32_t>(it->second);
+            break;
+        }
+        case TK_UINT32:
+        case TK_ENUM:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<uint32_t>(it->second);
+            break;
+        }
+        case TK_INT16:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<int16_t>(it->second);
+            break;
+        }
+        case TK_UINT16:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<uint16_t>(it->second);
+            break;
+        }
+        case TK_INT64:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<int64_t>(it->second);
+            break;
+        }
+        case TK_UINT64:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<uint64_t>(it->second);
+            break;
+        }
+        case TK_FLOAT32:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<float>(it->second);
+            break;
+        }
+        case TK_FLOAT64:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<double>(it->second);
+            break;
+        }
+        case TK_FLOAT128:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<long double>(it->second);
+            break;
+        }
+        case TK_CHAR8:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<char>(it->second);
+            break;
+        }
+        case TK_CHAR16:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<wchar_t>(it->second);
+            break;
+        }
+        case TK_BOOLEAN:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<bool>(it->second);
+            break;
+        }
+        case TK_BYTE:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<fastrtps::rtps::octet>(it->second);
+            break;
+        }
+        case TK_STRING8:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<std::string>(it->second);
+            break;
+        }
+        case TK_STRING16:
+        {
+            auto it = value_.begin();
+            cdr << *std::static_pointer_cast<std::wstring>(it->second);
+            break;
+        }
+        /*TODO(richiware)
+           case TK_BITMASK:
+           {
+            size_t type_size = get_size();
+            auto it = data.values_.begin();
+            switch (type_size)
+            {
+                case 1: cdr << *std::static_pointer_cast<uint8_t>(it->second); break;
+                case 2: cdr << *std::static_pointer_cast<uint16_t>(it->second); break;
+                case 3: cdr << *std::static_pointer_cast<uint32_t>(it->second); break;
+                case 4: cdr << *std::static_pointer_cast<uint64_t>(it->second); break;
+                default: EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot serialize bitmask of size " << type_size);
+            }
+            break;
+           }
+           case TK_UNION:
+           {
+            // The union_id_ must be serialized as a discriminator_type_
+            // cdr << data.union_id_;
+            serialize_discriminator(data, cdr);
+
+            if (data.union_id_ != MEMBER_ID_INVALID)
+            {
+         #ifdef DYNAMIC_TYPES_CHECKING
+                auto it = data.complex_values_.at(data.union_id_);
+         #else
+                auto it = std::static_pointer_cast<DynamicDataImpl>(data.values_.at(data.union_id_));
+         #endif // ifdef DYNAMIC_TYPES_CHECKING
+                it->serialize(cdr);
+            }
+            break;
+           }
+           case TypeKind::TK_SEQUENCE: // Sequence is like structure, but with size
+           {
+         #ifdef DYNAMIC_TYPES_CHECKING
+            cdr << static_cast<uint32_t>(data.complex_values_.size());
+            for (uint32_t idx = 0; idx < static_cast<uint32_t>(data.complex_values_.size()); ++idx)
+            {
+                auto it = data.complex_values_.at(MemberId{idx});
+                it->serialize(cdr);
+            }
+         #else
+            cdr << static_cast<uint32_t>(data.values_.size());
+            for (uint32_t idx = 0; idx < static_cast<uint32_t>(data.values_.size()); ++idx)
+            {
+                auto it = data.values_.at(MemberId(idx));
+                std::static_pointer_cast<DynamicDataImpl>(it)->serialize(cdr);
+            }
+         #endif // ifdef DYNAMIC_TYPES_CHECKING
+            break;
+           }
+         */
+        case TK_BITSET:
+        case TK_STRUCTURE:
+        {
+            auto& value_col = value_;
+
+            // delegate in base classes if any
+            if (type->get_descriptor().base_type())
+            {
+                serialize(cdr, traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()));
+            }
+
+            for (auto& m : type->get_all_members_by_index())
+            {
+                auto member = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(m);
+                //TODO(richiware) if (!m.annotation_is_non_serialized())
+                {
+                    auto it = value_col.find(member->get_id());
+
+                    if (it != value_col.end())
+                    {
+                        auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
+                        member_data->serialize(cdr,
+                                traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                    member->get_descriptor().type()));
+                    }
+                }
+            }
+            break;
+        }
+        /*TODO(richiware)
+           case TypeKind::TK_ARRAY:
+           {
+            uint32_t arraySize = get_total_bounds();
+            for (uint32_t idx = 0; idx < arraySize; ++idx)
+            {
+         #ifdef DYNAMIC_TYPES_CHECKING
+                auto it = data.complex_values_.find(MemberId{idx});
+                if (it != data.complex_values_.end())
+         #else
+                auto it = data.values_.find(MemberId{idx});
+                if (it != data.values_.end())
+         #endif // ifdef DYNAMIC_TYPES_CHECKING
+                {
+                    std::static_pointer_cast<DynamicDataImpl>(it->second)->serialize(cdr);
+                }
+                else
+                {
+                    get_element_type()->serialize_empty_data(cdr);
+                }
+            }
+            break;
+           }
+           case TypeKind::TK_MAP:
+           {
+         #ifdef DYNAMIC_TYPES_CHECKING
+            cdr << static_cast<uint32_t>(data.complex_values_.size() / 2); // Number of pairs
+            for (auto it = data.complex_values_.begin(); it != data.complex_values_.end(); ++it)
+            {
+                it->second->serialize(cdr);
+            }
+         #else
+            cdr << static_cast<uint32_t>(data.values_.size() / 2);
+            for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
+            {
+                std::static_pointer_cast<DynamicDataImpl>(it->second)->serialize(cdr);
+            }
+         #endif // ifdef DYNAMIC_TYPES_CHECKING
+            break;
+           }
+         */
+        case TK_ALIAS:
+            assert(type->get_descriptor().base_type());
+            serialize(cdr, traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()));
+            break;
+    }
 }
 
 bool DynamicDataImpl::deserialize(
         eprosima::fastcdr::Cdr& cdr) noexcept
 {
+    return deserialize(cdr, type_);
+}
+
+bool DynamicDataImpl::deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        traits<DynamicTypeImpl>::ref_type type) noexcept
+{
+    bool res = true;
+
+    /*TODO(richiware)
+        if (annotation_is_non_serialized())
+        {
+            return res;
+        }
+     */
+
+    switch (type->get_kind())
+    {
+        case TK_INT32:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<int32_t>(it->second);
+            break;
+        }
+        case TK_UINT32:
+        case TK_ENUM:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<uint32_t>(it->second);
+            break;
+        }
+        case TK_INT16:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<int16_t>(it->second);
+            break;
+        }
+        case TK_UINT16:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<uint16_t>(it->second);
+            break;
+        }
+        case TK_INT64:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<int64_t>(it->second);
+            break;
+        }
+        case TK_UINT64:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<uint64_t>(it->second);
+            break;
+        }
+        case TK_FLOAT32:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<float>(it->second);
+            break;
+        }
+        case TK_FLOAT64:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<double>(it->second);
+            break;
+        }
+        case TK_FLOAT128:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<long double>(it->second);
+            break;
+        }
+        case TK_CHAR8:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<char>(it->second);
+            break;
+        }
+        case TK_CHAR16:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<wchar_t>(it->second);
+            break;
+        }
+        case TK_BOOLEAN:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<bool>(it->second);
+            break;
+        }
+        case TK_BYTE:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<fastrtps::rtps::octet>(it->second);
+            break;
+        }
+        case TK_STRING8:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<std::string>(it->second);
+            break;
+        }
+        case TK_STRING16:
+        {
+            auto it = value_.begin();
+            cdr >> *std::static_pointer_cast<std::wstring>(it->second);
+            break;
+        }
+        /*TODO(richiware)
+           case TK_BITMASK:
+           {
+            size_t type_size = get_size();
+            auto it = data.values_.begin();
+            switch (type_size)
+            {
+                case 1: cdr >> *std::static_pointer_cast<uint8_t>(it->second); break;
+                case 2: cdr >> *std::static_pointer_cast<uint16_t>(it->second); break;
+                case 3: cdr >> *std::static_pointer_cast<uint32_t>(it->second); break;
+                case 4: cdr >> *std::static_pointer_cast<uint64_t>(it->second); break;
+                default: EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot deserialize bitmask of size " << type_size);
+            }
+            break;
+           }
+           case TypeKind::TK_UNION:
+           {
+            // The union_id_ must be deserialized as a discriminator_type_
+            // cdr >> data.union_id_;
+            deserialize_discriminator(data, cdr);
+
+            if (data.union_id_ != MEMBER_ID_INVALID)
+            {
+
+         #ifdef DYNAMIC_TYPES_CHECKING
+                auto it = data.complex_values_.find(data.union_id_);
+                if (it != data.complex_values_.end())
+                {
+                    it->second->deserialize(cdr);
+                }
+         #else
+                auto it = data.values_.find(data.union_id_);
+                if (it != data.values_.end())
+                {
+                    std::static_pointer_cast<DynamicDataImpl>(it->second)->deserialize(cdr);
+                }
+         #endif // ifdef DYNAMIC_TYPES_CHECKING
+            }
+            break;
+           }
+         */
+        case TK_BITSET:
+        case TK_STRUCTURE:
+        {
+            auto& value_col = value_;
+
+            // delegate in base clases if any
+            if (type->get_descriptor().base_type())
+            {
+                res &=
+                        deserialize(cdr,
+                                traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()));
+            }
+
+            for (auto& m : type->get_all_members_by_index())
+            {
+                auto member = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(m);
+                //TODO(richiware)if (!m.annotation_is_non_serialized())
+                {
+                    traits<DynamicData>::ref_type member_data;
+                    auto it = value_col.find(member->get_id());
+
+                    if (it != value_col.end())
+                    {
+                        member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
+                    }
+                    else
+                    {
+                        member_data = DynamicDataFactory::get_instance()->create_data(
+                            member->get_descriptor().type());
+                        value_col.emplace(it->first, member_data);
+                    }
+
+                    res &= member_data ? traits<DynamicData>::narrow<DynamicDataImpl>(member_data)->deserialize(cdr,
+                                    traits<DynamicType>::narrow<DynamicTypeImpl>(member->get_descriptor().type())) :
+                            false;
+                }
+            }
+        }
+        break;
+        /*TODO(richiware)
+           case TypeKind::TK_ARRAY:
+           {
+            uint32_t size(get_total_bounds());
+            if (size > 0)
+            {
+                std::shared_ptr<DynamicDataImpl> inputData;
+                for (uint32_t i = 0; i < size; ++i)
+                {
+         #ifdef DYNAMIC_TYPES_CHECKING
+                    auto it = data.complex_values_.find(MemberId{i});
+                    if (it != data.complex_values_.end())
+                    {
+                        it->second->deserialize(cdr);
+                    }
+                    else
+                    {
+                        if (!inputData)
+                        {
+                            inputData = DynamicDataFactoryImpl::get_instance().create_data(*get_element_type());
+                        }
+
+                        inputData->deserialize(cdr);
+                        if (*inputData != *data.default_array_value_)
+                        {
+                            data.complex_values_.emplace(i, inputData);
+                        }
+                    }
+         #else
+                    auto it = data.values_.find(MemberId(i));
+                    if (it != data.values_.end())
+                    {
+                        std::static_pointer_cast<DynamicDataImpl>(it->second)->deserialize(cdr);
+                    }
+                    else
+                    {
+                        if (!inputData)
+                        {
+                            inputData = DynamicDataFactoryImpl::get_instance().create_data(*get_element_type());
+                        }
+
+                        inputData->deserialize(cdr);
+                        if (inputData != data.default_array_value_)
+                        {
+                            data.values_.emplace(i, inputData);
+                        }
+                    }
+         #endif // ifdef DYNAMIC_TYPES_CHECKING
+                }
+                if (inputData)
+                {
+                    DynamicDataFactoryImpl::get_instance().delete_data(*inputData);
+                }
+            }
+            break;
+           }
+           case TypeKind::TK_SEQUENCE:
+           case TypeKind::TK_MAP:
+           {
+            uint32_t size(0);
+            bool bKeyElement(false);
+            cdr >> size;
+
+            if (get_kind() == TypeKind::TK_MAP)
+            {
+                size *= 2; // We serialize the number of pairs.
+            }
+            for (uint32_t i = 0; i < size; ++i)
+            {
+                //cdr >> memberId;
+                if (get_kind() == TypeKind::TK_MAP)
+                {
+                    bKeyElement = !bKeyElement;
+                }
+
+         #ifdef DYNAMIC_TYPES_CHECKING
+                auto it = data.complex_values_.find(MemberId{i});
+                if (it != data.complex_values_.end())
+                {
+                    it->second->deserialize(cdr);
+                    it->second->key_element_ = bKeyElement;
+                }
+                else
+                {
+                    std::shared_ptr<DynamicDataImpl> pData;
+                    if (bKeyElement)
+                    {
+                        pData = DynamicDataFactoryImpl::get_instance().create_data(*get_key_element_type());
+                    }
+                    else
+                    {
+                        pData = DynamicDataFactoryImpl::get_instance().create_data(*get_element_type());
+                    }
+                    pData->deserialize(cdr);
+                    pData->key_element_ = bKeyElement;
+                    data.complex_values_.insert(std::make_pair(i, pData));
+                }
+         #else
+                auto it = data.values_.find(MemberId(i));
+                if (it != data.values_.end())
+                {
+                    std::static_pointer_cast<DynamicDataImpl>(it->second)->deserialize(cdr);
+                    std::static_pointer_cast<DynamicDataImpl>(it->second)->key_element_ = bKeyElement;
+                }
+                else
+                {
+                    std::shared_ptr<DynamicDataImpl> pData;
+                    if (bKeyElement)
+                    {
+                        pData = DynamicDataFactoryImpl::get_instance().create_data(*get_key_element_type());
+                    }
+                    else
+                    {
+                        pData = DynamicDataFactoryImpl::get_instance().create_data(*get_element_type());
+                    }
+                    pData->deserialize(cdr);
+                    pData->key_element_ = bKeyElement;
+                    data.values_.insert(std::make_pair(i, pData));
+                }
+         #endif // ifdef DYNAMIC_TYPES_CHECKING
+            }
+            break;
+           }
+         */
+        case TK_ALIAS:
+            assert(type->get_descriptor().base_type());
+            return deserialize(cdr, traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()));
+        default:
+            break;
+    }
+
+    return res;
 }
 
 void DynamicDataImpl::serialize_key(
@@ -2826,9 +3459,296 @@ size_t DynamicDataImpl::get_max_cdr_serialized_size(
 }
 
 size_t DynamicDataImpl::get_cdr_serialized_size(
-        size_t current_alignment) noexcept
+        size_t current_alignment) const noexcept
 {
-    return 0;
+    return get_cdr_serialized_size(type_, current_alignment);
+}
+
+//TODO(richiware) support xcdrv1 and xcdrv2
+size_t DynamicDataImpl::get_cdr_serialized_size(
+        traits<DynamicTypeImpl>::ref_type type,
+        size_t current_alignment) const noexcept
+{
+    /*TODO(richiware)
+       if (data.type_ && annotation_is_non_serialized())
+       {
+        return 0;
+       }
+     */
+
+    size_t initial_alignment = current_alignment;
+
+    switch (type->get_kind())
+    {
+        case TK_INT32:
+        case TK_UINT32:
+        case TK_FLOAT32:
+        case TK_ENUM:
+        case TK_CHAR16: // WCHARS NEED 32 Bits on Linux & MacOS
+        {
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            break;
+        }
+        case TK_INT16:
+        case TK_UINT16:
+        {
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+            break;
+        }
+        case TK_INT64:
+        case TK_UINT64:
+        case TK_FLOAT64:
+        {
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            break;
+        }
+        /*TODO(richiware)
+           case TK_BITMASK:
+           {
+            size_t type_size = get_size();
+            current_alignment += type_size + eprosima::fastcdr::Cdr::alignment(current_alignment, type_size);
+            break;
+           }
+         */
+        case TK_FLOAT128:
+        {
+            current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            break;
+        }
+        case TK_CHAR8:
+        case TK_BOOLEAN:
+        case TK_BYTE:
+        {
+            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            break;
+        }
+        case TK_STRING8:
+        {
+            auto it = value_.begin();
+            // string content (length + characters + 1)
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
+                    std::static_pointer_cast<std::string>(it->second)->length() + 1;
+            break;
+        }
+        case TK_STRING16:
+        {
+            auto it = value_.begin();
+            // string content (length + (characters * 4) )
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
+                    std::static_pointer_cast<std::wstring>(it->second)->length() * 4;
+            break;
+        }
+        /*TODO(richiware)
+           case TypeKind::TK_UNION:
+           {
+            // Union discriminator
+            current_alignment += MemberId::serialized_size + eprosima::fastcdr::Cdr::alignment(current_alignment,
+                            MemberId::serialized_size);
+
+            if (data.union_id_ != MEMBER_ID_INVALID)
+            {
+         #ifdef DYNAMIC_TYPES_CHECKING
+                auto it = data.complex_values_.at(data.union_id_);
+         #else
+                auto it = std::static_pointer_cast<DynamicDataImpl>(data.values_.at(data.union_id_));
+         #endif // ifdef DYNAMIC_TYPES_CHECKING
+
+                current_alignment +=
+                        get_member(data.union_id_).get_type()->getCdrSerializedSize(*it, current_alignment);
+            }
+            break;
+           }
+         */
+        case TK_BITSET:
+        case TK_STRUCTURE:
+        {
+
+            auto& value_col = value_;
+
+            // calculate inheritance overhead
+            if (type->get_descriptor().base_type())
+            {
+                current_alignment += get_cdr_serialized_size(
+                    traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()),
+                    current_alignment);
+            }
+
+            for (auto& m : type->get_all_members_by_index())
+            {
+                auto member = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(m);
+                //TODO(richiware) if (!m.annotation_is_non_serialized())
+                {
+                    auto it = value_col.find(member->get_id());
+
+                    if (it != value_col.end())
+                    {
+                        auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
+                        current_alignment +=
+                                member_data->get_cdr_serialized_size(
+                            traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                member->get_descriptor().type()), current_alignment);
+                    }
+                }
+            }
+            break;
+        }
+        /*TODO(richiware)
+           case TypeKind::TK_ARRAY:
+           {
+            assert(element_type_);
+
+            uint32_t arraySize = get_total_bounds();
+            size_t emptyElementSize =
+                    get_element_type()->getEmptyCdrSerializedSize(current_alignment);
+            for (uint32_t idx = 0; idx < arraySize; ++idx)
+            {
+         #ifdef DYNAMIC_TYPES_CHECKING
+                auto it = data.complex_values_.find(MemberId{idx});
+                if (it != data.complex_values_.end())
+         #else
+                auto it = data.values_.find(MemberId{idx});
+                if (it != data.values_.end())
+         #endif // ifdef DYNAMIC_TYPES_CHECKING
+                {
+                    // Element Size
+                    current_alignment += element_type_->getCdrSerializedSize(
+         * std::static_pointer_cast<DynamicDataImpl>(it->second),
+                        current_alignment);
+                }
+                else
+                {
+                    current_alignment += emptyElementSize;
+                }
+            }
+            break;
+           }
+           case TypeKind::TK_SEQUENCE:
+           {
+            assert(element_type_);
+            // Elements count
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            // on sequences there is no need of keys serialization
+         #ifdef DYNAMIC_TYPES_CHECKING
+            for (auto it = data.complex_values_.begin(); it != data.complex_values_.end(); ++it)
+            {
+                // Element Size
+                current_alignment += element_type_->getCdrSerializedSize(*it->second, current_alignment);
+            }
+         #else
+            for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
+            {
+                // Element Size
+                current_alignment += element_type_->getCdrSerializedSize(
+         * std::static_pointer_cast<DynamicDataImpl>(it->second),
+                    current_alignment);
+            }
+         #endif // ifdef DYNAMIC_TYPES_CHECKING
+            break;
+           }
+           case TypeKind::TK_MAP:
+           {
+            assert(element_type_);
+            // Elements count
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            // on maps some nodes are keys and other values, that that into account
+         #ifdef DYNAMIC_TYPES_CHECKING
+            for (auto it = data.complex_values_.begin(); it != data.complex_values_.end(); ++it)
+            {
+                // Key Size
+                current_alignment += key_element_type_->getCdrSerializedSize(*it++->second, current_alignment);
+                // Element Size
+                current_alignment += element_type_->getCdrSerializedSize(*it->second, current_alignment);
+            }
+         #else
+            for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
+            {
+                // Key Size
+                current_alignment += key_element_type_->getCdrSerializedSize(
+         * std::static_pointer_cast<DynamicDataImpl>(it++->second),
+                    current_alignment);
+                // Element Size
+                current_alignment += element_type_->getCdrSerializedSize(
+         * std::static_pointer_cast<DynamicDataImpl>(it->second),
+                    current_alignment);
+            }
+         #endif // ifdef DYNAMIC_TYPES_CHECKING
+            break;
+           }
+         */
+        case TK_ALIAS:
+            assert(type->get_descriptor().base_type());
+            return get_cdr_serialized_size(
+                traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()),
+                current_alignment);
+        default:
+            break;
+    }
+
+    return current_alignment - initial_alignment;
+}
+
+bool DynamicDataImpl::compare_values(
+        TypeKind kind,
+        std::shared_ptr<void> l,
+        std::shared_ptr<void> r) const noexcept
+{
+    void* left = l.get();
+    void* right = r.get();
+
+    switch (kind)
+    {
+        case TK_INT32:      {
+            return *((int32_t*)left) == *((int32_t*)right);
+        }
+        case TK_UINT32:     {
+            return *((uint32_t*)left) == *((uint32_t*)right);
+        }
+        case TK_INT16:      {
+            return *((int16_t*)left) == *((int16_t*)right);
+        }
+        case TK_UINT16:     {
+            return *((uint16_t*)left) == *((uint16_t*)right);
+        }
+        case TK_INT64:      {
+            return *((int64_t*)left) == *((int64_t*)right);
+        }
+        case TK_UINT64:     {
+            return *((uint64_t*)left) == *((uint64_t*)right);
+        }
+        case TK_FLOAT32:    {
+            return *((float*)left) == *((float*)right);
+        }
+        case TK_FLOAT64:    {
+            return *((double*)left) == *((double*)right);
+        }
+        case TK_FLOAT128:   {
+            return *((long double*)left) == *((long double*)right);
+        }
+        case TK_CHAR8:      {
+            return *((char*)left) == *((char*)right);
+        }
+        case TK_CHAR16:     {
+            return *((wchar_t*)left) == *((wchar_t*)right);
+        }
+        case TK_BOOLEAN:    {
+            return *((bool*)left) == *((bool*)right);
+        }
+        case TK_BYTE:       {
+            return *((eprosima::fastrtps::rtps::octet*)left) == *((eprosima::fastrtps::rtps::octet*)right);
+        }
+        case TK_STRING8:    {
+            return *((std::string*)left) == *((std::string*)right);
+        }
+        case TK_STRING16:   {
+            return *((std::wstring*)left) == *((std::wstring*)right);
+        }
+        case TK_ENUM:       {
+            return *((uint32_t*)left) == *((uint32_t*)right);
+        }
+        default:
+            break;
+    }
+    return false;
 }
 
 /*
@@ -2890,66 +3810,6 @@ size_t DynamicDataImpl::get_cdr_serialized_size(
     return compare_values(kind, left.get(), right.get());
    }
 
-   bool DynamicDataImpl::compare_values(
-        TypeKind kind,
-        void* left,
-        void* right) const
-   {
-    switch (kind)
-    {
-        default:
-            break;
-        case TK_INT32:      {
-            return *((int32_t*)left) == *((int32_t*)right);
-        }
-        case TK_UINT32:     {
-            return *((uint32_t*)left) == *((uint32_t*)right);
-        }
-        case TK_INT16:      {
-            return *((int16_t*)left) == *((int16_t*)right);
-        }
-        case TK_UINT16:     {
-            return *((uint16_t*)left) == *((uint16_t*)right);
-        }
-        case TK_INT64:      {
-            return *((int64_t*)left) == *((int64_t*)right);
-        }
-        case TK_UINT64:     {
-            return *((uint64_t*)left) == *((uint64_t*)right);
-        }
-        case TK_FLOAT32:    {
-            return *((float*)left) == *((float*)right);
-        }
-        case TK_FLOAT64:    {
-            return *((double*)left) == *((double*)right);
-        }
-        case TK_FLOAT128:   {
-            return *((long double*)left) == *((long double*)right);
-        }
-        case TK_CHAR8:      {
-            return *((char*)left) == *((char*)right);
-        }
-        case TK_CHAR16:     {
-            return *((wchar_t*)left) == *((wchar_t*)right);
-        }
-        case TK_BOOLEAN:    {
-            return *((bool*)left) == *((bool*)right);
-        }
-        case TK_BYTE:       {
-            return *((eprosima::fastrtps::rtps::octet*)left) == *((eprosima::fastrtps::rtps::octet*)right);
-        }
-        case TK_STRING8:    {
-            return *((std::string*)left) == *((std::string*)right);
-        }
-        case TK_STRING16:   {
-            return *((std::wstring*)left) == *((std::wstring*)right);
-        }
-        case TK_ENUM:       {
-            return *((uint32_t*)left) == *((uint32_t*)right);
-        }
-    }
-    return false;
-   }
 
    std::string DynamicDataImpl::get_value(
         MemberId id) const
@@ -4762,20 +5622,6 @@ size_t DynamicDataImpl::get_cdr_serialized_size(
     return RETCODE_OK;
    }
 
-   bool DynamicDataImpl::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-   {
-    assert(type_);
-    return type_->deserialize(*this, cdr);
-   }
-
-   size_t DynamicDataImpl::getCdrSerializedSize(
-        const DynamicDataImpl& data,
-        size_t current_alignment)
-   {
-    return data.get_type().getCdrSerializedSize(data, current_alignment);
-   }
-
    size_t DynamicDataImpl::getKeyMaxCdrSerializedSize(
         const DynamicTypeImpl& type,
         size_t current_alignment)
@@ -4788,13 +5634,6 @@ size_t DynamicDataImpl::get_cdr_serialized_size(
         size_t current_alignment)
    {
     return type.getMaxCdrSerializedSize(current_alignment);
-   }
-
-   void DynamicDataImpl::serialize(
-        eprosima::fastcdr::Cdr& cdr) const
-   {
-    assert(type_);
-    type_->serialize(*this, cdr);
    }
 
    void DynamicDataImpl::serializeKey(
@@ -4828,116 +5667,6 @@ size_t DynamicDataImpl::get_cdr_serialized_size(
     }
    }
 
-   bool DynamicDataImpl::operator ==(
-        const DynamicDataImpl& other) const noexcept
-   {
-    if (&other == this)
-    {
-        return true;
-    }
-    else if (*type_ == *other.type_)
-    {
-        // Optimization for unions, only check the selected element.
-        if (get_kind() == TK_UNION)
-        {
-            if (union_id_ != other.union_id_)
-            {
-                return false;
-            }
-            else if (union_id_ != MEMBER_ID_INVALID)
-            {
- #ifdef DYNAMIC_TYPES_CHECKING
-                auto it = complex_value_.find(union_id_);
-                auto otherIt = other.complex_value_.find(union_id_);
- #else
-                auto it = value_.find(union_id_);
-                auto otherIt = other.value_.find(union_id_);
- #endif // ifdef DYNAMIC_TYPES_CHECKING
-
-                return it->second == otherIt->second ||
- * std::static_pointer_cast<DynamicDataImpl>(it->second) ==
- * std::static_pointer_cast<DynamicDataImpl>(otherIt->second);
-            }
-        }
-        else
-        {
- #ifdef DYNAMIC_TYPES_CHECKING
-            bool bFail = false;
-            bFail = int32_value_ != other.int32_value_;
-            bFail = bFail || uint32_value_ != other.uint32_value_;
-            bFail = bFail || int16_value_ != other.int16_value_;
-            bFail = bFail || uint16_value_ != other.uint16_value_;
-            bFail = bFail || int64_value_ != other.int64_value_;
-            bFail = bFail || uint64_value_ != other.uint64_value_;
-            bFail = bFail || float32_value_ != other.float32_value_;
-            bFail = bFail || float64_value_ != other.float64_value_;
-            bFail = bFail || float128_value_ != other.float128_value_;
-            bFail = bFail || char8_value_ != other.char8_value_;
-            bFail = bFail || char16_value_ != other.char16_value_;
-            bFail = bFail || byte_value_ != other.byte_value_;
-            bFail = bFail || bool_value_ != other.bool_value_;
-            bFail = bFail || string_value_ != other.string_value_;
-            bFail = bFail || wstring_value_ != other.wstring_value_;
-            bFail = bFail || !map_compare(complex_value_, other.complex_value_);
-
-            if (bFail)
-            {
-                return false;
-            }
- #else
-            if (get_kind() == TK_ENUM)
-            {
-                return compare_values(TK_UINT32, value_.begin()->second, other.value_.begin()->second);
-            }
-            else if (get_kind() == TK_BITMASK)
-            {
-                TypeKind bitmask_kind = TK_BYTE;
-                size_t type_size = type_->get_size();
-                switch (type_size)
-                {
-                    case 1: bitmask_kind = TK_BYTE; break;
-                    case 2: bitmask_kind = TK_UINT16; break;
-                    case 4: bitmask_kind = TK_UINT32; break;
-                    case 8: bitmask_kind = TK_UINT64; break;
-                }
-
-                assert(value_.size() && other.value_.size());
-
-                return compare_values(bitmask_kind, value_.begin()->second, other.value_.begin()->second);
-            }
-            else if (type_->is_complex_kind())
-            {
-                // array, map, sequence, structure, bitset, anotation
-                return value_.size() == other.value_.size() &&
-                       std::equal(
-                    value_.begin(),
-                    value_.end(),
-                    other.value_.begin(),
-                    [](const decltype(value_)::value_type& l, const decltype(value_)::value_type& r)
-                    {
-                        return l.second == r.second ||
- * std::static_pointer_cast<DynamicDataImpl>(l.second) ==
- * std::static_pointer_cast<DynamicDataImpl>(r.second);
-                    });
-            }
-            else
-            {
-                // primitives
-                return compare_values(get_kind(), value_.begin()->second, other.value_.begin()->second);
-            }
- #endif // ifdef DYNAMIC_TYPES_CHECKING
-        }
-        return true;
-    }
-
-    return false;
-   }
-
-   bool DynamicDataImpl::operator !=(
-        const DynamicDataImpl& data) const noexcept
-   {
-    return !(*this == data);
-   }
  */
 
 } // namespace dds
