@@ -83,6 +83,11 @@ public:
         return member_;
     }
 
+    const std::vector<traits<DynamicTypeMember>::ref_type>& get_all_members_by_index() const
+    {
+        return members_;
+    }
+
     const TypeDescriptorImpl& get_descriptor() const noexcept
     {
         return type_descriptor_;

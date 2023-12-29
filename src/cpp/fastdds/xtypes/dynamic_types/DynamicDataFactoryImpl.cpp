@@ -14,6 +14,7 @@
 
 #include "DynamicDataFactoryImpl.hpp"
 
+#include "DynamicDataImpl.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -44,11 +45,15 @@ ReturnCode_t DynamicDataFactoryImpl::delete_instance() noexcept
 traits<DynamicData>::ref_type DynamicDataFactoryImpl::create_data(
         traits<DynamicType>::ref_type type) noexcept
 {
+    traits<DynamicDataImpl>::ref_type ret_value = std::make_shared<DynamicDataImpl>(type);
+    return ret_value;
 }
 
 ReturnCode_t DynamicDataFactoryImpl::delete_data(
         traits<DynamicData>::ref_type data) noexcept
 {
+    data.reset();
+    return RETCODE_OK;
 }
 
 } // namespace dds
