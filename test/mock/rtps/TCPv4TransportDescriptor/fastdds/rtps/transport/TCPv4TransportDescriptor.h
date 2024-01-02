@@ -12,21 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TCPV4_TRANSPORT_DESCRIPTOR
-#define TCPV4_TRANSPORT_DESCRIPTOR
+#ifndef _FASTDDS_TCPV4_TRANSPORT_DESCRIPTOR_
+#define _FASTDDS_TCPV4_TRANSPORT_DESCRIPTOR_
 
-#include <fastrtps/transport/TCPTransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 
 namespace eprosima{
-namespace fastrtps{
+namespace fastdds{
 namespace rtps{
+
+using octet = fastrtps::rtps::octet;
 
 class TCPTransportInterface;
 /**
  * Transport configuration
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
+struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
     virtual ~TCPv4TransportDescriptor(){}
 
     virtual TransportInterface* create_transport() const override   {   return nullptr; }
@@ -62,10 +64,10 @@ typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
 
     }
 
-} TCPv4TransportDescriptor;
+};
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // _FASTDDS_TCPV4_TRANSPORT_DESCRIPTOR_

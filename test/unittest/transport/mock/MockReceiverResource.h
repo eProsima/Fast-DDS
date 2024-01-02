@@ -42,7 +42,7 @@ public:
             const Locator_t&,
             const Locator_t&) override;
     MockReceiverResource(
-            TransportInterface& transport,
+            fastdds::rtps::TransportInterface& transport,
             const Locator_t& locator);
     ~MockReceiverResource();
     MessageReceiver* CreateMessageReceiver() override;

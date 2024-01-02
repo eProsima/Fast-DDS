@@ -19,7 +19,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/Semaphore.h>
 
@@ -29,6 +29,8 @@
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps;
 using UDPv6Transport = eprosima::fastdds::rtps::UDPv6Transport;
+using UDPv6TransportDescriptor = eprosima::fastdds::rtps::UDPv6TransportDescriptor;
+using SendResourceList = eprosima::fastdds::rtps::SendResourceList;
 
 #ifndef __APPLE__
 const uint32_t ReceiveBufferCapacity = 65536;
@@ -315,7 +317,7 @@ TEST_F(UDPv6Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
     ASSERT_EQ(mainLocalLocator.port, remote_locator.port);
     ASSERT_EQ(mainLocalLocator.kind, remote_locator.kind);
 
-    ASSERT_EQ(IPLocator::toIPv6string(mainLocalLocator), s_IPv6AddressAny);
+    ASSERT_EQ(IPLocator::toIPv6string(mainLocalLocator), eprosima::fastdds::rtps::s_IPv6AddressAny);
 }
 
 TEST_F(UDPv6Tests, match_if_port_AND_address_matches)

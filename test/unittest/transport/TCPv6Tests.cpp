@@ -20,10 +20,10 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/Semaphore.h>
-
 #include <MockReceiverResource.h>
 #include "mock/MockTCPv6Transport.h"
 #include <rtps/network/NetworkFactory.h>
@@ -32,6 +32,7 @@
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps;
 using TCPv6Transport = eprosima::fastdds::rtps::TCPv6Transport;
+using TCPv6TransportDescriptor = eprosima::fastdds::rtps::TCPv6TransportDescriptor;
 
 #if defined(_WIN32)
 #define GET_PID _getpid

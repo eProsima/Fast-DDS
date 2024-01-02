@@ -15,15 +15,14 @@
 #ifndef MOCK_TRANSPORT_TCP4_STUFF_H
 #define MOCK_TRANSPORT_TCP4_STUFF_H
 
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <rtps/transport/TCPv4Transport.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
-using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
-using TCPChannelResource = eprosima::fastdds::rtps::TCPChannelResource;
+using Locator_t = eprosima::fastrtps::rtps::Locator_t;
 
 class MockTCPv4Transport : public TCPv4Transport
 {

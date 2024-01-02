@@ -147,7 +147,7 @@ public:
 
     static XMLP_ret getXMLTransports_wrapper(
             tinyxml2::XMLElement* elem,
-            std::vector<std::shared_ptr<TransportDescriptorInterface>>& transports,
+            std::vector<std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>>& transports,
             uint8_t ident)
     {
         return getXMLTransports(elem, transports, ident);

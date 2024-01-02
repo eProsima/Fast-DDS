@@ -17,20 +17,24 @@
 
 #include <asio.hpp>
 #include <gtest/gtest.h>
-#include <MockReceiverResource.h>
-#include "mock/MockTCPChannelResource.h"
-#include "mock/MockTCPv4Transport.h"
+
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <rtps/transport/TCPv4Transport.h>
+
+#include "mock/MockTCPChannelResource.h"
+#include "mock/MockTCPv4Transport.h"
+#include <MockReceiverResource.h>
 #include <rtps/transport/tcp/RTCPHeader.h>
+#include <rtps/transport/TCPv4Transport.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using SendResourceList = eprosima::fastdds::rtps::SendResourceList;
 using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
+using TCPv4TransportDescriptor = eprosima::fastdds::rtps::TCPv4TransportDescriptor;
 using TCPHeader = eprosima::fastdds::rtps::TCPHeader;
 
 #if defined(_WIN32)
@@ -281,7 +285,7 @@ TEST_F(TCPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
 
     ASSERT_EQ(mainLocalLocator.port, remote_locator.port);
     ASSERT_EQ(mainLocalLocator.kind, remote_locator.kind);
-    ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), s_IPv4AddressAny);
+    ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), eprosima::fastdds::rtps::s_IPv4AddressAny);
 }
 
 TEST_F(TCPv4Tests, match_if_port_AND_address_matches)
@@ -1565,7 +1569,7 @@ TEST_F(TCPv4Tests, receive_unordered_data)
         "-RTCRTC", "-RTCRT", "-RTCR"
     };
 
-    struct Receiver : public TransportReceiverInterface
+    struct Receiver : public eprosima::fastdds::rtps::TransportReceiverInterface
     {
         std::array<std::size_t, 3> num_received{ 0, 0, 0 };
 

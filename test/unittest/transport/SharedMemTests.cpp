@@ -733,7 +733,7 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
     MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    eprosima::fastrtps::rtps::SendResourceList send_resource_list;
+    SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
@@ -796,7 +796,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
     outputChannelLocator.kind = LOCATOR_KIND_SHM;
     outputChannelLocator.port = g_default_port + 1;
 
-    eprosima::fastrtps::rtps::SendResourceList send_resource_list;
+    SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
     octet message[4] = { 'H', 'e', 'l', 'l'};
@@ -1751,7 +1751,7 @@ TEST_F(SHMTransportTests, remote_segments_free)
             LocatorList send_locators_list;
             send_locators_list.push_back(pub_locator);
 
-            eprosima::fastrtps::rtps::SendResourceList send_resource_list;
+            SendResourceList send_resource_list;
             ASSERT_TRUE(transport.OpenOutputChannel(send_resource_list, pub_locator));
 
             std::function<void()> sub_callback = [&]()
@@ -1787,7 +1787,7 @@ TEST_F(SHMTransportTests, remote_segments_free)
             LocatorList send_locators_list;
             send_locators_list.push_back(sub_locator);
 
-            eprosima::fastrtps::rtps::SendResourceList send_resource_list;
+            SendResourceList send_resource_list;
             ASSERT_TRUE(transport.OpenOutputChannel(send_resource_list, sub_locator));
 
             std::chrono::high_resolution_clock::rep total_times = 0;
@@ -1890,7 +1890,7 @@ TEST_F(SHMTransportTests, remote_segments_free)
     LocatorList send_locators_list;
     send_locators_list.push_back(sub_locator);
 
-    eprosima::fastrtps::rtps::SendResourceList send_resource_list;
+    SendResourceList send_resource_list;
     ASSERT_TRUE(pub_transport.OpenOutputChannel(send_resource_list, sub_locator));
 
     auto t0 = std::chrono::high_resolution_clock::now();
@@ -2022,7 +2022,7 @@ TEST_F(SHMTransportTests, dump_file)
         MockReceiverResource receiver(transportUnderTest, unicastLocator);
         MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-        eprosima::fastrtps::rtps::SendResourceList send_resource_list;
+        SendResourceList send_resource_list;
         ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
         ASSERT_FALSE(send_resource_list.empty());
         ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));

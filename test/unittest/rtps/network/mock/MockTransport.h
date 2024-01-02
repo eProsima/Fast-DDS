@@ -15,14 +15,19 @@
 #ifndef MOCK_TRANSPORT_H
 #define MOCK_TRANSPORT_H
 
-#include <fastrtps/transport/TransportInterface.h>
-#include <fastrtps/transport/SocketTransportDescriptor.h>
 #include <utility>
 #include <vector>
 
+#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/SocketTransportDescriptor.h>
+
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
+
+using Locator_t = eprosima::fastrtps::rtps::Locator_t;
+using LocatorList_t = eprosima::fastrtps::rtps::LocatorList_t;
+using SenderResource = eprosima::fastrtps::rtps::SenderResource;
 
 class MockTransportDescriptor;
 
@@ -59,7 +64,7 @@ public:
     ~MockTransport();
 
     bool init(
-            const PropertyPolicy* properties = nullptr) override;
+            const fastrtps::rtps::PropertyPolicy* properties = nullptr) override;
 
     //API implementation
     bool IsInputChannelOpen(
@@ -104,7 +109,7 @@ public:
      * @param [in, out] selector Locator selector.
      */
     void select_locators(
-            LocatorSelector& selector) const override;
+            fastrtps::rtps::LocatorSelector& selector) const override;
 
     bool is_local_locator(
             const Locator_t&) const override
@@ -164,7 +169,7 @@ public:
 
     bool configureInitialPeerLocator(
             Locator_t&,
-            const PortParameters&,
+            const fastrtps::rtps::PortParameters&,
             uint32_t,
             LocatorList_t& ) const override
     {
@@ -204,7 +209,7 @@ public:
     {
         Locator_t destination;
         Locator_t origin;
-        std::vector<octet> data;
+        std::vector<fastrtps::rtps::octet> data;
     } MockMessage;
 
     std::vector<MockMessage> mockMessagesToReceive;
@@ -242,7 +247,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // ifndef MOCK_TRANSPORT_H

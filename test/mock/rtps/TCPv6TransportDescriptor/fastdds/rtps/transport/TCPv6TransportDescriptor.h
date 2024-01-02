@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UDP_TRANSPORT_DESCRIPTOR
-#define UDP_TRANSPORT_DESCRIPTOR
+#ifndef _FASTDDS_TCPV6_TRANSPORT_DESCRIPTOR_
+#define _FASTDDS_TCPV6_TRANSPORT_DESCRIPTOR_
 
-#include <fastrtps/transport/SocketTransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 
 namespace eprosima{
-namespace fastrtps{
+namespace fastdds{
 namespace rtps{
 
-using TransportInterface = fastdds::rtps::TransportInterface;
+class TCPTransportInterface;
 
 /**
  * Transport configuration
@@ -33,31 +33,26 @@ using TransportInterface = fastdds::rtps::TransportInterface;
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPTransportDescriptor: public SocketTransportDescriptor
+struct TCPv6TransportDescriptor: public TCPTransportDescriptor
 {
-   virtual ~UDPTransportDescriptor(){}
+    virtual ~TCPv6TransportDescriptor(){}
 
-   virtual TransportInterface* create_transport() const override {	return nullptr;	}
+    virtual TransportInterface* create_transport() const override {	return nullptr;	}
 
-   RTPS_DllAPI UDPTransportDescriptor()
-   : SocketTransportDescriptor(65550, 4)
-   {
+    RTPS_DllAPI TCPv6TransportDescriptor()
+    {
 
-   }
+    }
 
-   RTPS_DllAPI UDPTransportDescriptor(const UDPTransportDescriptor& /*t*/)
-   : SocketTransportDescriptor(65550, 4)
-   {
+    RTPS_DllAPI TCPv6TransportDescriptor(const TCPv6TransportDescriptor& /*t*/) : TCPv6TransportDescriptor()
+    {
 
-   }
+    }
 
-   uint16_t m_output_udp_socket;
-   
-   bool non_blocking_send = false;
-} UDPTransportDescriptor;
+};
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // _FASTDDS_TCPV6_TRANSPORT_DESCRIPTOR_

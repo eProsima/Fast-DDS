@@ -33,7 +33,6 @@ namespace rtps {
 using IPFinder = fastrtps::rtps::IPFinder;
 using octet = fastrtps::rtps::octet;
 using IPLocator = fastrtps::rtps::IPLocator;
-using octet = fastrtps::rtps::octet;
 using Log = fastdds::dds::Log;
 
 static void get_ipv6s(

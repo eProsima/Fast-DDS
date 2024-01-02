@@ -26,10 +26,10 @@
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
@@ -293,14 +293,14 @@ XMLP_ret XMLParser::parseXMLTransportData(
 
     if (sType == UDPv4 || sType == UDPv6)
     {
-        std::shared_ptr<rtps::UDPTransportDescriptor> pUDPDesc;
+        std::shared_ptr<fastdds::rtps::UDPTransportDescriptor> pUDPDesc;
         if (sType == UDPv4)
         {
-            pDescriptor = pUDPDesc = std::make_shared<rtps::UDPv4TransportDescriptor>();
+            pDescriptor = pUDPDesc = std::make_shared<fastdds::rtps::UDPv4TransportDescriptor>();
         }
         else
         {
-            pDescriptor = pUDPDesc = std::make_shared<rtps::UDPv6TransportDescriptor>();
+            pDescriptor = pUDPDesc = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
         }
 
         // Output UDP Socket
@@ -324,7 +324,7 @@ XMLP_ret XMLParser::parseXMLTransportData(
     }
     else if (sType == TCPv4)
     {
-        pDescriptor = std::make_shared<rtps::TCPv4TransportDescriptor>();
+        pDescriptor = std::make_shared<fastdds::rtps::TCPv4TransportDescriptor>();
         ret = parseXMLCommonTCPTransportData(p_root, pDescriptor);
         if (ret != XMLP_ret::XML_OK)
         {
@@ -332,8 +332,8 @@ XMLP_ret XMLParser::parseXMLTransportData(
         }
         else
         {
-            std::shared_ptr<rtps::TCPv4TransportDescriptor> pTCPv4Desc =
-                    std::dynamic_pointer_cast<rtps::TCPv4TransportDescriptor>(pDescriptor);
+            std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> pTCPv4Desc =
+                    std::dynamic_pointer_cast<fastdds::rtps::TCPv4TransportDescriptor>(pDescriptor);
 
             // Wan Address
             if (nullptr != (p_aux0 = p_root->FirstChildElement(TCP_WAN_ADDR)))
@@ -349,7 +349,7 @@ XMLP_ret XMLParser::parseXMLTransportData(
     }
     else if (sType == TCPv6)
     {
-        pDescriptor = std::make_shared<rtps::TCPv6TransportDescriptor>();
+        pDescriptor = std::make_shared<fastdds::rtps::TCPv6TransportDescriptor>();
         ret = parseXMLCommonTCPTransportData(p_root, pDescriptor);
         if (ret != XMLP_ret::XML_OK)
         {
@@ -643,8 +643,8 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
      */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
-    std::shared_ptr<rtps::TCPTransportDescriptor> pTCPDesc =
-            std::dynamic_pointer_cast<rtps::TCPTransportDescriptor>(p_transport);
+    std::shared_ptr<fastdds::rtps::TCPTransportDescriptor> pTCPDesc =
+            std::dynamic_pointer_cast<fastdds::rtps::TCPTransportDescriptor>(p_transport);
     if (pTCPDesc != nullptr)
     {
         tinyxml2::XMLElement* p_aux0 = nullptr;
@@ -932,14 +932,14 @@ XMLP_ret XMLParser::parse_tls_config(
         </tls>
      */
     using namespace rtps;
-    using TCPDescriptor = std::shared_ptr<rtps::TCPTransportDescriptor>;
-    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
-    using TLSOption = TCPTransportDescriptor::TLSConfig::TLSOptions;
-    using TLSHandShakeMode = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
+    using TCPDescriptor = std::shared_ptr<fastdds::rtps::TCPTransportDescriptor>;
+    using TLSVerifyMode = fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+    using TLSOption = fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSHandShakeMode = fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
 
     XMLP_ret ret = XMLP_ret::XML_OK;
 
-    TCPDescriptor pTCPDesc = std::dynamic_pointer_cast<rtps::TCPTransportDescriptor>(tcp_transport);
+    TCPDescriptor pTCPDesc = std::dynamic_pointer_cast<fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
     pTCPDesc->apply_security = true;
 
     tinyxml2::XMLElement* p_aux0 = nullptr;

@@ -18,10 +18,10 @@
 #include <memory>
 #include <vector>
 
+#include <fastdds/rtps/common/LocatorSelector.hpp>
+#include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/transport/SenderResource.h>
-#include <fastrtps/rtps/common/LocatorSelector.hpp>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
-#include <fastrtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.h>
 
 #include <rtps/network/ReceiverResource.h>
 

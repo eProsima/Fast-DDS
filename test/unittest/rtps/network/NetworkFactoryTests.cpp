@@ -17,19 +17,19 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <MockTransport.h>
 #include <rtps/network/NetworkFactory.h>
 
-using namespace std;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 class NetworkTests : public ::testing::Test
 {

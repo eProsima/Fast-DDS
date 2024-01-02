@@ -18,7 +18,7 @@
 #include <asio.hpp>
 #include <gtest/gtest.h>
 
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/Semaphore.h>
@@ -29,6 +29,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using UDPv4Transport = eprosima::fastdds::rtps::UDPv4Transport;
+using UDPv4TransportDescriptor = eprosima::fastdds::rtps::UDPv4TransportDescriptor;
+using SendResourceList = eprosima::fastdds::rtps::SendResourceList;
 
 #ifndef __APPLE__
 const uint32_t ReceiveBufferCapacity = 65536;
@@ -277,7 +279,7 @@ TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
     ASSERT_EQ(mainLocalLocator.port, remote_locator.port);
     ASSERT_EQ(mainLocalLocator.kind, remote_locator.kind);
 
-    ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), s_IPv4AddressAny);
+    ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), eprosima::fastdds::rtps::s_IPv4AddressAny);
 }
 
 TEST_F(UDPv4Tests, match_if_port_AND_address_matches)

@@ -29,8 +29,8 @@
 
 #include <fastrtps/publisher/Publisher.h>
 
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <gtest/gtest.h>

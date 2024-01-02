@@ -18,7 +18,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-MockReceiverResource::MockReceiverResource(TransportInterface& transport, const Locator_t& locator)
+MockReceiverResource::MockReceiverResource(fastdds::rtps::TransportInterface& transport, const Locator_t& locator)
         : msg_receiver(nullptr)
 {
     m_maxMsgSize = 0x8FFF;

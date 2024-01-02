@@ -552,7 +552,7 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv6)
 TEST_F(XMLParserTests, getXMLTransports)
 {
     uint8_t ident = 1;
-    std::vector<std::shared_ptr<TransportDescriptorInterface>> transports;
+    std::vector<std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>> transports;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
