@@ -28,8 +28,6 @@
 #include <utility>
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include "rpc_typesTypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -76,8 +74,6 @@ public:
      */
     eProsima_user_DllExport EntityId_t()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_rpc_types_type_objects();
     }
 
     /*!
@@ -248,8 +244,6 @@ public:
      */
     eProsima_user_DllExport GUID_t()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_rpc_types_type_objects();
     }
 
     /*!
@@ -430,8 +424,6 @@ public:
      */
     eProsima_user_DllExport SequenceNumber_t()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_rpc_types_type_objects();
     }
 
     /*!
@@ -592,8 +584,6 @@ public:
      */
     eProsima_user_DllExport SampleIdentity()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_rpc_types_type_objects();
     }
 
     /*!
@@ -797,8 +787,6 @@ public:
      */
     eProsima_user_DllExport RequestHeader()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_rpc_types_type_objects();
     }
 
     /*!
@@ -979,8 +967,6 @@ public:
      */
     eProsima_user_DllExport ReplyHeader()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_rpc_types_type_objects();
     }
 
     /*!

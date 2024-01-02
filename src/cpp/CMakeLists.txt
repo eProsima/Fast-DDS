@@ -120,7 +120,6 @@ set(${PROJECT_NAME}_source_files
     fastdds/domain/qos/DomainParticipantQos.cpp
     fastdds/domain/qos/DomainParticipantFactoryQos.cpp
     fastdds/builtin/type_lookup_service/detail/rpc_typesPubSubTypes.cxx
-    fastdds/builtin/type_lookup_service/detail/rpc_typesTypeObjectSupport.cxx
     fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.cxx
     fastdds/builtin/type_lookup_service/TypeLookupManager.cpp
     fastdds/builtin/type_lookup_service/TypeLookupRequestListener.cpp
