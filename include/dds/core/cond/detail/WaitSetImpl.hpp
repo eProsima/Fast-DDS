@@ -119,7 +119,7 @@ bool TWaitSet<DELEGATE>::detach_condition(
         const Condition& /*cond*/)
 {
     //    if (this->delegate()->detach_condition(cond.delegate().get()) ==
-    //            eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK)
+    //            RETCODE_OK)
     //    {
     //        return true;
     //    }

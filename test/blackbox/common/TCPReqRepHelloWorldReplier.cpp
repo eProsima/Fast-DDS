@@ -79,14 +79,14 @@ void TCPReqRepHelloWorldReplier::init(
     //uint32_t kind = LOCATOR_KIND_TCPv4;
 
     pattr.rtps.useBuiltinTransports = false;
-    std::shared_ptr<TCPTransportDescriptor> descriptor;
+    std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor;
     if (use_ipv6)
     {
-        descriptor = std::make_shared<TCPv6TransportDescriptor>();
+        descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
     }
     else
     {
-        descriptor = std::make_shared<TCPv4TransportDescriptor>();
+        descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     }
 
     descriptor->sendBufferSize = 0;
@@ -99,8 +99,8 @@ void TCPReqRepHelloWorldReplier::init(
 
     if (certs_folder != nullptr)
     {
-        using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
-        using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+        using TLSOptions = eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions;
+        using TLSVerifyMode = eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
         descriptor->apply_security = true;
         descriptor->tls_config.password = "testkey";
         descriptor->tls_config.cert_chain_file = std::string(certs_folder) + "/mainsubcert.pem";

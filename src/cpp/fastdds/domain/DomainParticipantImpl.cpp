@@ -1703,7 +1703,7 @@ bool DomainParticipantImpl::set_qos(
     return qos_should_be_updated;
 }
 
-fastrtps::types::ReturnCode_t DomainParticipantImpl::check_qos(
+ReturnCode_t DomainParticipantImpl::check_qos(
         const DomainParticipantQos& qos)
 {
     if (qos.allocation().data_limits.max_user_data == 0 ||

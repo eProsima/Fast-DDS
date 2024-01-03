@@ -21,10 +21,6 @@
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
 
-#include "idl/TypesTypeObjectSupport.hpp"
-#include "idl/WideEnumTypeObjectSupport.hpp"
-
-using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::types;
 
 class XTypesTests : public ::testing::Test
@@ -33,7 +29,6 @@ public:
 
     XTypesTests()
     {
-        //registerTypesTypes();
     }
 
     ~XTypesTests()

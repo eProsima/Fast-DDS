@@ -2382,7 +2382,7 @@ TEST(ParticipantTests, ExpressionParameterLimits)
                     topic, "", {"Parameter1"});
     ASSERT_NE(content_filtered_topic, nullptr);
 
-    ASSERT_EQ(fastrtps::types::RETCODE_BAD_PARAMETER, content_filtered_topic->set_expression_parameters(
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, content_filtered_topic->set_expression_parameters(
                 {"Parameter1",
                  "Parameter2"}));
 

@@ -49,11 +49,11 @@ public:
             // TODO: fix IPv6 issues related with zone ID
             GTEST_SKIP() << "TCPv6 tests are disabled in Mac";
 #endif // ifdef __APPLE__
-            test_transport_ = std::make_shared<TCPv6TransportDescriptor>();
+            test_transport_ = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
         }
         else
         {
-            test_transport_ = std::make_shared<TCPv4TransportDescriptor>();
+            test_transport_ = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
         }
     }
 
@@ -62,7 +62,7 @@ public:
         use_ipv6 = false;
     }
 
-    std::shared_ptr<TCPTransportDescriptor> test_transport_;
+    std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> test_transport_;
 };
 
 // TCP and Domain management with logical ports tests
@@ -526,8 +526,8 @@ TEST_P(TransportTCP, TCPLocalhost)
 TEST_P(TransportTCP, TCPv4_equal_operator)
 {
     // TCPv4TransportDescriptor
-    TCPv4TransportDescriptor tcpv4_transport_1;
-    TCPv4TransportDescriptor tcpv4_transport_2;
+    eprosima::fastdds::rtps::TCPv4TransportDescriptor tcpv4_transport_1;
+    eprosima::fastdds::rtps::TCPv4TransportDescriptor tcpv4_transport_2;
 
     // Compare equal in defult values
     ASSERT_EQ(tcpv4_transport_1, tcpv4_transport_2);
@@ -546,15 +546,15 @@ TEST_P(TransportTCP, TCPv4_equal_operator)
 // Test copy constructor and copy assignment for TCPv4
 TEST_P(TransportTCP, TCPv4_copy)
 {
-    TCPv4TransportDescriptor tcpv4_transport;
+    eprosima::fastdds::rtps::TCPv4TransportDescriptor tcpv4_transport;
     tcpv4_transport.set_WAN_address("80.80.99.45");
 
     // Copy constructor
-    TCPv4TransportDescriptor tcpv4_transport_copy_constructor(tcpv4_transport);
+    eprosima::fastdds::rtps::TCPv4TransportDescriptor tcpv4_transport_copy_constructor(tcpv4_transport);
     EXPECT_EQ(tcpv4_transport, tcpv4_transport_copy_constructor);
 
     // Copy assignment
-    TCPv4TransportDescriptor tcpv4_transport_copy = tcpv4_transport;
+    eprosima::fastdds::rtps::TCPv4TransportDescriptor tcpv4_transport_copy = tcpv4_transport;
     EXPECT_EQ(tcpv4_transport_copy, tcpv4_transport);
 }
 
@@ -562,7 +562,7 @@ TEST_P(TransportTCP, TCPv4_copy)
 TEST_P(TransportTCP, TCPv4_get_WAN_address)
 {
     // TCPv4TransportDescriptor
-    TCPv4TransportDescriptor tcpv4_transport;
+    eprosima::fastdds::rtps::TCPv4TransportDescriptor tcpv4_transport;
     tcpv4_transport.set_WAN_address("80.80.99.45");
     ASSERT_EQ(tcpv4_transport.get_WAN_address(), "80.80.99.45");
 }
@@ -571,8 +571,8 @@ TEST_P(TransportTCP, TCPv4_get_WAN_address)
 TEST_P(TransportTCP, TCPv6_equal_operator)
 {
     // TCPv6TransportDescriptor
-    TCPv6TransportDescriptor tcpv6_transport_1;
-    TCPv6TransportDescriptor tcpv6_transport_2;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor tcpv6_transport_1;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor tcpv6_transport_2;
 
     // Compare equal in defult values
     ASSERT_EQ(tcpv6_transport_1, tcpv6_transport_2);
@@ -597,17 +597,17 @@ TEST_P(TransportTCP, TCPv6_equal_operator)
 TEST_P(TransportTCP, TCPv6_copy)
 {
     // Change some varibles in order to check the non default creation
-    TCPv6TransportDescriptor tcpv6_transport;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor tcpv6_transport;
     tcpv6_transport.enable_tcp_nodelay = !tcpv6_transport.enable_tcp_nodelay; // change default value
     tcpv6_transport.max_logical_port = tcpv6_transport.max_logical_port + 10; // change default value
     tcpv6_transport.add_listener_port(123u * 98u);
 
     // Copy constructor
-    TCPv6TransportDescriptor tcpv6_transport_copy_constructor(tcpv6_transport);
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor tcpv6_transport_copy_constructor(tcpv6_transport);
     EXPECT_EQ(tcpv6_transport, tcpv6_transport_copy_constructor);
 
     // Copy assignment
-    TCPv6TransportDescriptor tcpv6_transport_copy = tcpv6_transport;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor tcpv6_transport_copy = tcpv6_transport;
     EXPECT_EQ(tcpv6_transport_copy, tcpv6_transport);
 }
 

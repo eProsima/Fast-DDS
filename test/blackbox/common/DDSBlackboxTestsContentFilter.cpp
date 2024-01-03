@@ -579,7 +579,7 @@ TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
 //! Correctly resolve an alias defined in another header
 TEST(DDSContentFilter, CorrectlyHandleAliasOtherHeader)
 {
-    registerTestRegression3361Types();
+    register_TestRegression3361_type_objects();
 
     auto dpf = DomainParticipantFactory::get_instance();
 

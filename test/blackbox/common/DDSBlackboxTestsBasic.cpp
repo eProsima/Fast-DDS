@@ -39,7 +39,6 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include "BlackboxTests.hpp"
 #include "../api/dds-pim/CustomPayloadPool.hpp"
@@ -397,7 +396,7 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     PubSubReader<HelloWorldPubSubType> reliable_reader(TEST_TOPIC_NAME);
 
     // Test transport will be used in order to filter inlineQoS
-    auto test_transport = std::make_shared<eprosima::fastrtps::rtps::test_UDPv4TransportDescriptor>();
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     bool exists_pid_related_sample_identity = false;
     bool exists_pid_custom_related_sample_identity = false;
 
@@ -455,7 +454,7 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     {
     }
 
-    ASSERT_EQ(eprosima::fastrtps::types::RETCODE_OK,
+    ASSERT_EQ(RETCODE_OK,
             native_reader.take_next_sample((void*)&read_data, &info));
 
     ASSERT_TRUE(exists_pid_related_sample_identity);
