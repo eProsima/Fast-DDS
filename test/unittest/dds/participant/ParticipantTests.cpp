@@ -60,7 +60,6 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
