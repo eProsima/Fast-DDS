@@ -187,25 +187,16 @@ private:
     /**
      * Checks if the given TypeIdentfierWithSize is known by the TypeObjectRegistry.
      * Uses get_type_dependencies() and get_types() to get those that are not known.
-     * @param type_identifier_with_size[in] TypeIdentfierWithSize to check.
-     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
-     * @return ReturnCode_t RETCODE_OK if type is known.
-     *                      RETCODE_NO_DATA if the type is being discovered.
-     *                      RETCODE_ERROR if any request was not sent correctly.
-     */
-    ReturnCode_t check_type_identifier_received(
-            const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
-            const fastrtps::rtps::GuidPrefix_t& type_server);
-
-    /**
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
      * TypeIdentfierWithSize was not in the map before
-     * @param type_identifier_with_size[in] TypeIdentfierWithSize to add the callback to
-     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeIdentfierWithSize is being solved.
+     * @param type_identifier_with_size[in] TypeIdentfierWithSize to check.
+     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
      * @param callback[in] AsyncGetTypeCallback to add.
-     * @return true if added. false otherwise
+     * @return ReturnCode_t RETCODE_OK if type is known.
+     *                      RETCODE_NO_DATA if the type is being discovered.
+     *                      RETCODE_ERROR if the request was not sent or the callback was not added correctly.
      */
-    bool add_async_get_type_callback(
+    ReturnCode_t check_type_identifier_received(
             const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
             const fastrtps::rtps::GuidPrefix_t& type_server,
             const AsyncGetTypeCallback& callback);
@@ -241,7 +232,7 @@ private:
 
     /**
      * Complete reply common fields, create CacheChange, serialize reply and add change to writer history.
-     * @param reply[in] TypeLookup_Reply to be send.
+     * @param reply[in] TypeLookup_Reply to be sent.
      * @return true if reply was sent, false otherwise.
      */
     bool send_reply(
@@ -277,7 +268,7 @@ private:
     }
 
     /**
-     * Create instance name as defined in 7.6.3.3.4 the XTypes 1.3 document
+     * Create instance name as defined in section 7.6.3.3.4 XTypes 1.3 specification
      * @param guid[in] GuidPrefix_t to be included in the instance name
      * @return The instance name.
      */
@@ -294,7 +285,7 @@ private:
     fastrtps::rtps::RTPSParticipantImpl* participant_ = nullptr;
 
     //!Own instance name
-    std::string own_instance_name_;
+    std::string local_instance_name_;
 
     //!Pointer to the BuiltinProtocols class.
     fastrtps::rtps::BuiltinProtocols* builtin_protocols_ = nullptr;
