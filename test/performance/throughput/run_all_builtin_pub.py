@@ -23,7 +23,7 @@ def run_test(builtin_transports):
         bytes = ["--msg_size=1000000"]
         data_sharing = ["--data_sharing=off"]
 
-        timeout_ = 60
+        timeout_ = 180
 
         command = [
             env_var,

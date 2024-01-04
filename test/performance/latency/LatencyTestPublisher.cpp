@@ -577,7 +577,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
             bounce_time = std::chrono::duration<uint32_t, std::nano>(pub->latency_data_in_->bounce);
         }
 
-        std::cout << "Seqnum in: " << pub->latency_data_in_->seqnum << " | Seqnum out: " << pub->latency_data_out_->seqnum << std::endl;
+        // std::cout << "Seqnum in: " << pub->latency_data_in_->seqnum << " | Seqnum out: " << pub->latency_data_out_->seqnum << std::endl;
 
         // Check if is the expected echo message
         if ((pub->dynamic_types_
