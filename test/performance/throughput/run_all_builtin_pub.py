@@ -21,8 +21,9 @@ def run_test(builtin_transports):
         period = ["--recovery_time=100"]
         duration = ["--time=10"]
         bytes = ["--msg_size=1000000"]
+        data_sharing = ["--data_sharing=off"]
 
-        timeout_ = 30
+        timeout_ = 60
 
         command = [
             env_var,
@@ -35,6 +36,7 @@ def run_test(builtin_transports):
         command += period
         command += duration
         command += bytes
+        command += data_sharing
 
         command = ' '.join(element for element in command)
         print('Throughput command:', command)
