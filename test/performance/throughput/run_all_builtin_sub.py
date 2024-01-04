@@ -8,8 +8,6 @@ import sys
 import time
 import subprocess
 
-root_dir = '/home/carlos/fastdds_ws/build/fastrtps/examples/cpp/dds/BigDataTransportExample/'
-
 def run_test(builtin_transports):
 
     for t in builtin_transports:
@@ -20,7 +18,7 @@ def run_test(builtin_transports):
         root_dir = '/home/carlos/fastdds_ws/build/fastrtps/test/performance/throughput/ThroughputTest'
         reliability = ["--reliability=reliable"]
 
-        timeout_ = 60
+        timeout_ = 180
 
         command = [
             env_var,
