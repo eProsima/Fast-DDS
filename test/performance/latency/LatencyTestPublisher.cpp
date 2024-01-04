@@ -577,6 +577,8 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
             bounce_time = std::chrono::duration<uint32_t, std::nano>(pub->latency_data_in_->bounce);
         }
 
+        std::cout << "Seqnum in: " << pub->latency_data_in_->seqnum << " | Seqnum out: " << pub->latency_data_out_->seqnum << std::endl;
+
         // Check if is the expected echo message
         if ((pub->dynamic_types_
                 && (pub->dynamic_data_in_->get_uint32_value(0)
@@ -861,7 +863,7 @@ bool LatencyTestPublisher::test(
         std::unique_lock<std::mutex> lock(mutex_);
         // the wait timeouts due possible message leaks
         data_msg_cv_.wait_for(lock,
-                std::chrono::milliseconds(100),
+                std::chrono::milliseconds(1000),
                 [&]()
                 {
                     return data_msg_count_ >= subscribers_;
@@ -919,7 +921,10 @@ bool LatencyTestPublisher::test(
     }
 
     // Drop the first measurement, as it's usually not representative
-    times_.erase(times_.begin());
+    if (!times_.empty())
+    {
+        times_.erase(times_.begin());
+    }
 
     // Log all data to CSV file if specified
     if (raw_data_file_ != "")
@@ -938,7 +943,7 @@ void LatencyTestPublisher::analyze_times(
     // Collect statistics
     TimeStats stats;
     stats.bytes_ = datasize;
-    stats.received_ = received_count_ - 1;  // Because we are not counting the first one.
+    stats.received_ = (received_count_ != 0) ? received_count_ - 1: received_count_;  // Because we are not counting the first one.
     stats.minimum_ = *min_element(times_.begin(), times_.end());
     stats.maximum_ = *max_element(times_.begin(), times_.end());
     stats.mean_ = accumulate(times_.begin(), times_.end(),
@@ -1014,7 +1019,7 @@ void LatencyTestPublisher::print_stats(
             stats.bytes_, stats.received_, stats.stdev_, stats.mean_, stats.minimum_.count(), stats.percentile_50_,
             stats.percentile_90_, stats.percentile_99_, stats.percentile_9999_, stats.maximum_.count());
 #else
-    printf("%8" PRIu64 ",%8u,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f \n",
+    printf("%9" PRIu64 ",%8u,%10.3f,%10.3f,%10.3f,%10.3f,%10.3f,%10.3f,%10.3f,%10.3f \n",
             stats.bytes_, stats.received_, stats.stdev_, stats.mean_, stats.minimum_.count(), stats.percentile_50_,
             stats.percentile_90_, stats.percentile_99_, stats.percentile_9999_, stats.maximum_.count());
 #endif // ifdef _WIN32
