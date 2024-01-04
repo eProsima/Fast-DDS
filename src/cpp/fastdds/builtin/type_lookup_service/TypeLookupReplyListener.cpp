@@ -82,18 +82,17 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
     auto requests_it = typelookup_manager_->async_get_type_requests_.find(request_id);
     if (requests_it != typelookup_manager_->async_get_type_requests_.end())
     {
-        bool are_dependencies_solved = true;
+        bool all_dependencies_known = true;
         for (xtypes::TypeIdentfierWithSize type_id : reply.dependent_typeids())
         {
-            ReturnCode_t solve_ret = typelookup_manager_->check_type_identifier_received(type_id, type_server);
-            if (RETCODE_OK != solve_ret)
+            if (RETCODE_OK != typelookup_manager_->check_type_identifier_received(type_id, type_server, nullptr))
             {
-                are_dependencies_solved = false;
+                all_dependencies_known = false;
             }
         }
 
         // If all dependencies are known, ask for the parent type
-        if (are_dependencies_solved)
+        if (all_dependencies_known)
         {
             xtypes::TypeIdentifierSeq uknown_type;
             uknown_type.push_back(requests_it->second.type_id());
