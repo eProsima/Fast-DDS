@@ -20,7 +20,7 @@ def run_test(builtin_transports):
         root_dir = '/home/carlos/fastdds_ws/build/fastrtps/test/performance/throughput/ThroughputTest'
         reliability = ["--reliability=reliable"]
 
-        timeout_ = 30
+        timeout_ = 60
 
         command = [
             env_var,

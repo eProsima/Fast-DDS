@@ -149,19 +149,23 @@ bool HelloWorldSubscriber::init(
     {
         rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
         rqos.history().kind = KEEP_ALL_HISTORY_QOS;
+        std::cout << "Reliable" << std::endl;
     }
     else
     {
         rqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;  // default
+        std::cout << "Best Effort" << std::endl;
     }
 
     if (transient)
     {
         rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        std::cout << "Transient_local durability" << std::endl;
     }
     else
     {
         rqos.durability().kind = VOLATILE_DURABILITY_QOS;   // default
+        std::cout << "Volatile durability" << std::endl;
     }
 
     if (history)

@@ -194,11 +194,13 @@ bool HelloWorldPublisher::init(
     {
         wqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
         wqos.history().kind = KEEP_ALL_HISTORY_QOS;
+        std::cout << "Realiable" << std::endl;
     }
     else
     {
         wqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;  // default in this example (although default value for
                                                                 // writters' qos actually is RELIABLE)
+        std::cout << "Best Effort" << std::endl;
     }
 
     if (transient)
@@ -206,11 +208,13 @@ bool HelloWorldPublisher::init(
         wqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         wqos.history().kind = KEEP_ALL_HISTORY_QOS;     // store previously sent samples so they can be resent to newly
                                                         // matched DataReaders
-    }
+         std::cout << "Transient_local durability" << std::endl;
+   }
     else
     {
         wqos.durability().kind = VOLATILE_DURABILITY_QOS;   // default in this example (although default value for
                                                             // writters' qos actually is TRANSIENT_LOCAL)
+        std::cout << "Volatile durability" << std::endl;
     }
 
     if (history)
