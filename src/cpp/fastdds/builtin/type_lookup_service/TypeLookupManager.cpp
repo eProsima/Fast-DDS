@@ -52,7 +52,7 @@ namespace builtin {
 
 
 inline SequenceNumber_t sequence_number_rtps_2_dds(
-        const fastrtps::rtps::SequenceNumber_t seq_number)
+        const fastrtps::rtps::SequenceNumber_t& seq_number)
 {
     return *reinterpret_cast<const SequenceNumber_t*>(&seq_number);
 }
