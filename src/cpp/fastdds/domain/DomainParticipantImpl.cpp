@@ -2097,7 +2097,11 @@ void DomainParticipantImpl::remove_child_request(
         if (parent_requests_.end() != parent_it)
         {
             std::vector<fastrtps::rtps::SampleIdentity>& pending = parent_it->second;
-            pending.erase(std::find(pending.begin(), pending.end(), request));
+            auto pending_it = std::find(pending.begin(), pending.end(), request);
+            if (pending_it != pending.end())
+            {
+                pending.erase(pending_it);
+            }
             if (pending.empty())
             {
                 parent_requests_.erase(parent_it);
