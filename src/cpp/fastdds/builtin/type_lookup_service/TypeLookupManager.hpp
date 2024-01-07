@@ -154,18 +154,20 @@ public:
      * associated with a sequence of TypeIdentifiers.
      * @param id_seq[in] Sequence of TypeIdentifiers for which dependencies are needed.
      * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
-     * @return The SampleIdentity of the request sended.
+     * @param continuation_point[in] Continuation point for a previous partially answered request.
+     * @return The SampleIdentity of the sent request.
      */
     SampleIdentity get_type_dependencies(
             const xtypes::TypeIdentifierSeq& id_seq,
-            const fastrtps::rtps::GuidPrefix_t& type_server) const;
+            const fastrtps::rtps::GuidPrefix_t& type_server,
+            const std::vector<uint8_t>& continuation_point = std::vector<uint8_t>()) const;
 
     /**
-     * Create and send a request using the builtin TypeLookup Service to retrieve TypeObjects associated with a
+     * Create and send a request using the built-in TypeLookup Service to retrieve TypeObjects associated with a
      * sequence of TypeIdentifiers.
      * @param id_seq[in] Sequence of TypeIdentifiers for which TypeObjects are to be retrieved.
-     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
-     * @return The SampleIdentity of the request sended.
+     * @param type_server[in] GuidPrefix corresponding to the remote participant whose TypeInformation is being resolved.
+     * @return The SampleIdentity of the sent request.
      */
     SampleIdentity get_types(
             const xtypes::TypeIdentifierSeq& id_seq,
