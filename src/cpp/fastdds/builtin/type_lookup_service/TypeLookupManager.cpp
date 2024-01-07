@@ -256,12 +256,18 @@ void TypeLookupManager::remove_remote_endpoints(
 
 SampleIdentity TypeLookupManager::get_type_dependencies(
         const xtypes::TypeIdentifierSeq& id_seq,
-        const fastrtps::rtps::GuidPrefix_t& type_server) const
+        const fastrtps::rtps::GuidPrefix_t& type_server,
+        const std::vector<uint8_t>& continuation_point) const
 {
     SampleIdentity id = INVALID_SAMPLE_IDENTITY;
 
     TypeLookup_getTypeDependencies_In in;
-    in.type_ids() = id_seq;
+    in.type_ids(id_seq);
+    if (!continuation_point.empty())
+    {
+        in.continuation_point(continuation_point);
+    }
+
     TypeLookup_RequestPubSubType type;
     TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
     request->data().getTypeDependencies(in);
@@ -281,7 +287,7 @@ SampleIdentity TypeLookupManager::get_types(
     SampleIdentity id = INVALID_SAMPLE_IDENTITY;
 
     TypeLookup_getTypes_In in;
-    in.type_ids() = id_seq;
+    in.type_ids(id_seq);
     TypeLookup_RequestPubSubType type;
     TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
     request->data().getTypes(in);
@@ -318,6 +324,50 @@ ReturnCode_t TypeLookupManager::async_get_type(
         callback(std::move(temp_reader_data));
     }
     return result;
+}
+
+ReturnCode_t TypeLookupManager::check_type_identifier_received(
+        const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
+        const fastrtps::rtps::GuidPrefix_t& type_server)
+{
+    // Check if the type is known
+    if (fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                    is_type_identifier_known(type_identifier_with_size))
+    {
+        return RETCODE_OK;
+    }
+
+    // Check if TypeIdentfierWithSize already exists in the map
+    auto writer_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
+    if (writer_it != async_get_type_writer_callbacks_.end())
+    {
+        // Return without sending new request
+        return RETCODE_NO_DATA;
+    }
+
+    // If not found in the writer map, check the reader map
+    auto reader_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
+    if (reader_it != async_get_type_reader_callbacks_.end())
+    {
+        // Return without sending new request
+        return RETCODE_NO_DATA;
+    }
+
+    // TypeIdentfierWithSize doesn't exist, create a new entry
+    xtypes::TypeIdentifierSeq unknown_type{type_identifier_with_size.type_id()};
+    SampleIdentity get_type_dependencies_request = get_type_dependencies(unknown_type, type_server);
+    if (INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
+    {
+        // Store the sent request
+        add_async_get_type_request(get_type_dependencies_request, type_identifier_with_size);
+        return RETCODE_NO_DATA;
+    }
+    else
+    {
+        // Failed to send request, return error
+        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Failed to send get_type_dependencies request");
+        return RETCODE_ERROR;
+    }
 }
 
 ReturnCode_t TypeLookupManager::check_type_identifier_received(
@@ -399,6 +449,33 @@ void TypeLookupManager::notify_callbacks(
         for (AsyncGetTypeCallback& callback : callbacks_it->second)
         {
             callback();
+        }
+        // Erase the solved TypeIdentfierWithSize
+        remove_async_get_type_callback(type_identifier_with_size);
+    }
+}
+
+void TypeLookupManager::notify_callbacks(
+        xtypes::TypeIdentfierWithSize type_identifier_with_size)
+{
+    // Check that type is not solved
+    auto writer_callbacks_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
+    if (writer_callbacks_it != async_get_type_writer_callbacks_.end())
+    {
+        for (auto& proxy_callback_pair : writer_callbacks_it->second)
+        {
+            proxy_callback_pair.second(std::move(proxy_callback_pair.first));
+        }
+        //Erase the solved TypeIdentfierWithSize
+        remove_async_get_type_callback(type_identifier_with_size);
+    }
+
+    auto reader_callbacks_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
+    if (reader_callbacks_it != async_get_type_reader_callbacks_.end())
+    {
+        for (auto& proxy_callback_pair : reader_callbacks_it->second)
+        {
+            proxy_callback_pair.second(std::move(proxy_callback_pair.first));
         }
         // Erase the solved TypeIdentfierWithSize
         remove_async_get_type_callback(type_identifier_with_size);
