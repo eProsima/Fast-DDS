@@ -56,7 +56,7 @@ void TypeLookupReplyListener::check_get_types_reply(
         const SampleIdentity& request_id,
         const TypeLookup_getTypes_Out& reply)
 {
-    // Check if we were waiting that reply SampleIdentity
+    // Check if the received reply SampleIdentity corresponds to an outstanding request
     auto requests_it = typelookup_manager_->async_get_type_requests_.find(request_id);
     if (requests_it != typelookup_manager_->async_get_type_requests_.end())
     {
@@ -65,10 +65,11 @@ void TypeLookupReplyListener::check_get_types_reply(
             if (RETCODE_OK == fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                             register_type_object(pair.type_identifier(), pair.type_object()))
             {
+                // Notify the callbacks associated with the request
                 typelookup_manager_->notify_callbacks(requests_it->second);
             }
         }
-        // Erase the processed SampleIdentity
+        // Remove the processed SampleIdentity from the outstanding requests
         typelookup_manager_->remove_async_get_types_request(request_id);
     }
 }
@@ -78,35 +79,63 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
         const fastrtps::rtps::GuidPrefix_t type_server,
         const TypeLookup_getTypeDependencies_Out& reply)
 {
-    // Check if we were waiting that reply SampleIdentity
+    // Check if the received reply SampleIdentity corresponds to an outstanding request
     auto requests_it = typelookup_manager_->async_get_type_requests_.find(request_id);
-    if (requests_it != typelookup_manager_->async_get_type_requests_.end())
+    if (requests_it == typelookup_manager_->async_get_type_requests_.end())
     {
-        bool all_dependencies_known = true;
-        for (xtypes::TypeIdentfierWithSize type_id : reply.dependent_typeids())
-        {
-            if (RETCODE_OK != typelookup_manager_->check_type_identifier_received(type_id, type_server, nullptr))
-            {
-                all_dependencies_known = false;
-            }
-        }
-
-        // If all dependencies are known, ask for the parent type
-        if (all_dependencies_known)
-        {
-            xtypes::TypeIdentifierSeq uknown_type;
-            uknown_type.push_back(requests_it->second.type_id());
-
-            SampleIdentity get_types_request = typelookup_manager_->get_types(uknown_type, type_server);
-            if (builtin::INVALID_SAMPLE_IDENTITY != get_types_request)
-            {
-                // Store the sent request and associated TypeIdentfierWithSize
-                typelookup_manager_->add_async_get_type_request(get_types_request, requests_it->second);
-            }
-        }
-        // Erase the processed SampleIdentity
-        typelookup_manager_->remove_async_get_types_request(request_id);
+        // The reply is not associated with any outstanding request, ignore it
+        return;
     }
+
+    // Check each dependent TypeIdentifierWithSize to ensure all dependencies are known
+    bool all_dependencies_known = std::all_of(
+        reply.dependent_typeids().begin(), reply.dependent_typeids().end(),
+        [&](const xtypes::TypeIdentfierWithSize& type_id)
+        {
+            // Check if the dependent TypeIdentifierWithSize is known; creating a new request if it is not
+            return RETCODE_OK == typelookup_manager_->check_type_identifier_received(type_id, type_server);
+        });
+
+    // If the received reply has continuation point, send next request
+    if (!reply.continuation_point().empty())
+    {
+        // Make a new request with the continuation point
+        xtypes::TypeIdentifierSeq unknown_type{requests_it->second.type_id()};
+        SampleIdentity next_request_id = typelookup_manager_->
+                        get_type_dependencies(unknown_type, type_server, reply.continuation_point());
+        if (INVALID_SAMPLE_IDENTITY != next_request_id)
+        {
+            // Store the sent requests and associated TypeIdentfierWithSize
+            typelookup_manager_->add_async_get_type_request(next_request_id, requests_it->second);
+        }
+        else
+        {
+            // Failed to send request
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Failed to send get_type_dependencies request");
+        }
+    }
+    // If all dependencies are known and there is no continuation point, request the parent type
+    else if (all_dependencies_known)
+    {
+        xtypes::TypeIdentifierSeq unknown_type{requests_it->second.type_id()};
+
+        // Initiate a type request to obtain the parent type
+        SampleIdentity get_types_request = typelookup_manager_->get_types(unknown_type, type_server);
+
+        if (INVALID_SAMPLE_IDENTITY != get_types_request)
+        {
+            // Store the type request
+            typelookup_manager_->add_async_get_type_request(get_types_request, requests_it->second);
+        }
+        else
+        {
+            // Failed to send request
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Failed to send get_types request");
+        }
+    }
+
+    // Remove the processed SampleIdentity from the outstanding requests
+    typelookup_manager_->remove_async_get_types_request(request_id);
 }
 
 void TypeLookupReplyListener::onNewCacheChangeAdded(
@@ -115,13 +144,16 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
 {
     CacheChange_t* change = const_cast<CacheChange_t*>(change_in);
 
+    // Check if the data is received from the expected TypeLookup Reply writer
     if (change->writerGUID.entityId != c_EntityId_TypeLookup_reply_writer)
     {
+        // Log a warning and remove the change from the history
         EPROSIMA_LOG_WARNING(TL_REPLY_READER, "Received data from a bad endpoint.");
         reader->getHistory()->remove_change(change);
     }
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Received new cache change");
 
+    // Process the received TypeLookup Reply and handle different types of replies
     TypeLookup_Reply reply;
     if (typelookup_manager_->receive_reply(*change, reply))
     {
@@ -142,6 +174,8 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                 break;
         }
     }
+
+    // Remove the processed cache change from the history
     reader->getHistory()->remove_change(change);
 }
 

@@ -65,11 +65,14 @@ public:
     {
     }
 
-    MOCK_CONST_METHOD1(get_type_dependencies, fastrtps::rtps::SampleIdentity(
-                const xtypes::TypeIdentifierSeq&));
+    MOCK_CONST_METHOD3(get_type_dependencies, SampleIdentity(
+                const fastrtps::types::TypeIdentifierSeq&,
+                const fastrtps::rtps::GuidPrefix_t&,
+                const std::vector<uint8_t>&));
 
-    MOCK_CONST_METHOD1(get_types, fastrtps::rtps::SampleIdentity(
-                const xtypes::TypeIdentifierSeq&));
+    MOCK_CONST_METHOD2(get_types, SampleIdentity(
+                const fastrtps::types::TypeIdentifierSeq&,
+                const fastrtps::rtps::GuidPrefix_t&));
 
     MOCK_METHOD1(remove_remote_endpoints, void(
                 fastrtps::rtps::ParticipantProxyData* pdata));

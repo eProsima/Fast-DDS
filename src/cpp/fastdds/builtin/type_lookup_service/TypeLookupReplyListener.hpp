@@ -72,7 +72,7 @@ public:
 
     /**
      * @brief Checks if all dependencies are solved.
-     * If they are not, sends next request and adds it to the list..
+     * If they are not, sends next request and adds it to the list.
      * If they are, sends get_types request and adds it to the list.
      * Also removes the current SampleIdentity from the list.
      * @param request_id[in] The SampleIdentity of the request
