@@ -47,6 +47,7 @@ public:
 
     /**
      * Creates a new @ref DynamicData reference based on the given @ref DynamicType reference.
+     * All objects returned by this operation should eventually be deleted by calling delete_data.
      * @param[in] type @ref DynamicType reference associated.
      * @return new @ref DynamicData reference
      */
@@ -57,8 +58,8 @@ public:
      * Resets the internal reference if it is cached.
      * @param[in] type @ref DynamicData reference whose internal cached reference to reset.
      * @return standard ReturnCode_t
-     * @retval RETCODE_OK is always returned.
      * @retval RETCODE_BAD_PARAMETER if reference is nil.
+     * @retval RETCODE_OK is otherwise returned.
      */
     virtual ReturnCode_t delete_data(
             traits<DynamicData>::ref_type data) = 0;
