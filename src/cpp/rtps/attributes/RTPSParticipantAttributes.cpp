@@ -169,6 +169,7 @@ static void setup_transports_shm(
         RTPSParticipantAttributes& att)
 {
 #ifdef FASTDDS_SHM_TRANSPORT_DISABLED
+    static_cast<void>(att);
     EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Trying to configure SHM transport only, " <<
             "but Fast DDS was built without SHM transport support.");
 #else
