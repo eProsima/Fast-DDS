@@ -713,8 +713,9 @@ std::string TypeLookupManager::get_instance_name(
     std::transform(str.begin(), str.end(), str.begin(),
             [](unsigned char c)
             {
-                return (c == '.') ? '\0' : static_cast<unsigned char>(std::tolower(c));
+                return static_cast<unsigned char>(std::tolower(c));
             });
+    str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
     return "dds.builtin.TOS." + str;
 }
 

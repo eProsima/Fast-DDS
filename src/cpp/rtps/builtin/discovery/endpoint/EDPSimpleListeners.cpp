@@ -207,7 +207,7 @@ void EDPBaseSUBListener::add_reader_from_change(
 
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeCallback after_typelookup_callback =
-                [this, reader, reader_history, change, edp, release_change, &temp_reader_data, &network]()
+                [reader, reader_history, change, edp, release_change, &temp_reader_data, &network]()
                 {
                     auto copy_data_fun = [&temp_reader_data, &network](
                         ReaderProxyData* data,
