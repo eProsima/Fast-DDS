@@ -310,7 +310,7 @@ TCPTransactionId RTCPMessageManager::sendConnectionRequest(
     }
     else
     {
-        IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::instance().process_id()));
+        IPLocator::setPhysicalPort(locator, IPLocator::getPhysicalPort(mTransport->get_initial_peer_local_locator()));
     }
 
     if (locator.kind == LOCATOR_KIND_TCPv4)

@@ -242,6 +242,14 @@ void TCPTransportInterface::clean()
         }
     }
 
+    if (initial_peer_local_locator_socket_ != nullptr)
+    {
+        if(initial_peer_local_locator_socket_->is_open())
+        {
+            initial_peer_local_locator_socket_->close();
+        }
+    }
+
     if (io_service_thread_.joinable())
     {
         io_service_.stop();
@@ -398,37 +406,46 @@ bool TCPTransportInterface::init(
         EPROSIMA_LOG_WARNING(TLS, "Error configuring TLS, using TCP transport without security");
     }
 
-    if (configuration()->sendBufferSize == 0 || configuration()->receiveBufferSize == 0)
+    /*
+    Open and bind a socket to obtain a unique port. This port is assigned to PDP passed locators.
+    Although real client socket local port will differ, this ensures uniqueness for server's channel
+    resources mapping (uses client locators as keys).
+    Open and bind a socket to obtain a unique port. This unique port is assigned to to PDP passed locators.
+    This process ensures uniqueness in the server's channel resources mapping, which uses client locators as keys. 
+    Although differing from the real client socket local port, provides a reliable mapping mechanism.
+    */
+    initial_peer_local_locator_socket_.reset(new asio::ip::tcp::socket(io_service_));
+    initial_peer_local_locator_socket_->open(generate_protocol());
+
+    // Binding to port 0 delegates the port selection to the system.
+    initial_peer_local_locator_socket_->bind(asio::ip::tcp::endpoint(generate_protocol(), 0));
+
+    ip::tcp::endpoint local_endpoint = initial_peer_local_locator_socket_->local_endpoint();
+    endpoint_to_locator(local_endpoint, initial_peer_local_locator_);
+
+    // Check system buffer sizes.
+    if (configuration()->sendBufferSize == 0)
     {
-        // Check system buffer sizes.
-        ip::tcp::socket socket(io_service_);
-        socket.open(generate_protocol());
+        socket_base::send_buffer_size option;
+        initial_peer_local_locator_socket_->get_option(option);
+        set_send_buffer_size(option.value());
 
-        if (configuration()->sendBufferSize == 0)
+        if (configuration()->sendBufferSize < s_minimumSocketBuffer)
         {
-            socket_base::send_buffer_size option;
-            socket.get_option(option);
-            set_send_buffer_size(option.value());
-
-            if (configuration()->sendBufferSize < s_minimumSocketBuffer)
-            {
-                set_send_buffer_size(s_minimumSocketBuffer);
-            }
+            set_send_buffer_size(s_minimumSocketBuffer);
         }
+    }
 
-        if (configuration()->receiveBufferSize == 0)
+    if (configuration()->receiveBufferSize == 0)
+    {
+        socket_base::receive_buffer_size option;
+        initial_peer_local_locator_socket_->get_option(option);
+        set_receive_buffer_size(option.value());
+
+        if (configuration()->receiveBufferSize < s_minimumSocketBuffer)
         {
-            socket_base::receive_buffer_size option;
-            socket.get_option(option);
-            set_receive_buffer_size(option.value());
-
-            if (configuration()->receiveBufferSize < s_minimumSocketBuffer)
-            {
-                set_receive_buffer_size(s_minimumSocketBuffer);
-            }
+            set_receive_buffer_size(s_minimumSocketBuffer);
         }
-
-        socket.close();
     }
 
     if (configuration()->maxMessageSize > s_maximumMessageSize)
@@ -1512,7 +1529,7 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(
             }
             else
             {
-                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::instance().process_id()));
+                IPLocator::setPhysicalPort(locator, IPLocator::getPhysicalPort(initial_peer_local_locator_));
             }
         }
     }
@@ -1581,7 +1598,7 @@ bool TCPTransportInterface::fillUnicastLocator(
             }
             else
             {
-                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::instance().process_id()));
+                IPLocator::setPhysicalPort(locator, IPLocator::getPhysicalPort(initial_peer_local_locator_));
             }
         }
     }
@@ -1770,6 +1787,12 @@ bool TCPTransportInterface::is_localhost_allowed() const
     fill_local_ip(local_locator);
     return is_locator_allowed(local_locator);
 }
+
+Locator TCPTransportInterface::get_initial_peer_local_locator()
+{
+    return initial_peer_local_locator_;
+}
+
 
 } // namespace rtps
 } // namespace fastrtps
