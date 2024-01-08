@@ -591,6 +591,8 @@ bool SecurityManager::discovered_participant(
     // Create or find information
     bool undiscovered = false;
     DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info;
+    // Use the information from the collection
+    const ParticipantProxyData* remote_participant_data = nullptr;
     {
         std::lock_guard<shared_mutex> _(mutex_);
 
@@ -604,13 +606,14 @@ bool SecurityManager::discovered_participant(
 
         undiscovered = map_ret.second;
         remote_participant_info = map_ret.first->second->get_auth();
+        remote_participant_data = &map_ret.first->second->participant_data();
     }
 
     bool notify_part_authorized = false;
-    if (undiscovered && remote_participant_info)
+    if (undiscovered && remote_participant_info && remote_participant_data != nullptr)
     {
         // Configure the timed event but do not start it
-        const GUID_t guid = participant_data.m_guid;
+        const GUID_t guid = remote_participant_data->m_guid;
         remote_participant_info->event_.reset(new TimedEvent(participant_->getEventResource(),
                 [&, guid]() -> bool
                 {
@@ -624,8 +627,8 @@ bool SecurityManager::discovered_participant(
         // Validate remote participant.
         ValidationResult_t validation_ret = authentication_plugin_->validate_remote_identity(&remote_identity_handle,
                         *local_identity_handle_,
-                        participant_data.identity_token_,
-                        participant_data.m_guid, exception);
+                        remote_participant_data->identity_token_,
+                        remote_participant_data->m_guid, exception);
 
         switch (validation_ret)
         {
@@ -645,21 +648,21 @@ bool SecurityManager::discovered_participant(
             // TODO(Ricardo) Send event.
             default:
 
-                on_validation_failed(participant_data, exception);
+                on_validation_failed(*remote_participant_data, exception);
 
                 std::lock_guard<shared_mutex> _(mutex_);
 
                 // Remove created element, because authentication failed.
-                discovered_participants_.erase(participant_data.m_guid);
+                discovered_participants_.erase(remote_participant_data->m_guid);
 
                 //TODO(Ricardo) cryptograhy registration in AUTHENTICAITON_OK
                 return false;
         }
 
-        EPROSIMA_LOG_INFO(SECURITY, "Discovered participant " << participant_data.m_guid);
+        EPROSIMA_LOG_INFO(SECURITY, "Discovered participant " << remote_participant_data->m_guid);
 
         // Match entities
-        match_builtin_endpoints(participant_data);
+        match_builtin_endpoints(*remote_participant_data);
 
         // Store new remote handle.
         remote_participant_info->auth_status_ = auth_status;
@@ -671,7 +674,7 @@ bool SecurityManager::discovered_participant(
         {
             //TODO(Ricardo) Shared secret on this case?
             std::shared_ptr<SecretHandle> ss;
-            notify_part_authorized = participant_authorized(participant_data, remote_participant_info, ss);
+            notify_part_authorized = participant_authorized(*remote_participant_data, remote_participant_info, ss);
         }
     }
     else
@@ -694,15 +697,15 @@ bool SecurityManager::discovered_participant(
     if (remote_participant_info->auth_status_ == AUTHENTICATION_REQUEST_NOT_SEND)
     {
         // Maybe send request.
-        returnedValue = on_process_handshake(participant_data, remote_participant_info,
+        returnedValue = on_process_handshake(*remote_participant_data, remote_participant_info,
                         MessageIdentity(), HandshakeMessageToken(), notify_part_authorized);
     }
 
-    restore_discovered_participant_info(participant_data.m_guid, remote_participant_info);
+    restore_discovered_participant_info(remote_participant_data->m_guid, remote_participant_info);
 
     if (notify_part_authorized)
     {
-        notify_participant_authorized(participant_data);
+        notify_participant_authorized(*remote_participant_data);
     }
 
     return returnedValue;

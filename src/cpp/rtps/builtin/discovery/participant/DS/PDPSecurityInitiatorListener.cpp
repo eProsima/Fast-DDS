@@ -71,15 +71,16 @@ void PDPSecurityInitiatorListener::process_alive_data(
 
     if (old_data == nullptr)
     {
+        auto callback_data = new_data;
         reader->getMutex().unlock();
         lock.unlock();
 
         //! notify security manager in order to start handshake
-        bool ret = parent_pdp_->getRTPSParticipant()->security_manager().discovered_participant(new_data);
+        bool ret = parent_pdp_->getRTPSParticipant()->security_manager().discovered_participant(callback_data);
         //! Reply to the remote participant
         if (ret)
         {
-            response_cb_(temp_participant_data_);
+            response_cb_(callback_data);
         }
 
         // Take again the reader lock
