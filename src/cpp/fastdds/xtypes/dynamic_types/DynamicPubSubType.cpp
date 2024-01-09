@@ -111,13 +111,14 @@ bool DynamicPubSubType::deserialize(
     traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<traits<DynamicDataImpl>::ref_type*>(data);
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN); // Object that deserializes the data.
-    // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     try
     {
-        (*data_ptr)->deserialize(deser); //Deserialize the object:
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        deser >> *data_ptr;
     }
     catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
@@ -171,11 +172,31 @@ bool DynamicPubSubType::getKey(
 std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
         void* data)
 {
+    return getSerializedSizeProvider(data, DEFAULT_DATA_REPRESENTATION);
+}
+
+std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
+        void* data,
+        DataRepresentationId_t data_representation)
+{
     traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<traits<DynamicDataImpl>::ref_type*>(data);
 
-    return [data_ptr]() -> uint32_t
+    return [data_ptr, data_representation]() -> uint32_t
            {
-               return (*data_ptr)->get_cdr_serialized_size() + 4 /*encapsulation*/;
+               try
+               {
+                   eprosima::fastcdr::CdrSizeCalculator calculator(
+                       data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                       eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                   size_t current_alignment {0};
+                   return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                              *data_ptr, current_alignment)) + 4u /*encapsulation*/;
+
+               }
+               catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+               {
+                   return 0;
+               }
            };
 }
 
@@ -195,12 +216,18 @@ bool DynamicPubSubType::serialize(
                     XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
+    //TODO (richiware)
+    //ser.set_encoding_flag(
+    //    data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+    //    eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
+    //    eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
 
     try
     {
-        (*data_ptr)->serialize(ser); // Serialize the object:
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+
+        ser << *data_ptr;
     }
     catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {

@@ -99,6 +99,10 @@ public:
     FASTDDS_EXPORTED_API std::function<uint32_t()> getSerializedSizeProvider(
             void* data) override;
 
+    FASTDDS_EXPORTED_API std::function<uint32_t()> getSerializedSizeProvider(
+            void* data,
+            DataRepresentationId_t data_representation) override;
+
     /*
      * Serialize an object into a given payload
      * @param data object to serialize

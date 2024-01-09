@@ -20,11 +20,15 @@
 #include <map>
 #include <vector>
 
-#include <fastcdr/Cdr.h>
-
 #include "DynamicTypeImpl.hpp"
 
 namespace eprosima {
+
+namespace fastcdr {
+class Cdr;
+class CdrSizeCalculator;
+} // namespace fastcdr
+
 namespace fastdds {
 namespace dds {
 
@@ -359,6 +363,13 @@ public:
     bool deserialize(
             eprosima::fastcdr::Cdr& cdr) noexcept;
 
+    size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
+            size_t& current_alignment) const noexcept
+    {
+        return calculate_serialized_size(calculator, type_, current_alignment);
+    }
+
     void serialize_key(
             eprosima::fastcdr::Cdr& cdr) const noexcept;
 
@@ -370,9 +381,6 @@ public:
             traits<DynamicType>::ref_type type,
             size_t current_alignment = 0);
 
-    size_t get_cdr_serialized_size(
-            size_t current_alignment = 0) const noexcept;
-
 protected:
 
     traits<DynamicDataImpl>::ref_type _this();
@@ -382,6 +390,11 @@ private:
     void add_value(
             TypeKind kind,
             MemberId id) noexcept;
+
+    size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
+            traits<DynamicTypeImpl>::ref_type type,
+            size_t& current_alignment) const noexcept;
 
     ReturnCode_t clear_data() noexcept;
 
@@ -393,10 +406,6 @@ private:
     bool deserialize(
             eprosima::fastcdr::Cdr& cdr,
             traits<DynamicTypeImpl>::ref_type type) noexcept;
-
-    size_t get_cdr_serialized_size(
-            traits<DynamicTypeImpl>::ref_type type,
-            size_t current_alignment = 0) const noexcept;
 
     void set_value(
             const ObjectName& value,
