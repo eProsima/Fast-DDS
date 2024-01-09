@@ -87,7 +87,7 @@ struct identifier_processor
             CurrentIdentifierState& identifier_state,
             const CompleteTypeObject& complete)
     {
-        if (TK_STRUCTURE != complete._d())
+        if (eprosima::fastdds::dds::xtypes::TK_STRUCTURE != complete._d())
         {
             throw parse_error("trying to access field on a non-struct type", n->begin());
         }
@@ -143,45 +143,45 @@ struct identifier_processor
     {
         switch (ti._d())
         {
-            case TK_BOOLEAN:
+            case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
                 return DDSFilterValue::ValueKind::BOOLEAN;
 
-            case TK_CHAR8:
+            case eprosima::fastdds::dds::xtypes::TK_CHAR8:
                 return DDSFilterValue::ValueKind::CHAR;
 
-            case TK_STRING8:
+            case eprosima::fastdds::dds::xtypes::TK_STRING8:
             case TI_STRING8_SMALL:
             case TI_STRING8_LARGE:
                 return DDSFilterValue::ValueKind::STRING;
 
-            case TK_INT16:
-            case TK_INT32:
-            case TK_INT64:
+            case eprosima::fastdds::dds::xtypes::TK_INT16:
+            case eprosima::fastdds::dds::xtypes::TK_INT32:
+            case eprosima::fastdds::dds::xtypes::TK_INT64:
                 return DDSFilterValue::ValueKind::SIGNED_INTEGER;
 
-            case TK_BYTE:
-            case TK_UINT16:
-            case TK_UINT32:
-            case TK_UINT64:
+            case eprosima::fastdds::dds::xtypes::TK_BYTE:
+            case eprosima::fastdds::dds::xtypes::TK_UINT16:
+            case eprosima::fastdds::dds::xtypes::TK_UINT32:
+            case eprosima::fastdds::dds::xtypes::TK_UINT64:
                 return DDSFilterValue::ValueKind::UNSIGNED_INTEGER;
 
-            case TK_FLOAT32:
+            case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
                 return DDSFilterValue::ValueKind::FLOAT_FIELD;
 
-            case TK_FLOAT64:
+            case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
                 return DDSFilterValue::ValueKind::DOUBLE_FIELD;
 
-            case TK_FLOAT128:
+            case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
                 return DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD;
 
             case EK_COMPLETE:
                 TypeObject type_object;
                 DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(ti, type_object);
-                if (TK_ENUM == type_object.complete()._d())
+                if (eprosima::fastdds::dds::xtypes::TK_ENUM == type_object.complete()._d())
                 {
                     return DDSFilterValue::ValueKind::ENUM;
                 }
-                if (TK_ALIAS == type_object.complete()._d())
+                if (eprosima::fastdds::dds::xtypes::TK_ALIAS == type_object.complete()._d())
                 {
                     const TypeIdentifier& aliasedId =
                             type_object.complete().alias_type().body().common().related_type();
