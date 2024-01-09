@@ -207,7 +207,7 @@ namespace filewatch {
                 throw std::system_error(GetLastError(), std::system_category());
             }
 #endif // WIN32
-            _callback_thread = std::move(std::thread([this]() {
+            _callback_thread = std::thread([this]() {
                 try {
                     callback_thread();
                 } catch (...) {
@@ -216,8 +216,8 @@ namespace filewatch {
                     }
                     catch (...) {} // set_exception() may throw too
                 }
-            }));
-            _watch_thread = std::move(std::thread([this]() {
+            });
+            _watch_thread = std::thread([this]() {
                 try {
                     monitor_directory();
                 } catch (...) {
@@ -226,7 +226,7 @@ namespace filewatch {
                     }
                     catch (...) {} // set_exception() may throw too
                 }
-            }));
+            });
 
             std::future<void> future = _running.get_future();
             future.get(); //block until the monitor_directory is up and running
