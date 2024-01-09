@@ -244,7 +244,7 @@ void TCPTransportInterface::clean()
 
     if (initial_peer_local_locator_socket_ != nullptr)
     {
-        if(initial_peer_local_locator_socket_->is_open())
+        if (initial_peer_local_locator_socket_->is_open())
         {
             initial_peer_local_locator_socket_->close();
         }
@@ -407,13 +407,13 @@ bool TCPTransportInterface::init(
     }
 
     /*
-    Open and bind a socket to obtain a unique port. This port is assigned to PDP passed locators.
-    Although real client socket local port will differ, this ensures uniqueness for server's channel
-    resources mapping (uses client locators as keys).
-    Open and bind a socket to obtain a unique port. This unique port is assigned to to PDP passed locators.
-    This process ensures uniqueness in the server's channel resources mapping, which uses client locators as keys. 
-    Although differing from the real client socket local port, provides a reliable mapping mechanism.
-    */
+       Open and bind a socket to obtain a unique port. This port is assigned to PDP passed locators.
+       Although real client socket local port will differ, this ensures uniqueness for server's channel
+       resources mapping (uses client locators as keys).
+       Open and bind a socket to obtain a unique port. This unique port is assigned to to PDP passed locators.
+       This process ensures uniqueness in the server's channel resources mapping, which uses client locators as keys.
+       Although differing from the real client socket local port, provides a reliable mapping mechanism.
+     */
     initial_peer_local_locator_socket_.reset(new asio::ip::tcp::socket(io_service_));
     initial_peer_local_locator_socket_->open(generate_protocol());
 
@@ -1791,7 +1791,6 @@ Locator TCPTransportInterface::get_initial_peer_local_locator()
 {
     return initial_peer_local_locator_;
 }
-
 
 } // namespace rtps
 } // namespace fastrtps

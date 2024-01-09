@@ -30,13 +30,16 @@ class MockTCPv4Transport : public TCPv4Transport
 public:
 
     MockTCPv4Transport(
-        const TCPv4TransportDescriptor& descriptor)
-        :TCPv4Transport(descriptor){}
+            const TCPv4TransportDescriptor& descriptor)
+        : TCPv4Transport(descriptor)
+    {
+    }
 
     std::map<Locator_t, std::shared_ptr<TCPChannelResource>> get_channel_resources()
     {
-        return channel_resources_; 
-    };
+        return channel_resources_;
+    }
+
 };
 
 } // namespace rtps

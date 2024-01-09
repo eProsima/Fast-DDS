@@ -30,13 +30,16 @@ class MockTCPv6Transport : public TCPv6Transport
 public:
 
     MockTCPv6Transport(
-        const TCPv6TransportDescriptor& descriptor)
-        :TCPv6Transport(descriptor){}
+            const TCPv6TransportDescriptor& descriptor)
+        : TCPv6Transport(descriptor)
+    {
+    }
 
     std::map<Locator_t, std::shared_ptr<TCPChannelResource>> get_channel_resources()
     {
-        return channel_resources_; 
-    };
+        return channel_resources_;
+    }
+
 };
 
 } // namespace rtps
