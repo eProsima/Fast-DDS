@@ -26,8 +26,6 @@
 #include <cstdint>
 #include <utility>
 
-#include "LoanableHelloWorldTypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -65,8 +63,6 @@ public:
      */
     eProsima_user_DllExport LoanableHelloWorld()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_LoanableHelloWorld_type_objects();
     }
 
     /*!

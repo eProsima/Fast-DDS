@@ -25,8 +25,6 @@
 #include <cstdint>
 #include <utility>
 
-#include "CalculatorTypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -75,8 +73,6 @@ public:
      */
     eProsima_user_DllExport RequestType()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_Calculator_type_objects();
     }
 
     /*!
@@ -274,8 +270,6 @@ public:
      */
     eProsima_user_DllExport ReplyType()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_Calculator_type_objects();
     }
 
     /*!

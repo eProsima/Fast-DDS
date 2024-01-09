@@ -27,8 +27,6 @@
 #include <fastcdr/exceptions/BadParamException.h>
 
 
-#include "WideEnumTypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -77,8 +75,6 @@ public:
      */
     eProsima_user_DllExport MyEnumWideStruct()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_WideEnum_type_objects();
     }
 
     /*!
@@ -203,9 +199,6 @@ public:
     eProsima_user_DllExport SimpleWideUnion()
     {
         m__d = MyEnumWide::A;
-
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_WideEnum_type_objects();
     }
 
     /*!
@@ -677,8 +670,6 @@ public:
      */
     eProsima_user_DllExport SimpleWideUnionStruct()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_WideEnum_type_objects();
     }
 
     /*!

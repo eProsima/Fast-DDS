@@ -27,8 +27,6 @@
 #include <utility>
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include "OwnershipStrengthTypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -66,8 +64,6 @@ public:
      */
     eProsima_user_DllExport ExampleMessage()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_OwnershipStrength_type_objects();
     }
 
     /*!

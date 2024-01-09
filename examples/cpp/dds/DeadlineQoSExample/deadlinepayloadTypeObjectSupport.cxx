@@ -144,7 +144,7 @@ void register_HelloMsg_type_identifier()
 
             if (return_code != eprosima::fastdds::dds::RETCODE_OK)
             {
-                std::string type_id_kind("TI_STRING8_SMALL");
+                std::string type_id_kind("TI_STRING8_LARGE");
                 if (type_id_kind == "TI_STRING8_SMALL")
                 {
                     SBound bound = static_cast<SBound>(256);

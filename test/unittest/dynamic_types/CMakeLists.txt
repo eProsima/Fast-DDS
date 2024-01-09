@@ -149,15 +149,7 @@ set(DYNAMIC_TYPES_TEST_SOURCE
     idl/BasicPubSubTypes.cxx
     idl/BasicTypeObjectSupport.cxx
     ${DYNAMIC_TYPES_SOURCE}
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPChannelResource.cpp
+    ${DYNAMIC_TYPES_NON_MOCK_SOURCE}
     )
 
 set(DYNAMIC_COMPLEX_TYPES_TEST_SOURCE
@@ -186,13 +178,6 @@ target_compile_definitions(DynamicTypesTests PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(DynamicTypesTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantAttributes
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
     ${Asio_INCLUDE_DIR}

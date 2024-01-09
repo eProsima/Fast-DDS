@@ -26,8 +26,6 @@
 #include <utility>
 #include "TestIncludeRegression3361.hpp"
 
-#include "TestRegression3361TypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -65,8 +63,6 @@ public:
      */
     eProsima_user_DllExport TestRegression3361()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_TestRegression3361_type_objects();
     }
 
     /*!

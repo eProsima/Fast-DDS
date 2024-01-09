@@ -30,8 +30,6 @@
 #include <fastcdr/exceptions/BadParamException.h>
 
 
-#include "typesTypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -77,8 +75,6 @@ public:
      */
     eProsima_user_DllExport EntityId_s()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -212,8 +208,6 @@ public:
      */
     eProsima_user_DllExport GuidPrefix_s()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -347,8 +341,6 @@ public:
      */
     eProsima_user_DllExport GUID_s()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -529,8 +521,6 @@ public:
      */
     eProsima_user_DllExport SequenceNumber_s()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -691,8 +681,6 @@ public:
      */
     eProsima_user_DllExport SampleIdentity_s()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -873,8 +861,6 @@ public:
      */
     eProsima_user_DllExport Locator_s()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -1084,8 +1070,6 @@ public:
      */
     eProsima_user_DllExport DiscoveryTime()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -1444,8 +1428,6 @@ public:
      */
     eProsima_user_DllExport EntityCount()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -1616,8 +1598,6 @@ public:
      */
     eProsima_user_DllExport SampleIdentityCount()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -1788,8 +1768,6 @@ public:
      */
     eProsima_user_DllExport Entity2LocatorTraffic()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -2081,8 +2059,6 @@ public:
      */
     eProsima_user_DllExport WriterReaderData()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -2300,8 +2276,6 @@ public:
      */
     eProsima_user_DllExport Locator2LocatorData()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -2519,8 +2493,6 @@ public:
      */
     eProsima_user_DllExport EntityData()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -2691,8 +2663,6 @@ public:
      */
     eProsima_user_DllExport PhysicalData()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!
@@ -2993,9 +2963,6 @@ public:
     eProsima_user_DllExport Data()
     {
         m__d = HISTORY2HISTORY_LATENCY;
-
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_types_type_objects();
     }
 
     /*!

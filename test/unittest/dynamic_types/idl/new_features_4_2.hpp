@@ -30,8 +30,6 @@
 #include <fastcdr/exceptions/BadParamException.h>
 
 
-#include "new_features_4_2TypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -69,8 +67,6 @@ public:
      */
     eProsima_user_DllExport NewAliases()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_new_features_4_2_type_objects();
     }
 
     /*!
@@ -501,9 +497,6 @@ public:
     eProsima_user_DllExport WCharUnion()
     {
         m__d = 'a';
-
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_new_features_4_2_type_objects();
     }
 
     /*!
@@ -873,9 +866,6 @@ public:
     eProsima_user_DllExport OctetUnion()
     {
         m__d = 5;
-
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_new_features_4_2_type_objects();
     }
 
     /*!
@@ -1245,9 +1235,6 @@ public:
     eProsima_user_DllExport Int8Union()
     {
         m__d = 3;
-
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_new_features_4_2_type_objects();
     }
 
     /*!
@@ -2106,8 +2093,6 @@ public:
      */
     eProsima_user_DllExport BitsetBitmask()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_new_features_4_2_type_objects();
     }
 
     /*!
@@ -2289,8 +2274,6 @@ public:
     eProsima_user_DllExport BM2()
         : BitsetBitmask()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_new_features_4_2_type_objects();
     }
 
     /*!
@@ -2473,8 +2456,6 @@ public:
     eProsima_user_DllExport StructTest()
         : NewAliases()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_new_features_4_2_type_objects();
     }
 
     /*!

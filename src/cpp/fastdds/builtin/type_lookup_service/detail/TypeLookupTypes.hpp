@@ -394,7 +394,6 @@ public:
     eProsima_user_DllExport TypeLookup_getTypes_Result()
     {
         m__d = eprosima::fastdds::dds::RETCODE_OK;
-
     }
 
     /*!
@@ -1035,7 +1034,6 @@ public:
     eProsima_user_DllExport TypeLookup_getTypeDependencies_Result()
     {
         m__d = eprosima::fastdds::dds::RETCODE_OK;
-
     }
 
     /*!
@@ -1316,7 +1314,6 @@ public:
     eProsima_user_DllExport TypeLookup_Call()
     {
         m__d = TypeLookup_getTypes_HashId;
-
     }
 
     /*!
@@ -1894,7 +1891,6 @@ public:
     eProsima_user_DllExport TypeLookup_Return()
     {
         m__d = TypeLookup_getTypes_HashId;
-
     }
 
     /*!

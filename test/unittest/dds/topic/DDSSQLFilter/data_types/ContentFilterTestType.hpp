@@ -30,8 +30,6 @@
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include "ContentFilterTestTypeTypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -93,8 +91,6 @@ public:
      */
     eProsima_user_DllExport StructType()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_ContentFilterTestType_type_objects();
     }
 
     /*!
@@ -748,8 +744,6 @@ public:
      */
     eProsima_user_DllExport ContentFilterTestType()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_ContentFilterTestType_type_objects();
     }
 
     /*!

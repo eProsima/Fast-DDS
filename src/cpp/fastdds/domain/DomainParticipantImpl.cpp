@@ -1446,11 +1446,7 @@ ReturnCode_t DomainParticipantImpl::register_type(
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.insert(std::make_pair(type_name, type));
 
-    //TODO(XTypes)
-    if (type->auto_fill_type_information())
-    {
-        // register_dynamic_type_to_factories(type);
-    }
+    type.get()->register_type_object_representation();
 
     return RETCODE_OK;
 }

@@ -152,7 +152,6 @@ public:
     eProsima_user_DllExport TypeObjectHashId()
     {
         m__d = EK_COMPLETE;
-
     }
 
     /*!
@@ -24086,7 +24085,6 @@ public:
     eProsima_user_DllExport TypeObject()
     {
         m__d = EK_COMPLETE;
-
     }
 
     /*!

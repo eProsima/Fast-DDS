@@ -1473,14 +1473,6 @@ void register_bitmodule_BitsetBitmask_type_identifier()
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                     ann_custom.reset();
                     AppliedAnnotationSeq tmp_ann_custom;
-                    eprosima::fastcdr::optional<std::string> unit;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                    eprosima::fastcdr::optional<std::string> hash_id;
-                    if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                    {
-                        member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                    }
                     if (!tmp_ann_custom.empty())
                     {
                         ann_custom = tmp_ann_custom;
@@ -1497,14 +1489,6 @@ void register_bitmodule_BitsetBitmask_type_identifier()
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                     ann_custom.reset();
                     AppliedAnnotationSeq tmp_ann_custom;
-                    eprosima::fastcdr::optional<std::string> unit;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                    eprosima::fastcdr::optional<std::string> hash_id;
-                    if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                    {
-                        member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                    }
                     if (!tmp_ann_custom.empty())
                     {
                         ann_custom = tmp_ann_custom;
@@ -1521,14 +1505,6 @@ void register_bitmodule_BitsetBitmask_type_identifier()
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                     ann_custom.reset();
                     AppliedAnnotationSeq tmp_ann_custom;
-                    eprosima::fastcdr::optional<std::string> unit;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                    eprosima::fastcdr::optional<std::string> hash_id;
-                    if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                    {
-                        member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                    }
                     if (!tmp_ann_custom.empty())
                     {
                         ann_custom = tmp_ann_custom;
@@ -1545,14 +1521,6 @@ void register_bitmodule_BitsetBitmask_type_identifier()
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                     ann_custom.reset();
                     AppliedAnnotationSeq tmp_ann_custom;
-                    eprosima::fastcdr::optional<std::string> unit;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                    eprosima::fastcdr::optional<std::string> hash_id;
-                    if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                    {
-                        member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                    }
                     if (!tmp_ann_custom.empty())
                     {
                         ann_custom = tmp_ann_custom;
@@ -1870,14 +1838,6 @@ void register_bitmodule_BM2_type_identifier()
                             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                             ann_custom.reset();
                             AppliedAnnotationSeq tmp_ann_custom;
-                            eprosima::fastcdr::optional<std::string> unit;
-                            eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                            eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                            eprosima::fastcdr::optional<std::string> hash_id;
-                            if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                            {
-                                member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                            }
                             if (!tmp_ann_custom.empty())
                             {
                                 ann_custom = tmp_ann_custom;
@@ -1894,14 +1854,6 @@ void register_bitmodule_BM2_type_identifier()
                             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                             ann_custom.reset();
                             AppliedAnnotationSeq tmp_ann_custom;
-                            eprosima::fastcdr::optional<std::string> unit;
-                            eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                            eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                            eprosima::fastcdr::optional<std::string> hash_id;
-                            if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                            {
-                                member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                            }
                             if (!tmp_ann_custom.empty())
                             {
                                 ann_custom = tmp_ann_custom;
@@ -1918,14 +1870,6 @@ void register_bitmodule_BM2_type_identifier()
                             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                             ann_custom.reset();
                             AppliedAnnotationSeq tmp_ann_custom;
-                            eprosima::fastcdr::optional<std::string> unit;
-                            eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                            eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                            eprosima::fastcdr::optional<std::string> hash_id;
-                            if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                            {
-                                member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                            }
                             if (!tmp_ann_custom.empty())
                             {
                                 ann_custom = tmp_ann_custom;
@@ -1942,14 +1886,6 @@ void register_bitmodule_BM2_type_identifier()
                             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                             ann_custom.reset();
                             AppliedAnnotationSeq tmp_ann_custom;
-                            eprosima::fastcdr::optional<std::string> unit;
-                            eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                            eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                            eprosima::fastcdr::optional<std::string> hash_id;
-                            if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                            {
-                                member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                            }
                             if (!tmp_ann_custom.empty())
                             {
                                 ann_custom = tmp_ann_custom;
@@ -2109,14 +2045,6 @@ void register_bitmodule_BM2_type_identifier()
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                     ann_custom.reset();
                     AppliedAnnotationSeq tmp_ann_custom;
-                    eprosima::fastcdr::optional<std::string> unit;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                    eprosima::fastcdr::optional<std::string> hash_id;
-                    if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                    {
-                        member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                    }
                     if (!tmp_ann_custom.empty())
                     {
                         ann_custom = tmp_ann_custom;
@@ -2133,14 +2061,6 @@ void register_bitmodule_BM2_type_identifier()
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                     ann_custom.reset();
                     AppliedAnnotationSeq tmp_ann_custom;
-                    eprosima::fastcdr::optional<std::string> unit;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                    eprosima::fastcdr::optional<std::string> hash_id;
-                    if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                    {
-                        member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                    }
                     if (!tmp_ann_custom.empty())
                     {
                         ann_custom = tmp_ann_custom;
@@ -2157,14 +2077,6 @@ void register_bitmodule_BM2_type_identifier()
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                     ann_custom.reset();
                     AppliedAnnotationSeq tmp_ann_custom;
-                    eprosima::fastcdr::optional<std::string> unit;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                    eprosima::fastcdr::optional<std::string> hash_id;
-                    if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                    {
-                        member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                    }
                     if (!tmp_ann_custom.empty())
                     {
                         ann_custom = tmp_ann_custom;
@@ -2181,14 +2093,6 @@ void register_bitmodule_BM2_type_identifier()
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                     ann_custom.reset();
                     AppliedAnnotationSeq tmp_ann_custom;
-                    eprosima::fastcdr::optional<std::string> unit;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                    eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                    eprosima::fastcdr::optional<std::string> hash_id;
-                    if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                    {
-                        member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                    }
                     if (!tmp_ann_custom.empty())
                     {
                         ann_custom = tmp_ann_custom;
@@ -3736,14 +3640,6 @@ void register_StructTest_type_identifier()
                                         eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                         ann_custom.reset();
                                         AppliedAnnotationSeq tmp_ann_custom;
-                                        eprosima::fastcdr::optional<std::string> unit;
-                                        eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                                        eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                                        eprosima::fastcdr::optional<std::string> hash_id;
-                                        if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                                        {
-                                            member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                                        }
                                         if (!tmp_ann_custom.empty())
                                         {
                                             ann_custom = tmp_ann_custom;
@@ -3760,14 +3656,6 @@ void register_StructTest_type_identifier()
                                         eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                         ann_custom.reset();
                                         AppliedAnnotationSeq tmp_ann_custom;
-                                        eprosima::fastcdr::optional<std::string> unit;
-                                        eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                                        eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                                        eprosima::fastcdr::optional<std::string> hash_id;
-                                        if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                                        {
-                                            member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                                        }
                                         if (!tmp_ann_custom.empty())
                                         {
                                             ann_custom = tmp_ann_custom;
@@ -3784,14 +3672,6 @@ void register_StructTest_type_identifier()
                                         eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                         ann_custom.reset();
                                         AppliedAnnotationSeq tmp_ann_custom;
-                                        eprosima::fastcdr::optional<std::string> unit;
-                                        eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                                        eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                                        eprosima::fastcdr::optional<std::string> hash_id;
-                                        if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                                        {
-                                            member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                                        }
                                         if (!tmp_ann_custom.empty())
                                         {
                                             ann_custom = tmp_ann_custom;
@@ -3808,14 +3688,6 @@ void register_StructTest_type_identifier()
                                         eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                         ann_custom.reset();
                                         AppliedAnnotationSeq tmp_ann_custom;
-                                        eprosima::fastcdr::optional<std::string> unit;
-                                        eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                                        eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                                        eprosima::fastcdr::optional<std::string> hash_id;
-                                        if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                                        {
-                                            member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                                        }
                                         if (!tmp_ann_custom.empty())
                                         {
                                             ann_custom = tmp_ann_custom;
@@ -3975,14 +3847,6 @@ void register_StructTest_type_identifier()
                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                 ann_custom.reset();
                                 AppliedAnnotationSeq tmp_ann_custom;
-                                eprosima::fastcdr::optional<std::string> unit;
-                                eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                                eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                                eprosima::fastcdr::optional<std::string> hash_id;
-                                if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                                {
-                                    member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                                }
                                 if (!tmp_ann_custom.empty())
                                 {
                                     ann_custom = tmp_ann_custom;
@@ -3999,14 +3863,6 @@ void register_StructTest_type_identifier()
                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                 ann_custom.reset();
                                 AppliedAnnotationSeq tmp_ann_custom;
-                                eprosima::fastcdr::optional<std::string> unit;
-                                eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                                eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                                eprosima::fastcdr::optional<std::string> hash_id;
-                                if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                                {
-                                    member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                                }
                                 if (!tmp_ann_custom.empty())
                                 {
                                     ann_custom = tmp_ann_custom;
@@ -4023,14 +3879,6 @@ void register_StructTest_type_identifier()
                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                 ann_custom.reset();
                                 AppliedAnnotationSeq tmp_ann_custom;
-                                eprosima::fastcdr::optional<std::string> unit;
-                                eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                                eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                                eprosima::fastcdr::optional<std::string> hash_id;
-                                if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                                {
-                                    member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                                }
                                 if (!tmp_ann_custom.empty())
                                 {
                                     ann_custom = tmp_ann_custom;
@@ -4047,14 +3895,6 @@ void register_StructTest_type_identifier()
                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                 ann_custom.reset();
                                 AppliedAnnotationSeq tmp_ann_custom;
-                                eprosima::fastcdr::optional<std::string> unit;
-                                eprosima::fastcdr::optional<AnnotationParameterValue> min;
-                                eprosima::fastcdr::optional<AnnotationParameterValue> max;
-                                eprosima::fastcdr::optional<std::string> hash_id;
-                                if (unit.has_value() || min.has_value() || max.has_value() || hash_id.has_value())
-                                {
-                                    member_ann_builtin = TypeObjectUtils::build_applied_builtin_member_annotations(unit, min, max, hash_id);
-                                }
                                 if (!tmp_ann_custom.empty())
                                 {
                                     ann_custom = tmp_ann_custom;

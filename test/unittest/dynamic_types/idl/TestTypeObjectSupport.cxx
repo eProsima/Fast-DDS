@@ -1915,12 +1915,9 @@ void register_ComplexStruct_type_identifier()
                     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                     CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
                     CompleteEnumeratedLiteralSeq literal_seq;
-                    int32_t value = 0; // TODO(jlbueno): remove
                     {
                         EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                        // TODO(jlbueno): getIndex
-                        CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                        value++; // TODO(jlbueno): remove
+                        CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(0, flags);
                         eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                         ann_custom.reset();
                         MemberName name = "A";
@@ -1930,9 +1927,7 @@ void register_ComplexStruct_type_identifier()
                     }
                     {
                         EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                        // TODO(jlbueno): getIndex
-                        CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                        value++; // TODO(jlbueno): remove
+                        CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(1, flags);
                         eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                         ann_custom.reset();
                         MemberName name = "B";
@@ -1942,9 +1937,7 @@ void register_ComplexStruct_type_identifier()
                     }
                     {
                         EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                        // TODO(jlbueno): getIndex
-                        CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                        value++; // TODO(jlbueno): remove
+                        CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(2, flags);
                         eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                         ann_custom.reset();
                         MemberName name = "C";
@@ -2094,12 +2087,9 @@ void register_ComplexStruct_type_identifier()
                 CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                 CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
                 CompleteEnumeratedLiteralSeq literal_seq;
-                int32_t value = 0; // TODO(jlbueno): remove
                 {
                     EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                    // TODO(jlbueno): getIndex
-                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                    value++; // TODO(jlbueno): remove
+                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(0, flags);
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                     ann_custom.reset();
                     MemberName name = "A";
@@ -2109,9 +2099,7 @@ void register_ComplexStruct_type_identifier()
                 }
                 {
                     EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                    // TODO(jlbueno): getIndex
-                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                    value++; // TODO(jlbueno): remove
+                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(1, flags);
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                     ann_custom.reset();
                     MemberName name = "B";
@@ -2121,9 +2109,7 @@ void register_ComplexStruct_type_identifier()
                 }
                 {
                     EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                    // TODO(jlbueno): getIndex
-                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                    value++; // TODO(jlbueno): remove
+                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(2, flags);
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                     ann_custom.reset();
                     MemberName name = "C";
@@ -8533,12 +8519,9 @@ void register_ComplexStruct_type_identifier()
                                     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                                     CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
                                     CompleteEnumeratedLiteralSeq literal_seq;
-                                    int32_t value = 0; // TODO(jlbueno): remove
                                     {
                                         EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                        // TODO(jlbueno): getIndex
-                                        CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                        value++; // TODO(jlbueno): remove
+                                        CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(0, flags);
                                         eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                         ann_custom.reset();
                                         MemberName name = "A";
@@ -8548,9 +8531,7 @@ void register_ComplexStruct_type_identifier()
                                     }
                                     {
                                         EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                        // TODO(jlbueno): getIndex
-                                        CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                        value++; // TODO(jlbueno): remove
+                                        CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(1, flags);
                                         eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                         ann_custom.reset();
                                         MemberName name = "B";
@@ -8560,9 +8541,7 @@ void register_ComplexStruct_type_identifier()
                                     }
                                     {
                                         EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                        // TODO(jlbueno): getIndex
-                                        CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                        value++; // TODO(jlbueno): remove
+                                        CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(2, flags);
                                         eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                         ann_custom.reset();
                                         MemberName name = "C";
@@ -9627,12 +9606,9 @@ void register_MyUnion_type_identifier()
             CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
             CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
             CompleteEnumeratedLiteralSeq literal_seq;
-            int32_t value = 0; // TODO(jlbueno): remove
             {
                 EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                // TODO(jlbueno): getIndex
-                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                value++; // TODO(jlbueno): remove
+                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(0, flags);
                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                 ann_custom.reset();
                 MemberName name = "A";
@@ -9642,9 +9618,7 @@ void register_MyUnion_type_identifier()
             }
             {
                 EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                // TODO(jlbueno): getIndex
-                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                value++; // TODO(jlbueno): remove
+                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(1, flags);
                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                 ann_custom.reset();
                 MemberName name = "B";
@@ -9654,9 +9628,7 @@ void register_MyUnion_type_identifier()
             }
             {
                 EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                // TODO(jlbueno): getIndex
-                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                value++; // TODO(jlbueno): remove
+                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(2, flags);
                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                 ann_custom.reset();
                 MemberName name = "C";
@@ -11624,12 +11596,9 @@ void register_MyUnion_type_identifier()
                                 CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                                 CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
                                 CompleteEnumeratedLiteralSeq literal_seq;
-                                int32_t value = 0; // TODO(jlbueno): remove
                                 {
                                     EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                    // TODO(jlbueno): getIndex
-                                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                    value++; // TODO(jlbueno): remove
+                                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(0, flags);
                                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                     ann_custom.reset();
                                     MemberName name = "A";
@@ -11639,9 +11608,7 @@ void register_MyUnion_type_identifier()
                                 }
                                 {
                                     EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                    // TODO(jlbueno): getIndex
-                                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                    value++; // TODO(jlbueno): remove
+                                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(1, flags);
                                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                     ann_custom.reset();
                                     MemberName name = "B";
@@ -11651,9 +11618,7 @@ void register_MyUnion_type_identifier()
                                 }
                                 {
                                     EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                    // TODO(jlbueno): getIndex
-                                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                    value++; // TODO(jlbueno): remove
+                                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(2, flags);
                                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                     ann_custom.reset();
                                     MemberName name = "C";
@@ -11803,12 +11768,9 @@ void register_MyUnion_type_identifier()
                             CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                             CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
                             CompleteEnumeratedLiteralSeq literal_seq;
-                            int32_t value = 0; // TODO(jlbueno): remove
                             {
                                 EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                // TODO(jlbueno): getIndex
-                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                value++; // TODO(jlbueno): remove
+                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(0, flags);
                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                 ann_custom.reset();
                                 MemberName name = "A";
@@ -11818,9 +11780,7 @@ void register_MyUnion_type_identifier()
                             }
                             {
                                 EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                // TODO(jlbueno): getIndex
-                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                value++; // TODO(jlbueno): remove
+                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(1, flags);
                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                 ann_custom.reset();
                                 MemberName name = "B";
@@ -11830,9 +11790,7 @@ void register_MyUnion_type_identifier()
                             }
                             {
                                 EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                // TODO(jlbueno): getIndex
-                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                value++; // TODO(jlbueno): remove
+                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(2, flags);
                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                 ann_custom.reset();
                                 MemberName name = "C";
@@ -18242,12 +18200,9 @@ void register_MyUnion_type_identifier()
                                                 CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                                                 CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
                                                 CompleteEnumeratedLiteralSeq literal_seq;
-                                                int32_t value = 0; // TODO(jlbueno): remove
                                                 {
                                                     EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                                    // TODO(jlbueno): getIndex
-                                                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                                    value++; // TODO(jlbueno): remove
+                                                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(0, flags);
                                                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                                     ann_custom.reset();
                                                     MemberName name = "A";
@@ -18257,9 +18212,7 @@ void register_MyUnion_type_identifier()
                                                 }
                                                 {
                                                     EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                                    // TODO(jlbueno): getIndex
-                                                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                                    value++; // TODO(jlbueno): remove
+                                                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(1, flags);
                                                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                                     ann_custom.reset();
                                                     MemberName name = "B";
@@ -18269,9 +18222,7 @@ void register_MyUnion_type_identifier()
                                                 }
                                                 {
                                                     EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                                    // TODO(jlbueno): getIndex
-                                                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                                    value++; // TODO(jlbueno): remove
+                                                    CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(2, flags);
                                                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                                     ann_custom.reset();
                                                     MemberName name = "C";
@@ -19720,12 +19671,9 @@ void register_CompleteStruct_type_identifier()
                         CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                         CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
                         CompleteEnumeratedLiteralSeq literal_seq;
-                        int32_t value = 0; // TODO(jlbueno): remove
                         {
                             EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                            // TODO(jlbueno): getIndex
-                            CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                            value++; // TODO(jlbueno): remove
+                            CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(0, flags);
                             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                             ann_custom.reset();
                             MemberName name = "A";
@@ -19735,9 +19683,7 @@ void register_CompleteStruct_type_identifier()
                         }
                         {
                             EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                            // TODO(jlbueno): getIndex
-                            CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                            value++; // TODO(jlbueno): remove
+                            CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(1, flags);
                             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                             ann_custom.reset();
                             MemberName name = "B";
@@ -19747,9 +19693,7 @@ void register_CompleteStruct_type_identifier()
                         }
                         {
                             EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                            // TODO(jlbueno): getIndex
-                            CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                            value++; // TODO(jlbueno): remove
+                            CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(2, flags);
                             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                             ann_custom.reset();
                             MemberName name = "C";
@@ -21717,12 +21661,9 @@ void register_CompleteStruct_type_identifier()
                                             CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                                             CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
                                             CompleteEnumeratedLiteralSeq literal_seq;
-                                            int32_t value = 0; // TODO(jlbueno): remove
                                             {
                                                 EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                                // TODO(jlbueno): getIndex
-                                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                                value++; // TODO(jlbueno): remove
+                                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(0, flags);
                                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                                 ann_custom.reset();
                                                 MemberName name = "A";
@@ -21732,9 +21673,7 @@ void register_CompleteStruct_type_identifier()
                                             }
                                             {
                                                 EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                                // TODO(jlbueno): getIndex
-                                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                                value++; // TODO(jlbueno): remove
+                                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(1, flags);
                                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                                 ann_custom.reset();
                                                 MemberName name = "B";
@@ -21744,9 +21683,7 @@ void register_CompleteStruct_type_identifier()
                                             }
                                             {
                                                 EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                                // TODO(jlbueno): getIndex
-                                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                                value++; // TODO(jlbueno): remove
+                                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(2, flags);
                                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                                 ann_custom.reset();
                                                 MemberName name = "C";
@@ -21896,12 +21833,9 @@ void register_CompleteStruct_type_identifier()
                                         CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                                         CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
                                         CompleteEnumeratedLiteralSeq literal_seq;
-                                        int32_t value = 0; // TODO(jlbueno): remove
                                         {
                                             EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                            // TODO(jlbueno): getIndex
-                                            CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                            value++; // TODO(jlbueno): remove
+                                            CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(0, flags);
                                             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                             ann_custom.reset();
                                             MemberName name = "A";
@@ -21911,9 +21845,7 @@ void register_CompleteStruct_type_identifier()
                                         }
                                         {
                                             EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                            // TODO(jlbueno): getIndex
-                                            CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                            value++; // TODO(jlbueno): remove
+                                            CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(1, flags);
                                             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                             ann_custom.reset();
                                             MemberName name = "B";
@@ -21923,9 +21855,7 @@ void register_CompleteStruct_type_identifier()
                                         }
                                         {
                                             EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                            // TODO(jlbueno): getIndex
-                                            CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                            value++; // TODO(jlbueno): remove
+                                            CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(2, flags);
                                             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                             ann_custom.reset();
                                             MemberName name = "C";
@@ -28335,12 +28265,9 @@ void register_CompleteStruct_type_identifier()
                                                             CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
                                                             CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
                                                             CompleteEnumeratedLiteralSeq literal_seq;
-                                                            int32_t value = 0; // TODO(jlbueno): remove
                                                             {
                                                                 EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                                                // TODO(jlbueno): getIndex
-                                                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                                                value++; // TODO(jlbueno): remove
+                                                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(0, flags);
                                                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                                                 ann_custom.reset();
                                                                 MemberName name = "A";
@@ -28350,9 +28277,7 @@ void register_CompleteStruct_type_identifier()
                                                             }
                                                             {
                                                                 EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                                                // TODO(jlbueno): getIndex
-                                                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                                                value++; // TODO(jlbueno): remove
+                                                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(1, flags);
                                                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                                                 ann_custom.reset();
                                                                 MemberName name = "B";
@@ -28362,9 +28287,7 @@ void register_CompleteStruct_type_identifier()
                                                             }
                                                             {
                                                                 EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(false);
-                                                                // TODO(jlbueno): getIndex
-                                                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(value, flags);
-                                                                value++; // TODO(jlbueno): remove
+                                                                CommonEnumeratedLiteral common = TypeObjectUtils::build_common_enumerated_literal(2, flags);
                                                                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
                                                                 ann_custom.reset();
                                                                 MemberName name = "C";

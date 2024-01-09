@@ -33,8 +33,6 @@
 #include <fastcdr/exceptions/BadParamException.h>
 
 
-#include "TestTypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -88,8 +86,6 @@ public:
      */
     eProsima_user_DllExport BasicStruct()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_Test_type_objects();
     }
 
     /*!
@@ -677,8 +673,6 @@ public:
      */
     eProsima_user_DllExport ComplexStruct()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_Test_type_objects();
     }
 
     /*!
@@ -1676,9 +1670,6 @@ public:
     eProsima_user_DllExport MyUnion()
     {
         m__d = MyEnum::A;
-
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_Test_type_objects();
     }
 
     /*!
@@ -2085,9 +2076,6 @@ public:
     eProsima_user_DllExport MyUnion2()
     {
         m__d = 0;
-
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_Test_type_objects();
     }
 
     /*!
@@ -2573,8 +2561,6 @@ public:
      */
     eProsima_user_DllExport CompleteStruct()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_Test_type_objects();
     }
 
     /*!
@@ -2755,8 +2741,6 @@ public:
      */
     eProsima_user_DllExport KeyedStruct()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_Test_type_objects();
     }
 
     /*!

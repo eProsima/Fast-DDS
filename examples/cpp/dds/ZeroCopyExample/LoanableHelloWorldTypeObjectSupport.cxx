@@ -194,7 +194,7 @@ void register_LoanableHelloWorld_type_identifier()
                 }
                 CollectionElementFlag element_flags = 0;
                 PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(equiv_kind, element_flags);
-                std::string type_id_kind("TI_PLAIN_ARRAY_SMALL");
+                std::string type_id_kind("TI_PLAIN_ARRAY_LARGE");
                 if (type_id_kind == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
