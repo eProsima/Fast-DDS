@@ -697,7 +697,6 @@ bool TCPTransportInterface::OpenOutputChannel(
                 {
                     // Disconnect the old channel
                     tcp_sender_resource->channel()->disconnect();
-                    tcp_sender_resource->channel()->clear();
                     // Update sender resource with new channel
                     tcp_sender_resource->channel() = existing_channel->second;
                 }
