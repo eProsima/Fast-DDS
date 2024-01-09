@@ -112,6 +112,7 @@
             ├ userTransports                    [0~1],
             |   └ transport_id                  [1~*] [string],
             ├ useBuiltinTransports              [bool],
+            ├ builtinTransports                 [0~1][string],
             ├ propertiesPolicy                  [0~1],
             ├ allocation                        [0~1],
             ├ userData                          [0~1],
@@ -141,6 +142,20 @@
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="useBuiltinTransports" type="boolean" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtinTransports" minOccurs="0" maxOccurs="1">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="NONE"/>
+                                    <xs:enumeration value="DEFAULT"/>
+                                    <xs:enumeration value="DEFAULTv6"/>
+                                    <xs:enumeration value="SHM"/>
+                                    <xs:enumeration value="UDPv4"/>
+                                    <xs:enumeration value="UDPv6"/>
+                                    <xs:enumeration value="LARGE_DATA"/>
+                                    <xs:enumeration value="LARGE_DATAv6"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
                         <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType"  minOccurs="0" maxOccurs="1"/>
                         <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -503,9 +518,6 @@
         <xs:attribute name="key_type" type="string" use="optional"/>
         <xs:attribute name="mapMaxLength" type="int32" use="optional"/>
     </xs:complexType>
-
-
-
 
     <!--| LOG ELEMENTS |-->
     <!--Log consumer:

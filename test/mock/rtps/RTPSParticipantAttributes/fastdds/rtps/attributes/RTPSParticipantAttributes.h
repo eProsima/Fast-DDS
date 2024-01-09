@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@
 #ifndef _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
 #define _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
 
+#include <memory>
+#include <sstream>
+
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
@@ -32,9 +35,7 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/utils/fixed_size_string.hpp>
-
-#include <memory>
-#include <sstream>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -476,8 +477,31 @@ public:
      *
      * @param transports Defines the transport configuration scenario to setup.
      */
-    RTPS_DllAPI void setup_transports(
-            fastdds::rtps::BuiltinTransports transports);
+    void setup_transports(
+            fastdds::rtps::BuiltinTransports /*transports*/)
+    {
+        // Only include UDPv4 behavior for mock tests
+        setup_transports_default(*this);
+        useBuiltinTransports = false;
+    }
+
+    static void setup_transports_default(
+            RTPSParticipantAttributes& att)
+    {
+        auto descriptor = create_udpv4_transport(att);
+
+        att.userTransports.push_back(descriptor);
+    }
+
+    static std::shared_ptr<fastrtps::rtps::UDPv4TransportDescriptor> create_udpv4_transport(
+            const RTPSParticipantAttributes& att)
+    {
+        auto descriptor = std::make_shared<fastrtps::rtps::UDPv4TransportDescriptor>();
+        descriptor->sendBufferSize = att.sendSocketBufferSize;
+        descriptor->receiveBufferSize = att.listenSocketBufferSize;
+
+        return descriptor;
+    }
 
     /**
      * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
