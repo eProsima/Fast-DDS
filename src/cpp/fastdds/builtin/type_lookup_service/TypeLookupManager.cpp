@@ -658,9 +658,9 @@ bool TypeLookupManager::receive_request(
     payload.data = change.serializedPayload.data + 4;
     bool result = request_type_.deserialize(&payload, &request);
     payload.data = nullptr;
-    if (result && request.header().instanceName() == local_instance_name_)
+    if (result && request.header().instanceName() != local_instance_name_)
     {
-        // Message from our selves.
+        // Ignore request
         result = false;
     }
     return result;
@@ -698,7 +698,7 @@ bool TypeLookupManager::receive_reply(
     if (result &&
             guid_dds_2_rtps(reply.header().relatedRequestId().writer_guid()) != builtin_request_writer_->getGuid())
     {
-        // This reply isn't for us.
+        // Ignore reply
         result = false;
     }
     return result;
