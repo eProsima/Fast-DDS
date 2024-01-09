@@ -17,11 +17,44 @@
 #include <algorithm>
 #include <string>
 
+#include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
+
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 
 #include "DynamicTypeMemberImpl.hpp"
 
 namespace eprosima {
+
+namespace fastcdr {
+
+template<>
+RTPS_DllAPI size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const fastdds::dds::traits<fastdds::dds::DynamicDataImpl>::ref_type& data,
+        size_t& current_alignment)
+{
+    return data->calculate_serialized_size(calculator, current_alignment);
+}
+
+template<>
+RTPS_DllAPI void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const fastdds::dds::traits<fastdds::dds::DynamicDataImpl>::ref_type& data)
+{
+    return data->serialize(scdr);
+}
+
+template<>
+RTPS_DllAPI void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        fastdds::dds::traits<fastdds::dds::DynamicDataImpl>::ref_type& data)
+{
+    data->deserialize(cdr);
+}
+
+} // namespace fastcdr
+
 namespace fastdds {
 namespace dds {
 
@@ -3039,30 +3072,30 @@ void DynamicDataImpl::serialize(
         case TK_BITSET:
         case TK_STRUCTURE:
         {
-            auto& value_col = value_;
-
-            // delegate in base classes if any
-            if (type->get_descriptor().base_type())
-            {
-                serialize(cdr, traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()));
-            }
+            eprosima::fastcdr::Cdr::state current_state(cdr);
+            cdr.begin_serialize_type(current_state,
+                    eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+                    eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2:                     //TODO(richiware) get
+                                                                                                //extensibility
+                    eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
             for (auto& m : type->get_all_members_by_index())
             {
                 auto member = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(m);
                 //TODO(richiware) if (!m.annotation_is_non_serialized())
                 {
-                    auto it = value_col.find(member->get_id());
+                    auto it = value_.find(member->get_id());
 
-                    if (it != value_col.end())
+                    if (it != value_.end())
                     {
                         auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
-                        member_data->serialize(cdr,
-                                traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                    member->get_descriptor().type()));
+
+                        cdr << MemberId(member->get_id()) << member_data;
                     }
                 }
             }
+
+            cdr.end_serialize_type(current_state);
             break;
         }
         /*TODO(richiware)
@@ -3269,40 +3302,44 @@ bool DynamicDataImpl::deserialize(
         case TK_BITSET:
         case TK_STRUCTURE:
         {
-            auto& value_col = value_;
-
-            // delegate in base clases if any
-            if (type->get_descriptor().base_type())
-            {
-                res &=
-                        deserialize(cdr,
-                                traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()));
-            }
-
-            for (auto& m : type->get_all_members_by_index())
-            {
-                auto member = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(m);
-                //TODO(richiware)if (!m.annotation_is_non_serialized())
-                {
-                    traits<DynamicData>::ref_type member_data;
-                    auto it = value_col.find(member->get_id());
-
-                    if (it != value_col.end())
+            cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+                    eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 : //TODO(richiware) get extensibility
+                    eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                    [&](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
                     {
-                        member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
-                    }
-                    else
-                    {
-                        member_data = DynamicDataFactory::get_instance()->create_data(
-                            member->get_descriptor().type());
-                        value_col.emplace(it->first, member_data);
-                    }
+                        bool ret_value = true;
 
-                    res &= member_data ? traits<DynamicData>::narrow<DynamicDataImpl>(member_data)->deserialize(cdr,
-                                    traits<DynamicType>::narrow<DynamicTypeImpl>(member->get_descriptor().type())) :
-                            false;
-                }
-            }
+                        traits<DynamicTypeMember>::ref_type member;
+
+                        //TODO(richiware) check if mutable extension and use get_member.
+                        if (RETCODE_OK == type_->get_member_by_index(member, mid.id))
+                        {
+                            auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+                            traits<DynamicDataImpl>::ref_type member_data;
+                            auto it = value_.find(member_impl->get_id());
+
+                            if (it != value_.end())
+                            {
+                                member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
+                            }
+                            else
+                            {
+                                member_data =
+                                traits<DynamicData>::narrow<DynamicDataImpl>(DynamicDataFactory::get_instance()
+                                        ->create_data(
+                                    member_impl->get_descriptor().type()));
+                                value_.emplace(it->first, member_data);
+                            }
+
+                            dcdr >> member_data;
+                        }
+                        else
+                        {
+                            ret_value = false;
+                        }
+
+                        return ret_value;
+                    });
         }
         break;
         /*TODO(richiware)
@@ -3439,36 +3476,14 @@ bool DynamicDataImpl::deserialize(
     return res;
 }
 
-void DynamicDataImpl::serialize_key(
-        eprosima::fastcdr::Cdr& cdr) const noexcept
-{
-}
-
-size_t DynamicDataImpl::get_key_max_cdr_serialized_size(
-        traits<DynamicType>::ref_type type,
-        size_t current_alignment)
-{
-    return 0;
-}
-
-size_t DynamicDataImpl::get_max_cdr_serialized_size(
-        traits<DynamicType>::ref_type type,
-        size_t current_alignment)
-{
-    return 0;
-}
-
-size_t DynamicDataImpl::get_cdr_serialized_size(
-        size_t current_alignment) const noexcept
-{
-    return get_cdr_serialized_size(type_, current_alignment);
-}
-
-//TODO(richiware) support xcdrv1 and xcdrv2
-size_t DynamicDataImpl::get_cdr_serialized_size(
+size_t DynamicDataImpl::calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
         traits<DynamicTypeImpl>::ref_type type,
-        size_t current_alignment) const noexcept
+        size_t& current_alignment) const noexcept
 {
+    size_t calculated_size {0};
+    auto it = value_.begin();
+
     /*TODO(richiware)
        if (data.type_ && annotation_is_non_serialized())
        {
@@ -3476,32 +3491,45 @@ size_t DynamicDataImpl::get_cdr_serialized_size(
        }
      */
 
-    size_t initial_alignment = current_alignment;
-
     switch (type->get_kind())
     {
         case TK_INT32:
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<int32_t>(
+                                it->second), current_alignment);
+            break;
         case TK_UINT32:
-        case TK_FLOAT32:
         case TK_ENUM:
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<uint32_t>(
+                                it->second), current_alignment);
+            break;
+        case TK_FLOAT32:
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<float>(
+                                it->second), current_alignment);
+            break;
         case TK_CHAR16: // WCHARS NEED 32 Bits on Linux & MacOS
-        {
-            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<wchar_t>(
+                                it->second), current_alignment);
             break;
-        }
         case TK_INT16:
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<int16_t>(
+                                it->second), current_alignment);
+            break;
         case TK_UINT16:
-        {
-            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<uint16_t>(
+                                it->second), current_alignment);
             break;
-        }
         case TK_INT64:
-        case TK_UINT64:
-        case TK_FLOAT64:
-        {
-            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<int64_t>(
+                                it->second), current_alignment);
             break;
-        }
+        case TK_UINT64:
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<uint64_t>(
+                                it->second), current_alignment);
+            break;
+        case TK_FLOAT64:
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<double>(
+                                it->second), current_alignment);
+            break;
         /*TODO(richiware)
            case TK_BITMASK:
            {
@@ -3511,33 +3539,29 @@ size_t DynamicDataImpl::get_cdr_serialized_size(
            }
          */
         case TK_FLOAT128:
-        {
-            current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<long double>(
+                                it->second), current_alignment);
             break;
-        }
         case TK_CHAR8:
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<char>(
+                                it->second), current_alignment);
+            break;
         case TK_BOOLEAN:
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<bool>(
+                                it->second), current_alignment);
+            break;
         case TK_BYTE:
-        {
-            current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<uint8_t>(
+                                it->second), current_alignment);
             break;
-        }
         case TK_STRING8:
-        {
-            auto it = value_.begin();
-            // string content (length + characters + 1)
-            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
-                    std::static_pointer_cast<std::string>(it->second)->length() + 1;
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<std::string>(
+                                it->second), current_alignment);
             break;
-        }
         case TK_STRING16:
-        {
-            auto it = value_.begin();
-            // string content (length + (characters * 4) )
-            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
-                    std::static_pointer_cast<std::wstring>(it->second)->length() * 4;
+            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<std::wstring>(it->second),
+                            current_alignment);
             break;
-        }
         /*TODO(richiware)
            case TypeKind::TK_UNION:
            {
@@ -3562,34 +3586,31 @@ size_t DynamicDataImpl::get_cdr_serialized_size(
         case TK_BITSET:
         case TK_STRUCTURE:
         {
-
-            auto& value_col = value_;
-
-            // calculate inheritance overhead
-            if (type->get_descriptor().base_type())
-            {
-                current_alignment += get_cdr_serialized_size(
-                    traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()),
-                    current_alignment);
-            }
+            eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+            calculated_size = calculator.begin_calculate_type_serialized_size(
+                eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2:                         //TODO(richiware) get
+                                                                                                //extensibility
+                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                current_alignment);
 
             for (auto& m : type->get_all_members_by_index())
             {
                 auto member = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(m);
                 //TODO(richiware) if (!m.annotation_is_non_serialized())
                 {
-                    auto it = value_col.find(member->get_id());
+                    it = value_.find(member->get_id());
 
-                    if (it != value_col.end())
+                    if (it != value_.end())
                     {
                         auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
-                        current_alignment +=
-                                member_data->get_cdr_serialized_size(
-                            traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                member->get_descriptor().type()), current_alignment);
+                        calculated_size += calculator.calculate_member_serialized_size(
+                            member->get_id(), member_data, current_alignment);
                     }
                 }
             }
+
+            calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
             break;
         }
         /*TODO(richiware)
@@ -3677,14 +3698,35 @@ size_t DynamicDataImpl::get_cdr_serialized_size(
          */
         case TK_ALIAS:
             assert(type->get_descriptor().base_type());
-            return get_cdr_serialized_size(
+            calculated_size = calculate_serialized_size(
+                calculator,
                 traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()),
                 current_alignment);
+            break;
         default:
             break;
     }
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
+}
+
+void DynamicDataImpl::serialize_key(
+        eprosima::fastcdr::Cdr& cdr) const noexcept
+{
+}
+
+size_t DynamicDataImpl::get_key_max_cdr_serialized_size(
+        traits<DynamicType>::ref_type type,
+        size_t current_alignment)
+{
+    return 0;
+}
+
+size_t DynamicDataImpl::get_max_cdr_serialized_size(
+        traits<DynamicType>::ref_type type,
+        size_t current_alignment)
+{
+    return 0;
 }
 
 bool DynamicDataImpl::compare_values(

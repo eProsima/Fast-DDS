@@ -480,31 +480,33 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
     std::wstring wsTest;
     ASSERT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), eprosima::fastdds::dds::RETCODE_BAD_PARAMETER);
 
-    // Serialize <-> Deserialize Test
-    DynamicPubSubType pubsubType(created_type);
-    uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data)());
-    SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(pubsubType.serialize(&data, &payload));
-    ASSERT_TRUE(payload.length == payloadSize);
-    DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-    ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-    ASSERT_TRUE(data2->equals(data));
+    // XCDRv1
+    {
+        /// Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(created_type);
+        uint32_t payloadSize =
+                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
+        ASSERT_TRUE(payload.length == payloadSize);
+        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
+        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
+        ASSERT_TRUE(data2->equals(data));
+    }
 
-    // SERIALIZATION TEST
-    LongStruct wlong;
-    LongStructPubSubType wlongpb;
-
-    SerializedPayload_t dynamic_payload(payloadSize);
-    ASSERT_TRUE(pubsubType.serialize(&data, &dynamic_payload));
-    ASSERT_TRUE(wlongpb.deserialize(&dynamic_payload, &wlong));
-
-    uint32_t static_payloadSize = static_cast<uint32_t>(wlongpb.getSerializedSizeProvider(&wlong)());
-    SerializedPayload_t static_payload(static_payloadSize);
-    ASSERT_TRUE(wlongpb.serialize(&wlong, &static_payload));
-    ASSERT_TRUE(static_payload.length == static_payloadSize);
-    DynamicData::_ref_type data3 {DynamicDataFactory::get_instance()->create_data(created_type)};
-    ASSERT_TRUE(pubsubType.deserialize(&static_payload, &data3));
-    ASSERT_TRUE(data3->equals(data));
+    // XCDRv2
+    {
+        /// Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(created_type);
+        uint32_t payloadSize =
+                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
+        ASSERT_TRUE(payload.length == payloadSize);
+        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
+        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
+        ASSERT_TRUE(data2->equals(data));
+    }
 }
 
 /*

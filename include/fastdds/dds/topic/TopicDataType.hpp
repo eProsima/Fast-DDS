@@ -120,7 +120,7 @@ public:
      * @return Functor which calculates the serialized size of the data.
      */
     RTPS_DllAPI virtual std::function<uint32_t()> getSerializedSizeProvider(
-            void* data) = 0;
+            void* data) = 0; //TODO Remove
 
     /*!
      * @brief Returns a function which can be used to calculate the serialized size of the provided data.

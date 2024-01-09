@@ -34,14 +34,20 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
     if ((TK_STRUCTURE == type_descriptor_.kind() || TK_UNION == type_descriptor_.kind()) &&
             type_descriptor_.base_type())
     {
+        // Get the members of the base type.
+        auto base_type = traits<DynamicType>::narrow<DynamicTypeImpl>(type_descriptor_.base_type());
+        member_ = base_type->member_;
+        member_by_name_ = base_type->member_by_name_;
+        members_ = base_type->members_;
+
         // Get last member_id from the base type.
-        auto parent = type_descriptor_.base_type();
-        traits<DynamicTypeMember>::ref_type member;
-        parent->get_member_by_index(member, parent->get_member_count() - 1);
-        traits<DynamicTypeMemberImpl>::ref_type member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
-                                                                 member)};
-        assert(MEMBER_ID_INVALID != member_impl->get_descriptor().id());
-        next_id = member_impl->get_descriptor().id() + 1;
+        if (0 < members_.size())
+        {
+            traits<DynamicTypeMemberImpl>::ref_type member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
+                                                                     members_.at(members_.size() - 1))};
+            assert(MEMBER_ID_INVALID != member_impl->get_descriptor().id());
+            next_id = member_impl->get_descriptor().id() + 1;
+        }
     }
     else if (TK_UNION == type_descriptor_.kind())
     {
