@@ -33,42 +33,11 @@ class DataWriterImpl;
 class Publisher;
 class Topic;
 
-class DataWriter : public Entity
+class DataWriter
 {
 public:
 
     MOCK_METHOD1(write, bool(void* data));
-
-    DataWriter() = default;
-
-    DataWriter(
-            DataWriterImpl* impl,
-            const StatusMask& mask = StatusMask::all())
-    {
-        impl_ = impl;
-        static_cast<void>(mask);
-    }
-
-    enum class LoanInitializationKind
-    {
-        NO_LOAN_INITIALIZATION,
-        ZERO_LOAN_INITIALIZATION,
-        CONSTRUCTED_LOAN_INITIALIZATION
-    };
-
-    virtual ~DataWriter() = default;
-
-    Publisher* get_publisher() const
-    {
-        return nullptr;
-    }
-
-    Topic* get_topic() const
-    {
-        return nullptr;
-    }
-
-    DataWriterImpl* impl_;
 
 };
 

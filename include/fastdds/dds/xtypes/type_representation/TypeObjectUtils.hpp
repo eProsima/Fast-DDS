@@ -2122,23 +2122,6 @@ protected:
             const TypeIdentifier& element_identifier);
 
     /**
-     * @brief Check map header, element and key identifiers consistency.
-     *        XTypes v1.3 Clause 7.2.2.4.3: Implementers of this specification need only support key elements of signed
-     *        and unsigned integer types and of narrow and wide string types.
-     *        In Debug build mode, this method also checks that the string/wstring bound is consistent.
-     *
-     * @param[in] header PlainCollectionHeader to be checked.
-     * @param[in] element_identifier Element TypeIdentifier to be checked.
-     * @param[in] key_identifier Key TypeIdentifier to be checked.
-     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given parameters are not
-     *            consistent.
-     */
-    static void map_header_element_key_type_identifiers_consistency(
-            const PlainCollectionHeader& header,
-            const TypeIdentifier& element_identifier,
-            const TypeIdentifier& key_identifier);
-
-    /**
      * @brief Check map key_identifier consistency.
      *        XTypes v1.3 Clause 7.2.2.4.3: Implementers of this specification need only support key elements of signed
      *        and unsigned integer types and of narrow and wide string types.

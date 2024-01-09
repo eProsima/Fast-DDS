@@ -19,53 +19,43 @@
 
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
-#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/writer/WriterListener.h>
-#include <fastdds/rtps/writer/ReaderProxy.h>
-#include <fastdds/rtps/history/WriterHistory.h>
-
-#include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/history/BasicPayloadPool.hpp>
-#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
-#include <rtps/DataSharing/DataSharingNotifier.hpp>
-#include <rtps/DataSharing/WriterPool.hpp>
-
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
-#include <fastdds/rtps/messages/RTPSMessageGroup.h>
-
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
-
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <mutex>
+#include <stdexcept>
+#include <vector>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/TimeConversion.h>
-
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <fastdds/rtps/messages/RTPSMessageGroup.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/ReaderProxy.h>
+#include <fastrtps/utils/TimeConversion.h>
 
-#include <rtps/RTPSDomainImpl.hpp>
+#include "../builtin/discovery/database/DiscoveryDataBase.hpp"
+#include "../flowcontrol/FlowController.hpp"
+#include <rtps/DataSharing/DataSharingNotifier.hpp>
+#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/DataSharing/WriterPool.hpp>
+#include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/messages/RTPSGapBuilder.hpp>
 #include <rtps/network/ExternalLocatorsProcessor.hpp>
-
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/RTPSDomainImpl.hpp>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/types/monitorservice_types.hpp>
 #endif // ifdef FASTDDS_STATISTICS
 
-#include "../builtin/discovery/database/DiscoveryDataBase.hpp"
-
-#include "../flowcontrol/FlowController.hpp"
-
-#include <mutex>
-#include <vector>
-#include <stdexcept>
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
 
 /**
  * Loops over all the readers in the vector, applying the given routine.

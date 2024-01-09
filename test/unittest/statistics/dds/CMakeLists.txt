@@ -70,12 +70,24 @@ if (FASTDDS_STATISTICS)
         DomainParticipantStatisticsListenerTests.cpp)
 
     add_executable(DomainParticipantStatisticsListenerTests
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/FileConsumer.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/Exception.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectUtils.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
+        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
+        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
         ${TINYXML2_SOURCES}
         ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
     target_compile_definitions(DomainParticipantStatisticsListenerTests PRIVATE
@@ -84,6 +96,8 @@ if (FASTDDS_STATISTICS)
         )
     target_include_directories(DomainParticipantStatisticsListenerTests PRIVATE
         DomainParticipantStatisticsListenerTests/mock
+        ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantFactory/
+        ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl/
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}/include
         ${PROJECT_SOURCE_DIR}/src/cpp)
@@ -97,20 +111,27 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
     # this test includes C sources
     enable_language(C)
 
-    file(GLOB COMMON_STATISTICS_MOCK_TESTS_SOURCES
+    file(GLOB STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
+        StatisticsDomainParticipantMockTests.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/detail/*.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Entity.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/*.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipant.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipantFactory.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/qos/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/DataWriter.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/DataWriterHistory.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/DataWriterImpl.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/PublisherImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/history/DataReaderHistory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/*.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/utils/QosConverters.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/*.cpp
@@ -348,7 +369,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
 
     # SHM Transport
     if(IS_THIRDPARTY_BOOST_OK)
-        list(APPEND COMMON_STATISTICS_MOCK_TESTS_SOURCES
+        list(APPEND STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/test_SharedMemTransport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
             )
@@ -359,7 +380,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
 
     # TLS Support
     if(TLS_FOUND)
-        list(APPEND COMMON_STATISTICS_MOCK_TESTS_SOURCES
+        list(APPEND STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
             )
@@ -384,12 +405,12 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/*.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/logging/*.cpp
             )
-        list(APPEND COMMON_STATISTICS_MOCK_TESTS_SOURCES ${security_sources})
+        list(APPEND STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE ${security_sources})
     endif()
 
     # External sources
     if(TINYXML2_SOURCE_DIR)
-        list(APPEND COMMON_STATISTICS_MOCK_TESTS_SOURCES
+        list(APPEND STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
             ${TINYXML2_SOURCES}
             )
         list(APPEND STATISTICS_DOMAINPARTICIPANT_STATUS_QUERYABLE_TESTS_SOURCE
@@ -397,78 +418,9 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
             )
     endif()
 
-    ## StatisticsDomainParticipantListenerTests
-    file(GLOB DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE
-        DomainParticipantStatisticsListenerTests.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/*.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/qos/*.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/DataWriterHistory.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/DataWriterImpl.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/Publisher.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/PublisherImpl.cpp
-        )
-
-    add_executable(DomainParticipantStatisticsListenerTests
-        ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE}
-        ${COMMON_STATISTICS_MOCK_TESTS_SOURCES})
-    target_compile_definitions(DomainParticipantStatisticsListenerTests PRIVATE
-        BOOST_ASIO_STANDALONE
-        ASIO_STANDALONE
-        SQLITE_WIN32_GETVERSIONEX=0
-        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
-        $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
-        $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
-        $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
-        $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
-        $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
-        $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
-        $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
-        $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
-        )
-    target_include_directories(DomainParticipantStatisticsListenerTests PRIVATE
-        $<$<BOOL:${OPENSSL_INCLUDE_DIR}>:${OPENSSL_INCLUDE_DIR}>
-        DomainParticipantStatisticsListenerTests/mock
-        ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_BINARY_DIR}/include
-        ${Asio_INCLUDE_DIR}
-        ${PROJECT_SOURCE_DIR}/src/cpp
-        ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
-        ${THIRDPARTY_BOOST_INCLUDE_DIR})
-    target_link_libraries(DomainParticipantStatisticsListenerTests ${PRIVACY}
-        fastcdr
-        foonathan_memory
-        GTest::gmock
-        ${CMAKE_DL_LIBS}
-        ${TINYXML2_LIBRARY}
-        $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
-        $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-        ${THIRDPARTY_BOOST_LINK_LIBS}
-        eProsima_atomic
-        )
-    if(MSVC OR MSVC_IDE)
-        target_link_libraries(DomainParticipantStatisticsListenerTests ${PRIVACY}
-            iphlpapi Shlwapi
-            )
-    endif()
-    gtest_discover_tests(DomainParticipantStatisticsListenerTests)
-
-    ## StatisticsDomainParticipantMockTests
-    file(GLOB STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
-        StatisticsDomainParticipantMockTests.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipant.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipantFactory.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/qos/DomainParticipantFactoryQos.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/qos/DomainParticipantQos.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/DataWriter.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/DataWriterHistory.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/DataWriterImpl.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/PublisherImpl.cpp
-        )
-
     add_executable(StatisticsDomainParticipantMockTests
         ${STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE}
-        ${COMMON_STATISTICS_MOCK_TESTS_SOURCES})
+        )
     target_compile_definitions(StatisticsDomainParticipantMockTests PRIVATE
         BOOST_ASIO_STANDALONE
         ASIO_STANDALONE
@@ -493,7 +445,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_BINARY_DIR}/include
         ${Asio_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/src/cpp
-        ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
         ${THIRDPARTY_BOOST_INCLUDE_DIR})
     target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY}
         fastcdr

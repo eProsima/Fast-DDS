@@ -160,7 +160,6 @@ public:
         }
 
         using_transport_communication_ = (communication_type::TRANSPORT == GetParam());
-        register_HelloWorld_type_objects();
     }
 
     void TearDown() override
@@ -579,8 +578,6 @@ TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
 //! Correctly resolve an alias defined in another header
 TEST(DDSContentFilter, CorrectlyHandleAliasOtherHeader)
 {
-    register_TestRegression3361_type_objects();
-
     auto dpf = DomainParticipantFactory::get_instance();
 
     auto participant = dpf->create_participant(0, PARTICIPANT_QOS_DEFAULT);

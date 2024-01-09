@@ -28,6 +28,8 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+class DomainParticipantImpl;
+
 class DomainParticipantFactory
 {
 public:
@@ -46,6 +48,12 @@ public:
     DomainParticipantFactory()
     : rtps_domain_(fastrtps::rtps::RTPSDomainImpl::get_instance())
     {
+    }
+
+    void participant_has_been_deleted(
+            DomainParticipantImpl* part)
+    {
+        static_cast<void>(part);
     }
 
 private:

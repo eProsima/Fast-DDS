@@ -21,88 +21,13 @@ endif()
 
 file(GLOB DYNAMIC_TYPES_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/detail/*.cxx
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Entity.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/qos/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/history/DataReaderHistory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/utils/QosConverters.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cxx
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/database/backup/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/database/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/endpoint/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/timedevent/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/liveliness/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/DataSharing/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/participant/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/publisher/qos/DataWriterQos.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/reader/StatisticsReaderImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/StatisticsBase.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/writer/StatisticsWriterImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/*.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/*.cpp
     )
-
-if (FASTDDS_STATISTICS)
-    file(GLOB statistics_sources
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/*.cpp
-        )
-    list(APPEND DYNAMIC_TYPES_SOURCE ${statistics_sources})
-endif()
-
-if(TLS_FOUND)
-    list(APPEND DYNAMIC_TYPES_SOURCE
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
-        )
-endif()
-
-if(SECURITY)
-    file(GLOB security_sources
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Token.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/common/SharedSecretHandle.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/logging/Logging.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/*.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/*.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/*.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/*.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/*.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/security/logging/*.cpp
-        )
-    list(APPEND DYNAMIC_TYPES_SOURCE ${security_sources})
-endif()
 
 # External sources
 if(TINYXML2_SOURCE_DIR)
@@ -119,11 +44,37 @@ if(ANDROID)
     endif()
 endif()
 
-file(GLOB DYNAMIC_TYPES_NON_MOCK_SOURCE
+if (IS_THIRDPARTY_BOOST_OK)
+    set(DYNAMIC_TYPES_ADDITIONAL_SOURCE
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
+        )
+endif()
+
+if (TLS_FOUND)
+    list(APPEND DYNAMIC_TYPES_ADDITIONAL_SOURCE
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
+        )
+endif()
+
+set(DYNAMIC_TYPES_TEST_SOURCE
+    DynamicTypesTests.cpp
+    idl/BasicPubSubTypes.cxx
+    idl/BasicTypeObjectSupport.cxx
+    ${DYNAMIC_TYPES_SOURCE}
+    ${DYNAMIC_TYPES_ADDITIONAL_SOURCE}
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
@@ -135,21 +86,11 @@ file(GLOB DYNAMIC_TYPES_NON_MOCK_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv6Transport.cpp
-    )
-
-if (IS_THIRDPARTY_BOOST_OK)
-    list(APPEND DYNAMIC_TYPES_NON_MOCK_SOURCE
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/test_SharedMemTransport.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
-        )
-endif()
-
-set(DYNAMIC_TYPES_TEST_SOURCE
-    DynamicTypesTests.cpp
-    idl/BasicPubSubTypes.cxx
-    idl/BasicTypeObjectSupport.cxx
-    ${DYNAMIC_TYPES_SOURCE}
-    ${DYNAMIC_TYPES_NON_MOCK_SOURCE}
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLDynamicParser.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLElementParser.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParser.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParserCommon.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLProfileManager.cpp
     )
 
 set(DYNAMIC_COMPLEX_TYPES_TEST_SOURCE
@@ -157,7 +98,6 @@ set(DYNAMIC_COMPLEX_TYPES_TEST_SOURCE
     idl/TestPubSubTypes.cxx
     idl/TestTypeObjectSupport.cxx
     ${DYNAMIC_TYPES_SOURCE}
-    ${DYNAMIC_TYPES_NON_MOCK_SOURCE}
     )
 
 set(DYNAMIC_TYPES_4_2_TEST_SOURCE
@@ -165,7 +105,6 @@ set(DYNAMIC_TYPES_4_2_TEST_SOURCE
     idl/new_features_4_2PubSubTypes.cxx
     idl/new_features_4_2TypeObjectSupport.cxx
     ${DYNAMIC_TYPES_SOURCE}
-    ${DYNAMIC_TYPES_NON_MOCK_SOURCE}
     )
 
 include_directories(mock/)
@@ -179,24 +118,25 @@ target_compile_definitions(DynamicTypesTests PRIVATE
     )
 target_include_directories(DynamicTypesTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantAttributes
-    ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantFactory/
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl/
     ${Asio_INCLUDE_DIR}
     $<$<BOOL:${TINYXML2_INCLUDE_DIR}>:${TINYXML2_INCLUDE_DIR}>
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
-    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
-    $<$<BOOL:${OPENSSL_INCLUDE_DIR}>:${OPENSSL_INCLUDE_DIR}>
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
+    $<$<BOOL:${OPENSSL_INCLUDE_DIR}>:${OPENSSL_INCLUDE_DIR}>
+    ${THIRDPARTY_BOOST_INCLUDE_DIR}
     )
 target_link_libraries(DynamicTypesTests GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
-    ${THIRDPARTY_BOOST_LINK_LIBS}
-    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     fastcdr
     foonathan_memory
+    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+    ${THIRDPARTY_BOOST_LINK_LIBS}
     )
 if(QNX)
     target_link_libraries(DynamicTypesTests socket)
@@ -212,23 +152,19 @@ target_compile_definitions(DynamicComplexTypesTests PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(DynamicComplexTypesTests PRIVATE
-    ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantFactory/
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl/
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
-    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
-    $<$<BOOL:${OPENSSL_INCLUDE_DIR}>:${OPENSSL_INCLUDE_DIR}>
     )
 
 target_link_libraries(DynamicComplexTypesTests GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
-    ${THIRDPARTY_BOOST_LINK_LIBS}
     fastcdr
-    foonathan_memory
-    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     )
 if(QNX)
     target_link_libraries(DynamicComplexTypesTests socket)
@@ -244,23 +180,19 @@ target_compile_definitions(DynamicTypes_4_2_Tests PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(DynamicTypes_4_2_Tests PRIVATE
-    ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantFactory/
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl/
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
-    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
-    $<$<BOOL:${OPENSSL_INCLUDE_DIR}>:${OPENSSL_INCLUDE_DIR}>
     )
 
 target_link_libraries(DynamicTypes_4_2_Tests GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
-    ${THIRDPARTY_BOOST_LINK_LIBS}
     fastcdr
-    foonathan_memory
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
-    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     )
 if(QNX)
     target_link_libraries(DynamicTypes_4_2_Tests socket)

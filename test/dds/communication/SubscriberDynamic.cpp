@@ -83,9 +83,9 @@ public:
 #if HAVE_SECURITY
     void onParticipantAuthentication(
             DomainParticipant* /*participant*/,
-            rtps::ParticipantAuthenticationInfo&& info) override
+            ParticipantAuthenticationInfo&& info) override
     {
-        if (rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
+        if (ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
         {
             std::cout << "Subscriber participant " << //participant->guid() <<
                 " authorized participant " << info.guid << std::endl;
