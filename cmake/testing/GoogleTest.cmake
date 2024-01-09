@@ -15,6 +15,7 @@
 include(GoogleTest)
 
 function(gtest_discover_tests TARGET)
+    cmake_minimum_required(VERSION 3.22)
     if (WIN32)
         add_custom_command(
             TARGET ${TARGET} POST_BUILD
