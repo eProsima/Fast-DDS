@@ -40,6 +40,7 @@ endif(WIN32)
 # Testing
 ###############################################################################
 if(EPROSIMA_BUILD_TESTS)
+    cmake_minimum_required(VERSION 3.22)
     find_package(GTest CONFIG REQUIRED)
     include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)
 
@@ -59,16 +60,18 @@ endif()
 # Profiling tests using valgrind
 ###############################################################################
 if(NOT ((MSVC OR MSVC_IDE)) AND PROFILING_TESTS)
-   find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
-   if(CTEST_MEMORYCHECK_COMMAND)
-      add_subdirectory(profiling)
-   endif()
+    find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
+    if(CTEST_MEMORYCHECK_COMMAND)
+        cmake_minimum_required(VERSION 3.22)
+        add_subdirectory(profiling)
+    endif()
 endif()
 
 ###############################################################################
 # Performance tests
 ###############################################################################
 if(PERFORMANCE_TESTS)
+    cmake_minimum_required(VERSION 3.22)
     add_subdirectory(performance)
 endif()
 
@@ -76,6 +79,7 @@ endif()
 # System tests
 ###############################################################################
 if(SYSTEM_TESTS)
+    cmake_minimum_required(VERSION 3.22)
     add_subdirectory(system/tools/fastdds)
     add_subdirectory(system/tools/fds)
 endif()
