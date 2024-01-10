@@ -443,22 +443,6 @@ void TypeLookupManager::notify_callbacks(
         xtypes::TypeIdentfierWithSize type_identifier_with_size)
 {
     // Check that type is not solved
-    auto callbacks_it = async_get_type_callbacks_.find(type_identifier_with_size);
-    if (callbacks_it != async_get_type_callbacks_.end())
-    {
-        for (AsyncGetTypeCallback& callback : callbacks_it->second)
-        {
-            callback();
-        }
-        // Erase the solved TypeIdentfierWithSize
-        remove_async_get_type_callback(type_identifier_with_size);
-    }
-}
-
-void TypeLookupManager::notify_callbacks(
-        xtypes::TypeIdentfierWithSize type_identifier_with_size)
-{
-    // Check that type is not solved
     auto writer_callbacks_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
     if (writer_callbacks_it != async_get_type_writer_callbacks_.end())
     {
