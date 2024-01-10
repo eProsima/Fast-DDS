@@ -15,7 +15,7 @@
 ###############################################################################
 # Auxiliary project for check_configuration.cmake module testing
 ###############################################################################
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.20)
 
 # setup
 option(TEST_FALLBACK "Ignore CMake builtin instrospection and use our original fallback" OFF)
