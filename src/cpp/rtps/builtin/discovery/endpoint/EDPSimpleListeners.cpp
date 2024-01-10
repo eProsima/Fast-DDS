@@ -133,7 +133,7 @@ void EDPBasePUBListener::add_writer_from_change(
                     reader->getMutex().lock();
                 };
 
-        edp->mp_RTPSParticipant->typelookup_manager().async_get_type(
+        edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
             std::move(temp_writer_data),
             after_typelookup_callback);
     }
@@ -258,7 +258,7 @@ void EDPBaseSUBListener::add_reader_from_change(
                     reader->getMutex().lock();
                 };
 
-        edp->mp_RTPSParticipant->typelookup_manager().async_get_type(
+        edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
             std::move(temp_reader_data),
             after_typelookup_callback);
     }

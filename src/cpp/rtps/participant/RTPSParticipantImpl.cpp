@@ -2245,7 +2245,7 @@ WLP* RTPSParticipantImpl::wlp()
     return mp_builtinProtocols->mp_WLP;
 }
 
-fastdds::dds::builtin::TypeLookupManager& RTPSParticipantImpl::typelookup_manager() const
+fastdds::dds::builtin::TypeLookupManager* RTPSParticipantImpl::typelookup_manager() const
 {
     return mp_builtinProtocols->typelookup_manager_;
 }
