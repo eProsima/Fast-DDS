@@ -413,26 +413,30 @@ bool TypeLookupManager::remove_async_get_type_callback(
     std::lock_guard<std::mutex> lock(async_get_types_mutex_);
     try
     {
+        bool removed = false;
+
         // Check if the key is in the writer map
         auto writer_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
         if (writer_it != async_get_type_writer_callbacks_.end())
         {
             async_get_type_writer_callbacks_.erase(writer_it);
-            return true;
+            removed = true;
         }
-
-        // If not found in the writer map, check the reader map
+        // Check if the key is in the reader map
         auto reader_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
         if (reader_it != async_get_type_reader_callbacks_.end())
         {
             async_get_type_reader_callbacks_.erase(reader_it);
-            return true;
+            removed = true;
         }
 
-        // If not found in either map, log an error
-        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
-                "Error in TypeLookupManager::remove_async_get_type_callback: Key not found");
-        return false;
+        if (!removed)
+        {
+            // If not found in either map, log an error
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
+                    "Error in TypeLookupManager::remove_async_get_type_callback: Key not found");
+        }
+        return removed;
     }
     catch (const std::exception& e)
     {
