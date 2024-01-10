@@ -23,6 +23,7 @@
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
+#include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h>
 
 namespace eprosima {
 
@@ -67,12 +68,12 @@ public:
     }
 
     MOCK_CONST_METHOD3(get_type_dependencies, SampleIdentity(
-                const fastrtps::types::TypeIdentifierSeq&,
+                const eprosima::fastdds::dds::xtypes::TypeIdentifierSeq&,
                 const fastrtps::rtps::GuidPrefix_t&,
                 const std::vector<uint8_t>&));
 
     MOCK_CONST_METHOD2(get_types, SampleIdentity(
-                const fastrtps::types::TypeIdentifierSeq&,
+                const eprosima::fastdds::dds::xtypes::TypeIdentifierSeq&,
                 const fastrtps::rtps::GuidPrefix_t&));
 
     void remove_remote_endpoints(
