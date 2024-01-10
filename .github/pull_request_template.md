@@ -1,4 +1,5 @@
 <!-- Provide a general summary of your changes in the Title above -->
+<!-- It must be meaningful and coherent with the changes -->
 
 <!-- 
     If this PR is still a Work in Progress [WIP], please open it as DRAFT.
@@ -11,6 +12,7 @@
 ## Description
 <!--
     Describe changes in detail.
+    This includes depicting the context, use case or current behavior and describe the proposed changes.
     If several features/bug fixes are included with these changes, please consider opening separated pull requests.
 -->
 
@@ -18,7 +20,7 @@
     In case of bug fixes, please provide the list of supported branches where this fix should be also merged.
     Please uncomment following line with the corresponding branches.
 -->
-<!-- @Mergifyio backport (branch/es) -->
+<!-- @Mergifyio backport 2.12.x 2.11.x 2.10.x 2.6.x -->
 
 <!-- If an issue is already opened, please uncomment next line with the corresponding issue number. -->
 <!-- Fixes #(issue) -->
@@ -41,6 +43,8 @@
 
 
 ## Reviewer Checklist
+- [ ] The PR has a milestone assigned.
+- [ ] The title and description correctly express the PR's purpose.
 - [ ] Check contributor checklist is correct.
 - [ ] Check CI results: changes do not issue any warning.
 - [ ] Check CI results: failing tests are unrelated with the changes.
