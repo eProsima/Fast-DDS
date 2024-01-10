@@ -1,5 +1,6 @@
-struct HelloWorld
+struct LargeData
 {
 	unsigned long index;
 	char message[20];
+	sequence<octet> data;
 };
