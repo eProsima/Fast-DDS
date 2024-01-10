@@ -20,11 +20,7 @@
     In case of bug fixes, please provide the list of supported branches where this fix should be also merged.
     Please uncomment following line with the corresponding branches.
 -->
-<<<<<<< HEAD
-<!-- @Mergifyio backport (branch/es) -->
-=======
 <!-- @Mergifyio backport 2.12.x 2.11.x 2.10.x 2.6.x -->
->>>>>>> dbbb46532 (Update PR template to include check for PR description, title and backports (#4215))
 
 <!-- If an issue is already opened, please uncomment next line with the corresponding issue number. -->
 <!-- Fixes #(issue) -->
@@ -47,11 +43,8 @@
 
 
 ## Reviewer Checklist
-<<<<<<< HEAD
-=======
 - [ ] The PR has a milestone assigned.
 - [ ] The title and description correctly express the PR's purpose.
->>>>>>> dbbb46532 (Update PR template to include check for PR description, title and backports (#4215))
 - [ ] Check contributor checklist is correct.
 - [ ] Check CI results: changes do not issue any warning.
 - [ ] Check CI results: failing tests are unrelated with the changes.
