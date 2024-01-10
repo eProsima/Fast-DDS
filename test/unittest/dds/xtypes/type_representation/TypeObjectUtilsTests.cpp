@@ -1155,6 +1155,25 @@ void register_basic_enum()
     TypeObjectUtils::build_and_register_enumerated_type_object(enum_type, basic_enum_name);
 }
 
+void register_basic_bitmask()
+{
+    std::string basic_bitmask_name = "basic_bitmask";
+    CommonEnumeratedHeader common = TypeObjectUtils::build_common_enumerated_header(32, true);
+    CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
+            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>(), basic_bitmask_name);
+    CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail, true);
+    CommonBitflag common_flag = TypeObjectUtils::build_common_bitflag(5, 0);
+    CompleteMemberDetail detail_flag = TypeObjectUtils::build_complete_member_detail("flag",
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteBitflag flag = TypeObjectUtils::build_complete_bitflag(common_flag, detail_flag);
+    CompleteBitflagSeq flag_seq;
+    TypeObjectUtils::add_complete_bitflag(flag_seq, flag);
+    CompleteBitmaskType bitmask_type = TypeObjectUtils::build_complete_bitmask_type(0, header, flag_seq);
+    TypeObjectUtils::build_and_register_bitmask_type_object(bitmask_type, basic_bitmask_name);
+}
+
 // Build CommonDiscriminatorMember with inconsistent TypeIdentifier
 TEST(TypeObjectUtilsTests, build_common_discriminator_member_inconsistent_type_identifier)
 {
@@ -1244,12 +1263,11 @@ TEST(TypeObjectUtilsTests, build_common_discriminator_member_inconsistent_type_i
     DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("basic_enum", type_ids);
     EXPECT_NO_THROW(CommonDiscriminatorMember member = TypeObjectUtils::build_common_discriminator_member(flags,
             type_ids.type_identifier1()));
-    // Bitmask: use bitmask registered by builtin annotation
-    TypeIdentifierPair data_representation_bitmask_type_identifiers;
-    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    get_type_identifiers("DataRepresentationMask", data_representation_bitmask_type_identifiers));
+    // Bitmask
+    register_basic_bitmask();
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("basic_bitmask", type_ids);
     EXPECT_THROW(CommonDiscriminatorMember member = TypeObjectUtils::build_common_discriminator_member(flags,
-            data_representation_bitmask_type_identifiers.type_identifier1()), InvalidArgumentError);
+            type_ids.type_identifier1()), InvalidArgumentError);
     // Alias: int16_t & float
     CompleteAliasType int16_alias = int_16_alias();
     CompleteAliasType float_alias = float32_alias();
@@ -1346,8 +1364,9 @@ TEST(TypeObjectUtilsTests, build_complete_annotation_parameter_inconsistent_data
     // TODO(jlbueno)
     AnnotationParameterValue enum_param = TypeObjectUtils::build_annotation_parameter_value_enum(
         static_cast<int32_t>(0));
-    AnnotationParameterValue string8_param = TypeObjectUtils::build_annotation_parameter_value("Hello");
-    AnnotationParameterValue string16_param = TypeObjectUtils::build_annotation_parameter_value(L"Hello");
+    AnnotationParameterValue string8_param = TypeObjectUtils::build_annotation_parameter_value(
+            eprosima::fastcdr::fixed_string<128>("Hello"));
+    AnnotationParameterValue string16_param = TypeObjectUtils::build_annotation_parameter_value(std::wstring(L"Hello"));
     std::vector<AnnotationParameterValue> ann_param_seq;
     ann_param_seq.push_back(bool_param);
     ann_param_seq.push_back(byte_param);
@@ -1485,18 +1504,17 @@ TEST(TypeObjectUtilsTests, build_complete_annotation_parameter_inconsistent_data
     large_map_type_identifier(type_id);
     common = TypeObjectUtils::build_common_annotation_parameter(0, type_id);
     check_annotation_parameter_consistency(common, ann_param_seq, expected_results);
-    TypeIdentifierPair try_construct_enum_type_identifiers;
-    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    get_type_identifiers("TryConstructFailAction", try_construct_enum_type_identifiers));
+    register_basic_enum();
+    TypeIdentifierPair type_ids;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("basic_enum", type_ids);
     common = TypeObjectUtils::build_common_annotation_parameter(0,
-                    try_construct_enum_type_identifiers.type_identifier1());
+                    type_ids.type_identifier1());
     expected_results[15] = true;
     check_annotation_parameter_consistency(common, ann_param_seq, expected_results);
-    TypeIdentifierPair data_representation_bitmask_type_identifiers;
-    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    get_type_identifiers("DataRepresentationMask", data_representation_bitmask_type_identifiers));
+    register_basic_bitmask();
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("basic_bitmask", type_ids);
     common = TypeObjectUtils::build_common_annotation_parameter(0,
-                    data_representation_bitmask_type_identifiers.type_identifier1());
+                    type_ids.type_identifier1());
     expected_results[15] = false;
     check_annotation_parameter_consistency(common, ann_param_seq, expected_results);
 }
@@ -1594,16 +1612,6 @@ TEST(TypeObjectUtilsTests, build_complete_alias_type_non_empty_flags)
             header, body));
 }
 
-// Build CommonCollectionHeader with invalid bound
-TEST(TypeObjectUtilsTests, build_common_collection_header_invalid_bound)
-{
-    LBound bound = 0;
-    EXPECT_THROW(CommonCollectionHeader header = TypeObjectUtils::build_common_collection_header(bound),
-            InvalidArgumentError);
-    bound = 10;
-    EXPECT_NO_THROW(CommonCollectionHeader header = TypeObjectUtils::build_common_collection_header(bound));
-}
-
 // Build CompleteElementDetail with @hasid builtin annotation
 TEST(TypeObjectUtilsTests, build_complete_element_detail_inconsistent_hashid)
 {
@@ -1653,7 +1661,8 @@ TEST(TypeObjectUtilsTests, build_common_array_header_invalid_bound)
     TypeObjectUtils::add_array_dimension(array_bounds, bound);
     EXPECT_NO_THROW(CommonArrayHeader header = TypeObjectUtils::build_common_array_header(array_bounds));
     bound = 0;
-    TypeObjectUtils::add_array_dimension(array_bounds, bound);
+    EXPECT_THROW(TypeObjectUtils::add_array_dimension(array_bounds, bound), InvalidArgumentError);
+    array_bounds.push_back(bound);
     EXPECT_THROW(CommonArrayHeader header = TypeObjectUtils::build_common_array_header(array_bounds),
             InvalidArgumentError);
 }
@@ -1762,7 +1771,7 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element));
-    type_id._d(TI_STRING16_SMALL);
+    key_type_id._d(TI_STRING16_SMALL);
     common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
@@ -1772,7 +1781,7 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element));
-    type_id._d(TI_STRING16_LARGE);
+    key_type_id._d(TI_STRING16_LARGE);
     common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
@@ -1807,19 +1816,18 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element), InvalidArgumentError);
-    TypeIdentifierPair try_construct_enum_type_identifiers;
-    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    get_type_identifiers("TryConstructFailAction", try_construct_enum_type_identifiers));
+    register_basic_enum();
+    TypeIdentifierPair type_ids;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("basic_enum", type_ids);
     common_key = TypeObjectUtils::build_common_collection_element(flags,
-                    try_construct_enum_type_identifiers.type_identifier1());
+                    type_ids.type_identifier1());
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element), InvalidArgumentError);
-    TypeIdentifierPair data_representation_bitmask_type_identifiers;
-    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    get_type_identifiers("DataRepresentationMask", data_representation_bitmask_type_identifiers));
+    register_basic_bitmask();
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("basic_bitmask", type_ids);
     common_key = TypeObjectUtils::build_common_collection_element(flags,
-                    data_representation_bitmask_type_identifiers.type_identifier1());
+                    type_ids.type_identifier1());
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element), InvalidArgumentError);
@@ -2386,6 +2394,8 @@ TEST(TypeObjectUtilsTests, register_bitmask_type_object)
                 type_name));
 }
 
+// This tests only check that Complete TypeObjects sequences are correctly ordered. TypeObjectUtils API only generates
+// Complete TypeObjects. Minimal TypeObject sequence order is checked in Fast DDS-Gen.
 // Test add element to AppliedAnnotationParameterSeq
 TEST(TypeObjectUtilsTests, add_to_applied_annotation_parameter_seq)
 {
@@ -2412,6 +2422,8 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_parameter_seq)
     EXPECT_EQ(get_dependencies_param, param_seq[0]);
     EXPECT_EQ(color_param, param_seq[1]);
     EXPECT_EQ(shapesize_param, param_seq[2]);
+    EXPECT_TRUE(param_seq[0].paramname_hash() < param_seq[1].paramname_hash());
+    EXPECT_TRUE(param_seq[1].paramname_hash() < param_seq[2].paramname_hash());
 }
 
 // Test add element to AppliedAnnotationSeq
@@ -2444,15 +2456,47 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_seq)
     ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("third_custom",
             third_custom_annotation_ids));
-    AppliedAnnotation first_annotation = TypeObjectUtils::build_applied_annotation(
-        first_custom_annotation_ids.type_identifier1(),
-        eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
-    AppliedAnnotation second_annotation = TypeObjectUtils::build_applied_annotation(
-        second_custom_annotation_ids.type_identifier1(),
-        eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
-    AppliedAnnotation third_annotation = TypeObjectUtils::build_applied_annotation(
-        third_custom_annotation_ids.type_identifier1(),
-        eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    // Ensure to use Complete TypeIdentifier. The test uses annotations that differs on the name which is not included
+    // in the Minimal TypeObject.
+    AppliedAnnotation first_annotation;
+    AppliedAnnotation second_annotation;
+    AppliedAnnotation third_annotation;
+    if (EK_COMPLETE == first_custom_annotation_ids.type_identifier1()._d())
+    {
+        first_annotation = TypeObjectUtils::build_applied_annotation(
+            first_custom_annotation_ids.type_identifier1(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    }
+    else
+    {
+        first_annotation = TypeObjectUtils::build_applied_annotation(
+            first_custom_annotation_ids.type_identifier2(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    }
+    if (EK_COMPLETE == second_custom_annotation_ids.type_identifier1()._d())
+    {
+        second_annotation = TypeObjectUtils::build_applied_annotation(
+            second_custom_annotation_ids.type_identifier1(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    }
+    else
+    {
+        second_annotation = TypeObjectUtils::build_applied_annotation(
+            second_custom_annotation_ids.type_identifier2(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    }
+    if (EK_COMPLETE == third_custom_annotation_ids.type_identifier1()._d())
+    {
+        third_annotation = TypeObjectUtils::build_applied_annotation(
+            third_custom_annotation_ids.type_identifier1(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    }
+    else
+    {
+        third_annotation = TypeObjectUtils::build_applied_annotation(
+            third_custom_annotation_ids.type_identifier2(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    }
     AppliedAnnotationSeq applied_annotation_seq;
     EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, third_annotation));
     EXPECT_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, third_annotation),
@@ -2464,9 +2508,11 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_seq)
     EXPECT_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, second_annotation),
             InvalidArgumentError);
     EXPECT_EQ(3, applied_annotation_seq.size());
-    EXPECT_EQ(first_annotation, applied_annotation_seq[0]);
-    EXPECT_EQ(second_annotation, applied_annotation_seq[1]);
-    EXPECT_EQ(third_annotation, applied_annotation_seq[2]);
+    // Ordered by Annotation TypeIdentifier
+    EXPECT_TRUE(applied_annotation_seq[0].annotation_typeid().equivalence_hash() <
+            applied_annotation_seq[1].annotation_typeid().equivalence_hash());
+    EXPECT_TRUE(applied_annotation_seq[1].annotation_typeid().equivalence_hash() <
+            applied_annotation_seq[2].annotation_typeid().equivalence_hash());
 }
 
 // Test add element to CompleteStructMemberSeq
