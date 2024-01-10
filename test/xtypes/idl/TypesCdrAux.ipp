@@ -2596,18 +2596,10 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case 0:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member first the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.first();
                                                             break;
 
                                                         case 1:
-                                                            if (mid != 2)
-                                                            {
-                                                                throw BadParamException("Deserializing union member second the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.second();
                                                             break;
 
@@ -2713,18 +2705,10 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case 0:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member first_case the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.first_case();
                                                             break;
 
                                                         case 1:
-                                                            if (mid != 2)
-                                                            {
-                                                                throw BadParamException("Deserializing union member second_case the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.second_case();
                                                             break;
 
@@ -2830,18 +2814,10 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case 0:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member first the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.first();
                                                             break;
 
                                                         case 1:
-                                                            if (mid != 2)
-                                                            {
-                                                                throw BadParamException("Deserializing union member second the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.second();
                                                             break;
 
@@ -2947,18 +2923,10 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case 0:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member first the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.first();
                                                             break;
 
                                                         case 2:
-                                                            if (mid != 2)
-                                                            {
-                                                                throw BadParamException("Deserializing union member second the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.second();
                                                             break;
 
@@ -3064,18 +3032,10 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case 0:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member first the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.first();
                                                             break;
 
                                                         case 1:
-                                                            if (mid != 2)
-                                                            {
-                                                                throw BadParamException("Deserializing union member second the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.second();
                                                             break;
 
