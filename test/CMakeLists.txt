@@ -59,10 +59,10 @@ endif()
 # Profiling tests using valgrind
 ###############################################################################
 if(NOT ((MSVC OR MSVC_IDE)) AND PROFILING_TESTS)
-   find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
-   if(CTEST_MEMORYCHECK_COMMAND)
-      add_subdirectory(profiling)
-   endif()
+    find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
+    if(CTEST_MEMORYCHECK_COMMAND)
+        add_subdirectory(profiling)
+    endif()
 endif()
 
 ###############################################################################
