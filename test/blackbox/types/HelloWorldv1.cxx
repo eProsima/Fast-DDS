@@ -85,7 +85,7 @@ struct FindType {
 };
 }
 
-#define HelloWorld_max_cdr_typesize 141ULL;
+#define HelloWorld_max_cdr_typesize 137ULL;
 
 
 

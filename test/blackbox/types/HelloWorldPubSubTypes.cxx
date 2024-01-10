@@ -36,10 +36,10 @@ HelloWorldPubSubType::HelloWorldPubSubType()
     setName("HelloWorld");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-            static_cast<uint32_t>(HelloWorld::getMaxCdrSerializedSize());
+        static_cast<uint32_t>(HelloWorld::getMaxCdrSerializedSize());
 #else
-            HelloWorld_max_cdr_typesize;
-#endif // if FASTCDR_VERSION_MAJOR == 1
+        HelloWorld_max_cdr_typesize;
+#endif
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
@@ -150,8 +150,8 @@ std::function<uint32_t()> HelloWorldPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                              *static_cast<HelloWorld*>(data), current_alignment)) +
-                          4u /*encapsulation*/;
+                               *static_cast<HelloWorld*>(data), current_alignment)) +
+                           4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                {
@@ -189,8 +189,7 @@ bool HelloWorldPubSubType::getKey(
             HelloWorld_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS,
-            eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
 #if FASTCDR_VERSION_MAJOR == 1
     p_type->serializeKey(ser);
 #else
@@ -219,3 +218,4 @@ bool HelloWorldPubSubType::getKey(
     }
     return true;
 }
+
