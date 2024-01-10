@@ -55,7 +55,7 @@
 #include <rtps/network/NetworkFactory.h>
 #include <rtps/network/ReceiverResource.h>
 #include <statistics/rtps/StatisticsBase.hpp>
-#include <statistics/types/monitorservice_types.h>
+#include <statistics/types/monitorservice_types.hpp>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/Endpoint.h>

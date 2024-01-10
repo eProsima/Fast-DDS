@@ -19,6 +19,8 @@
 #include <vector>
 #include <gmock/gmock.h>
 
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
+
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 
 namespace eprosima {
@@ -64,10 +66,10 @@ public:
     }
 
     MOCK_CONST_METHOD1(get_type_dependencies, fastrtps::rtps::SampleIdentity(
-                const fastrtps::types::TypeIdentifierSeq&));
+                const xtypes::TypeIdentifierSeq&));
 
     MOCK_CONST_METHOD1(get_types, fastrtps::rtps::SampleIdentity(
-                const fastrtps::types::TypeIdentifierSeq&));
+                const xtypes::TypeIdentifierSeq&));
 
     MOCK_METHOD1(remove_remote_endpoints, void(
                 fastrtps::rtps::ParticipantProxyData* pdata));

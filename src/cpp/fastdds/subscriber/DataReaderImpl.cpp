@@ -63,7 +63,7 @@
 
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
-#include <statistics/types/monitorservice_types.h>
+#include <statistics/types/monitorservice_types.hpp>
 #endif //FASTDDS_STATISTICS
 
 using eprosima::fastrtps::RecursiveTimedMutex;
@@ -957,7 +957,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
     }
 
 #ifdef FASTDDS_STATISTICS
-    notify_status_observer(statistics::LIVELINESS_CHANGED);
+    notify_status_observer(statistics::StatusKind::LIVELINESS_CHANGED);
 #endif //FASTDDS_STATISTICS
 
     data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
@@ -980,7 +980,7 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
     }
 
 #ifdef FASTDDS_STATISTICS
-    notify_status_observer(statistics::INCOMPATIBLE_QOS);
+    notify_status_observer(statistics::StatusKind::INCOMPATIBLE_QOS);
 #endif //FASTDDS_STATISTICS
 
     data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
@@ -1003,7 +1003,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_lost(
     }
 
 #ifdef FASTDDS_STATISTICS
-    notify_status_observer(statistics::SAMPLE_LOST);
+    notify_status_observer(statistics::StatusKind::SAMPLE_LOST);
 #endif //FASTDDS_STATISTICS
 
     data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
@@ -1215,7 +1215,7 @@ bool DataReaderImpl::deadline_missed()
     }
 
 #ifdef FASTDDS_STATISTICS
-    reader_listener_.notify_status_observer(statistics::DEADLINE_MISSED);
+    reader_listener_.notify_status_observer(statistics::StatusKind::DEADLINE_MISSED);
 #endif //FASTDDS_STATISTICS
 
     user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);

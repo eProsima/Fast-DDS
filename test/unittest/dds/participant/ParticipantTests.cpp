@@ -972,7 +972,7 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
 
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers, qos_output);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
 
     // check UDPv6 transport is there
     auto udpv6_check_2 = [](fastrtps::rtps::RTPSParticipantAttributes& attributes_2) -> bool
@@ -991,10 +991,10 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
 
     result_qos = participant_2->get_qos();
     EXPECT_EQ(result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers, qos_output);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant_2->set_qos(result_qos));
+    EXPECT_EQ(RETCODE_OK, participant_2->set_qos(result_qos));
 
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_2));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_2));
 }
 
 

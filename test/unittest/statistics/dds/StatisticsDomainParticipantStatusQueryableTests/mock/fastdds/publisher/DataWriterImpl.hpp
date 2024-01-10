@@ -21,6 +21,7 @@
 
 #include <memory>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -40,8 +41,6 @@
 
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
-
-#include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterCollection.hpp>
@@ -151,25 +150,25 @@ public:
 
     virtual ReturnCode_t enable()
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t check_delete_preconditions()
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t loan_sample(
             void*&,
             LoanInitializationKind )
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t discard_loan(
             void*& )
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     bool write(
@@ -189,7 +188,7 @@ public:
             void*,
             const InstanceHandle_t& )
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t write_w_timestamp(
@@ -197,7 +196,7 @@ public:
             const InstanceHandle_t&,
             const fastrtps::Time_t& )
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     InstanceHandle_t register_instance(
@@ -218,7 +217,7 @@ public:
             const InstanceHandle_t&,
             bool = false)
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t unregister_instance_w_timestamp(
@@ -227,7 +226,7 @@ public:
             const fastrtps::Time_t&,
             bool  = false)
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     void gen_guid()
@@ -257,7 +256,7 @@ public:
     ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& )
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t wait_for_acknowledgments(
@@ -265,33 +264,33 @@ public:
             const InstanceHandle_t&,
             const fastrtps::Duration_t& )
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t get_publication_matched_status(
             PublicationMatchedStatus&)
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t get_offered_deadline_missed_status(
             fastrtps::OfferedDeadlineMissedStatus& status)
     {
         status = deadline_missed_status_;
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t get_offered_incompatible_qos_status(
             OfferedIncompatibleQosStatus& status)
     {
         status = offered_incompatible_qos_status_;
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t set_qos(
             const DataWriterQos&)
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     const DataWriterQos& get_qos() const
@@ -312,21 +311,21 @@ public:
     ReturnCode_t set_listener(
             DataWriterListener*)
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t get_key_value(
             void*,
             const InstanceHandle_t& )
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status)
     {
         status = liveliness_lost_status_;
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     const Publisher* get_publisher() const
@@ -342,7 +341,7 @@ public:
 
     ReturnCode_t assert_liveliness()
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     virtual void disable()
@@ -353,13 +352,13 @@ public:
     ReturnCode_t clear_history(
             size_t*)
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t get_sending_locators(
             rtps::LocatorList&) const
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     void filter_is_being_removed(
@@ -411,14 +410,14 @@ public:
     static ReturnCode_t check_qos(
             const ::eprosima::fastdds::dds::DataWriterQos&)
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     static ReturnCode_t check_qos_including_resource_limits(
             const DataWriterQos&,
             const TypeSupport& )
     {
-        return fastrtps::types::ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     static void set_qos(

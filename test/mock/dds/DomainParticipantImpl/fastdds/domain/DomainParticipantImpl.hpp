@@ -600,12 +600,12 @@ public:
 
     ReturnCode_t enable_monitor_service() const
     {
-        return ReturnCode_t{ReturnCode_t::RETCODE_OK};
+        return ReturnCode_t{RETCODE_OK};
     }
 
     ReturnCode_t disable_monitor_service() const
     {
-        return ReturnCode_t{ReturnCode_t::RETCODE_OK};
+        return ReturnCode_t{RETCODE_OK};
     }
 
     virtual ReturnCode_t delete_contained_entities()

@@ -41,7 +41,7 @@
 #include <functional>
 
 #ifdef FASTDDS_STATISTICS
-#include <statistics/types/monitorservice_types.h>
+#include <statistics/types/monitorservice_types.hpp>
 #endif //FASTDDS_STATISTICS
 
 namespace eprosima {
@@ -664,26 +664,26 @@ bool PublisherImpl::get_monitoring_status(
             {
                 switch (status_id)
                 {
-                    case statistics::INCOMPATIBLE_QOS:
+                    case statistics::StatusKind::INCOMPATIBLE_QOS:
                     {
                         writer->get_offered_incompatible_qos_status(*static_cast<OfferedIncompatibleQosStatus*>(status));
                         ret = true;
                         break;
                     }
                     //! TODO
-                    /*case statistics::INCONSISTENT_TOPIC:
+                    /*case statistics::StatusKind::INCONSISTENT_TOPIC:
                        {
                         writer->get_inconsistent_topic_status();
                         ret = true;
                         break;
                        }*/
-                    case statistics::LIVELINESS_LOST:
+                    case statistics::StatusKind::LIVELINESS_LOST:
                     {
                         writer->get_liveliness_lost_status(*static_cast<LivelinessLostStatus*>(status));
                         ret = true;
                         break;
                     }
-                    case statistics::DEADLINE_MISSED:
+                    case statistics::StatusKind::DEADLINE_MISSED:
                     {
                         writer->get_offered_deadline_missed_status(*static_cast<DeadlineMissedStatus*>(status));
                         ret = true;

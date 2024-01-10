@@ -38,6 +38,10 @@
 
 #include "rtps/RTPSDomainImpl.hpp"
 
+#ifdef FASTDDS_STATISTICS
+#include <statistics/types/monitorservice_types.hpp>
+#endif // FASTDDS_STATISTICS
+
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
 using namespace eprosima::fastrtps::rtps;
@@ -1490,15 +1494,15 @@ bool StatefulReader::get_connections(
 
         if (writer->is_datasharing_writer())
         {
-            mode = fastdds::statistics::DATA_SHARING;
+            mode = fastdds::statistics::ConnectionMode::DATA_SHARING;
         }
         else if (RTPSDomainImpl::should_intraprocess_between(m_guid, writer->guid()))
         {
-            mode = fastdds::statistics::INTRAPROCESS;
+            mode = fastdds::statistics::ConnectionMode::INTRAPROCESS;
         }
         else
         {
-            mode = fastdds::statistics::TRANSPORT;
+            mode = fastdds::statistics::ConnectionMode::TRANSPORT;
 
             //! Announced locators is, for the moment,
             //! equal to the used_locators

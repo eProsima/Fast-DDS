@@ -119,7 +119,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -130,7 +130,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.hash(), current_alignment);
                     break;
 
@@ -154,7 +154,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr << eprosima::fastcdr::MemberId(0) << data._d();
@@ -163,7 +163,7 @@ eProsima_user_DllExport void serialize(
     {
                 case EK_COMPLETE:
                 case EK_MINIMAL:
-                    scdr << eprosima::fastcdr::MemberId(0) << data.hash();
+                    scdr << eprosima::fastcdr::MemberId(1) << data.hash();
                     break;
 
         default:
@@ -181,7 +181,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -196,6 +196,10 @@ eProsima_user_DllExport void deserialize(
                         {
                                                         case EK_COMPLETE:
                                                         case EK_MINIMAL:
+                                                            if (mid != 1)
+                                                            {
+                                                                throw BadParamException("Deserializing union member hash the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.hash();
                                                             break;
 
@@ -263,7 +267,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -287,7 +291,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -304,7 +308,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -349,7 +353,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -373,7 +377,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -390,7 +394,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -435,7 +439,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -462,7 +466,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -480,7 +484,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -529,7 +533,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -559,7 +563,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -578,7 +582,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -631,7 +635,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -661,7 +665,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -680,7 +684,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -733,7 +737,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -763,7 +767,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -782,7 +786,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -835,7 +839,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -865,7 +869,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -884,7 +888,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -937,7 +941,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -973,7 +977,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -994,7 +998,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -1055,7 +1059,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -1091,7 +1095,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -1112,7 +1116,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -1273,8 +1277,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR,
                                 current_alignment)};
 
 
@@ -1294,8 +1298,8 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR);
 
     static_cast<void>(data);
 
@@ -1310,8 +1314,8 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 static_cast<void>(data);
@@ -1347,7 +1351,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -1358,59 +1362,59 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     {
         case TI_STRING8_SMALL:
         case TI_STRING16_SMALL:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.string_sdefn(), current_alignment);
                     break;
 
         case TI_STRING8_LARGE:
         case TI_STRING16_LARGE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.string_ldefn(), current_alignment);
                     break;
 
         case TI_PLAIN_SEQUENCE_SMALL:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.seq_sdefn(), current_alignment);
                     break;
 
         case TI_PLAIN_SEQUENCE_LARGE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.seq_ldefn(), current_alignment);
                     break;
 
         case TI_PLAIN_ARRAY_SMALL:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.array_sdefn(), current_alignment);
                     break;
 
         case TI_PLAIN_ARRAY_LARGE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.array_ldefn(), current_alignment);
                     break;
 
         case TI_PLAIN_MAP_SMALL:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.map_sdefn(), current_alignment);
                     break;
 
         case TI_PLAIN_MAP_LARGE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
                                 data.map_ldefn(), current_alignment);
                     break;
 
         case TI_STRONGLY_CONNECTED_COMPONENT:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
                                 data.sc_component_id(), current_alignment);
                     break;
 
         case EK_COMPLETE:
         case EK_MINIMAL:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                                 data.equivalence_hash(), current_alignment);
                     break;
 
                 default:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
                                 data.extended_defn(), current_alignment);
                     break;
 
@@ -1432,7 +1436,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr << eprosima::fastcdr::MemberId(0) << data._d();
@@ -1441,49 +1445,49 @@ eProsima_user_DllExport void serialize(
     {
                 case TI_STRING8_SMALL:
                 case TI_STRING16_SMALL:
-                    scdr << eprosima::fastcdr::MemberId(0) << data.string_sdefn();
+                    scdr << eprosima::fastcdr::MemberId(1) << data.string_sdefn();
                     break;
 
                 case TI_STRING8_LARGE:
                 case TI_STRING16_LARGE:
-                    scdr << eprosima::fastcdr::MemberId(1) << data.string_ldefn();
+                    scdr << eprosima::fastcdr::MemberId(2) << data.string_ldefn();
                     break;
 
                 case TI_PLAIN_SEQUENCE_SMALL:
-                    scdr << eprosima::fastcdr::MemberId(2) << data.seq_sdefn();
+                    scdr << eprosima::fastcdr::MemberId(3) << data.seq_sdefn();
                     break;
 
                 case TI_PLAIN_SEQUENCE_LARGE:
-                    scdr << eprosima::fastcdr::MemberId(3) << data.seq_ldefn();
+                    scdr << eprosima::fastcdr::MemberId(4) << data.seq_ldefn();
                     break;
 
                 case TI_PLAIN_ARRAY_SMALL:
-                    scdr << eprosima::fastcdr::MemberId(4) << data.array_sdefn();
+                    scdr << eprosima::fastcdr::MemberId(5) << data.array_sdefn();
                     break;
 
                 case TI_PLAIN_ARRAY_LARGE:
-                    scdr << eprosima::fastcdr::MemberId(5) << data.array_ldefn();
+                    scdr << eprosima::fastcdr::MemberId(6) << data.array_ldefn();
                     break;
 
                 case TI_PLAIN_MAP_SMALL:
-                    scdr << eprosima::fastcdr::MemberId(6) << data.map_sdefn();
+                    scdr << eprosima::fastcdr::MemberId(7) << data.map_sdefn();
                     break;
 
                 case TI_PLAIN_MAP_LARGE:
-                    scdr << eprosima::fastcdr::MemberId(7) << data.map_ldefn();
+                    scdr << eprosima::fastcdr::MemberId(8) << data.map_ldefn();
                     break;
 
                 case TI_STRONGLY_CONNECTED_COMPONENT:
-                    scdr << eprosima::fastcdr::MemberId(8) << data.sc_component_id();
+                    scdr << eprosima::fastcdr::MemberId(9) << data.sc_component_id();
                     break;
 
                 case EK_COMPLETE:
                 case EK_MINIMAL:
-                    scdr << eprosima::fastcdr::MemberId(9) << data.equivalence_hash();
+                    scdr << eprosima::fastcdr::MemberId(10) << data.equivalence_hash();
                     break;
 
                 default:
-                    scdr << eprosima::fastcdr::MemberId(10) << data.extended_defn();
+                    scdr << eprosima::fastcdr::MemberId(11) << data.extended_defn();
                     break;
 
     }
@@ -1499,7 +1503,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -1514,48 +1518,92 @@ eProsima_user_DllExport void deserialize(
                         {
                                                         case TI_STRING8_SMALL:
                                                         case TI_STRING16_SMALL:
+                                                            if (mid != 1)
+                                                            {
+                                                                throw BadParamException("Deserializing union member string_sdefn the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.string_sdefn();
                                                             break;
 
                                                         case TI_STRING8_LARGE:
                                                         case TI_STRING16_LARGE:
+                                                            if (mid != 2)
+                                                            {
+                                                                throw BadParamException("Deserializing union member string_ldefn the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.string_ldefn();
                                                             break;
 
                                                         case TI_PLAIN_SEQUENCE_SMALL:
+                                                            if (mid != 3)
+                                                            {
+                                                                throw BadParamException("Deserializing union member seq_sdefn the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.seq_sdefn();
                                                             break;
 
                                                         case TI_PLAIN_SEQUENCE_LARGE:
+                                                            if (mid != 4)
+                                                            {
+                                                                throw BadParamException("Deserializing union member seq_ldefn the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.seq_ldefn();
                                                             break;
 
                                                         case TI_PLAIN_ARRAY_SMALL:
+                                                            if (mid != 5)
+                                                            {
+                                                                throw BadParamException("Deserializing union member array_sdefn the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.array_sdefn();
                                                             break;
 
                                                         case TI_PLAIN_ARRAY_LARGE:
+                                                            if (mid != 6)
+                                                            {
+                                                                throw BadParamException("Deserializing union member array_ldefn the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.array_ldefn();
                                                             break;
 
                                                         case TI_PLAIN_MAP_SMALL:
+                                                            if (mid != 7)
+                                                            {
+                                                                throw BadParamException("Deserializing union member map_sdefn the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.map_sdefn();
                                                             break;
 
                                                         case TI_PLAIN_MAP_LARGE:
+                                                            if (mid != 8)
+                                                            {
+                                                                throw BadParamException("Deserializing union member map_ldefn the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.map_ldefn();
                                                             break;
 
                                                         case TI_STRONGLY_CONNECTED_COMPONENT:
+                                                            if (mid != 9)
+                                                            {
+                                                                throw BadParamException("Deserializing union member sc_component_id the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.sc_component_id();
                                                             break;
 
                                                         case EK_COMPLETE:
                                                         case EK_MINIMAL:
+                                                            if (mid != 10)
+                                                            {
+                                                                throw BadParamException("Deserializing union member equivalence_hash the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.equivalence_hash();
                                                             break;
 
                                                         default:
+                                                            if (mid != 11)
+                                                            {
+                                                                throw BadParamException("Deserializing union member extended_defn the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.extended_defn();
                                                             break;
 
@@ -1586,8 +1634,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR,
                                 current_alignment)};
 
 
@@ -1607,8 +1655,8 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR);
 
     static_cast<void>(data);
 
@@ -1623,8 +1671,8 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 static_cast<void>(data);
@@ -1660,7 +1708,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -1670,97 +1718,97 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     switch (data._d())
     {
         case TK_BOOLEAN:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.boolean_value(), current_alignment);
                     break;
 
         case TK_BYTE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.byte_value(), current_alignment);
                     break;
 
         case TK_INT8:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.int8_value(), current_alignment);
                     break;
 
         case TK_UINT8:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.uint8_value(), current_alignment);
                     break;
 
         case TK_INT16:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.int16_value(), current_alignment);
                     break;
 
         case TK_UINT16:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.uint_16_value(), current_alignment);
                     break;
 
         case TK_INT32:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.int32_value(), current_alignment);
                     break;
 
         case TK_UINT32:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
                                 data.uint32_value(), current_alignment);
                     break;
 
         case TK_INT64:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
                                 data.int64_value(), current_alignment);
                     break;
 
         case TK_UINT64:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                                 data.uint64_value(), current_alignment);
                     break;
 
         case TK_FLOAT32:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
                                 data.float32_value(), current_alignment);
                     break;
 
         case TK_FLOAT64:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(12),
                                 data.float64_value(), current_alignment);
                     break;
 
         case TK_FLOAT128:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(12),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(13),
                                 data.float128_value(), current_alignment);
                     break;
 
         case TK_CHAR8:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(13),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(14),
                                 data.char_value(), current_alignment);
                     break;
 
         case TK_CHAR16:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(14),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(15),
                                 data.wchar_value(), current_alignment);
                     break;
 
         case TK_ENUM:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(15),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(16),
                                 data.enumerated_value(), current_alignment);
                     break;
 
         case TK_STRING8:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(16),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(17),
                                 data.string8_value(), current_alignment);
                     break;
 
         case TK_STRING16:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(17),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(18),
                                 data.string16_value(), current_alignment);
                     break;
 
                 default:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(18),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(19),
                                 data.extended_value(), current_alignment);
                     break;
 
@@ -1782,7 +1830,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr << eprosima::fastcdr::MemberId(0) << data._d();
@@ -1790,79 +1838,79 @@ eProsima_user_DllExport void serialize(
     switch (data._d())
     {
                 case TK_BOOLEAN:
-                    scdr << eprosima::fastcdr::MemberId(0) << data.boolean_value();
+                    scdr << eprosima::fastcdr::MemberId(1) << data.boolean_value();
                     break;
 
                 case TK_BYTE:
-                    scdr << eprosima::fastcdr::MemberId(1) << data.byte_value();
+                    scdr << eprosima::fastcdr::MemberId(2) << data.byte_value();
                     break;
 
                 case TK_INT8:
-                    scdr << eprosima::fastcdr::MemberId(2) << data.int8_value();
+                    scdr << eprosima::fastcdr::MemberId(3) << data.int8_value();
                     break;
 
                 case TK_UINT8:
-                    scdr << eprosima::fastcdr::MemberId(3) << data.uint8_value();
+                    scdr << eprosima::fastcdr::MemberId(4) << data.uint8_value();
                     break;
 
                 case TK_INT16:
-                    scdr << eprosima::fastcdr::MemberId(4) << data.int16_value();
+                    scdr << eprosima::fastcdr::MemberId(5) << data.int16_value();
                     break;
 
                 case TK_UINT16:
-                    scdr << eprosima::fastcdr::MemberId(5) << data.uint_16_value();
+                    scdr << eprosima::fastcdr::MemberId(6) << data.uint_16_value();
                     break;
 
                 case TK_INT32:
-                    scdr << eprosima::fastcdr::MemberId(6) << data.int32_value();
+                    scdr << eprosima::fastcdr::MemberId(7) << data.int32_value();
                     break;
 
                 case TK_UINT32:
-                    scdr << eprosima::fastcdr::MemberId(7) << data.uint32_value();
+                    scdr << eprosima::fastcdr::MemberId(8) << data.uint32_value();
                     break;
 
                 case TK_INT64:
-                    scdr << eprosima::fastcdr::MemberId(8) << data.int64_value();
+                    scdr << eprosima::fastcdr::MemberId(9) << data.int64_value();
                     break;
 
                 case TK_UINT64:
-                    scdr << eprosima::fastcdr::MemberId(9) << data.uint64_value();
+                    scdr << eprosima::fastcdr::MemberId(10) << data.uint64_value();
                     break;
 
                 case TK_FLOAT32:
-                    scdr << eprosima::fastcdr::MemberId(10) << data.float32_value();
+                    scdr << eprosima::fastcdr::MemberId(11) << data.float32_value();
                     break;
 
                 case TK_FLOAT64:
-                    scdr << eprosima::fastcdr::MemberId(11) << data.float64_value();
+                    scdr << eprosima::fastcdr::MemberId(12) << data.float64_value();
                     break;
 
                 case TK_FLOAT128:
-                    scdr << eprosima::fastcdr::MemberId(12) << data.float128_value();
+                    scdr << eprosima::fastcdr::MemberId(13) << data.float128_value();
                     break;
 
                 case TK_CHAR8:
-                    scdr << eprosima::fastcdr::MemberId(13) << data.char_value();
+                    scdr << eprosima::fastcdr::MemberId(14) << data.char_value();
                     break;
 
                 case TK_CHAR16:
-                    scdr << eprosima::fastcdr::MemberId(14) << data.wchar_value();
+                    scdr << eprosima::fastcdr::MemberId(15) << data.wchar_value();
                     break;
 
                 case TK_ENUM:
-                    scdr << eprosima::fastcdr::MemberId(15) << data.enumerated_value();
+                    scdr << eprosima::fastcdr::MemberId(16) << data.enumerated_value();
                     break;
 
                 case TK_STRING8:
-                    scdr << eprosima::fastcdr::MemberId(16) << data.string8_value();
+                    scdr << eprosima::fastcdr::MemberId(17) << data.string8_value();
                     break;
 
                 case TK_STRING16:
-                    scdr << eprosima::fastcdr::MemberId(17) << data.string16_value();
+                    scdr << eprosima::fastcdr::MemberId(18) << data.string16_value();
                     break;
 
                 default:
-                    scdr << eprosima::fastcdr::MemberId(18) << data.extended_value();
+                    scdr << eprosima::fastcdr::MemberId(19) << data.extended_value();
                     break;
 
     }
@@ -1878,7 +1926,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -1892,78 +1940,154 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case TK_BOOLEAN:
+                                                            if (mid != 1)
+                                                            {
+                                                                throw BadParamException("Deserializing union member boolean_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.boolean_value();
                                                             break;
 
                                                         case TK_BYTE:
+                                                            if (mid != 2)
+                                                            {
+                                                                throw BadParamException("Deserializing union member byte_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.byte_value();
                                                             break;
 
                                                         case TK_INT8:
+                                                            if (mid != 3)
+                                                            {
+                                                                throw BadParamException("Deserializing union member int8_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.int8_value();
                                                             break;
 
                                                         case TK_UINT8:
+                                                            if (mid != 4)
+                                                            {
+                                                                throw BadParamException("Deserializing union member uint8_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.uint8_value();
                                                             break;
 
                                                         case TK_INT16:
+                                                            if (mid != 5)
+                                                            {
+                                                                throw BadParamException("Deserializing union member int16_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.int16_value();
                                                             break;
 
                                                         case TK_UINT16:
+                                                            if (mid != 6)
+                                                            {
+                                                                throw BadParamException("Deserializing union member uint_16_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.uint_16_value();
                                                             break;
 
                                                         case TK_INT32:
+                                                            if (mid != 7)
+                                                            {
+                                                                throw BadParamException("Deserializing union member int32_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.int32_value();
                                                             break;
 
                                                         case TK_UINT32:
+                                                            if (mid != 8)
+                                                            {
+                                                                throw BadParamException("Deserializing union member uint32_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.uint32_value();
                                                             break;
 
                                                         case TK_INT64:
+                                                            if (mid != 9)
+                                                            {
+                                                                throw BadParamException("Deserializing union member int64_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.int64_value();
                                                             break;
 
                                                         case TK_UINT64:
+                                                            if (mid != 10)
+                                                            {
+                                                                throw BadParamException("Deserializing union member uint64_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.uint64_value();
                                                             break;
 
                                                         case TK_FLOAT32:
+                                                            if (mid != 11)
+                                                            {
+                                                                throw BadParamException("Deserializing union member float32_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.float32_value();
                                                             break;
 
                                                         case TK_FLOAT64:
+                                                            if (mid != 12)
+                                                            {
+                                                                throw BadParamException("Deserializing union member float64_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.float64_value();
                                                             break;
 
                                                         case TK_FLOAT128:
+                                                            if (mid != 13)
+                                                            {
+                                                                throw BadParamException("Deserializing union member float128_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.float128_value();
                                                             break;
 
                                                         case TK_CHAR8:
+                                                            if (mid != 14)
+                                                            {
+                                                                throw BadParamException("Deserializing union member char_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.char_value();
                                                             break;
 
                                                         case TK_CHAR16:
+                                                            if (mid != 15)
+                                                            {
+                                                                throw BadParamException("Deserializing union member wchar_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.wchar_value();
                                                             break;
 
                                                         case TK_ENUM:
+                                                            if (mid != 16)
+                                                            {
+                                                                throw BadParamException("Deserializing union member enumerated_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.enumerated_value();
                                                             break;
 
                                                         case TK_STRING8:
+                                                            if (mid != 17)
+                                                            {
+                                                                throw BadParamException("Deserializing union member string8_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.string8_value();
                                                             break;
 
                                                         case TK_STRING16:
+                                                            if (mid != 18)
+                                                            {
+                                                                throw BadParamException("Deserializing union member string16_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.string16_value();
                                                             break;
 
                                                         default:
+                                                            if (mid != 19)
+                                                            {
+                                                                throw BadParamException("Deserializing union member extended_value the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.extended_value();
                                                             break;
 
@@ -2182,7 +2306,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -2212,7 +2336,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -2231,7 +2355,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -2394,7 +2518,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -2424,7 +2548,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -2443,7 +2567,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -2496,7 +2620,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -2526,7 +2650,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -2545,7 +2669,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -2598,7 +2722,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -2622,7 +2746,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -2639,7 +2763,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -2960,7 +3084,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -2981,7 +3105,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     static_cast<void>(data);
@@ -2997,7 +3121,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -3034,7 +3158,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -3064,7 +3188,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -3083,7 +3207,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -3324,7 +3448,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -3354,7 +3478,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -3373,7 +3497,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -3426,7 +3550,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -3456,7 +3580,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -3475,7 +3599,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -3530,7 +3654,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -3563,7 +3687,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -3583,7 +3707,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -3832,7 +3956,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -3859,7 +3983,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -3877,7 +4001,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -4286,7 +4410,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -4319,7 +4443,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -4339,7 +4463,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -4396,7 +4520,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -4429,7 +4553,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -4449,7 +4573,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -4506,7 +4630,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -4533,7 +4657,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -4551,7 +4675,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -4966,7 +5090,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -4996,7 +5120,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -5015,7 +5139,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -5068,7 +5192,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -5098,7 +5222,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -5117,7 +5241,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -5170,7 +5294,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -5197,7 +5321,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -5215,7 +5339,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -5610,7 +5734,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -5640,7 +5764,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -5659,7 +5783,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -5712,7 +5836,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -5742,7 +5866,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -5761,7 +5885,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -5814,7 +5938,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -5841,7 +5965,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -5859,7 +5983,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -5908,7 +6032,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -5935,7 +6059,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -5953,7 +6077,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -6182,7 +6306,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -6206,7 +6330,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -6223,7 +6347,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -6448,7 +6572,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -6478,7 +6602,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -6497,7 +6621,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -6550,7 +6674,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -6580,7 +6704,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -6599,7 +6723,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -6652,7 +6776,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -6676,7 +6800,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -6693,7 +6817,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -7020,7 +7144,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -7050,7 +7174,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -7069,7 +7193,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -7122,7 +7246,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -7155,7 +7279,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -7175,7 +7299,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -7232,7 +7356,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -7265,7 +7389,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -7285,7 +7409,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -7630,7 +7754,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -7654,7 +7778,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -7671,7 +7795,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -7896,7 +8020,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -7926,7 +8050,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -7945,7 +8069,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -7998,7 +8122,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -8028,7 +8152,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -8047,7 +8171,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -8100,7 +8224,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -8127,7 +8251,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -8145,7 +8269,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -8386,7 +8510,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -8410,7 +8534,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -8427,7 +8551,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -8680,7 +8804,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -8713,7 +8837,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -8733,7 +8857,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -9342,8 +9466,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR,
                                 current_alignment)};
 
 
@@ -9363,8 +9487,8 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR);
 
     static_cast<void>(data);
 
@@ -9379,8 +9503,8 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 static_cast<void>(data);
@@ -9416,7 +9540,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -9426,57 +9550,57 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     switch (data._d())
     {
         case TK_ALIAS:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.alias_type(), current_alignment);
                     break;
 
         case TK_ANNOTATION:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.annotation_type(), current_alignment);
                     break;
 
         case TK_STRUCTURE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.struct_type(), current_alignment);
                     break;
 
         case TK_UNION:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.union_type(), current_alignment);
                     break;
 
         case TK_BITSET:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.bitset_type(), current_alignment);
                     break;
 
         case TK_SEQUENCE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.sequence_type(), current_alignment);
                     break;
 
         case TK_ARRAY:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.array_type(), current_alignment);
                     break;
 
         case TK_MAP:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
                                 data.map_type(), current_alignment);
                     break;
 
         case TK_ENUM:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
                                 data.enumerated_type(), current_alignment);
                     break;
 
         case TK_BITMASK:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                                 data.bitmask_type(), current_alignment);
                     break;
 
                 default:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
                                 data.extended_type(), current_alignment);
                     break;
 
@@ -9498,7 +9622,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr << eprosima::fastcdr::MemberId(0) << data._d();
@@ -9506,47 +9630,47 @@ eProsima_user_DllExport void serialize(
     switch (data._d())
     {
                 case TK_ALIAS:
-                    scdr << eprosima::fastcdr::MemberId(0) << data.alias_type();
+                    scdr << eprosima::fastcdr::MemberId(1) << data.alias_type();
                     break;
 
                 case TK_ANNOTATION:
-                    scdr << eprosima::fastcdr::MemberId(1) << data.annotation_type();
+                    scdr << eprosima::fastcdr::MemberId(2) << data.annotation_type();
                     break;
 
                 case TK_STRUCTURE:
-                    scdr << eprosima::fastcdr::MemberId(2) << data.struct_type();
+                    scdr << eprosima::fastcdr::MemberId(3) << data.struct_type();
                     break;
 
                 case TK_UNION:
-                    scdr << eprosima::fastcdr::MemberId(3) << data.union_type();
+                    scdr << eprosima::fastcdr::MemberId(4) << data.union_type();
                     break;
 
                 case TK_BITSET:
-                    scdr << eprosima::fastcdr::MemberId(4) << data.bitset_type();
+                    scdr << eprosima::fastcdr::MemberId(5) << data.bitset_type();
                     break;
 
                 case TK_SEQUENCE:
-                    scdr << eprosima::fastcdr::MemberId(5) << data.sequence_type();
+                    scdr << eprosima::fastcdr::MemberId(6) << data.sequence_type();
                     break;
 
                 case TK_ARRAY:
-                    scdr << eprosima::fastcdr::MemberId(6) << data.array_type();
+                    scdr << eprosima::fastcdr::MemberId(7) << data.array_type();
                     break;
 
                 case TK_MAP:
-                    scdr << eprosima::fastcdr::MemberId(7) << data.map_type();
+                    scdr << eprosima::fastcdr::MemberId(8) << data.map_type();
                     break;
 
                 case TK_ENUM:
-                    scdr << eprosima::fastcdr::MemberId(8) << data.enumerated_type();
+                    scdr << eprosima::fastcdr::MemberId(9) << data.enumerated_type();
                     break;
 
                 case TK_BITMASK:
-                    scdr << eprosima::fastcdr::MemberId(9) << data.bitmask_type();
+                    scdr << eprosima::fastcdr::MemberId(10) << data.bitmask_type();
                     break;
 
                 default:
-                    scdr << eprosima::fastcdr::MemberId(10) << data.extended_type();
+                    scdr << eprosima::fastcdr::MemberId(11) << data.extended_type();
                     break;
 
     }
@@ -9562,7 +9686,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -9576,46 +9700,90 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case TK_ALIAS:
+                                                            if (mid != 1)
+                                                            {
+                                                                throw BadParamException("Deserializing union member alias_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.alias_type();
                                                             break;
 
                                                         case TK_ANNOTATION:
+                                                            if (mid != 2)
+                                                            {
+                                                                throw BadParamException("Deserializing union member annotation_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.annotation_type();
                                                             break;
 
                                                         case TK_STRUCTURE:
+                                                            if (mid != 3)
+                                                            {
+                                                                throw BadParamException("Deserializing union member struct_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.struct_type();
                                                             break;
 
                                                         case TK_UNION:
+                                                            if (mid != 4)
+                                                            {
+                                                                throw BadParamException("Deserializing union member union_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.union_type();
                                                             break;
 
                                                         case TK_BITSET:
+                                                            if (mid != 5)
+                                                            {
+                                                                throw BadParamException("Deserializing union member bitset_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.bitset_type();
                                                             break;
 
                                                         case TK_SEQUENCE:
+                                                            if (mid != 6)
+                                                            {
+                                                                throw BadParamException("Deserializing union member sequence_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.sequence_type();
                                                             break;
 
                                                         case TK_ARRAY:
+                                                            if (mid != 7)
+                                                            {
+                                                                throw BadParamException("Deserializing union member array_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.array_type();
                                                             break;
 
                                                         case TK_MAP:
+                                                            if (mid != 8)
+                                                            {
+                                                                throw BadParamException("Deserializing union member map_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.map_type();
                                                             break;
 
                                                         case TK_ENUM:
+                                                            if (mid != 9)
+                                                            {
+                                                                throw BadParamException("Deserializing union member enumerated_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.enumerated_type();
                                                             break;
 
                                                         case TK_BITMASK:
+                                                            if (mid != 10)
+                                                            {
+                                                                throw BadParamException("Deserializing union member bitmask_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.bitmask_type();
                                                             break;
 
                                                         default:
+                                                            if (mid != 11)
+                                                            {
+                                                                throw BadParamException("Deserializing union member extended_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.extended_type();
                                                             break;
 
@@ -9640,8 +9808,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR,
                                 current_alignment)};
 
 
@@ -9661,8 +9829,8 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR);
 
     static_cast<void>(data);
 
@@ -9677,8 +9845,8 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 static_cast<void>(data);
@@ -9714,7 +9882,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -9724,57 +9892,57 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     switch (data._d())
     {
         case TK_ALIAS:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.alias_type(), current_alignment);
                     break;
 
         case TK_ANNOTATION:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.annotation_type(), current_alignment);
                     break;
 
         case TK_STRUCTURE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.struct_type(), current_alignment);
                     break;
 
         case TK_UNION:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.union_type(), current_alignment);
                     break;
 
         case TK_BITSET:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.bitset_type(), current_alignment);
                     break;
 
         case TK_SEQUENCE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.sequence_type(), current_alignment);
                     break;
 
         case TK_ARRAY:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.array_type(), current_alignment);
                     break;
 
         case TK_MAP:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
                                 data.map_type(), current_alignment);
                     break;
 
         case TK_ENUM:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
                                 data.enumerated_type(), current_alignment);
                     break;
 
         case TK_BITMASK:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                                 data.bitmask_type(), current_alignment);
                     break;
 
                 default:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
                                 data.extended_type(), current_alignment);
                     break;
 
@@ -9796,7 +9964,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr << eprosima::fastcdr::MemberId(0) << data._d();
@@ -9804,47 +9972,47 @@ eProsima_user_DllExport void serialize(
     switch (data._d())
     {
                 case TK_ALIAS:
-                    scdr << eprosima::fastcdr::MemberId(0) << data.alias_type();
+                    scdr << eprosima::fastcdr::MemberId(1) << data.alias_type();
                     break;
 
                 case TK_ANNOTATION:
-                    scdr << eprosima::fastcdr::MemberId(1) << data.annotation_type();
+                    scdr << eprosima::fastcdr::MemberId(2) << data.annotation_type();
                     break;
 
                 case TK_STRUCTURE:
-                    scdr << eprosima::fastcdr::MemberId(2) << data.struct_type();
+                    scdr << eprosima::fastcdr::MemberId(3) << data.struct_type();
                     break;
 
                 case TK_UNION:
-                    scdr << eprosima::fastcdr::MemberId(3) << data.union_type();
+                    scdr << eprosima::fastcdr::MemberId(4) << data.union_type();
                     break;
 
                 case TK_BITSET:
-                    scdr << eprosima::fastcdr::MemberId(4) << data.bitset_type();
+                    scdr << eprosima::fastcdr::MemberId(5) << data.bitset_type();
                     break;
 
                 case TK_SEQUENCE:
-                    scdr << eprosima::fastcdr::MemberId(5) << data.sequence_type();
+                    scdr << eprosima::fastcdr::MemberId(6) << data.sequence_type();
                     break;
 
                 case TK_ARRAY:
-                    scdr << eprosima::fastcdr::MemberId(6) << data.array_type();
+                    scdr << eprosima::fastcdr::MemberId(7) << data.array_type();
                     break;
 
                 case TK_MAP:
-                    scdr << eprosima::fastcdr::MemberId(7) << data.map_type();
+                    scdr << eprosima::fastcdr::MemberId(8) << data.map_type();
                     break;
 
                 case TK_ENUM:
-                    scdr << eprosima::fastcdr::MemberId(8) << data.enumerated_type();
+                    scdr << eprosima::fastcdr::MemberId(9) << data.enumerated_type();
                     break;
 
                 case TK_BITMASK:
-                    scdr << eprosima::fastcdr::MemberId(9) << data.bitmask_type();
+                    scdr << eprosima::fastcdr::MemberId(10) << data.bitmask_type();
                     break;
 
                 default:
-                    scdr << eprosima::fastcdr::MemberId(10) << data.extended_type();
+                    scdr << eprosima::fastcdr::MemberId(11) << data.extended_type();
                     break;
 
     }
@@ -9860,7 +10028,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -9874,46 +10042,90 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case TK_ALIAS:
+                                                            if (mid != 1)
+                                                            {
+                                                                throw BadParamException("Deserializing union member alias_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.alias_type();
                                                             break;
 
                                                         case TK_ANNOTATION:
+                                                            if (mid != 2)
+                                                            {
+                                                                throw BadParamException("Deserializing union member annotation_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.annotation_type();
                                                             break;
 
                                                         case TK_STRUCTURE:
+                                                            if (mid != 3)
+                                                            {
+                                                                throw BadParamException("Deserializing union member struct_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.struct_type();
                                                             break;
 
                                                         case TK_UNION:
+                                                            if (mid != 4)
+                                                            {
+                                                                throw BadParamException("Deserializing union member union_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.union_type();
                                                             break;
 
                                                         case TK_BITSET:
+                                                            if (mid != 5)
+                                                            {
+                                                                throw BadParamException("Deserializing union member bitset_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.bitset_type();
                                                             break;
 
                                                         case TK_SEQUENCE:
+                                                            if (mid != 6)
+                                                            {
+                                                                throw BadParamException("Deserializing union member sequence_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.sequence_type();
                                                             break;
 
                                                         case TK_ARRAY:
+                                                            if (mid != 7)
+                                                            {
+                                                                throw BadParamException("Deserializing union member array_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.array_type();
                                                             break;
 
                                                         case TK_MAP:
+                                                            if (mid != 8)
+                                                            {
+                                                                throw BadParamException("Deserializing union member map_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.map_type();
                                                             break;
 
                                                         case TK_ENUM:
+                                                            if (mid != 9)
+                                                            {
+                                                                throw BadParamException("Deserializing union member enumerated_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.enumerated_type();
                                                             break;
 
                                                         case TK_BITMASK:
+                                                            if (mid != 10)
+                                                            {
+                                                                throw BadParamException("Deserializing union member bitmask_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.bitmask_type();
                                                             break;
 
                                                         default:
+                                                            if (mid != 11)
+                                                            {
+                                                                throw BadParamException("Deserializing union member extended_type the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.extended_type();
                                                             break;
 
@@ -9950,12 +10162,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     switch (data._d())
     {
         case EK_COMPLETE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.complete(), current_alignment);
                     break;
 
         case EK_MINIMAL:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.minimal(), current_alignment);
                     break;
 
@@ -9987,11 +10199,11 @@ eProsima_user_DllExport void serialize(
     switch (data._d())
     {
                 case EK_COMPLETE:
-                    scdr << eprosima::fastcdr::MemberId(0) << data.complete();
+                    scdr << eprosima::fastcdr::MemberId(1) << data.complete();
                     break;
 
                 case EK_MINIMAL:
-                    scdr << eprosima::fastcdr::MemberId(1) << data.minimal();
+                    scdr << eprosima::fastcdr::MemberId(2) << data.minimal();
                     break;
 
         default:
@@ -10023,10 +10235,18 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case EK_COMPLETE:
+                                                            if (mid != 1)
+                                                            {
+                                                                throw BadParamException("Deserializing union member complete the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.complete();
                                                             break;
 
                                                         case EK_MINIMAL:
+                                                            if (mid != 2)
+                                                            {
+                                                                throw BadParamException("Deserializing union member minimal the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.minimal();
                                                             break;
 
@@ -10059,7 +10279,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -10086,7 +10306,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -10104,7 +10324,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -10155,7 +10375,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                                 current_alignment)};
 
@@ -10182,7 +10402,7 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
@@ -10200,7 +10420,7 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
@@ -10451,15 +10671,15 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
     size_t calculated_size {calculator.begin_calculate_type_serialized_size(
                                 eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR,
                                 current_alignment)};
 
 
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0x00001001),
                 data.minimal(), current_alignment);
 
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0x00001002),
                 data.complete(), current_alignment);
 
 
@@ -10478,12 +10698,12 @@ eProsima_user_DllExport void serialize(
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
             eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR);
 
     scdr
-        << eprosima::fastcdr::MemberId(0) << data.minimal()
-        << eprosima::fastcdr::MemberId(1) << data.complete()
+        << eprosima::fastcdr::MemberId(0x00001001) << data.minimal()
+        << eprosima::fastcdr::MemberId(0x00001002) << data.complete()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -10496,18 +10716,18 @@ eProsima_user_DllExport void deserialize(
     using namespace eprosima::fastdds::dds::xtypes;
 
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR,
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
                 switch (mid.id)
                 {
-                                        case 0:
+                                        case 0x00001001:
                                                 dcdr >> data.minimal();
                                             break;
 
-                                        case 1:
+                                        case 0x00001002:
                                                 dcdr >> data.complete();
                                             break;
 

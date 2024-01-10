@@ -23,6 +23,8 @@
 #include <vector>
 
 #include <asio.hpp>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
@@ -265,7 +267,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 
             if (nullptr != enable_ms_property_value && *enable_ms_property_value == "true")
             {
-                if (enable_monitor_service() != ReturnCode_t::RETCODE_OK)
+                if (enable_monitor_service() != efd::RETCODE_OK)
                 {
                     EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT, "Could not enable the Monitor Service");
                 }
@@ -300,7 +302,7 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
 
 ReturnCode_t DomainParticipantImpl::enable_monitor_service()
 {
-    fastrtps::types::ReturnCode_t ret = fastrtps::types::ReturnCode_t::RETCODE_OK;
+    ReturnCode_t ret = efd::RETCODE_OK;
 
     if (!rtps_participant_->is_monitor_service_created())
     {
@@ -310,7 +312,7 @@ ReturnCode_t DomainParticipantImpl::enable_monitor_service()
     if (!rtps_participant_->enable_monitor_service() ||
             nullptr == status_observer_)
     {
-        ret = fastrtps::types::ReturnCode_t::RETCODE_ERROR;
+        ret = efd::RETCODE_ERROR;
     }
 
     return ret;
@@ -318,12 +320,12 @@ ReturnCode_t DomainParticipantImpl::enable_monitor_service()
 
 ReturnCode_t DomainParticipantImpl::disable_monitor_service()
 {
-    fastrtps::types::ReturnCode_t ret = fastrtps::types::ReturnCode_t::RETCODE_OK;
+    ReturnCode_t ret = efd::RETCODE_OK;
 
     if (!rtps_participant_->is_monitor_service_created() ||
             !rtps_participant_->disable_monitor_service())
     {
-        ret = fastrtps::types::ReturnCode_t::RETCODE_NOT_ENABLED;
+        ret = efd::RETCODE_NOT_ENABLED;
     }
 
     return ret;
@@ -333,11 +335,11 @@ ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
         fastrtps::rtps::ParticipantProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
-    ReturnCode_t ret{ReturnCode_t::RETCODE_OK};
+    ReturnCode_t ret{efd::RETCODE_OK};
 
     if (!get_rtps_participant()->fill_discovery_data_from_cdr_message(data, msg))
     {
-        ret = ReturnCode_t::RETCODE_ERROR;
+        ret = efd::RETCODE_ERROR;
     }
 
     return ret;
@@ -347,11 +349,11 @@ ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
         fastrtps::rtps::WriterProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
-    ReturnCode_t ret{ReturnCode_t::RETCODE_OK};
+    ReturnCode_t ret{efd::RETCODE_OK};
 
     if (!get_rtps_participant()->fill_discovery_data_from_cdr_message(data, msg))
     {
-        ret = ReturnCode_t::RETCODE_ERROR;
+        ret = efd::RETCODE_ERROR;
     }
 
     return ret;
@@ -361,11 +363,11 @@ ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
         fastrtps::rtps::ReaderProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
-    ReturnCode_t ret{ReturnCode_t::RETCODE_OK};
+    ReturnCode_t ret{efd::RETCODE_OK};
 
     if (!get_rtps_participant()->fill_discovery_data_from_cdr_message(data, msg))
     {
-        ret = ReturnCode_t::RETCODE_ERROR;
+        ret = efd::RETCODE_ERROR;
     }
 
     return ret;
@@ -426,7 +428,7 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
         if (MONITOR_SERVICE_TOPIC_ALIAS == topic)
         {
             if (!rtps_participant_->is_monitor_service_created() &&
-                    enable_monitor_service() != ReturnCode_t::RETCODE_OK)
+                    enable_monitor_service() != efd::RETCODE_OK)
             {
                 EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT, "Could not enable the Monitor Service");
             }
@@ -627,7 +629,7 @@ bool DomainParticipantImpl::get_monitoring_status(
         const uint32_t& status_id,
         eprosima::fastdds::statistics::rtps::DDSEntityStatus*& status)
 {
-    ReturnCode_t ret = ReturnCode_t::RETCODE_ERROR;
+    ReturnCode_t ret = efd::RETCODE_ERROR;
 
     if (entity_guid.entityId.is_reader())
     {
@@ -636,7 +638,7 @@ bool DomainParticipantImpl::get_monitoring_status(
         {
             if (sub.second->get_monitoring_status(status_id, status, entity_guid))
             {
-                ret = ReturnCode_t::RETCODE_OK;
+                ret = efd::RETCODE_OK;
                 break;
             }
         }
@@ -648,7 +650,7 @@ bool DomainParticipantImpl::get_monitoring_status(
         {
             if (pub.second->get_monitoring_status(status_id, status, entity_guid))
             {
-                ret = ReturnCode_t::RETCODE_OK;
+                ret = efd::RETCODE_OK;
                 break;
             }
         }
@@ -659,7 +661,7 @@ bool DomainParticipantImpl::get_monitoring_status(
                 "Unknown entity type to get the status from " << entity_guid.entityId);
     }
 
-    return (ret == ReturnCode_t::RETCODE_OK);
+    return (ret == efd::RETCODE_OK);
 }
 
 } // dds
