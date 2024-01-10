@@ -17,12 +17,39 @@
  *
  */
 
-#ifndef TYPELOOKUP_REQUEST_LISTENER_HPP_
-#define TYPELOOKUP_REQUEST_LISTENER_HPP_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef _FASTDDS_TYPELOOKUP_SERVICE_REQUEST_LISTENER_HPP_
+#define _FASTDDS_TYPELOOKUP_SERVICE_REQUEST_LISTENER_HPP_
+
+#include <mutex>
+#include <unordered_map>
+#include <unordered_set>
+
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
+#include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
+
+namespace std {
+
+template <>
+struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifierSeq>
+{
+    std::size_t operator ()(
+            const eprosima::fastdds::dds::xtypes::TypeIdentifierSeq& k) const
+    {
+        std::size_t hash_value = 0;
+        for (const auto& id : k)
+        {
+            hash_value ^= (static_cast<size_t>(id.equivalence_hash()[0]) << 16) |
+                    (static_cast<size_t>(id.equivalence_hash()[1]) << 8) |
+                    (static_cast<size_t>(id.equivalence_hash()[2]));
+        }
+        return hash_value;
+    }
+
+};
+
+} // std
 
 namespace eprosima {
 namespace fastrtps {
@@ -79,6 +106,17 @@ public:
             const TypeLookup_getTypeDependencies_In& request);
 
     /**
+     * @brief Builds a TypeLookup_getTypeDependencies_Out ussing continuation points to manage size
+     * @param id_seq[in] Sequence of TypeIdentifiers for which dependencies are needed.
+     * @param type_dependencies[in] The full list of dependencies of the type
+     * @param continuation_point[in] The continuation point of the previous request
+     */
+    TypeLookup_getTypeDependencies_Out prepare_dependent_types(
+            const xtypes::TypeIdentifierSeq& id_seq,
+            const std::unordered_set<xtypes::TypeIdentfierWithSize>& type_dependencies,
+            const std::vector<uint8_t>& continuation_point);
+
+    /**
      * @brief Method call when this class is notified of a new cache change
      * @param reader The reader receiving the cache change
      * @param change The cache change
@@ -92,11 +130,16 @@ private:
     //! A pointer to the typelookup manager
     TypeLookupManager* typelookup_manager_;
 
+    //!Mutex to protect access to requests_with_continuation_
+    std::mutex requests_with_continuation_mutex_;
+
+    //!Collection of the requests that needed continuation points.
+    std::unordered_map <xtypes::TypeIdentifierSeq,
+            std::unordered_set<xtypes::TypeIdentfierWithSize>> requests_with_continuation_;
 };
 
 } /* namespace builtin */
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* TYPELOOKUP_REQUEST_LISTENER_HPP_*/
+#endif /* _FASTDDS_TYPELOOKUP_SERVICE_REQUEST_LISTENER_HPP_*/

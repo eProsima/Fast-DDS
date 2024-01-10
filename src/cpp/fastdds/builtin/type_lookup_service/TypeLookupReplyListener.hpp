@@ -17,9 +17,9 @@
  *
  */
 
-#ifndef TYPELOOKUP_REPLY_LISTENER_HPP_
-#define TYPELOOKUP_REPLY_LISTENER_HPP_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef _FASTDDS_TYPELOOKUP_SERVICE_REPLY_LISTENER_HPP_
+#define _FASTDDS_TYPELOOKUP_SERVICE_REPLY_LISTENER_HPP_
+
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
@@ -103,5 +103,4 @@ private:
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* TYPELOOKUP_REPLY_LISTENER_HPP_*/
+#endif /* _FASTDDS_TYPELOOKUP_SERVICE_REPLY_LISTENER_HPP_*/
