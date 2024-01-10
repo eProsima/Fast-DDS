@@ -32,6 +32,7 @@
 #include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
 #include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
+#include <fastrtps/utils/ProxyPool.hpp>
 
 namespace std {
 
@@ -102,7 +103,10 @@ namespace builtin {
 
 const SampleIdentity INVALID_SAMPLE_IDENTITY;
 
-using AsyncGetTypeCallback = std::function<void ()>;
+using AsyncGetTypeWriterCallback = std::function<
+    void (eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr && temp_writer_data)>;
+using AsyncGetTypeReaderCallback = std::function<
+    void (eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr && temp_reader_data)>;
 
 /**
  * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.3 specification.
@@ -170,17 +174,18 @@ public:
     /**
      * Use builtin TypeLookup service to solve the type and dependencies of a given TypeInformation.
      * It receives a callback that will be used to notify when the negotiation is complete.
-     * @param type_information[in] TypeInformation that requires solving.
-     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
-     * @param callback AsyncGetTypeCallback called when the negotiation is complete.
+     * @param temp_proxy_data[in] Temporary Writer/Reader ProxyData that originated the request.
+     * @param callback Callback called when the negotiation is complete.
      * @return ReturnCode_t RETCODE_OK if the type is already known.
      *                      RETCODE_NO_DATA if type is not known, and a negotiation has been started.
      *                      RETCODE_ERROR if any request was not sent correctly.
      */
     ReturnCode_t async_get_type(
-            const xtypes::TypeInformation& type_information,
-            const fastrtps::rtps::GuidPrefix_t& type_server,
-            const AsyncGetTypeCallback& callback);
+            eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&& temp_proxy_data,
+            const AsyncGetTypeWriterCallback& callback);
+    ReturnCode_t async_get_type(
+            eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&& temp_proxy_data,
+            const AsyncGetTypeReaderCallback& callback);
 
 private:
 
@@ -189,28 +194,50 @@ private:
      * Uses get_type_dependencies() and get_types() to get those that are not known.
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
      * TypeIdentfierWithSize was not in the map before
-     * @param type_identifier_with_size[in] TypeIdentfierWithSize to check.
-     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
-     * @param callback[in] AsyncGetTypeCallback to add.
+     * @param temp_proxy_data[in] Temporary Writer/Reader ProxyData that originated the request.
+     * @param callback[in] Callback to add.
      * @return ReturnCode_t RETCODE_OK if type is known.
      *                      RETCODE_NO_DATA if the type is being discovered.
      *                      RETCODE_ERROR if the request was not sent or the callback was not added correctly.
      */
     ReturnCode_t check_type_identifier_received(
-            const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
-            const fastrtps::rtps::GuidPrefix_t& type_server,
-            const AsyncGetTypeCallback& callback);
+            eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&& temp_writer_data,
+            const AsyncGetTypeWriterCallback& callback);
+    ReturnCode_t check_type_identifier_received(
+            eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&&  temp_reader_data,
+            const AsyncGetTypeReaderCallback& callback);
+
+    /**
+     * Implementation for check_type_identifier_received method.
+     * Checks if the given TypeIdentfierWithSize is known by the TypeObjectRegistry.
+     * Uses get_type_dependencies() and get_types() to get those that are not known.
+     * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
+     * TypeIdentfierWithSize was not in the map before
+     * @param temp_proxy_data[in] Temporary Writer/Reader ProxyData that originated the request.
+     * @param callback[in] Callback to add.
+     * @param async_get_type_callbacks[in] The collection ProxyData and their callbacks to use.
+     * @return ReturnCode_t RETCODE_OK if type is known.
+     *                      RETCODE_NO_DATA if the type is being discovered.
+     *                      RETCODE_ERROR if the request was not sent or the callback was not added correctly.
+     */
+    template <typename ProxyType, typename AsyncCallback>
+    ReturnCode_t check_type_identifier_received_impl(
+            typename eprosima::ProxyPool<ProxyType>::smart_ptr&& temp_proxy_data,
+            const AsyncCallback& callback,
+            std::unordered_map<xtypes::TypeIdentfierWithSize,
+            std::vector<std::pair<typename eprosima::ProxyPool<ProxyType>::smart_ptr,
+            AsyncCallback>>>& async_get_type_callbacks);
 
     /**
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
      * TypeIdentfierWithSize was not in the map before
      * @param request[in] SampleIdentity of the request
-     * @param type_id[in] TypeIdentfierWithSize that originated the request.
+     * @param type_identifier_with_size[in] TypeIdentfierWithSize that originated the request.
      * @return true if added. false otherwise
      */
     bool add_async_get_type_request(
             const SampleIdentity& request,
-            const xtypes::TypeIdentfierWithSize& type_id );
+            const xtypes::TypeIdentfierWithSize& type_identifier_with_size );
 
     /**
      * Removes a TypeIdentfierWithSize from the async_get_type_callbacks_.
@@ -336,8 +363,15 @@ private:
     //!Mutex to protect access to async_get_type_callbacks_ and async_get_type_requests_
     std::mutex async_get_types_mutex_;
 
-    //!Collection of all the callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
-    std::unordered_map<xtypes::TypeIdentfierWithSize, std::vector<AsyncGetTypeCallback>> async_get_type_callbacks_;
+    //!Collection of all the WriterProxyData and their callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
+    std::unordered_map < xtypes::TypeIdentfierWithSize,
+            std::vector<std::pair<eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr,
+            AsyncGetTypeWriterCallback>>> async_get_type_writer_callbacks_;
+
+    //!Collection of all the ReaderProxyData and their callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
+    std::unordered_map < xtypes::TypeIdentfierWithSize,
+            std::vector<std::pair<eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr,
+            AsyncGetTypeReaderCallback>>> async_get_type_reader_callbacks_;
 
     //!Collection SampleIdentity and the TypeIdentfierWithSize it originated from, hashed by its SampleIdentity.
     std::unordered_map<SampleIdentity, xtypes::TypeIdentfierWithSize> async_get_type_requests_;

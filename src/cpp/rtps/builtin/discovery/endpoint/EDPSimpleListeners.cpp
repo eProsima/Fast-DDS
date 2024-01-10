@@ -82,8 +82,9 @@ void EDPBasePUBListener::add_writer_from_change(
         }
 
         // Callback function to continue after typelookup is complete
-        fastdds::dds::builtin::AsyncGetTypeCallback after_typelookup_callback =
-                [reader, reader_history, change, edp, release_change, &temp_writer_data, &network]()
+        fastdds::dds::builtin::AsyncGetTypeWriterCallback after_typelookup_callback =
+                [reader, reader_history, change, edp, release_change, &network]
+                    (eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&& temp_writer_data)
                 {
                     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
                     auto copy_data_fun = [&temp_writer_data, &network](
@@ -133,8 +134,7 @@ void EDPBasePUBListener::add_writer_from_change(
                 };
 
         edp->mp_RTPSParticipant->typelookup_manager().async_get_type(
-            temp_writer_data->type_information().type_information,
-            temp_writer_data->guid().guidPrefix,
+            std::move(temp_writer_data),
             after_typelookup_callback);
     }
 }
@@ -191,7 +191,7 @@ void EDPBaseSUBListener::add_reader_from_change(
         EDP* edp,
         bool release_change /*=true*/)
 {
-    //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
+    //LOAD INFORMATION IN TEMPORAL READER PROXY DATA
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
     auto temp_reader_data = edp->get_temporary_reader_proxies_pool().get();
@@ -206,8 +206,9 @@ void EDPBaseSUBListener::add_reader_from_change(
         }
 
         // Callback function to continue after typelookup is complete
-        fastdds::dds::builtin::AsyncGetTypeCallback after_typelookup_callback =
-                [reader, reader_history, change, edp, release_change, &temp_reader_data, &network]()
+        fastdds::dds::builtin::AsyncGetTypeReaderCallback after_typelookup_callback =
+                [reader, reader_history, change, edp, release_change, &network]
+                    (eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&& temp_reader_data)
                 {
                     auto copy_data_fun = [&temp_reader_data, &network](
                         ReaderProxyData* data,
@@ -247,7 +248,6 @@ void EDPBaseSUBListener::add_reader_from_change(
                     if (reader_data != nullptr) //ADDED NEW DATA
                     {
                         edp->pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
-
                     }
                     else
                     {
@@ -259,8 +259,7 @@ void EDPBaseSUBListener::add_reader_from_change(
                 };
 
         edp->mp_RTPSParticipant->typelookup_manager().async_get_type(
-            temp_reader_data->type_information().type_information,
-            temp_reader_data->guid().guidPrefix,
+            std::move(temp_reader_data),
             after_typelookup_callback);
     }
 }

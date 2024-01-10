@@ -295,27 +295,59 @@ SampleIdentity TypeLookupManager::get_types(
 }
 
 ReturnCode_t TypeLookupManager::async_get_type(
-        const xtypes::TypeInformation& type_information,
-        const fastrtps::rtps::GuidPrefix_t& type_server,
-        const AsyncGetTypeCallback& callback)
+        eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&& temp_writer_data,
+        const AsyncGetTypeWriterCallback& callback)
 {
-    ReturnCode_t result = check_type_identifier_received(
-        type_information.complete().typeid_with_size(), type_server, callback);
+    ReturnCode_t result = check_type_identifier_received(std::move(temp_writer_data), callback);
     if (RETCODE_OK == result)
     {
         // The type is already known, invoke the callback
-        callback();
+        callback(std::move(temp_writer_data));
     }
+    return result;
+}
 
+ReturnCode_t TypeLookupManager::async_get_type(
+        eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&&  temp_reader_data,
+        const AsyncGetTypeReaderCallback& callback)
+{
+    ReturnCode_t result = check_type_identifier_received(std::move(temp_reader_data), callback);
+    if (RETCODE_OK == result)
+    {
+        // The type is already known, invoke the callback
+        callback(std::move(temp_reader_data));
+    }
     return result;
 }
 
 ReturnCode_t TypeLookupManager::check_type_identifier_received(
-        const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
-        const fastrtps::rtps::GuidPrefix_t& type_server,
-        const AsyncGetTypeCallback& callback)
-
+        eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&& temp_writer_data,
+        const AsyncGetTypeWriterCallback& callback)
 {
+    return check_type_identifier_received_impl<eprosima::fastrtps::rtps::WriterProxyData>(
+        std::move(temp_writer_data), callback, async_get_type_writer_callbacks_);
+}
+
+ReturnCode_t TypeLookupManager::check_type_identifier_received(
+        eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&& temp_reader_data,
+        const AsyncGetTypeReaderCallback& callback)
+{
+    return check_type_identifier_received_impl<eprosima::fastrtps::rtps::ReaderProxyData>(
+        std::move(temp_reader_data), callback, async_get_type_reader_callbacks_);
+}
+
+template <typename ProxyType, typename AsyncCallback>
+ReturnCode_t TypeLookupManager::check_type_identifier_received_impl(
+        typename eprosima::ProxyPool<ProxyType>::smart_ptr&& temp_proxy_data,
+        const AsyncCallback& callback,
+        std::unordered_map<xtypes::TypeIdentfierWithSize,
+        std::vector<std::pair<typename eprosima::ProxyPool<ProxyType>::smart_ptr,
+        AsyncCallback>>>& async_get_type_callbacks)
+{
+    xtypes::TypeIdentfierWithSize type_identifier_with_size =
+            temp_proxy_data->type_information().type_information.complete().typeid_with_size();
+    fastrtps::rtps::GuidPrefix_t type_server = temp_proxy_data->guid().guidPrefix;
+
     // Check if the type is known
     if (fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                     is_type_identifier_known(type_identifier_with_size))
@@ -323,64 +355,48 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
         return RETCODE_OK;
     }
 
+    // Check if TypeIdentfierWithSize already exists in the map
+    std::lock_guard<std::mutex> lock(async_get_types_mutex_);
+    auto it = async_get_type_callbacks.find(type_identifier_with_size);
+    if (it != async_get_type_callbacks.end())
     {
-        // Check if TypeIdentfierWithSize already exists in the map
-        std::lock_guard<std::mutex> lock(async_get_types_mutex_);
-        auto it = async_get_type_callbacks_.find(type_identifier_with_size);
-        if (it != async_get_type_callbacks_.end())
-        {
-            // TypeIdentfierWithSize exists, add the callback
-            if (nullptr != callback)
-            {
-                it->second.push_back(callback);
-            }
-            // Return without sending new request
-            return RETCODE_NO_DATA;
-        }
-        else
-        {
-            // TypeIdentfierWithSize doesn't exist, create a new entry
-            if (nullptr != callback)
-            {
-                try
-                {
-                    async_get_type_callbacks_.emplace(type_identifier_with_size,
-                            std::vector<AsyncGetTypeCallback>{std::move(callback)});
-                }
-                catch (const std::exception& e)
-                {
-                    EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Error adding async_get_type_callback: " << e.what());
-                    return RETCODE_ERROR;
-                }
-            }
-        }
-    }
-
-    // TypeInformation is unknown
-    xtypes::TypeIdentifierSeq unknown_type;
-    unknown_type.push_back(type_identifier_with_size.type_id());
-    SampleIdentity get_type_dependencies_request = get_type_dependencies(unknown_type, type_server);
-    if (INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
-    {
-        // Store the sent requests and associated TypeIdentfierWithSize
-        add_async_get_type_request(get_type_dependencies_request, type_identifier_with_size);
+        // TypeIdentfierWithSize exists, add the callback
+        it->second.push_back(std::make_pair(std::move(temp_proxy_data), callback));
+        // Return without sending new request
         return RETCODE_NO_DATA;
     }
     else
     {
-        // Failed to send request, return error
-        return RETCODE_ERROR;
+        // TypeIdentfierWithSize doesn't exist, create a new entry
+        xtypes::TypeIdentifierSeq unknown_type{type_identifier_with_size.type_id()};
+        SampleIdentity get_type_dependencies_request = get_type_dependencies(unknown_type, type_server);
+        if (INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
+        {
+            // Store the sent requests and callback
+            add_async_get_type_request(get_type_dependencies_request, type_identifier_with_size);
+            std::vector<std::pair<typename eprosima::ProxyPool<ProxyType>::smart_ptr, AsyncCallback>> types;
+            types.push_back(std::make_pair(std::move(temp_proxy_data), callback));
+            async_get_type_callbacks.emplace(type_identifier_with_size, std::move(types));
+
+            return RETCODE_NO_DATA;
+        }
+        else
+        {
+            // Failed to send request, return error
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Failed to send get_type_dependencies request");
+            return RETCODE_ERROR;
+        }
     }
 }
 
 bool TypeLookupManager::add_async_get_type_request(
         const SampleIdentity& request,
-        const xtypes::TypeIdentfierWithSize& type_id)
+        const xtypes::TypeIdentfierWithSize& type_identifier_with_size)
 {
     std::lock_guard<std::mutex> lock(async_get_types_mutex_);
     try
     {
-        async_get_type_requests_.emplace(request, type_id);
+        async_get_type_requests_.emplace(request, type_identifier_with_size);
         return true;
     }
     catch (const std::exception& e)
@@ -397,11 +413,30 @@ bool TypeLookupManager::remove_async_get_type_callback(
     std::lock_guard<std::mutex> lock(async_get_types_mutex_);
     try
     {
-        async_get_type_callbacks_.erase(type_identifier_with_size);
-        return true;
+        // Check if the key is in the writer map
+        auto writer_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
+        if (writer_it != async_get_type_writer_callbacks_.end())
+        {
+            async_get_type_writer_callbacks_.erase(writer_it);
+            return true;
+        }
+
+        // If not found in the writer map, check the reader map
+        auto reader_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
+        if (reader_it != async_get_type_reader_callbacks_.end())
+        {
+            async_get_type_reader_callbacks_.erase(reader_it);
+            return true;
+        }
+
+        // If not found in either map, log an error
+        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
+                "Error in TypeLookupManager::remove_async_get_type_callback: Key not found");
+        return false;
     }
     catch (const std::exception& e)
     {
+        // Log any exception that might occur during erasure
         EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
                 "Error in TypeLookupManager::remove_async_get_type_callback: " << e.what());
         return false;
@@ -586,7 +621,6 @@ bool TypeLookupManager::send_request(
     }
     builtin_request_writer_history_->remove_change(change);
     return false;
-
 }
 
 bool TypeLookupManager::send_reply(
@@ -650,7 +684,7 @@ bool TypeLookupManager::receive_request(
         return false;
     }
     change.serializedPayload.encapsulation = static_cast<uint16_t>(encapsulation);
-    msg.pos += 2;     // Skip encapsulation options.
+    msg.pos += 2; // Skip encapsulation options.
 
     SerializedPayload_t payload;
     payload.max_size = change.serializedPayload.max_size - 4;
