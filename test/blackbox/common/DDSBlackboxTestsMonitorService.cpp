@@ -679,7 +679,9 @@ struct ProxySampleValidator : public SampleValidator
                     RTPSParticipantAllocationAttributes att;
                     ParticipantProxyData pdata(att);
 
-                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata, data), eprosima::fastdds::dds::RETCODE_OK);
+                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata,
+                            data),
+                            eprosima::fastdds::dds::RETCODE_OK);
 
                     auto part_names = participant->get_participant_names();
                     auto it_names =
@@ -690,14 +692,18 @@ struct ProxySampleValidator : public SampleValidator
                 {
                     ReaderProxyData rdata(4, 4);
 
-                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(rdata, data), eprosima::fastdds::dds::RETCODE_OK);
+                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(rdata,
+                            data),
+                            eprosima::fastdds::dds::RETCODE_OK);
 
                 }
                 else if (guid.entityId.is_writer())
                 {
                     WriterProxyData wdata(4, 4);
 
-                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(wdata, data), eprosima::fastdds::dds::RETCODE_OK);
+                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(wdata,
+                            data),
+                            eprosima::fastdds::dds::RETCODE_OK);
                 }
                 else
                 {

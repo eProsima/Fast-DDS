@@ -52,7 +52,7 @@
 
 #ifdef FASTDDS_STATISTICS
 #include <statistics/types/monitorservice_types.hpp>
-#endif
+#endif // ifdef FASTDDS_STATISTICS
 
 #include "../builtin/discovery/database/DiscoveryDataBase.hpp"
 
