@@ -66,38 +66,38 @@ static std::string process_environment(
 
     // Functor called to process each match
     auto match_cb = [&](const std::smatch& match)
-    {
-        // Compute substitution value
-        std::string var_name = match[1];
-        std::string value = "";
-        if (var_name == "_")
-        {
-            // Silently ignore ${_} since it might expose sensitive information (full path to executable).
-            EPROSIMA_LOG_WARNING(XMLPARSER, "Ignoring environment variable ${_}");
-        }
-        else if (ReturnCode_t::RETCODE_OK != SystemInfo::get_env(var_name, value))
-        {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Could not find a value for environment variable " << var_name);
-        }
+            {
+                // Compute substitution value
+                std::string var_name = match[1];
+                std::string value = "";
+                if (var_name == "_")
+                {
+                    // Silently ignore ${_} since it might expose sensitive information (full path to executable).
+                    EPROSIMA_LOG_WARNING(XMLPARSER, "Ignoring environment variable ${_}");
+                }
+                else if (ReturnCode_t::RETCODE_OK != SystemInfo::get_env(var_name, value))
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Could not find a value for environment variable " << var_name);
+                }
 
-        // Compute number of non-matching characters between this match and the last one
-        auto this_match_position = match.position();
-        auto diff = this_match_position - last_match_position;
+                // Compute number of non-matching characters between this match and the last one
+                auto this_match_position = match.position();
+                auto diff = this_match_position - last_match_position;
 
-        // Append non-matching characters to return value
-        auto this_match_start = last_match_end;
-        std::advance(this_match_start, diff);
-        ret_val.append(last_match_end, this_match_start);
+                // Append non-matching characters to return value
+                auto this_match_start = last_match_end;
+                std::advance(this_match_start, diff);
+                ret_val.append(last_match_end, this_match_start);
 
-        // Append substitution value to return value
-        ret_val.append(value);
+                // Append substitution value to return value
+                ret_val.append(value);
 
-        // Prepare for next iteration
-        auto match_length = match.length();
-        last_match_position = this_match_position + match_length;
-        last_match_end = this_match_start;
-        std::advance(last_match_end, match_length);
-    };
+                // Prepare for next iteration
+                auto match_length = match.length();
+                last_match_position = this_match_position + match_length;
+                last_match_end = this_match_start;
+                std::advance(last_match_end, match_length);
+            };
 
     // Substitute all matches
     std::sregex_iterator begin(first, last, expression);
