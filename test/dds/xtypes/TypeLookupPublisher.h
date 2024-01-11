@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,6 +37,20 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+
+
+struct PubKnownType
+{
+    TypeSupport type_;
+    void* obj_;
+    void* type_sup_;
+    Publisher* publisher_ = nullptr;
+    DataWriter* writer_ = nullptr;
+    Topic* topic_ = nullptr;
+
+    std::function<void(void* data, int current_sample)> callback_;
+};
+
 class TypeLookupPublisher
     : public DomainParticipantListener
 {
@@ -48,9 +62,12 @@ public:
 
     ~TypeLookupPublisher();
 
-    bool init();
+    bool init(
+            std::vector<std::string> known_types);
 
-    bool create_type();
+    template <typename Type, typename TypePubSubType>
+    bool create_known_type(
+            const std::string& type);
 
     void wait_discovery(
             uint32_t how_many);
@@ -69,10 +86,8 @@ private:
     unsigned int matched_ = 0;
     bool run_ = true;
     DomainParticipant* participant_ = nullptr;
-    TypeSupport type_;
-    Publisher* publisher_ = nullptr;
-    DataWriter* writer_ = nullptr;
-    Topic* topic_ = nullptr;
+
+    std::map<std::string, PubKnownType> known_types_;
 };
 
 } // dds

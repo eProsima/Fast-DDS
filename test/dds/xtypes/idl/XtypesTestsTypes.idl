@@ -1,5 +1,17 @@
-struct BasicStruct
+struct Type1
 {
 	unsigned short index;
+	string<128> message;
+};
+
+struct Type2
+{
+	short index;
+	string<128> message;
+};
+
+struct Type3
+{
+	long index;
 	string<128> message;
 };

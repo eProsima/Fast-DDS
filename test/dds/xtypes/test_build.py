@@ -1,28 +1,11 @@
-"""Execute a DDS communictaion test following a json definition file."""
-# Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-import glob
+import shutil
 import json
 import logging
 import os
 import subprocess
 import sys
-import time
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-seed = str(os.getpid())
 
 
 def read_json(file_name):
@@ -33,125 +16,79 @@ def read_json(file_name):
     return structure_dic
 
 
-def test_definition(file_name):
-    """Return a list with each test process defined in dictionary."""
+def participants_definition(file_name):
+    """Return a list with each participant defined in dictionary."""
     return read_json(file_name)['participants']
 
 
-def define_args(tests_definition):
-    """Use list dictionary to get commands args for each test process."""
-    sub_args = []
-    pub_args = []
+def define_args(participant):
+    """Use dictionary to get command args for each participant."""
+    args = [participant['kind'].lower()]
 
-    for test in tests_definition:
+    if 'known_types' in participant and isinstance(participant['known_types'], list):
+        args.extend(participant['known_types'])
+    else:
+        print(f'ARGUMENT ERROR: For {participant["kind"]}s, <known_types> should be a list of types')
 
-        if 'kind' not in test.keys():
-            print('ARGUMENT ERROR : '
-                  'Test definition requites <kind> field for each participant')
-            continue
-
-        if test['kind'] == 'publisher':
-            pub_args.append(['publisher'])
-
-        elif test['kind'] == 'subscriber':
-            sub_args.append(['subscriber'])
-
-        else:
-            print('ARGUMENT ERROR : '
-                  '<kind> field can be publisher/subscriber')
-
-    return pub_args, sub_args
+    return args
 
 
-def define_commands(pub_args, sub_args):
-    """Create commands for each test addind executable to args."""
-    files = glob.glob(
-        os.path.join(
-            script_dir,
-            '**/DDSXtypesCommunication*'),
-        recursive=True)
-    pf = iter(files)
-    command = next(pf, None)
-    while command and \
-        (not os.path.isfile(command)
-            or not os.access(command,
-            os.X_OK)):
-        command = next(pf, None)
-
-    
-    # Add executable to each command
-    return (
-        [[command] + args for args in pub_args],
-        [[command] + args for args in sub_args]
-    )
+def find_executable(executable_name):
+    """Find the full path of an executable file by name."""
+    executable_path = shutil.which(executable_name)
+    if not executable_path or not os.path.isfile(executable_path) or not os.access(executable_path, os.X_OK):
+        # Try looking in the current working directory
+        executable_path = os.path.join(os.getcwd(), executable_name)
+        if not os.path.isfile(executable_path) or not os.access(executable_path, os.X_OK):
+            return None
+    return executable_path
 
 
-def execute_command(command):
-    """Execute command."""
-    return subprocess.Popen(command)
+def define_commands(participants):
+    """Create commands for each participant adding executable to args."""
+    executable_path = find_executable('DDSXtypesCommunication')
+    if not executable_path:
+        print("ERROR: Executable 'DDSXtypesCommunication' not found in the system PATH or is not executable.")
+        sys.exit(1)
+
+    commands = [[executable_path] + define_args(participant) for participant in participants]
+
+    return commands
 
 
-def execute_commands(pub_commands, sub_commands, logger):
+def execute_commands(commands, logger):
     """Get test definitions in command lists and execute each process."""
-    pubs_proc = []
-    subs_proc = []
+    processes = []
 
-    for subscriber_command in sub_commands:
-        logger.info(f'Executing subcriber: {subscriber_command}')
-        subs_proc.append(execute_command(subscriber_command))
-
-    for publisher_command in pub_commands:
-        logger.info(f'Executing publisher: {publisher_command}')
-        pubs_proc.append(execute_command(publisher_command))
+    for command in commands:
+        logger.info(f'Executing: {command}')
+        processes.append(subprocess.Popen(command))
 
     ret_value = 0
 
-    for proc in subs_proc:
+    for proc in processes:
         proc.communicate()
-        ret_value = ret_value + proc.returncode
-
-    for proc in pubs_proc:
-        proc.kill()
+        ret_value += proc.returncode
 
     return ret_value
 
 
 if __name__ == '__main__':
 
-    logger = logging.getLogger('DDS COMMUNICATION TEST')
+    logger = logging.getLogger('XTYPES COMMUNICATION TEST')
     logger.setLevel(logging.INFO)
-
-    logger.error("TEST RUNNING")
 
     args = sys.argv[1:]
 
     if len(args) != 1:
-        logger.error('ARGUMENTS ERROR : 1 argument required: '
-                     'path to .json file with test definition')
+        logger.error('ARGUMENTS ERROR : 1 argument required: path to .json file with test definition')
         sys.exit(1)
 
-    logger.error("test_definition")
-    test_definitions = test_definition(args[0])
+    participants = participants_definition(args[0])
 
-    logger.error(test_definitions)
+    commands = define_commands(participants)
 
-    logger.error("define_args")
-    pub_args, sub_args = define_args(test_definitions)
-
-    logger.error(pub_args)
-    logger.error(sub_args)
-
-    logger.error("define_commands")
-    pub_commands, sub_commands = define_commands(pub_args, sub_args)
-
-    logger.error(pub_commands)
-    logger.error(sub_commands)
-
-    logger.error("execute_commands")
-    test_value = execute_commands(
-        pub_commands,
-        sub_commands,
-        logger)
+    test_value = execute_commands(commands, logger)
 
     logger.error(test_value)
 

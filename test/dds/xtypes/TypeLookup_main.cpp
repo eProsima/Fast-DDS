@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,33 +22,52 @@
 
 #include <fastrtps/log/Log.h>
 
+#include <vector>
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <random>
+
+
 using namespace eprosima::fastrtps;
 
 int main(
         int argc,
         char** argv)
 {
-    std::cout << "Starting " << std::endl;
-    int type = 1;
-    int count = 5;
-    long sleep = 100;
+    // Seed for random number generation
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distr(1, 10);
+    int randomSeconds = distr(gen);
+    // Sleep for the random duration
+    std::this_thread::sleep_for(std::chrono::seconds(randomSeconds));
+
+    std::cout << "Starting " << randomSeconds << std::endl;
+    // Print all command-line arguments
+    std::cout << "Command-line arguments:" << std::endl;
+    for (int i = 0; i < argc; ++i)
+    {
+        std::cout << "argv[" << i << "]: " << argv[i] << std::endl;
+    }
+
+    int type = 0;
+    std::vector<std::string> known_types;
+
     if (argc > 1)
     {
         if (strcmp(argv[1], "publisher") == 0)
         {
             type = 1;
-            if (argc >= 3)
-            {
-                count = atoi(argv[2]);
-                if (argc == 4)
-                {
-                    sleep = atoi(argv[3]);
-                }
-            }
         }
         else if (strcmp(argv[1], "subscriber") == 0)
         {
             type = 2;
+        }
+
+        for (int i = 2; i < argc; ++i)
+        {
+            known_types.push_back(argv[i]);
         }
     }
     else
@@ -62,23 +81,25 @@ int main(
     {
         case 1:
         {
-            eprosima::fastdds::dds::TypeLookupPublisher mypub;
-            if (mypub.init())
+            eprosima::fastdds::dds::TypeLookupPublisher pub;
+            if (pub.init(known_types))
             {
-                mypub.wait_discovery(1);
-                mypub.run(10);
+                pub.wait_discovery(1);
+                pub.run(10);
             }
             break;
         }
         case 2:
         {
-            eprosima::fastdds::dds::TypeLookupSubscriber mysub;
-            if (mysub.init())
+            eprosima::fastdds::dds::TypeLookupSubscriber sub;
+            if (sub.init(known_types))
             {
-                mysub.run();
+                sub.run(30);
             }
             break;
         }
+        default:
+            std::cout << "publisher OR subscriber argument needed" << std::endl;
     }
     Log::Reset();
     return 0;

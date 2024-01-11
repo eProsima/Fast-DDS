@@ -27,8 +27,6 @@
 #include <utility>
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include "XtypesTestsTypesTypeObjectSupport.hpp"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -54,48 +52,46 @@
 #endif // _WIN32
 
 /*!
- * @brief This class represents the structure BasicStruct defined by the user in the IDL file.
+ * @brief This class represents the structure Type1 defined by the user in the IDL file.
  * @ingroup XtypesTestsTypes
  */
-class BasicStruct
+class Type1
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport BasicStruct()
+    eProsima_user_DllExport Type1()
     {
-        // Register TypeObject in Fast DDS DomainParticipantFactory TypeObjectRegistry.
-        register_XtypesTestsTypes_type_objects();
     }
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~BasicStruct()
+    eProsima_user_DllExport ~Type1()
     {
     }
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object BasicStruct that will be copied.
+     * @param x Reference to the object Type1 that will be copied.
      */
-    eProsima_user_DllExport BasicStruct(
-            const BasicStruct& x)
+    eProsima_user_DllExport Type1(
+            const Type1& x)
     {
-        m_index = x.m_index;
+                    m_index = x.m_index;
 
-        m_message = x.m_message;
+                    m_message = x.m_message;
 
     }
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object BasicStruct that will be copied.
+     * @param x Reference to the object Type1 that will be copied.
      */
-    eProsima_user_DllExport BasicStruct(
-            BasicStruct&& x) noexcept
+    eProsima_user_DllExport Type1(
+            Type1&& x) noexcept
     {
         m_index = x.m_index;
         m_message = std::move(x.m_message);
@@ -103,25 +99,25 @@ public:
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object BasicStruct that will be copied.
+     * @param x Reference to the object Type1 that will be copied.
      */
-    eProsima_user_DllExport BasicStruct& operator =(
-            const BasicStruct& x)
+    eProsima_user_DllExport Type1& operator =(
+            const Type1& x)
     {
 
-        m_index = x.m_index;
+                    m_index = x.m_index;
 
-        m_message = x.m_message;
+                    m_message = x.m_message;
 
         return *this;
     }
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object BasicStruct that will be copied.
+     * @param x Reference to the object Type1 that will be copied.
      */
-    eProsima_user_DllExport BasicStruct& operator =(
-            BasicStruct&& x) noexcept
+    eProsima_user_DllExport Type1& operator =(
+            Type1&& x) noexcept
     {
 
         m_index = x.m_index;
@@ -131,21 +127,21 @@ public:
 
     /*!
      * @brief Comparison operator.
-     * @param x BasicStruct object to compare.
+     * @param x Type1 object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const BasicStruct& x) const
+            const Type1& x) const
     {
         return (m_index == x.m_index &&
-               m_message == x.m_message);
+           m_message == x.m_message);
     }
 
     /*!
      * @brief Comparison operator.
-     * @param x BasicStruct object to compare.
+     * @param x Type1 object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const BasicStruct& x) const
+            const Type1& x) const
     {
         return !(*this == x);
     }
@@ -177,6 +173,7 @@ public:
     {
         return m_index;
     }
+
 
     /*!
      * @brief This function copies the value in member message
@@ -216,9 +213,351 @@ public:
         return m_message;
     }
 
+
+
 private:
 
     uint16_t m_index{0};
+    eprosima::fastcdr::fixed_string<128> m_message;
+
+};
+/*!
+ * @brief This class represents the structure Type2 defined by the user in the IDL file.
+ * @ingroup XtypesTestsTypes
+ */
+class Type2
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport Type2()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~Type2()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object Type2 that will be copied.
+     */
+    eProsima_user_DllExport Type2(
+            const Type2& x)
+    {
+                    m_index = x.m_index;
+
+                    m_message = x.m_message;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object Type2 that will be copied.
+     */
+    eProsima_user_DllExport Type2(
+            Type2&& x) noexcept
+    {
+        m_index = x.m_index;
+        m_message = std::move(x.m_message);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object Type2 that will be copied.
+     */
+    eProsima_user_DllExport Type2& operator =(
+            const Type2& x)
+    {
+
+                    m_index = x.m_index;
+
+                    m_message = x.m_message;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object Type2 that will be copied.
+     */
+    eProsima_user_DllExport Type2& operator =(
+            Type2&& x) noexcept
+    {
+
+        m_index = x.m_index;
+        m_message = std::move(x.m_message);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x Type2 object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const Type2& x) const
+    {
+        return (m_index == x.m_index &&
+           m_message == x.m_message);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x Type2 object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const Type2& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets a value in member index
+     * @param _index New value for member index
+     */
+    eProsima_user_DllExport void index(
+            int16_t _index)
+    {
+        m_index = _index;
+    }
+
+    /*!
+     * @brief This function returns the value of member index
+     * @return Value of member index
+     */
+    eProsima_user_DllExport int16_t index() const
+    {
+        return m_index;
+    }
+
+    /*!
+     * @brief This function returns a reference to member index
+     * @return Reference to member index
+     */
+    eProsima_user_DllExport int16_t& index()
+    {
+        return m_index;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member message
+     * @param _message New value to be copied in member message
+     */
+    eProsima_user_DllExport void message(
+            const eprosima::fastcdr::fixed_string<128>& _message)
+    {
+        m_message = _message;
+    }
+
+    /*!
+     * @brief This function moves the value in member message
+     * @param _message New value to be moved in member message
+     */
+    eProsima_user_DllExport void message(
+            eprosima::fastcdr::fixed_string<128>&& _message)
+    {
+        m_message = std::move(_message);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member message
+     * @return Constant reference to member message
+     */
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<128>& message() const
+    {
+        return m_message;
+    }
+
+    /*!
+     * @brief This function returns a reference to member message
+     * @return Reference to member message
+     */
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<128>& message()
+    {
+        return m_message;
+    }
+
+
+
+private:
+
+    int16_t m_index{0};
+    eprosima::fastcdr::fixed_string<128> m_message;
+
+};
+/*!
+ * @brief This class represents the structure Type3 defined by the user in the IDL file.
+ * @ingroup XtypesTestsTypes
+ */
+class Type3
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport Type3()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~Type3()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object Type3 that will be copied.
+     */
+    eProsima_user_DllExport Type3(
+            const Type3& x)
+    {
+                    m_index = x.m_index;
+
+                    m_message = x.m_message;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object Type3 that will be copied.
+     */
+    eProsima_user_DllExport Type3(
+            Type3&& x) noexcept
+    {
+        m_index = x.m_index;
+        m_message = std::move(x.m_message);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object Type3 that will be copied.
+     */
+    eProsima_user_DllExport Type3& operator =(
+            const Type3& x)
+    {
+
+                    m_index = x.m_index;
+
+                    m_message = x.m_message;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object Type3 that will be copied.
+     */
+    eProsima_user_DllExport Type3& operator =(
+            Type3&& x) noexcept
+    {
+
+        m_index = x.m_index;
+        m_message = std::move(x.m_message);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x Type3 object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const Type3& x) const
+    {
+        return (m_index == x.m_index &&
+           m_message == x.m_message);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x Type3 object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const Type3& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets a value in member index
+     * @param _index New value for member index
+     */
+    eProsima_user_DllExport void index(
+            int32_t _index)
+    {
+        m_index = _index;
+    }
+
+    /*!
+     * @brief This function returns the value of member index
+     * @return Value of member index
+     */
+    eProsima_user_DllExport int32_t index() const
+    {
+        return m_index;
+    }
+
+    /*!
+     * @brief This function returns a reference to member index
+     * @return Reference to member index
+     */
+    eProsima_user_DllExport int32_t& index()
+    {
+        return m_index;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member message
+     * @param _message New value to be copied in member message
+     */
+    eProsima_user_DllExport void message(
+            const eprosima::fastcdr::fixed_string<128>& _message)
+    {
+        m_message = _message;
+    }
+
+    /*!
+     * @brief This function moves the value in member message
+     * @param _message New value to be moved in member message
+     */
+    eProsima_user_DllExport void message(
+            eprosima::fastcdr::fixed_string<128>&& _message)
+    {
+        m_message = std::move(_message);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member message
+     * @return Constant reference to member message
+     */
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<128>& message() const
+    {
+        return m_message;
+    }
+
+    /*!
+     * @brief This function returns a reference to member message
+     * @return Reference to member message
+     */
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<128>& message()
+    {
+        return m_message;
+    }
+
+
+
+private:
+
+    int32_t m_index{0};
     eprosima::fastcdr::fixed_string<128> m_message;
 
 };
