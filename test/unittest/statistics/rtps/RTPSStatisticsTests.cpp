@@ -47,8 +47,8 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <statistics/types/monitorservice_types.h>
-#include <statistics/types/types.h>
+#include <statistics/types/monitorservice_types.hpp>
+#include <statistics/types/types.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/transport/test_UDPv4Transport.h>

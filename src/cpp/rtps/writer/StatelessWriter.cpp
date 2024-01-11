@@ -39,6 +39,10 @@
 #include <rtps/network/ExternalLocatorsProcessor.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 
+#ifdef FASTDDS_STATISTICS
+#include <statistics/types/monitorservice_types.hpp>
+#endif // FASTDDS_STATISTICS
+
 #include "../flowcontrol/FlowController.hpp"
 
 namespace eprosima {
@@ -930,7 +934,7 @@ bool StatelessWriter::get_connections(
         for_matched_readers(matched_local_readers_, [&connection, &connection_list](ReaderLocator& reader)
                 {
                     connection.guid(fastdds::statistics::to_statistics_type(reader.local_reader()->getGuid()));
-                    connection.mode(fastdds::statistics::INTRAPROCESS);
+                    connection.mode(fastdds::statistics::ConnectionMode::INTRAPROCESS);
                     connection_list.push_back(connection);
 
                     return false;
@@ -944,7 +948,7 @@ bool StatelessWriter::get_connections(
         for_matched_readers(matched_datasharing_readers_, [&connection, &connection_list](ReaderLocator& reader)
                 {
                     connection.guid(fastdds::statistics::to_statistics_type(reader.remote_guid()));
-                    connection.mode(fastdds::statistics::DATA_SHARING);
+                    connection.mode(fastdds::statistics::ConnectionMode::DATA_SHARING);
                     connection_list.push_back(connection);
 
                     return false;
@@ -978,7 +982,7 @@ bool StatelessWriter::get_connections(
                     });
 
                     connection.guid(fastdds::statistics::to_statistics_type(reader.remote_guid()));
-                    connection.mode(fastdds::statistics::TRANSPORT);
+                    connection.mode(fastdds::statistics::ConnectionMode::TRANSPORT);
                     connection.announced_locators(statistics_locators);
                     connection.used_locators(statistics_locators);
                     connection_list.push_back(connection);
