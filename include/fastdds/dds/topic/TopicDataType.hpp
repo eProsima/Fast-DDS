@@ -66,20 +66,12 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI TopicDataType()
-        : m_typeSize(0)
-        , m_isGetKeyDefined(false)
-        , auto_fill_type_object_(true)
-        , auto_fill_type_information_(true)
-    {
-    }
+    RTPS_DllAPI TopicDataType();
 
     /**
      * @brief Destructor
      */
-    RTPS_DllAPI virtual ~TopicDataType()
-    {
-    }
+    RTPS_DllAPI virtual ~TopicDataType();
 
     /**
      * Serialize method, it should be implemented by the user, since it is abstract.
@@ -89,12 +81,14 @@ public:
      * @param[out] payload Pointer to the payload
      * @return True if correct.
      */
+    // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
     RTPS_DllAPI virtual bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload) = 0;
 
     /**
-     * Serialize method, it should be implemented by the user, since it is abstract.
+     * Serialize method, it should be implemented by the user, since it is abstract. If not implemented, this method
+     * will call the serialize method in which the topic data representation is not considered.
      * It is VERY IMPORTANT that the user sets the SerializedPayload length correctly.
      *
      * @param[in] data Pointer to the data
@@ -105,13 +99,7 @@ public:
     RTPS_DllAPI virtual bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload,
-            DataRepresentationId_t data_representation)
-    {
-        static_cast<void>(data);
-        static_cast<void>(payload);
-        static_cast<void>(data_representation);
-        return false;
-    }
+            DataRepresentationId_t data_representation);
 
     /**
      * Deserialize method, it should be implemented by the user, since it is abstract.
@@ -142,15 +130,7 @@ public:
      */
     RTPS_DllAPI virtual std::function<uint32_t()> getSerializedSizeProvider(
             void* data,
-            DataRepresentationId_t data_representation)
-    {
-        static_cast<void>(data);
-        static_cast<void>(data_representation);
-        return []()
-               {
-                   return 0;
-               };
-    }
+            DataRepresentationId_t data_representation);
 
     /**
      * Create a Data Type.

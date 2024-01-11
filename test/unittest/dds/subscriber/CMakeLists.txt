@@ -32,6 +32,7 @@ set(DATAREADERHISTORYTESTS_SOURCE DataReaderHistoryTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/History.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/ReaderHistory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/history/DataReaderHistory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
     )
 
 if(WIN32)

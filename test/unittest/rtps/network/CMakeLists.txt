@@ -145,6 +145,7 @@ add_executable(ExternalLocatorsProcessorTests
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
     )
 target_compile_definitions(ExternalLocatorsProcessorTests PRIVATE
     BOOST_ASIO_STANDALONE
