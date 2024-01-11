@@ -87,11 +87,11 @@ struct SimplePDPEndpointsSecure : public SimplePDPEndpoints
         assert(nullptr != change);
         if (change->writerGUID.entityId == fastrtps::rtps::c_EntityId_SPDPWriter)
         {
-            secure_reader.history_->remove_change(change);
+            SimplePDPEndpoints::remove_from_pdp_reader_history(change);
         }
         else
         {
-            SimplePDPEndpoints::remove_from_pdp_reader_history(change);
+            secure_reader.history_->remove_change(change);
         }
     }
 
