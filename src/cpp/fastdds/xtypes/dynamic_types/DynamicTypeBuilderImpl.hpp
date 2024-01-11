@@ -100,7 +100,7 @@ private:
 
     DynamicTypeMembersByName member_by_name_;
 
-    std::vector<traits<DynamicTypeMember>::ref_type> members_;
+    std::vector<traits<DynamicTypeMemberImpl>::ref_type> members_;
 
     TypeDescriptorImpl type_descriptor_;
 
