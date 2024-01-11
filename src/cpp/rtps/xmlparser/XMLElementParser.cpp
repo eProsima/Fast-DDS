@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
@@ -42,38 +43,69 @@ namespace detail {
 static std::string process_environment(
         const std::string& input)
 {
-    std::string ret_val = input;
     /* From [IEEE Std 1003.1]:(https://pubs.opengroup.org/onlinepubs/000095399/basedefs/xbd_chap08.html)
      * Environment variable names used ... consist solely of uppercase letters, digits, and the '_' (underscore)
      * from the characters defined in Portable Character Set and do not begin with a digit.
      */
     std::regex expression("\\$\\{([A-Z_][A-Z0-9_]*)\\}");
-    std::smatch match;
 
-    do
+    // Algorithm inspired by https://stackoverflow.com/a/37516316/559350
+
+    // This will hold the accumulated substitution result
+    std::string ret_val{};
+
+    // Iterators to first and last character of the input string
+    auto first = input.cbegin();
+    auto last = input.cend();
+
+    // Position of last match in the input string
+    std::smatch::difference_type last_match_position = 0;
+
+    // Iterator to the character after the last match in the input string
+    auto last_match_end = first;
+
+    // Functor called to process each match
+    auto match_cb = [&](const std::smatch& match)
     {
-        std::regex_search(ret_val, match, expression);
-        if (!match.empty())
+        // Compute substitution value
+        std::string var_name = match[1];
+        std::string value = "";
+        if (var_name == "_")
         {
-            std::string var_name = match[1];
-            std::string value;
-            if (var_name == "_")
-            {
-                // Silently ignore ${_} since it might expose sensitive information (full path to executable).
-                ret_val = match.prefix().str() + match.suffix().str();
-                EPROSIMA_LOG_WARNING(XMLPARSER, "Ignoring environment variable ${_}");
-            }
-            else if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(var_name, value))
-            {
-                ret_val = match.prefix().str() + value + match.suffix().str();
-            }
-            else
-            {
-                ret_val = match.prefix().str() + match.suffix().str();
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Could not find a value for environment variable " << var_name);
-            }
+            // Silently ignore ${_} since it might expose sensitive information (full path to executable).
+            EPROSIMA_LOG_WARNING(XMLPARSER, "Ignoring environment variable ${_}");
         }
-    } while (!match.empty());
+        else if (ReturnCode_t::RETCODE_OK != SystemInfo::get_env(var_name, value))
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Could not find a value for environment variable " << var_name);
+        }
+
+        // Compute number of non-matching characters between this match and the last one
+        auto this_match_position = match.position();
+        auto diff = this_match_position - last_match_position;
+
+        // Append non-matching characters to return value
+        auto this_match_start = last_match_end;
+        std::advance(this_match_start, diff);
+        ret_val.append(last_match_end, this_match_start);
+
+        // Append substitution value to return value
+        ret_val.append(value);
+
+        // Prepare for next iteration
+        auto match_length = match.length();
+        last_match_position = this_match_position + match_length;
+        last_match_end = this_match_start;
+        std::advance(last_match_end, match_length);
+    };
+
+    // Substitute all matches
+    std::sregex_iterator begin(first, last, expression);
+    std::sregex_iterator end;
+    std::for_each(begin, end, match_cb);
+
+    // Append characters after last match
+    ret_val.append(last_match_end, last);
 
     return ret_val;
 }
