@@ -225,7 +225,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             TK_UNION != type_descriptor_kind)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Type of kind " << type_descriptor_kind << " not supports adding members");
-        return RETCODE_BAD_PARAMETER;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     if (!descriptor)

@@ -410,6 +410,18 @@ private:
             eprosima::fastcdr::Cdr& cdr,
             const traits<DynamicTypeImpl>::ref_type type) noexcept;
 
+    /*!
+     * @brief Given a type, returns the enclosing type if exists.
+     */
+    traits<DynamicTypeImpl>::ref_type get_enclosing_type(
+            traits<DynamicTypeImpl>::ref_type type) const noexcept;
+
+    /*!
+     * @brief Given a type, returns the enclosing type kind if exists.
+     */
+    TypeKind get_enclosing_typekind(
+            traits<DynamicTypeImpl>::ref_type type) const noexcept;
+
     void set_value(
             const ObjectName& value,
             MemberId id) noexcept;
