@@ -393,8 +393,11 @@ private:
 
     size_t calculate_serialized_size(
             eprosima::fastcdr::CdrSizeCalculator& calculator,
-            traits<DynamicTypeImpl>::ref_type type,
+            const traits<DynamicTypeImpl>::ref_type type,
             size_t& current_alignment) const noexcept;
+
+    ReturnCode_t clear_all_values(
+            bool only_non_keyed) noexcept;
 
     ReturnCode_t clear_data() noexcept;
 
@@ -405,18 +408,19 @@ private:
 
     bool deserialize(
             eprosima::fastcdr::Cdr& cdr,
-            traits<DynamicTypeImpl>::ref_type type) noexcept;
+            const traits<DynamicTypeImpl>::ref_type type) noexcept;
 
     void set_value(
             const ObjectName& value,
             MemberId id) noexcept;
 
     void set_default_value(
-            MemberId id) noexcept;
+            const traits<DynamicTypeMemberImpl>::ref_type member,
+            traits<DynamicDataImpl>::ref_type data) noexcept;
 
     void serialize(
             eprosima::fastcdr::Cdr& cdr,
-            traits<DynamicTypeImpl>::ref_type type) const noexcept;
+            const traits<DynamicTypeImpl>::ref_type type) const noexcept;
 
 };
 

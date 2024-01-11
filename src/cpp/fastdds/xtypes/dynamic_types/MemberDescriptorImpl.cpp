@@ -235,14 +235,14 @@ bool MemberDescriptorImpl::is_consistent() noexcept
     if (TK_UNION == parent_kind_ && 0 == id_)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES,
-                "Descriptor describes a UNION and the MemberId 0 is reserved to the discriminator");
+                "Parent type is an UNION and the MemberId 0 is reserved to the discriminator");
         return false;
     }
 
     // Check default_label.
     if (is_default_label_ && TK_UNION != parent_kind_)
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor doesn't describe a UNION and it has set is_default_label");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is not a UNION and it has set is_default_label");
         return false;
     }
 
@@ -256,7 +256,20 @@ bool MemberDescriptorImpl::is_consistent() noexcept
 
     if (!is_default_value_consistent(type_->get_kind(), default_value_))
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor name is not a valid full qualified name");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Default value is not consistent");
+        return false;
+    }
+
+    // Check enum enclosing type.
+    if (TK_ENUM == parent_kind_ &&
+            TK_INT8 != type_->get_kind() &&
+            TK_UINT8 != type_->get_kind() &&
+            TK_INT16 != type_->get_kind() &&
+            TK_UINT16 != type_->get_kind() &&
+            TK_INT32 != type_->get_kind() &&
+            TK_UINT32 != type_->get_kind())
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is an ENUM and the enclosing type is not valid");
         return false;
     }
 

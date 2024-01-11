@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "AnnotationDescriptorImpl.hpp"
+#include "DynamicTypeMemberImpl.hpp"
 #include "TypeDescriptorImpl.hpp"
 #include "VerbatimTextDescriptorImpl.hpp"
 
@@ -83,7 +84,7 @@ public:
         return member_;
     }
 
-    const std::vector<traits<DynamicTypeMember>::ref_type>& get_all_members_by_index() const
+    const std::vector<traits<DynamicTypeMemberImpl>::ref_type>& get_all_members_by_index() const
     {
         return members_;
     }
@@ -105,7 +106,7 @@ private:
 
     DynamicTypeMembersByName member_by_name_;
 
-    std::vector<traits<DynamicTypeMember>::ref_type> members_;
+    std::vector<traits<DynamicTypeMemberImpl>::ref_type> members_;
 
     TypeDescriptorImpl type_descriptor_;
 

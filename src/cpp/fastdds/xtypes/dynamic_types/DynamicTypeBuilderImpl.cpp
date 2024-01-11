@@ -240,7 +240,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     {
         for (auto member : members_)
         {
-            auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+            const auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
 
             // Check that there isn't any member as default label and that there isn't any member with the same case.
             if (descriptor_impl->is_default_label() && member_impl->member_descriptor_.is_default_label())
@@ -290,7 +290,6 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     }
 
     traits<DynamicTypeMemberImpl>::ref_type dyn_member = std::make_shared<DynamicTypeMemberImpl>(*descriptor_impl);
-    dyn_member->get_descriptor().parent_kind(type_descriptor_kind); // Set before calling is_consistent().
 
     auto member_id = dyn_member->get_descriptor().id();
 
@@ -322,10 +321,23 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         dyn_member->get_descriptor().index(next_index_++);
     }
 
+    dyn_member->get_descriptor().parent_kind(type_descriptor_kind); // Set before calling is_consistent().
+
     if (!dyn_member->get_descriptor().is_consistent())
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor is not consistent");
         return RETCODE_BAD_PARAMETER;
+    }
+
+    if (TK_ENUM == type_descriptor_kind && 0 < members_.size())
+    {
+        const auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(members_.at(0));
+
+        if (member_impl->get_descriptor().type()->get_kind() != descriptor->type()->get_kind())
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor type kind differs from the current member types.");
+            return RETCODE_BAD_PARAMETER;
+        }
     }
 
     /*TODO(richiware) think
