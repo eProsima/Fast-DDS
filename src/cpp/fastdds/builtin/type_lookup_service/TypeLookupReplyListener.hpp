@@ -50,7 +50,7 @@ public:
 
     /**
      * @brief Constructor
-     * @param manager Pointer to the TypeLookupManager
+     * @param manager Pointer to the TypeLookupManager.
      */
     TypeLookupReplyListener(
             TypeLookupManager* manager);
@@ -63,8 +63,8 @@ public:
     /**
      * @brief Registers TypeIdentifier and TypeObject in TypeObjectRegistry.
      * Also notifies all callbacks for the type and removes the current SampleIdentity from the list.
-     * @param request_id[in] The SampleIdentity of the request
-     * @param reply[in] The reply data
+     * @param request_id[in] The SampleIdentity of the request.
+     * @param reply[in] The reply data.
      */
     void check_get_types_reply(
             const SampleIdentity& request_id,
@@ -75,9 +75,9 @@ public:
      * If they are not, sends next request and adds it to the list.
      * If they are, sends get_types request and adds it to the list.
      * Also removes the current SampleIdentity from the list.
-     * @param request_id[in] The SampleIdentity of the request
+     * @param request_id[in] The SampleIdentity of the request.
      * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
-     * @param reply[in] The reply data
+     * @param reply[in] The reply data.
      */
     void check_get_type_dependencies_reply(
             const SampleIdentity& request_id,
@@ -85,9 +85,9 @@ public:
             const TypeLookup_getTypeDependencies_Out& reply);
 
     /**
-     * @brief Method called when this class is notified of a new cache change
-     * @param reader The reader receiving the cache change
-     * @param change The cache change
+     * @brief Method called when this class is notified of a new cache change.
+     * @param reader The reader receiving the cache change.
+     * @param change The cache change.
      */
     void onNewCacheChangeAdded(
             fastrtps::rtps::RTPSReader* reader,
@@ -95,7 +95,7 @@ public:
 
 private:
 
-    //! A pointer to the typelookup manager
+    //! A pointer to the typelookup manager.
     TypeLookupManager* typelookup_manager_;
 };
 

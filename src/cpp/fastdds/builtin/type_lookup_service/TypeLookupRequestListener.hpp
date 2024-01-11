@@ -76,50 +76,51 @@ class TypeLookupRequestListener : public fastrtps::rtps::ReaderListener
 public:
 
     /**
-     * @brief Constructor
-     * @param manager Pointer to the TypeLookupManager
+     * @brief Constructor.
+     * @param manager Pointer to the TypeLookupManager.
      */
     TypeLookupRequestListener(
             TypeLookupManager* manager);
 
     /**
-     * @brief Destructor
+     * @brief Destructor.
      */
     virtual ~TypeLookupRequestListener() override;
 
     /**
-     * @brief Gets TypeObject from TypeObjectRegistry, creates and sends reply
-     * @param request_id[in] The SampleIdentity of the request
-     * @param request[in] The request data
+     * @brief Gets TypeObject from TypeObjectRegistry, creates and sends reply.
+     * @param request_id[in] The SampleIdentity of the request.
+     * @param request[in] The request data.
      */
     void check_get_types_request(
             SampleIdentity request_id,
             const TypeLookup_getTypes_In& request);
 
     /**
-     * @brief Gets type dependencies from TypeObjectRegistry, creates and sends reply
-     * @param request_id[in] The SampleIdentity of the request
-     * @param request[in] The request data
+     * @brief Gets type dependencies from TypeObjectRegistry, creates and sends reply.
+     * @param request_id[in] The SampleIdentity of the request.
+     * @param request[in] The request data.
      */
     void check_get_type_dependencies_request(
             SampleIdentity request_id,
             const TypeLookup_getTypeDependencies_In& request);
 
     /**
-     * @brief Builds a TypeLookup_getTypeDependencies_Out ussing continuation points to manage size
+     * @brief Creates a TypeLookup_getTypeDependencies_Out using continuation points to manage size.
      * @param id_seq[in] Sequence of TypeIdentifiers for which dependencies are needed.
-     * @param type_dependencies[in] The full list of dependencies of the type
-     * @param continuation_point[in] The continuation point of the previous request
+     * @param type_dependencies[in] The full list of dependencies of the type.
+     * @param continuation_point[in] The continuation point of the previous request.
+     * @return The reply containing the dependent types.
      */
-    TypeLookup_getTypeDependencies_Out prepare_dependent_types(
+    TypeLookup_getTypeDependencies_Out prepare_get_type_dependencies_response(
             const xtypes::TypeIdentifierSeq& id_seq,
             const std::unordered_set<xtypes::TypeIdentfierWithSize>& type_dependencies,
             const std::vector<uint8_t>& continuation_point);
 
     /**
-     * @brief Method call when this class is notified of a new cache change
-     * @param reader The reader receiving the cache change
-     * @param change The cache change
+     * @brief Method call when this class is notified of a new cache change.
+     * @param reader The reader receiving the cache change.
+     * @param change The cache change.
      */
     void onNewCacheChangeAdded(
             fastrtps::rtps::RTPSReader* reader,
@@ -127,13 +128,13 @@ public:
 
 private:
 
-    //! A pointer to the typelookup manager
+    //! A pointer to the typelookup manager.
     TypeLookupManager* typelookup_manager_;
 
-    //!Mutex to protect access to requests_with_continuation_
+    //! Mutex to protect access to requests_with_continuation_.
     std::mutex requests_with_continuation_mutex_;
 
-    //!Collection of the requests that needed continuation points.
+    //! Collection of the requests that needed continuation points.
     std::unordered_map <xtypes::TypeIdentifierSeq,
             std::unordered_set<xtypes::TypeIdentfierWithSize>> requests_with_continuation_;
 };

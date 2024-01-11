@@ -144,7 +144,7 @@ public:
 
     /**
      * Remove remote endpoints from the typelookup service.
-     * @param pdata Pointer to the ParticipantProxyData to remove
+     * @param pdata Pointer to the ParticipantProxyData to remove.
      */
     void remove_remote_endpoints(
             fastrtps::rtps::ParticipantProxyData* pdata);
@@ -195,7 +195,7 @@ private:
      * Checks if the given TypeIdentfierWithSize is known by the TypeObjectRegistry.
      * Uses get_type_dependencies() and get_types() to get those that are not known.
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
-     * TypeIdentfierWithSize was not in the map before
+     * TypeIdentfierWithSize was not in the map before.
      * @param type_identifier_with_size[in] TypeIdentfierWithSize to check.
      * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
      * @return ReturnCode_t RETCODE_OK if type is known.
@@ -209,7 +209,7 @@ private:
      * Checks if the given TypeIdentfierWithSize is known by the TypeObjectRegistry.
      * Uses get_type_dependencies() and get_types() to get those that are not known.
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
-     * TypeIdentfierWithSize was not in the map before
+     * TypeIdentfierWithSize was not in the map before.
      * @param temp_proxy_data[in] Temporary Writer/Reader ProxyData that originated the request.
      * @param callback[in] Callback to add.
      * @return ReturnCode_t RETCODE_OK if type is known.
@@ -245,7 +245,7 @@ private:
             AsyncCallback>>>& async_get_type_callbacks);
 
     /**
-     *  Notifies callbacks for a given TypeIdentfierWithSize
+     *  Notifies callbacks for a given TypeIdentfierWithSize.
      * @param type_identifier_with_size[in] TypeIdentfierWithSize of the callbacks to notify.
      */
     void notify_callbacks(
@@ -253,10 +253,10 @@ private:
 
     /**
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
-     * TypeIdentfierWithSize was not in the map before
-     * @param request[in] SampleIdentity of the request
+     * TypeIdentfierWithSize was not in the map before.
+     * @param request[in] SampleIdentity of the request.
      * @param type_identifier_with_size[in] TypeIdentfierWithSize that originated the request.
-     * @return true if added. false otherwise
+     * @return true if added. false otherwise.
      */
     bool add_async_get_type_request(
             const SampleIdentity& request,
@@ -265,7 +265,7 @@ private:
     /**
      * Removes a TypeIdentfierWithSize from the async_get_type_callbacks_.
      * @param type_identifier_with_size[in] TypeIdentfierWithSize to be removed.
-     * @return true if removed. false otherwise
+     * @return true if removed, false otherwise.
      */
     bool remove_async_get_type_callback(
             const xtypes::TypeIdentfierWithSize& type_identifier_with_size);
@@ -273,7 +273,7 @@ private:
     /**
      * Removes a SampleIdentity from the async_get_type_callbacks_.
      * @param request[in] SampleIdentity to be removed.
-     * @return true if removed. false otherwise
+     * @return true if removed, false otherwise.
      */
     bool remove_async_get_types_request(
             SampleIdentity request);
@@ -298,8 +298,8 @@ private:
 
     /**
      * Used for request reception. Deserialize the request and check if it is directed to the local DomainParticipant.
-     * @param change[in] CacheChange_t of the request
-     * @param request[out] TypeLookup_Request after deserialization
+     * @param change[in] CacheChange_t of the request.
+     * @param request[out] TypeLookup_Request after deserialization.
      * @return true if the request is deserialized and directed to the local participant, false otherwise.
      */
     bool receive_request(
@@ -308,8 +308,8 @@ private:
 
     /**
      * Used for reply reception. Deserialize and check that the reply's recipient is the local participant.
-     * @param change[in] CacheChange_t of the reply
-     * @param reply[out] TypeLookup_Reply after deserialize
+     * @param change[in] CacheChange_t of the reply.
+     * @param reply[out] TypeLookup_Reply after deserialize.
      * @return true if the request is deserialized and the reply's recipient is us, false otherwise.
      */
     bool receive_reply(
@@ -326,8 +326,8 @@ private:
     }
 
     /**
-     * Create instance name as defined in section 7.6.3.3.4 XTypes 1.3 specification
-     * @param guid[in] GuidPrefix_t to be included in the instance name
+     * Create instance name as defined in section 7.6.3.3.4 XTypes 1.3 specification.
+     * @param guid[in] GuidPrefix_t to be included in the instance name.
      * @return The instance name.
      */
     std::string get_instance_name(
@@ -339,72 +339,72 @@ private:
      */
     bool create_endpoints();
 
-    //!Pointer to the local RTPSParticipant.
+    //! Pointer to the local RTPSParticipant.
     fastrtps::rtps::RTPSParticipantImpl* participant_ = nullptr;
 
-    //!Own instance name
+    //! Own instance name.
     std::string local_instance_name_;
 
-    //!Pointer to the BuiltinProtocols class.
+    //! Pointer to the BuiltinProtocols class.
     fastrtps::rtps::BuiltinProtocols* builtin_protocols_ = nullptr;
 
-    //!Pointer to the RTPSWriter for the TypeLookup_Request.
+    //! Pointer to the RTPSWriter for the TypeLookup_Request.
     fastrtps::rtps::StatefulWriter* builtin_request_writer_ = nullptr;
 
-    //!Pointer to the RTPSReader for the TypeLookup_Request.
+    //! Pointer to the RTPSReader for the TypeLookup_Request.
     fastrtps::rtps::StatefulReader* builtin_request_reader_ = nullptr;
 
-    //!Pointer to the RTPSWriter for the TypeLookup_Reply.
+    //! Pointer to the RTPSWriter for the TypeLookup_Reply.
     fastrtps::rtps::StatefulWriter* builtin_reply_writer_ = nullptr;
 
-    //!Pointer to the RTPSReader for the TypeLookup_Reply.
+    //! Pointer to the RTPSReader for the TypeLookup_Reply.
     fastrtps::rtps::StatefulReader* builtin_reply_reader_ = nullptr;
 
-    //!Pointer to the Writer History of TypeLookup_Request
+    //! Pointer to the Writer History of TypeLookup_Request.
     fastrtps::rtps::WriterHistory* builtin_request_writer_history_ = nullptr;
 
-    //!Pointer to the Writer History of TypeLookup_Reply
+    //! Pointer to the Writer History of TypeLookup_Reply.
     fastrtps::rtps::WriterHistory* builtin_reply_writer_history_ = nullptr;
 
-    //!Pointer to the Reader History of TypeLookup_Request
+    //! Pointer to the Reader History of TypeLookup_Request.
     fastrtps::rtps::ReaderHistory* builtin_request_reader_history_ = nullptr;
 
-    //!Pointer to the Reader History of TypeLookup_Reply
+    //! Pointer to the Reader History of TypeLookup_Reply.
     fastrtps::rtps::ReaderHistory* builtin_reply_reader_history_ = nullptr;
 
-    //!Request Listener object.
+    //! Request Listener object.
     TypeLookupRequestListener* request_listener_ = nullptr;
 
-    //!Reply Listener object.
+    //! Reply Listener object.
     TypeLookupReplyListener* reply_listener_ = nullptr;
 
-    //!Mutex to protect access to temp_reader_proxy_data_ and temp_writer_proxy_data_
+    //! Mutex to protect access to temp_reader_proxy_data_ and temp_writer_proxy_data_.
     std::mutex temp_data_lock_;
 
-    //!Pointer to the temp ReaderProxyData used for assigments
+    //! Pointer to the temp ReaderProxyData used for assigments.
     fastrtps::rtps::ReaderProxyData* temp_reader_proxy_data_ = nullptr;
 
-    //!Pointer to the temp WriterProxyData used for assigments
+    //! Pointer to the temp WriterProxyData used for assigments.
     fastrtps::rtps::WriterProxyData* temp_writer_proxy_data_ = nullptr;
 
     mutable fastrtps::rtps::SequenceNumber_t request_seq_number_;
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
 
-    //!Mutex to protect access to async_get_type_callbacks_ and async_get_type_requests_
+    //! Mutex to protect access to async_get_type_callbacks_ and async_get_type_requests_.
     std::mutex async_get_types_mutex_;
 
-    //!Collection of all the WriterProxyData and their callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
+    //! Collection of all the WriterProxyData and their callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
     std::unordered_map < xtypes::TypeIdentfierWithSize,
             std::vector<std::pair<eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr,
             AsyncGetTypeWriterCallback>>> async_get_type_writer_callbacks_;
 
-    //!Collection of all the ReaderProxyData and their callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
+    //! Collection of all the ReaderProxyData and their callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
     std::unordered_map < xtypes::TypeIdentfierWithSize,
             std::vector<std::pair<eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr,
             AsyncGetTypeReaderCallback>>> async_get_type_reader_callbacks_;
 
-    //!Collection SampleIdentity and the TypeIdentfierWithSize it originated from, hashed by its SampleIdentity.
+    //! Collection SampleIdentity and the TypeIdentfierWithSize it originated from, hashed by its SampleIdentity.
     std::unordered_map<SampleIdentity, xtypes::TypeIdentfierWithSize> async_get_type_requests_;
 };
 
