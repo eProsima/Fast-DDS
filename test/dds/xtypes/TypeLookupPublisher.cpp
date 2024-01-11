@@ -1,4 +1,4 @@
-// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@
 
 #include <chrono>
 #include <fstream>
+#include <iostream>
+#include <map>
+#include <memory>
 #include <string>
 #include <thread>
 
@@ -38,19 +41,11 @@ static int DOMAIN_ID_ = 10;
 
 TypeLookupPublisher::~TypeLookupPublisher()
 {
-    if (nullptr != writer_)
+    for (auto it = known_types_.begin(); it != known_types_.end(); ++it)
     {
-        publisher_->delete_datawriter(writer_);
-    }
-
-    if (nullptr != publisher_)
-    {
-        participant_->delete_publisher(publisher_);
-    }
-
-    if (nullptr != topic_)
-    {
-        participant_->delete_topic(topic_);
+        it->second.publisher_->delete_datawriter(it->second.writer_);
+        participant_->delete_publisher(it->second.publisher_);
+        participant_->delete_topic(it->second.topic_);
     }
 
     if (nullptr != participant_)
@@ -59,63 +54,105 @@ TypeLookupPublisher::~TypeLookupPublisher()
     }
 }
 
-bool TypeLookupPublisher::init()
+bool TypeLookupPublisher::init(
+        std::vector<std::string> known_types)
 {
-    std::cout << "TypeLookupPublisher::init" << std::endl;
-
     participant_ = DomainParticipantFactory::get_instance()
                     ->create_participant(DOMAIN_ID_, PARTICIPANT_QOS_DEFAULT, this);
-
     if (participant_ == nullptr)
     {
         std::cout << "ERROR create_participant" << std::endl;
         return false;
     }
 
-    if (!create_type())
+    for (const auto& type : known_types)
     {
-        std::cout << "ERROR create_type" << std::endl;
-        return false;
+        if (type == "Type1")
+        {
+            if (!create_known_type<Type1, Type1PubSubType>(type))
+            {
+                std::cout << "ERROR create_known_type: " << type << std::endl;
+                return false;
+            }
+        }
+        else if (type == "Type2")
+        {
+            if (!create_known_type<Type2, Type2PubSubType>(type))
+            {
+                std::cout << "ERROR create_known_type: " << type << std::endl;
+                return false;
+            }
+        }
+        else if (type == "Type3")
+        {
+            if (!create_known_type<Type3, Type3PubSubType>(type))
+            {
+                std::cout << "ERROR create_known_type: " << type << std::endl;
+                return false;
+            }
+        }
+        else
+        {
+            std::cout << "ERROR TypeLookupPublisher::init uknown type: " << type << std::endl;
+            return false;
+        }
     }
-
     return true;
 }
 
-bool TypeLookupPublisher::create_type()
+template <typename Type, typename TypePubSubType>
+bool TypeLookupPublisher::create_known_type(
+        const std::string& type)
 {
-
-    auto obj = BasicStruct();
-    type_.reset(new BasicStructPubSubType());
-    type_.register_type(participant_);
-
-
-    //CREATE THE PUBLISHER
-    publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, this);
-    if (publisher_ == nullptr)
+    // Check if the type is already created
+    if (known_types_.find(type) != known_types_.end())
     {
-        std::cout << "ERROR create_publisher" << std::endl;
+        std::cout << "Type " << type << " is already created." << std::endl;
+        return true;
+    }
+
+    // Create a new PubKnownType for the given type
+    PubKnownType a_type;
+    a_type.obj_ = new Type();
+    a_type.type_.reset(new TypePubSubType());
+    a_type.type_.register_type(participant_);
+
+    // CREATE THE PUBLISHER
+    a_type.publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, this);
+    if (a_type.publisher_ == nullptr)
+    {
+        std::cout << "ERROR create_publisher: " << type << std::endl;
         return false;
     }
 
-    //CREATE THE TOPIC
+    // CREATE THE TOPIC
     std::ostringstream topic_name;
-    topic_name << "BasicStructPubSubType" << "_" << asio::ip::host_name() << "_" << DOMAIN_ID_;
-    topic_ = participant_->create_topic(topic_name.str(), type_.get_type_name(), TOPIC_QOS_DEFAULT);
-    if (topic_ == nullptr)
+    topic_name << type << "_" << asio::ip::host_name() << "_" << DOMAIN_ID_;
+    a_type.topic_ = participant_->create_topic(topic_name.str(), a_type.type_.get_type_name(), TOPIC_QOS_DEFAULT);
+    if (a_type.topic_ == nullptr)
     {
-        std::cout << "ERROR create_topic" << std::endl;
+        std::cout << "ERROR create_topic: " << type << std::endl;
         return false;
     }
 
-    //CREATE THE DATAWRITER
-    DataWriterQos wqos = publisher_->get_default_datawriter_qos();
-    writer_ = publisher_->create_datawriter(topic_, wqos, this);
-    if (writer_ == nullptr)
+    // CREATE THE DATAWRITER
+    DataWriterQos wqos = a_type.publisher_->get_default_datawriter_qos();
+    a_type.writer_ = a_type.publisher_->create_datawriter(a_type.topic_, wqos, this);
+    if (a_type.writer_ == nullptr)
     {
         std::cout << "ERROR create_datawriter" << std::endl;
         return false;
     }
 
+    // CREATE CALLBACK
+    a_type.callback_ = [](void* data, int current_sample)
+            {
+                Type* typed_data = static_cast<Type*>(data);
+                typed_data->index(current_sample);
+                typed_data->message("Message" + std::to_string(current_sample));
+            };
+
+    known_types_.emplace(type, a_type);
     return true;
 }
 
@@ -133,26 +170,24 @@ void TypeLookupPublisher::run(
         uint32_t samples)
 {
     uint32_t current_sample = 0;
-    uint16_t index = 0;
     void* sample = nullptr;
 
     while (samples > current_sample)
     {
-        sample = type_.create_data();
+        for (auto it = known_types_.begin(); it != known_types_.end(); ++it)
+        {
+            sample =  it->second.type_.create_data();
 
-        BasicStruct* data = static_cast<BasicStruct*>(sample);
-        data->index(index);
-        data->message("Message" + std::to_string(index));
+            it->second.callback_(sample, current_sample);
 
-        std::cout << "Publisher writting index: " << index << std::endl;
-        writer_->write(sample);
+            std::cout << "Publisher " << it->second.type_.get_type_name() <<
+                " writting sample: " << current_sample << std::endl;
+            it->second.writer_->write(sample);
+            it->second.type_.delete_data(sample);
 
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        }
         ++current_sample;
-        ++index;
-
-        type_.delete_data(sample);
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 }
 

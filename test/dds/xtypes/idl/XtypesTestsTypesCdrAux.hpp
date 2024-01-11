@@ -24,8 +24,14 @@
 
 #include "XtypesTestsTypes.hpp"
 
-constexpr uint32_t BasicStruct_max_cdr_typesize {141UL};
-constexpr uint32_t BasicStruct_max_key_cdr_typesize {0UL};
+constexpr uint32_t Type2_max_cdr_typesize {141UL};
+constexpr uint32_t Type2_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t Type3_max_cdr_typesize {141UL};
+constexpr uint32_t Type3_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t Type1_max_cdr_typesize {141UL};
+constexpr uint32_t Type1_max_key_cdr_typesize {0UL};
 
 
 namespace eprosima {
@@ -36,7 +42,15 @@ class CdrSizeCalculator;
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
-        const BasicStruct& data);
+        const Type1& data);
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const Type2& data);
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const Type3& data);
 
 
 } // namespace fastcdr

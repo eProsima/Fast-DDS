@@ -1,4 +1,4 @@
-// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,19 +39,11 @@ static int DOMAIN_ID_ = 10;
 
 TypeLookupSubscriber::~TypeLookupSubscriber()
 {
-    if (nullptr != reader_)
+    for (auto it = known_types_.begin(); it != known_types_.end(); ++it)
     {
-        subscriber_->delete_datareader(reader_);
-    }
-
-    if (nullptr != subscriber_)
-    {
-        participant_->delete_subscriber(subscriber_);
-    }
-
-    if (nullptr != topic_)
-    {
-        participant_->delete_topic(topic_);
+        it->second.subscriber_->delete_datareader(it->second.reader_);
+        participant_->delete_subscriber(it->second.subscriber_);
+        participant_->delete_topic(it->second.topic_);
     }
 
     if (nullptr != participant_)
@@ -60,41 +52,75 @@ TypeLookupSubscriber::~TypeLookupSubscriber()
     }
 }
 
-bool TypeLookupSubscriber::init()
+bool TypeLookupSubscriber::init(
+        std::vector<std::string> known_types)
 {
-    std::cout << "TypeLookupSubscriber::init" << std::endl;
-
     StatusMask mask = StatusMask::subscription_matched()
             << StatusMask::data_available()
             << StatusMask::liveliness_changed();
 
     participant_ = DomainParticipantFactory::get_instance()
                     ->create_participant(DOMAIN_ID_, PARTICIPANT_QOS_DEFAULT, this, mask);
-
     if (participant_ == nullptr)
     {
         std::cout << "ERROR create_participant" << std::endl;
         return false;
     }
 
-    if (!create_type())
+    for (const auto& type : known_types)
     {
-        std::cout << "ERROR create_type" << std::endl;
-        return false;
+        if (type == "Type1")
+        {
+            if (!create_known_type<Type1, Type1PubSubType>(type))
+            {
+                std::cout << "ERROR create_known_type: " << type << std::endl;
+                return false;
+            }
+        }
+        else if (type == "Type2")
+        {
+            if (!create_known_type<Type2, Type2PubSubType>(type))
+            {
+                std::cout << "ERROR create_known_type: " << type << std::endl;
+                return false;
+            }
+        }
+        else if (type == "Type3")
+        {
+            if (!create_known_type<Type3, Type3PubSubType>(type))
+            {
+                std::cout << "ERROR create_known_type: " << type << std::endl;
+                return false;
+            }
+        }
+        else
+        {
+            std::cout << "ERROR TypeLookupSubscriber::init uknown type: " << type << std::endl;
+            return false;
+        }
     }
-
     return true;
 }
 
-bool TypeLookupSubscriber::create_type()
+template <typename Type, typename TypePubSubType>
+bool TypeLookupSubscriber::create_known_type(
+        const std::string& type)
 {
-    auto obj = BasicStruct();
-    type_.reset(new BasicStructPubSubType());
-    type_.register_type(participant_);
+    // Check if the type is already created
+    if (known_types_.find(type) != known_types_.end())
+    {
+        std::cout << "Type " << type << " is already created." << std::endl;
+        return true;
+    }
+
+    SubKnownType a_type;
+    a_type.obj_ = new Type();
+    a_type.type_.reset(new TypePubSubType());
+    a_type.type_.register_type(participant_);
 
     //CREATE THE SUBSCRIBER
-    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
-    if (subscriber_ == nullptr)
+    a_type.subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+    if (a_type.subscriber_ == nullptr)
     {
         std::cout << "ERROR create_subscriber" << std::endl;
         return false;
@@ -102,29 +128,38 @@ bool TypeLookupSubscriber::create_type()
 
     //CREATE THE TOPIC
     std::ostringstream topic_name;
-    topic_name << "BasicStructPubSubType" << "_" << asio::ip::host_name() << "_" << DOMAIN_ID_;
-    topic_ = participant_->create_topic(topic_name.str(), type_.get_type_name(), TOPIC_QOS_DEFAULT);
-    if (topic_ == nullptr)
+    topic_name << type << "_" << asio::ip::host_name() << "_" << DOMAIN_ID_;
+    a_type.topic_ = participant_->create_topic(topic_name.str(), a_type.type_.get_type_name(), TOPIC_QOS_DEFAULT);
+    if (a_type.topic_ == nullptr)
     {
         std::cout << "ERROR create_topic" << std::endl;
         return false;
     }
 
     //CREATE THE DATAREADER
-    DataReaderQos rqos = subscriber_->get_default_datareader_qos();
-    reader_ = subscriber_->create_datareader(topic_, rqos);
-    if (reader_ == nullptr)
+    DataReaderQos rqos = a_type.subscriber_->get_default_datareader_qos();
+    a_type.reader_ = a_type.subscriber_->create_datareader(a_type.topic_, rqos);
+    if (a_type.reader_ == nullptr)
     {
         std::cout << "ERROR create_datareader" << std::endl;
         return false;
     }
 
+    // CREATE CALLBACK
+    a_type.callback_ = [](void* data)
+            {
+                Type* sample = static_cast<Type*>(data);
+                std::cout <<  "index(" << sample->index() << "), message(" << sample->message() << ")" << std::endl;
+            };
+
+    known_types_.emplace(type, a_type);
     return true;
 }
 
-bool TypeLookupSubscriber::run()
+bool TypeLookupSubscriber::run(
+        int seconds)
 {
-    return run_for(std::chrono::seconds(30));
+    return run_for(std::chrono::seconds(seconds));
 }
 
 bool TypeLookupSubscriber::run_for(
@@ -135,12 +170,12 @@ bool TypeLookupSubscriber::run_for(
     std::unique_lock<std::mutex> lock(mutex_);
     returned_value = cv_.wait_for(lock, timeout, [&]
                     {
-                        if (publishers_ < number_samples_.size())
+                        if (known_types_.size() < number_samples_.size())
                         {
                             // Will fail later.
                             return true;
                         }
-                        else if (publishers_ > number_samples_.size())
+                        else if (known_types_.size() > number_samples_.size())
                         {
                             return false;
                         }
@@ -156,9 +191,9 @@ bool TypeLookupSubscriber::run_for(
                         return true;
                     });
 
-    if (publishers_ < number_samples_.size())
+    if (known_types_.size() < number_samples_.size())
     {
-        std::cout << "ERROR: detected more than " << publishers_ << " publishers" << std::endl;
+        std::cout << "ERROR: detected more than " << known_types_.size() << " publishers" << std::endl;
         returned_value = false;
     }
 
@@ -190,15 +225,19 @@ void TypeLookupSubscriber::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    BasicStruct sample;
-    if (reader->take_next_sample((void*)&sample, &info) == RETCODE_OK)
+    void* sample_data = known_types_[reader->type().get_type_name()].obj_;
+
+    if (reader->take_next_sample(sample_data, &info) == RETCODE_OK)
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
-            std::unique_lock<std::mutex> lock(mutex_);
-            std::cout << "Received sample (" << info.sample_identity.writer_guid().guidPrefix << " - " <<
-                info.sample_identity.sequence_number() << "): index(" << sample.index() << "), message("
-                      << sample.message() << ")" << std::endl;
+
+            std::cout << "Subscriber " << reader->type().get_type_name() <<
+                " received sample: " << info.sample_identity.sequence_number() << " -> ";
+
+            // Call the callback function to process the received data
+            known_types_[reader->type().get_type_name()].callback_(sample_data);
+
             if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
             {
                 cv_.notify_all();

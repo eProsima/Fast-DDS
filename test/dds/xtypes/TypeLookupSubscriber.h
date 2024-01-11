@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
@@ -36,6 +37,19 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+
+struct SubKnownType
+{
+    TypeSupport type_;
+    void* obj_;
+    void* type_sup_;
+    Subscriber* subscriber_ = nullptr;
+    DataReader* reader_ = nullptr;
+    Topic* topic_ = nullptr;
+
+    std::function<void(void* data)> callback_;
+};
+
 class TypeLookupSubscriber
     : public DomainParticipantListener
 {
@@ -47,11 +61,15 @@ public:
 
     ~TypeLookupSubscriber();
 
-    bool init();
+    bool init(
+            std::vector<std::string> known_types);
 
-    bool create_type();
+    template <typename Type, typename TypePubSubType>
+    bool create_known_type(
+            const std::string& type);
 
-    bool run();
+    bool run(
+            int seconds);
 
     bool run_for(
             const std::chrono::milliseconds& timeout);
@@ -68,15 +86,12 @@ private:
     std::mutex mutex_;
     std::condition_variable cv_;
     unsigned int matched_ = 0;
-    const uint32_t publishers_ = 1;
     const uint32_t max_number_samples_ = 10;
     std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> number_samples_;
     bool run_ = true;
     DomainParticipant* participant_ = nullptr;
-    TypeSupport type_;
-    Subscriber* subscriber_ = nullptr;
-    DataReader* reader_ = nullptr;
-    Topic* topic_ = nullptr;
+
+    std::map<std::string, SubKnownType> known_types_;
 };
 
 } // dds

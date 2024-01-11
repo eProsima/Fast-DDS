@@ -2,10 +2,25 @@
     "description": "Simple test to communicate a publisher and a subscriber with default values",
     "participants": [
         {
-            "kind": "subscriber"
+            "kind": "subscriber",
+            "known_types": [
+                "Type1",
+                "Type2"
+            ]
         },
         {
-            "kind": "publisher"
+            "kind": "publisher",
+            "known_types": [
+                "Type1",
+                "Type2"
+            ]
+        },
+        {
+            "kind": "publisher",
+            "known_types": [
+                "Type1",
+                "Type2"
+            ]
         }
     ]
 }
