@@ -427,7 +427,7 @@ bool MonitorService::write_status(
 
                 if (status_retrieved)
                 {
-                    status_data.status_kind(i);
+                    status_data.status_kind(static_cast<StatusKind::StatusKind>(i));
                     status_data.value(data);
                     add_change(status_data, false);
                 }
