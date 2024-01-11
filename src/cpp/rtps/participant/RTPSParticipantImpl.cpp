@@ -23,6 +23,7 @@
 #include <mutex>
 #include <sstream>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
@@ -68,7 +69,7 @@
 #include <utils/string_utilities.hpp>
 
 #ifdef FASTDDS_STATISTICS
-#include <statistics/types/monitorservice_types.h>
+#include <statistics/types/monitorservice_types.hpp>
 #include <statistics/rtps/monitor-service/MonitorService.hpp>
 #endif // ifdef FASTDDS_STATISTICS
 
@@ -2891,7 +2892,7 @@ RTPSParticipantImpl::get_entity_connections(
         {
             fastdds::statistics::Connection connection;
             connection.guid(fastdds::statistics::to_statistics_type((*pit)->m_guid));
-            connection.mode(fastdds::statistics::TRANSPORT);
+            connection.mode(fastdds::statistics::ConnectionMode::TRANSPORT);
 
             std::vector<fastdds::statistics::detail::Locator_s> statistic_locators;
             statistic_locators.reserve((*pit)->metatraffic_locators.multicast.size() +

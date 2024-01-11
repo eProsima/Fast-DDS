@@ -23,6 +23,8 @@
 #include <vector>
 
 #include <asio.hpp>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>

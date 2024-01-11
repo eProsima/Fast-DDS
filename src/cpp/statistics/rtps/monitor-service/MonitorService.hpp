@@ -36,7 +36,7 @@
 
 #include <rtps/history/ITopicPayloadPool.h>
 #include <statistics/rtps/monitor-service/MonitorServiceListener.hpp>
-#include <statistics/types/monitorservice_types.h>
+#include <statistics/types/monitorservice_types.hpp>
 #include <statistics/types/monitorservice_typesPubSubTypes.h>
 
 namespace eprosima {
@@ -171,7 +171,7 @@ private:
      */
     bool write_status(
             const fastrtps::rtps::EntityId_t& entity_id,
-            const std::bitset<STATUSES_SIZE>& changed_statuses,
+            const std::bitset<StatusKind::STATUSES_SIZE>& changed_statuses,
             const bool& entity_disposed);
 
     /**
@@ -237,7 +237,7 @@ private:
     //! inserted twice.
     std::map<fastrtps::rtps::EntityId_t,
             std::pair<
-                std::bitset<statistics::STATUSES_SIZE>, bool>> local_entities_;
+                std::bitset<StatusKind::STATUSES_SIZE>, bool>> local_entities_;
 
     std::unique_ptr<fastrtps::rtps::TimedEvent> event_;
 

@@ -195,7 +195,7 @@ bool StringSTypeDefnPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -385,7 +385,7 @@ bool StringLTypeDefnPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -575,7 +575,7 @@ bool PlainCollectionHeaderPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -765,7 +765,7 @@ bool PlainSequenceSElemDefnPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -955,7 +955,7 @@ bool PlainSequenceLElemDefnPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -1145,7 +1145,7 @@ bool PlainArraySElemDefnPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -1335,7 +1335,7 @@ bool PlainArrayLElemDefnPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -1525,7 +1525,7 @@ bool PlainMapSTypeDefnPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -1715,7 +1715,7 @@ bool PlainMapLTypeDefnPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -2092,8 +2092,8 @@ bool ExtendedTypeDefnPubSubType::serialize(
 #if FASTCDR_VERSION_MAJOR > 1
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -2288,8 +2288,8 @@ bool ExtendedAnnotationParameterValuePubSubType::serialize(
 #if FASTCDR_VERSION_MAJOR > 1
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -2865,7 +2865,7 @@ bool AppliedVerbatimAnnotationPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -3245,7 +3245,7 @@ bool CommonStructMemberPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -3435,7 +3435,7 @@ bool CompleteMemberDetailPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -3625,7 +3625,7 @@ bool MinimalMemberDetailPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -4387,7 +4387,7 @@ bool MinimalTypeDetailPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -4577,7 +4577,7 @@ bool CompleteTypeDetailPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -5147,7 +5147,7 @@ bool CompleteStructTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -5337,7 +5337,7 @@ bool MinimalStructTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -5529,7 +5529,7 @@ bool CommonUnionMemberPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -6103,7 +6103,7 @@ bool CommonDiscriminatorMemberPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -7053,7 +7053,7 @@ bool CompleteUnionTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -7243,7 +7243,7 @@ bool MinimalUnionTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -7433,7 +7433,7 @@ bool CommonAnnotationParameterPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -8385,7 +8385,7 @@ bool CompleteAnnotationTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -8575,7 +8575,7 @@ bool MinimalAnnotationTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -8765,7 +8765,7 @@ bool CommonAliasBodyPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -9713,7 +9713,7 @@ bool CompleteAliasTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -9903,7 +9903,7 @@ bool MinimalAliasTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -10093,7 +10093,7 @@ bool CompleteElementDetailPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -10283,7 +10283,7 @@ bool CommonCollectionElementPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -10853,7 +10853,7 @@ bool CommonCollectionHeaderPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -11423,7 +11423,7 @@ bool CompleteSequenceTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -11613,7 +11613,7 @@ bool MinimalSequenceTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -11803,7 +11803,7 @@ bool CommonArrayHeaderPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -12563,7 +12563,7 @@ bool MinimalArrayTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -12753,7 +12753,7 @@ bool CompleteMapTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -12943,7 +12943,7 @@ bool MinimalMapTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -13709,7 +13709,7 @@ bool CommonEnumeratedHeaderPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -14279,7 +14279,7 @@ bool CompleteEnumeratedTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -14469,7 +14469,7 @@ bool MinimalEnumeratedTypePubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -14659,7 +14659,7 @@ bool CommonBitflagPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -15233,7 +15233,7 @@ bool CommonBitmaskHeaderPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -15807,7 +15807,7 @@ bool CommonBitfieldPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -17136,8 +17136,8 @@ bool CompleteExtendedTypePubSubType::serialize(
 #if FASTCDR_VERSION_MAJOR > 1
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -17326,8 +17326,8 @@ bool MinimalExtendedTypePubSubType::serialize(
 #if FASTCDR_VERSION_MAJOR > 1
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -17525,7 +17525,7 @@ bool TypeIdentifierTypeObjectPairPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -17717,7 +17717,7 @@ bool TypeIdentifierPairPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -18292,8 +18292,8 @@ bool TypeInformationPubSubType::serialize(
 #if FASTCDR_VERSION_MAJOR > 1
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try

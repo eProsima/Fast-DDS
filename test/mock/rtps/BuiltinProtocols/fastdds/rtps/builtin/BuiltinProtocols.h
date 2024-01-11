@@ -22,6 +22,8 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -46,7 +48,6 @@ public:
         : mp_participantImpl(nullptr)
         , mp_PDP(nullptr)
         , mp_WLP(nullptr)
-        , tlm_(nullptr)
     {
     }
 
@@ -76,8 +77,8 @@ public:
     //!Pointer to the WLP
     WLP* mp_WLP;
 
-    //!Pointer to the TypeLookupManager
-    fastdds::dds::builtin::TypeLookupManager* tlm_;
+    //! TypeLookupManager
+    fastdds::dds::builtin::TypeLookupManager typelookup_manager_;
 
 };
 

@@ -48,6 +48,10 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/RTPSDomainImpl.hpp>
 
+#ifdef FASTDDS_STATISTICS
+#include <statistics/types/monitorservice_types.hpp>
+#endif // ifdef FASTDDS_STATISTICS
+
 #include "../builtin/discovery/database/DiscoveryDataBase.hpp"
 
 #include "../flowcontrol/FlowController.hpp"
@@ -2220,7 +2224,7 @@ bool StatefulWriter::get_connections(
         for_matched_readers(matched_local_readers_, [&connection, &connection_list](ReaderProxy*& reader)
                 {
                     connection.guid(fastdds::statistics::to_statistics_type(reader->guid()));
-                    connection.mode(fastdds::statistics::INTRAPROCESS);
+                    connection.mode(fastdds::statistics::ConnectionMode::INTRAPROCESS);
                     connection_list.push_back(connection);
 
                     return false;
@@ -2234,7 +2238,7 @@ bool StatefulWriter::get_connections(
         for_matched_readers(matched_datasharing_readers_, [&connection, &connection_list](ReaderProxy*& reader)
                 {
                     connection.guid(fastdds::statistics::to_statistics_type(reader->guid()));
-                    connection.mode(fastdds::statistics::DATA_SHARING);
+                    connection.mode(fastdds::statistics::ConnectionMode::DATA_SHARING);
                     connection_list.push_back(connection);
 
                     return false;
@@ -2268,7 +2272,7 @@ bool StatefulWriter::get_connections(
                     });
 
                     connection.guid(fastdds::statistics::to_statistics_type(reader->guid()));
-                    connection.mode(fastdds::statistics::TRANSPORT);
+                    connection.mode(fastdds::statistics::ConnectionMode::TRANSPORT);
                     connection.announced_locators(statistics_locators);
                     connection.used_locators(statistics_locators);
                     connection_list.push_back(connection);

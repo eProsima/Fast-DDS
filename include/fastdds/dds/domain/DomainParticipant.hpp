@@ -40,8 +40,6 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/TypeIdentifier.h>
 
 namespace dds {
 namespace domain {
