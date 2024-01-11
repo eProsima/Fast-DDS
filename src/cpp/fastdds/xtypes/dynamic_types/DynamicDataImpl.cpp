@@ -20,6 +20,7 @@
 #include <fastcdr/Cdr.h>
 #include <fastcdr/CdrSizeCalculator.hpp>
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 
 #include "DynamicTypeMemberImpl.hpp"
@@ -591,6 +592,16 @@ uint32_t DynamicDataImpl::get_item_count() noexcept
     {
         traits<DynamicTypeImpl>::ref_type type_impl = traits<DynamicType>::narrow<DynamicTypeImpl>(type_);
         return type_impl->get_descriptor().bound().size();
+    }
+    else if (TK_STRING8 == type_->get_kind())
+    {
+        assert(1 == value_.size());
+        return std::static_pointer_cast<std::string>(value_.begin()->second)->length();
+    }
+    else if (TK_STRING16 == type_->get_kind())
+    {
+        assert(1 == value_.size());
+        return std::static_pointer_cast<std::wstring>(value_.begin()->second)->length();
     }
     else
     {
@@ -2269,19 +2280,18 @@ ReturnCode_t DynamicDataImpl::set_string_value(
     {
         if (TK_STRING8 == type_->get_kind() && MEMBER_ID_INVALID == id)
         {
-            //TODO(richiware)if (value.length() <= type_->get_bounds())
+            auto bound = type_->get_descriptor().bound().at(0);
+            if (0 == bound || value.length() <= bound)
             {
                 *std::static_pointer_cast<std::string>(it->second) = value;
                 return RETCODE_OK;
             }
-            /*TODO(richiware)
-               else
-               {
+            else
+            {
                 EPROSIMA_LOG_ERROR(DYN_TYPES,
                         "Error setting string value. The given string is greater than the length limit.");
                 return RETCODE_BAD_PARAMETER;
-               }
-             */
+            }
         }
         else if (MEMBER_ID_INVALID != id)
         {
@@ -2358,19 +2368,18 @@ ReturnCode_t DynamicDataImpl::set_wstring_value(
     {
         if (TK_STRING16 == type_->get_kind() && id == MEMBER_ID_INVALID)
         {
-            //TODO(richiware)if (value.length() <= type_->get_bounds())
+            auto bound = type_->get_descriptor().bound().at(0);
+            if (0 == bound || value.length() <= bound)
             {
                 *std::static_pointer_cast<std::wstring>(it->second) = value;
                 return RETCODE_OK;
             }
-            /*TODO(richiware)
-               else
-               {
+            else
+            {
                 EPROSIMA_LOG_ERROR(DYN_TYPES,
                         "Error setting wstring value. The given string is greater than the length limit.");
                 return RETCODE_BAD_PARAMETER;
-               }
-             */
+            }
         }
         else if (MEMBER_ID_INVALID != id)
         {
@@ -3164,7 +3173,7 @@ bool DynamicDataImpl::deserialize(
         case TK_STRUCTURE:
         {
             cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-                    eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 : //TODO(richiware) get extensibility
+                    eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :     //TODO(richiware) get extensibility
                     eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
                     [&](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
                     {
@@ -3329,7 +3338,8 @@ bool DynamicDataImpl::deserialize(
          */
         case TK_ALIAS:
             assert(type->get_descriptor().base_type());
-            return deserialize(cdr, traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()));
+            return deserialize(cdr,
+                           traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()));
         default:
             break;
     }
@@ -3381,7 +3391,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
             calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<float>(
                                 it->second), current_alignment);
             break;
-        case TK_CHAR16: // WCHARS NEED 32 Bits on Linux & MacOS
+        case TK_CHAR16:     // WCHARS NEED 32 Bits on Linux & MacOS
             calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<wchar_t>(
                                 it->second), current_alignment);
             break;
@@ -3434,7 +3444,9 @@ size_t DynamicDataImpl::calculate_serialized_size(
                                 it->second), current_alignment);
             break;
         case TK_STRING16:
-            calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<std::wstring>(it->second),
+            calculated_size =
+                    calculator.calculate_serialized_size(*std::static_pointer_cast<std::wstring>(
+                                it->second),
                             current_alignment);
             break;
         /*TODO(richiware)
