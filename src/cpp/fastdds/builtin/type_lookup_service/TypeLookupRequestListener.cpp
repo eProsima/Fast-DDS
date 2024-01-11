@@ -44,14 +44,16 @@ namespace fastdds {
 namespace dds {
 namespace builtin {
 
-const int MAX_DEPENDENCIES_PER_REQUEST = 100;
+//! Constant that specifies the maximum number of dependent types to be included per reply.
+//! This number is calculated considering the MTU.
+const int MAX_DEPENDENCIES_PER_REPLY = 75;
 
 /**
  * @brief Calculates the opaque value of continuation point.
  * @param continuation_point[in] The continuation point.
  * @return The value of the continuation_point.
  */
-size_t calculate_continuation_point(
+inline size_t calculate_continuation_point(
         const std::vector<uint8_t>& continuation_point)
 {
     size_t result = 0;
@@ -67,7 +69,7 @@ size_t calculate_continuation_point(
  * @param value[in] The desired value.
  * @return The continuation_point.
  */
-std::vector<uint8_t> create_continuation_point(
+inline std::vector<uint8_t> create_continuation_point(
         int value)
 {
     std::vector<uint8_t> continuation_point(32, 0);
@@ -106,6 +108,7 @@ void TypeLookupRequestListener::check_get_types_request(
         const TypeLookup_getTypes_In& request)
 {
     TypeLookup_getTypes_Out out;
+    // Iterate through requested type_ids
     for (const xtypes::TypeIdentifier& type_id : request.type_ids())
     {
         xtypes::TypeObject obj;
@@ -115,9 +118,11 @@ void TypeLookupRequestListener::check_get_types_request(
             xtypes::TypeIdentifierTypeObjectPair pair;
             pair.type_identifier(type_id);
             pair.type_object(obj);
+            // Add the pair to the result
             out.types().push_back(std::move(pair));
         }
     }
+    // Create and send the reply
     TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
     TypeLookup_getTypes_Result result;
     result.result(out);
@@ -133,7 +138,7 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
         const TypeLookup_getTypeDependencies_In& request)
 {
     std::unordered_set<xtypes::TypeIdentfierWithSize> type_dependencies;
-    ReturnCode_t result;
+    ReturnCode_t type_dependencies_result;
     // Check if the received request has been done before and needed a continuation point
     {
         std::lock_guard<std::mutex> lock(requests_with_continuation_mutex_);
@@ -142,27 +147,27 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
         {
             // Get the dependencies without chechking the registry
             type_dependencies = requests_it->second;
-            result = RETCODE_OK;
+            type_dependencies_result = RETCODE_OK;
         }
         else
         {
             // Get the dependencies from the registry
-            result = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+            type_dependencies_result = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                             get_type_dependencies(request.type_ids(), type_dependencies);
 
-            // If there are too many dependent types, store the result for future requests
-            if (result == RETCODE_OK && type_dependencies.size() > MAX_DEPENDENCIES_PER_REQUEST)
+            // If there are too many dependent types, store the type dependencies for future requests
+            if (type_dependencies_result == RETCODE_OK && type_dependencies.size() > MAX_DEPENDENCIES_PER_REPLY)
             {
                 requests_with_continuation_.emplace(request.type_ids(), type_dependencies);
             }
         }
     }
 
-    if (RETCODE_OK == result)
+    if (RETCODE_OK == type_dependencies_result)
     {
-        TypeLookup_getTypeDependencies_Out out =
-                prepare_dependent_types(request.type_ids(), type_dependencies, request.continuation_point());
-
+        // Prepare and send the reply
+        TypeLookup_getTypeDependencies_Out out = prepare_get_type_dependencies_response(
+            request.type_ids(), type_dependencies, request.continuation_point());
         TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
         TypeLookup_getTypeDependencies_Result result;
         result.result(out);
@@ -174,34 +179,37 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
     }
 }
 
-TypeLookup_getTypeDependencies_Out TypeLookupRequestListener::prepare_dependent_types(
+TypeLookup_getTypeDependencies_Out TypeLookupRequestListener::prepare_get_type_dependencies_response(
         const xtypes::TypeIdentifierSeq& id_seq,
         const std::unordered_set<xtypes::TypeIdentfierWithSize>& type_dependencies,
         const std::vector<uint8_t>& continuation_point)
 {
     TypeLookup_getTypeDependencies_Out out;
-
     std::vector<xtypes::TypeIdentfierWithSize> dependent_types;
-    if (type_dependencies.size() < MAX_DEPENDENCIES_PER_REQUEST)
+
+    // Check if all dependencies can be sent in a single response
+    if (type_dependencies.size() < MAX_DEPENDENCIES_PER_REPLY)
     {
         std::copy(type_dependencies.begin(), type_dependencies.end(), std::back_inserter(dependent_types));
     }
     else
     {
         size_t start_index = 0;
+        // Check if a continuation point is provided, and calculate starting point if there is
         if (!continuation_point.empty())
         {
-            start_index = calculate_continuation_point(continuation_point) * MAX_DEPENDENCIES_PER_REQUEST;
+            start_index = calculate_continuation_point(continuation_point) * MAX_DEPENDENCIES_PER_REPLY;
         }
 
+        // Copy the dependencies within the specified range
         auto start_it = std::next(type_dependencies.begin(), start_index);
-        auto end_it = std::next(start_it, std::min<size_t>(MAX_DEPENDENCIES_PER_REQUEST,
+        auto end_it = std::next(start_it, std::min<size_t>(MAX_DEPENDENCIES_PER_REPLY,
                         type_dependencies.size() - start_index));
         std::copy(start_it, end_it, std::back_inserter(dependent_types));
 
-        if ((start_index + MAX_DEPENDENCIES_PER_REQUEST) > type_dependencies.size())
+        if ((start_index + MAX_DEPENDENCIES_PER_REPLY) > type_dependencies.size())
         {
-            // Is all dependent types have been sent, remove from map
+            // If all dependent types have been sent, remove from map
             std::lock_guard<std::mutex> lock(requests_with_continuation_mutex_);
             auto requests_it = requests_with_continuation_.find(id_seq);
             if (requests_it != requests_with_continuation_.end())
@@ -211,10 +219,12 @@ TypeLookup_getTypeDependencies_Out TypeLookupRequestListener::prepare_dependent_
         }
         else
         {
+            // Set the continuation point for the next request
             out.continuation_point(create_continuation_point(calculate_continuation_point(continuation_point) + 1));
         }
     }
 
+    // Set the dependent types in the reply
     out.dependent_typeids(dependent_types);
 
     return out;
@@ -226,13 +236,16 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
 {
     CacheChange_t* change = const_cast<CacheChange_t*>(changeIN);
 
+    // Check if the data is received from the expected TypeLookup Request writer
     if (change->writerGUID.entityId != c_EntityId_TypeLookup_request_writer)
     {
+        // Log a warning and remove the change from the history
         EPROSIMA_LOG_WARNING(TL_REQUEST_READER, "Received data from a bad endpoint.");
         reader->getHistory()->remove_change(change);
     }
-
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Received new cache change");
+
+    // Process the received TypeLookup Request and handle different types of requests
     TypeLookup_Request request;
     if (typelookup_manager_->receive_request(*change, request))
     {
@@ -243,7 +256,6 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                 std::async(std::launch::async,
                         &TypeLookupRequestListener::check_get_types_request, this,
                         request.header().requestId(), request.data().getTypes());
-
                 break;
             }
             case TypeLookup_getDependencies_HashId:
@@ -251,13 +263,14 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                 std::async(std::launch::async,
                         &TypeLookupRequestListener::check_get_type_dependencies_request, this,
                         request.header().requestId(), request.data().getTypeDependencies());
-
                 break;
             }
             default:
                 break;
         }
     }
+
+    // Remove the processed cache change from the history
     reader->getHistory()->remove_change(change);
 }
 
