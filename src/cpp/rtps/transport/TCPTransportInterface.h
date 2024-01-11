@@ -73,13 +73,13 @@ class TCPTransportInterface : public TransportInterface
     };
 
     std::atomic<bool> alive_;
-    std::shared_ptr<asio::ip::tcp::socket> initial_peer_local_locator_socket_;
 
 protected:
 
     std::vector<fastrtps::rtps::IPFinder::info_IP> current_interfaces_;
     asio::io_service io_service_;
     asio::io_service io_service_timers_;
+    std::shared_ptr<asio::ip::tcp::socket> initial_peer_local_locator_socket_;
     Locator initial_peer_local_locator_;
 
 #if TLS_FOUND

@@ -414,7 +414,7 @@ bool TCPTransportInterface::init(
        This process ensures uniqueness in the server's channel resources mapping, which uses client locators as keys.
        Although differing from the real client socket local port, provides a reliable mapping mechanism.
      */
-    initial_peer_local_locator_socket_.reset(new asio::ip::tcp::socket(io_service_));
+    initial_peer_local_locator_socket_ = std::make_shared<asio::ip::tcp::socket>(io_service_);
     initial_peer_local_locator_socket_->open(generate_protocol());
 
     // Binding to port 0 delegates the port selection to the system.

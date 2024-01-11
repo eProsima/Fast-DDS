@@ -247,7 +247,7 @@ TEST_F(TCPv6Tests, client_announced_local_port_uniqueness)
     ASSERT_TRUE(sendTransportUnderTest_2.OpenOutputChannel(send_resource_list_2, outputLocator));
     ASSERT_FALSE(send_resource_list_2.empty());
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     ASSERT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2);
 }
