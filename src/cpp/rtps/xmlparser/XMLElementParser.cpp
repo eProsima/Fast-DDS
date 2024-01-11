@@ -57,7 +57,13 @@ static std::string process_environment(
         {
             std::string var_name = match[1];
             std::string value;
-            if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(var_name, value))
+            if (var_name == "_")
+            {
+                // Silently ignore ${_} since it might expose sensitive information (full path to executable).
+                ret_val = match.prefix().str() + match.suffix().str();
+                EPROSIMA_LOG_WARNING(XMLPARSER, "Ignoring environment variable ${_}");
+            }
+            else if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(var_name, value))
             {
                 ret_val = match.prefix().str() + value + match.suffix().str();
             }
