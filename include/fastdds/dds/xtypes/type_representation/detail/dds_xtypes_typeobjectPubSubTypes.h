@@ -132,6 +132,39 @@ typedef eprosima::fastdds::dds::xtypes::TypeFlag BitsetTypeFlag;
 
 
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct StringSTypeDefn_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct StringSTypeDefn_f
+{
+    typedef eprosima::fastdds::dds::xtypes::SBound StringSTypeDefn::* type;
+    friend constexpr type get(
+            StringSTypeDefn_f);
+};
+
+template struct StringSTypeDefn_rob<StringSTypeDefn_f, &StringSTypeDefn::m_bound>;
+
+template <typename T, typename Tag>
+inline size_t constexpr StringSTypeDefn_offset_of()
+{
+    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 /*!
  * @brief This class represents the TopicDataType of the type StringSTypeDefn defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -193,14 +226,20 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return is_plain_xcdrv1_impl();
     }
 
     eProsima_user_DllExport inline bool is_plain(
         eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        static_cast<void>(data_representation);
-        return false;
+        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        {
+            return is_plain_xcdrv2_impl();
+        }
+        else
+        {
+            return is_plain_xcdrv1_impl();
+        }
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -209,8 +248,8 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        static_cast<void>(memory);
-        return false;
+        new (memory) StringSTypeDefn();
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -218,8 +257,57 @@ public:
     MD5 m_md5;
     unsigned char* m_keyBuffer;
 
+private:
+
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return 1ULL ==
+               (detail::StringSTypeDefn_offset_of<StringSTypeDefn, detail::StringSTypeDefn_f>() +
+               sizeof(eprosima::fastdds::dds::xtypes::SBound));
+    }
+
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return 1ULL ==
+               (detail::StringSTypeDefn_offset_of<StringSTypeDefn, detail::StringSTypeDefn_f>() +
+               sizeof(eprosima::fastdds::dds::xtypes::SBound));
+    }
+
 };
 
+
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct StringLTypeDefn_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct StringLTypeDefn_f
+{
+    typedef eprosima::fastdds::dds::xtypes::LBound StringLTypeDefn::* type;
+    friend constexpr type get(
+            StringLTypeDefn_f);
+};
+
+template struct StringLTypeDefn_rob<StringLTypeDefn_f, &StringLTypeDefn::m_bound>;
+
+template <typename T, typename Tag>
+inline size_t constexpr StringLTypeDefn_offset_of()
+{
+    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
 
 
 /*!
@@ -283,14 +371,20 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return is_plain_xcdrv1_impl();
     }
 
     eProsima_user_DllExport inline bool is_plain(
         eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        static_cast<void>(data_representation);
-        return false;
+        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        {
+            return is_plain_xcdrv2_impl();
+        }
+        else
+        {
+            return is_plain_xcdrv1_impl();
+        }
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -299,14 +393,30 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        static_cast<void>(memory);
-        return false;
+        new (memory) StringLTypeDefn();
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
+private:
+
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return 4ULL ==
+               (detail::StringLTypeDefn_offset_of<StringLTypeDefn, detail::StringLTypeDefn_f>() +
+               sizeof(eprosima::fastdds::dds::xtypes::LBound));
+    }
+
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return 4ULL ==
+               (detail::StringLTypeDefn_offset_of<StringLTypeDefn, detail::StringLTypeDefn_f>() +
+               sizeof(eprosima::fastdds::dds::xtypes::LBound));
+    }
 
 };
 
@@ -1758,6 +1868,39 @@ public:
 
 
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct MinimalMemberDetail_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct MinimalMemberDetail_f
+{
+    typedef eprosima::fastdds::dds::xtypes::NameHash MinimalMemberDetail::* type;
+    friend constexpr type get(
+            MinimalMemberDetail_f);
+};
+
+template struct MinimalMemberDetail_rob<MinimalMemberDetail_f, &MinimalMemberDetail::m_name_hash>;
+
+template <typename T, typename Tag>
+inline size_t constexpr MinimalMemberDetail_offset_of()
+{
+    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 /*!
  * @brief This class represents the TopicDataType of the type MinimalMemberDetail defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -1819,14 +1962,20 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return is_plain_xcdrv1_impl();
     }
 
     eProsima_user_DllExport inline bool is_plain(
         eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        static_cast<void>(data_representation);
-        return false;
+        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        {
+            return is_plain_xcdrv2_impl();
+        }
+        else
+        {
+            return is_plain_xcdrv1_impl();
+        }
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1835,14 +1984,30 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        static_cast<void>(memory);
-        return false;
+        new (memory) MinimalMemberDetail();
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
+private:
+
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return 4ULL ==
+               (detail::MinimalMemberDetail_offset_of<MinimalMemberDetail, detail::MinimalMemberDetail_f>() +
+               sizeof(eprosima::fastdds::dds::xtypes::NameHash));
+    }
+
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return 4ULL ==
+               (detail::MinimalMemberDetail_offset_of<MinimalMemberDetail, detail::MinimalMemberDetail_f>() +
+               sizeof(eprosima::fastdds::dds::xtypes::NameHash));
+    }
 
 };
 
@@ -2179,14 +2344,20 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return is_plain_xcdrv1_impl();
     }
 
     eProsima_user_DllExport inline bool is_plain(
         eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        static_cast<void>(data_representation);
-        return false;
+        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        {
+            return is_plain_xcdrv2_impl();
+        }
+        else
+        {
+            return is_plain_xcdrv1_impl();
+        }
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2195,14 +2366,26 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        static_cast<void>(memory);
-        return false;
+        new (memory) MinimalTypeDetail();
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
+private:
+
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return true;
+    }
+
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return true;
+    }
 
 };
 
@@ -5179,6 +5362,39 @@ public:
 
 
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct CommonCollectionHeader_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct CommonCollectionHeader_f
+{
+    typedef eprosima::fastdds::dds::xtypes::LBound CommonCollectionHeader::* type;
+    friend constexpr type get(
+            CommonCollectionHeader_f);
+};
+
+template struct CommonCollectionHeader_rob<CommonCollectionHeader_f, &CommonCollectionHeader::m_bound>;
+
+template <typename T, typename Tag>
+inline size_t constexpr CommonCollectionHeader_offset_of()
+{
+    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 /*!
  * @brief This class represents the TopicDataType of the type CommonCollectionHeader defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -5240,14 +5456,20 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return is_plain_xcdrv1_impl();
     }
 
     eProsima_user_DllExport inline bool is_plain(
         eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        static_cast<void>(data_representation);
-        return false;
+        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        {
+            return is_plain_xcdrv2_impl();
+        }
+        else
+        {
+            return is_plain_xcdrv1_impl();
+        }
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -5256,14 +5478,30 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        static_cast<void>(memory);
-        return false;
+        new (memory) CommonCollectionHeader();
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
+private:
+
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return 4ULL ==
+               (detail::CommonCollectionHeader_offset_of<CommonCollectionHeader, detail::CommonCollectionHeader_f>() +
+               sizeof(eprosima::fastdds::dds::xtypes::LBound));
+    }
+
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return 4ULL ==
+               (detail::CommonCollectionHeader_offset_of<CommonCollectionHeader, detail::CommonCollectionHeader_f>() +
+               sizeof(eprosima::fastdds::dds::xtypes::LBound));
+    }
 
 };
 
@@ -6532,6 +6770,39 @@ typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral> Mi
 
 
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct CommonEnumeratedHeader_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct CommonEnumeratedHeader_f
+{
+    typedef eprosima::fastdds::dds::xtypes::BitBound CommonEnumeratedHeader::* type;
+    friend constexpr type get(
+            CommonEnumeratedHeader_f);
+};
+
+template struct CommonEnumeratedHeader_rob<CommonEnumeratedHeader_f, &CommonEnumeratedHeader::m_bit_bound>;
+
+template <typename T, typename Tag>
+inline size_t constexpr CommonEnumeratedHeader_offset_of()
+{
+    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 /*!
  * @brief This class represents the TopicDataType of the type CommonEnumeratedHeader defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -6593,14 +6864,20 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return is_plain_xcdrv1_impl();
     }
 
     eProsima_user_DllExport inline bool is_plain(
         eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        static_cast<void>(data_representation);
-        return false;
+        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        {
+            return is_plain_xcdrv2_impl();
+        }
+        else
+        {
+            return is_plain_xcdrv1_impl();
+        }
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -6609,14 +6886,30 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        static_cast<void>(memory);
-        return false;
+        new (memory) CommonEnumeratedHeader();
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
+private:
+
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return 2ULL ==
+               (detail::CommonEnumeratedHeader_offset_of<CommonEnumeratedHeader, detail::CommonEnumeratedHeader_f>() +
+               sizeof(eprosima::fastdds::dds::xtypes::BitBound));
+    }
+
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return 2ULL ==
+               (detail::CommonEnumeratedHeader_offset_of<CommonEnumeratedHeader, detail::CommonEnumeratedHeader_f>() +
+               sizeof(eprosima::fastdds::dds::xtypes::BitBound));
+    }
 
 };
 
@@ -7254,6 +7547,39 @@ typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalBitflag> MinimalBitfl
 
 
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct CommonBitmaskHeader_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct CommonBitmaskHeader_f
+{
+    typedef eprosima::fastdds::dds::xtypes::BitBound CommonBitmaskHeader::* type;
+    friend constexpr type get(
+            CommonBitmaskHeader_f);
+};
+
+template struct CommonBitmaskHeader_rob<CommonBitmaskHeader_f, &CommonBitmaskHeader::m_bit_bound>;
+
+template <typename T, typename Tag>
+inline size_t constexpr CommonBitmaskHeader_offset_of()
+{
+    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 /*!
  * @brief This class represents the TopicDataType of the type CommonBitmaskHeader defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -7315,14 +7641,20 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return is_plain_xcdrv1_impl();
     }
 
     eProsima_user_DllExport inline bool is_plain(
         eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        static_cast<void>(data_representation);
-        return false;
+        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        {
+            return is_plain_xcdrv2_impl();
+        }
+        else
+        {
+            return is_plain_xcdrv1_impl();
+        }
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -7331,14 +7663,30 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        static_cast<void>(memory);
-        return false;
+        new (memory) CommonBitmaskHeader();
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
+private:
+
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return 2ULL ==
+               (detail::CommonBitmaskHeader_offset_of<CommonBitmaskHeader, detail::CommonBitmaskHeader_f>() +
+               sizeof(eprosima::fastdds::dds::xtypes::BitBound));
+    }
+
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return 2ULL ==
+               (detail::CommonBitmaskHeader_offset_of<CommonBitmaskHeader, detail::CommonBitmaskHeader_f>() +
+               sizeof(eprosima::fastdds::dds::xtypes::BitBound));
+    }
 
 };
 typedef eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader CompleteBitmaskHeader;

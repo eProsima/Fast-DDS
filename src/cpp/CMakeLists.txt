@@ -245,10 +245,8 @@ if (FASTDDS_STATISTICS)
         statistics/rtps/reader/StatisticsReaderImpl.cpp
         statistics/rtps/StatisticsBase.cpp
         statistics/rtps/writer/StatisticsWriterImpl.cpp
-        statistics/types/typesPubSubTypes.cxx
         statistics/types/monitorservice_typesPubSubTypes.cxx
-        statistics/types/monitorservice_types.cxx
-        statistics/types/monitorservice_typesv1.cxx
+        statistics/types/typesPubSubTypes.cxx
         )
 
     list(APPEND ${PROJECT_NAME}_source_files

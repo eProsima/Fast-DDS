@@ -218,11 +218,11 @@ TEST_F(MonitorServiceTests, multiple_dds_status_updates)
     //! Trigger statuses updates for each entity
     for (auto& entity : mock_guids)
     {
-        listener_.on_local_entity_status_change(entity, statistics::INCOMPATIBLE_QOS);
-        listener_.on_local_entity_status_change(entity, statistics::LIVELINESS_CHANGED);
-        listener_.on_local_entity_status_change(entity, statistics::LIVELINESS_LOST);
-        listener_.on_local_entity_status_change(entity, statistics::DEADLINE_MISSED);
-        listener_.on_local_entity_status_change(entity, statistics::SAMPLE_LOST);
+        listener_.on_local_entity_status_change(entity, statistics::StatusKind::INCOMPATIBLE_QOS);
+        listener_.on_local_entity_status_change(entity, statistics::StatusKind::LIVELINESS_CHANGED);
+        listener_.on_local_entity_status_change(entity, statistics::StatusKind::LIVELINESS_LOST);
+        listener_.on_local_entity_status_change(entity, statistics::StatusKind::DEADLINE_MISSED);
+        listener_.on_local_entity_status_change(entity, statistics::StatusKind::SAMPLE_LOST);
     }
 
     //! Verify expectations
@@ -264,11 +264,11 @@ TEST_F(MonitorServiceTests, entity_removal_correctly_performs)
     for (auto& entity : mock_guids)
     {
         listener_.on_local_entity_connections_change(entity);
-        listener_.on_local_entity_status_change(entity, statistics::INCOMPATIBLE_QOS);
-        listener_.on_local_entity_status_change(entity, statistics::LIVELINESS_CHANGED);
-        listener_.on_local_entity_status_change(entity, statistics::LIVELINESS_LOST);
-        listener_.on_local_entity_status_change(entity, statistics::DEADLINE_MISSED);
-        listener_.on_local_entity_status_change(entity, statistics::SAMPLE_LOST);
+        listener_.on_local_entity_status_change(entity, statistics::StatusKind::INCOMPATIBLE_QOS);
+        listener_.on_local_entity_status_change(entity, statistics::StatusKind::LIVELINESS_CHANGED);
+        listener_.on_local_entity_status_change(entity, statistics::StatusKind::LIVELINESS_LOST);
+        listener_.on_local_entity_status_change(entity, statistics::StatusKind::DEADLINE_MISSED);
+        listener_.on_local_entity_status_change(entity, statistics::StatusKind::SAMPLE_LOST);
     }
 
     //! Verify expectations

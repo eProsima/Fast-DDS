@@ -19,6 +19,8 @@
 #include <vector>
 #include <gmock/gmock.h>
 
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
+
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 
 namespace eprosima {

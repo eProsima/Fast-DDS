@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 
-#include "monitorservice_types.h"
+#include "monitorservice_types.hpp"
 
 #include "typesPubSubTypes.h"
 
@@ -44,8 +44,6 @@ namespace eprosima
     {
         namespace statistics
         {
-
-
 
 
 
@@ -316,8 +314,6 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
-
-
             typedef std::vector<eprosima::fastdds::statistics::QosPolicyCount_s> QosPolicyCountSeq_s;
 
 
@@ -592,9 +588,19 @@ namespace eprosima
             typedef eprosima::fastdds::statistics::BaseStatus_s LivelinessLostStatus_s;
             typedef eprosima::fastdds::statistics::BaseStatus_s InconsistentTopicStatus_s;
             typedef eprosima::fastdds::statistics::BaseStatus_s SampleLostStatus_s;
+            namespace StatusKind
+            {
+                typedef uint32_t StatusKind;
 
 
 
+
+
+
+
+
+
+            } // namespace StatusKind
 
 
 
@@ -687,9 +693,9 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
-        }
-    }
-}
+        } // namespace statistics
+    } // namespace fastdds
+} // namespace eprosima
 
 #endif // _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_MONITORSERVICE_TYPES_PUBSUBTYPES_H_
 
