@@ -698,7 +698,15 @@ const MinimalAnnotationType TypeObjectRegistry::build_minimal_from_complete_anno
         minimal_annotation_parameter.name_hash(TypeObjectUtils::name_hash(
                     complete_annotation_parameter.name().c_str()));
         minimal_annotation_parameter.default_value(complete_annotation_parameter.default_value());
-        minimal_annotation_parameter_sequence.push_back(minimal_annotation_parameter);
+        auto it = minimal_annotation_parameter_sequence.begin();
+        for (; it !=  minimal_annotation_parameter_sequence.end(); ++it)
+        {
+            if (it->name_hash() > minimal_annotation_parameter.name_hash())
+            {
+                break;
+            }
+        }
+        minimal_annotation_parameter_sequence.emplace(it, minimal_annotation_parameter);
     }
     minimal_annotation_type.member_seq(minimal_annotation_parameter_sequence);
     return minimal_annotation_type;
@@ -891,8 +899,10 @@ const TypeIdentifier TypeObjectRegistry::minimal_from_complete_type_identifier(
             (TI_PLAIN_SEQUENCE_LARGE == type_id._d() && type_id.seq_ldefn().header().equiv_kind() == EK_COMPLETE) ||
             (TI_PLAIN_ARRAY_SMALL == type_id._d() && type_id.array_sdefn().header().equiv_kind() == EK_COMPLETE) ||
             (TI_PLAIN_ARRAY_LARGE == type_id._d() && type_id.array_ldefn().header().equiv_kind() == EK_COMPLETE) ||
-            (TI_PLAIN_MAP_SMALL == type_id._d() && type_id.map_sdefn().header().equiv_kind() == EK_COMPLETE) ||
-            (TI_PLAIN_MAP_LARGE == type_id._d() && type_id.map_ldefn().header().equiv_kind() == EK_COMPLETE))
+            (TI_PLAIN_MAP_SMALL == type_id._d() && (type_id.map_sdefn().header().equiv_kind() == EK_COMPLETE ||
+            type_id.map_sdefn().key_identifier()->_d() == EK_COMPLETE)) ||
+            (TI_PLAIN_MAP_LARGE == type_id._d() && (type_id.map_ldefn().header().equiv_kind() == EK_COMPLETE ||
+            type_id.map_ldefn().key_identifier()->_d() == EK_COMPLETE)))
     {
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         for (const auto& it : local_type_identifiers_)
