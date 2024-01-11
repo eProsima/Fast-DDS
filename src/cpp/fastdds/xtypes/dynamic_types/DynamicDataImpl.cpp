@@ -22,6 +22,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 
 #include "DynamicTypeMemberImpl.hpp"
 
@@ -240,20 +241,7 @@ void DynamicDataImpl::set_value(
         const ObjectName& sValue,
         MemberId id) noexcept
 {
-    TypeKind type_kind = type_->get_kind();
-
-    // If enum, get enclosing type.
-    if (TK_ENUM == type_kind)
-    {
-        if (0 == type_->get_all_members_by_index().size())
-        {
-            type_kind = TK_UINT32;
-        }
-        else
-        {
-            type_kind = type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind();
-        }
-    }
+    TypeKind type_kind = get_enclosing_typekind(type_);
 
     switch (type_kind)
     {
@@ -481,9 +469,10 @@ bool DynamicDataImpl::equals(
 
     if (type_->equals(other_data->type_))
     {
+        TypeKind type_kind = get_enclosing_typekind(type_);
         // Optimization for unions, only check the selected element.
         /*TODO(richiware)
-           if (get_kind() == TK_UNION)
+           if (type_kind == TK_UNION)
            {
             if (union_id_ != other.union_id_)
             {
@@ -507,12 +496,8 @@ bool DynamicDataImpl::equals(
            else
          */
         {
-            if (TK_ENUM == type_->get_kind())
-            {
-                return compare_values(TK_UINT32, value_.begin()->second, other_data->value_.begin()->second);
-            }
             /*TODO(richiware)
-               else if (TK_BITMASK == type_->get_kind())
+               else if (TK_BITMASK == type_kind)
                {
                 TypeKind bitmask_kind = TK_BYTE;
                 size_t type_size = type_->get_size();
@@ -529,7 +514,7 @@ bool DynamicDataImpl::equals(
                 return compare_values(bitmask_kind, value_.begin()->second, other.value_.begin()->second);
                }
              */
-            else if (is_complex_kind(type_->get_kind()))
+            if (is_complex_kind(type_kind))
             {
                 // array, map, sequence, structure, bitset, anotation
                 return value_.size() == other_data->value_.size() &&
@@ -546,7 +531,7 @@ bool DynamicDataImpl::equals(
             else
             {
                 // primitives
-                return compare_values(type_->get_kind(), value_.begin()->second, other_data->value_.begin()->second);
+                return compare_values(type_kind, value_.begin()->second, other_data->value_.begin()->second);
             }
         }
 
@@ -584,21 +569,22 @@ MemberId DynamicDataImpl::get_member_id_at_index(
 
 uint32_t DynamicDataImpl::get_item_count() noexcept
 {
-    if (TK_MAP == type_->get_kind())
+    TypeKind type_kind = get_enclosing_typekind(type_);
+    if (TK_MAP == type_kind)
     {
         return static_cast<uint32_t>(value_.size() / 2);
     }
-    else if (TK_ARRAY == type_->get_kind())
+    else if (TK_ARRAY == type_kind)
     {
         traits<DynamicTypeImpl>::ref_type type_impl = traits<DynamicType>::narrow<DynamicTypeImpl>(type_);
         return type_impl->get_descriptor().bound().size();
     }
-    else if (TK_STRING8 == type_->get_kind())
+    else if (TK_STRING8 == type_kind)
     {
         assert(1 == value_.size());
         return std::static_pointer_cast<std::string>(value_.begin()->second)->length();
     }
-    else if (TK_STRING16 == type_->get_kind())
+    else if (TK_STRING16 == type_kind)
     {
         assert(1 == value_.size());
         return std::static_pointer_cast<std::wstring>(value_.begin()->second)->length();
@@ -828,10 +814,8 @@ ReturnCode_t DynamicDataImpl::get_int32_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (MEMBER_ID_INVALID == id && (TK_INT32 == type_->get_kind() || (
-                    TK_ENUM == type_->get_kind() && (0 == type_->get_all_members_by_index().size() ||
-                    TK_INT32 == type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind())
-                    )))
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_INT32 == type->get_kind())
         {
             value = *std::static_pointer_cast<int32_t>(it->second);
             return RETCODE_OK;
@@ -858,10 +842,8 @@ ReturnCode_t DynamicDataImpl::set_int32_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (MEMBER_ID_INVALID == id && (TK_INT32 == type_->get_kind() || (
-                    TK_ENUM == type_->get_kind() && (0 == type_->get_all_members_by_index().size() ||
-                    TK_INT32 == type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind())
-                    )))
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_INT32 == type->get_kind())
         {
             *std::static_pointer_cast<int32_t>(it->second) = value;
             return RETCODE_OK;
@@ -928,10 +910,8 @@ ReturnCode_t DynamicDataImpl::get_uint32_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (MEMBER_ID_INVALID == id && (TK_UINT32 == type_->get_kind() || (
-                    TK_ENUM == type_->get_kind() && (0 == type_->get_all_members_by_index().size() ||
-                    TK_UINT32 == type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind())
-                    )))
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_UINT32 == type->get_kind())
         {
             value = *std::static_pointer_cast<uint32_t>(it->second);
             return RETCODE_OK;
@@ -961,10 +941,8 @@ ReturnCode_t DynamicDataImpl::set_uint32_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (MEMBER_ID_INVALID == id && (TK_UINT32 == type_->get_kind() || (
-                    TK_ENUM == type_->get_kind() && (0 == type_->get_all_members_by_index().size() ||
-                    TK_UINT32 == type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind())
-                    )))
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_UINT32 == type->get_kind())
         {
             *std::static_pointer_cast<uint32_t>(it->second) = value;
             return RETCODE_OK;
@@ -1030,10 +1008,8 @@ ReturnCode_t DynamicDataImpl::get_int8_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (MEMBER_ID_INVALID == id && (TK_INT8 == type_->get_kind() || (
-                    TK_ENUM == type_->get_kind() && (0 == type_->get_all_members_by_index().size() ||
-                    TK_INT8 == type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind())
-                    )))
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_INT8 == type->get_kind())
         {
             value = *std::static_pointer_cast<int16_t>(it->second);
             return RETCODE_OK;
@@ -1062,10 +1038,8 @@ ReturnCode_t DynamicDataImpl::set_int8_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (MEMBER_ID_INVALID == id && (TK_INT8 == type_->get_kind() || (
-                    TK_ENUM == type_->get_kind() && (0 == type_->get_all_members_by_index().size() ||
-                    TK_INT8 == type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind())
-                    )))
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_INT8 == type->get_kind())
         {
             *std::static_pointer_cast<int16_t>(it->second) = value;
             return RETCODE_OK;
@@ -1131,10 +1105,8 @@ ReturnCode_t DynamicDataImpl::get_uint8_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (MEMBER_ID_INVALID == id && (TK_UINT8 == type_->get_kind() || (
-                    TK_ENUM == type_->get_kind() && (0 == type_->get_all_members_by_index().size() ||
-                    TK_UINT8 == type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind())
-                    )))
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_UINT8 == type->get_kind())
         {
             value = *std::static_pointer_cast<uint16_t>(it->second);
             return RETCODE_OK;
@@ -1164,10 +1136,8 @@ ReturnCode_t DynamicDataImpl::set_uint8_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (MEMBER_ID_INVALID == id && (TK_UINT8 == type_->get_kind() || (
-                    TK_ENUM == type_->get_kind() && (0 == type_->get_all_members_by_index().size() ||
-                    TK_UINT8 == type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind())
-                    )))
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_UINT8 == type->get_kind())
         {
             *std::static_pointer_cast<uint16_t>(it->second) = value;
             return RETCODE_OK;
@@ -1232,10 +1202,8 @@ ReturnCode_t DynamicDataImpl::get_int16_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (MEMBER_ID_INVALID == id && (TK_INT16 == type_->get_kind() || (
-                    TK_ENUM == type_->get_kind() && (0 == type_->get_all_members_by_index().size() ||
-                    TK_INT16 == type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind())
-                    )))
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_INT16 == type->get_kind())
         {
             value = *std::static_pointer_cast<int16_t>(it->second);
             return RETCODE_OK;
@@ -1264,10 +1232,8 @@ ReturnCode_t DynamicDataImpl::set_int16_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (MEMBER_ID_INVALID == id && (TK_INT16 == type_->get_kind() || (
-                    TK_ENUM == type_->get_kind() && (0 == type_->get_all_members_by_index().size() ||
-                    TK_INT16 == type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind())
-                    )))
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_INT16 == type->get_kind())
         {
             *std::static_pointer_cast<int16_t>(it->second) = value;
             return RETCODE_OK;
@@ -1336,10 +1302,8 @@ ReturnCode_t DynamicDataImpl::get_uint16_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (MEMBER_ID_INVALID == id && (TK_UINT16 == type_->get_kind() || (
-                    TK_ENUM == type_->get_kind() && (0 == type_->get_all_members_by_index().size() ||
-                    TK_UINT16 == type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind())
-                    )))
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_UINT16 == type->get_kind())
         {
             value = *std::static_pointer_cast<uint16_t>(it->second);
             return RETCODE_OK;
@@ -1369,10 +1333,8 @@ ReturnCode_t DynamicDataImpl::set_uint16_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (MEMBER_ID_INVALID == id && (TK_UINT16 == type_->get_kind() || (
-                    TK_ENUM == type_->get_kind() && (0 == type_->get_all_members_by_index().size() ||
-                    TK_UINT16 == type_->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind())
-                    )))
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_UINT16 == type->get_kind())
         {
             *std::static_pointer_cast<uint16_t>(it->second) = value;
             return RETCODE_OK;
@@ -1436,7 +1398,8 @@ ReturnCode_t DynamicDataImpl::get_int64_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_INT64 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_INT64 == type->get_kind())
         {
             value = *std::static_pointer_cast<int64_t>(it->second);
             return RETCODE_OK;
@@ -1465,7 +1428,8 @@ ReturnCode_t DynamicDataImpl::set_int64_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_INT64 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_INT64 == type->get_kind())
         {
             *std::static_pointer_cast<int64_t>(it->second) = value;
             return RETCODE_OK;
@@ -1532,7 +1496,8 @@ ReturnCode_t DynamicDataImpl::get_uint64_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if ((TK_UINT64 == type_->get_kind() || TK_BITMASK == type_->get_kind()) && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_UINT64 == type->get_kind())
         {
             value = *std::static_pointer_cast<uint64_t>(it->second);
             return RETCODE_OK;
@@ -1562,7 +1527,8 @@ ReturnCode_t DynamicDataImpl::set_uint64_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if ((TK_UINT64 == type_->get_kind() || TK_BITMASK == type_->get_kind()) && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_UINT64 == type->get_kind())
         {
             *std::static_pointer_cast<uint64_t>(it->second) = value;
             return RETCODE_OK;
@@ -1628,7 +1594,8 @@ ReturnCode_t DynamicDataImpl::get_float32_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_FLOAT32 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_FLOAT32 == type->get_kind())
         {
             value = *std::static_pointer_cast<float>(it->second);
             return RETCODE_OK;
@@ -1658,7 +1625,8 @@ ReturnCode_t DynamicDataImpl::set_float32_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_FLOAT32 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_FLOAT32 == type->get_kind())
         {
             *std::static_pointer_cast<float>(it->second) = value;
             return RETCODE_OK;
@@ -1706,7 +1674,8 @@ ReturnCode_t DynamicDataImpl::get_float64_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_FLOAT64 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_FLOAT64 == type->get_kind())
         {
             value = *std::static_pointer_cast<double>(it->second);
             return RETCODE_OK;
@@ -1736,7 +1705,8 @@ ReturnCode_t DynamicDataImpl::set_float64_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_FLOAT64 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_FLOAT64 == type->get_kind())
         {
             *std::static_pointer_cast<double>(it->second) = value;
             return RETCODE_OK;
@@ -1784,7 +1754,8 @@ ReturnCode_t DynamicDataImpl::get_float128_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_FLOAT128 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_FLOAT128 == type->get_kind())
         {
             value = *std::static_pointer_cast<long double>(it->second);
             return RETCODE_OK;
@@ -1814,7 +1785,8 @@ ReturnCode_t DynamicDataImpl::set_float128_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_FLOAT128 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_FLOAT128 == type->get_kind())
         {
             *std::static_pointer_cast<long double>(it->second) = value;
             return RETCODE_OK;
@@ -1862,7 +1834,8 @@ ReturnCode_t DynamicDataImpl::get_char8_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_CHAR8 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_CHAR8 == type->get_kind())
         {
             value = *std::static_pointer_cast<char>(it->second);
             return RETCODE_OK;
@@ -1891,7 +1864,8 @@ ReturnCode_t DynamicDataImpl::set_char8_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_CHAR8 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_CHAR8 == type->get_kind())
         {
             *std::static_pointer_cast<char>(it->second) = value;
             return RETCODE_OK;
@@ -1939,7 +1913,8 @@ ReturnCode_t DynamicDataImpl::get_char16_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_CHAR16 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_CHAR16 == type->get_kind())
         {
             value = *std::static_pointer_cast<wchar_t>(it->second);
             return RETCODE_OK;
@@ -1969,7 +1944,8 @@ ReturnCode_t DynamicDataImpl::set_char16_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_CHAR16 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_CHAR16 == type->get_kind())
         {
             *std::static_pointer_cast<wchar_t>(it->second) = value;
             return RETCODE_OK;
@@ -2017,7 +1993,8 @@ ReturnCode_t DynamicDataImpl::get_byte_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_BYTE == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_BYTE == type->get_kind())
         {
             value = *std::static_pointer_cast<eprosima::fastrtps::rtps::octet>(it->second);
             return RETCODE_OK;
@@ -2046,7 +2023,8 @@ ReturnCode_t DynamicDataImpl::set_byte_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_BYTE == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_BYTE == type->get_kind())
         {
             *std::static_pointer_cast<eprosima::fastrtps::rtps::octet>(it->second) = value;
             return RETCODE_OK;
@@ -2120,7 +2098,8 @@ ReturnCode_t DynamicDataImpl::get_boolean_value(
     }
     if (it != value_.end())
     {
-        if (TK_BOOLEAN == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_BOOLEAN == type->get_kind())
         {
             value = *std::static_pointer_cast<bool>(it->second);
             return RETCODE_OK;
@@ -2164,7 +2143,8 @@ ReturnCode_t DynamicDataImpl::set_boolean_value(
 
     if (it != value_.end())
     {
-        if (TK_BOOLEAN == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_BOOLEAN == type->get_kind())
         {
             *std::static_pointer_cast<bool>(it->second) = value;
             return RETCODE_OK;
@@ -2247,7 +2227,8 @@ ReturnCode_t DynamicDataImpl::get_string_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_STRING8 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_STRING8 == type->get_kind())
         {
             value = *std::static_pointer_cast<std::string>(it->second);
             return RETCODE_OK;
@@ -2278,9 +2259,10 @@ ReturnCode_t DynamicDataImpl::set_string_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_STRING8 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_STRING8 == type->get_kind())
         {
-            auto bound = type_->get_descriptor().bound().at(0);
+            auto bound = type->get_descriptor().bound().at(0);
             if (0 == bound || value.length() <= bound)
             {
                 *std::static_pointer_cast<std::string>(it->second) = value;
@@ -2297,7 +2279,7 @@ ReturnCode_t DynamicDataImpl::set_string_value(
         {
             ReturnCode_t result = std::static_pointer_cast<DynamicDataImpl>(it->second)->set_string_value(
                 MEMBER_ID_INVALID, value);
-            if (RETCODE_OK == result && TK_UNION == type_->get_kind())
+            if (RETCODE_OK == result && TK_UNION == type->get_kind())
             {
                 //TODO(richiware)set_union_id(id);
             }
@@ -2336,7 +2318,8 @@ ReturnCode_t DynamicDataImpl::get_wstring_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_STRING16 == type_->get_kind() && MEMBER_ID_INVALID == id)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_STRING16 == type->get_kind())
         {
             value = *std::static_pointer_cast<std::wstring>(it->second);
             return RETCODE_OK;
@@ -2366,7 +2349,8 @@ ReturnCode_t DynamicDataImpl::set_wstring_value(
     auto it = value_.find(id);
     if (it != value_.end())
     {
-        if (TK_STRING16 == type_->get_kind() && id == MEMBER_ID_INVALID)
+        auto type = get_enclosing_type(type_);
+        if (MEMBER_ID_INVALID == id && TK_STRING16 == type->get_kind())
         {
             auto bound = type_->get_descriptor().bound().at(0);
             if (0 == bound || value.length() <= bound)
@@ -2755,6 +2739,40 @@ void DynamicDataImpl::serialize(
     serialize(cdr, type_);
 }
 
+traits<DynamicTypeImpl>::ref_type DynamicDataImpl::get_enclosing_type(
+        traits<DynamicTypeImpl>::ref_type type) const noexcept
+{
+    traits<DynamicTypeImpl>::ref_type ret_value = type;
+
+    if (TK_ENUM == ret_value->get_kind()) // If enum, get enclosing type.
+    {
+        if (0 == ret_value->get_all_members_by_index().size())
+        {
+            ret_value = traits<DynamicType>::narrow<DynamicTypeImpl>(
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+        }
+        else
+        {
+            ret_value = traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_all_members_by_index().at(
+                                0)->get_descriptor().type());
+        }
+    }
+    else if (TK_ALIAS == ret_value->get_kind()) // If alias, get enclosing type.
+    {
+        do {
+            ret_value = traits<DynamicType>::narrow<DynamicTypeImpl>(ret_value->get_descriptor().base_type());
+        } while (TK_ALIAS == ret_value->get_kind());
+    }
+
+    return ret_value;
+}
+
+TypeKind DynamicDataImpl::get_enclosing_typekind(
+        traits<DynamicTypeImpl>::ref_type type) const noexcept
+{
+    return get_enclosing_type(type)->get_kind();
+}
+
 void DynamicDataImpl::serialize(
         eprosima::fastcdr::Cdr& cdr,
         const traits<DynamicTypeImpl>::ref_type type) const noexcept
@@ -2765,20 +2783,7 @@ void DynamicDataImpl::serialize(
         return;
        }
      */
-    TypeKind type_kind = type->get_kind();
-
-    // If enum, get enclosing type.
-    if (TK_ENUM == type_kind)
-    {
-        if (0 == type->get_all_members_by_index().size())
-        {
-            type_kind = TK_UINT32;
-        }
-        else
-        {
-            type_kind = type->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind();
-        }
-    }
+    TypeKind type_kind = get_enclosing_typekind(type);
 
     switch (type_kind)
     {
@@ -3021,20 +3026,7 @@ bool DynamicDataImpl::deserialize(
         }
      */
 
-    TypeKind type_kind = type->get_kind();
-
-    // If enum, get enclosing type.
-    if (TK_ENUM == type_kind)
-    {
-        if (0 == type->get_all_members_by_index().size())
-        {
-            type_kind = TK_UINT32;
-        }
-        else
-        {
-            type_kind = type->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind();
-        }
-    }
+    TypeKind type_kind = get_enclosing_typekind(type);
 
     switch (type_kind)
     {
@@ -3362,20 +3354,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
        }
      */
 
-    TypeKind type_kind = type->get_kind();
-
-    // If enum, get enclosing type.
-    if (TK_ENUM == type_kind)
-    {
-        if (0 == type->get_all_members_by_index().size())
-        {
-            type_kind = TK_UINT32;
-        }
-        else
-        {
-            type_kind = type->get_all_members_by_index().at(0)->get_descriptor().type()->get_kind();
-        }
-    }
+    TypeKind type_kind = get_enclosing_typekind(type);
 
     switch (type_kind)
     {
