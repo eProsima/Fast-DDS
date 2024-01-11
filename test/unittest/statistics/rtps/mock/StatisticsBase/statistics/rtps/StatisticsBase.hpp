@@ -27,7 +27,7 @@
 #include <fastrtps/config.h>
 
 
-#include <statistics/types/types.h>
+#include <statistics/types/types.hpp>
 
 
 namespace eprosima {

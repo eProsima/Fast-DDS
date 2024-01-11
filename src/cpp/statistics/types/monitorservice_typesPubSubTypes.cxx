@@ -34,8 +34,6 @@ namespace eprosima {
         namespace statistics {
 
 
-
-
             ConnectionPubSubType::ConnectionPubSubType()
             {
                 setName("eprosima::fastdds::statistics::Connection");
@@ -603,8 +601,6 @@ namespace eprosima {
                 }
                 return true;
             }
-
-
 
 
 
@@ -1184,8 +1180,19 @@ namespace eprosima {
 
 
 
+            namespace StatusKind {
 
 
+
+
+
+
+
+
+
+
+
+            } // namespace StatusKind
 
 
 
@@ -1379,12 +1386,12 @@ namespace eprosima {
                 return true;
             }
 
+        } // namespace statistics
 
-        } //End of namespace statistics
+    } // namespace fastdds
+
+} // namespace eprosima
 
 
-    } //End of namespace fastdds
-
-
-} //End of namespace eprosima
-
+// Include auxiliary functions like for serializing/deserializing.
+#include "monitorservice_typesCdrAux.ipp"

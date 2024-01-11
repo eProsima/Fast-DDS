@@ -94,25 +94,25 @@ const DomainParticipant* DomainParticipant::narrow(
 #endif // FASTDDS_STATISTICS
 }
 
-ReturnCode_t DomainParticipant::enable_monitor_service()
+fastdds::dds::ReturnCode_t DomainParticipant::enable_monitor_service()
 {
 #ifdef FASTDDS_STATISTICS
     return static_cast<DomainParticipantImpl*>(impl_)->enable_monitor_service();
 #else
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return fastdds::dds::RETCODE_UNSUPPORTED;
 #endif // FASTDDS_STATISTICS
 }
 
-ReturnCode_t DomainParticipant::disable_monitor_service()
+fastdds::dds::ReturnCode_t DomainParticipant::disable_monitor_service()
 {
 #ifdef FASTDDS_STATISTICS
     return static_cast<DomainParticipantImpl*>(impl_)->disable_monitor_service();
 #else
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return fastdds::dds::RETCODE_UNSUPPORTED;
 #endif // FASTDDS_STATISTICS
 }
 
-ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
+fastdds::dds::ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
         fastrtps::rtps::ParticipantProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
@@ -121,11 +121,11 @@ ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
 #else
     (void)data;
     (void)msg;
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return fastdds::dds::RETCODE_UNSUPPORTED;
 #endif // FASTDDS_STATISTICS
 }
 
-ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
+fastdds::dds::ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
         fastrtps::rtps::WriterProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
@@ -134,11 +134,11 @@ ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
 #else
     (void)data;
     (void)msg;
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return fastdds::dds::RETCODE_UNSUPPORTED;
 #endif // FASTDDS_STATISTICS
 }
 
-ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
+fastdds::dds::ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
         fastrtps::rtps::ReaderProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
@@ -147,7 +147,7 @@ ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
 #else
     (void)data;
     (void)msg;
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return fastdds::dds::RETCODE_UNSUPPORTED;
 #endif // FASTDDS_STATISTICS
 }
 

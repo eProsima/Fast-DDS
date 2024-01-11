@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_MONITORSERVICE_TYPESCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_MONITORSERVICE_TYPESCDRAUX_HPP_
 
-#include "monitorservice_types.h"
+#include "monitorservice_types.hpp"
 
 constexpr uint32_t eprosima_fastdds_statistics_BaseStatus_s_max_cdr_typesize {8UL};
 constexpr uint32_t eprosima_fastdds_statistics_BaseStatus_s_max_key_cdr_typesize {0UL};
@@ -37,24 +37,24 @@ constexpr uint32_t eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_cdr_ty
 constexpr uint32_t eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_key_cdr_typesize {0UL};
 
 
+
 constexpr uint32_t eprosima_fastdds_statistics_QosPolicyCount_s_max_cdr_typesize {12UL};
 constexpr uint32_t eprosima_fastdds_statistics_QosPolicyCount_s_max_key_cdr_typesize {0UL};
 
 
-
-constexpr uint32_t eprosima_fastdds_statistics_MonitorServiceStatusData_max_cdr_typesize {565252UL};
+constexpr uint32_t eprosima_fastdds_statistics_MonitorServiceStatusData_max_cdr_typesize {72UL};
 constexpr uint32_t eprosima_fastdds_statistics_MonitorServiceStatusData_max_key_cdr_typesize {32UL};
 
 
 
 
 
-constexpr uint32_t eprosima_fastdds_statistics_Connection_max_cdr_typesize {5652UL};
+constexpr uint32_t eprosima_fastdds_statistics_Connection_max_cdr_typesize {52UL};
 constexpr uint32_t eprosima_fastdds_statistics_Connection_max_key_cdr_typesize {0UL};
 
 
 
-constexpr uint32_t eprosima_fastdds_statistics_IncompatibleQoSStatus_s_max_cdr_typesize {1220UL};
+constexpr uint32_t eprosima_fastdds_statistics_IncompatibleQoSStatus_s_max_cdr_typesize {20UL};
 constexpr uint32_t eprosima_fastdds_statistics_IncompatibleQoSStatus_s_max_key_cdr_typesize {0UL};
 
 
@@ -75,8 +75,6 @@ class CdrSizeCalculator;
 
 
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::Connection& data);
@@ -92,8 +90,6 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::BaseStatus_s& data);
-
-
 
 
 
@@ -128,12 +124,17 @@ eProsima_user_DllExport void serialize_key(
 
 
 
+
+
+
+
+
+
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::MonitorServiceStatusData& data);
-
-
-
 
 
 } // namespace fastcdr

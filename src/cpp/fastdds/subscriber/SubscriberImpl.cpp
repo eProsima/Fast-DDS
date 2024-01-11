@@ -18,6 +18,8 @@
  */
 
 #include <fastdds/subscriber/SubscriberImpl.hpp>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
@@ -40,7 +42,7 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #ifdef FASTDDS_STATISTICS
-#include <statistics/types/monitorservice_types.h>
+#include <statistics/types/monitorservice_types.hpp>
 #endif //FASTDDS_STATISTICS
 
 namespace eprosima {
@@ -673,7 +675,7 @@ bool SubscriberImpl::get_monitoring_status(
 {
     bool ret = false;
     std::vector<DataReader*> readers;
-    if (get_datareaders(readers) == ReturnCode_t::RETCODE_OK)
+    if (get_datareaders(readers) == RETCODE_OK)
     {
         for (auto& reader : readers)
         {
@@ -681,7 +683,7 @@ bool SubscriberImpl::get_monitoring_status(
             {
                 switch (status_id)
                 {
-                    case statistics::INCOMPATIBLE_QOS:
+                    case statistics::StatusKind::INCOMPATIBLE_QOS:
                     {
                         reader->get_requested_incompatible_qos_status(*static_cast<RequestedIncompatibleQosStatus*>(
                                     status));
@@ -689,25 +691,25 @@ bool SubscriberImpl::get_monitoring_status(
                         break;
                     }
                     //! TODO
-                    /*case statistics::INCONSISTENT_TOPIC:
+                    /*case statistics::StatusKind::INCONSISTENT_TOPIC:
                        {
                         reader->get_inconsistent_topic_status();
                         ret = true;
                         break;
                        }*/
-                    case statistics::LIVELINESS_CHANGED:
+                    case statistics::StatusKind::LIVELINESS_CHANGED:
                     {
                         reader->get_liveliness_changed_status(*static_cast<LivelinessChangedStatus*>(status));
                         ret = true;
                         break;
                     }
-                    case statistics::DEADLINE_MISSED:
+                    case statistics::StatusKind::DEADLINE_MISSED:
                     {
                         reader->get_requested_deadline_missed_status(*static_cast<DeadlineMissedStatus*>(status));
                         ret = true;
                         break;
                     }
-                    case statistics::SAMPLE_LOST:
+                    case statistics::StatusKind::SAMPLE_LOST:
                     {
                         reader->get_sample_lost_status(*static_cast<SampleLostStatus*>(status));
                         ret = true;

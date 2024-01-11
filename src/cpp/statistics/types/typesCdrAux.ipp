@@ -1570,6 +1570,7 @@ eProsima_user_DllExport void serialize(
 
     switch (data._d())
     {
+<<<<<<< HEAD
                 case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
                     scdr << eprosima::fastcdr::MemberId(0) << data.writer_reader_data();
                     break;
@@ -1609,6 +1610,47 @@ eProsima_user_DllExport void serialize(
 
                 case eprosima::fastdds::statistics::PHYSICAL_DATA:
                     scdr << eprosima::fastcdr::MemberId(7) << data.physical_data();
+=======
+                case HISTORY2HISTORY_LATENCY:
+                    scdr << eprosima::fastcdr::MemberId(1) << data.writer_reader_data();
+                    break;
+
+                case NETWORK_LATENCY:
+                    scdr << eprosima::fastcdr::MemberId(2) << data.locator2locator_data();
+                    break;
+
+                case PUBLICATION_THROUGHPUT:
+                case SUBSCRIPTION_THROUGHPUT:
+                    scdr << eprosima::fastcdr::MemberId(3) << data.entity_data();
+                    break;
+
+                case RTPS_SENT:
+                case RTPS_LOST:
+                    scdr << eprosima::fastcdr::MemberId(4) << data.entity2locator_traffic();
+                    break;
+
+                case RESENT_DATAS:
+                case HEARTBEAT_COUNT:
+                case ACKNACK_COUNT:
+                case NACKFRAG_COUNT:
+                case GAP_COUNT:
+                case DATA_COUNT:
+                case PDP_PACKETS:
+                case EDP_PACKETS:
+                    scdr << eprosima::fastcdr::MemberId(5) << data.entity_count();
+                    break;
+
+                case DISCOVERED_ENTITY:
+                    scdr << eprosima::fastcdr::MemberId(6) << data.discovery_time();
+                    break;
+
+                case SAMPLE_DATAS:
+                    scdr << eprosima::fastcdr::MemberId(7) << data.sample_identity_count();
+                    break;
+
+                case PHYSICAL_DATA:
+                    scdr << eprosima::fastcdr::MemberId(8) << data.physical_data();
+>>>>>>> fa9f8d288 (Bugfix: fix feature/xtypes1.3 branch build (#4228))
                     break;
 
         default:

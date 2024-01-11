@@ -21,7 +21,6 @@
 #include <string>
 
 #include <fastdds/core/policy/ParameterList.hpp>
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>

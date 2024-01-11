@@ -57,7 +57,7 @@
 
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
-#include <statistics/types/monitorservice_types.h>
+#include <statistics/types/monitorservice_types.hpp>
 #endif //FASTDDS_STATISTICS
 
 using namespace eprosima::fastrtps;
@@ -1266,7 +1266,7 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
     }
 
 #ifdef FASTDDS_STATISTICS
-    notify_status_observer(statistics::INCOMPATIBLE_QOS);
+    notify_status_observer(statistics::StatusKind::INCOMPATIBLE_QOS);
 #endif //FASTDDS_STATISTICS
 
     data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
@@ -1305,7 +1305,7 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
     }
 
 #ifdef FASTDDS_STATISTICS
-    notify_status_observer(statistics::LIVELINESS_LOST);
+    notify_status_observer(statistics::StatusKind::LIVELINESS_LOST);
 #endif //FASTDDS_STATISTICS
 
     data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
@@ -1477,7 +1477,7 @@ bool DataWriterImpl::deadline_missed()
     }
 
 #ifdef FASTDDS_STATISTICS
-    writer_listener_.notify_status_observer(statistics::DEADLINE_MISSED);
+    writer_listener_.notify_status_observer(statistics::StatusKind::DEADLINE_MISSED);
 #endif //FASTDDS_STATISTICS
 
     user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);

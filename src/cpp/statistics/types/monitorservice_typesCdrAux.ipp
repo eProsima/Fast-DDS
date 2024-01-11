@@ -36,8 +36,6 @@ namespace fastcdr {
 
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -324,8 +322,6 @@ void serialize_key(
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
-
-
 
 
 
@@ -637,6 +633,16 @@ void serialize_key(
 
 
 
+
+
+
+
+
+
+
+
+
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -795,39 +801,39 @@ eProsima_user_DllExport void deserialize(
                     default:
                         switch (data._d())
                         {
-                                                        case eprosima::fastdds::statistics::PROXY:
+                                                        case StatusKind::PROXY:
                                                             dcdr >> data.entity_proxy();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::CONNECTION_LIST:
+                                                        case StatusKind::CONNECTION_LIST:
                                                             dcdr >> data.connection_list();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
+                                                        case StatusKind::INCOMPATIBLE_QOS:
                                                             dcdr >> data.incompatible_qos_status();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
+                                                        case StatusKind::INCONSISTENT_TOPIC:
                                                             dcdr >> data.inconsistent_topic_status();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::LIVELINESS_LOST:
+                                                        case StatusKind::LIVELINESS_LOST:
                                                             dcdr >> data.liveliness_lost_status();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
+                                                        case StatusKind::LIVELINESS_CHANGED:
                                                             dcdr >> data.liveliness_changed_status();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::DEADLINE_MISSED:
+                                                        case StatusKind::DEADLINE_MISSED:
                                                             dcdr >> data.deadline_missed_status();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::SAMPLE_LOST:
+                                                        case StatusKind::SAMPLE_LOST:
                                                             dcdr >> data.sample_lost_status();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::STATUSES_SIZE:
+                                                        case StatusKind::STATUSES_SIZE:
                                                             dcdr >> data.statuses_size();
                                                             break;
 
@@ -946,9 +952,6 @@ void serialize_key(
 
 
 }
-
-
-
 
 
 
