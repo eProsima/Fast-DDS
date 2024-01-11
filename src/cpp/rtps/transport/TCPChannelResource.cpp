@@ -295,6 +295,28 @@ bool TCPChannelResource::remove_logical_port(
     return true;
 }
 
+bool TCPChannelResource::check_socket_send_buffer(
+        const size_t& msg_size,
+        const std::shared_ptr<asio::ip::tcp::socket> socket)
+{
+    int bytesInSendQueue;
+
+#ifndef _WIN32
+    if (ioctl(socket->native_handle(), TIOCOUTQ, &bytesInSendQueue) == -1)
+    {
+        return false;
+    }
+#endif // ifndef _WIN32
+
+
+    size_t future_queue_size = size_t(bytesInSendQueue) + msg_size;
+    if (future_queue_size > size_t(parent_->configuration()->sendBufferSize))
+    {
+        return false;
+    }
+    return true;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
