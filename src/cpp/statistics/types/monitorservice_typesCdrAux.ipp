@@ -660,47 +660,47 @@ eProsima_user_DllExport size_t calculate_serialized_size(
     switch (data._d())
     {
         case eprosima::fastdds::statistics::PROXY:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.entity_proxy(), current_alignment);
                     break;
 
         case eprosima::fastdds::statistics::CONNECTION_LIST:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.connection_list(), current_alignment);
                     break;
 
         case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.incompatible_qos_status(), current_alignment);
                     break;
 
         case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.inconsistent_topic_status(), current_alignment);
                     break;
 
         case eprosima::fastdds::statistics::LIVELINESS_LOST:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.liveliness_lost_status(), current_alignment);
                     break;
 
         case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.liveliness_changed_status(), current_alignment);
                     break;
 
         case eprosima::fastdds::statistics::DEADLINE_MISSED:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.deadline_missed_status(), current_alignment);
                     break;
 
         case eprosima::fastdds::statistics::SAMPLE_LOST:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
                                 data.sample_lost_status(), current_alignment);
                     break;
 
         case eprosima::fastdds::statistics::STATUSES_SIZE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
                                 data.statuses_size(), current_alignment);
                     break;
 
@@ -732,39 +732,39 @@ eProsima_user_DllExport void serialize(
     switch (data._d())
     {
                 case eprosima::fastdds::statistics::PROXY:
-                    scdr << eprosima::fastcdr::MemberId(0) << data.entity_proxy();
+                    scdr << eprosima::fastcdr::MemberId(1) << data.entity_proxy();
                     break;
 
                 case eprosima::fastdds::statistics::CONNECTION_LIST:
-                    scdr << eprosima::fastcdr::MemberId(1) << data.connection_list();
+                    scdr << eprosima::fastcdr::MemberId(2) << data.connection_list();
                     break;
 
                 case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
-                    scdr << eprosima::fastcdr::MemberId(2) << data.incompatible_qos_status();
+                    scdr << eprosima::fastcdr::MemberId(3) << data.incompatible_qos_status();
                     break;
 
                 case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
-                    scdr << eprosima::fastcdr::MemberId(3) << data.inconsistent_topic_status();
+                    scdr << eprosima::fastcdr::MemberId(4) << data.inconsistent_topic_status();
                     break;
 
                 case eprosima::fastdds::statistics::LIVELINESS_LOST:
-                    scdr << eprosima::fastcdr::MemberId(4) << data.liveliness_lost_status();
+                    scdr << eprosima::fastcdr::MemberId(5) << data.liveliness_lost_status();
                     break;
 
                 case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
-                    scdr << eprosima::fastcdr::MemberId(5) << data.liveliness_changed_status();
+                    scdr << eprosima::fastcdr::MemberId(6) << data.liveliness_changed_status();
                     break;
 
                 case eprosima::fastdds::statistics::DEADLINE_MISSED:
-                    scdr << eprosima::fastcdr::MemberId(6) << data.deadline_missed_status();
+                    scdr << eprosima::fastcdr::MemberId(7) << data.deadline_missed_status();
                     break;
 
                 case eprosima::fastdds::statistics::SAMPLE_LOST:
-                    scdr << eprosima::fastcdr::MemberId(7) << data.sample_lost_status();
+                    scdr << eprosima::fastcdr::MemberId(8) << data.sample_lost_status();
                     break;
 
                 case eprosima::fastdds::statistics::STATUSES_SIZE:
-                    scdr << eprosima::fastcdr::MemberId(8) << data.statuses_size();
+                    scdr << eprosima::fastcdr::MemberId(9) << data.statuses_size();
                     break;
 
         default:

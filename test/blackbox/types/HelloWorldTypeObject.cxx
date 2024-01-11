@@ -21,10 +21,8 @@
 
 #ifdef _WIN32
 // Remove linker warning LNK4221 on Visual Studio
-namespace {
-char dummy;
-} // namespace
-#endif // ifdef _WIN32
+namespace { char dummy; }
+#endif
 
 #include "HelloWorld.h"
 #include "HelloWorldTypeObject.h"
@@ -45,7 +43,7 @@ void registerHelloWorldTypes()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                TypeObjectFactory* factory = TypeObjectFactory::get_instance();
+                TypeObjectFactory *factory = TypeObjectFactory::get_instance();
                 factory->add_type_object("HelloWorld", GetHelloWorldIdentifier(true),
                 GetHelloWorldObject(true));
                 factory->add_type_object("HelloWorld", GetHelloWorldIdentifier(false),
@@ -54,10 +52,11 @@ void registerHelloWorldTypes()
             });
 }
 
-const TypeIdentifier* GetHelloWorldIdentifier(
-        bool complete)
+
+
+const TypeIdentifier* GetHelloWorldIdentifier(bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("HelloWorld", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("HelloWorld", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
@@ -67,8 +66,7 @@ const TypeIdentifier* GetHelloWorldIdentifier(
     return TypeObjectFactory::get_instance()->get_type_identifier("HelloWorld", complete);
 }
 
-const TypeObject* GetHelloWorldObject(
-        bool complete)
+const TypeObject* GetHelloWorldObject(bool complete)
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("HelloWorld", complete);
     if (c_type_object != nullptr)
@@ -91,7 +89,7 @@ const TypeObject* GetMinimalHelloWorldObject()
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_STRUCTURE);
 
@@ -115,7 +113,7 @@ const TypeObject* GetMinimalHelloWorldObject()
 
 
     MD5 index_hash("index");
-    for (int i = 0; i < 4; ++i)
+    for(int i = 0; i < 4; ++i)
     {
         mst_index.detail().name_hash()[i] = index_hash.digest[i];
     }
@@ -133,7 +131,7 @@ const TypeObject* GetMinimalHelloWorldObject()
     mst_message.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(128, false));
 
     MD5 message_hash("message");
-    for (int i = 0; i < 4; ++i)
+    for(int i = 0; i < 4; ++i)
     {
         mst_message.detail().name_hash()[i] = message_hash.digest[i];
     }
@@ -150,7 +148,7 @@ const TypeObject* GetMinimalHelloWorldObject()
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     size_t current_alignment {0};
     SerializedPayload_t payload(static_cast<uint32_t>(
-                calculator.calculate_serialized_size(type_object->minimal().struct_type(), current_alignment) + 4));
+        calculator.calculate_serialized_size(type_object->minimal().struct_type(), current_alignment) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -167,7 +165,7 @@ const TypeObject* GetMinimalHelloWorldObject()
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
-    for (int i = 0; i < 14; ++i)
+    for(int i = 0; i < 14; ++i)
     {
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
@@ -185,7 +183,7 @@ const TypeObject* GetCompleteHelloWorldObject()
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject *type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_STRUCTURE);
 
@@ -231,7 +229,6 @@ const TypeObject* GetCompleteHelloWorldObject()
     // Header
     type_object->complete().struct_type().header().detail().type_name("HelloWorld");
     // TODO inheritance
-
     {
         AppliedAnnotation ann;
         //ann.annotation_typeid(GetfinalIdentifier(true));
@@ -246,7 +243,7 @@ const TypeObject* GetCompleteHelloWorldObject()
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     size_t current_alignment {0};
     SerializedPayload_t payload(static_cast<uint32_t>(
-                calculator.calculate_serialized_size(type_object->complete().struct_type(), current_alignment) + 4));
+        calculator.calculate_serialized_size(type_object->complete().struct_type(), current_alignment) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -263,7 +260,7 @@ const TypeObject* GetCompleteHelloWorldObject()
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
-    for (int i = 0; i < 14; ++i)
+    for(int i = 0; i < 14; ++i)
     {
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
