@@ -31,6 +31,8 @@
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <fastrtps/fastrtps_dll.h>
 
+#include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
+
 namespace std {
 template<>
 struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifier>
@@ -42,17 +44,6 @@ struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifier>
         return (static_cast<size_t>(k.equivalence_hash()[0]) << 16) |
                (static_cast<size_t>(k.equivalence_hash()[1]) << 8) |
                (static_cast<size_t>(k.equivalence_hash()[2]));
-    }
-
-};
-
-template<>
-struct hash<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>
-{
-    std::size_t operator ()(
-            const eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& k) const
-    {
-        return static_cast<size_t>(k.typeobject_serialized_size());
     }
 
 };
@@ -204,13 +195,13 @@ public:
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
 
     /**
-     * @brief Check if the given TypeIdentifier is known by the registry.
+     * @brief Check if the given TypeIdentfierWithSize is known by the registry.
      *
-     * @param[in] type_identifier TypeIdentifier to query.
-     * @return true if TypeIdentifier is known. false otherwise.
+     * @param[in] type_identifier_with_size TypeIdentfierWithSize to query.
+     * @return true if TypeIdentfierWithSize is known. false otherwise.
      */
     bool is_type_identifier_known(
-            const TypeIdentifier& type_identifier);
+            const TypeIdentfierWithSize& type_identifier_with_size);
 
     /**
      * @brief Check if a given TypeIdentifier corresponds to a builtin annotation.

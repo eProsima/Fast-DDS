@@ -77,8 +77,8 @@ public:
     //!Pointer to the WLP
     WLP* mp_WLP;
 
-    //! TypeLookupManager
-    fastdds::dds::builtin::TypeLookupManager typelookup_manager_;
+    //!Pointer to the TypeLookupManager
+    fastdds::dds::builtin::TypeLookupManager* typelookup_manager_;
 
 };
 

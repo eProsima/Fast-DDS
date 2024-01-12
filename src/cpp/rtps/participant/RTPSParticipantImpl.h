@@ -443,7 +443,7 @@ public:
 
     WLP* wlp();
 
-    fastdds::dds::builtin::TypeLookupManager& typelookup_manager() const;
+    fastdds::dds::builtin::TypeLookupManager* typelookup_manager() const;
 
     bool is_intraprocess_only() const
     {

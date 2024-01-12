@@ -33,6 +33,7 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <rtps/network/NetworkFactory.h>
 
@@ -80,48 +81,61 @@ void EDPBasePUBListener::add_writer_from_change(
             return;
         }
 
-        //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
-        auto copy_data_fun = [&temp_writer_data, &network](
-            WriterProxyData* data,
-            bool updating,
-            const ParticipantProxyData& participant_data)
+        // Callback function to continue after typelookup is complete
+        fastdds::dds::builtin::AsyncGetTypeWriterCallback after_typelookup_callback =
+                [reader, reader_history, change, edp, release_change, &network]
+                    (eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&& temp_writer_data)
                 {
-                    if (!temp_writer_data->has_locators())
+                    //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
+                    auto copy_data_fun = [&temp_writer_data, &network](
+                        WriterProxyData* data,
+                        bool updating,
+                        const ParticipantProxyData& participant_data)
+                            {
+                                if (!temp_writer_data->has_locators())
+                                {
+                                    temp_writer_data->set_remote_locators(participant_data.default_locators, network,
+                                            true);
+                                }
+
+                                if (updating && !data->is_update_allowed(*temp_writer_data))
+                                {
+                                    EPROSIMA_LOG_WARNING(RTPS_EDP,
+                                            "Received incompatible update for WriterQos. writer_guid = " <<
+                                            data->guid());
+                                }
+                                *data = *temp_writer_data;
+                                return true;
+                            };
+
+                    GUID_t participant_guid;
+                    WriterProxyData* writer_data =
+                            edp->mp_PDP->addWriterProxyData(temp_writer_data->guid(), participant_guid, copy_data_fun);
+
+                    // release temporary proxy
+                    temp_writer_data.reset();
+
+                    reader_history->remove_change(reader_history->find_change(change), release_change);
+
+                    // At this point, we can release the reader lock because the change is not used
+                    reader->getMutex().unlock();
+
+                    if (writer_data != nullptr)
                     {
-                        temp_writer_data->set_remote_locators(participant_data.default_locators, network, true);
+                        edp->pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_WARNING(RTPS_EDP, "Received message from UNKNOWN RTPSParticipant, removing");
                     }
 
-                    if (updating && !data->is_update_allowed(*temp_writer_data))
-                    {
-                        EPROSIMA_LOG_WARNING(RTPS_EDP,
-                                "Received incompatible update for WriterQos. writer_guid = " << data->guid());
-                    }
-                    *data = *temp_writer_data;
-                    return true;
+                    // Take the reader lock again if needed.
+                    reader->getMutex().lock();
                 };
 
-        GUID_t participant_guid;
-        WriterProxyData* writer_data =
-                edp->mp_PDP->addWriterProxyData(temp_writer_data->guid(), participant_guid, copy_data_fun);
-
-        // release temporary proxy
-        temp_writer_data.reset();
-
-        //Removing change from history
-        reader_history->remove_change(reader_history->find_change(change), release_change);
-
-        // At this point we can release reader lock, cause change is not used
-        reader->getMutex().unlock();
-        if (writer_data != nullptr)
-        {
-            edp->pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
-        }
-        else //NOT ADDED BECAUSE IT WAS ALREADY THERE
-        {
-            EPROSIMA_LOG_WARNING(RTPS_EDP, "Received message from UNKNOWN RTPSParticipant, removing");
-        }
-        // Take again the reader lock.
-        reader->getMutex().lock();
+        edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
+            std::move(temp_writer_data),
+            after_typelookup_callback);
     }
 }
 
@@ -177,7 +191,7 @@ void EDPBaseSUBListener::add_reader_from_change(
         EDP* edp,
         bool release_change /*=true*/)
 {
-    //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
+    //LOAD INFORMATION IN TEMPORAL READER PROXY DATA
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
     auto temp_reader_data = edp->get_temporary_reader_proxies_pool().get();
@@ -191,51 +205,62 @@ void EDPBaseSUBListener::add_reader_from_change(
             return;
         }
 
-        auto copy_data_fun = [&temp_reader_data, &network](
-            ReaderProxyData* data,
-            bool updating,
-            const ParticipantProxyData& participant_data)
+        // Callback function to continue after typelookup is complete
+        fastdds::dds::builtin::AsyncGetTypeReaderCallback after_typelookup_callback =
+                [reader, reader_history, change, edp, release_change, &network]
+                    (eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&& temp_reader_data)
                 {
-                    if (!temp_reader_data->has_locators())
+                    auto copy_data_fun = [&temp_reader_data, &network](
+                        ReaderProxyData* data,
+                        bool updating,
+                        const ParticipantProxyData& participant_data)
+                            {
+                                if (!temp_reader_data->has_locators())
+                                {
+                                    temp_reader_data->set_remote_locators(participant_data.default_locators, network,
+                                            true);
+                                }
+
+                                if (updating && !data->is_update_allowed(*temp_reader_data))
+                                {
+                                    EPROSIMA_LOG_WARNING(RTPS_EDP,
+                                            "Received incompatible update for ReaderQos. reader_guid = " <<
+                                            data->guid());
+                                }
+                                *data = *temp_reader_data;
+                                return true;
+                            };
+
+                    //LOOK IF IS AN UPDATED INFORMATION
+                    GUID_t participant_guid;
+                    ReaderProxyData* reader_data =
+                            edp->mp_PDP->addReaderProxyData(temp_reader_data->guid(), participant_guid, copy_data_fun);
+
+                    // Release the temporary proxy
+                    temp_reader_data.reset();
+
+                    // Remove change from history.
+                    reader_history->remove_change(reader_history->find_change(change), release_change);
+
+                    // At this point we can release reader lock, cause change is not used
+                    reader->getMutex().unlock();
+
+                    if (reader_data != nullptr) //ADDED NEW DATA
                     {
-                        temp_reader_data->set_remote_locators(participant_data.default_locators, network, true);
+                        edp->pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_WARNING(RTPS_EDP, "From UNKNOWN RTPSParticipant, removing");
                     }
 
-                    if (updating && !data->is_update_allowed(*temp_reader_data))
-                    {
-                        EPROSIMA_LOG_WARNING(RTPS_EDP,
-                                "Received incompatible update for ReaderQos. reader_guid = " << data->guid());
-                    }
-                    *data = *temp_reader_data;
-                    return true;
+                    // Take again the reader lock.
+                    reader->getMutex().lock();
                 };
 
-        //LOOK IF IS AN UPDATED INFORMATION
-        GUID_t participant_guid;
-        ReaderProxyData* reader_data =
-                edp->mp_PDP->addReaderProxyData(temp_reader_data->guid(), participant_guid, copy_data_fun);
-
-        // Release the temporary proxy
-        temp_reader_data.reset();
-
-        // Remove change from history.
-        reader_history->remove_change(reader_history->find_change(change), release_change);
-
-        // At this point we can release reader lock, cause change is not used
-        reader->getMutex().unlock();
-
-        if (reader_data != nullptr) //ADDED NEW DATA
-        {
-            edp->pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
-
-        }
-        else
-        {
-            EPROSIMA_LOG_WARNING(RTPS_EDP, "From UNKNOWN RTPSParticipant, removing");
-        }
-
-        // Take again the reader lock.
-        reader->getMutex().lock();
+        edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
+            std::move(temp_reader_data),
+            after_typelookup_callback);
     }
 }
 
