@@ -297,10 +297,6 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case eprosima::fastdds::dds::RETCODE_OK:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member result the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.result();
                                                             break;
 
@@ -585,10 +581,6 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case eprosima::fastdds::dds::RETCODE_OK:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member result the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.result();
                                                             break;
 
@@ -698,18 +690,10 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case TypeLookup_getTypes_HashId:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member getTypes the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.getTypes();
                                                             break;
 
                                                         case TypeLookup_getDependencies_HashId:
-                                                            if (mid != 2)
-                                                            {
-                                                                throw BadParamException("Deserializing union member getTypeDependencies the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.getTypeDependencies();
                                                             break;
 
@@ -911,18 +895,10 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case TypeLookup_getTypes_HashId:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member getType the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.getType();
                                                             break;
 
                                                         case TypeLookup_getDependencies_HashId:
-                                                            if (mid != 2)
-                                                            {
-                                                                throw BadParamException("Deserializing union member getTypeDependencies the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.getTypeDependencies();
                                                             break;
 

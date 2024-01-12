@@ -124,10 +124,6 @@ eProsima_user_DllExport void deserialize(
                         {
                                                         case EK_COMPLETE:
                                                         case EK_MINIMAL:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member hash the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.hash();
                                                             break;
 
@@ -1407,92 +1403,48 @@ eProsima_user_DllExport void deserialize(
                         {
                                                         case TI_STRING8_SMALL:
                                                         case TI_STRING16_SMALL:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member string_sdefn the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.string_sdefn();
                                                             break;
 
                                                         case TI_STRING8_LARGE:
                                                         case TI_STRING16_LARGE:
-                                                            if (mid != 2)
-                                                            {
-                                                                throw BadParamException("Deserializing union member string_ldefn the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.string_ldefn();
                                                             break;
 
                                                         case TI_PLAIN_SEQUENCE_SMALL:
-                                                            if (mid != 3)
-                                                            {
-                                                                throw BadParamException("Deserializing union member seq_sdefn the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.seq_sdefn();
                                                             break;
 
                                                         case TI_PLAIN_SEQUENCE_LARGE:
-                                                            if (mid != 4)
-                                                            {
-                                                                throw BadParamException("Deserializing union member seq_ldefn the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.seq_ldefn();
                                                             break;
 
                                                         case TI_PLAIN_ARRAY_SMALL:
-                                                            if (mid != 5)
-                                                            {
-                                                                throw BadParamException("Deserializing union member array_sdefn the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.array_sdefn();
                                                             break;
 
                                                         case TI_PLAIN_ARRAY_LARGE:
-                                                            if (mid != 6)
-                                                            {
-                                                                throw BadParamException("Deserializing union member array_ldefn the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.array_ldefn();
                                                             break;
 
                                                         case TI_PLAIN_MAP_SMALL:
-                                                            if (mid != 7)
-                                                            {
-                                                                throw BadParamException("Deserializing union member map_sdefn the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.map_sdefn();
                                                             break;
 
                                                         case TI_PLAIN_MAP_LARGE:
-                                                            if (mid != 8)
-                                                            {
-                                                                throw BadParamException("Deserializing union member map_ldefn the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.map_ldefn();
                                                             break;
 
                                                         case TI_STRONGLY_CONNECTED_COMPONENT:
-                                                            if (mid != 9)
-                                                            {
-                                                                throw BadParamException("Deserializing union member sc_component_id the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.sc_component_id();
                                                             break;
 
                                                         case EK_COMPLETE:
                                                         case EK_MINIMAL:
-                                                            if (mid != 10)
-                                                            {
-                                                                throw BadParamException("Deserializing union member equivalence_hash the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.equivalence_hash();
                                                             break;
 
                                                         default:
-                                                            if (mid != 11)
-                                                            {
-                                                                throw BadParamException("Deserializing union member extended_defn the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.extended_defn();
                                                             break;
 
@@ -1825,154 +1777,78 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case TK_BOOLEAN:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member boolean_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.boolean_value();
                                                             break;
 
                                                         case TK_BYTE:
-                                                            if (mid != 2)
-                                                            {
-                                                                throw BadParamException("Deserializing union member byte_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.byte_value();
                                                             break;
 
                                                         case TK_INT8:
-                                                            if (mid != 3)
-                                                            {
-                                                                throw BadParamException("Deserializing union member int8_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.int8_value();
                                                             break;
 
                                                         case TK_UINT8:
-                                                            if (mid != 4)
-                                                            {
-                                                                throw BadParamException("Deserializing union member uint8_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.uint8_value();
                                                             break;
 
                                                         case TK_INT16:
-                                                            if (mid != 5)
-                                                            {
-                                                                throw BadParamException("Deserializing union member int16_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.int16_value();
                                                             break;
 
                                                         case TK_UINT16:
-                                                            if (mid != 6)
-                                                            {
-                                                                throw BadParamException("Deserializing union member uint_16_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.uint_16_value();
                                                             break;
 
                                                         case TK_INT32:
-                                                            if (mid != 7)
-                                                            {
-                                                                throw BadParamException("Deserializing union member int32_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.int32_value();
                                                             break;
 
                                                         case TK_UINT32:
-                                                            if (mid != 8)
-                                                            {
-                                                                throw BadParamException("Deserializing union member uint32_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.uint32_value();
                                                             break;
 
                                                         case TK_INT64:
-                                                            if (mid != 9)
-                                                            {
-                                                                throw BadParamException("Deserializing union member int64_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.int64_value();
                                                             break;
 
                                                         case TK_UINT64:
-                                                            if (mid != 10)
-                                                            {
-                                                                throw BadParamException("Deserializing union member uint64_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.uint64_value();
                                                             break;
 
                                                         case TK_FLOAT32:
-                                                            if (mid != 11)
-                                                            {
-                                                                throw BadParamException("Deserializing union member float32_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.float32_value();
                                                             break;
 
                                                         case TK_FLOAT64:
-                                                            if (mid != 12)
-                                                            {
-                                                                throw BadParamException("Deserializing union member float64_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.float64_value();
                                                             break;
 
                                                         case TK_FLOAT128:
-                                                            if (mid != 13)
-                                                            {
-                                                                throw BadParamException("Deserializing union member float128_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.float128_value();
                                                             break;
 
                                                         case TK_CHAR8:
-                                                            if (mid != 14)
-                                                            {
-                                                                throw BadParamException("Deserializing union member char_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.char_value();
                                                             break;
 
                                                         case TK_CHAR16:
-                                                            if (mid != 15)
-                                                            {
-                                                                throw BadParamException("Deserializing union member wchar_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.wchar_value();
                                                             break;
 
                                                         case TK_ENUM:
-                                                            if (mid != 16)
-                                                            {
-                                                                throw BadParamException("Deserializing union member enumerated_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.enumerated_value();
                                                             break;
 
                                                         case TK_STRING8:
-                                                            if (mid != 17)
-                                                            {
-                                                                throw BadParamException("Deserializing union member string8_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.string8_value();
                                                             break;
 
                                                         case TK_STRING16:
-                                                            if (mid != 18)
-                                                            {
-                                                                throw BadParamException("Deserializing union member string16_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.string16_value();
                                                             break;
 
                                                         default:
-                                                            if (mid != 19)
-                                                            {
-                                                                throw BadParamException("Deserializing union member extended_value the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.extended_value();
                                                             break;
 
@@ -9419,90 +9295,46 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case TK_ALIAS:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member alias_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.alias_type();
                                                             break;
 
                                                         case TK_ANNOTATION:
-                                                            if (mid != 2)
-                                                            {
-                                                                throw BadParamException("Deserializing union member annotation_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.annotation_type();
                                                             break;
 
                                                         case TK_STRUCTURE:
-                                                            if (mid != 3)
-                                                            {
-                                                                throw BadParamException("Deserializing union member struct_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.struct_type();
                                                             break;
 
                                                         case TK_UNION:
-                                                            if (mid != 4)
-                                                            {
-                                                                throw BadParamException("Deserializing union member union_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.union_type();
                                                             break;
 
                                                         case TK_BITSET:
-                                                            if (mid != 5)
-                                                            {
-                                                                throw BadParamException("Deserializing union member bitset_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.bitset_type();
                                                             break;
 
                                                         case TK_SEQUENCE:
-                                                            if (mid != 6)
-                                                            {
-                                                                throw BadParamException("Deserializing union member sequence_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.sequence_type();
                                                             break;
 
                                                         case TK_ARRAY:
-                                                            if (mid != 7)
-                                                            {
-                                                                throw BadParamException("Deserializing union member array_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.array_type();
                                                             break;
 
                                                         case TK_MAP:
-                                                            if (mid != 8)
-                                                            {
-                                                                throw BadParamException("Deserializing union member map_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.map_type();
                                                             break;
 
                                                         case TK_ENUM:
-                                                            if (mid != 9)
-                                                            {
-                                                                throw BadParamException("Deserializing union member enumerated_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.enumerated_type();
                                                             break;
 
                                                         case TK_BITMASK:
-                                                            if (mid != 10)
-                                                            {
-                                                                throw BadParamException("Deserializing union member bitmask_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.bitmask_type();
                                                             break;
 
                                                         default:
-                                                            if (mid != 11)
-                                                            {
-                                                                throw BadParamException("Deserializing union member extended_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.extended_type();
                                                             break;
 
@@ -9759,90 +9591,46 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case TK_ALIAS:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member alias_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.alias_type();
                                                             break;
 
                                                         case TK_ANNOTATION:
-                                                            if (mid != 2)
-                                                            {
-                                                                throw BadParamException("Deserializing union member annotation_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.annotation_type();
                                                             break;
 
                                                         case TK_STRUCTURE:
-                                                            if (mid != 3)
-                                                            {
-                                                                throw BadParamException("Deserializing union member struct_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.struct_type();
                                                             break;
 
                                                         case TK_UNION:
-                                                            if (mid != 4)
-                                                            {
-                                                                throw BadParamException("Deserializing union member union_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.union_type();
                                                             break;
 
                                                         case TK_BITSET:
-                                                            if (mid != 5)
-                                                            {
-                                                                throw BadParamException("Deserializing union member bitset_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.bitset_type();
                                                             break;
 
                                                         case TK_SEQUENCE:
-                                                            if (mid != 6)
-                                                            {
-                                                                throw BadParamException("Deserializing union member sequence_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.sequence_type();
                                                             break;
 
                                                         case TK_ARRAY:
-                                                            if (mid != 7)
-                                                            {
-                                                                throw BadParamException("Deserializing union member array_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.array_type();
                                                             break;
 
                                                         case TK_MAP:
-                                                            if (mid != 8)
-                                                            {
-                                                                throw BadParamException("Deserializing union member map_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.map_type();
                                                             break;
 
                                                         case TK_ENUM:
-                                                            if (mid != 9)
-                                                            {
-                                                                throw BadParamException("Deserializing union member enumerated_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.enumerated_type();
                                                             break;
 
                                                         case TK_BITMASK:
-                                                            if (mid != 10)
-                                                            {
-                                                                throw BadParamException("Deserializing union member bitmask_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.bitmask_type();
                                                             break;
 
                                                         default:
-                                                            if (mid != 11)
-                                                            {
-                                                                throw BadParamException("Deserializing union member extended_type the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.extended_type();
                                                             break;
 
@@ -9950,18 +9738,10 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case EK_COMPLETE:
-                                                            if (mid != 1)
-                                                            {
-                                                                throw BadParamException("Deserializing union member complete the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.complete();
                                                             break;
 
                                                         case EK_MINIMAL:
-                                                            if (mid != 2)
-                                                            {
-                                                                throw BadParamException("Deserializing union member minimal the MemberId doesn't match");
-                                                            }
                                                             dcdr >> data.minimal();
                                                             break;
 
