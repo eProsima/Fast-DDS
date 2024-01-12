@@ -28,7 +28,7 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include "LargeDataPubSubTypes.h"
+#include "AdvancedConfigurationPubSubTypes.h"
 #include "types.hpp"
 
 /**
@@ -75,7 +75,7 @@ public:
 
 private:
 
-    LargeData hello_;
+    AdvancedConfiguration hello_;
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
 

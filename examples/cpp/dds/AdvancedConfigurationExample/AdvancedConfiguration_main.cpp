@@ -53,7 +53,7 @@ int main(
 #endif // if defined(_WIN32)
 
     EntityType type = PUBLISHER;
-    std::string topic_name = "LargeDataTopic";
+    std::string topic_name = "AdvancedConfigurationTopic";
     int count = 0;
     long sleep = 100;
     int num_wait_matched = 0;
