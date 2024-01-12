@@ -687,7 +687,7 @@ bool TCPTransportInterface::OpenOutputChannel(
     {
         Locator physical_locator = IPLocator::toPhysicalLocator(locator);
 
-        // We try to find a SenderResource that can be reuse to this locator.
+        // We try to find a SenderResource that can be reused to this locator.
         // Note: This is done in this level because if we do in NetworkFactory level, we have to mantain what transport
         // already reuses a SenderResource.
         for (auto& sender_resource : send_resource_list)
@@ -722,7 +722,7 @@ bool TCPTransportInterface::OpenOutputChannel(
             }
         }
 
-        // At this point, if there no SenderResource to reuse, the channel was created for reception (through an
+        // At this point, if there is no SenderResource to reuse, the channel was created for reception (through an
         // acceptor) or we have to create a new one.
 
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
