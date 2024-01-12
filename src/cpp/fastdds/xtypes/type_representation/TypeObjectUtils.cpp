@@ -653,8 +653,8 @@ const AppliedAnnotation TypeObjectUtils::build_applied_annotation(
         const TypeIdentifier& annotation_typeid,
         const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
 {
-#if !defined(NDEBUG)
     applied_annotation_type_identifier_consistency(annotation_typeid);
+#if !defined(NDEBUG)
     if (param_seq.has_value())
     {
         applied_annotation_parameter_seq_consistency(param_seq.value());
