@@ -42,6 +42,7 @@ public:
      * Resets the singleton reference.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK is always returned.
+     * @todo Improve this documentation.
      */
     static ReturnCode_t delete_instance();
 

@@ -71,6 +71,7 @@ public:
      * Only next types support accessing by name.
      * @li Aggregated type.
      * @li Map type.
+     * @li Bitmask type.
      * @param[in] name string
      * @return MemberId or MEMBER_ID_INVALID on failure
      */
@@ -83,6 +84,7 @@ public:
      * Only next types support accessing by index.
      * @li Aggregated type.
      * @li Sequence type.
+     * @li String type.
      * @li Map type.
      * @li Array type.
      * @li Bitmask type.
@@ -120,6 +122,7 @@ public:
      * Clear all members not associated to the key
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the cleaning was successful.
+     * @todo Improve this documentation.
      */
     virtual ReturnCode_t clear_nonkey_values() = 0;
 
@@ -154,7 +157,7 @@ public:
     /*!
      * Returns a loan retrieved using @ref DynamicData::loan_value.
      * @param[in] value @ref DynamicData reference previously loaned
-     * @retval RETCODE_OK when the loaned was returned successfully.
+     * @retval RETCODE_OK when the loan was returned successfully.
      * @retval RETCODE_PRECONDITION_NOT_MET when the loan is invalid.
      */
     virtual ReturnCode_t return_loaned_value(
@@ -173,7 +176,7 @@ public:
      * @param[in] Id identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b int32.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int32.
      */
     virtual ReturnCode_t get_int32_value(
             int32_t& value,
@@ -185,7 +188,7 @@ public:
      * @param[in] value \b int32 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b int32.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int32.
      */
     virtual ReturnCode_t set_int32_value(
             MemberId id,
@@ -197,7 +200,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b uint32.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint32.
      */
     virtual ReturnCode_t get_uint32_value(
             uint32_t& value,
@@ -209,7 +212,7 @@ public:
      * @param[in] value \b uint32 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b uint32.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint32.
      */
     virtual ReturnCode_t set_uint32_value(
             MemberId id,
@@ -221,7 +224,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b int8.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int8.
      */
     virtual ReturnCode_t get_int8_value(
             int8_t& value,
@@ -233,7 +236,7 @@ public:
      * @param[in] value \b int8 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b int8.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int8.
      */
     virtual ReturnCode_t set_int8_value(
             MemberId id,
@@ -245,7 +248,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b uint8.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint8.
      */
     virtual ReturnCode_t get_uint8_value(
             uint8_t& value,
@@ -257,7 +260,7 @@ public:
      * @param[in] value \b uint8 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b uint8.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint8.
      */
     virtual ReturnCode_t set_uint8_value(
             MemberId id,
@@ -269,7 +272,7 @@ public:
      * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b int16.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int16.
      */
     virtual ReturnCode_t get_int16_value(
             int16_t& value,
@@ -281,7 +284,7 @@ public:
      * @param[in] value \b int16 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b int16.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int16.
      */
     virtual ReturnCode_t set_int16_value(
             MemberId id,
@@ -293,7 +296,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b uint16.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint16.
      */
     virtual ReturnCode_t get_uint16_value(
             uint16_t& value,
@@ -305,7 +308,7 @@ public:
      * @param[in] value \b uint16 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b uint16.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint16.
      */
     virtual ReturnCode_t set_uint16_value(
             MemberId id,
@@ -317,7 +320,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b int64.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int64.
      */
     virtual ReturnCode_t get_int64_value(
             int64_t& value,
@@ -329,7 +332,7 @@ public:
      * @param[in] value \b int64 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b int64.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int64.
      */
     virtual ReturnCode_t set_int64_value(
             MemberId id,
@@ -341,7 +344,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b uint64.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint64.
      */
     virtual ReturnCode_t get_uint64_value(
             uint64_t& value,
@@ -353,7 +356,7 @@ public:
      * @param[in] value \b uint64 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b uint64.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint64.
      */
     virtual ReturnCode_t set_uint64_value(
             MemberId id,
@@ -365,7 +368,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b float32.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float32.
      */
     virtual ReturnCode_t get_float32_value(
             float& value,
@@ -377,7 +380,7 @@ public:
      * @param[in] value \b float32 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b float32.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float32.
      */
     virtual ReturnCode_t set_float32_value(
             MemberId id,
@@ -389,7 +392,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b float64.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float64.
      */
     virtual ReturnCode_t get_float64_value(
             double& value,
@@ -401,7 +404,7 @@ public:
      * @param[in] value \b float64 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b float64.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float64.
      */
     virtual ReturnCode_t set_float64_value(
             MemberId id,
@@ -414,7 +417,7 @@ public:
      * @remarks Only available on platforms supporting long double
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b float128.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float128.
      */
     virtual ReturnCode_t get_float128_value(
             long double& value,
@@ -426,7 +429,7 @@ public:
      * @param[in] value \b float128 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b float128.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float128.
      */
     virtual ReturnCode_t set_float128_value(
             MemberId id,
@@ -438,7 +441,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b char8.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b char8.
      */
     virtual ReturnCode_t get_char8_value(
             char& value,
@@ -450,7 +453,7 @@ public:
      * @param[in] value \b char8 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b char8.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b char8.
      */
     virtual ReturnCode_t set_char8_value(
             MemberId id,
@@ -462,7 +465,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b char16.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b char16.
      */
     virtual ReturnCode_t get_char16_value(
             wchar_t& value,
@@ -474,7 +477,7 @@ public:
      * @param[in] value \b char16 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b char16.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b char16.
      */
     virtual ReturnCode_t set_char16_value(
             MemberId id,
@@ -486,7 +489,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b byte.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b byte.
      */
     virtual ReturnCode_t get_byte_value(
             eprosima::fastrtps::rtps::octet& value,
@@ -498,7 +501,7 @@ public:
      * @param[in] value \b byte to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b byte.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b byte.
      */
     virtual ReturnCode_t set_byte_value(
             MemberId id,
@@ -510,7 +513,7 @@ public:
      * @param[inout] value \b bool to populate.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b bool.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b bool.
      */
     virtual ReturnCode_t get_boolean_value(
             bool& value,
@@ -522,7 +525,7 @@ public:
      * @param[in] value \b bool to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b bool.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b bool.
      */
     virtual ReturnCode_t set_boolean_value(
             MemberId id,
@@ -534,7 +537,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b string.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b string.
      */
     virtual ReturnCode_t get_string_value(
             std::string& value,
@@ -546,7 +549,7 @@ public:
      * @param[in] value \b string to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b string.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b string.
      */
     virtual ReturnCode_t set_string_value(
             MemberId id,
@@ -558,7 +561,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b wstring.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b wstring.
      */
     virtual ReturnCode_t get_wstring_value(
             std::wstring& value,
@@ -570,7 +573,7 @@ public:
      * @param[in] value \b wstring to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b wstring.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b wstring.
      */
     virtual ReturnCode_t set_wstring_value(
             MemberId id,
@@ -582,7 +585,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b complex.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b complex.
      */
     virtual ReturnCode_t get_complex_value(
             traits<DynamicData>::ref_type value,
@@ -594,7 +597,7 @@ public:
      * @param[in] value @ref DynamicData reference to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not \b complex.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b complex.
      */
     virtual ReturnCode_t set_complex_value(
             MemberId id,
@@ -606,7 +609,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b int32.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int32.
      */
     virtual ReturnCode_t get_int32_values(
             Int32Seq& value,
@@ -618,7 +621,7 @@ public:
      * @param[in] value Sequence of \b int32 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b int32.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int32.
      */
     virtual ReturnCode_t set_int32_values(
             MemberId id,
@@ -630,7 +633,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b uint32.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint32.
      */
     virtual ReturnCode_t get_uint32_values(
             UInt32Seq& value,
@@ -642,7 +645,7 @@ public:
      * @param[in] value Sequence of \b uint32 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b uint32.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint32.
      */
     virtual ReturnCode_t set_uint32_values(
             MemberId id,
@@ -654,7 +657,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b int8.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int8.
      */
     virtual ReturnCode_t get_int8_values(
             Int8Seq& value,
@@ -666,7 +669,7 @@ public:
      * @param[in] value Sequence of \b int8 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b int8.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int8.
      */
     virtual ReturnCode_t set_int8_values(
             MemberId id,
@@ -678,7 +681,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b uint8.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint8.
      */
     virtual ReturnCode_t get_uint8_values(
             UInt8Seq& value,
@@ -690,7 +693,7 @@ public:
      * @param[in] value Sequence of \b uint8 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b uint8.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint8.
      */
     virtual ReturnCode_t set_uint8_values(
             MemberId id,
@@ -702,7 +705,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b int16.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int16.
      */
     virtual ReturnCode_t get_int16_values(
             Int16Seq& value,
@@ -714,7 +717,7 @@ public:
      * @param[in] value Sequence of \b int16 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b int16.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int16.
      */
     virtual ReturnCode_t set_int16_values(
             MemberId id,
@@ -726,7 +729,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b uint16.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint16.
      */
     virtual ReturnCode_t get_uint16_values(
             UInt16Seq& value,
@@ -738,7 +741,7 @@ public:
      * @param[in] value Sequence of \b uint16 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b uint16.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint16.
      */
     virtual ReturnCode_t set_uint16_values(
             MemberId id,
@@ -750,7 +753,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b int64.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int64.
      */
     virtual ReturnCode_t get_int64_values(
             Int64Seq& value,
@@ -762,7 +765,7 @@ public:
      * @param[in] value Sequence of \b int64 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b int64.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int64.
      */
     virtual ReturnCode_t set_int64_values(
             MemberId id,
@@ -774,7 +777,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b uint64.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint64.
      */
     virtual ReturnCode_t get_uint64_values(
             UInt64Seq& value,
@@ -786,7 +789,7 @@ public:
      * @param[in] value Sequence of \b uint64 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b uint64.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint64.
      */
     virtual ReturnCode_t set_uint64_values(
             MemberId id,
@@ -798,7 +801,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b float32.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float32.
      */
     virtual ReturnCode_t get_float32_values(
             Float32Seq& value,
@@ -810,7 +813,7 @@ public:
      * @param[in] value Sequence of \b float32 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b float32.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float32.
      */
     virtual ReturnCode_t set_float32_values(
             MemberId id,
@@ -822,7 +825,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b float64.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float64.
      */
     virtual ReturnCode_t get_float64_values(
             Float64Seq& value,
@@ -834,7 +837,7 @@ public:
      * @param[in] value Sequence of \b float64 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b float64.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float64.
      */
     virtual ReturnCode_t set_float64_values(
             MemberId id,
@@ -847,7 +850,7 @@ public:
      * @remarks Only available on platforms supporting long double
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b
      * float128.
      */
     virtual ReturnCode_t get_float128_values(
@@ -861,7 +864,7 @@ public:
      * @remarks Only available on platforms supporting long double
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b float128.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float128.
      */
     virtual ReturnCode_t set_float128_values(
             MemberId id,
@@ -873,7 +876,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b char8.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b char8.
      */
     virtual ReturnCode_t get_char8_values(
             CharSeq& value,
@@ -885,7 +888,7 @@ public:
      * @param[in] value Sequence of \b char8 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b char8.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b char8.
      */
     virtual ReturnCode_t set_char8_values(
             MemberId id,
@@ -897,7 +900,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b char16.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b char16.
      */
     virtual ReturnCode_t get_char16_values(
             WcharSeq& value,
@@ -909,7 +912,7 @@ public:
      * @param[in] value Sequence of \b char16 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b char16.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b char16.
      */
     virtual ReturnCode_t set_char16_values(
             MemberId id,
@@ -921,7 +924,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b byte.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b byte.
      */
     virtual ReturnCode_t get_byte_values(
             ByteSeq& value,
@@ -933,7 +936,7 @@ public:
      * @param[in] value Sequence of \b byte to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b byte.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b byte.
      */
     virtual ReturnCode_t set_byte_values(
             MemberId id,
@@ -945,7 +948,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b bool.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b bool.
      */
     virtual ReturnCode_t get_boolean_values(
             BooleanSeq& value,
@@ -957,7 +960,7 @@ public:
      * @param[in] value Sequence of \b bool to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b bool.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b bool.
      */
     virtual ReturnCode_t set_boolean_values(
             MemberId id,
@@ -969,7 +972,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b string.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b string.
      */
     virtual ReturnCode_t get_string_values(
             StringSeq& value,
@@ -981,7 +984,7 @@ public:
      * @param[in] value Sequence of \b string to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b string.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b string.
      */
     virtual ReturnCode_t set_string_values(
             MemberId id,
@@ -993,7 +996,7 @@ public:
      * @param[in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b wstring.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b wstring.
      */
     virtual ReturnCode_t get_wstring_values(
             WstringSeq& value,
@@ -1005,7 +1008,7 @@ public:
      * @param[in] value Sequence of \b wstring to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not sequence of \b wstring.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b wstring.
      */
     virtual ReturnCode_t set_wstring_values(
             MemberId id,
