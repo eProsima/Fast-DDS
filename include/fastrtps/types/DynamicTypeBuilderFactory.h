@@ -53,75 +53,75 @@ protected:
     DynamicType_ptr build_type(
             DynamicType_ptr other);
 
-//     void build_alias_type_code(
-//             const TypeDescriptor* descriptor,
-//             TypeObject& object,
-//             bool complete = true) const;
+    //     void build_alias_type_code(
+    //             const TypeDescriptor* descriptor,
+    //             TypeObject& object,
+    //             bool complete = true) const;
 
-//     void build_string8_type_code(
-//             const TypeDescriptor* descriptor) const;
+    //     void build_string8_type_code(
+    //             const TypeDescriptor* descriptor) const;
 
-//     void build_string16_type_code(
-//             const TypeDescriptor* descriptor) const;
+    //     void build_string16_type_code(
+    //             const TypeDescriptor* descriptor) const;
 
-//     void build_sequence_type_code(
-//             const TypeDescriptor* descriptor,
-//             TypeObject& object,
-//             bool complete = true) const;
+    //     void build_sequence_type_code(
+    //             const TypeDescriptor* descriptor,
+    //             TypeObject& object,
+    //             bool complete = true) const;
 
-//     void build_array_type_code(
-//             const TypeDescriptor* descriptor,
-//             TypeObject& object,
-//             bool complete = true) const;
+    //     void build_array_type_code(
+    //             const TypeDescriptor* descriptor,
+    //             TypeObject& object,
+    //             bool complete = true) const;
 
-//     void build_map_type_code(
-//             const TypeDescriptor* descriptor,
-//             TypeObject& object,
-//             bool complete = true) const;
+    //     void build_map_type_code(
+    //             const TypeDescriptor* descriptor,
+    //             TypeObject& object,
+    //             bool complete = true) const;
 
-//     void build_enum_type_code(
-//             const TypeDescriptor* descriptor,
-//             TypeObject& object,
-//             const std::vector<const MemberDescriptor*> members,
-//             bool complete = true) const;
+    //     void build_enum_type_code(
+    //             const TypeDescriptor* descriptor,
+    //             TypeObject& object,
+    //             const std::vector<const MemberDescriptor*> members,
+    //             bool complete = true) const;
 
-//     void build_struct_type_code(
-//             const TypeDescriptor* descriptor,
-//             TypeObject& object,
-//             const std::vector<const MemberDescriptor*> members,
-//             bool complete = true) const;
+    //     void build_struct_type_code(
+    //             const TypeDescriptor* descriptor,
+    //             TypeObject& object,
+    //             const std::vector<const MemberDescriptor*> members,
+    //             bool complete = true) const;
 
-//     void build_union_type_code(
-//             const TypeDescriptor* descriptor,
-//             TypeObject& object,
-//             const std::vector<const MemberDescriptor*> members,
-//             bool complete = true) const;
+    //     void build_union_type_code(
+    //             const TypeDescriptor* descriptor,
+    //             TypeObject& object,
+    //             const std::vector<const MemberDescriptor*> members,
+    //             bool complete = true) const;
 
-//     void build_bitset_type_code(
-//             const TypeDescriptor* descriptor,
-//             TypeObject& object,
-//             const std::vector<const MemberDescriptor*> members,
-//             bool complete = true) const;
+    //     void build_bitset_type_code(
+    //             const TypeDescriptor* descriptor,
+    //             TypeObject& object,
+    //             const std::vector<const MemberDescriptor*> members,
+    //             bool complete = true) const;
 
-//     void build_bitmask_type_code(
-//             const TypeDescriptor* descriptor,
-//             TypeObject& object,
-//             const std::vector<const MemberDescriptor*> members,
-//             bool complete = true) const;
+    //     void build_bitmask_type_code(
+    //             const TypeDescriptor* descriptor,
+    //             TypeObject& object,
+    //             const std::vector<const MemberDescriptor*> members,
+    //             bool complete = true) const;
 
-//     void build_annotation_type_code(
-//             const TypeDescriptor* descriptor,
-//             TypeObject& object,
-//             const std::vector<const MemberDescriptor*> members,
-//             bool complete = true) const;
+    //     void build_annotation_type_code(
+    //             const TypeDescriptor* descriptor,
+    //             TypeObject& object,
+    //             const std::vector<const MemberDescriptor*> members,
+    //             bool complete = true) const;
 
     void set_annotation_default_value(
             AnnotationParameterValue& apv,
             const MemberDescriptor* member) const;
 
-//     void apply_type_annotations(
-//             AppliedAnnotationSeq& annotations,
-//             const TypeDescriptor* descriptor) const;
+    //     void apply_type_annotations(
+    //             AppliedAnnotationSeq& annotations,
+    //             const TypeDescriptor* descriptor) const;
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicTypeBuilder*> builders_list_;
@@ -289,28 +289,28 @@ public:
     RTPS_DllAPI DynamicType_ptr create_bitset_type(
             uint32_t bound);
 
-//     RTPS_DllAPI void build_type_identifier(
-//             const DynamicType_ptr type,
-//             TypeIdentifier& identifier,
-//             bool complete = true) const;
+    //     RTPS_DllAPI void build_type_identifier(
+    //             const DynamicType_ptr type,
+    //             TypeIdentifier& identifier,
+    //             bool complete = true) const;
 
-//     RTPS_DllAPI void build_type_identifier(
-//             const TypeDescriptor* descriptor,
-//             TypeIdentifier& identifier,
-//             bool complete = true) const;
+    //     RTPS_DllAPI void build_type_identifier(
+    //             const TypeDescriptor* descriptor,
+    //             TypeIdentifier& identifier,
+    //             bool complete = true) const;
 
-//     RTPS_DllAPI void build_type_object(
-//             const DynamicType_ptr type,
-//             TypeObject& object,
-//             bool complete = true,
-//             bool force = false) const;
+    //     RTPS_DllAPI void build_type_object(
+    //             const DynamicType_ptr type,
+    //             TypeObject& object,
+    //             bool complete = true,
+    //             bool force = false) const;
 
-//     RTPS_DllAPI void build_type_object(
-//             const TypeDescriptor* descriptor,
-//             TypeObject& object,
-//             const std::vector<const MemberDescriptor*>* members = nullptr,
-//             bool complete = true,
-//             bool force = false) const;
+    //     RTPS_DllAPI void build_type_object(
+    //             const TypeDescriptor* descriptor,
+    //             TypeObject& object,
+    //             const std::vector<const MemberDescriptor*>* members = nullptr,
+    //             bool complete = true,
+    //             bool force = false) const;
 
     RTPS_DllAPI bool is_empty() const;
 };

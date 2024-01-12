@@ -264,7 +264,7 @@ int main(
         {
             TypeObjectPair type_objects;
             if (RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
-                    type_name, type_objects))
+                        type_name, type_objects))
             {
                 std::cout << "ERROR: TypeObject cannot be retrieved for type: "
                           << type_name << std::endl;
@@ -314,7 +314,8 @@ int main(
         {
             // loop taking samples
             eprosima::fastrtps::types::DynamicPubSubType pst(type);
-            eprosima::fastrtps::types::DynamicData_ptr sample(static_cast<eprosima::fastrtps::types::DynamicData*>(pst.createData()));
+            eprosima::fastrtps::types::DynamicData_ptr sample(static_cast<eprosima::fastrtps::types::DynamicData*>(pst.
+                            createData()));
             eprosima::fastdds::dds::SampleInfo info;
 
             if (RETCODE_OK == reader->take_next_sample(sample.get(), &info))

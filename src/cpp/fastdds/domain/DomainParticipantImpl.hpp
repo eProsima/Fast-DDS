@@ -661,9 +661,9 @@ protected:
     ReturnCode_t register_dynamic_type(
             fastrtps::types::DynamicType_ptr dyn_type);
 
-// TODO(XTypes): PENDING design to register discovered remote types
-//     bool register_dynamic_type_to_factories(
-//             const TypeSupport& type) const;
+    // TODO(XTypes): PENDING design to register discovered remote types
+    //     bool register_dynamic_type_to_factories(
+    //             const TypeSupport& type) const;
 
     virtual PublisherImpl* create_publisher_impl(
             const PublisherQos& qos,

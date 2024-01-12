@@ -46,7 +46,7 @@ public:
     }
 
     DomainParticipantFactory()
-    : rtps_domain_(fastrtps::rtps::RTPSDomainImpl::get_instance())
+        : rtps_domain_(fastrtps::rtps::RTPSDomainImpl::get_instance())
     {
     }
 

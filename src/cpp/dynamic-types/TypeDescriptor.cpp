@@ -219,7 +219,9 @@ bool TypeDescriptor::is_consistent() const
     }
 
     // Alias must have base type, and structures and bitsets optionally can have it.
-    if (base_type_ != nullptr && kind_ != eprosima::fastdds::dds::xtypes::TK_ALIAS && kind_ != eprosima::fastdds::dds::xtypes::TK_STRUCTURE && kind_ != eprosima::fastdds::dds::xtypes::TK_BITSET)
+    if (base_type_ != nullptr && kind_ != eprosima::fastdds::dds::xtypes::TK_ALIAS &&
+            kind_ != eprosima::fastdds::dds::xtypes::TK_STRUCTURE &&
+            kind_ != eprosima::fastdds::dds::xtypes::TK_BITSET)
     {
         return false;
     }
@@ -231,8 +233,12 @@ bool TypeDescriptor::is_consistent() const
     }
 
     // These types need one bound with the length of the field.
-    if (bound_.size() != 1 && (kind_ == eprosima::fastdds::dds::xtypes::TK_SEQUENCE || kind_ == eprosima::fastdds::dds::xtypes::TK_MAP || kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK ||
-            kind_ == eprosima::fastdds::dds::xtypes::TK_STRING8 || kind_ == eprosima::fastdds::dds::xtypes::TK_STRING16))
+    if (bound_.size() != 1 &&
+            (kind_ == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_MAP ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_STRING8 ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_STRING16))
     {
         return false;
     }
@@ -244,14 +250,19 @@ bool TypeDescriptor::is_consistent() const
     }
 
     // ElementType is used by these types to set the "value" type of the element, otherwise it should be null.
-    if ((element_type_ == nullptr) == (kind_ == eprosima::fastdds::dds::xtypes::TK_ARRAY || kind_ == eprosima::fastdds::dds::xtypes::TK_SEQUENCE || kind_ == eprosima::fastdds::dds::xtypes::TK_STRING8 ||
-            kind_ == eprosima::fastdds::dds::xtypes::TK_STRING16 || kind_ == eprosima::fastdds::dds::xtypes::TK_MAP || kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK))
+    if ((element_type_ == nullptr) ==
+            (kind_ == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_STRING8 ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_STRING16 || kind_ == eprosima::fastdds::dds::xtypes::TK_MAP ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK))
     {
         return false;
     }
 
     // For Bitmask types is mandatory that this element is boolean.
-    if (kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK && (element_type_->get_kind() != eprosima::fastdds::dds::xtypes::TK_BOOLEAN))
+    if (kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK &&
+            (element_type_->get_kind() != eprosima::fastdds::dds::xtypes::TK_BOOLEAN))
     {
         return false;
     }

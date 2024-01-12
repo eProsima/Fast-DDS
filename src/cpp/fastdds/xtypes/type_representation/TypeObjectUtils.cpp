@@ -1881,7 +1881,7 @@ void TypeObjectUtils::set_extensibility_kind(
         case ExtensibilityKind::APPENDABLE:
             type_flag |= TypeFlagBits::IS_APPENDABLE;
             break;
-        
+
         // ExtensibilityKind::NOT_APPLIED
         default:
             break;
@@ -1979,7 +1979,7 @@ void TypeObjectUtils::struct_member_flag_consistency(
     {
         throw InvalidArgumentError("Keyed members cannot be optional");
     }
-    if ((MemberFlagBits::IS_DEFAULT & member_flags) != 0)
+    if ((MemberFlagBits::IS_DEFAULT& member_flags) != 0)
     {
         throw InvalidArgumentError("Default flag does not apply to structure members");
     }
@@ -2671,7 +2671,7 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
                 throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
             }
             break;
-        // String        
+        // String
         case TI_STRING8_SMALL:
         case TI_STRING8_LARGE:
             if (value._d() != TK_STRING8)
@@ -2692,7 +2692,8 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         case EK_MINIMAL:
         {
             TypeObject type_object;
-            if (eprosima::fastdds::dds::RETCODE_OK == type_object_registry_observer().get_type_object(type_id, type_object))
+            if (eprosima::fastdds::dds::RETCODE_OK ==
+                    type_object_registry_observer().get_type_object(type_id, type_object))
             {
                 if (EK_COMPLETE == type_object._d() && type_object.complete()._d() == TK_ALIAS)
                 {
@@ -2709,13 +2710,13 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
                 if (TK_ENUM != value._d())
                 {
                     throw InvalidArgumentError(
-                                "Given annotation parameter value is inconsistent with given TypeIdentifier");
+                              "Given annotation parameter value is inconsistent with given TypeIdentifier");
                 }
                 else if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ENUM) ||
                         (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
                 {
                     throw InvalidArgumentError(
-                                "Given annotation parameter value is inconsistent with given TypeIdentifier");
+                              "Given annotation parameter value is inconsistent with given TypeIdentifier");
                 }
             }
             else

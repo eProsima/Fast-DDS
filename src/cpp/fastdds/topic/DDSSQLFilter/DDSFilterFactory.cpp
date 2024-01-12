@@ -518,7 +518,7 @@ ReturnCode_t DDSFilterFactory::create_content_filter(
     {
         eprosima::fastdds::dds::xtypes::TypeObjectPair type_objects;
         ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
-                type_name, type_objects);
+            type_name, type_objects);
         auto type_object = eprosima::fastdds::dds::xtypes::TypeObject();
         type_object.complete(type_objects.complete_type_object);
         if (RETCODE_BAD_PARAMETER == ret)
@@ -533,21 +533,27 @@ ReturnCode_t DDSFilterFactory::create_content_filter(
                 eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
                 eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
                 ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                        type_name, type_ids);
+                    type_name, type_ids);
                 if (eprosima::fastdds::dds::xtypes::TK_NONE == type_ids.type_identifier2()._d() ||
                         eprosima::fastdds::dds::xtypes::EK_COMPLETE == type_ids.type_identifier1()._d() ||
                         (eprosima::fastdds::dds::xtypes::TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
-                        eprosima::fastdds::dds::xtypes::EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                        eprosima::fastdds::dds::xtypes::EK_COMPLETE ==
+                        type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
                         (eprosima::fastdds::dds::xtypes::TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier1()._d() &&
-                        eprosima::fastdds::dds::xtypes::EK_COMPLETE == type_ids.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                        eprosima::fastdds::dds::xtypes::EK_COMPLETE ==
+                        type_ids.type_identifier1().seq_ldefn().header().equiv_kind()) ||
                         (eprosima::fastdds::dds::xtypes::TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier1()._d() &&
-                        eprosima::fastdds::dds::xtypes::EK_COMPLETE == type_ids.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                        eprosima::fastdds::dds::xtypes::EK_COMPLETE ==
+                        type_ids.type_identifier1().array_sdefn().header().equiv_kind()) ||
                         (eprosima::fastdds::dds::xtypes::TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
-                        eprosima::fastdds::dds::xtypes::EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                        eprosima::fastdds::dds::xtypes::EK_COMPLETE ==
+                        type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                         (eprosima::fastdds::dds::xtypes::TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                        eprosima::fastdds::dds::xtypes::EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                        eprosima::fastdds::dds::xtypes::EK_COMPLETE ==
+                        type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
                         (eprosima::fastdds::dds::xtypes::TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                        eprosima::fastdds::dds::xtypes::EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                        eprosima::fastdds::dds::xtypes::EK_COMPLETE ==
+                        type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
                 {
                     type_id = type_ids.type_identifier1();
                 }

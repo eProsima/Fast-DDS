@@ -461,14 +461,24 @@ uint32_t DynamicType::get_total_bounds() const
 
 bool DynamicType::has_children() const
 {
-    return kind_ == eprosima::fastdds::dds::xtypes::TK_ANNOTATION || kind_ == eprosima::fastdds::dds::xtypes::TK_ARRAY || kind_ == eprosima::fastdds::dds::xtypes::TK_MAP || kind_ == eprosima::fastdds::dds::xtypes::TK_SEQUENCE
-           || kind_ == eprosima::fastdds::dds::xtypes::TK_STRUCTURE || kind_ == eprosima::fastdds::dds::xtypes::TK_UNION || kind_ == eprosima::fastdds::dds::xtypes::TK_BITSET;
+    return kind_ == eprosima::fastdds::dds::xtypes::TK_ANNOTATION ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_MAP ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_SEQUENCE
+           || kind_ == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_UNION ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_BITSET;
 }
 
 bool DynamicType::is_complex_kind() const
 {
-    return kind_ == eprosima::fastdds::dds::xtypes::TK_ANNOTATION || kind_ == eprosima::fastdds::dds::xtypes::TK_ARRAY || kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK || kind_ == eprosima::fastdds::dds::xtypes::TK_ENUM
-           || kind_ == eprosima::fastdds::dds::xtypes::TK_MAP || kind_ == eprosima::fastdds::dds::xtypes::TK_SEQUENCE || kind_ == eprosima::fastdds::dds::xtypes::TK_STRUCTURE || kind_ == eprosima::fastdds::dds::xtypes::TK_UNION ||
+    return kind_ == eprosima::fastdds::dds::xtypes::TK_ANNOTATION ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_ENUM
+           || kind_ == eprosima::fastdds::dds::xtypes::TK_MAP || kind_ == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_UNION ||
            kind_ == eprosima::fastdds::dds::xtypes::TK_BITSET;
 }
 
@@ -479,14 +489,24 @@ bool DynamicType::is_consistent() const
 
 bool DynamicType::is_discriminator_type() const
 {
-    if (kind_ == eprosima::fastdds::dds::xtypes::TK_ALIAS && descriptor_ != nullptr && descriptor_->get_base_type() != nullptr)
+    if (kind_ == eprosima::fastdds::dds::xtypes::TK_ALIAS && descriptor_ != nullptr &&
+            descriptor_->get_base_type() != nullptr)
     {
         return descriptor_->get_base_type()->is_discriminator_type();
     }
-    return kind_ == eprosima::fastdds::dds::xtypes::TK_BOOLEAN || kind_ == eprosima::fastdds::dds::xtypes::TK_BYTE || kind_ == eprosima::fastdds::dds::xtypes::TK_INT16 || kind_ == eprosima::fastdds::dds::xtypes::TK_INT32 ||
-           kind_ == eprosima::fastdds::dds::xtypes::TK_INT64 || kind_ == eprosima::fastdds::dds::xtypes::TK_UINT16 || kind_ == eprosima::fastdds::dds::xtypes::TK_UINT32 || kind_ == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
-           kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT32 || kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT64 || kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT128 || kind_ == eprosima::fastdds::dds::xtypes::TK_CHAR8 ||
-           kind_ == eprosima::fastdds::dds::xtypes::TK_CHAR16 || kind_ == eprosima::fastdds::dds::xtypes::TK_STRING8 || kind_ == eprosima::fastdds::dds::xtypes::TK_STRING16 || kind_ == eprosima::fastdds::dds::xtypes::TK_ENUM || kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK;
+    return kind_ == eprosima::fastdds::dds::xtypes::TK_BOOLEAN || kind_ == eprosima::fastdds::dds::xtypes::TK_BYTE ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_INT16 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_INT32 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_INT64 || kind_ == eprosima::fastdds::dds::xtypes::TK_UINT16 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_UINT32 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT32 || kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT64 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT128 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_CHAR8 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_CHAR16 || kind_ == eprosima::fastdds::dds::xtypes::TK_STRING8 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_STRING16 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_ENUM ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK;
 }
 
 void DynamicType::set_name(
@@ -503,10 +523,14 @@ size_t DynamicType::get_size() const
 {
     switch (kind_)
     {
-        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN: case eprosima::fastdds::dds::xtypes::TK_BYTE: case eprosima::fastdds::dds::xtypes::TK_CHAR8: return 1;
-        case eprosima::fastdds::dds::xtypes::TK_INT16: case eprosima::fastdds::dds::xtypes::TK_UINT16: case eprosima::fastdds::dds::xtypes::TK_CHAR16:  return 2;
-        case eprosima::fastdds::dds::xtypes::TK_INT32: case eprosima::fastdds::dds::xtypes::TK_UINT32: case eprosima::fastdds::dds::xtypes::TK_FLOAT32: return 4;
-        case eprosima::fastdds::dds::xtypes::TK_INT64: case eprosima::fastdds::dds::xtypes::TK_UINT64: case eprosima::fastdds::dds::xtypes::TK_FLOAT64: return 8;
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN: case eprosima::fastdds::dds::xtypes::TK_BYTE: case eprosima::
+                    fastdds::dds::xtypes::TK_CHAR8: return 1;
+        case eprosima::fastdds::dds::xtypes::TK_INT16: case eprosima::fastdds::dds::xtypes::TK_UINT16: case eprosima::
+                    fastdds::dds::xtypes::TK_CHAR16:  return 2;
+        case eprosima::fastdds::dds::xtypes::TK_INT32: case eprosima::fastdds::dds::xtypes::TK_UINT32: case eprosima::
+                    fastdds::dds::xtypes::TK_FLOAT32: return 4;
+        case eprosima::fastdds::dds::xtypes::TK_INT64: case eprosima::fastdds::dds::xtypes::TK_UINT64: case eprosima::
+                    fastdds::dds::xtypes::TK_FLOAT64: return 8;
         case eprosima::fastdds::dds::xtypes::TK_FLOAT128: return 16;
         case eprosima::fastdds::dds::xtypes::TK_BITMASK: case eprosima::fastdds::dds::xtypes::TK_ENUM:
         {

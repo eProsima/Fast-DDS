@@ -227,14 +227,17 @@ bool MemberDescriptor::is_consistent(
         TypeKind parentKind) const
 {
     // The type field is mandatory in every type except bitmasks and enums.
-    if ((parentKind != eprosima::fastdds::dds::xtypes::TK_BITMASK && parentKind != eprosima::fastdds::dds::xtypes::TK_ENUM) && type_ == nullptr)
+    if ((parentKind != eprosima::fastdds::dds::xtypes::TK_BITMASK &&
+            parentKind != eprosima::fastdds::dds::xtypes::TK_ENUM) && type_ == nullptr)
     {
         return false;
     }
 
     // Only aggregated types must use the ID value.
-    if (id_ != MEMBER_ID_INVALID && parentKind != eprosima::fastdds::dds::xtypes::TK_UNION && parentKind != eprosima::fastdds::dds::xtypes::TK_STRUCTURE &&
-            parentKind != eprosima::fastdds::dds::xtypes::TK_BITSET && parentKind != eprosima::fastdds::dds::xtypes::TK_ANNOTATION)
+    if (id_ != MEMBER_ID_INVALID && parentKind != eprosima::fastdds::dds::xtypes::TK_UNION &&
+            parentKind != eprosima::fastdds::dds::xtypes::TK_STRUCTURE &&
+            parentKind != eprosima::fastdds::dds::xtypes::TK_BITSET &&
+            parentKind != eprosima::fastdds::dds::xtypes::TK_ANNOTATION)
     {
         return false;
     }

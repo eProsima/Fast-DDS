@@ -1857,7 +1857,8 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
         ASSERT_TRUE(data->get_string_value(sTest2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(sTest1 == sTest2);
 
-        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS",
+                MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
@@ -3373,10 +3374,12 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
         ASSERT_TRUE(child_struct_type_builder != nullptr);
 
         // Add a new member to the child struct.
-        ASSERT_TRUE(child_struct_type_builder->add_member(2, "child_int32", base_type) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(child_struct_type_builder->add_member(2, "child_int32",
+                base_type) == eprosima::fastdds::dds::RETCODE_OK);
 
         // try to add a member to override one of the parent struct.
-        ASSERT_FALSE(child_struct_type_builder->add_member(3, "int32", base_type) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(child_struct_type_builder->add_member(3, "int32",
+                base_type) == eprosima::fastdds::dds::RETCODE_OK);
 
         auto child_struct_type = child_struct_type_builder->build();
         ASSERT_TRUE(child_struct_type != nullptr);
@@ -3451,8 +3454,10 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
         ASSERT_TRUE(parent_struct_type_builder != nullptr);
 
         // Add members to the parent struct.
-        ASSERT_TRUE(parent_struct_type_builder->add_member(0, "child_struct", struct_type) == eprosima::fastdds::dds::RETCODE_OK);
-        ASSERT_TRUE(parent_struct_type_builder->add_member(1, "child_int64", base_type2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(parent_struct_type_builder->add_member(0, "child_struct",
+                struct_type) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(parent_struct_type_builder->add_member(1, "child_int64",
+                base_type2) == eprosima::fastdds::dds::RETCODE_OK);
 
         auto parent_struct_type = parent_struct_type_builder->build();
         ASSERT_TRUE(parent_struct_type != nullptr);
@@ -3543,7 +3548,8 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
         ASSERT_TRUE(union_type_builder != nullptr);
 
         // Add members to the union.
-        ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", { 0 }, true) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", { 0 },
+                true) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(union_type_builder->add_member(1, "second", base_type2, "", { 1 },
                 false) == eprosima::fastdds::dds::RETCODE_OK);
 
@@ -3645,7 +3651,8 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
         ASSERT_TRUE(union_type_builder != nullptr);
 
         // Add members to the union.
-        ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", { 0 }, true) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", { 0 },
+                true) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(union_type_builder->add_member(1, "second", base_type2, "", { 1 },
                 false) == eprosima::fastdds::dds::RETCODE_OK);
 
@@ -4829,7 +4836,8 @@ TEST_F(DynamicTypesTests, DynamicType_bounded_string_unit_tests)
         SerializedPayload_t static_payload(static_payloadSize);
         ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
         ASSERT_TRUE(static_payload.length == static_payloadSize);
-        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS",
+                MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
 
         delete(pbType);
@@ -4862,7 +4870,8 @@ TEST_F(DynamicTypesTests, DynamicType_bounded_wstring_unit_tests)
         SerializedPayload_t static_payload(static_payloadSize);
         ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
         ASSERT_TRUE(static_payload.length == static_payloadSize);
-        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS",
+                MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
 
         delete(pbType);

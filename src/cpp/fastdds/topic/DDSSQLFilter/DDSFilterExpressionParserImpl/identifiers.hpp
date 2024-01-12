@@ -226,7 +226,7 @@ struct identifier_processor
 
                 TypeObject type_object;
                 ReturnCode_t ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-                        *state.current_type, type_object);
+                    *state.current_type, type_object);
                 if (RETCODE_BAD_PARAMETER == ret)
                 {
                     throw parse_error("could not find type object definition", n->begin());

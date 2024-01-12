@@ -110,9 +110,12 @@ ReturnCode_t DynamicTypeBuilder::add_member(
 {
     if (descriptor_ != nullptr && descriptor != nullptr && descriptor->is_consistent(descriptor_->get_kind()))
     {
-        if (descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_ANNOTATION || descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK
-                || descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM || descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE
-                || descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION || descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
+        if (descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_ANNOTATION ||
+                descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK
+                || descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM ||
+                descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE
+                || descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION ||
+                descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
         {
             if (!exists_member_by_name(descriptor->get_name()) ||
                     (kind_ == eprosima::fastdds::dds::xtypes::TK_BITSET && descriptor->get_name().empty())) // Bitsets allow multiple empty members.
@@ -429,19 +432,30 @@ bool DynamicTypeBuilder::is_consistent() const
 
 bool DynamicTypeBuilder::is_discriminator_type() const
 {
-    if (kind_ == eprosima::fastdds::dds::xtypes::TK_ALIAS && descriptor_ != nullptr && descriptor_->get_base_type() != nullptr)
+    if (kind_ == eprosima::fastdds::dds::xtypes::TK_ALIAS && descriptor_ != nullptr &&
+            descriptor_->get_base_type() != nullptr)
     {
         return descriptor_->get_base_type()->is_discriminator_type();
     }
-    return kind_ == eprosima::fastdds::dds::xtypes::TK_BOOLEAN || kind_ == eprosima::fastdds::dds::xtypes::TK_BYTE || kind_ == eprosima::fastdds::dds::xtypes::TK_INT16 || kind_ == eprosima::fastdds::dds::xtypes::TK_INT32 ||
-           kind_ == eprosima::fastdds::dds::xtypes::TK_INT64 || kind_ == eprosima::fastdds::dds::xtypes::TK_UINT16 || kind_ == eprosima::fastdds::dds::xtypes::TK_UINT32 || kind_ == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
-           kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT32 || kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT64 || kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT128 || kind_ == eprosima::fastdds::dds::xtypes::TK_CHAR8 ||
-           kind_ == eprosima::fastdds::dds::xtypes::TK_CHAR16 || kind_ == eprosima::fastdds::dds::xtypes::TK_STRING8 || kind_ == eprosima::fastdds::dds::xtypes::TK_STRING16 || kind_ == eprosima::fastdds::dds::xtypes::TK_ENUM || kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK;
+    return kind_ == eprosima::fastdds::dds::xtypes::TK_BOOLEAN || kind_ == eprosima::fastdds::dds::xtypes::TK_BYTE ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_INT16 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_INT32 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_INT64 || kind_ == eprosima::fastdds::dds::xtypes::TK_UINT16 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_UINT32 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT32 || kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT64 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT128 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_CHAR8 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_CHAR16 || kind_ == eprosima::fastdds::dds::xtypes::TK_STRING8 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_STRING16 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_ENUM ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK;
 }
 
 void DynamicTypeBuilder::refresh_member_ids()
 {
-    if ((descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE || descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET) &&
+    if ((descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+            descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET) &&
             descriptor_->get_base_type() != nullptr)
     {
         current_member_id_ = descriptor_->get_base_type()->get_members_count();

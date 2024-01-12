@@ -69,8 +69,8 @@ void register_empty_structure_type_object()
 {
     std::string empty_struct_name = "empty_structure";
     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
-            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>(), empty_struct_name);
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>(), empty_struct_name);
     CompleteStructHeader header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
     CompleteStructType struct_type = TypeObjectUtils::build_complete_struct_type(0, header, CompleteStructMemberSeq());
     TypeObjectUtils::build_and_register_struct_type_object(struct_type, empty_struct_name);
@@ -1140,15 +1140,15 @@ void register_basic_enum()
     std::string basic_enum_name = "basic_enum";
     CommonEnumeratedHeader common = TypeObjectUtils::build_common_enumerated_header(32);
     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
-            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>(), basic_enum_name);
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>(), basic_enum_name);
     CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
     CommonEnumeratedLiteral common_literal = TypeObjectUtils::build_common_enumerated_literal(1, 0);
     CompleteMemberDetail detail_literal = TypeObjectUtils::build_complete_member_detail("literal",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteEnumeratedLiteral literal = TypeObjectUtils::build_complete_enumerated_literal(common_literal,
-            detail_literal);
+                    detail_literal);
     CompleteEnumeratedLiteralSeq literal_seq;
     TypeObjectUtils::add_complete_enumerated_literal(literal_seq, literal);
     CompleteEnumeratedType enum_type = TypeObjectUtils::build_complete_enumerated_type(0, header, literal_seq);
@@ -1160,13 +1160,13 @@ void register_basic_bitmask()
     std::string basic_bitmask_name = "basic_bitmask";
     CommonEnumeratedHeader common = TypeObjectUtils::build_common_enumerated_header(32, true);
     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
-            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>(), basic_bitmask_name);
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>(), basic_bitmask_name);
     CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail, true);
     CommonBitflag common_flag = TypeObjectUtils::build_common_bitflag(5, 0);
     CompleteMemberDetail detail_flag = TypeObjectUtils::build_complete_member_detail("flag",
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteBitflag flag = TypeObjectUtils::build_complete_bitflag(common_flag, detail_flag);
     CompleteBitflagSeq flag_seq;
     TypeObjectUtils::add_complete_bitflag(flag_seq, flag);
@@ -1365,7 +1365,7 @@ TEST(TypeObjectUtilsTests, build_complete_annotation_parameter_inconsistent_data
     AnnotationParameterValue enum_param = TypeObjectUtils::build_annotation_parameter_value_enum(
         static_cast<int32_t>(0));
     AnnotationParameterValue string8_param = TypeObjectUtils::build_annotation_parameter_value(
-            eprosima::fastcdr::fixed_string<128>("Hello"));
+        eprosima::fastcdr::fixed_string<128>("Hello"));
     AnnotationParameterValue string16_param = TypeObjectUtils::build_annotation_parameter_value(std::wstring(L"Hello"));
     std::vector<AnnotationParameterValue> ann_param_seq;
     ann_param_seq.push_back(bool_param);
@@ -2141,7 +2141,7 @@ TEST(TypeObjectUtilsTests, register_structure_type_object)
 TEST(TypeObjectUtilsTests, register_union_type_object)
 {
     UnionTypeFlag flags = TypeObjectUtils::build_union_type_flag(
-            eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE, false, false);
+        eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE, false, false);
     UnionDiscriminatorFlag discr_flags = TypeObjectUtils::build_union_discriminator_flag(
         eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD,
         false);
@@ -2576,7 +2576,7 @@ TEST(TypeObjectUtilsTests, add_to_union_case_label_seq)
 TEST(TypeObjectUtilsTests, add_to_complete_union_member_seq)
 {
     UnionMemberFlag flags = TypeObjectUtils::build_union_member_flag(
-            eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false, false);
     TypeIdentifier type_id;
     type_id._d(TK_UINT32);
     UnionCaseLabelSeq label_1;

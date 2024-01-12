@@ -603,7 +603,9 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_string_builder(
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_child_struct_builder(
         DynamicTypeBuilder* parent_type)
 {
-    if (parent_type != nullptr && (parent_type->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE || parent_type->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET))
+    if (parent_type != nullptr &&
+            (parent_type->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+            parent_type->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET))
     {
         TypeDescriptor pDescriptor;
         pDescriptor.kind_ = parent_type->get_kind();
@@ -639,12 +641,27 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_custom_builder(
     if (descriptor != nullptr)
     {
         TypeKind kind = descriptor->get_kind();
-        if (kind == eprosima::fastdds::dds::xtypes::TK_BOOLEAN || kind == eprosima::fastdds::dds::xtypes::TK_BYTE || kind == eprosima::fastdds::dds::xtypes::TK_INT16 || kind == eprosima::fastdds::dds::xtypes::TK_INT32 ||
-                kind == eprosima::fastdds::dds::xtypes::TK_INT64 || kind == eprosima::fastdds::dds::xtypes::TK_UINT16 || kind == eprosima::fastdds::dds::xtypes::TK_UINT32 || kind == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
-                kind == eprosima::fastdds::dds::xtypes::TK_FLOAT32 || kind == eprosima::fastdds::dds::xtypes::TK_FLOAT64 || kind == eprosima::fastdds::dds::xtypes::TK_FLOAT128 || kind == eprosima::fastdds::dds::xtypes::TK_CHAR8 ||
-                kind == eprosima::fastdds::dds::xtypes::TK_CHAR16 || kind == eprosima::fastdds::dds::xtypes::TK_STRING8 || kind == eprosima::fastdds::dds::xtypes::TK_STRING16 || kind == eprosima::fastdds::dds::xtypes::TK_ALIAS ||
-                kind == eprosima::fastdds::dds::xtypes::TK_ENUM || kind == eprosima::fastdds::dds::xtypes::TK_BITMASK || kind == eprosima::fastdds::dds::xtypes::TK_STRUCTURE || kind == eprosima::fastdds::dds::xtypes::TK_UNION ||
-                kind == eprosima::fastdds::dds::xtypes::TK_BITSET || kind == eprosima::fastdds::dds::xtypes::TK_SEQUENCE || kind == eprosima::fastdds::dds::xtypes::TK_ARRAY || kind == eprosima::fastdds::dds::xtypes::TK_MAP ||
+        if (kind == eprosima::fastdds::dds::xtypes::TK_BOOLEAN || kind == eprosima::fastdds::dds::xtypes::TK_BYTE ||
+                kind == eprosima::fastdds::dds::xtypes::TK_INT16 ||
+                kind == eprosima::fastdds::dds::xtypes::TK_INT32 ||
+                kind == eprosima::fastdds::dds::xtypes::TK_INT64 || kind == eprosima::fastdds::dds::xtypes::TK_UINT16 ||
+                kind == eprosima::fastdds::dds::xtypes::TK_UINT32 ||
+                kind == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+                kind == eprosima::fastdds::dds::xtypes::TK_FLOAT32 ||
+                kind == eprosima::fastdds::dds::xtypes::TK_FLOAT64 ||
+                kind == eprosima::fastdds::dds::xtypes::TK_FLOAT128 ||
+                kind == eprosima::fastdds::dds::xtypes::TK_CHAR8 ||
+                kind == eprosima::fastdds::dds::xtypes::TK_CHAR16 ||
+                kind == eprosima::fastdds::dds::xtypes::TK_STRING8 ||
+                kind == eprosima::fastdds::dds::xtypes::TK_STRING16 ||
+                kind == eprosima::fastdds::dds::xtypes::TK_ALIAS ||
+                kind == eprosima::fastdds::dds::xtypes::TK_ENUM || kind == eprosima::fastdds::dds::xtypes::TK_BITMASK ||
+                kind == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+                kind == eprosima::fastdds::dds::xtypes::TK_UNION ||
+                kind == eprosima::fastdds::dds::xtypes::TK_BITSET ||
+                kind == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+                kind == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+                kind == eprosima::fastdds::dds::xtypes::TK_MAP ||
                 kind == eprosima::fastdds::dds::xtypes::TK_ANNOTATION)
         {
             DynamicTypeBuilder* pNewType = new DynamicTypeBuilder(descriptor);
@@ -2696,79 +2713,92 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_alias_type(
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_int32_type()
 {
-    TypeDescriptor pInt32Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_INT32)), eprosima::fastdds::dds::xtypes::TK_INT32);
+    TypeDescriptor pInt32Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_INT32)),
+            eprosima::fastdds::dds::xtypes::TK_INT32);
     return DynamicType_ptr(new DynamicType(&pInt32Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_uint32_type()
 {
-    TypeDescriptor pUint32Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_UINT32)), eprosima::fastdds::dds::xtypes::TK_UINT32);
+    TypeDescriptor pUint32Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_UINT32)),
+            eprosima::fastdds::dds::xtypes::TK_UINT32);
     return DynamicType_ptr(new DynamicType(&pUint32Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_int16_type()
 {
-    TypeDescriptor pInt16Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_INT16)), eprosima::fastdds::dds::xtypes::TK_INT16);
+    TypeDescriptor pInt16Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_INT16)),
+            eprosima::fastdds::dds::xtypes::TK_INT16);
     return DynamicType_ptr(new DynamicType(&pInt16Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_uint16_type()
 {
-    TypeDescriptor pUint16Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_UINT16)), eprosima::fastdds::dds::xtypes::TK_UINT16);
+    TypeDescriptor pUint16Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_UINT16)),
+            eprosima::fastdds::dds::xtypes::TK_UINT16);
     return DynamicType_ptr(new DynamicType(&pUint16Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_int64_type()
 {
-    TypeDescriptor pInt64Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_INT64)), eprosima::fastdds::dds::xtypes::TK_INT64);
+    TypeDescriptor pInt64Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_INT64)),
+            eprosima::fastdds::dds::xtypes::TK_INT64);
     return DynamicType_ptr(new DynamicType(&pInt64Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_uint64_type()
 {
-    TypeDescriptor pUint64Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_UINT64)), eprosima::fastdds::dds::xtypes::TK_UINT64);
+    TypeDescriptor pUint64Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_UINT64)),
+            eprosima::fastdds::dds::xtypes::TK_UINT64);
     return DynamicType_ptr(new DynamicType(&pUint64Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_float32_type()
 {
-    TypeDescriptor pFloat32Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_FLOAT32)), eprosima::fastdds::dds::xtypes::TK_FLOAT32);
+    TypeDescriptor pFloat32Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_FLOAT32)),
+            eprosima::fastdds::dds::xtypes::TK_FLOAT32);
     return DynamicType_ptr(new DynamicType(&pFloat32Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_float64_type()
 {
-    TypeDescriptor pFloat64Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_FLOAT64)), eprosima::fastdds::dds::xtypes::TK_FLOAT64);
+    TypeDescriptor pFloat64Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_FLOAT64)),
+            eprosima::fastdds::dds::xtypes::TK_FLOAT64);
     return DynamicType_ptr(new DynamicType(&pFloat64Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_float128_type()
 {
-    TypeDescriptor pFloat128Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_FLOAT128)), eprosima::fastdds::dds::xtypes::TK_FLOAT128);
+    TypeDescriptor pFloat128Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_FLOAT128)),
+            eprosima::fastdds::dds::xtypes::TK_FLOAT128);
     return DynamicType_ptr(new DynamicType(&pFloat128Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_char8_type()
 {
-    TypeDescriptor pChar8Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_CHAR8)), eprosima::fastdds::dds::xtypes::TK_CHAR8);
+    TypeDescriptor pChar8Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_CHAR8)),
+            eprosima::fastdds::dds::xtypes::TK_CHAR8);
     return DynamicType_ptr(new DynamicType(&pChar8Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_char16_type()
 {
-    TypeDescriptor pChar16Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_CHAR16)), eprosima::fastdds::dds::xtypes::TK_CHAR16);
+    TypeDescriptor pChar16Descriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_CHAR16)),
+            eprosima::fastdds::dds::xtypes::TK_CHAR16);
     return DynamicType_ptr(new DynamicType(&pChar16Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_bool_type()
 {
-    TypeDescriptor pBoolDescriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_BOOLEAN)), eprosima::fastdds::dds::xtypes::TK_BOOLEAN);
+    TypeDescriptor pBoolDescriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_BOOLEAN)),
+            eprosima::fastdds::dds::xtypes::TK_BOOLEAN);
     return DynamicType_ptr(new DynamicType(&pBoolDescriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_byte_type()
 {
-    TypeDescriptor pByteDescriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_BYTE)), eprosima::fastdds::dds::xtypes::TK_BYTE);
+    TypeDescriptor pByteDescriptor(GenerateTypeName(get_type_name(eprosima::fastdds::dds::xtypes::TK_BYTE)),
+            eprosima::fastdds::dds::xtypes::TK_BYTE);
     return DynamicType_ptr(new DynamicType(&pByteDescriptor));
 }
 

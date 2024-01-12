@@ -188,7 +188,8 @@ void DynamicData::create_members(
         if (pType->is_complex_kind())
         {
             // Bitmasks and enums register their members but only manages one value.
-            if (pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK || pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM)
+            if (pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK ||
+                    pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM)
             {
                 add_value(pType->get_kind(), MEMBER_ID_INVALID);
             }
@@ -199,7 +200,8 @@ void DynamicData::create_members(
                 if (it->second->get_descriptor(newDescriptor) == eprosima::fastdds::dds::RETCODE_OK)
                 {
                     descriptors_.insert(std::make_pair(it->first, newDescriptor));
-                    if (pType->get_kind() != eprosima::fastdds::dds::xtypes::TK_BITMASK && pType->get_kind() != eprosima::fastdds::dds::xtypes::TK_ENUM)
+                    if (pType->get_kind() != eprosima::fastdds::dds::xtypes::TK_BITMASK &&
+                            pType->get_kind() != eprosima::fastdds::dds::xtypes::TK_ENUM)
                     {
                         DynamicData* data = DynamicDataFactory::get_instance()->create_data(newDescriptor->type_);
                         if (newDescriptor->type_->get_kind() != eprosima::fastdds::dds::xtypes::TK_BITSET &&
@@ -370,7 +372,8 @@ bool DynamicData::equals(
 #else
                 if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM)
                 {
-                    if (!compare_values(eprosima::fastdds::dds::xtypes::TK_UINT32, values_.begin()->second, other->values_.begin()->second))
+                    if (!compare_values(eprosima::fastdds::dds::xtypes::TK_UINT32, values_.begin()->second,
+                            other->values_.begin()->second))
                     {
                         return false;
                     }
@@ -649,7 +652,9 @@ ReturnCode_t DynamicData::clear_all_values()
 {
     if (type_->is_complex_kind())
     {
-        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE || get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP || get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+                get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP ||
+                get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return clear_data();
         }
@@ -1893,7 +1898,8 @@ ReturnCode_t DynamicData::set_int32_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET && data->type_->get_descriptor()->annotation_get_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_get_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 int32_t mask = 0x00;
@@ -2038,7 +2044,8 @@ ReturnCode_t DynamicData::set_uint32_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 uint32_t mask = 0x00;
@@ -2183,7 +2190,8 @@ ReturnCode_t DynamicData::set_int16_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 int16_t mask = 0x00;
@@ -2328,7 +2336,8 @@ ReturnCode_t DynamicData::set_uint16_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 uint16_t mask = 0x00;
@@ -2472,7 +2481,8 @@ ReturnCode_t DynamicData::set_int64_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 int64_t mask = 0x00;
@@ -2555,7 +2565,8 @@ ReturnCode_t DynamicData::get_uint64_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64 || get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK) && id == MEMBER_ID_INVALID)
+    if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK) && id == MEMBER_ID_INVALID)
     {
         value = uint64_value_;
         return eprosima::fastdds::dds::RETCODE_OK;
@@ -2580,7 +2591,8 @@ ReturnCode_t DynamicData::get_uint64_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64 || get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK) && id == MEMBER_ID_INVALID)
+        if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+                get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK) && id == MEMBER_ID_INVALID)
         {
             value = *((uint64_t*)it->second);
             return eprosima::fastdds::dds::RETCODE_OK;
@@ -2606,7 +2618,8 @@ ReturnCode_t DynamicData::set_uint64_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64 || get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK) && id == MEMBER_ID_INVALID)
+    if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK) && id == MEMBER_ID_INVALID)
     {
         uint64_value_ = value;
         return eprosima::fastdds::dds::RETCODE_OK;
@@ -2617,7 +2630,8 @@ ReturnCode_t DynamicData::set_uint64_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 uint64_t mask = 0x00;
@@ -2650,7 +2664,8 @@ ReturnCode_t DynamicData::set_uint64_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64 || get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK) && id == MEMBER_ID_INVALID)
+        if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+                get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK) && id == MEMBER_ID_INVALID)
         {
             *((uint64_t*)it->second) = value;
             return eprosima::fastdds::dds::RETCODE_OK;
@@ -3349,7 +3364,8 @@ ReturnCode_t DynamicData::set_byte_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 octet mask = 0x00;
@@ -4430,7 +4446,8 @@ ReturnCode_t DynamicData::insert_int32_value(
         int32_t value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_INT32)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_INT32)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4450,7 +4467,8 @@ ReturnCode_t DynamicData::insert_uint32_value(
         uint32_t value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT32)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT32)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4470,7 +4488,8 @@ ReturnCode_t DynamicData::insert_int16_value(
         int16_t value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_INT16)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_INT16)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4490,7 +4509,8 @@ ReturnCode_t DynamicData::insert_uint16_value(
         uint16_t value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT16)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT16)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4510,7 +4530,8 @@ ReturnCode_t DynamicData::insert_int64_value(
         int64_t value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_INT64)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_INT64)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4530,7 +4551,8 @@ ReturnCode_t DynamicData::insert_uint64_value(
         uint64_t value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4550,7 +4572,8 @@ ReturnCode_t DynamicData::insert_float32_value(
         float value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT32)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT32)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4570,7 +4593,8 @@ ReturnCode_t DynamicData::insert_float64_value(
         double value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT64)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT64)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4590,7 +4614,8 @@ ReturnCode_t DynamicData::insert_float128_value(
         long double value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT128)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT128)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4610,7 +4635,8 @@ ReturnCode_t DynamicData::insert_char8_value(
         char value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR8)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR8)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4630,7 +4656,8 @@ ReturnCode_t DynamicData::insert_char16_value(
         wchar_t value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR16)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR16)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4650,7 +4677,8 @@ ReturnCode_t DynamicData::insert_byte_value(
         octet value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_BYTE)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_BYTE)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4670,7 +4698,8 @@ ReturnCode_t DynamicData::insert_bool_value(
         bool value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_BOOLEAN)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_BOOLEAN)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4690,7 +4719,8 @@ ReturnCode_t DynamicData::insert_string_value(
         const std::string& value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING8)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING8)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4710,7 +4740,8 @@ ReturnCode_t DynamicData::insert_wstring_value(
         const std::wstring& value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING16)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING16)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4730,7 +4761,8 @@ ReturnCode_t DynamicData::insert_enum_value(
         const std::string& value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == eprosima::fastdds::dds::RETCODE_OK)
@@ -4750,7 +4782,8 @@ ReturnCode_t DynamicData::insert_complex_value(
         const DynamicData* value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->equals(value->type_.get()))
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->equals(value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4781,7 +4814,8 @@ ReturnCode_t DynamicData::insert_complex_value(
         DynamicData_ptr value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->equals(value->type_.get()))
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->equals(value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4812,7 +4846,8 @@ ReturnCode_t DynamicData::insert_complex_value(
         DynamicData* value,
         MemberId& outId)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE && type_->get_element_type()->equals(value->type_.get()))
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->equals(value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4876,7 +4911,8 @@ ReturnCode_t DynamicData::insert_sequence_data(
 ReturnCode_t DynamicData::remove_sequence_data(
         MemberId id)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE || get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         auto it = complex_values_.find(id);
@@ -4974,7 +5010,8 @@ ReturnCode_t DynamicData::insert_map_data(
         MemberId& outKey,
         MemberId& outValue)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP && type_->get_key_element_type()->equals(key->type_.get()) &&
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP &&
+            type_->get_key_element_type()->equals(key->type_.get()) &&
             type_->get_element_type()->equals(value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
@@ -5035,7 +5072,8 @@ ReturnCode_t DynamicData::insert_map_data(
         MemberId& outKey,
         MemberId& outValue)
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP && type_->get_key_element_type()->equals(key->type_.get()) &&
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP &&
+            type_->get_key_element_type()->equals(key->type_.get()) &&
             type_->get_element_type()->equals(value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
@@ -5147,7 +5185,9 @@ ReturnCode_t DynamicData::remove_map_data(
 
 ReturnCode_t DynamicData::clear_data()
 {
-    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE || get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP || get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         for (auto it = complex_values_.begin(); it != complex_values_.end(); ++it)
@@ -5176,8 +5216,13 @@ ReturnCode_t DynamicData::get_complex_value(
         MemberId id) const
 {
     // Check that the type is complex and in case of dynamic containers, check that the index is valid
-    if (id != MEMBER_ID_INVALID && (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE || get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION ||
-            get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE || get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY || get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP || get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET))
+    if (id != MEMBER_ID_INVALID &&
+            (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET))
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         auto it = complex_values_.find(id);
@@ -5209,11 +5254,18 @@ ReturnCode_t DynamicData::set_complex_value(
         MemberId id)
 {
     // Check that the type is complex and in case of dynamic containers, check that the index is valid
-    if (id != MEMBER_ID_INVALID && (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE || get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION ||
-            get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE || get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY || get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP || get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET))
+    if (id != MEMBER_ID_INVALID &&
+            (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET))
     {
         // With containers, check that the index is valid
-        if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE || get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY || get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP) &&
+        if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+                get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+                get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP) &&
                 id < type_->get_total_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -6080,7 +6132,8 @@ size_t DynamicData::getKeyMaxCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
     // Structures check the the size of the key for their children
-    if (type->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE || type->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
+    if (type->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+            type->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
     {
         for (auto it = type->member_by_id_.begin(); it != type->member_by_id_.end(); ++it)
         {
@@ -6648,7 +6701,8 @@ void DynamicData::serializeKey(
         eprosima::fastcdr::Cdr& cdr) const
 {
     // Structures check the the size of the key for their children
-    if (type_->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE || type_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
+    if (type_->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+            type_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         for (auto it = complex_values_.begin(); it != complex_values_.end(); ++it)
