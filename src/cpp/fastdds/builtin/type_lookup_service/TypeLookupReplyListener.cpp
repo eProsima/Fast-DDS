@@ -67,15 +67,8 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Received new cache change");
 
     TypeLookup_Reply reply;
-    if (typelookup_manager_->recv_reply(*change, reply))
+    if (typelookup_manager_->receive_reply(*change, reply))
     {
-        if (get_rtps_guid(reply.header().relatedRequestId().writer_guid()) !=
-                typelookup_manager_->builtin_request_writer_->getGuid())
-        {
-            // This message isn't for us.
-            return;
-        }
-
         switch (reply.return_value()._d())
         {
             case TypeLookup_getTypes_HashId:
