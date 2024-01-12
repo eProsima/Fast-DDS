@@ -51,6 +51,7 @@ BuiltinProtocols::BuiltinProtocols()
     : mp_participantImpl(nullptr)
     , mp_PDP(nullptr)
     , mp_WLP(nullptr)
+    , typelookup_manager_(nullptr)
 {
 }
 
@@ -65,6 +66,7 @@ BuiltinProtocols::~BuiltinProtocols()
     // TODO Auto-generated destructor stub
     delete mp_WLP;
     delete mp_PDP;
+    delete typelookup_manager_;
 }
 
 bool BuiltinProtocols::initBuiltinProtocols(
@@ -140,7 +142,8 @@ bool BuiltinProtocols::initBuiltinProtocols(
     }
 
     // TypeLookupManager
-    typelookup_manager_.init(this);
+    typelookup_manager_ = new fastdds::dds::builtin::TypeLookupManager();
+    typelookup_manager_->init(this);
 
     return true;
 }
