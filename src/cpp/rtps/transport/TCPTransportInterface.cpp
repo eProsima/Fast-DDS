@@ -104,6 +104,7 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , calculate_crc(true)
     , check_crc(true)
     , apply_security(false)
+    , non_blocking_send(false)
 {
 }
 
@@ -125,6 +126,7 @@ TCPTransportDescriptor::TCPTransportDescriptor(
     , tls_config(t.tls_config)
     , keep_alive_thread(t.keep_alive_thread)
     , accept_thread(t.accept_thread)
+    , non_blocking_send(t.non_blocking_send)
 {
 }
 
@@ -152,6 +154,7 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator =(
     tls_config = t.tls_config;
     keep_alive_thread = t.keep_alive_thread;
     accept_thread = t.accept_thread;
+    non_blocking_send = t.non_blocking_send;
     return *this;
 }
 
@@ -173,6 +176,7 @@ bool TCPTransportDescriptor::operator ==(
            this->tls_config == t.tls_config &&
            this->keep_alive_thread == t.keep_alive_thread &&
            this->accept_thread == t.accept_thread &&
+           this->non_blocking_send == t.non_blocking_send &&
            SocketTransportDescriptor::operator ==(t));
 }
 

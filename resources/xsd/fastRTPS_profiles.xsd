@@ -853,7 +853,7 @@
         ├ interfaceWhiteList        [0~*],                     (NOT  available for   SHM type)
         |   └ address               [ipv4Address|ipv6Address]
         ├ TTL                       [uint8],                   (ONLY available for  UDP  type)
-        ├ non_blocking_send         [boolean],                 (ONLY available for  UDP  type)
+        ├ non_blocking_send         [boolean],                 (ONLY available for  UDP/TCPv4/TCPv6  type)
         ├ output_port               [uint16],                  (ONLY available for  UDP  type)
         ├ wan_addr                  [ipv4AddressFormat],       (ONLY available for TCPv4 type)
         ├ keep_alive_frequency_ms   [uint32],                  (ONLY available for TCP   type)

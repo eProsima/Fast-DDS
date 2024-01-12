@@ -172,6 +172,7 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
     bool calculate_crc;
     bool check_crc;
     bool apply_security;
+    bool non_blocking_send;
 
     TLSConfig tls_config;
 
