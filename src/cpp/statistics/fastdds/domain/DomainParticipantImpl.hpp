@@ -130,7 +130,7 @@ public:
      * @return RETCODE_UNSUPPORTED if FASTDDS_STATISTICS is not enabled.
      *
      */
-    ReturnCode_t enable_monitor_service();
+    efd::ReturnCode_t enable_monitor_service();
 
     /**
      * Disables the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
@@ -141,7 +141,7 @@ public:
      * @return RETCODE_UNSUPPORTED if FASTDDS_STATISTICS is not enabled.
      *
      */
-    ReturnCode_t disable_monitor_service();
+    efd::ReturnCode_t disable_monitor_service();
 
     /**
      * fills in the ParticipantProxyData from a MonitorService Message
@@ -152,7 +152,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    ReturnCode_t fill_discovery_data_from_cdr_message(
+    efd::ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ParticipantProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
@@ -165,7 +165,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    ReturnCode_t fill_discovery_data_from_cdr_message(
+    efd::ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::WriterProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
@@ -178,7 +178,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    ReturnCode_t fill_discovery_data_from_cdr_message(
+    efd::ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ReaderProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 

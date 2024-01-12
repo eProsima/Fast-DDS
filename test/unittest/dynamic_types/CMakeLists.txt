@@ -22,6 +22,7 @@ endif()
 file(GLOB DYNAMIC_TYPES_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cxx

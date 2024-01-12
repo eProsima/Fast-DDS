@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 namespace eprosima {
 namespace fastcdr {
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -144,8 +142,6 @@ void serialize_key(
 }
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -238,8 +234,6 @@ void serialize_key(
 }
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -322,9 +316,6 @@ void serialize_key(
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
-
-
-
 
 
 
@@ -428,8 +419,6 @@ void serialize_key(
 }
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -530,8 +519,6 @@ void serialize_key(
 }
 
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -622,21 +609,6 @@ void serialize_key(
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -802,38 +774,74 @@ eProsima_user_DllExport void deserialize(
                         switch (data._d())
                         {
                                                         case StatusKind::PROXY:
+                                                            if (mid != 1)
+                                                            {
+                                                                throw BadParamException("Deserializing union member entity_proxy the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.entity_proxy();
                                                             break;
 
                                                         case StatusKind::CONNECTION_LIST:
+                                                            if (mid != 2)
+                                                            {
+                                                                throw BadParamException("Deserializing union member connection_list the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.connection_list();
                                                             break;
 
                                                         case StatusKind::INCOMPATIBLE_QOS:
+                                                            if (mid != 3)
+                                                            {
+                                                                throw BadParamException("Deserializing union member incompatible_qos_status the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.incompatible_qos_status();
                                                             break;
 
                                                         case StatusKind::INCONSISTENT_TOPIC:
+                                                            if (mid != 4)
+                                                            {
+                                                                throw BadParamException("Deserializing union member inconsistent_topic_status the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.inconsistent_topic_status();
                                                             break;
 
                                                         case StatusKind::LIVELINESS_LOST:
+                                                            if (mid != 5)
+                                                            {
+                                                                throw BadParamException("Deserializing union member liveliness_lost_status the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.liveliness_lost_status();
                                                             break;
 
                                                         case StatusKind::LIVELINESS_CHANGED:
+                                                            if (mid != 6)
+                                                            {
+                                                                throw BadParamException("Deserializing union member liveliness_changed_status the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.liveliness_changed_status();
                                                             break;
 
                                                         case StatusKind::DEADLINE_MISSED:
+                                                            if (mid != 7)
+                                                            {
+                                                                throw BadParamException("Deserializing union member deadline_missed_status the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.deadline_missed_status();
                                                             break;
 
                                                         case StatusKind::SAMPLE_LOST:
+                                                            if (mid != 8)
+                                                            {
+                                                                throw BadParamException("Deserializing union member sample_lost_status the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.sample_lost_status();
                                                             break;
 
                                                         case StatusKind::STATUSES_SIZE:
+                                                            if (mid != 9)
+                                                            {
+                                                                throw BadParamException("Deserializing union member statuses_size the MemberId doesn't match");
+                                                            }
                                                             dcdr >> data.statuses_size();
                                                             break;
 
@@ -846,8 +854,6 @@ eProsima_user_DllExport void deserialize(
                 return ret_value;
             });
 }
-
-
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(

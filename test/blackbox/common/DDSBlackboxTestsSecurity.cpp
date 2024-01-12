@@ -20,6 +20,7 @@
 
 #include <thread>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -114,7 +115,7 @@ void test_big_message_corner_case(
 
     fastdds::TypeSupport type_support(new eprosima::fastrtps::types::DynamicPubSubType(array_type));
     type_support.get()->auto_fill_type_information(false);
-    EXPECT_EQ(RETCODE_OK, participant->register_type(type_support));
+    EXPECT_EQ(fastdds::RETCODE_OK, participant->register_type(type_support));
 
     auto topic = participant->create_topic(name, name, fastdds::TOPIC_QOS_DEFAULT);
     ASSERT_NE(nullptr, topic);
@@ -138,13 +139,13 @@ void test_big_message_corner_case(
     }
 
     auto data = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(array_type);
-    EXPECT_EQ(RETCODE_OK, writer->write(data, fastdds::HANDLE_NIL));
+    EXPECT_EQ(fastdds::RETCODE_OK, writer->write(data, fastdds::HANDLE_NIL));
 
     fastdds::SampleInfo info{};
     bool taken = false;
     for (size_t n_tries = 0; n_tries < 6u; ++n_tries)
     {
-        if (RETCODE_OK == reader->take_next_sample(data, &info))
+        if (fastdds::RETCODE_OK == reader->take_next_sample(data, &info))
         {
             taken = true;
             break;
@@ -153,7 +154,7 @@ void test_big_message_corner_case(
     }
 
     EXPECT_TRUE(taken);
-    EXPECT_EQ(RETCODE_OK, participant->delete_contained_entities());
+    EXPECT_EQ(fastdds::RETCODE_OK, participant->delete_contained_entities());
     fastdds::DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 

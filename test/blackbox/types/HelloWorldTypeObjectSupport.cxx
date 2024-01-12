@@ -51,13 +51,20 @@ void register_HelloWorld_type_objects()
 void register_HelloWorld_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
         ReturnCode_t return_code;
         TypeIdentifierPair type_ids;
         QualifiedTypeName type_name = "HelloWorld";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
+        AppliedAnnotationSeq tmp_ann_custom;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim;
+        if (!tmp_ann_custom.empty())
+        {
+            ann_custom = tmp_ann_custom;
+        }
+
         CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
         CompleteStructHeader header;
         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
@@ -87,9 +94,11 @@ void register_HelloWorld_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -103,9 +112,11 @@ void register_HelloWorld_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -184,9 +195,11 @@ void register_HelloWorld_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -200,9 +213,11 @@ void register_HelloWorld_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }

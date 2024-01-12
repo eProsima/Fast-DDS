@@ -124,9 +124,11 @@ void register_eprosima_fastdds_statistics_detail_EntityId_s_type_identifier()
                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                 {
                     element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                 }
@@ -140,9 +142,11 @@ void register_eprosima_fastdds_statistics_detail_EntityId_s_type_identifier()
                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                 {
                     element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                 }
@@ -210,9 +214,11 @@ void register_eprosima_fastdds_statistics_detail_EntityId_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -226,9 +232,11 @@ void register_eprosima_fastdds_statistics_detail_EntityId_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -307,9 +315,11 @@ void register_eprosima_fastdds_statistics_detail_GuidPrefix_s_type_identifier()
                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                 {
                     element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                 }
@@ -323,9 +333,11 @@ void register_eprosima_fastdds_statistics_detail_GuidPrefix_s_type_identifier()
                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                 {
                     element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                 }
@@ -393,9 +405,11 @@ void register_eprosima_fastdds_statistics_detail_GuidPrefix_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -409,9 +423,11 @@ void register_eprosima_fastdds_statistics_detail_GuidPrefix_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -511,9 +527,11 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier()
                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                             {
                                 element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                             }
@@ -527,9 +545,11 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier()
                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                             {
                                 element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                             }
@@ -597,9 +617,11 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -613,9 +635,11 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -662,9 +686,11 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -678,9 +704,11 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -748,9 +776,11 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier()
                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                             {
                                 element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                             }
@@ -764,9 +794,11 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier()
                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                             {
                                 element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                             }
@@ -834,9 +866,11 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -850,9 +884,11 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -899,9 +935,11 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -915,9 +953,11 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -991,9 +1031,11 @@ void register_eprosima_fastdds_statistics_detail_SequenceNumber_s_type_identifie
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -1007,9 +1049,11 @@ void register_eprosima_fastdds_statistics_detail_SequenceNumber_s_type_identifie
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -1051,9 +1095,11 @@ void register_eprosima_fastdds_statistics_detail_SequenceNumber_s_type_identifie
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -1067,9 +1113,11 @@ void register_eprosima_fastdds_statistics_detail_SequenceNumber_s_type_identifie
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -1190,9 +1238,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -1206,9 +1256,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -1276,9 +1328,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -1292,9 +1346,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -1341,9 +1397,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -1357,9 +1415,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -1427,9 +1487,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -1443,9 +1505,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -1513,9 +1577,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -1529,9 +1595,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -1578,9 +1646,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -1594,9 +1664,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -1643,9 +1715,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -1659,9 +1733,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -1724,9 +1800,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -1740,9 +1818,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -1784,9 +1864,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -1800,9 +1882,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -1849,9 +1933,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -1865,9 +1951,11 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -1941,9 +2029,11 @@ void register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -1957,9 +2047,11 @@ void register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -2001,9 +2093,11 @@ void register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -2017,9 +2111,11 @@ void register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -2066,9 +2162,11 @@ void register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier()
                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                 {
                     element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                 }
@@ -2082,9 +2180,11 @@ void register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier()
                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                 {
                     element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                 }
@@ -2152,9 +2252,11 @@ void register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -2168,9 +2270,11 @@ void register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -2293,9 +2397,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -2309,9 +2415,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -2379,9 +2487,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -2395,9 +2505,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -2444,9 +2556,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -2460,9 +2574,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -2530,9 +2646,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -2546,9 +2664,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -2616,9 +2736,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -2632,9 +2754,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -2681,9 +2805,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -2697,9 +2823,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -2746,9 +2874,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -2762,9 +2892,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -2866,9 +2998,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -2882,9 +3016,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -2952,9 +3088,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -2968,9 +3106,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -3017,9 +3157,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -3033,9 +3175,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -3103,9 +3247,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -3119,9 +3265,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -3189,9 +3337,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -3205,9 +3355,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -3254,9 +3406,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -3270,9 +3424,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -3319,9 +3475,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -3335,9 +3493,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -3392,9 +3552,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -3408,9 +3570,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -3489,9 +3653,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -3505,9 +3671,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -3586,9 +3754,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -3602,9 +3772,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -3683,9 +3855,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -3699,9 +3873,11 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -3822,9 +3998,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -3838,9 +4016,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -3908,9 +4088,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -3924,9 +4106,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -3973,9 +4157,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -3989,9 +4175,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -4059,9 +4247,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -4075,9 +4265,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -4145,9 +4337,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -4161,9 +4355,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -4210,9 +4406,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -4226,9 +4424,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -4275,9 +4475,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -4291,9 +4493,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -4348,9 +4552,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -4364,9 +4570,11 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -4508,9 +4716,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -4524,9 +4734,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -4594,9 +4806,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -4610,9 +4824,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -4659,9 +4875,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -4675,9 +4893,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -4745,9 +4965,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -4761,9 +4983,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -4831,9 +5055,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -4847,9 +5073,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -4896,9 +5124,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -4912,9 +5142,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -4961,9 +5193,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -4977,9 +5211,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -5042,9 +5278,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -5058,9 +5296,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -5102,9 +5342,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -5118,9 +5360,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -5167,9 +5411,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -5183,9 +5429,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -5232,9 +5480,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -5248,9 +5498,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -5305,9 +5557,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -5321,9 +5575,11 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -5444,9 +5700,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -5460,9 +5718,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -5530,9 +5790,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -5546,9 +5808,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -5595,9 +5859,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -5611,9 +5877,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -5681,9 +5949,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -5697,9 +5967,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -5767,9 +6039,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -5783,9 +6057,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -5832,9 +6108,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -5848,9 +6126,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -5897,9 +6177,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -5913,9 +6195,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -5991,9 +6275,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -6007,9 +6293,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -6051,9 +6339,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -6067,9 +6357,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -6116,9 +6408,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                             {
                                 element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                             }
@@ -6132,9 +6426,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                             {
                                 element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                             }
@@ -6202,9 +6498,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -6218,9 +6516,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -6267,9 +6567,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -6283,9 +6585,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -6340,9 +6644,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -6356,9 +6662,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -6400,9 +6708,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -6416,9 +6726,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -6460,9 +6772,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -6476,9 +6790,11 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -6599,9 +6915,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -6615,9 +6933,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -6685,9 +7005,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -6701,9 +7023,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -6750,9 +7074,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -6766,9 +7092,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -6836,9 +7164,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -6852,9 +7182,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -6922,9 +7254,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -6938,9 +7272,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -6987,9 +7323,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -7003,9 +7341,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -7052,9 +7392,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -7068,9 +7410,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -7172,9 +7516,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -7188,9 +7534,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -7258,9 +7606,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -7274,9 +7624,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -7323,9 +7675,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -7339,9 +7693,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -7409,9 +7765,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -7425,9 +7783,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -7495,9 +7855,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -7511,9 +7873,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -7560,9 +7924,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -7576,9 +7942,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -7625,9 +7993,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -7641,9 +8011,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -7698,9 +8070,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -7714,9 +8088,11 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -7811,9 +8187,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -7827,9 +8205,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -7871,9 +8251,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -7887,9 +8269,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -7936,9 +8320,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                             {
                                 element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                             }
@@ -7952,9 +8338,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                             {
                                 element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                             }
@@ -8022,9 +8410,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -8038,9 +8428,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -8087,9 +8479,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -8103,9 +8497,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -8181,9 +8577,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -8197,9 +8595,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -8241,9 +8641,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -8257,9 +8659,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -8306,9 +8710,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                             {
                                 element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                             }
@@ -8322,9 +8728,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                             {
                                 element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                             }
@@ -8392,9 +8800,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -8408,9 +8818,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -8457,9 +8869,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -8473,9 +8887,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -8530,9 +8946,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -8546,9 +8964,11 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -8669,9 +9089,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -8685,9 +9107,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -8755,9 +9179,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -8771,9 +9197,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -8820,9 +9248,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -8836,9 +9266,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -8906,9 +9338,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -8922,9 +9356,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -8992,9 +9428,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -9008,9 +9446,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -9057,9 +9497,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -9073,9 +9515,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -9122,9 +9566,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -9138,9 +9584,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -9195,9 +9643,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -9211,9 +9661,11 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -9334,9 +9786,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -9350,9 +9804,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -9420,9 +9876,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -9436,9 +9894,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -9485,9 +9945,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -9501,9 +9963,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -9571,9 +10035,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -9587,9 +10053,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -9657,9 +10125,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -9673,9 +10143,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -9722,9 +10194,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -9738,9 +10212,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -9787,9 +10263,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -9803,9 +10281,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -9897,9 +10377,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -9913,9 +10395,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -9994,9 +10478,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -10010,9 +10496,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -10091,9 +10579,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
             }
@@ -10107,9 +10597,11 @@ void register_eprosima_fastdds_statistics_PhysicalData_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
             }
@@ -10281,9 +10773,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -10297,9 +10791,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -10367,9 +10863,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -10383,9 +10881,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -10432,9 +10932,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -10448,9 +10950,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -10518,9 +11022,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -10534,9 +11040,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -10604,9 +11112,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -10620,9 +11130,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -10669,9 +11181,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -10685,9 +11199,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -10734,9 +11250,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -10750,9 +11268,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -10854,9 +11374,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -10870,9 +11392,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -10940,9 +11464,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -10956,9 +11482,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -11005,9 +11533,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -11021,9 +11551,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -11091,9 +11623,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -11107,9 +11641,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -11177,9 +11713,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -11193,9 +11731,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -11242,9 +11782,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -11258,9 +11800,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -11307,9 +11851,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -11323,9 +11869,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -11380,9 +11928,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -11396,9 +11946,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -11447,9 +11999,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier1(),
                         label_seq);
@@ -11464,9 +12018,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier2(),
                         label_seq);
@@ -11551,9 +12107,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -11567,9 +12125,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -11611,9 +12171,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -11627,9 +12189,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -11676,9 +12240,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -11692,9 +12258,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -11762,9 +12330,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -11778,9 +12348,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -11827,9 +12399,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -11843,9 +12417,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -11921,9 +12497,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -11937,9 +12515,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -11981,9 +12561,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -11997,9 +12579,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -12046,9 +12630,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -12062,9 +12648,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -12132,9 +12720,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -12148,9 +12738,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -12197,9 +12789,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -12213,9 +12807,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -12270,9 +12866,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -12286,9 +12884,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -12337,9 +12937,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier1(),
                         label_seq);
@@ -12354,9 +12956,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier2(),
                         label_seq);
@@ -12467,9 +13071,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -12483,9 +13089,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -12553,9 +13161,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -12569,9 +13179,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -12618,9 +13230,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -12634,9 +13248,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -12704,9 +13320,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -12720,9 +13338,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -12790,9 +13410,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -12806,9 +13428,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -12855,9 +13479,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -12871,9 +13497,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -12920,9 +13548,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -12936,9 +13566,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -12993,9 +13625,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -13009,9 +13643,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -13061,9 +13697,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier1(),
                         label_seq);
@@ -13078,9 +13716,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier2(),
                         label_seq);
@@ -13191,9 +13831,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -13207,9 +13849,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -13277,9 +13921,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -13293,9 +13939,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -13342,9 +13990,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -13358,9 +14008,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -13428,9 +14080,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -13444,9 +14098,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -13514,9 +14170,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -13530,9 +14188,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -13579,9 +14239,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -13595,9 +14257,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -13644,9 +14308,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -13660,9 +14326,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -13738,9 +14406,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -13754,9 +14424,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -13798,9 +14470,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -13814,9 +14488,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -13863,9 +14539,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                         }
@@ -13879,9 +14557,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                         {
                                             element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                         }
@@ -13949,9 +14629,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -13965,9 +14647,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -14014,9 +14698,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -14030,9 +14716,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -14087,9 +14775,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -14103,9 +14793,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -14147,9 +14839,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -14163,9 +14857,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -14207,9 +14903,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -14223,9 +14921,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -14275,9 +14975,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier1(),
                         label_seq);
@@ -14292,9 +14994,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier2(),
                         label_seq);
@@ -14405,9 +15109,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -14421,9 +15127,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -14491,9 +15199,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -14507,9 +15217,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -14556,9 +15268,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -14572,9 +15286,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -14642,9 +15358,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -14658,9 +15376,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -14728,9 +15448,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -14744,9 +15466,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -14793,9 +15517,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -14809,9 +15535,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -14858,9 +15586,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -14874,9 +15604,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -14931,9 +15663,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -14947,9 +15681,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -15005,9 +15741,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier1(),
                         label_seq);
@@ -15022,9 +15760,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier2(),
                         label_seq);
@@ -15135,9 +15875,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -15151,9 +15893,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -15221,9 +15965,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -15237,9 +15983,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -15286,9 +16034,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -15302,9 +16052,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -15372,9 +16124,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -15388,9 +16142,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -15458,9 +16214,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -15474,9 +16232,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -15523,9 +16283,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -15539,9 +16301,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -15588,9 +16352,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -15604,9 +16370,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -15708,9 +16476,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -15724,9 +16494,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -15794,9 +16566,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -15810,9 +16584,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -15859,9 +16635,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -15875,9 +16653,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -15945,9 +16725,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -15961,9 +16743,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -16031,9 +16815,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -16047,9 +16833,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -16096,9 +16884,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -16112,9 +16902,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -16161,9 +16953,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -16177,9 +16971,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -16234,9 +17030,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -16250,9 +17048,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -16331,9 +17131,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -16347,9 +17149,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -16428,9 +17232,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -16444,9 +17250,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -16525,9 +17333,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -16541,9 +17351,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -16592,9 +17404,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier1(),
                         label_seq);
@@ -16609,9 +17423,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier2(),
                         label_seq);
@@ -16743,9 +17559,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                                 {
                                                                     element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                                 }
@@ -16759,9 +17577,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                                 {
                                                                     element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                                 }
@@ -16829,9 +17649,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                             {
                                                                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                             }
@@ -16845,9 +17667,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                             {
                                                                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                             }
@@ -16894,9 +17718,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -16910,9 +17736,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -16980,9 +17808,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                                 {
                                                                     element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                                 }
@@ -16996,9 +17826,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                                 {
                                                                     element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                                 }
@@ -17066,9 +17898,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                             {
                                                                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                             }
@@ -17082,9 +17916,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                             {
                                                                 common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                             }
@@ -17131,9 +17967,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -17147,9 +17985,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -17196,9 +18036,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -17212,9 +18054,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -17277,9 +18121,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -17293,9 +18139,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -17337,9 +18185,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -17353,9 +18203,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -17402,9 +18254,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -17418,9 +18272,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -17467,9 +18323,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -17483,9 +18341,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -17540,9 +18400,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -17556,9 +18418,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -17607,9 +18471,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier1(),
                         label_seq);
@@ -17624,9 +18490,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier2(),
                         label_seq);
@@ -17737,9 +18605,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -17753,9 +18623,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -17823,9 +18695,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -17839,9 +18713,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -17888,9 +18764,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -17904,9 +18782,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -17974,9 +18854,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier1());
                                                     }
@@ -17990,9 +18872,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                     {
                                                         element_identifier = new TypeIdentifier(type_ids.type_identifier2());
                                                     }
@@ -18060,9 +18944,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                                 }
@@ -18076,9 +18962,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                                         (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                                         EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                                         (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                                         (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                                 {
                                                     common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                                 }
@@ -18125,9 +19013,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                                     }
@@ -18141,9 +19031,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                             (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                             EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                             (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                             (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                                     {
                                         common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                                     }
@@ -18190,9 +19082,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -18206,9 +19100,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -18300,9 +19196,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -18316,9 +19214,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -18397,9 +19297,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -18413,9 +19315,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -18494,9 +19398,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
                         }
@@ -18510,9 +19416,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                                 (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                                 EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                                (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                                 (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                                (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
                         {
                             common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
                         }
@@ -18561,9 +19469,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier1(),
                         label_seq);
@@ -18578,9 +19488,11 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
                     (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
                     EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
                     (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind()) ||
+                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
                     (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind()))
+                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
                 common = TypeObjectUtils::build_common_union_member(member_id, member_flags, type_ids.type_identifier2(),
                         label_seq);

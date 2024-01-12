@@ -679,7 +679,7 @@ TEST_P(TransportTCP, TCPv4_autofill_port)
     PubSubReader<HelloWorldPubSubType> p2(TEST_TOPIC_NAME);
 
     // Add TCP Transport with listening port 0
-    auto p1_transport = std::make_shared<TCPv4TransportDescriptor>();
+    auto p1_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     p1_transport->add_listener_port(0);
     p1.disable_builtin_transport().add_user_transport_to_pparams(p1_transport);
     p1.init();
@@ -687,7 +687,7 @@ TEST_P(TransportTCP, TCPv4_autofill_port)
 
     // Add TCP Transport with listening port different from 0
     uint16_t port = 12345;
-    auto p2_transport = std::make_shared<TCPv4TransportDescriptor>();
+    auto p2_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     p2_transport->add_listener_port(port);
     p2.disable_builtin_transport().add_user_transport_to_pparams(p2_transport);
     p2.init();
@@ -709,7 +709,7 @@ TEST_P(TransportTCP, TCPv6_autofill_port)
     PubSubReader<HelloWorldPubSubType> p2(TEST_TOPIC_NAME);
 
     // Add TCP Transport with listening port 0
-    auto p1_transport = std::make_shared<TCPv6TransportDescriptor>();
+    auto p1_transport = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
     p1_transport->add_listener_port(0);
     p1.disable_builtin_transport().add_user_transport_to_pparams(p1_transport);
     p1.init();
@@ -717,7 +717,7 @@ TEST_P(TransportTCP, TCPv6_autofill_port)
 
     // Add TCP Transport with listening port different from 0
     uint16_t port = 12345;
-    auto p2_transport = std::make_shared<TCPv6TransportDescriptor>();
+    auto p2_transport = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
     p2_transport->add_listener_port(port);
     p2.disable_builtin_transport().add_user_transport_to_pparams(p2_transport);
     p2.init();

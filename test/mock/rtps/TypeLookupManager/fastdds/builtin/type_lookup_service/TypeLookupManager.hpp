@@ -72,6 +72,12 @@ public:
     MOCK_CONST_METHOD1(get_types, fastrtps::rtps::SampleIdentity(
                 const fastdds::dds::xtypes::TypeIdentifierSeq&));
 
+    void remove_remote_endpoints(
+            fastrtps::rtps::ParticipantProxyData* pdata)
+    {
+        static_cast<void>(pdata);
+    }
+
 };
 
 } /* namespace builtin */

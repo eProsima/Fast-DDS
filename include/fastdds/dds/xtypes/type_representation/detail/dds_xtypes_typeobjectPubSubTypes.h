@@ -162,39 +162,6 @@ inline size_t constexpr StringSTypeDefn_offset_of()
 #endif // ifndef SWIG
 
 
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct StringSTypeDefn_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct StringSTypeDefn_f
-{
-    typedef eprosima::fastdds::dds::xtypes::SBound StringSTypeDefn::* type;
-    friend constexpr type get(
-            StringSTypeDefn_f);
-};
-
-template struct StringSTypeDefn_rob<StringSTypeDefn_f, &StringSTypeDefn::m_bound>;
-
-template <typename T, typename Tag>
-inline size_t constexpr StringSTypeDefn_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
-
 /*!
  * @brief This class represents the TopicDataType of the type StringSTypeDefn defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -307,39 +274,6 @@ private:
     }
 
 };
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct StringLTypeDefn_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct StringLTypeDefn_f
-{
-    typedef eprosima::fastdds::dds::xtypes::LBound StringLTypeDefn::* type;
-    friend constexpr type get(
-            StringLTypeDefn_f);
-};
-
-template struct StringLTypeDefn_rob<StringLTypeDefn_f, &StringLTypeDefn::m_bound>;
-
-template <typename T, typename Tag>
-inline size_t constexpr StringLTypeDefn_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
 
 #ifndef SWIG
 namespace detail {
@@ -1950,39 +1884,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct MinimalMemberDetail_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct MinimalMemberDetail_f
-{
-    typedef eprosima::fastdds::dds::xtypes::NameHash MinimalMemberDetail::* type;
-    friend constexpr type get(
-            MinimalMemberDetail_f);
-};
-
-template struct MinimalMemberDetail_rob<MinimalMemberDetail_f, &MinimalMemberDetail::m_name_hash>;
-
-template <typename T, typename Tag>
-inline size_t constexpr MinimalMemberDetail_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
 
 #ifndef SWIG
 namespace detail {
@@ -5555,39 +5456,6 @@ inline size_t constexpr CommonCollectionHeader_offset_of()
 #endif // ifndef SWIG
 
 
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct CommonCollectionHeader_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct CommonCollectionHeader_f
-{
-    typedef eprosima::fastdds::dds::xtypes::LBound CommonCollectionHeader::* type;
-    friend constexpr type get(
-            CommonCollectionHeader_f);
-};
-
-template struct CommonCollectionHeader_rob<CommonCollectionHeader_f, &CommonCollectionHeader::m_bound>;
-
-template <typename T, typename Tag>
-inline size_t constexpr CommonCollectionHeader_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
-
 /*!
  * @brief This class represents the TopicDataType of the type CommonCollectionHeader defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -7011,39 +6879,6 @@ inline size_t constexpr CommonEnumeratedHeader_offset_of()
 #endif // ifndef SWIG
 
 
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct CommonEnumeratedHeader_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct CommonEnumeratedHeader_f
-{
-    typedef eprosima::fastdds::dds::xtypes::BitBound CommonEnumeratedHeader::* type;
-    friend constexpr type get(
-            CommonEnumeratedHeader_f);
-};
-
-template struct CommonEnumeratedHeader_rob<CommonEnumeratedHeader_f, &CommonEnumeratedHeader::m_bit_bound>;
-
-template <typename T, typename Tag>
-inline size_t constexpr CommonEnumeratedHeader_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
-
 /*!
  * @brief This class represents the TopicDataType of the type CommonEnumeratedHeader defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -7795,39 +7630,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalBitflag> MinimalBitflagSeq;
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct CommonBitmaskHeader_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct CommonBitmaskHeader_f
-{
-    typedef eprosima::fastdds::dds::xtypes::BitBound CommonBitmaskHeader::* type;
-    friend constexpr type get(
-            CommonBitmaskHeader_f);
-};
-
-template struct CommonBitmaskHeader_rob<CommonBitmaskHeader_f, &CommonBitmaskHeader::m_bit_bound>;
-
-template <typename T, typename Tag>
-inline size_t constexpr CommonBitmaskHeader_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
 
 #ifndef SWIG
 namespace detail {

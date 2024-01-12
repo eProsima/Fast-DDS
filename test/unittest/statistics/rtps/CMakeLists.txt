@@ -71,15 +71,6 @@ set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeMember.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/MemberDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifier.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifierTypes.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObject.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeNamesGenerator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
@@ -96,9 +87,14 @@ set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LocatorSelectorSender.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorService.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorServiceListener.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/Exception.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectUtils.cpp
     )
 
 add_executable(MonitorServiceTests ${STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE})
@@ -112,6 +108,7 @@ target_compile_definitions(MonitorServiceTests PRIVATE FASTRTPS_NO_LIB
 
 target_include_directories(MonitorServiceTests PRIVATE
     mock/StatisticsBase
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantFactory
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/BuiltinProtocols
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ExternalLocatorsProcessor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
@@ -119,6 +116,7 @@ target_include_directories(MonitorServiceTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/WLP
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader

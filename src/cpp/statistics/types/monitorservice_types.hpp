@@ -71,8 +71,6 @@ enum class ConnectionMode : uint32_t
     INTRAPROCESS,
     TRANSPORT
 };
-
-
 /*!
  * @brief This class represents the structure Connection defined by the user in the IDL file.
  * @ingroup monitorservice_types
@@ -337,8 +335,6 @@ private:
     std::vector<detail::Locator_s> m_used_locators;
 
 };
-
-
 /*!
  * @brief This class represents the structure QosPolicyCount_s defined by the user in the IDL file.
  * @ingroup monitorservice_types
@@ -499,8 +495,6 @@ private:
     uint32_t m_count{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure BaseStatus_s defined by the user in the IDL file.
  * @ingroup monitorservice_types
@@ -625,8 +619,6 @@ private:
 
 };
 typedef std::vector<QosPolicyCount_s> QosPolicyCountSeq_s;
-
-
 
 /*!
  * @brief This class represents the structure IncompatibleQoSStatus_s defined by the user in the IDL file.
@@ -835,8 +827,6 @@ private:
     QosPolicyCountSeq_s m_policies;
 
 };
-
-
 /*!
  * @brief This class represents the structure LivelinessChangedStatus_s defined by the user in the IDL file.
  * @ingroup monitorservice_types
@@ -1044,8 +1034,6 @@ private:
     std::array<uint8_t, 16> m_last_publication_handle{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure DeadlineMissedStatus_s defined by the user in the IDL file.
  * @ingroup monitorservice_types
@@ -1237,8 +1225,6 @@ const StatusKind SAMPLE_LOST = 7;
 const StatusKind STATUSES_SIZE = 8;
 
 } // namespace StatusKind
-
-
 /*!
  * @brief This class represents the union MonitorServiceData defined by the user in the IDL file.
  * @ingroup monitorservice_types
@@ -2441,8 +2427,6 @@ private:
     SampleLostStatus_s m_sample_lost_status;
     uint8_t m_statuses_size{0};
 };
-
-
 /*!
  * @brief This class represents the structure MonitorServiceStatusData defined by the user in the IDL file.
  * @ingroup monitorservice_types
