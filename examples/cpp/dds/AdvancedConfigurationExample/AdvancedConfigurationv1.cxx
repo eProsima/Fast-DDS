@@ -28,7 +28,7 @@ char dummy;
 
 #include "AdvancedConfiguration.h"
 
-#if FASTCDR_VERSION_MAJOR > 1
+#if FASTCDR_VERSION_MAJOR == 1
 
 #include <fastcdr/Cdr.h>
 
@@ -38,6 +38,62 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+namespace helper {
+namespace internal {
+
+enum class Size
+{
+    UInt8,
+    UInt16,
+    UInt32,
+    UInt64,
+};
+
+constexpr Size get_size(
+        int s)
+{
+    return (s <= 8 ) ? Size::UInt8:
+           (s <= 16) ? Size::UInt16:
+           (s <= 32) ? Size::UInt32: Size::UInt64;
+}
+
+template<Size s>
+struct FindTypeH;
+
+template<>
+struct FindTypeH<Size::UInt8>
+{
+    using type = std::uint8_t;
+};
+
+template<>
+struct FindTypeH<Size::UInt16>
+{
+    using type = std::uint16_t;
+};
+
+template<>
+struct FindTypeH<Size::UInt32>
+{
+    using type = std::uint32_t;
+};
+
+template<>
+struct FindTypeH<Size::UInt64>
+{
+    using type = std::uint64_t;
+};
+} // namespace internal
+
+template<int S>
+struct FindType
+{
+    using type = typename internal::FindTypeH<internal::get_size(S)>::type;
+};
+} // namespace helper
+
+#define AdvancedConfiguration_max_cdr_typesize 132ULL;
+
 
 
 
@@ -45,6 +101,13 @@ using namespace eprosima::fastcdr::exception;
 
 AdvancedConfiguration::AdvancedConfiguration()
 {
+    // unsigned long m_index
+    m_index = 0;
+    // char m_message
+    memset(&m_message, 0, ((20)) * 1);
+    // sequence<octet> m_data
+
+
 }
 
 AdvancedConfiguration::~AdvancedConfiguration()
@@ -55,35 +118,53 @@ AdvancedConfiguration::AdvancedConfiguration(
         const AdvancedConfiguration& x)
 {
     m_index = x.m_index;
+
+
     m_message = x.m_message;
+
+
     m_data = x.m_data;
+
 }
 
 AdvancedConfiguration::AdvancedConfiguration(
         AdvancedConfiguration&& x) noexcept
 {
     m_index = x.m_index;
+
+
     m_message = std::move(x.m_message);
+
+
     m_data = std::move(x.m_data);
+
 }
 
 AdvancedConfiguration& AdvancedConfiguration::operator =(
         const AdvancedConfiguration& x)
 {
-
     m_index = x.m_index;
+
+
     m_message = x.m_message;
+
+
     m_data = x.m_data;
+
     return *this;
 }
 
 AdvancedConfiguration& AdvancedConfiguration::operator =(
         AdvancedConfiguration&& x) noexcept
 {
-
     m_index = x.m_index;
+
+
     m_message = std::move(x.m_message);
+
+
     m_data = std::move(x.m_data);
+
     return *this;
 }
 
@@ -99,6 +180,80 @@ bool AdvancedConfiguration::operator !=(
         const AdvancedConfiguration& x) const
 {
     return !(*this == x);
+}
+
+size_t AdvancedConfiguration::getMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    static_cast<void>(current_alignment);
+    return AdvancedConfiguration_max_cdr_typesize;
+}
+
+size_t AdvancedConfiguration::getCdrSerializedSize(
+        const AdvancedConfiguration& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    current_alignment += (((20)) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    if (data.data().size() > 0)
+    {
+        current_alignment += (data.data().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
+
+
+
+
+    return current_alignment - initial_alignment;
+}
+
+void AdvancedConfiguration::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    scdr << m_index;
+
+    scdr << m_message;
+
+
+    scdr << m_data;
+
+
+}
+
+void AdvancedConfiguration::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    dcdr >> m_index;
+
+
+
+    dcdr >> m_message;
+
+
+
+    dcdr >> m_data;
+
+
+}
+
+bool AdvancedConfiguration::isKeyDefined()
+{
+    return false;
+}
+
+void AdvancedConfiguration::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    (void) scdr;
 }
 
 /*!
@@ -205,7 +360,4 @@ std::vector<uint8_t>& AdvancedConfiguration::data()
     return m_data;
 }
 
-// Include auxiliary functions like for serializing/deserializing.
-#include "AdvancedConfigurationCdrAux.ipp"
-
-#endif // FASTCDR_VERSION_MAJOR > 1
+#endif // FASTCDR_VERSION_MAJOR == 1
