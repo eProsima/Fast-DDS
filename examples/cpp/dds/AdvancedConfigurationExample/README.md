@@ -3,7 +3,7 @@
 This example extends the configuration options of a trivial HelloWorld by letting the user specify properties of
 entities such as durability, reliability or specify the transport protocol to be used, among other possibilities. This
 could be useful, for example, to quickly test whether two endpoints are compatible and hence would match.
-Additionally, the message type includes a sequence of data whose size can be set by the user, allowing to send large data between endopoints.
+Additionally, the message type includes a data sequence which size can be set by the user, allowing to send large data between endpoints.
 Note: Due to the nature of the data type (not bounded), this example will not use data sharing.
 
 ## Execution instructions
