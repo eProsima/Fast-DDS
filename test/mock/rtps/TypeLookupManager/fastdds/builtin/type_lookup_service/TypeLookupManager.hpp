@@ -43,7 +43,7 @@ namespace fastdds {
 namespace dds {
 namespace builtin {
 
-extern const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
+const SampleIdentity INVALID_SAMPLE_IDENTITY;
 
 /**
  * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.2 specification.

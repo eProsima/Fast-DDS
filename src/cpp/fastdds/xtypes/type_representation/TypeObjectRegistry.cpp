@@ -278,21 +278,28 @@ ReturnCode_t TypeObjectRegistry::get_type_dependencies(
 }
 
 bool TypeObjectRegistry::is_type_identifier_known(
-        const TypeIdentifier& type_identifier)
+        const TypeIdentfierWithSize& type_identifier_with_size)
 {
-    if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier))
+    if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier_with_size.type_id()))
     {
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-        if (type_registry_entries_.find(type_identifier) != type_registry_entries_.end())
+        // Check TypeIdentifier is known
+        auto it = type_registry_entries_.find(type_identifier_with_size.type_id());
+        if (it != type_registry_entries_.end())
         {
-            return true;
+            // Check typeobject_serialized_size is the same
+            if (it->second.type_object_serialized_size_ == type_identifier_with_size.typeobject_serialized_size())
+            {
+                return true;
+            }
         }
     }
 
     std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     for (const auto& it : local_type_identifiers_)
     {
-        if (it.second.type_identifier1() == type_identifier || it.second.type_identifier2() == type_identifier)
+        if (it.second.type_identifier1() == type_identifier_with_size.type_id() ||
+                it.second.type_identifier2() == type_identifier_with_size.type_id())
         {
             return true;
         }
