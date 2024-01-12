@@ -42,7 +42,8 @@ struct DataMsgUtils
     {
         inlineQosFlag =
                 (nullptr != inlineQos) ||
-                ((WITH_KEY == topicKind) && (!change->writerGUID.is_builtin() || expectsInlineQos || change->kind != ALIVE)) ||
+                ((WITH_KEY == topicKind) &&
+                (!change->writerGUID.is_builtin() || expectsInlineQos || change->kind != ALIVE)) ||
                 (change->write_params.related_sample_identity() != SampleIdentity::unknown());
 
         dataFlag = ALIVE == change->kind &&
