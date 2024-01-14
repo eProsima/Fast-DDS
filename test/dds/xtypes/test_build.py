@@ -1,9 +1,10 @@
-import shutil
 import json
 import logging
 import os
+import shutil
 import subprocess
 import sys
+import time
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -23,15 +24,18 @@ def participants_definition(file_name):
 
 def define_args(participant):
     """Use dictionary to get command args for each participant."""
-    args = [participant['kind'].lower()]
+    args = []
+    args.extend([f"kind={participant.get('kind')}"])
+    args.extend([f"samples={participant.get('samples', 10)}"])
+    args.extend([f"timeout={participant.get('timeout', 10)}"])
+    args.extend([f"expected_types={participant.get('expected_types', 1)}"])
 
     if 'known_types' in participant and isinstance(participant['known_types'], list):
-        args.extend(participant['known_types'])
+        args.append(f'known_types={",".join(participant["known_types"])}')
     else:
         print(f'ARGUMENT ERROR: For {participant["kind"]}s, <known_types> should be a list of types')
 
     return args
-
 
 def find_executable(executable_name):
     """Find the full path of an executable file by name."""
@@ -63,6 +67,7 @@ def execute_commands(commands, logger):
     for command in commands:
         logger.info(f'Executing: {command}')
         processes.append(subprocess.Popen(command))
+        time.sleep(0.25)  # Delay for consistency
 
     ret_value = 0
 

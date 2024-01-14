@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _TEST_PUBLISHER_H_
-#define _TEST_PUBLISHER_H_
+#ifndef _TYPELOOKUPTEST_PUBLISHER_H_
+#define _TYPELOOKUPTEST_PUBLISHER_H_
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -27,17 +27,12 @@
 
 #include "idl/XtypesTestsTypesPubSubTypes.h"
 
-// #include <rtps/RTPSDomainImpl.hpp>
-// #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
-
 #include <mutex>
 #include <condition_variable>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-
 
 struct PubKnownType
 {
@@ -65,28 +60,45 @@ public:
     bool init(
             std::vector<std::string> known_types);
 
-    template <typename Type, typename TypePubSubType>
     bool create_known_type(
-            const std::string& type);
+            const std::string& type,
+            bool register_type);
 
-    void wait_discovery(
-            uint32_t how_many);
+    template <typename Type, typename TypePubSubType>
+    bool create_known_type_impl(
+            const std::string& type,
+            bool register_type);
 
-    void run(
+    bool wait_discovery(
+            uint32_t expected_match,
+            uint32_t timeout);
+
+    bool run(
             uint32_t samples);
+
+    bool run_for(
+            const std::chrono::seconds& timeout);
 
     void on_publication_matched(
             DataWriter* /*publisher*/,
             const PublicationMatchedStatus& info) override;
+
+    void on_data_reader_discovery(
+            eprosima::fastdds::dds::DomainParticipant* participant,
+            eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override;
 
 private:
 
     std::mutex mutex_;
     std::condition_variable cv_;
     unsigned int matched_ = 0;
-    bool run_ = true;
+
+    uint32_t expected_samples_ = 0;
+    std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> sent_samples_;
+
     DomainParticipant* participant_ = nullptr;
 
+    std::mutex known_types_mutex_;
     std::map<std::string, PubKnownType> known_types_;
 };
 
@@ -94,4 +106,4 @@ private:
 } // fastdds
 } // eprosima
 
-#endif /* _TEST_PUBLISHER_H_ */
+#endif /* _TYPELOOKUPTEST_PUBLISHER_H_ */

@@ -20,30 +20,79 @@
 #include "TypeLookupPublisher.h"
 #include "TypeLookupSubscriber.h"
 
-#include <fastrtps/log/Log.h>
-
-#include <vector>
 #include <iostream>
-#include <chrono>
-#include <thread>
-#include <random>
-
+#include <sstream>
+#include <vector>
+#include <algorithm>
 
 using namespace eprosima::fastrtps;
+
+struct CommandLineArgs
+{
+    int kind;
+    int samples;
+    int timeout;
+    int expected_types;
+    std::vector<std::string> known_types;
+};
+
+CommandLineArgs parse_args(
+        int argc,
+        char** argv)
+{
+    CommandLineArgs args = {0, 0, 0, 0, {}};
+
+    for (int i = 1; i < argc; ++i)
+    {
+        std::string arg = argv[i];
+        std::stringstream ss(arg);
+
+        std::string key, value;
+        std::getline(ss, key, '=');
+        std::getline(ss, value, '=');
+
+        if (key == "kind")
+        {
+            if (value == "publisher")
+            {
+                args.kind = 1;
+            }
+            else if (value == "subscriber")
+            {
+                args.kind = 2;
+            }
+        }
+        else if (key == "samples")
+        {
+            args.samples = std::stoi(value);
+        }
+        else if (key == "timeout")
+        {
+            args.timeout = std::stoi(value);
+        }
+        else if (key == "expected_types")
+        {
+            args.expected_types = std::stoi(value);
+        }
+        else if (key == "known_types")
+        {
+            std::replace(value.begin(), value.end(), ',', ' ');
+            std::stringstream types_ss(value);
+            std::string type;
+            while (types_ss >> type)
+            {
+                args.known_types.push_back(type);
+            }
+        }
+    }
+
+    return args;
+}
 
 int main(
         int argc,
         char** argv)
 {
-    // Seed for random number generation
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distr(1, 10);
-    int randomSeconds = distr(gen);
-    // Sleep for the random duration
-    std::this_thread::sleep_for(std::chrono::seconds(randomSeconds));
-
-    std::cout << "Starting " << randomSeconds << std::endl;
     // Print all command-line arguments
     std::cout << "Command-line arguments:" << std::endl;
     for (int i = 0; i < argc; ++i)
@@ -51,56 +100,36 @@ int main(
         std::cout << "argv[" << i << "]: " << argv[i] << std::endl;
     }
 
-    int type = 0;
-    std::vector<std::string> known_types;
+    CommandLineArgs args = parse_args(argc, argv);
 
-    if (argc > 1)
+    if (args.kind == 0 || args.samples == 0  || args.timeout == 0  ||
+            args.expected_types == 0 || args.known_types.empty())
     {
-        if (strcmp(argv[1], "publisher") == 0)
-        {
-            type = 1;
-        }
-        else if (strcmp(argv[1], "subscriber") == 0)
-        {
-            type = 2;
-        }
-
-        for (int i = 2; i < argc; ++i)
-        {
-            known_types.push_back(argv[i]);
-        }
-    }
-    else
-    {
-        std::cout << "publisher OR subscriber argument needed" << std::endl;
-        Log::Reset();
-        return 0;
+        std::cout << "Invalid command-line arguments. Usage: " <<
+            "./DDSXtypesCommunication " <<
+            "kind=<publisher/subscriber> " <<
+            "samples=<amount> " <<
+            "expected_types=<amount> " <<
+            "timeout=<timeout> " <<
+            "known_types=<Type1,Type2,...>" << std::endl;
+        return -1;
     }
 
-    switch (type)
-    {
-        case 1:
-        {
+    switch (args.kind){
+        case 1: {
             eprosima::fastdds::dds::TypeLookupPublisher pub;
-            if (pub.init(known_types))
-            {
-                pub.wait_discovery(1);
-                pub.run(10);
-            }
-            break;
+            return (pub.init(args.known_types) &&
+                   pub.wait_discovery(args.expected_types, args.timeout) &&
+                   pub.run(args.samples)) ? 0 : -1;
         }
-        case 2:
-        {
+        case 2: {
             eprosima::fastdds::dds::TypeLookupSubscriber sub;
-            if (sub.init(known_types))
-            {
-                sub.run(30);
-            }
-            break;
+            return (sub.init(args.known_types) &&
+                   sub.wait_discovery(args.expected_types, args.timeout) &&
+                   sub.run(args.samples)) ? 0 : -1;
         }
         default:
-            std::cout << "publisher OR subscriber argument needed" << std::endl;
+            std::cout << "Invalid participant type. Use 'publisher' or 'subscriber'." << std::endl;
+            return -1;
     }
-    Log::Reset();
-    return 0;
 }
