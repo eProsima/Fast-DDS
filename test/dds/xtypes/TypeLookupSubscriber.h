@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _TEST_SUBSCRIBER_H_
-#define _TEST_SUBSCRIBER_H_
+#ifndef _TYPELOOKUPTEST_SUBSCRIBER_H_
+#define _TYPELOOKUPTEST_SUBSCRIBER_H_
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -36,7 +36,6 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
 
 struct SubKnownType
 {
@@ -64,15 +63,24 @@ public:
     bool init(
             std::vector<std::string> known_types);
 
-    template <typename Type, typename TypePubSubType>
     bool create_known_type(
-            const std::string& type);
+            const std::string& type,
+            bool register_type);
+
+    template <typename Type, typename TypePubSubType>
+    bool create_known_type_impl(
+            const std::string& type,
+            bool register_type);
+
+    bool wait_discovery(
+            uint32_t expected_match,
+            uint32_t timeout);
 
     bool run(
-            int seconds);
+            uint32_t samples);
 
     bool run_for(
-            const std::chrono::milliseconds& timeout);
+            const std::chrono::seconds& timeout);
 
     void on_subscription_matched(
             DataReader* /*reader*/,
@@ -81,16 +89,22 @@ public:
     void on_data_available(
             DataReader* reader) override;
 
+    void on_data_writer_discovery(
+            eprosima::fastdds::dds::DomainParticipant* participant,
+            eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override;
+
 private:
 
     std::mutex mutex_;
     std::condition_variable cv_;
     unsigned int matched_ = 0;
-    const uint32_t max_number_samples_ = 10;
-    std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> number_samples_;
-    bool run_ = true;
+
+    uint32_t expected_samples_ = 0;
+    std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> received_samples_;
+
     DomainParticipant* participant_ = nullptr;
 
+    std::mutex known_types_mutex_;
     std::map<std::string, SubKnownType> known_types_;
 };
 
@@ -99,4 +113,4 @@ private:
 } // eprosima
 
 
-#endif /* _TEST_SUBSCRIBER_H_ */
+#endif /* _TYPELOOKUPTEST_SUBSCRIBER_H_ */

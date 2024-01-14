@@ -1,25 +1,22 @@
 {
-    "description": "Simple test to communicate a publisher and a subscriber with default values",
+    "description": "Simple test to communicate a publisher and a subscriber starting with the same known type.",
     "participants": [
         {
             "kind": "subscriber",
+            "samples": "10",
+            "timeout": "10",
+            "expected_types": "1",
             "known_types": [
-                "Type1",
-                "Type2"
+                "Type1"
             ]
         },
         {
             "kind": "publisher",
+            "samples": "10",
+            "timeout": "10",
+            "expected_types": "1",
             "known_types": [
-                "Type1",
-                "Type2"
-            ]
-        },
-        {
-            "kind": "publisher",
-            "known_types": [
-                "Type1",
-                "Type2"
+                "Type1"
             ]
         }
     ]
