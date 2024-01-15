@@ -54,10 +54,6 @@ namespace rtps {
 class ResourceEvent;
 } // namespace rtps
 
-namespace types {
-class TypeInformation;
-} // namespace types
-
 class ParticipantAttributes;
 class PublisherAttributes;
 class SubscriberAttributes;
