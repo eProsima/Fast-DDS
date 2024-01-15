@@ -160,9 +160,22 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/*.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/*.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/*.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/*.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv4Transport.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv6Transport.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPChannelResource.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv6Transport.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/*.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/*.cpp
