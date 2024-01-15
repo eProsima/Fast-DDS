@@ -36,6 +36,8 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
+#include <fastrtps/transport/TCPTransportDescriptor.h>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/transport/UDPTransportDescriptor.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
