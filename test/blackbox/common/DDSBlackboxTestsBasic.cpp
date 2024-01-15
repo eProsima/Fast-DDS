@@ -734,13 +734,13 @@ TEST(DDSBasic, endpoint_custom_payload_pools)
 
     std::shared_ptr<CustomPayloadPool> writer_payload_pool = std::make_shared<CustomPayloadPool>();
 
-    DataReader* data_reader = subscriber->create_datareader(
-        topic, reader_qos, nullptr, StatusMask::all(), reader_payload_pool);
+    DataReader* data_reader = subscriber->create_datareader_with_payload_pool(
+        topic, reader_qos, reader_payload_pool, nullptr, StatusMask::all());
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
 
-    DataWriter* data_writer = publisher->create_datawriter(
-        topic, writer_qos, nullptr, StatusMask::all(), writer_payload_pool);
+    DataWriter* data_writer = publisher->create_datawriter_with_payload_pool(
+        topic, writer_qos, writer_payload_pool, nullptr, StatusMask::all());
 
     ASSERT_NE(data_reader, nullptr);
     ASSERT_NE(data_writer, nullptr);
