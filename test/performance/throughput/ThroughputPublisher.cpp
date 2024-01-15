@@ -795,7 +795,7 @@ bool ThroughputPublisher::test(
         double tot_time_elapsed = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
         std::cout << "Sample| Time to send (ms)|      Sleep for|   Time elapsed|" << std::endl;
                 printf("%6u,%18.4f,%15.4f,%15.4f\n",
-                        throughput_data_->seqnum,
+                        samples,
                         cout_dur_ms,
                         rec_dur_ms,
                         tot_time_elapsed);
