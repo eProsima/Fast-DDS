@@ -728,6 +728,7 @@ bool ThroughputPublisher::test(
             std::chrono::duration<double, std::micro>(std::chrono::steady_clock::now() - test_start_sent_tp);
 
     // Send batches until test_time_ns is reached
+    std::vector<double> times_write;
     t_start_ = std::chrono::steady_clock::now();
     uint32_t seqnum = 0;
     while ((t_end_ - t_start_) < test_time_ns)
@@ -788,6 +789,17 @@ bool ThroughputPublisher::test(
          */
         std::this_thread::sleep_for(recovery_duration_ns - (t_end_ - batch_start));
 
+        double cout_dur_ms = std::chrono::duration<double, std::milli>(t_end_ - batch_start).count();
+        times_write.push_back(cout_dur_ms);
+        double rec_dur_ms = std::chrono::duration<double, std::milli>(recovery_duration_ns - (t_end_ - batch_start)).count();
+        double tot_time_elapsed = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
+        std::cout << "Sample| Time to send (ms)|      Sleep for|   Time elapsed|" << std::endl;
+                printf("%6u,%18.4f,%15.4f,%15.4f\n",
+                        throughput_data_->seqnum,
+                        cout_dur_ms,
+                        rec_dur_ms,
+                        tot_time_elapsed);
+
         clock_overhead += t_overhead_ * 2; // We access the clock twice per batch.
     }
 
@@ -804,6 +816,11 @@ bool ThroughputPublisher::test(
         EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER,
                 "Something went wrong: The subscriber has not acknowledged the TEST_ENDS command.");
         return false;
+    }
+
+    std::cout << "Runtime of write funciton: " << std::endl;
+    for (const auto& element : times_write) {
+        std::cout << element << ",";
     }
 
     // Results processing
