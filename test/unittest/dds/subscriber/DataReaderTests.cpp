@@ -3522,7 +3522,7 @@ TEST_F(DataReaderTests, CustomPoolCreation)
     std::shared_ptr<CustomPayloadPool> payload_pool = std::make_shared<CustomPayloadPool>();
 
     DataReader* data_reader =
-            subscriber->create_datareader(topic, reader_qos, nullptr, StatusMask::all(), payload_pool);
+            subscriber->create_datareader(topic, reader_qos, payload_pool, nullptr, StatusMask::all());
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
     writer_qos.reliability().kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
