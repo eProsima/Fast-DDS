@@ -387,6 +387,10 @@ protected:
 
 private:
 
+    void add_sequence_value(
+            TypeKind sequence_kind,
+            uint32_t sequence_size) noexcept;
+
     void add_value(
             TypeKind kind,
             MemberId id) noexcept;
@@ -396,11 +400,33 @@ private:
             const traits<DynamicTypeImpl>::ref_type type,
             size_t& current_alignment) const noexcept;
 
+    /*!
+     * Auxiliary function to clear completely a sequence.
+     * Only valid for TK_SEQUENCE.
+     */
+    ReturnCode_t clear_all_sequence() noexcept;
+
     ReturnCode_t clear_all_values(
             bool only_non_keyed) noexcept;
 
-    ReturnCode_t clear_data() noexcept;
+    /*!
+     * Auxiliary function to clear a sequence element.
+     * Only valid for TK_SEQUENCE.
+     */
+    ReturnCode_t clear_sequence_element(
+            MemberId id) noexcept;
 
+    /*!
+     * Auxiliary function to compare two sequence values.
+     */
+    bool compare_sequence_values(
+            TypeKind kind,
+            std::shared_ptr<void> left,
+            std::shared_ptr<void> right) const noexcept;
+
+    /*!
+     * Auxiliary function to compare two primitive values.
+     */
     bool compare_values(
             TypeKind kind,
             std::shared_ptr<void> left,
@@ -422,9 +448,44 @@ private:
     TypeKind get_enclosing_typekind(
             traits<DynamicTypeImpl>::ref_type type) const noexcept;
 
+    /*!
+     * @brief Auxiliary template to retrieve the length of a internal sequence.
+     * Only valid for TK_ARRAY and TK_SEQUENCE.
+     */
+    uint32_t get_sequence_length();
+
+    /*!
+     * Auxiliary template with the common code for getting the values of a sequence from a TK_ARRAY or TK_SEQUENCE.
+     */
+    template<typename T, int TK, class Sequence>
+    ReturnCode_t get_sequence_values(
+            Sequence& value,
+            MemberId id) noexcept;
+
+    template<typename T, int TK, class Sequence>
+    ReturnCode_t get_value(
+            T& value,
+            MemberId id) noexcept;
+
     void set_value(
             const ObjectName& value,
             MemberId id) noexcept;
+
+    /*!
+     * Auxiliary template with the common code for setting the values of a sequence into a TK_ARRAY or TK_SEQUENCE.
+     */
+    template<typename T, int TK, class Sequence>
+    ReturnCode_t set_sequence_values(
+            MemberId id,
+            const Sequence& value) noexcept;
+
+    /*!
+     * Auxiliary template with the common code for setting the value of a primitive type
+     */
+    template<typename T, int TK, class Sequence>
+    ReturnCode_t set_value(
+            MemberId id,
+            const T& value) noexcept;
 
     void set_default_value(
             const traits<DynamicTypeMemberImpl>::ref_type member,
