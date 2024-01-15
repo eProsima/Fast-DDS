@@ -959,6 +959,11 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 #endif // if HAVE_STRICT_REALTIME
 
+    std::chrono::steady_clock::time_point t_start_;
+    std::chrono::steady_clock::time_point t_start_global;
+    std::chrono::steady_clock::time_point t_end_;
+    t_start_global = std::chrono::steady_clock::now();
+    t_start_ = std::chrono::steady_clock::now();
     PayloadInfo_t payload;
     bool was_loaned = check_and_remove_loan(data, payload);
     if (!was_loaned)
@@ -975,15 +980,29 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             return ReturnCode_t::RETCODE_ERROR;
         }
     }
+    t_end_ = std::chrono::steady_clock::now();
+
+    double ser_time = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
+
+    std::cout << "Serialized time is: " << ser_time << std::endl;
 
     CacheChange_t* ch = writer_->new_change(change_kind, handle);
     if (ch != nullptr)
     {
+        t_start_ = std::chrono::steady_clock::now();
         payload.move_into_change(*ch);
+
+        t_end_ = std::chrono::steady_clock::now();
+
+        double m_time = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
+
+        std::cout << "Move_into_change time is: " << m_time << std::endl;
 
         bool added = false;
         if (reader_filters_)
         {
+            t_start_ = std::chrono::steady_clock::now();
+
             auto related_sample_identity = wparams.related_sample_identity();
             auto filter_hook = [&related_sample_identity, this](CacheChange_t& ch)
                     {
@@ -991,10 +1010,21 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
                                 related_sample_identity);
                     };
             added = history_.add_pub_change_with_commit_hook(ch, wparams, filter_hook, lock, max_blocking_time);
+            t_end_ = std::chrono::steady_clock::now();
+
+            double ap_change_time = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
+
+            std::cout << "Add_pub_change time is: " << ap_change_time << std::endl;
         }
         else
         {
+            t_start_ = std::chrono::steady_clock::now();
             added = history_.add_pub_change(ch, wparams, lock, max_blocking_time);
+            t_end_ = std::chrono::steady_clock::now();
+
+            double ap_change_time = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
+
+            std::cout << "Add_pub_change time is: " << ap_change_time << std::endl;
         }
 
         if (!added)
@@ -1036,6 +1066,11 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
             lifespan_timer_->restart_timer();
         }
+        t_end_ = std::chrono::steady_clock::now();
+
+        double total_time = std::chrono::duration<double, std::milli>(t_end_ - t_start_global).count();
+
+        std::cout << "TOTAL time is: " << total_time << std::endl;
 
         return ReturnCode_t::RETCODE_OK;
     }
