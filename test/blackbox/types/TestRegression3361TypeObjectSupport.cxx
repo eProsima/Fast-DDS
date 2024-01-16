@@ -64,8 +64,6 @@ void register_TestRegression3361_type_identifier()
         header_TestRegression3361 = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_TestRegression3361);
         CompleteStructMemberSeq member_seq_TestRegression3361;
         {
-            StructMemberFlag member_flags_uuid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_TestRegression3361 =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "TestModule::MACHINEID", type_ids_TestRegression3361);
@@ -189,6 +187,8 @@ void register_TestRegression3361_type_identifier()
                     return;
                 }
             }
+            StructMemberFlag member_flags_uuid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_uuid;
             MemberId member_id_uuid = 0x00000000;
             if (EK_COMPLETE == type_ids_TestRegression3361.type_identifier1()._d() || TK_NONE == type_ids_TestRegression3361.type_identifier2()._d() ||

@@ -63,8 +63,6 @@ void register_HelloMsg_type_identifier()
         header_HelloMsg = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_HelloMsg);
         CompleteStructMemberSeq member_seq_HelloMsg;
         {
-            StructMemberFlag member_flags_deadlinekey = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, true, false);
             return_code_HelloMsg =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_uint16_t", type_ids_HelloMsg);
@@ -75,6 +73,8 @@ void register_HelloMsg_type_identifier()
                         "deadlinekey Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_deadlinekey = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, true, false);
             CommonStructMember common_deadlinekey;
             MemberId member_id_deadlinekey = 0x00000000;
             if (EK_COMPLETE == type_ids_HelloMsg.type_identifier1()._d() || TK_NONE == type_ids_HelloMsg.type_identifier2()._d() ||
@@ -140,8 +140,6 @@ void register_HelloMsg_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_HelloMsg, member_deadlinekey);
         }
         {
-            StructMemberFlag member_flags_payload = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_HelloMsg =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "anonymous_string_256", type_ids_HelloMsg);
@@ -189,6 +187,8 @@ void register_HelloMsg_type_identifier()
                     return;
                 }
             }
+            StructMemberFlag member_flags_payload = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_payload;
             MemberId member_id_payload = 0x00000001;
             if (EK_COMPLETE == type_ids_HelloMsg.type_identifier1()._d() || TK_NONE == type_ids_HelloMsg.type_identifier2()._d() ||

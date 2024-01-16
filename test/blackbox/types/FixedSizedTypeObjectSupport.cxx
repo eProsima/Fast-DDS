@@ -70,8 +70,6 @@ void register_FixedSized_type_identifier()
         header_FixedSized = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FixedSized);
         CompleteStructMemberSeq member_seq_FixedSized;
         {
-            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_FixedSized =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_uint16_t", type_ids_FixedSized);
@@ -82,6 +80,8 @@ void register_FixedSized_type_identifier()
                         "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_index;
             MemberId member_id_index = 0x00000000;
             if (EK_COMPLETE == type_ids_FixedSized.type_identifier1()._d() || TK_NONE == type_ids_FixedSized.type_identifier2()._d() ||

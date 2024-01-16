@@ -75,8 +75,6 @@ void register_NewAliases_type_identifier()
         header_NewAliases = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_NewAliases);
         CompleteStructMemberSeq member_seq_NewAliases;
         {
-            StructMemberFlag member_flags_int8_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_NewAliases =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int8_t", type_ids_NewAliases);
@@ -87,6 +85,8 @@ void register_NewAliases_type_identifier()
                         "int8_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_int8_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_int8_;
             MemberId member_id_int8_ = 0x00000000;
             if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -139,8 +139,6 @@ void register_NewAliases_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_int8_);
         }
         {
-            StructMemberFlag member_flags_uint8_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_NewAliases =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_uint8_t", type_ids_NewAliases);
@@ -151,6 +149,8 @@ void register_NewAliases_type_identifier()
                         "uint8_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_uint8_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_uint8_;
             MemberId member_id_uint8_ = 0x00000001;
             if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -203,8 +203,6 @@ void register_NewAliases_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_uint8_);
         }
         {
-            StructMemberFlag member_flags_int16_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_NewAliases =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int16_t", type_ids_NewAliases);
@@ -215,6 +213,8 @@ void register_NewAliases_type_identifier()
                         "int16_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_int16_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_int16_;
             MemberId member_id_int16_ = 0x00000002;
             if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -267,8 +267,6 @@ void register_NewAliases_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_int16_);
         }
         {
-            StructMemberFlag member_flags_uint16_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_NewAliases =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_uint16_t", type_ids_NewAliases);
@@ -279,6 +277,8 @@ void register_NewAliases_type_identifier()
                         "uint16_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_uint16_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_uint16_;
             MemberId member_id_uint16_ = 0x00000003;
             if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -331,8 +331,6 @@ void register_NewAliases_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_uint16_);
         }
         {
-            StructMemberFlag member_flags_int32_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_NewAliases =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int32_t", type_ids_NewAliases);
@@ -343,6 +341,8 @@ void register_NewAliases_type_identifier()
                         "int32_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_int32_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_int32_;
             MemberId member_id_int32_ = 0x00000004;
             if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -395,8 +395,6 @@ void register_NewAliases_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_int32_);
         }
         {
-            StructMemberFlag member_flags_uint32_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_NewAliases =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_uint32_t", type_ids_NewAliases);
@@ -407,6 +405,8 @@ void register_NewAliases_type_identifier()
                         "uint32_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_uint32_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_uint32_;
             MemberId member_id_uint32_ = 0x00000005;
             if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -459,8 +459,6 @@ void register_NewAliases_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_uint32_);
         }
         {
-            StructMemberFlag member_flags_int64_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_NewAliases =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int64_t", type_ids_NewAliases);
@@ -471,6 +469,8 @@ void register_NewAliases_type_identifier()
                         "int64_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_int64_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_int64_;
             MemberId member_id_int64_ = 0x00000006;
             if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -523,8 +523,6 @@ void register_NewAliases_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_int64_);
         }
         {
-            StructMemberFlag member_flags_uint64_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_NewAliases =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_uint64_t", type_ids_NewAliases);
@@ -535,6 +533,8 @@ void register_NewAliases_type_identifier()
                         "uint64_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_uint64_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_uint64_;
             MemberId member_id_uint64_ = 0x00000007;
             if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -600,8 +600,6 @@ void register_NewAliases_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_uint64_);
         }
         {
-            StructMemberFlag member_flags_local_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_NewAliases =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "anonymous_string_unbounded", type_ids_NewAliases);
@@ -649,6 +647,8 @@ void register_NewAliases_type_identifier()
                     return;
                 }
             }
+            StructMemberFlag member_flags_local_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_local_string;
             MemberId member_id_local_string = 0x00000008;
             if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -776,8 +776,6 @@ void register_WCharUnion_type_identifier()
                 type_ann_builtin_WCharUnion, ann_custom_WCharUnion);
         CompleteUnionMemberSeq member_seq_WCharUnion;
         {
-            UnionMemberFlag member_flags_case_zero = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false);
             return_code_WCharUnion =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int32_t", type_ids_WCharUnion);
@@ -788,6 +786,8 @@ void register_WCharUnion_type_identifier()
                         "case_zero Union member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            UnionMemberFlag member_flags_case_zero = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
             UnionCaseLabelSeq label_seq_case_zero;
             TypeObjectUtils::add_union_case_label(label_seq_case_zero, static_cast<int32_t>('a'));
             CommonUnionMember common_case_zero;
@@ -844,8 +844,6 @@ void register_WCharUnion_type_identifier()
             TypeObjectUtils::add_complete_union_member(member_seq_WCharUnion, member_case_zero);
         }
         {
-            UnionMemberFlag member_flags_case_one = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false);
             return_code_WCharUnion =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int32_t", type_ids_WCharUnion);
@@ -856,6 +854,8 @@ void register_WCharUnion_type_identifier()
                         "case_one Union member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            UnionMemberFlag member_flags_case_one = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
             UnionCaseLabelSeq label_seq_case_one;
             TypeObjectUtils::add_union_case_label(label_seq_case_one, static_cast<int32_t>('b'));
             CommonUnionMember common_case_one;
@@ -975,8 +975,6 @@ void register_OctetUnion_type_identifier()
                 type_ann_builtin_OctetUnion, ann_custom_OctetUnion);
         CompleteUnionMemberSeq member_seq_OctetUnion;
         {
-            UnionMemberFlag member_flags_case_five = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false);
             return_code_OctetUnion =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int32_t", type_ids_OctetUnion);
@@ -987,6 +985,8 @@ void register_OctetUnion_type_identifier()
                         "case_five Union member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            UnionMemberFlag member_flags_case_five = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
             UnionCaseLabelSeq label_seq_case_five;
             TypeObjectUtils::add_union_case_label(label_seq_case_five, static_cast<int32_t>(5));
             CommonUnionMember common_case_five;
@@ -1043,8 +1043,6 @@ void register_OctetUnion_type_identifier()
             TypeObjectUtils::add_complete_union_member(member_seq_OctetUnion, member_case_five);
         }
         {
-            UnionMemberFlag member_flags_case_seven = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false);
             return_code_OctetUnion =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int32_t", type_ids_OctetUnion);
@@ -1055,6 +1053,8 @@ void register_OctetUnion_type_identifier()
                         "case_seven Union member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            UnionMemberFlag member_flags_case_seven = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
             UnionCaseLabelSeq label_seq_case_seven;
             TypeObjectUtils::add_union_case_label(label_seq_case_seven, static_cast<int32_t>(7));
             CommonUnionMember common_case_seven;
@@ -1174,8 +1174,6 @@ void register_Int8Union_type_identifier()
                 type_ann_builtin_Int8Union, ann_custom_Int8Union);
         CompleteUnionMemberSeq member_seq_Int8Union;
         {
-            UnionMemberFlag member_flags_case_three = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false);
             return_code_Int8Union =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int32_t", type_ids_Int8Union);
@@ -1186,6 +1184,8 @@ void register_Int8Union_type_identifier()
                         "case_three Union member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            UnionMemberFlag member_flags_case_three = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
             UnionCaseLabelSeq label_seq_case_three;
             TypeObjectUtils::add_union_case_label(label_seq_case_three, static_cast<int32_t>(3));
             CommonUnionMember common_case_three;
@@ -1242,8 +1242,6 @@ void register_Int8Union_type_identifier()
             TypeObjectUtils::add_complete_union_member(member_seq_Int8Union, member_case_three);
         }
         {
-            UnionMemberFlag member_flags_case_six = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false);
             return_code_Int8Union =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int32_t", type_ids_Int8Union);
@@ -1254,6 +1252,8 @@ void register_Int8Union_type_identifier()
                         "case_six Union member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            UnionMemberFlag member_flags_case_six = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
             UnionCaseLabelSeq label_seq_case_six;
             TypeObjectUtils::add_union_case_label(label_seq_case_six, static_cast<int32_t>(6));
             CommonUnionMember common_case_six;
@@ -1344,8 +1344,6 @@ void register_bitmodule_BitsetBitmask_type_identifier()
         header_BitsetBitmask = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_BitsetBitmask);
         CompleteStructMemberSeq member_seq_BitsetBitmask;
         {
-            StructMemberFlag member_flags_mybitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_BitsetBitmask =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "bitmodule::MyBitset", type_ids_BitsetBitmask);
@@ -1454,6 +1452,8 @@ void register_bitmodule_BitsetBitmask_type_identifier()
                     return;
                 }
             }
+            StructMemberFlag member_flags_mybitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_mybitset;
             MemberId member_id_mybitset = 0x00000000;
             if (EK_COMPLETE == type_ids_BitsetBitmask.type_identifier1()._d() || TK_NONE == type_ids_BitsetBitmask.type_identifier2()._d() ||
@@ -1506,8 +1506,6 @@ void register_bitmodule_BitsetBitmask_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_BitsetBitmask, member_mybitset);
         }
         {
-            StructMemberFlag member_flags_mybitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_BitsetBitmask =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "bitmodule::MyBitMask", type_ids_BitsetBitmask);
@@ -1622,6 +1620,8 @@ void register_bitmodule_BitsetBitmask_type_identifier()
                     return;
                 }
             }
+            StructMemberFlag member_flags_mybitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_mybitmask;
             MemberId member_id_mybitmask = 0x00000001;
             if (EK_COMPLETE == type_ids_BitsetBitmask.type_identifier1()._d() || TK_NONE == type_ids_BitsetBitmask.type_identifier2()._d() ||
@@ -1717,8 +1717,6 @@ void register_bitmodule_BM2_type_identifier()
                 header_BitsetBitmask = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_BitsetBitmask);
                 CompleteStructMemberSeq member_seq_BitsetBitmask;
                 {
-                    StructMemberFlag member_flags_mybitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
                     return_code_BitsetBitmask =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                         "bitmodule::MyBitset", type_ids_BitsetBitmask);
@@ -1827,6 +1825,8 @@ void register_bitmodule_BM2_type_identifier()
                             return;
                         }
                     }
+                    StructMemberFlag member_flags_mybitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false, false, false, false);
                     CommonStructMember common_mybitset;
                     MemberId member_id_mybitset = 0x00000000;
                     if (EK_COMPLETE == type_ids_BitsetBitmask.type_identifier1()._d() || TK_NONE == type_ids_BitsetBitmask.type_identifier2()._d() ||
@@ -1879,8 +1879,6 @@ void register_bitmodule_BM2_type_identifier()
                     TypeObjectUtils::add_complete_struct_member(member_seq_BitsetBitmask, member_mybitset);
                 }
                 {
-                    StructMemberFlag member_flags_mybitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
                     return_code_BitsetBitmask =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                         "bitmodule::MyBitMask", type_ids_BitsetBitmask);
@@ -1995,6 +1993,8 @@ void register_bitmodule_BM2_type_identifier()
                             return;
                         }
                     }
+                    StructMemberFlag member_flags_mybitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false, false, false, false);
                     CommonStructMember common_mybitmask;
                     MemberId member_id_mybitmask = 0x00000001;
                     if (EK_COMPLETE == type_ids_BitsetBitmask.type_identifier1()._d() || TK_NONE == type_ids_BitsetBitmask.type_identifier2()._d() ||
@@ -2085,8 +2085,6 @@ void register_bitmodule_BM2_type_identifier()
         }
         CompleteStructMemberSeq member_seq_BM2;
         {
-            StructMemberFlag member_flags_two = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_BM2 =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "bitmodule::MyBitMask", type_ids_BM2);
@@ -2201,6 +2199,8 @@ void register_bitmodule_BM2_type_identifier()
                     return;
                 }
             }
+            StructMemberFlag member_flags_two = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_two;
             MemberId member_id_two = 0x00000002;
             if (EK_COMPLETE == type_ids_BM2.type_identifier1()._d() || TK_NONE == type_ids_BM2.type_identifier2()._d() ||
@@ -2253,8 +2253,6 @@ void register_bitmodule_BM2_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_BM2, member_two);
         }
         {
-            StructMemberFlag member_flags_mylong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_BM2 =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int32_t", type_ids_BM2);
@@ -2265,6 +2263,8 @@ void register_bitmodule_BM2_type_identifier()
                         "mylong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_mylong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_mylong;
             MemberId member_id_mylong = 0x00000003;
             if (EK_COMPLETE == type_ids_BM2.type_identifier1()._d() || TK_NONE == type_ids_BM2.type_identifier2()._d() ||
@@ -2362,8 +2362,6 @@ void register_StructTest_type_identifier()
                 header_NewAliases = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_NewAliases);
                 CompleteStructMemberSeq member_seq_NewAliases;
                 {
-                    StructMemberFlag member_flags_int8_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
                     return_code_NewAliases =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                         "_int8_t", type_ids_NewAliases);
@@ -2374,6 +2372,8 @@ void register_StructTest_type_identifier()
                                 "int8_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
+                    StructMemberFlag member_flags_int8_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false, false, false, false);
                     CommonStructMember common_int8_;
                     MemberId member_id_int8_ = 0x00000000;
                     if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -2426,8 +2426,6 @@ void register_StructTest_type_identifier()
                     TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_int8_);
                 }
                 {
-                    StructMemberFlag member_flags_uint8_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
                     return_code_NewAliases =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                         "_uint8_t", type_ids_NewAliases);
@@ -2438,6 +2436,8 @@ void register_StructTest_type_identifier()
                                 "uint8_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
+                    StructMemberFlag member_flags_uint8_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false, false, false, false);
                     CommonStructMember common_uint8_;
                     MemberId member_id_uint8_ = 0x00000001;
                     if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -2490,8 +2490,6 @@ void register_StructTest_type_identifier()
                     TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_uint8_);
                 }
                 {
-                    StructMemberFlag member_flags_int16_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
                     return_code_NewAliases =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                         "_int16_t", type_ids_NewAliases);
@@ -2502,6 +2500,8 @@ void register_StructTest_type_identifier()
                                 "int16_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
+                    StructMemberFlag member_flags_int16_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false, false, false, false);
                     CommonStructMember common_int16_;
                     MemberId member_id_int16_ = 0x00000002;
                     if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -2554,8 +2554,6 @@ void register_StructTest_type_identifier()
                     TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_int16_);
                 }
                 {
-                    StructMemberFlag member_flags_uint16_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
                     return_code_NewAliases =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                         "_uint16_t", type_ids_NewAliases);
@@ -2566,6 +2564,8 @@ void register_StructTest_type_identifier()
                                 "uint16_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
+                    StructMemberFlag member_flags_uint16_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false, false, false, false);
                     CommonStructMember common_uint16_;
                     MemberId member_id_uint16_ = 0x00000003;
                     if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -2618,8 +2618,6 @@ void register_StructTest_type_identifier()
                     TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_uint16_);
                 }
                 {
-                    StructMemberFlag member_flags_int32_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
                     return_code_NewAliases =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                         "_int32_t", type_ids_NewAliases);
@@ -2630,6 +2628,8 @@ void register_StructTest_type_identifier()
                                 "int32_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
+                    StructMemberFlag member_flags_int32_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false, false, false, false);
                     CommonStructMember common_int32_;
                     MemberId member_id_int32_ = 0x00000004;
                     if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -2682,8 +2682,6 @@ void register_StructTest_type_identifier()
                     TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_int32_);
                 }
                 {
-                    StructMemberFlag member_flags_uint32_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
                     return_code_NewAliases =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                         "_uint32_t", type_ids_NewAliases);
@@ -2694,6 +2692,8 @@ void register_StructTest_type_identifier()
                                 "uint32_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
+                    StructMemberFlag member_flags_uint32_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false, false, false, false);
                     CommonStructMember common_uint32_;
                     MemberId member_id_uint32_ = 0x00000005;
                     if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -2746,8 +2746,6 @@ void register_StructTest_type_identifier()
                     TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_uint32_);
                 }
                 {
-                    StructMemberFlag member_flags_int64_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
                     return_code_NewAliases =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                         "_int64_t", type_ids_NewAliases);
@@ -2758,6 +2756,8 @@ void register_StructTest_type_identifier()
                                 "int64_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
+                    StructMemberFlag member_flags_int64_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false, false, false, false);
                     CommonStructMember common_int64_;
                     MemberId member_id_int64_ = 0x00000006;
                     if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -2810,8 +2810,6 @@ void register_StructTest_type_identifier()
                     TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_int64_);
                 }
                 {
-                    StructMemberFlag member_flags_uint64_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
                     return_code_NewAliases =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                         "_uint64_t", type_ids_NewAliases);
@@ -2822,6 +2820,8 @@ void register_StructTest_type_identifier()
                                 "uint64_ Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                         return;
                     }
+                    StructMemberFlag member_flags_uint64_ = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false, false, false, false);
                     CommonStructMember common_uint64_;
                     MemberId member_id_uint64_ = 0x00000007;
                     if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -2887,8 +2887,6 @@ void register_StructTest_type_identifier()
                     TypeObjectUtils::add_complete_struct_member(member_seq_NewAliases, member_uint64_);
                 }
                 {
-                    StructMemberFlag member_flags_local_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
                     return_code_NewAliases =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                         "anonymous_string_unbounded", type_ids_NewAliases);
@@ -2936,6 +2934,8 @@ void register_StructTest_type_identifier()
                             return;
                         }
                     }
+                    StructMemberFlag member_flags_local_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false, false, false, false);
                     CommonStructMember common_local_string;
                     MemberId member_id_local_string = 0x00000008;
                     if (EK_COMPLETE == type_ids_NewAliases.type_identifier1()._d() || TK_NONE == type_ids_NewAliases.type_identifier2()._d() ||
@@ -3039,8 +3039,6 @@ void register_StructTest_type_identifier()
         }
         CompleteStructMemberSeq member_seq_StructTest;
         {
-            StructMemberFlag member_flags_octetUnion = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_StructTest =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "OctetUnion", type_ids_StructTest);
@@ -3090,8 +3088,6 @@ void register_StructTest_type_identifier()
                             type_ann_builtin_OctetUnion, ann_custom_OctetUnion);
                     CompleteUnionMemberSeq member_seq_OctetUnion;
                     {
-                        UnionMemberFlag member_flags_case_five = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                false, false);
                         return_code_OctetUnion =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                             "_int32_t", type_ids_OctetUnion);
@@ -3102,6 +3098,8 @@ void register_StructTest_type_identifier()
                                     "case_five Union member TypeIdentifier unknown to TypeObjectRegistry.");
                             return;
                         }
+                        UnionMemberFlag member_flags_case_five = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
                         UnionCaseLabelSeq label_seq_case_five;
                         TypeObjectUtils::add_union_case_label(label_seq_case_five, static_cast<int32_t>(5));
                         CommonUnionMember common_case_five;
@@ -3158,8 +3156,6 @@ void register_StructTest_type_identifier()
                         TypeObjectUtils::add_complete_union_member(member_seq_OctetUnion, member_case_five);
                     }
                     {
-                        UnionMemberFlag member_flags_case_seven = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                false, false);
                         return_code_OctetUnion =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                             "_int32_t", type_ids_OctetUnion);
@@ -3170,6 +3166,8 @@ void register_StructTest_type_identifier()
                                     "case_seven Union member TypeIdentifier unknown to TypeObjectRegistry.");
                             return;
                         }
+                        UnionMemberFlag member_flags_case_seven = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
                         UnionCaseLabelSeq label_seq_case_seven;
                         TypeObjectUtils::add_union_case_label(label_seq_case_seven, static_cast<int32_t>(7));
                         CommonUnionMember common_case_seven;
@@ -3244,6 +3242,8 @@ void register_StructTest_type_identifier()
                     }
                 }
             }
+            StructMemberFlag member_flags_octetUnion = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_octetUnion;
             MemberId member_id_octetUnion = 0x00000009;
             if (EK_COMPLETE == type_ids_StructTest.type_identifier1()._d() || TK_NONE == type_ids_StructTest.type_identifier2()._d() ||
@@ -3296,8 +3296,6 @@ void register_StructTest_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_StructTest, member_octetUnion);
         }
         {
-            StructMemberFlag member_flags_int8Union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_StructTest =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "Int8Union", type_ids_StructTest);
@@ -3347,8 +3345,6 @@ void register_StructTest_type_identifier()
                             type_ann_builtin_Int8Union, ann_custom_Int8Union);
                     CompleteUnionMemberSeq member_seq_Int8Union;
                     {
-                        UnionMemberFlag member_flags_case_three = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                false, false);
                         return_code_Int8Union =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                             "_int32_t", type_ids_Int8Union);
@@ -3359,6 +3355,8 @@ void register_StructTest_type_identifier()
                                     "case_three Union member TypeIdentifier unknown to TypeObjectRegistry.");
                             return;
                         }
+                        UnionMemberFlag member_flags_case_three = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
                         UnionCaseLabelSeq label_seq_case_three;
                         TypeObjectUtils::add_union_case_label(label_seq_case_three, static_cast<int32_t>(3));
                         CommonUnionMember common_case_three;
@@ -3415,8 +3413,6 @@ void register_StructTest_type_identifier()
                         TypeObjectUtils::add_complete_union_member(member_seq_Int8Union, member_case_three);
                     }
                     {
-                        UnionMemberFlag member_flags_case_six = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                false, false);
                         return_code_Int8Union =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                             "_int32_t", type_ids_Int8Union);
@@ -3427,6 +3423,8 @@ void register_StructTest_type_identifier()
                                     "case_six Union member TypeIdentifier unknown to TypeObjectRegistry.");
                             return;
                         }
+                        UnionMemberFlag member_flags_case_six = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
                         UnionCaseLabelSeq label_seq_case_six;
                         TypeObjectUtils::add_union_case_label(label_seq_case_six, static_cast<int32_t>(6));
                         CommonUnionMember common_case_six;
@@ -3501,6 +3499,8 @@ void register_StructTest_type_identifier()
                     }
                 }
             }
+            StructMemberFlag member_flags_int8Union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_int8Union;
             MemberId member_id_int8Union = 0x0000000a;
             if (EK_COMPLETE == type_ids_StructTest.type_identifier1()._d() || TK_NONE == type_ids_StructTest.type_identifier2()._d() ||
@@ -3553,8 +3553,6 @@ void register_StructTest_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_StructTest, member_int8Union);
         }
         {
-            StructMemberFlag member_flags_myStructBits = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_StructTest =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "bitmodule::BM2", type_ids_StructTest);
@@ -3585,8 +3583,6 @@ void register_StructTest_type_identifier()
                             header_BitsetBitmask = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_BitsetBitmask);
                             CompleteStructMemberSeq member_seq_BitsetBitmask;
                             {
-                                StructMemberFlag member_flags_mybitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                        false, false, false, false);
                                 return_code_BitsetBitmask =
                                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                                     "bitmodule::MyBitset", type_ids_BitsetBitmask);
@@ -3695,6 +3691,8 @@ void register_StructTest_type_identifier()
                                         return;
                                     }
                                 }
+                                StructMemberFlag member_flags_mybitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                        false, false, false, false);
                                 CommonStructMember common_mybitset;
                                 MemberId member_id_mybitset = 0x00000000;
                                 if (EK_COMPLETE == type_ids_BitsetBitmask.type_identifier1()._d() || TK_NONE == type_ids_BitsetBitmask.type_identifier2()._d() ||
@@ -3747,8 +3745,6 @@ void register_StructTest_type_identifier()
                                 TypeObjectUtils::add_complete_struct_member(member_seq_BitsetBitmask, member_mybitset);
                             }
                             {
-                                StructMemberFlag member_flags_mybitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                        false, false, false, false);
                                 return_code_BitsetBitmask =
                                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                                     "bitmodule::MyBitMask", type_ids_BitsetBitmask);
@@ -3863,6 +3859,8 @@ void register_StructTest_type_identifier()
                                         return;
                                     }
                                 }
+                                StructMemberFlag member_flags_mybitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                        false, false, false, false);
                                 CommonStructMember common_mybitmask;
                                 MemberId member_id_mybitmask = 0x00000001;
                                 if (EK_COMPLETE == type_ids_BitsetBitmask.type_identifier1()._d() || TK_NONE == type_ids_BitsetBitmask.type_identifier2()._d() ||
@@ -3953,8 +3951,6 @@ void register_StructTest_type_identifier()
                     }
                     CompleteStructMemberSeq member_seq_BM2;
                     {
-                        StructMemberFlag member_flags_two = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                false, false, false, false);
                         return_code_BM2 =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                             "bitmodule::MyBitMask", type_ids_BM2);
@@ -4069,6 +4065,8 @@ void register_StructTest_type_identifier()
                                 return;
                             }
                         }
+                        StructMemberFlag member_flags_two = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false, false, false);
                         CommonStructMember common_two;
                         MemberId member_id_two = 0x00000002;
                         if (EK_COMPLETE == type_ids_BM2.type_identifier1()._d() || TK_NONE == type_ids_BM2.type_identifier2()._d() ||
@@ -4121,8 +4119,6 @@ void register_StructTest_type_identifier()
                         TypeObjectUtils::add_complete_struct_member(member_seq_BM2, member_two);
                     }
                     {
-                        StructMemberFlag member_flags_mylong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                false, false, false, false);
                         return_code_BM2 =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                             "_int32_t", type_ids_BM2);
@@ -4133,6 +4129,8 @@ void register_StructTest_type_identifier()
                                     "mylong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                             return;
                         }
+                        StructMemberFlag member_flags_mylong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false, false, false);
                         CommonStructMember common_mylong;
                         MemberId member_id_mylong = 0x00000003;
                         if (EK_COMPLETE == type_ids_BM2.type_identifier1()._d() || TK_NONE == type_ids_BM2.type_identifier2()._d() ||
@@ -4202,6 +4200,8 @@ void register_StructTest_type_identifier()
                     }
                 }
             }
+            StructMemberFlag member_flags_myStructBits = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_myStructBits;
             MemberId member_id_myStructBits = 0x0000000b;
             if (EK_COMPLETE == type_ids_StructTest.type_identifier1()._d() || TK_NONE == type_ids_StructTest.type_identifier2()._d() ||

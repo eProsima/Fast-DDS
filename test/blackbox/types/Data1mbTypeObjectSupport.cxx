@@ -63,8 +63,6 @@ void register_Data1mb_type_identifier()
         header_Data1mb = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_Data1mb);
         CompleteStructMemberSeq member_seq_Data1mb;
         {
-            StructMemberFlag member_flags_data = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_Data1mb =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "anonymous_sequence_uint8_t_1024000", type_ids_Data1mb);
@@ -166,6 +164,8 @@ void register_Data1mb_type_identifier()
                     return;
                 }
             }
+            StructMemberFlag member_flags_data = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_data;
             MemberId member_id_data = 0x00000000;
             if (EK_COMPLETE == type_ids_Data1mb.type_identifier1()._d() || TK_NONE == type_ids_Data1mb.type_identifier2()._d() ||

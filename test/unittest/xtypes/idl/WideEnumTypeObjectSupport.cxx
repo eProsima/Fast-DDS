@@ -67,8 +67,6 @@ void register_MyEnumWideStruct_type_identifier()
         header_MyEnumWideStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_MyEnumWideStruct);
         CompleteStructMemberSeq member_seq_MyEnumWideStruct;
         {
-            StructMemberFlag member_flags_my_enum_wide = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_MyEnumWideStruct =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "MyEnumWide", type_ids_MyEnumWideStruct);
@@ -142,6 +140,8 @@ void register_MyEnumWideStruct_type_identifier()
                     return;
                 }
             }
+            StructMemberFlag member_flags_my_enum_wide = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_my_enum_wide;
             MemberId member_id_my_enum_wide = 0x00000000;
             if (EK_COMPLETE == type_ids_MyEnumWideStruct.type_identifier1()._d() || TK_NONE == type_ids_MyEnumWideStruct.type_identifier2()._d() ||
@@ -319,8 +319,6 @@ void register_SimpleWideUnion_type_identifier()
                 type_ann_builtin_SimpleWideUnion, ann_custom_SimpleWideUnion);
         CompleteUnionMemberSeq member_seq_SimpleWideUnion;
         {
-            UnionMemberFlag member_flags_first = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false);
             return_code_SimpleWideUnion =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int32_t", type_ids_SimpleWideUnion);
@@ -331,6 +329,8 @@ void register_SimpleWideUnion_type_identifier()
                         "first Union member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            UnionMemberFlag member_flags_first = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
             UnionCaseLabelSeq label_seq_first;
             TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(MyEnumWide::A));
             CommonUnionMember common_first;
@@ -387,8 +387,6 @@ void register_SimpleWideUnion_type_identifier()
             TypeObjectUtils::add_complete_union_member(member_seq_SimpleWideUnion, member_first);
         }
         {
-            UnionMemberFlag member_flags_second = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false);
             return_code_SimpleWideUnion =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int64_t", type_ids_SimpleWideUnion);
@@ -399,6 +397,8 @@ void register_SimpleWideUnion_type_identifier()
                         "second Union member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            UnionMemberFlag member_flags_second = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
             UnionCaseLabelSeq label_seq_second;
             TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(MyEnumWide::B));
             CommonUnionMember common_second;
@@ -455,8 +455,6 @@ void register_SimpleWideUnion_type_identifier()
             TypeObjectUtils::add_complete_union_member(member_seq_SimpleWideUnion, member_second);
         }
         {
-            UnionMemberFlag member_flags_third = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false);
             return_code_SimpleWideUnion =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_byte", type_ids_SimpleWideUnion);
@@ -467,6 +465,8 @@ void register_SimpleWideUnion_type_identifier()
                         "third Union member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            UnionMemberFlag member_flags_third = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
             UnionCaseLabelSeq label_seq_third;
             TypeObjectUtils::add_union_case_label(label_seq_third, static_cast<int32_t>(MyEnumWide::D));
             CommonUnionMember common_third;
@@ -556,8 +556,6 @@ void register_SimpleWideUnionStruct_type_identifier()
         header_SimpleWideUnionStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_SimpleWideUnionStruct);
         CompleteStructMemberSeq member_seq_SimpleWideUnionStruct;
         {
-            StructMemberFlag member_flags_my_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_SimpleWideUnionStruct =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "SimpleWideUnion", type_ids_SimpleWideUnionStruct);
@@ -670,8 +668,6 @@ void register_SimpleWideUnionStruct_type_identifier()
                             type_ann_builtin_SimpleWideUnion, ann_custom_SimpleWideUnion);
                     CompleteUnionMemberSeq member_seq_SimpleWideUnion;
                     {
-                        UnionMemberFlag member_flags_first = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                false, false);
                         return_code_SimpleWideUnion =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                             "_int32_t", type_ids_SimpleWideUnion);
@@ -682,6 +678,8 @@ void register_SimpleWideUnionStruct_type_identifier()
                                     "first Union member TypeIdentifier unknown to TypeObjectRegistry.");
                             return;
                         }
+                        UnionMemberFlag member_flags_first = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
                         UnionCaseLabelSeq label_seq_first;
                         TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(MyEnumWide::A));
                         CommonUnionMember common_first;
@@ -738,8 +736,6 @@ void register_SimpleWideUnionStruct_type_identifier()
                         TypeObjectUtils::add_complete_union_member(member_seq_SimpleWideUnion, member_first);
                     }
                     {
-                        UnionMemberFlag member_flags_second = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                false, false);
                         return_code_SimpleWideUnion =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                             "_int64_t", type_ids_SimpleWideUnion);
@@ -750,6 +746,8 @@ void register_SimpleWideUnionStruct_type_identifier()
                                     "second Union member TypeIdentifier unknown to TypeObjectRegistry.");
                             return;
                         }
+                        UnionMemberFlag member_flags_second = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
                         UnionCaseLabelSeq label_seq_second;
                         TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(MyEnumWide::B));
                         CommonUnionMember common_second;
@@ -806,8 +804,6 @@ void register_SimpleWideUnionStruct_type_identifier()
                         TypeObjectUtils::add_complete_union_member(member_seq_SimpleWideUnion, member_second);
                     }
                     {
-                        UnionMemberFlag member_flags_third = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                false, false);
                         return_code_SimpleWideUnion =
                             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                             "_byte", type_ids_SimpleWideUnion);
@@ -818,6 +814,8 @@ void register_SimpleWideUnionStruct_type_identifier()
                                     "third Union member TypeIdentifier unknown to TypeObjectRegistry.");
                             return;
                         }
+                        UnionMemberFlag member_flags_third = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
                         UnionCaseLabelSeq label_seq_third;
                         TypeObjectUtils::add_union_case_label(label_seq_third, static_cast<int32_t>(MyEnumWide::D));
                         CommonUnionMember common_third;
@@ -892,6 +890,8 @@ void register_SimpleWideUnionStruct_type_identifier()
                     }
                 }
             }
+            StructMemberFlag member_flags_my_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_my_union;
             MemberId member_id_my_union = 0x00000000;
             if (EK_COMPLETE == type_ids_SimpleWideUnionStruct.type_identifier1()._d() || TK_NONE == type_ids_SimpleWideUnionStruct.type_identifier2()._d() ||

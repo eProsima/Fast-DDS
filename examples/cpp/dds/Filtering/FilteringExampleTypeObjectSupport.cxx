@@ -63,8 +63,6 @@ void register_FilteringExample_type_identifier()
         header_FilteringExample = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FilteringExample);
         CompleteStructMemberSeq member_seq_FilteringExample;
         {
-            StructMemberFlag member_flags_sampleNumber = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_FilteringExample =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_int32_t", type_ids_FilteringExample);
@@ -75,6 +73,8 @@ void register_FilteringExample_type_identifier()
                         "sampleNumber Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_sampleNumber = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_sampleNumber;
             MemberId member_id_sampleNumber = 0x00000000;
             if (EK_COMPLETE == type_ids_FilteringExample.type_identifier1()._d() || TK_NONE == type_ids_FilteringExample.type_identifier2()._d() ||

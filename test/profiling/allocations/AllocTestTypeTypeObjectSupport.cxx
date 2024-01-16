@@ -63,8 +63,6 @@ void register_AllocTestType_type_identifier()
         header_AllocTestType = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_AllocTestType);
         CompleteStructMemberSeq member_seq_AllocTestType;
         {
-            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_AllocTestType =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_uint32_t", type_ids_AllocTestType);
@@ -75,6 +73,8 @@ void register_AllocTestType_type_identifier()
                         "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_index;
             MemberId member_id_index = 0x00000000;
             if (EK_COMPLETE == type_ids_AllocTestType.type_identifier1()._d() || TK_NONE == type_ids_AllocTestType.type_identifier2()._d() ||

@@ -63,8 +63,6 @@ void register_Lifespan_type_identifier()
         header_Lifespan = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_Lifespan);
         CompleteStructMemberSeq member_seq_Lifespan;
         {
-            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_Lifespan =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_uint32_t", type_ids_Lifespan);
@@ -75,6 +73,8 @@ void register_Lifespan_type_identifier()
                         "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
+            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_index;
             MemberId member_id_index = 0x00000000;
             if (EK_COMPLETE == type_ids_Lifespan.type_identifier1()._d() || TK_NONE == type_ids_Lifespan.type_identifier2()._d() ||
@@ -127,8 +127,6 @@ void register_Lifespan_type_identifier()
             TypeObjectUtils::add_complete_struct_member(member_seq_Lifespan, member_index);
         }
         {
-            StructMemberFlag member_flags_message = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_Lifespan =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "anonymous_string_unbounded", type_ids_Lifespan);
@@ -176,6 +174,8 @@ void register_Lifespan_type_identifier()
                     return;
                 }
             }
+            StructMemberFlag member_flags_message = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_message;
             MemberId member_id_message = 0x00000001;
             if (EK_COMPLETE == type_ids_Lifespan.type_identifier1()._d() || TK_NONE == type_ids_Lifespan.type_identifier2()._d() ||

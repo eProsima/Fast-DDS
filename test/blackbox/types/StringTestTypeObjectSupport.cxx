@@ -63,8 +63,6 @@ void register_StringTest_type_identifier()
         header_StringTest = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_StringTest);
         CompleteStructMemberSeq member_seq_StringTest;
         {
-            StructMemberFlag member_flags_message = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                    false, false, false, false);
             return_code_StringTest =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "anonymous_string_10000", type_ids_StringTest);
@@ -112,6 +110,8 @@ void register_StringTest_type_identifier()
                     return;
                 }
             }
+            StructMemberFlag member_flags_message = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
             CommonStructMember common_message;
             MemberId member_id_message = 0x00000000;
             if (EK_COMPLETE == type_ids_StringTest.type_identifier1()._d() || TK_NONE == type_ids_StringTest.type_identifier2()._d() ||
