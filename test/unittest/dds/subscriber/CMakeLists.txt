@@ -69,6 +69,9 @@ add_gtest(SubscriberTests SOURCES ${SUBSCRIBERTESTS_SOURCE})
 
 add_executable(DataReaderTests ${DATAREADERTESTS_SOURCE})
 target_compile_definitions(DataReaderTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    ASIO_DISABLE_VISIBILITY
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
