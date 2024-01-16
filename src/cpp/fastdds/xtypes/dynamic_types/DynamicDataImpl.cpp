@@ -153,13 +153,8 @@ void DynamicDataImpl::add_sequence_value(
 {
     if (is_complex_kind(sequence_kind))
     {
-        if (TK_ANNOTATION == sequence_kind ||
-                TK_STRUCTURE == sequence_kind ||
-                TK_UNION == sequence_kind)
-        {
-            value_.emplace(MEMBER_ID_INVALID,
-                    std::make_shared<std::vector<traits<DynamicData>::ref_type>>(sequence_size));
-        }
+        value_.emplace(MEMBER_ID_INVALID,
+                std::make_shared<std::vector<traits<DynamicDataImpl>::ref_type>>(sequence_size));
     }
     else
     {
@@ -826,7 +821,7 @@ ReturnCode_t DynamicDataImpl::clear_all_sequence() noexcept
             std::static_pointer_cast<std::vector<std::wstring>>(value_.begin()->second)->clear();
             break;
         default:
-            ret_value = RETCODE_BAD_PARAMETER;
+            std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(value_.begin()->second)->clear();
             break;
     }
 
@@ -1043,7 +1038,12 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
             break;
         }
         default:
-            ret_value = RETCODE_BAD_PARAMETER;
+            auto seq = std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(value_.begin()->second);
+            if (seq->size() > id + 1)
+            {
+                seq->erase(seq->begin() + id);
+                ret_value = RETCODE_OK;
+            }
             break;
     }
 
@@ -1096,45 +1096,79 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
 {
     if (id != MEMBER_ID_INVALID)
     {
+        TypeKind type_kind = get_enclosing_typekind(type_);
+
         if (std::find(loaned_values_.begin(), loaned_values_.end(), id) == loaned_values_.end())
         {
-            auto it = value_.find(id);
-            if (it != value_.end())
+            if (TK_ANNOTATION == type_kind ||
+                    TK_STRUCTURE == type_kind ||
+                    TK_UNION == type_kind)
             {
-                /*TODO(richiware)
-                   if (TK_MAP == type_->get_kind() &&
-                        std::static_pointer_cast<DynamicData>(it->second)->key_element_)
-                   {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
-                    return nullptr;
-                   }
-                   else
-                 */
+                auto it = value_.find(id);
+                if (it != value_.end())
                 {
-                    auto sp = std::static_pointer_cast<DynamicData>(it->second);
-
                     /*TODO(richiware)
-                       if (get_kind() == TK_UNION && union_id_ != id)
+                       if (TK_MAP == type_->get_kind() &&
+                            std::static_pointer_cast<DynamicData>(it->second)->key_element_)
                        {
-                        set_union_id(id);
+                        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
+                        return nullptr;
                        }
+                       else
                      */
+                    {
+                        auto sp = std::static_pointer_cast<DynamicData>(it->second);
 
-                    loaned_values_.push_back(id);
-                    return sp;
+                        /*TODO(richiware)
+                           if (get_kind() == TK_UNION && union_id_ != id)
+                           {
+                            set_union_id(id);
+                           }
+                         */
+
+                        loaned_values_.push_back(id);
+                        return sp;
+                    }
                 }
             }
-            else if (TK_ARRAY == type_->get_kind())
+            else if (TK_ARRAY == type_kind ||
+                    TK_SEQUENCE == type_kind)
             {
-                /*TODO(richiware)
-                   if (insert_array_data(id) == RETCODE_OK)
-                   {
-                    auto sp = std::static_pointer_cast<DynamicData>(value_.at(id));
+                auto element_type =
+                        get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                    type_->get_descriptor().element_type()));
 
-                    loaned_values_.push_back(id);
-                    return sp;
-                   }
-                 */
+                if (is_complex_kind(element_type->get_kind()))
+                {
+                    auto it = value_.cbegin();
+                    assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
+                    auto sequence =
+                            std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(it->second);
+                    assert(sequence);
+                    if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
+                            (TK_SEQUENCE == type_kind && (0 == type_->get_descriptor().bound().at(0) ||
+                            type_->get_descriptor().bound().at(0) >= id + 1)))
+                    {
+                        if (sequence->size() < id + 1)
+                        {
+                            auto last_pos = sequence->size();
+                            sequence->resize(id + 1);
+
+                            for (auto pos = last_pos; pos < sequence->size(); ++pos)
+                            {
+                                sequence->at(pos) = traits<DynamicData>::narrow<DynamicDataImpl>(
+                                    DynamicDataFactory::get_instance()->create_data(element_type));
+                            }
+                        }
+
+                        loaned_values_.push_back(id);
+                        return sequence->at(id);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning a collection of primitives");
+                }
             }
 
             else
@@ -1144,12 +1178,12 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
         }
         else
         {
-            //EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. The value has been loaned previously.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. The value has been loaned previously.");
         }
     }
     else
     {
-        //EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Invalid MemberId.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Invalid MemberId.");
     }
 
     return {};
@@ -1158,18 +1192,43 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
 ReturnCode_t DynamicDataImpl::return_loaned_value(
         traits<DynamicData>::ref_type value) noexcept
 {
+    TypeKind type_kind = get_enclosing_typekind(type_);
+
     for (auto loan_it {loaned_values_.begin()}; loan_it != loaned_values_.end(); ++loan_it)
     {
-        auto it = value_.find(*loan_it);
-        if (it != value_.end() && std::static_pointer_cast<DynamicData>(it->second) == value)
+        if (TK_ANNOTATION == type_kind ||
+                TK_STRUCTURE == type_kind ||
+                TK_UNION == type_kind)
         {
-            //TODO(richiware) it->second = DynamicDataFactory::get_instance().create_copy(std::move(value));
-            loaned_values_.erase(loan_it);
-            return RETCODE_OK;
+            auto it = value_.find(*loan_it);
+            if (it != value_.end() && std::static_pointer_cast<DynamicData>(it->second) == value)
+            {
+                loaned_values_.erase(loan_it);
+                return RETCODE_OK;
+            }
+        }
+        else if (TK_ARRAY == type_kind ||
+                TK_SEQUENCE == type_kind)
+        {
+            auto it = value_.cbegin();
+            assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
+            auto sequence =
+                    std::static_pointer_cast<std::vector<traits<DynamicData>::ref_type>>(it->second);
+            assert((TK_ARRAY == type_kind && sequence->size() >= *loan_it + 1) ||
+                    (TK_SEQUENCE == type_kind && (0 == type_->get_descriptor().bound().at(0) ||
+                    type_->get_descriptor().bound().at(0) >= *loan_it + 1)));
+            if (sequence->size() >= *loan_it + 1)
+            {
+                if (sequence->at(*loan_it) == value)
+                {
+                    loaned_values_.erase(loan_it);
+                    return RETCODE_OK;
+                }
+            }
         }
     }
 
-    //EPROSIMA_LOG_ERROR(DYN_TYPES, "Error returning loaned Value. The value hasn't been loaned.");
+    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error returning loaned Value. The value hasn't been loaned.");
     return RETCODE_PRECONDITION_NOT_MET;
 }
 
@@ -1873,9 +1932,16 @@ bool DynamicDataImpl::compare_sequence_values(
         case TK_STRING16:   {
             return *((std::vector<std::wstring>*)left) == *((std::vector<std::wstring>*)right);
         }
-        //TODO(richiware) structures unions...
-        default:
-            break;
+        default:            {
+            auto* dl = (std::vector<traits<DynamicDataImpl>::ref_type>*)left;
+            auto* dr = (std::vector<traits<DynamicDataImpl>::ref_type>*)right;
+            return std::equal(dl->begin(), dl->end(), dr->begin(), dr->end(),
+                           [](traits<DynamicDataImpl>::ref_type& x, traits<DynamicDataImpl>::ref_type& y)
+                           {
+                               return x->equals(y);
+                           });
+        }
+        break;
     }
     return false;
 }
@@ -2079,9 +2145,10 @@ uint32_t DynamicDataImpl::get_sequence_length()
             ret_value =  std::static_pointer_cast<std::vector<std::wstring>>(value_.begin()->second)->size();
         }
         break;
-            break;
         default:
-            break;
+            ret_value =
+                    std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(value_.begin()->second)
+                            ->size();
     }
 
     return static_cast<uint32_t>(ret_value);
@@ -2594,6 +2661,8 @@ void DynamicDataImpl::serialize(
                     cdr << *std::static_pointer_cast<std::vector<std::wstring>>(value_.begin()->second);
                     break;
                 default:
+                    cdr << *std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
+                        value_.begin()->second);
                     break;
             }
 
@@ -2886,7 +2955,92 @@ bool DynamicDataImpl::deserialize(
                     cdr >> *std::static_pointer_cast<std::vector<std::wstring>>(value_.begin()->second);
                     break;
                 default:
-                    break;
+                {
+                    auto vector_t = std::static_pointer_cast <std::vector<traits<DynamicDataImpl>::ref_type >> (
+                        value_.begin()->second);
+                    uint32_t sequence_length {0};
+
+                    if (fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
+                    {
+                        uint32_t dheader {0};
+                        cdr.deserialize(dheader);
+
+                        auto offset = cdr.get_current_position();
+
+                        cdr.deserialize(sequence_length);
+
+                        if (0 == sequence_length)
+                        {
+                            vector_t->clear();
+                        }
+                        else
+                        {
+                            auto element_type =
+                                    get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                                type_->get_descriptor().element_type()));
+
+                            vector_t->resize(sequence_length);
+
+                            for (size_t pos = 0; pos < vector_t->size(); ++pos)
+                            {
+                                if (!vector_t->at(pos))
+                                {
+                                    vector_t->at(pos) = traits<DynamicData>::narrow<DynamicDataImpl>(
+                                        DynamicDataFactory::get_instance()->create_data(element_type));
+                                }
+                            }
+
+                            uint32_t count {0};
+                            while (cdr.get_current_position() - offset < dheader && count < sequence_length)
+                            {
+                                cdr.deserialize(vector_t->data()[count]);
+                                ++count;
+                            }
+
+                            if (cdr.get_current_position() - offset != dheader)
+                            {
+                                throw fastcdr::exception::BadParamException(
+                                          "Member size differs from the size specified by DHEADER");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        fastcdr::Cdr::state state_before_error(cdr);
+
+                        cdr.deserialize(sequence_length);
+
+                        if (sequence_length == 0)
+                        {
+                            vector_t->clear();
+                        }
+                        else
+                        {
+                            auto element_type =
+                                    get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                                type_->get_descriptor().element_type()));
+                            try
+                            {
+                                vector_t->resize(sequence_length);
+                                for (size_t pos = 0; pos < vector_t->size(); ++pos)
+                                {
+                                    if (!vector_t->at(pos))
+                                    {
+                                        vector_t->at(pos) = traits<DynamicData>::narrow<DynamicDataImpl>(
+                                            DynamicDataFactory::get_instance()->create_data(element_type));
+                                    }
+                                }
+                                cdr.deserialize_array(vector_t->data(), vector_t->size());
+                            }
+                            catch (fastcdr::exception::Exception& ex)
+                            {
+                                cdr.set_state(state_before_error);
+                                ex.raise();
+                            }
+                        }
+                    }
+                }
+                break;
             }
             break;
         }
@@ -3257,6 +3411,10 @@ size_t DynamicDataImpl::calculate_serialized_size(
                                         value_.begin()->second), current_alignment);
                     break;
                 default:
+                    calculated_size =
+                            calculator.calculate_serialized_size(
+                        *std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
+                            value_.begin()->second), current_alignment);
                     break;
             }
             break;
