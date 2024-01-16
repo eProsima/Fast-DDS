@@ -477,7 +477,7 @@ if(BUILD_DOCUMENTATION)
         set(USE_DOT YES)
     endif()
     # Configure the template doxyfile for or specific project
-    configure_file(doxyfile.in ${PROJECT_BINARY_DIR}/doxyfile @ONLY IMMEDIATE)
+    configure_file(utils/doxygen/doxyfile.in ${PROJECT_BINARY_DIR}/doxyfile @ONLY IMMEDIATE)
     # Add custom target to run doxygen when ever the project is build
     add_custom_target(doxygen
         COMMAND "${DOXYGEN_EXECUTABLE}" "${PROJECT_BINARY_DIR}/doxyfile"
