@@ -1,0 +1,4 @@
+struct Type2
+{
+	short index;
+};

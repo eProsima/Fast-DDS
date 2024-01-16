@@ -1,0 +1,10 @@
+#include "XtypesTestsType1.idl"
+#include "XtypesTestsType2.idl"
+#include "XtypesTestsType3.idl"
+
+struct TypeBig
+{
+	Type1 dep1;
+	Type2 dep2;
+	Type3 dep3;
+};

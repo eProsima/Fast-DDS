@@ -1,0 +1,4 @@
+struct Type3
+{
+	long index;
+};

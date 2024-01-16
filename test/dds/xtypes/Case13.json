@@ -1,20 +1,21 @@
 {
-    "description": "Simple test to communicate a publisher and a subscriber starting with the same known type.",
+    "description": "Case 13: Test to communicate a publisher and a subscriber, where no TypeInformation is sent.",
     "participants": [
         {
             "kind": "subscriber",
             "samples": "10",
             "timeout": "10",
-            "expected_types": "1",
+            "expected_types": "2",
             "known_types": [
-                "Type1"
+                "Type1",
+                "Type2"
             ]
         },
         {
             "kind": "publisher",
             "samples": "10",
             "timeout": "10",
-            "expected_types": "1",
+            "expected_types": "2",
             "known_types": [
                 "Type1"
             ]
