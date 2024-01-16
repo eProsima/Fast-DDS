@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles"
-           targetNamespace="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles"
+           xmlns="http://www.eprosima.com/XMLSchemas/fastdds_Profiles"
+           targetNamespace="http://www.eprosima.com/XMLSchemas/fastdds_Profiles"
            attributeFormDefault="unqualified"
            elementFormDefault="qualified">
 
