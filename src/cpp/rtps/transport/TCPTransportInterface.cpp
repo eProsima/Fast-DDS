@@ -1768,7 +1768,7 @@ bool TCPTransportInterface::is_localhost_allowed() const
 }
 
 void TCPTransportInterface::fill_local_physical_port(
-    Locator& locator) const
+        Locator& locator) const
 {
     if (!configuration()->listening_ports.empty())
     {

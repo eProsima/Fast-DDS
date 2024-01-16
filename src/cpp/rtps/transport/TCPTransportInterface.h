@@ -449,7 +449,7 @@ public:
      * @param locator locator to be filled.
      */
     void fill_local_physical_port(
-        Locator& locator) const;
+            Locator& locator) const;
 };
 
 } // namespace rtps
