@@ -147,6 +147,12 @@ class DDSSQLFilterTests : public testing::Test
 
 protected:
 
+    void SetUp() override
+    {
+        register_ContentFilterTestType_type_objects();
+        eprosima::fastdds::dds::Log::ClearConsumers();
+    }
+
     const ReturnCode_t ok_code = RETCODE_OK;
     const ReturnCode_t bad_code = RETCODE_BAD_PARAMETER;
 
@@ -2089,7 +2095,5 @@ int main(
         char** argv)
 {
     testing::InitGoogleMock(&argc, argv);
-    register_ContentFilterTestType_type_objects();
-    eprosima::fastdds::dds::Log::ClearConsumers();
     return RUN_ALL_TESTS();
 }
