@@ -1,0 +1,10 @@
+#include "XtypesTestsType1.idl"
+#include "XtypesTestsType2.idl"
+#include "XtypesTestsType3.idl"
+
+struct TypeDep
+{
+	Type1 var_type1;
+	Type2 var_type2;
+	Type3 var_type3;
+};

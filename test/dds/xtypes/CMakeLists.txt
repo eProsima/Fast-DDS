@@ -27,9 +27,16 @@ include_directories(${Asio_INCLUDE_DIR})
 
 # Standar tests
 set(COMMON_SOURCE
-    #${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypesPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypesTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsType1PubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsType1TypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsType2PubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsType2TypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsType3PubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsType3TypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeBigPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeBigTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeDepPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeDepTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/RTPSDomain.cpp
 )
@@ -38,8 +45,7 @@ set(DDS_XTYPES_SOURCE ${COMMON_SOURCE}
     TypeLookup_main.cpp
     TypeLookupPublisher.cpp
     TypeLookupSubscriber.cpp
-    )
-    
+    )    
 
 add_executable(DDSXtypesCommunication ${DDS_XTYPES_SOURCE})
 target_compile_definitions(DDSXtypesCommunication PRIVATE
@@ -56,7 +62,20 @@ target_link_libraries(DDSXtypesCommunication fastrtps fastcdr foonathan_memory $
 ###############################################################################
 # Standard tests
 list(APPEND TEST_DEFINITIONS
-    simple_communication
+    Case1
+    Case2
+    Case3
+    Case4
+    Case5
+    Case6
+    Case7
+    Case8
+    Case9
+    Case10
+    Case11
+    Case12
+    Case13
+    Case14
     )
     
 # Python file
@@ -84,8 +103,8 @@ if(PYTHONINTERP_FOUND)
             ${TEST_DEFINITION}.json
             )
 
-        set_property(TEST ${TEST_NAME} PROPERTY ENVIRONMENT
-        "DDS_SIMPLE_COMMUNICATION_BIN=$<TARGET_FILE:DDSXtypesCommunication>")
+        # set_property(TEST ${TEST_NAME} PROPERTY ENVIRONMENT
+        # "DDS_XTYPES_COMMUNICATION_BIN=$<TARGET_FILE:DDSXtypesCommunication>")
 
         if(WIN32)
             string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")

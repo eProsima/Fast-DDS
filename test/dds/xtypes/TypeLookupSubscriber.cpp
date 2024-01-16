@@ -31,6 +31,7 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
@@ -42,9 +43,18 @@ TypeLookupSubscriber::~TypeLookupSubscriber()
 {
     for (auto it = known_types_.begin(); it != known_types_.end(); ++it)
     {
-        it->second.subscriber_->delete_datareader(it->second.reader_);
-        participant_->delete_subscriber(it->second.subscriber_);
-        participant_->delete_topic(it->second.topic_);
+        if (nullptr != it->second.reader_)
+        {
+            it->second.subscriber_->delete_datareader(it->second.reader_);
+        }
+        if (nullptr != it->second.subscriber_)
+        {
+            participant_->delete_subscriber(it->second.subscriber_);
+        }
+        if (nullptr != it->second.topic_)
+        {
+            participant_->delete_topic(it->second.topic_);
+        }
     }
 
     if (nullptr != participant_)
@@ -56,6 +66,10 @@ TypeLookupSubscriber::~TypeLookupSubscriber()
 bool TypeLookupSubscriber::init(
         std::vector<std::string> known_types)
 {
+    auto settings = fastrtps::xmlparser::XMLProfileManager::library_settings();
+    settings.intraprocess_delivery = fastrtps::INTRAPROCESS_OFF;
+    fastrtps::xmlparser::XMLProfileManager::library_settings(settings);
+
     StatusMask mask = StatusMask::subscription_matched()
             << StatusMask::data_available()
             << StatusMask::liveliness_changed();
@@ -64,39 +78,42 @@ bool TypeLookupSubscriber::init(
                     ->create_participant(SUB_DOMAIN_ID_, PARTICIPANT_QOS_DEFAULT, this, mask);
     if (participant_ == nullptr)
     {
-        std::cout << "ERROR create_participant" << std::endl;
+        std::cout << "ERROR TypeLookupSubscriber: create_participant" << std::endl;
         return false;
     }
     for (const auto& type : known_types)
     {
-
-        create_known_type(type, true);
-
+        create_known_type(type);
     }
+
     return true;
 }
 
 bool TypeLookupSubscriber::create_known_type(
-        const std::string& type,
-        bool register_type)
+        const std::string& type)
 {
-    bool type_created = false;
+    // Check if the type is already created
+    if (nullptr != participant_->find_type(type))
+    {
+        return true;
+    }
 
+    bool type_created = false;
     if (type == "Type1")
     {
-        type_created = create_known_type_impl<Type1, Type1PubSubType>(type, register_type);
+        type_created = create_known_type_impl<Type1, Type1PubSubType>(type);
     }
     else if (type == "Type2")
     {
-        type_created = create_known_type_impl<Type2, Type2PubSubType>(type, register_type);
+        type_created = create_known_type_impl<Type2, Type2PubSubType>(type);
     }
     else if (type == "Type3")
     {
-        type_created = create_known_type_impl<Type3, Type3PubSubType>(type, register_type);
+        type_created = create_known_type_impl<Type3, Type3PubSubType>(type);
     }
     else
     {
-        std::cout << "ERROR TypeLookupSubscriber::init uknown type: " << type << std::endl;
+        std::cout << "ERROR TypeLookupSubscriber: init uknown type: " << type << std::endl;
     }
 
     return type_created;
@@ -104,31 +121,19 @@ bool TypeLookupSubscriber::create_known_type(
 
 template <typename Type, typename TypePubSubType>
 bool TypeLookupSubscriber::create_known_type_impl(
-        const std::string& type,
-        bool register_type)
+        const std::string& type)
 {
-    std::lock_guard<std::mutex> lock(known_types_mutex_);
-    // Check if the type is already created
-    if (known_types_.find(type) != known_types_.end())
-    {
-        std::cout << "Type " << type << " is already created." << std::endl;
-        return true;
-    }
-
+    // Create a new PubKnownType for the given type
     SubKnownType a_type;
     a_type.obj_ = new Type();
     a_type.type_.reset(new TypePubSubType());
-
-    if (register_type)
-    {
-        a_type.type_.register_type(participant_);
-    }
+    a_type.type_.register_type(participant_);
 
     //CREATE THE SUBSCRIBER
     a_type.subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
     if (a_type.subscriber_ == nullptr)
     {
-        std::cout << "ERROR create_subscriber" << std::endl;
+        std::cout << "ERROR TypeLookupSubscriber: create_subscriber" << std::endl;
         return false;
     }
 
@@ -138,7 +143,7 @@ bool TypeLookupSubscriber::create_known_type_impl(
     a_type.topic_ = participant_->create_topic(topic_name.str(), a_type.type_.get_type_name(), TOPIC_QOS_DEFAULT);
     if (a_type.topic_ == nullptr)
     {
-        std::cout << "ERROR create_topic" << std::endl;
+        std::cout << "ERROR TypeLookupSubscriber: create_topic" << std::endl;
         return false;
     }
 
@@ -147,7 +152,7 @@ bool TypeLookupSubscriber::create_known_type_impl(
     a_type.reader_ = a_type.subscriber_->create_datareader(a_type.topic_, rqos);
     if (a_type.reader_ == nullptr)
     {
-        std::cout << "ERROR create_datareader" << std::endl;
+        std::cout << "ERROR TypeLookupSubscriber: create_datareader" << std::endl;
         return false;
     }
 
@@ -155,18 +160,26 @@ bool TypeLookupSubscriber::create_known_type_impl(
     a_type.callback_ = [](void* data)
             {
                 Type* sample = static_cast<Type*>(data);
-                std::cout <<  "index(" << sample->index() << "), message(" << sample->message() << ")" << std::endl;
+                std::cout <<  "index(" << sample->index() << ")" << std::endl;
             };
 
     known_types_.emplace(type, a_type);
+
     return true;
+}
+
+bool TypeLookupSubscriber::check_registered_type(
+        const xtypes::TypeInformationParameter& type_info)
+{
+    xtypes::TypeObject type_obj;
+    return RETCODE_OK == DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+        type_info.type_information.complete().typeid_with_size().type_id(), type_obj);
 }
 
 bool TypeLookupSubscriber::wait_discovery(
         uint32_t expected_match,
         uint32_t timeout)
 {
-
     std::unique_lock<std::mutex> lock(mutex_);
     bool result = cv_.wait_for(lock, std::chrono::seconds(timeout), [&]()
                     {
@@ -179,49 +192,45 @@ bool TypeLookupSubscriber::wait_discovery(
 bool TypeLookupSubscriber::run(
         uint32_t samples)
 {
-    expected_samples_ = samples;
-    bool returned_value = false;
-
     std::unique_lock<std::mutex> lock(mutex_);
-    returned_value = cv_.wait_for(lock, std::chrono::seconds(SUB_MAX_TIMEOUT_), [&]
-                    {
-                        for (auto& received_sample_ : received_samples_)
-                        {
-                            if (expected_samples_ != received_sample_.second)
-                            {
-                                return false;
-                            }
-                        }
-                        return true;
-                    });
+    return cv_.wait_for(
+        lock, std::chrono::seconds(SUB_MAX_TIMEOUT_), [&]
+        {
+            if (known_types_.size() != received_samples_.size())
+            {
+                return false;
+            }
 
-    if (known_types_.size() != received_samples_.size())
-    {
-        std::cout << "ERROR: known_types_.size() != received_samples_.size()" << std::endl;
-        returned_value = false;
-    }
-    return returned_value;
+            std::lock_guard<std::mutex> lock(received_samples_mutex_);
+            for (auto& received_sample : received_samples_)
+            {
+                if (samples != received_sample.second)
+                {
+                    return false;
+                }
+            }
+            return true;
+        });
 }
 
 void TypeLookupSubscriber::on_subscription_matched(
         DataReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
+    std::unique_lock<std::mutex> lock(mutex_);
     if (info.current_count_change == 1)
     {
         ++matched_;
-        std::cout << "(TypeLookupSubscriber) matched." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
         --matched_;
-        std::cout << "(TypeLookupSubscriber) unmatched." << std::endl;
     }
     else
     {
-        std::cout << info.current_count_change
-                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+        std::cout << "ERROR TypeLookupSubscriber: info.current_count_change" << std::endl;
     }
+    cv_.notify_all();
 }
 
 void TypeLookupSubscriber::on_data_available(
@@ -235,11 +244,10 @@ void TypeLookupSubscriber::on_data_available(
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
             std::cout << "Subscriber " << reader->type().get_type_name() <<
-                " received sample: " << info.sample_identity.sequence_number() << " -> ";
+                " received sample:" << info.sample_identity.sequence_number() << "->";
             // Call the callback function to process the received data
             known_types_[reader->type().get_type_name()].callback_(sample_data);
-
-            ++received_samples_[info.sample_identity.writer_guid()];
+            received_samples_[info.sample_identity.writer_guid()]++;
             cv_.notify_all();
         }
     }
@@ -249,15 +257,14 @@ void TypeLookupSubscriber::on_data_writer_discovery(
         eprosima::fastdds::dds::DomainParticipant* /*participant*/,
         eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info)
 {
-    // xtypes::TypeIdentifier type_id;
-    // type_id = info.info.type_information().type_information.complete().typeid_with_size().type_id();
-    // xtypes::TypeObject type_obj;
+    xtypes::TypeInformationParameter type_info = info.info.type_information();
 
-    // auto ret_code = eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry()
-    //                 .get_type_object(type_id, type_obj);
-
-    // std::cout << "TypeLookupSubscriber::on_data_reader_discovery:" <<
-    //     info.info.typeName() << " result: " << ret_code << std::endl;
-
-    create_known_type(info.info.typeName().to_string(), false);
+    if (check_registered_type(type_info))
+    {
+        create_known_type(info.info.typeName().to_string());
+    }
+    else
+    {
+        throw TypeLookupSubscriberTypeNotRegisteredException(info.info.typeName().to_string());
+    }
 }

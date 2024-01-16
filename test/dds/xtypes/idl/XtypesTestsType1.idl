@@ -1,0 +1,4 @@
+struct Type1
+{
+	unsigned short index;
+};

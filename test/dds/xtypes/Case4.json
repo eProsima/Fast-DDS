@@ -1,0 +1,25 @@
+{
+    "description": "Case 4: Subscriber knows Type1 and Type2, Publisher knows Type1 and Type3.",
+    "participants": [
+        {
+            "kind": "subscriber",
+            "samples": "10",
+            "timeout": "10",
+            "expected_types": "3",
+            "known_types": [
+                "Type1",
+                "Type2"
+            ]
+        },
+        {
+            "kind": "publisher",
+            "samples": "10",
+            "timeout": "10",
+            "expected_types": "3",
+            "known_types": [
+                "Type1",
+                "Type3"
+            ]
+        }
+    ]
+}

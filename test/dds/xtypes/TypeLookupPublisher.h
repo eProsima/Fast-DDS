@@ -25,14 +25,29 @@
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
-#include "idl/XtypesTestsTypesPubSubTypes.h"
+#include "idl/XtypesTestsType1PubSubTypes.h"
+#include "idl/XtypesTestsType2PubSubTypes.h"
+#include "idl/XtypesTestsType3PubSubTypes.h"
 
 #include <mutex>
 #include <condition_variable>
+#include <stdexcept>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+class TypeLookupPublisherTypeNotRegisteredException : public std::runtime_error
+{
+public:
+
+    TypeLookupPublisherTypeNotRegisteredException(
+            std::string type_name)
+        : std::runtime_error("Type: " + type_name + " not registered in TypeLookupPublisher")
+    {
+    }
+
+};
 
 struct PubKnownType
 {
@@ -61,13 +76,14 @@ public:
             std::vector<std::string> known_types);
 
     bool create_known_type(
-            const std::string& type,
-            bool register_type);
+            const std::string& type);
 
     template <typename Type, typename TypePubSubType>
     bool create_known_type_impl(
-            const std::string& type,
-            bool register_type);
+            const std::string& type);
+
+    bool check_registered_type(
+            const xtypes::TypeInformationParameter& type_info);
 
     bool wait_discovery(
             uint32_t expected_match,
@@ -76,15 +92,12 @@ public:
     bool run(
             uint32_t samples);
 
-    bool run_for(
-            const std::chrono::seconds& timeout);
-
     void on_publication_matched(
-            DataWriter* /*publisher*/,
+            DataWriter* /*writer*/,
             const PublicationMatchedStatus& info) override;
 
     void on_data_reader_discovery(
-            eprosima::fastdds::dds::DomainParticipant* participant,
+            eprosima::fastdds::dds::DomainParticipant* /*participant*/,
             eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override;
 
 private:
@@ -93,12 +106,10 @@ private:
     std::condition_variable cv_;
     unsigned int matched_ = 0;
 
-    uint32_t expected_samples_ = 0;
     std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> sent_samples_;
 
     DomainParticipant* participant_ = nullptr;
 
-    std::mutex known_types_mutex_;
     std::map<std::string, PubKnownType> known_types_;
 };
 
