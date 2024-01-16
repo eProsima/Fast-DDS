@@ -6,7 +6,6 @@ Forthcoming
 * Enable Discovery Server example through TCP
 * Added configuration of builtin transports through DomainParticipantQos, environment
   variable and XML.
-* Exposed custom payload pool on DDS endpoints declaration
 
 Version 2.10.2
 --------------
