@@ -297,12 +297,12 @@ bool TCPChannelResource::remove_logical_port(
 
 bool TCPChannelResource::check_socket_send_buffer(
         const size_t& msg_size,
-        const std::shared_ptr<asio::ip::tcp::socket> socket)
+        const asio::ip::tcp::socket::native_handle_type& socket_native_handle)
 {
-    int bytesInSendQueue;
+    int bytesInSendQueue = 0;
 
 #ifndef _WIN32
-    if (ioctl(socket->native_handle(), TIOCOUTQ, &bytesInSendQueue) == -1)
+    if (ioctl(socket_native_handle, TIOCOUTQ, &bytesInSendQueue) == -1)
     {
         return false;
     }

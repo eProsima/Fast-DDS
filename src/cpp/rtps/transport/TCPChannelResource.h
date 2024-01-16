@@ -192,7 +192,7 @@ protected:
 
     bool check_socket_send_buffer(
             const size_t& msg_size,
-            const std::shared_ptr<asio::ip::tcp::socket> socket);
+            const asio::ip::tcp::socket::native_handle_type& socket_native_handle);
 
     TCPConnectionType tcp_connection_type_;
 
