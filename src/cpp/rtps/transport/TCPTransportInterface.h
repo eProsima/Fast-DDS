@@ -79,8 +79,8 @@ protected:
     std::vector<fastrtps::rtps::IPFinder::info_IP> current_interfaces_;
     asio::io_service io_service_;
     asio::io_service io_service_timers_;
-    std::shared_ptr<asio::ip::tcp::socket> initial_peer_local_locator_socket_;
-    Locator initial_peer_local_locator_;
+    std::unique_ptr<asio::ip::tcp::socket> initial_peer_local_locator_socket_;
+    uint16_t initial_peer_local_locator_port_;
 
 #if TLS_FOUND
     asio::ssl::context ssl_context_;
@@ -445,10 +445,11 @@ public:
     bool is_localhost_allowed() const override;
 
     /**
-     * Method to get client's local locator.
-     * @return Local locator.
+     * Method to fill local locator physical port.
+     * @param locator locator to be filled.
      */
-    Locator get_initial_peer_local_locator();
+    void fill_local_physical_port(
+        Locator& locator) const;
 };
 
 } // namespace rtps

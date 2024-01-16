@@ -35,7 +35,7 @@ public:
     {
     }
 
-    std::map<Locator_t, std::shared_ptr<TCPChannelResource>> get_channel_resources()
+    const std::map<Locator_t, std::shared_ptr<TCPChannelResource>>& get_channel_resources() const
     {
         return channel_resources_;
     }

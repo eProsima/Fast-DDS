@@ -242,12 +242,14 @@ void TCPTransportInterface::clean()
         }
     }
 
-    if (initial_peer_local_locator_socket_ != nullptr)
+    if (initial_peer_local_locator_socket_)
     {
         if (initial_peer_local_locator_socket_->is_open())
         {
             initial_peer_local_locator_socket_->close();
         }
+
+        initial_peer_local_locator_socket_.reset();
     }
 
     if (io_service_thread_.joinable())
@@ -414,14 +416,14 @@ bool TCPTransportInterface::init(
        This process ensures uniqueness in the server's channel resources mapping, which uses client locators as keys.
        Although differing from the real client socket local port, provides a reliable mapping mechanism.
      */
-    initial_peer_local_locator_socket_ = std::make_shared<asio::ip::tcp::socket>(io_service_);
+    initial_peer_local_locator_socket_ = std::unique_ptr<asio::ip::tcp::socket>(new asio::ip::tcp::socket(io_service_));
     initial_peer_local_locator_socket_->open(generate_protocol());
 
     // Binding to port 0 delegates the port selection to the system.
     initial_peer_local_locator_socket_->bind(asio::ip::tcp::endpoint(generate_protocol(), 0));
 
     ip::tcp::endpoint local_endpoint = initial_peer_local_locator_socket_->local_endpoint();
-    endpoint_to_locator(local_endpoint, initial_peer_local_locator_);
+    initial_peer_local_locator_port_ = local_endpoint.port();
 
     // Check system buffer sizes.
     if (configuration()->sendBufferSize == 0)
@@ -1519,18 +1521,7 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(
 {
     if (IPLocator::getPhysicalPort(locator.port) == 0)
     {
-        const TCPTransportDescriptor* config = configuration();
-        if (config != nullptr)
-        {
-            if (!config->listening_ports.empty())
-            {
-                IPLocator::setPhysicalPort(locator, *(config->listening_ports.begin()));
-            }
-            else
-            {
-                IPLocator::setPhysicalPort(locator, IPLocator::getPhysicalPort(initial_peer_local_locator_));
-            }
-        }
+        fill_local_physical_port(locator);
     }
 
     if (IPLocator::getLogicalPort(locator) == 0)
@@ -1588,18 +1579,7 @@ bool TCPTransportInterface::fillUnicastLocator(
 {
     if (IPLocator::getPhysicalPort(locator.port) == 0)
     {
-        const TCPTransportDescriptor* config = configuration();
-        if (config != nullptr)
-        {
-            if (!config->listening_ports.empty())
-            {
-                IPLocator::setPhysicalPort(locator, *(config->listening_ports.begin()));
-            }
-            else
-            {
-                IPLocator::setPhysicalPort(locator, IPLocator::getPhysicalPort(initial_peer_local_locator_));
-            }
-        }
+        fill_local_physical_port(locator);
     }
 
     if (IPLocator::getLogicalPort(locator) == 0)
@@ -1787,9 +1767,17 @@ bool TCPTransportInterface::is_localhost_allowed() const
     return is_locator_allowed(local_locator);
 }
 
-Locator TCPTransportInterface::get_initial_peer_local_locator()
+void TCPTransportInterface::fill_local_physical_port(
+    Locator& locator) const
 {
-    return initial_peer_local_locator_;
+    if (!configuration()->listening_ports.empty())
+    {
+        IPLocator::setPhysicalPort(locator, *(configuration()->listening_ports.begin()));
+    }
+    else
+    {
+        IPLocator::setPhysicalPort(locator, initial_peer_local_locator_port_);
+    }
 }
 
 } // namespace rtps
