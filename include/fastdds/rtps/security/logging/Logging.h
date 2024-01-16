@@ -188,7 +188,7 @@ private:
     LogOptions log_options_;
     GUID_t guid_;
     std::string guid_str_;
-    uint32_t domain_id_ = std::numeric_limits<uint32_t>::max();
+    uint32_t domain_id_ = (std::numeric_limits<uint32_t>::max)();
     std::string domain_id_str_;
 };
 

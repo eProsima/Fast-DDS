@@ -174,12 +174,12 @@ bool Logging::set_domain_id(
         const uint32_t id,
         SecurityException& exception)
 {
-    if (std::numeric_limits<uint32_t>::max() == id)
+    if ((std::numeric_limits<uint32_t>::max)() == id)
     {
         exception = SecurityException("Invalid domaine id value.");
         return false;
     }
-    else if (std::numeric_limits<uint32_t>::max() != domain_id_)
+    else if ((std::numeric_limits<uint32_t>::max)() != domain_id_)
     {
         exception = SecurityException("Domaine id already set (" + std::to_string(domain_id_) + ")");
         return false;
