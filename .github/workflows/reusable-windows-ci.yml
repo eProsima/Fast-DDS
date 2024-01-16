@@ -144,6 +144,8 @@ jobs:
 
       - name: Install OpenSSL
         uses: eProsima/eprosima-CI/windows/install_openssl@v0
+        with:
+          version: '3.1.1'
 
       - name: Update OpenSSL environment variables
         run: |
