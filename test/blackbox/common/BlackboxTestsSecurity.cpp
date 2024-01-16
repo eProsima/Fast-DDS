@@ -3848,6 +3848,56 @@ TEST(Security, AllowUnauthenticatedParticipants_TwoParticipantsDifferentCertific
     ASSERT_FALSE(writer.is_matched());
 }
 
+// Regresion test for redmine issue 20166
+TEST(Security, InANonSecureParticipantWithTwoSecureParticipantScenario_TheTwoSecureParticipantsCorrectlyCommunicate)
+{
+    // Create
+    PubSubReader<HelloWorldPubSubType> non_secure_reader("HelloWorldTopic");
+    PubSubReader<HelloWorldPubSubType> secure_reader("HelloWorldTopic");
+    PubSubWriter<HelloWorldPubSubType> secure_writer("HelloWorldTopic");
+
+    // Configure security
+    const std::string governance_file("governance_helloworld_all_enable.smime");
+    const std::string permissions_file("permissions_helloworld.smime");
+    CommonPermissionsConfigure(secure_reader, secure_writer, governance_file, permissions_file);
+
+    secure_writer.history_depth(10).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(secure_writer.isInitialized());
+
+    non_secure_reader.history_depth(10).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(non_secure_reader.isInitialized());
+
+    secure_reader.history_depth(10).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(secure_reader.isInitialized());
+
+    // Wait for the authorization
+    secure_reader.waitAuthorized();
+    secure_writer.waitAuthorized();
+
+    // Wait for discovery
+    secure_writer.wait_discovery(std::chrono::seconds(5));
+    secure_reader.wait_discovery(std::chrono::seconds(5));
+
+    // Data is correctly sent and received
+    auto data = default_helloworld_data_generator();
+
+    secure_reader.startReception(data);
+
+    secure_writer.send(data);
+
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+
+    secure_reader.block_for_all();
+    EXPECT_EQ(non_secure_reader.getReceivedCount(), 0u);
+}
+
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
 // *INDENT-ON*
