@@ -16,6 +16,7 @@
 #define TYPES_ANNOTATION_DESCRIPTOR_H
 
 #include <map>
+#include <string>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastrtps/types/DynamicTypePtr.h>

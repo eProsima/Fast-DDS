@@ -51,74 +51,74 @@ void register_LoanableHelloWorld_type_objects()
 void register_LoanableHelloWorld_type_identifier()
 {
     {
-        StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+        StructTypeFlag struct_flags_LoanableHelloWorld = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code;
-        TypeIdentifierPair type_ids;
-        QualifiedTypeName type_name = "LoanableHelloWorld";
-        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
-        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
-        AppliedAnnotationSeq tmp_ann_custom;
-        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim;
-        if (!tmp_ann_custom.empty())
+        ReturnCode_t return_code_LoanableHelloWorld;
+        TypeIdentifierPair type_ids_LoanableHelloWorld;
+        QualifiedTypeName type_name_LoanableHelloWorld = "LoanableHelloWorld";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_LoanableHelloWorld;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_LoanableHelloWorld;
+        AppliedAnnotationSeq tmp_ann_custom_LoanableHelloWorld;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_LoanableHelloWorld;
+        if (!tmp_ann_custom_LoanableHelloWorld.empty())
         {
-            ann_custom = tmp_ann_custom;
+            ann_custom_LoanableHelloWorld = tmp_ann_custom_LoanableHelloWorld;
         }
 
-        CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin, ann_custom, type_name.to_string());
-        CompleteStructHeader header;
-        header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
-        CompleteStructMemberSeq member_seq;
+        CompleteTypeDetail detail_LoanableHelloWorld = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_LoanableHelloWorld, ann_custom_LoanableHelloWorld, type_name_LoanableHelloWorld.to_string());
+        CompleteStructHeader header_LoanableHelloWorld;
+        header_LoanableHelloWorld = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_LoanableHelloWorld);
+        CompleteStructMemberSeq member_seq_LoanableHelloWorld;
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            return_code =
+            return_code_LoanableHelloWorld =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_uint32_t", type_ids);
+                "_uint32_t", type_ids_LoanableHelloWorld);
 
-            if (return_code != eprosima::fastdds::dds::RETCODE_OK)
+            if (return_code_LoanableHelloWorld != eprosima::fastdds::dds::RETCODE_OK)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            CommonStructMember common;
-            MemberId member_id = 0x00000000;
-            if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
+            CommonStructMember common_index;
+            MemberId member_id_index = 0x00000000;
+            if (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1()._d() || TK_NONE == type_ids_LoanableHelloWorld.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
-                common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
+                common_index = TypeObjectUtils::build_common_struct_member(member_id_index, member_flags_index, type_ids_LoanableHelloWorld.type_identifier1());
             }
-            else if (EK_COMPLETE == type_ids.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
+            else if (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
-                common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
+                common_index = TypeObjectUtils::build_common_struct_member(member_id_index, member_flags_index, type_ids_LoanableHelloWorld.type_identifier2());
             }
             else
             {
@@ -126,68 +126,68 @@ void register_LoanableHelloWorld_type_identifier()
                         "Structure index member TypeIdentifier inconsistent.");
                 return;
             }
-            MemberName name = "index";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
-            ann_custom.reset();
-            CompleteMemberDetail detail = TypeObjectUtils::build_complete_member_detail(name, member_ann_builtin, ann_custom);
-            CompleteStructMember member = TypeObjectUtils::build_complete_struct_member(common, detail);
-            TypeObjectUtils::add_complete_struct_member(member_seq, member);
+            MemberName name_index = "index";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_index;
+            ann_custom_LoanableHelloWorld.reset();
+            CompleteMemberDetail detail_index = TypeObjectUtils::build_complete_member_detail(name_index, member_ann_builtin_index, ann_custom_LoanableHelloWorld);
+            CompleteStructMember member_index = TypeObjectUtils::build_complete_struct_member(common_index, detail_index);
+            TypeObjectUtils::add_complete_struct_member(member_seq_LoanableHelloWorld, member_index);
         }
         {
-            StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_message = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            return_code =
+            return_code_LoanableHelloWorld =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_array_char_256", type_ids);
+                "anonymous_array_char_256", type_ids_LoanableHelloWorld);
 
-            if (return_code != eprosima::fastdds::dds::RETCODE_OK)
+            if (return_code_LoanableHelloWorld != eprosima::fastdds::dds::RETCODE_OK)
             {
-                return_code =
+                return_code_LoanableHelloWorld =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "_char", type_ids);
+                    "_char", type_ids_LoanableHelloWorld);
 
-                if (return_code != eprosima::fastdds::dds::RETCODE_OK)
+                if (return_code_LoanableHelloWorld != eprosima::fastdds::dds::RETCODE_OK)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                TypeIdentifier* element_identifier {nullptr};
-                if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
-                        (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                        (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
-                        EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                        (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                        (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
-                        EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
+                TypeIdentifier* element_identifier_anonymous_array_char_256 {nullptr};
+                if (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1()._d() || TK_NONE == type_ids_LoanableHelloWorld.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().map_ldefn().key_identifier()->_d())))
                 {
-                    element_identifier = new TypeIdentifier(type_ids.type_identifier1());
+                    element_identifier_anonymous_array_char_256 = new TypeIdentifier(type_ids_LoanableHelloWorld.type_identifier1());
                 }
-                else if (EK_COMPLETE == type_ids.type_identifier2()._d() ||
-                        (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                        (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
-                        EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                        (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                        (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
-                        EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
+                else if (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().map_ldefn().key_identifier()->_d())))
                 {
-                    element_identifier = new TypeIdentifier(type_ids.type_identifier2());
+                    element_identifier_anonymous_array_char_256 = new TypeIdentifier(type_ids_LoanableHelloWorld.type_identifier2());
                 }
                 else
                 {
@@ -195,21 +195,21 @@ void register_LoanableHelloWorld_type_identifier()
                         "Array element TypeIdentifier inconsistent.");
                     return;
                 }
-                EquivalenceKind equiv_kind = EK_COMPLETE;
-                if (TK_NONE == type_ids.type_identifier2()._d())
+                EquivalenceKind equiv_kind_anonymous_array_char_256 = EK_COMPLETE;
+                if (TK_NONE == type_ids_LoanableHelloWorld.type_identifier2()._d())
                 {
-                    equiv_kind = EK_BOTH;
+                    equiv_kind_anonymous_array_char_256 = EK_BOTH;
                 }
-                CollectionElementFlag element_flags = 0;
-                PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(equiv_kind, element_flags);
-                std::string type_id_kind("TI_PLAIN_ARRAY_LARGE");
-                if (type_id_kind == "TI_PLAIN_ARRAY_SMALL")
+                CollectionElementFlag element_flags_anonymous_array_char_256 = 0;
+                PlainCollectionHeader header_anonymous_array_char_256 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_char_256, element_flags_anonymous_array_char_256);
+                std::string type_id_kind_anonymous_array_char_256("TI_PLAIN_ARRAY_LARGE");
+                if (type_id_kind_anonymous_array_char_256 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(256));
 
-                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier));
+                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_char_256, array_bound_seq,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_char_256));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_char_256"))
                     {
@@ -222,8 +222,8 @@ void register_LoanableHelloWorld_type_identifier()
                     LBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(256));
 
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier));
+                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_char_256, array_bound_seq,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_char_256));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_char_256"))
                     {
@@ -231,53 +231,53 @@ void register_LoanableHelloWorld_type_identifier()
                             "anonymous_array_char_256 already registered in TypeObjectRegistry for a different type.");
                     }
                 }
-                return_code =
+                return_code_LoanableHelloWorld =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "anonymous_array_char_256", type_ids);
-                if (return_code != eprosima::fastdds::dds::RETCODE_OK)
+                    "anonymous_array_char_256", type_ids_LoanableHelloWorld);
+                if (return_code_LoanableHelloWorld != eprosima::fastdds::dds::RETCODE_OK)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_array_char_256: Given Array TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
             }
-            CommonStructMember common;
-            MemberId member_id = 0x00000001;
-            if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
+            CommonStructMember common_message;
+            MemberId member_id_message = 0x00000001;
+            if (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1()._d() || TK_NONE == type_ids_LoanableHelloWorld.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_LoanableHelloWorld.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
-                common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier1());
+                common_message = TypeObjectUtils::build_common_struct_member(member_id_message, member_flags_message, type_ids_LoanableHelloWorld.type_identifier1());
             }
-            else if (EK_COMPLETE == type_ids.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
+            else if (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_LoanableHelloWorld.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_LoanableHelloWorld.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
-                common = TypeObjectUtils::build_common_struct_member(member_id, member_flags, type_ids.type_identifier2());
+                common_message = TypeObjectUtils::build_common_struct_member(member_id_message, member_flags_message, type_ids_LoanableHelloWorld.type_identifier2());
             }
             else
             {
@@ -285,24 +285,24 @@ void register_LoanableHelloWorld_type_identifier()
                         "Structure message member TypeIdentifier inconsistent.");
                 return;
             }
-            MemberName name = "message";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
-            ann_custom.reset();
-            CompleteMemberDetail detail = TypeObjectUtils::build_complete_member_detail(name, member_ann_builtin, ann_custom);
-            CompleteStructMember member = TypeObjectUtils::build_complete_struct_member(common, detail);
-            TypeObjectUtils::add_complete_struct_member(member_seq, member);
+            MemberName name_message = "message";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_message;
+            ann_custom_LoanableHelloWorld.reset();
+            CompleteMemberDetail detail_message = TypeObjectUtils::build_complete_member_detail(name_message, member_ann_builtin_message, ann_custom_LoanableHelloWorld);
+            CompleteStructMember member_message = TypeObjectUtils::build_complete_struct_member(common_message, detail_message);
+            TypeObjectUtils::add_complete_struct_member(member_seq_LoanableHelloWorld, member_message);
         }
-        CompleteStructType struct_type = TypeObjectUtils::build_complete_struct_type(struct_flags, header, member_seq);
+        CompleteStructType struct_type_LoanableHelloWorld = TypeObjectUtils::build_complete_struct_type(struct_flags_LoanableHelloWorld, header_LoanableHelloWorld, member_seq_LoanableHelloWorld);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type, type_name.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_LoanableHelloWorld, type_name_LoanableHelloWorld.to_string()))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "LoanableHelloWorld already registered in TypeObjectRegistry for a different type.");
         }
-        return_code =
+        return_code_LoanableHelloWorld =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "LoanableHelloWorld", type_ids);
-        if (return_code != eprosima::fastdds::dds::RETCODE_OK)
+            "LoanableHelloWorld", type_ids_LoanableHelloWorld);
+        if (return_code_LoanableHelloWorld != eprosima::fastdds::dds::RETCODE_OK)
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "LoanableHelloWorld: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
