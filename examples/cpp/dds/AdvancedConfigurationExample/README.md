@@ -100,5 +100,5 @@ This code presents how to run a publisher with this example without Shared Memor
 
 ```sh
 # From AdvancedConfigurationExample installation dir
-FASTRTPS_DEFAULT_PROFILES_FILE=shm_off.xml ./AdvancedConfigurationExample publisher --xml-profile no_shm_participant_profile
+FASTDDS_DEFAULT_PROFILES_FILE=shm_off.xml ./AdvancedConfigurationExample publisher --xml-profile no_shm_participant_profile
 ```

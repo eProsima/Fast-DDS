@@ -2063,7 +2063,7 @@ TEST_F(XMLProfileParserBasicTests, skip_default_xml)
     ";
     tinyxml2::XMLDocument xml_doc;
     xml_doc.Parse(xml);
-    xml_doc.SaveFile("DEFAULT_FASTRTPS_PROFILES.xml");
+    xml_doc.SaveFile("DEFAULT_FASTDDS_PROFILES.xml");
 
 #ifdef _WIN32
     _putenv_s("SKIP_DEFAULT_XML_FILE", "1");
@@ -2083,13 +2083,13 @@ TEST_F(XMLProfileParserBasicTests, skip_default_xml)
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_default);
 
-    remove("DEFAULT_FASTRTPS_PROFILES.xml");
+    remove("DEFAULT_FASTDDS_PROFILES.xml");
 
     EXPECT_NE(participant_atts_none.domainId, participant_atts_default.domainId);
 }
 
 /*
- * Tests whether the FASTRTPS_DEFAULT_PROFILES_FILE environment file correctly loads the selected file as default.
+ * Tests whether the FASTDDS_DEFAULT_PROFILES_FILE environment file correctly loads the selected file as default.
  * - participant_atts_default contains the attributes in the default file in this folder.
  * - participant_atts_file contains the attributes in the default file created by the test.
  */
@@ -2106,21 +2106,21 @@ TEST_F(XMLProfileParserBasicTests, default_env_variable)
     ";
     tinyxml2::XMLDocument xml_doc;
     xml_doc.Parse(xml);
-    xml_doc.SaveFile("FASTRTPS_PROFILES.xml");
+    xml_doc.SaveFile("FASTDDS_PROFILES.xml");
 
     ParticipantAttributes participant_atts_default;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_default);
 
 #ifdef _WIN32
-    _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", "FASTRTPS_PROFILES.xml");
+    _putenv_s("FASTDDS_DEFAULT_PROFILES_FILE", "FASTDDS_PROFILES.xml");
 #else
-    setenv("FASTRTPS_DEFAULT_PROFILES_FILE", "FASTRTPS_PROFILES.xml", 1);
+    setenv("FASTDDS_DEFAULT_PROFILES_FILE", "FASTDDS_PROFILES.xml", 1);
 #endif // ifdef _WIN32
     ParticipantAttributes participant_atts_file;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_file);
-    remove("FASTRTPS_PROFILES.xml");
+    remove("FASTDDS_PROFILES.xml");
 
     EXPECT_NE(participant_atts_file.domainId, participant_atts_default.domainId);
 }
