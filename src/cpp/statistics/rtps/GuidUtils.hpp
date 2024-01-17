@@ -19,7 +19,7 @@
 #ifndef _STATISTICS_RTPS_GUIDUTILS_HPP_
 #define _STATISTICS_RTPS_GUIDUTILS_HPP_
 
-#include <fastrtps/config.h>
+#include <fastdds/config.h>
 
 #include <fastdds/rtps/common/EntityId_t.hpp>
 

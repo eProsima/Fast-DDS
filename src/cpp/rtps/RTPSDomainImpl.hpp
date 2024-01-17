@@ -25,13 +25,12 @@
 #endif // defined(_WIN32) || defined(__unix__)
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
-
-#include <utils/SystemInfo.hpp>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <utils/shared_memory/BoostAtExitRegistry.hpp>
+#include <utils/SystemInfo.hpp>
 
 namespace eprosima {
 namespace fastrtps {

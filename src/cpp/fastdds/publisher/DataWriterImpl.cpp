@@ -16,7 +16,7 @@
  * DataWriterImpl.cpp
  *
  */
-#include <fastrtps/config.h>
+#include <fastdds/config.h>
 
 #include <fastdds/publisher/DataWriterImpl.hpp>
 
@@ -1158,7 +1158,7 @@ ReturnCode_t DataWriterImpl::set_qos(
 
     if (enabled)
     {
-        if (qos_.reliability().kind == eprosima::fastrtps::RELIABLE_RELIABILITY_QOS &&
+        if (qos_.reliability().kind == ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS &&
                 qos_.reliable_writer_qos() == qos_to_set.reliable_writer_qos())
         {
             // Update times and positive_acks attributes on RTPS Layer
@@ -1289,7 +1289,7 @@ void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
 
 void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         fastrtps::rtps::RTPSWriter* /*writer*/,
-        const fastrtps::LivelinessLostStatus& status)
+        const LivelinessLostStatus& status)
 {
     data_writer_->update_liveliness_lost_status(status);
     StatusMask notify_status = StatusMask::liveliness_lost();
@@ -1666,7 +1666,7 @@ OfferedIncompatibleQosStatus& DataWriterImpl::update_offered_incompatible_qos(
 }
 
 LivelinessLostStatus& DataWriterImpl::update_liveliness_lost_status(
-        const fastrtps::LivelinessLostStatus& liveliness_lost_status)
+        const LivelinessLostStatus& liveliness_lost_status)
 {
     liveliness_lost_status_.total_count = liveliness_lost_status.total_count;
     liveliness_lost_status_.total_count_change += liveliness_lost_status.total_count_change;

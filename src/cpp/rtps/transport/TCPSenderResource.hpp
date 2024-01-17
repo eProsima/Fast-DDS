@@ -106,7 +106,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // __TRANSPORT_UDPSENDERRESOURCE_HPP__

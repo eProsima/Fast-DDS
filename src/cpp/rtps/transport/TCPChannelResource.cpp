@@ -296,5 +296,5 @@ bool TCPChannelResource::remove_logical_port(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

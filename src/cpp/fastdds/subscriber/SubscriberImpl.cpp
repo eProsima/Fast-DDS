@@ -459,7 +459,7 @@ void SubscriberImpl::SubscriberReaderListener::on_subscription_matched(
 
 void SubscriberImpl::SubscriberReaderListener::on_requested_deadline_missed(
         DataReader* reader,
-        const fastrtps::RequestedDeadlineMissedStatus& status)
+        const RequestedDeadlineMissedStatus& status)
 {
     if (subscriber_->listener_ != nullptr)
     {
@@ -469,7 +469,7 @@ void SubscriberImpl::SubscriberReaderListener::on_requested_deadline_missed(
 
 void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
         DataReader* reader,
-        const fastrtps::LivelinessChangedStatus& status)
+        const LivelinessChangedStatus& status)
 {
     (void)status;
 
@@ -496,7 +496,7 @@ void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
 
 void SubscriberImpl::SubscriberReaderListener::on_sample_rejected(
         DataReader* /*reader*/,
-        const fastrtps::SampleRejectedStatus& /*status*/)
+        const SampleRejectedStatus& /*status*/)
 {
     /* TODO
        if (subscriber_->listener_ != nullptr)

@@ -18,13 +18,13 @@
 
 #include <statistics/rtps/StatisticsBase.hpp>
 
-#include <cmath>
-
 #include <algorithm>
+#include <cmath>
 #include <string>
 
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/qos/ParameterTypes.h>
+
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {

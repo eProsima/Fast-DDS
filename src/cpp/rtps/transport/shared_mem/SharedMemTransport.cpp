@@ -24,10 +24,10 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastrtps/rtps/messages/CDRMessage.h>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
 
 #include <rtps/network/ReceiverResource.h>
 #include <rtps/transport/shared_mem/SharedMemChannelResource.hpp>
@@ -37,7 +37,7 @@
 #include <rtps/transport/shared_mem/SHMLocator.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
-#define SHM_MANAGER_DOMAIN ("fastrtps")
+#define SHM_MANAGER_DOMAIN ("fastdds")
 
 using namespace std;
 

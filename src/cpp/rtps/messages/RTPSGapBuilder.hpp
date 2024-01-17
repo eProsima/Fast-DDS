@@ -21,7 +21,7 @@
 #define RTPSGAPBUILDER_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/rtps/messages/RTPSMessageGroup.h>
+#include <fastdds/rtps/messages/RTPSMessageGroup.h>
 
 namespace eprosima {
 namespace fastrtps {

@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastrtps/qos/ParameterTypes.h>
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/core/policy/ParameterList.hpp>

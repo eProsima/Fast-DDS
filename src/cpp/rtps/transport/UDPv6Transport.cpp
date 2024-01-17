@@ -606,5 +606,5 @@ void UDPv6Transport::update_network_interfaces()
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

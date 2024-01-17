@@ -50,5 +50,5 @@ TCPAcceptor::TCPAcceptor(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

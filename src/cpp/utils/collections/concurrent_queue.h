@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef _FASTRTPS_UTILS_CONCURRENT_QUEUE_H_
-#define _FASTRTPS_UTILS_CONCURRENT_QUEUE_H_
+#ifndef _FASTDDS_UTILS_CONCURRENT_QUEUE_H_
+#define _FASTDDS_UTILS_CONCURRENT_QUEUE_H_
 
 #include <queue>
 #include <mutex>
@@ -153,4 +153,4 @@ protected:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // _FASTRTPS_UTILS_CONCURRENT_QUEUE_H_
+#endif // _FASTDDS_UTILS_CONCURRENT_QUEUE_H_

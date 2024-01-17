@@ -27,12 +27,12 @@
 #include <mutex>
 #include <vector>
 
+#include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
-#include <fastrtps/qos/WriterQos.h>
 
 #include <rtps/history/ITopicPayloadPool.h>
 #include <statistics/rtps/monitor-service/MonitorServiceListener.hpp>
@@ -84,7 +84,7 @@ public:
     using endpoint_registrator_t = std::function<bool (
                         fastrtps::rtps::RTPSWriter*,
                         const fastrtps::TopicAttributes&,
-                        const fastrtps::WriterQos&)>;
+                        const fastdds::dds::WriterQos&)>;
 
     MonitorService(
             const fastrtps::rtps::GUID_t& guid,

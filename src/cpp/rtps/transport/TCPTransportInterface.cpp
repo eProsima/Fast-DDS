@@ -36,6 +36,7 @@
 #include <asio/ssl/verify_context.hpp>
 #endif // if TLS_FOUND
 
+#include <fastdds/config.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
@@ -48,7 +49,6 @@
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
-#include <fastrtps/config.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
 
@@ -1772,5 +1772,5 @@ bool TCPTransportInterface::is_localhost_allowed() const
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

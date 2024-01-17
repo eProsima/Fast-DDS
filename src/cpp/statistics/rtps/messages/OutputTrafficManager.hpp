@@ -24,9 +24,8 @@
 #include <list>
 #include <utility>
 
+#include <fastdds/config.h>
 #include <fastdds/rtps/common/Locator.h>
-
-#include <fastrtps/config.h>
 
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 

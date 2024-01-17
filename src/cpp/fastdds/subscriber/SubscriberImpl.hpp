@@ -21,18 +21,15 @@
 #define _FASTDDS_SUBSCRIBERIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <map>
+#include <mutex>
 
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-#include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastrtps/types/TypesBase.h>
-
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusQueryable.hpp>
-
-#include <mutex>
-#include <map>
+#include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -274,15 +271,15 @@ protected:
 
         void on_requested_deadline_missed(
                 DataReader* reader,
-                const fastrtps::RequestedDeadlineMissedStatus& status) override;
+                const RequestedDeadlineMissedStatus& status) override;
 
         void on_liveliness_changed(
                 DataReader* reader,
-                const fastrtps::LivelinessChangedStatus& status) override;
+                const LivelinessChangedStatus& status) override;
 
         void on_sample_rejected(
                 DataReader* reader,
-                const fastrtps::SampleRejectedStatus& status) override;
+                const SampleRejectedStatus& status) override;
 
         void on_requested_incompatible_qos(
                 DataReader* reader,

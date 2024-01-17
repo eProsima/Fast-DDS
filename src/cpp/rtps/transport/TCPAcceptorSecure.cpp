@@ -117,5 +117,5 @@ void TCPAcceptorSecure::accept(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

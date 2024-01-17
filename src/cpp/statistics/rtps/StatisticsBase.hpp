@@ -24,17 +24,15 @@
 #include <mutex>
 #include <set>
 
-#include <fastrtps/config.h>
-
+#include <fastdds/config.h>
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
-#include <fastrtps/qos/ParameterTypes.h>
 #include <statistics/rtps/GuidUtils.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <statistics/types/types.h>
-
 
 namespace eprosima {
 namespace fastrtps {

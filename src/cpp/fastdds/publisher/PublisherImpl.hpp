@@ -22,18 +22,16 @@
 #define _FASTDDS_PUBLISHERIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/attributes/PublisherAttributes.h>
-
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastrtps/types/TypesBase.h>
-#include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastrtps/qos/IncompatibleQosStatus.hpp>
-
-#include <mutex>
 #include <map>
+#include <mutex>
+
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 #ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusQueryable.hpp>
@@ -246,7 +244,7 @@ protected:
 
         void on_offered_deadline_missed(
                 DataWriter* writer,
-                const fastrtps::OfferedDeadlineMissedStatus& status) override;
+                const OfferedDeadlineMissedStatus& status) override;
 
         void on_liveliness_lost(
                 DataWriter* writer,

@@ -16,39 +16,34 @@
  * @file DataWriterImpl.hpp
  */
 
-#ifndef _FASTRTPS_DATAWRITERIMPL_HPP_
-#define _FASTRTPS_DATAWRITERIMPL_HPP_
+#ifndef _FASTDDS_DATAWRITERIMPL_HPP_
+#define _FASTDDS_DATAWRITERIMPL_HPP_
 
 #include <memory>
 
 #include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-
 #include <fastdds/rtps/attributes/WriterAttributes.h>
-#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/WriteParams.h>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/WriterListener.h>
-
-#include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastrtps/qos/LivelinessLostStatus.h>
-
 #include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterCollection.hpp>
-
 #include <rtps/common/PayloadInfo_t.hpp>
-#include <rtps/history/ITopicPayloadPool.h>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/history/ITopicPayloadPool.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -317,7 +312,7 @@ public:
             PublicationMatchedStatus& status);
 
     ReturnCode_t get_offered_deadline_missed_status(
-            fastrtps::OfferedDeadlineMissedStatus& status);
+            OfferedDeadlineMissedStatus& status);
 
     ReturnCode_t get_offered_incompatible_qos_status(
             OfferedIncompatibleQosStatus& status);
@@ -442,7 +437,7 @@ protected:
 
         void on_liveliness_lost(
                 fastrtps::rtps::RTPSWriter* writer,
-                const fastrtps::LivelinessLostStatus& status) override;
+                const LivelinessLostStatus& status) override;
 
         void on_reader_discovery(
                 fastrtps::rtps::RTPSWriter* writer,
@@ -642,7 +637,7 @@ protected:
      * @return Current liveliness lost status.
      */
     LivelinessLostStatus& update_liveliness_lost_status(
-            const fastrtps::LivelinessLostStatus& liveliness_lost_status);
+            const LivelinessLostStatus& liveliness_lost_status);
 
     /**
      * Returns the most appropriate listener to handle the callback for the given status,
@@ -733,4 +728,4 @@ protected:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif //_FASTRTPS_DATAWRITERIMPL_HPP_
+#endif //_FASTDDS_DATAWRITERIMPL_HPP_
