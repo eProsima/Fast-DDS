@@ -276,20 +276,6 @@ bool StatelessReader::change_received(
             update_notified = is_matched;
         }
 
-<<<<<<< HEAD
-=======
-        // Update Ownership strength.
-        if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind)
-        {
-            assert(matched_writers_.end() != writer);
-            change->reader_info.writer_ownership_strength = writer->ownership_strength;
-        }
-        else
-        {
-            change->reader_info.writer_ownership_strength = (std::numeric_limits<uint32_t>::max)();
-        }
-
->>>>>>> 9b31bc25f (Fix max clash with Windows CI (#4248))
         if (mp_history->received_change(change, 0))
         {
             auto payload_length = change->serializedPayload.length;

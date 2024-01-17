@@ -1013,19 +1013,6 @@ bool StatefulReader::change_received(
         }
     }
 
-<<<<<<< HEAD
-=======
-    // Update Ownership strength.
-    if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind)
-    {
-        a_change->reader_info.writer_ownership_strength = prox->ownership_strength();
-    }
-    else
-    {
-        a_change->reader_info.writer_ownership_strength = (std::numeric_limits<uint32_t>::max)();
-    }
-
->>>>>>> 9b31bc25f (Fix max clash with Windows CI (#4248))
     // NOTE: Depending on QoS settings, one change can be removed from history
     // inside the call to mp_history->received_change
     if (mp_history->received_change(a_change, unknown_missing_changes_up_to))

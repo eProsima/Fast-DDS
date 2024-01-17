@@ -46,11 +46,7 @@ struct DataReaderInstance
     //! The list of alive writers for this instance
     WriterCollection alive_writers;
     //! GUID and strength of the current maximum strength writer
-<<<<<<< HEAD
     WriterOwnership current_owner{ {}, 0 };
-=======
-    WriterOwnership current_owner{ {}, (std::numeric_limits<uint32_t>::max)() };
->>>>>>> 9b31bc25f (Fix max clash with Windows CI (#4248))
     //! The time when the group will miss the deadline
     std::chrono::steady_clock::time_point next_deadline_us;
     //! Current view state of the instance
@@ -122,29 +118,6 @@ private:
         {
             current_owner.first = writer_guid;
             current_owner.second = ownership_strength;
-<<<<<<< HEAD
-=======
-            ret_val = true;
-        }
-        else if (ownership_strength == current_owner.second &&
-                writer_guid < current_owner.first) // Check if new writer has lower GUID.
-        {
-            current_owner.first = writer_guid;
-            ret_val = true;
-        }
-        else if ((std::numeric_limits<uint32_t>::max)() == ownership_strength) // uint32_t::max indicates we are in SHARED_OWNERSHIP_QOS.
-        {
-            assert(eprosima::fastrtps::rtps::c_Guid_Unknown == current_owner.first);
-            assert((std::numeric_limits<uint32_t>::max)() == current_owner.second);
-            ret_val = true;
-        }
-        else if (eprosima::fastrtps::rtps::c_Guid_Unknown == current_owner.first) // Without owner.
-        {
-            current_owner.first = writer_guid;
-            current_owner.second = ownership_strength;
-            ret_val = true;
-        }
->>>>>>> 9b31bc25f (Fix max clash with Windows CI (#4248))
 
             if (InstanceStateKind::NOT_ALIVE_DISPOSED_INSTANCE_STATE == instance_state)
             {
@@ -177,16 +150,8 @@ private:
         writer_set(writer_guid, ownership_strength);
         if (ownership_strength >= current_owner.second)
         {
-<<<<<<< HEAD
             current_owner.first = writer_guid;
             current_owner.second = ownership_strength;
-=======
-            if ((std::numeric_limits<uint32_t>::max)() != ownership_strength) // Not SHARED_OWNERSHIP_QOS
-            {
-                current_owner.first = writer_guid;
-                current_owner.second = ownership_strength;
-            }
->>>>>>> 9b31bc25f (Fix max clash with Windows CI (#4248))
 
             if (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state)
             {

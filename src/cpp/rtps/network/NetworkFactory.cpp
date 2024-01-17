@@ -36,14 +36,8 @@ using SendResourceList = fastdds::rtps::SendResourceList;
 
 NetworkFactory::NetworkFactory(
         const RTPSParticipantAttributes& PParam)
-<<<<<<< HEAD
-    : maxMessageSizeBetweenTransports_(std::numeric_limits<uint32_t>::max())
-    , minSendBufferSize_(std::numeric_limits<uint32_t>::max())
-=======
     : maxMessageSizeBetweenTransports_((std::numeric_limits<uint32_t>::max)())
     , minSendBufferSize_((std::numeric_limits<uint32_t>::max)())
-    , network_configuration_(0)
->>>>>>> 9b31bc25f (Fix max clash with Windows CI (#4248))
 {
     const std::string* enforce_metatraffic = nullptr;
     enforce_metatraffic = PropertyPolicyHelper::find_property(PParam.properties, "fastdds.shm.enforce_metatraffic");
