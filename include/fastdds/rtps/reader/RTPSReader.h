@@ -21,17 +21,16 @@
 
 #include <functional>
 
-#include <fastdds/rtps/Endpoint.h>
+#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastrtps/qos/LivelinessChangedStatus.h>
-#include <fastrtps/utils/TimedConditionVariable.hpp>
-
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+#include <fastrtps/utils/TimedConditionVariable.hpp>
 
 #ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>

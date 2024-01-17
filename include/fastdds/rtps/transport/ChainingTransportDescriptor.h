@@ -69,7 +69,7 @@ typedef struct ChainingTransportDescriptor : public TransportDescriptorInterface
 } ChainingTransportDescriptor;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_TRANSPORT_CHAININGTRANSPORTDESCRIPTOR_H_

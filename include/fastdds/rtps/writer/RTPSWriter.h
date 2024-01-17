@@ -25,6 +25,7 @@
 #include <mutex>
 #include <vector>
 
+#include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
@@ -32,15 +33,13 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
-#include "DeliveryRetCode.hpp"
-#include "LocatorSelectorSender.hpp"
-#include <fastrtps/qos/LivelinessLostStatus.h>
-
+#include <fastdds/rtps/writer/DeliveryRetCode.hpp>
+#include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
 #ifdef FASTDDS_STATISTICS
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
 #endif // ifdef FASTDDS_STATISTICS
 
 namespace eprosima {

@@ -19,11 +19,11 @@
 #ifndef _FASTDDS_SUBLISTENER_HPP_
 #define _FASTDDS_SUBLISTENER_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastrtps/qos/LivelinessChangedStatus.h>
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
+#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastdds {

@@ -21,7 +21,6 @@
 #define _FASTDDS_PUBLISHERQOS_HPP_
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastrtps/attributes/PublisherAttributes.h>
 
 namespace eprosima {
 namespace fastdds {

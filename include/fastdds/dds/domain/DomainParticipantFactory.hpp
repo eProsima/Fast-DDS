@@ -20,15 +20,14 @@
 #ifndef _FASTDDS_DOMAINPARTICIPANT_HPP_
 #define _FASTDDS_DOMAINPARTICIPANT_HPP_
 
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/types/TypesBase.h>
-#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
-#include <fastdds/dds/core/status/StatusMask.hpp>
-
 #include <map>
 #include <memory>
 #include <mutex>
+
+#include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 

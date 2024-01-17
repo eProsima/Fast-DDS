@@ -20,8 +20,8 @@
 #ifndef REQUESTHEADER_HPP
 #define REQUESTHEADER_HPP
 
-#include <fastrtps/rtps/common/SampleIdentity.h>
 #include <fastdds/dds/builtin/common/Types.hpp>
+#include <fastdds/rtps/common/SampleIdentity.h>
 
 namespace eprosima {
 

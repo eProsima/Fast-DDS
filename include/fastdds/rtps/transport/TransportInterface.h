@@ -44,7 +44,7 @@ static const std::string s_IPv6AddressAny = "::";
 using SendResourceList = std::vector<std::unique_ptr<fastrtps::rtps::SenderResource>>;
 
 /**
- * Interface against which to implement a transport layer, decoupled from FastRTPS internals.
+ * Interface against which to implement a transport layer, decoupled from Fast DDS internals.
  * TransportInterface expects the user to implement a logical equivalence between Locators and protocol-specific "channels".
  * This equivalence can be narrowing: For instance in UDP/IP, a port would take the role of channel, and several different
  * locators can map to the same port, and hence the same channel.

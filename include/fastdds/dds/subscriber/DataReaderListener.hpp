@@ -16,16 +16,16 @@
  * @file DataReaderListener.hpp
  */
 
-#ifndef _FASTRTPS_DATAREADERLISTENER_HPP_
-#define _FASTRTPS_DATAREADERLISTENER_HPP_
+#ifndef _FASTDDS_DATAREADERLISTENER_HPP_
+#define _FASTDDS_DATAREADERLISTENER_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastrtps/qos/LivelinessChangedStatus.h>
-#include <fastrtps/qos/SampleRejectedStatus.hpp>
-#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -88,7 +88,7 @@ public:
      */
     RTPS_DllAPI virtual void on_requested_deadline_missed(
             DataReader* reader,
-            const fastrtps::RequestedDeadlineMissedStatus& status)
+            const RequestedDeadlineMissedStatus& status)
     {
         (void)reader;
         (void)status;
@@ -102,7 +102,7 @@ public:
      */
     RTPS_DllAPI virtual void on_liveliness_changed(
             DataReader* reader,
-            const fastrtps::LivelinessChangedStatus& status)
+            const LivelinessChangedStatus& status)
     {
         (void)reader;
         (void)status;
@@ -116,7 +116,7 @@ public:
      */
     RTPS_DllAPI virtual void on_sample_rejected(
             DataReader* reader,
-            const fastrtps::SampleRejectedStatus& status)
+            const SampleRejectedStatus& status)
     {
         (void)reader;
         (void)status;
@@ -156,4 +156,4 @@ public:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* _FASTRTPS_DATAREADERLISTENER_HPP_ */
+#endif /* _FASTDDS_DATAREADERLISTENER_HPP_ */

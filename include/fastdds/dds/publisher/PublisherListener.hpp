@@ -19,8 +19,8 @@
 #ifndef _FASTDDS_PUBLISHERLISTENER_HPP_
 #define _FASTDDS_PUBLISHERLISTENER_HPP_
 
-#include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 
