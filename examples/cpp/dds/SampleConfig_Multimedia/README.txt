@@ -80,7 +80,7 @@ Audio and Video transmission have a common characteristic: Having a stable, high
 
 - Distributed measurement: Controllers
 
-Lets say we have a factory with a network of distributed temperature sensors and we want to use eProsima Fast RTPS to send data from said sensors to an automation computer which
+Lets say we have a factory with a network of distributed temperature sensors and we want to use eProsima Fast DDS to send data from said sensors to an automation computer which
 makes decisions based on the temperature distribution. We would group all sensors within one single topic, 
 
 	Reliability: Reliable. We want to make sure samples are not lost. Furthermore, since reliable more ensures data delivery, it allows us to detect hardware problems when a sensor becomes silent
