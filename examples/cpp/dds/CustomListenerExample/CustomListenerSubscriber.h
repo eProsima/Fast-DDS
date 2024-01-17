@@ -20,13 +20,13 @@
 #ifndef CUSTOMLISTENERSUBSCRIBER_H_
 #define CUSTOMLISTENERSUBSCRIBER_H_
 
-#include "TopicPubSubTypes.h"
-#include "CustomListeners.h"
-
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
-#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+
+#include "CustomListeners.h"
+#include "TopicPubSubTypes.h"
 
 class CustomListenerSubscriber
 {

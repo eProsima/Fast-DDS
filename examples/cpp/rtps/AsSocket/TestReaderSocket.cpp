@@ -19,16 +19,14 @@
 
 #include "TestReaderSocket.h"
 
-#include "fastrtps/rtps/reader/RTPSReader.h"
-#include "fastrtps/rtps/participant/RTPSParticipant.h"
-#include "fastrtps/rtps/RTPSDomain.h"
-
-#include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
-#include "fastrtps/rtps/attributes/ReaderAttributes.h"
-#include "fastrtps/rtps/attributes/HistoryAttributes.h"
-
-#include "fastrtps/rtps/history/ReaderHistory.h"
-#include "fastrtps/utils/IPLocator.h"
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastrtps/utils/IPLocator.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

@@ -20,12 +20,11 @@
 #ifndef TESTWRITERSOCKET_H_
 #define TESTWRITERSOCKET_H_
 
-#include "fastrtps/rtps/rtps_fwd.h"
-
-
-#include <string>
-#include <cstdio>
 #include <cstdint>
+#include <cstdio>
+#include <string>
+
+#include <fastdds/rtps/rtps_fwd.h>
 
 class TestWriterSocket
 {

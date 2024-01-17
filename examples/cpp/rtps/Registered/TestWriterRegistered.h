@@ -20,10 +20,8 @@
 #ifndef TESTWRITERREGISTERED_H_
 #define TESTWRITERREGISTERED_H_
 
-#include "fastrtps/rtps/rtps_fwd.h"
-
-
-#include "fastrtps/rtps/writer/WriterListener.h"
+#include <fastdds/rtps/rtps_fwd.h>
+#include <fastdds/rtps/writer/WriterListener.h>
 
 class TestWriterRegistered
 {

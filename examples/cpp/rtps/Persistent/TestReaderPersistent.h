@@ -20,10 +20,8 @@
 #ifndef TESTREADERPERSISTENT_H_
 #define TESTREADERPERSISTENT_H_
 
-#include <fastrtps/rtps/rtps_fwd.h>
-
-
-#include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/rtps_fwd.h>
 
 class TestReaderPersistent
 {

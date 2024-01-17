@@ -17,6 +17,8 @@
  *
  */
 
+#include "BasicConfigurationSubscriber.h"
+
 #include <csignal>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -27,10 +29,6 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-
-#include "BasicConfigurationSubscriber.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;

@@ -12,25 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdio.h>
-#include <cstring>
-#include <iostream>
-#include <iomanip>
 #include <bitset>
 #include <cstdint>
+#include <cstring>
+#include <iomanip>
+#include <iostream>
 #include <sstream>
+#include <stdio.h>
 
-#include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.h>
 
-#include "TestWriterPersistent.h"
 #include "TestReaderPersistent.h"
+#include "TestWriterPersistent.h"
 
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
 using namespace std;
-
 
 int main(
         int argc,

@@ -17,16 +17,16 @@
  *
  */
 
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+
 #include "LivelinessPublisher.h"
 #include "LivelinessSubscriber.h"
-
-#include <fastrtps/Domain.h>
-#include <fastrtps/log/Log.h>
-#include <fastrtps/qos/QosPolicies.h>
 
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
+using namespace eprosima::fastdds::dds;
 
 //!
 //! \brief Parses command line artuments
@@ -57,7 +57,7 @@ int main(
     int sleep_ms = 1000;
     int count = 10;
 
-    eprosima::fastrtps::LivelinessQosPolicyKind kind = eprosima::fastrtps::AUTOMATIC_LIVELINESS_QOS;
+    LivelinessQosPolicyKind kind = LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
 
     if (!parse_arguments(
                 argc,
@@ -109,7 +109,6 @@ int main(
             break;
         }
     }
-    Domain::stopAll();
     Log::Reset();
     return 0;
 }
@@ -119,7 +118,7 @@ bool parse_arguments(
         char** argv,
         int& type,
         int& lease_duration_ms,
-        eprosima::fastrtps::LivelinessQosPolicyKind& kind,
+        LivelinessQosPolicyKind& kind,
         int& sleep_ms,
         int& samples)
 {
@@ -153,15 +152,15 @@ bool parse_arguments(
             {
                 if (!strcmp(argv[count + 1], "AUTOMATIC"))
                 {
-                    kind = eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
+                    kind = LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
                 }
                 else if (!strcmp(argv[count + 1], "MANUAL_BY_PARTICIPANT"))
                 {
-                    kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+                    kind = LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
                 }
                 else if (!strcmp(argv[count + 1], "MANUAL_BY_TOPIC"))
                 {
-                    kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
+                    kind = LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
                 }
                 else
                 {
@@ -201,15 +200,15 @@ bool parse_arguments(
             {
                 if (!strcmp(argv[count + 1], "AUTOMATIC"))
                 {
-                    kind = eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
+                    kind = LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
                 }
                 else if (!strcmp(argv[count + 1], "MANUAL_BY_PARTICIPANT"))
                 {
-                    kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+                    kind = LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
                 }
                 else if (!strcmp(argv[count + 1], "MANUAL_BY_TOPIC"))
                 {
-                    kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
+                    kind = LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
                 }
                 else
                 {

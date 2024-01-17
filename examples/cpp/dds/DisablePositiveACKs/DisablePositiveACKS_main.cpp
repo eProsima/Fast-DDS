@@ -20,12 +20,13 @@
 #include "DisablePositiveACKsPublisher.h"
 #include "DisablePositiveACKsSubscriber.h"
 
-#include <fastrtps/Domain.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
+
+using namespace eprosima::fastdds::dds;
 
 /**
  * @brief Parses command line arguments
@@ -182,7 +183,6 @@ int main(
             break;
         }
     }
-    Domain::stopAll();
     Log::Reset();
     return 0;
 }

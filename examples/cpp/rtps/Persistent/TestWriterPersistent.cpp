@@ -22,15 +22,15 @@
 #include <chrono>
 #include <thread>
 
+#include <fastdds/dds/publisher/qos/WriterQos.hpp>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/qos/WriterQos.h>
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
-#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/rtps/attributes/WriterAttributes.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

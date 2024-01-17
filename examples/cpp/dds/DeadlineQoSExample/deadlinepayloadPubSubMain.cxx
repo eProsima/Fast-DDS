@@ -15,10 +15,6 @@
 #include "deadlinepayloadPublisher.h"
 #include "deadlinepayloadSubscriber.h"
 
-
-#include <fastrtps/Domain.h>
-#include <fastrtps/log/Log.h>
-
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 

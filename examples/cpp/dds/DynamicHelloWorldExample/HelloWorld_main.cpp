@@ -20,7 +20,7 @@
 #include "HelloWorldPublisher.h"
 #include "HelloWorldSubscriber.h"
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 using eprosima::fastdds::dds::Log;
 

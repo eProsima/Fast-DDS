@@ -24,14 +24,12 @@
 #define _DEADLINEPAYLOAD_SUBSCRIBER_H_
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
 #include "deadlinepayloadPubSubTypes.h"
-
-#include "mapableKey.h"
 
 class deadlinepayloadSubscriber
 {

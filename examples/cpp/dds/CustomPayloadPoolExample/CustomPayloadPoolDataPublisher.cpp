@@ -17,19 +17,16 @@
  *
  */
 
-#include <thread>
-#include <csignal>
-
 #include "CustomPayloadPoolDataPublisher.h"
+
+#include <csignal>
+#include <thread>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
