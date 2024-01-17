@@ -3,6 +3,8 @@
 This example extends the configuration options of a trivial HelloWorld by letting the user specify properties of
 entities such as durability, reliability or specify the transport protocol to be used, among other possibilities. This
 could be useful, for example, to quickly test whether two endpoints are compatible and hence would match.
+Additionally, the message type includes a data sequence which size can be set by the user, allowing to send large data between endpoints.
+Note: Due to the nature of the data type (not bounded), this example will not use data sharing.
 
 ## Execution instructions
 
@@ -24,12 +26,14 @@ General options:
 
 Publisher options:
   -t <topic_name> --topic=<topic_name>
-                    Topic name (Default: HelloWorldTopic).
+                    Topic name (Default: AdvancedConfigurationTopic).
   -d <id>         --domain=<id>
                     DDS domain ID (Default: 0).
   -w <num>        --wait=<num>
                     Number of matched subscribers required to publish (Default:
                     0 => does not wait).
+  -m <num>        --msg-size=<num>
+                    Size in bytes of the data to send (Default 10).
   -s <num>        --samples=<num>
                     Number of samples to send (Default: 0 => infinite samples).
   -i <num>        --interval=<num>
@@ -50,7 +54,7 @@ Publisher options:
 
 Subscriber options:
   -t <topic_name> --topic=<topic_name>
-                    Topic name (Default: HelloWorldTopic).
+                    Topic name (Default: AdvancedConfigurationTopic).
   -d <id>         --domain=<id>
                     DDS domain ID (Default: 0).
   -s <num>        --samples=<num>

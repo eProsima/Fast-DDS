@@ -44,7 +44,7 @@ HelloWorldSubscriber::HelloWorldSubscriber()
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
-    , type_(new HelloWorldPubSubType())
+    , type_(new AdvancedConfigurationPubSubType())
 {
 }
 
@@ -169,7 +169,7 @@ bool HelloWorldSubscriber::init(
     // CREATE THE TOPIC
     topic_ = participant_->create_topic(
         topic_name,
-        "HelloWorld",
+        "AdvancedConfiguration",
         TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
@@ -288,7 +288,9 @@ void HelloWorldSubscriber::SubListener::on_data_available(
         {
             samples_++;
             // Print your structure data here.
-            std::cout << "Message " << hello_.message().data() << " " << hello_.index() << " RECEIVED" << std::endl;
+            std::cout << "Sample received: " << hello_.message().data() << "  " << hello_.index() <<
+                "  (" << static_cast<int>(hello_.data().size()) << " Bytes)" << std::endl;
+
             if (max_messages_ > 0 && (samples_ >= max_messages_))
             {
                 stop();

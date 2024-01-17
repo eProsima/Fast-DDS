@@ -46,7 +46,7 @@ HelloWorldPublisher::HelloWorldPublisher()
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
-    , type_(new HelloWorldPubSubType())
+    , type_(new AdvancedConfigurationPubSubType())
 {
 }
 
@@ -73,10 +73,13 @@ bool HelloWorldPublisher::init(
         const std::string& partitions,
         bool use_ownership,
         unsigned int ownership_strength,
+        int data_size,
         const std::string& profile)
 {
+
     hello_.index(0);
     memcpy(hello_.message().data(), "HelloWorld ", strlen("HelloWorld") + 1);
+    hello_.data(std::vector<uint8_t>(data_size, 0xAA));
 
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
@@ -176,7 +179,7 @@ bool HelloWorldPublisher::init(
     }
 
     // CREATE THE TOPIC
-    topic_ = participant_->create_topic(topic_name, "HelloWorld", TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic(topic_name, type_.get_type_name(), TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
@@ -325,8 +328,9 @@ void HelloWorldPublisher::runThread(
         if (listener_.enough_matched())
         {
             publish();
-            std::cout << "Message: " << hello_.message().data() << " with index: " << hello_.index()
-                      << " SENT" << std::endl;
+            std::cout << "Sample sent: " << hello_.message().data() << "  " << hello_.index() <<
+                "  (" << static_cast<int>(hello_.data().size()) << " Bytes)"
+                      << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
         else

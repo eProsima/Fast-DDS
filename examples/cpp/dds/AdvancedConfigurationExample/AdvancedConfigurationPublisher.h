@@ -28,7 +28,7 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include "HelloWorldPubSubTypes.h"
+#include "AdvancedConfigurationPubSubTypes.h"
 #include "types.hpp"
 
 /**
@@ -56,6 +56,7 @@ public:
             const std::string& partitions,
             bool use_ownership,
             unsigned int ownership_strength,
+            int data_size,
             const std::string& profile);
 
     //! Publish a sample
@@ -74,7 +75,7 @@ public:
 
 private:
 
-    HelloWorld hello_;
+    AdvancedConfiguration hello_;
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
 

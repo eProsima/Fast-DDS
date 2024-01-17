@@ -28,7 +28,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 
-#include "HelloWorldPubSubTypes.h"
+#include "AdvancedConfigurationPubSubTypes.h"
 #include "types.hpp"
 
 /**
@@ -111,7 +111,7 @@ private:
 
     private:
 
-        HelloWorld hello_;
+        AdvancedConfiguration hello_;
 
         //! Number of DataWriters matched to the associated DataReader
         int matched_;
