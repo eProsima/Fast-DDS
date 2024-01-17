@@ -4,8 +4,8 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include <fastrtps/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/messages/MessageReceiver.h>
 
 #define MIN_SIZE RTPSMESSAGE_HEADER_SIZE
 #define MAX_SIZE 64000
