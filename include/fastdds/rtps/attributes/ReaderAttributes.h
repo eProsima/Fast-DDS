@@ -20,10 +20,10 @@
 #ifndef _FASTDDS_RTPS_ATTRIBUTES_READERATTRIBUTES_H_
 #define _FASTDDS_RTPS_ATTRIBUTES_READERATTRIBUTES_H_
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/EndpointAttributes.h>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 namespace eprosima {

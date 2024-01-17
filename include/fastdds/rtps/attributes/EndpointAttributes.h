@@ -19,10 +19,9 @@
 #ifndef _FASTDDS_ENDPOINTATTRIBUTES_H_
 #define _FASTDDS_ENDPOINTATTRIBUTES_H_
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastrtps/qos/QosPolicies.h>
-
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Types.h>

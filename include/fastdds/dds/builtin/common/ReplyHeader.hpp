@@ -20,8 +20,8 @@
 #ifndef REPLYHEADER_HPP
 #define REPLYHEADER_HPP
 
-#include <fastrtps/rtps/common/SampleIdentity.h>
 #include <fastdds/dds/builtin/common/Types.hpp>
+#include <fastdds/rtps/common/SampleIdentity.h>
 
 namespace eprosima {
 
