@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles" >
     <participant profile_name="UDP_simple">
         <rtps>
             <prefix>44.49.53.43.53.45.52.56.45.52.5F.31</prefix>

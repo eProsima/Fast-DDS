@@ -3221,7 +3221,7 @@ TEST_F(XMLProfileParserBasicTests, log_thread_settings_qos)
             "log_thread_settings_ok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <log>
                         <thread_settings>
                             <scheduling_policy>-1</scheduling_policy>
@@ -3237,7 +3237,7 @@ TEST_F(XMLProfileParserBasicTests, log_thread_settings_qos)
             "log_thread_settings_duplicate",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <log>
                         <thread_settings>
                             <scheduling_policy>-1</scheduling_policy>
@@ -3259,7 +3259,7 @@ TEST_F(XMLProfileParserBasicTests, log_thread_settings_qos)
             "log_thread_settings_wrong",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <log>
                         <thread_settings>
                             <scheduling_policy>-1</scheduling_policy>
@@ -3314,7 +3314,7 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
             "entity_factory_ok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <domainparticipant_factory profile_name="factory" is_default_profile="true">
                         <qos>
@@ -3334,7 +3334,7 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
             "shm_watchdog_thread_ok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <domainparticipant_factory profile_name="factory" is_default_profile="true">
                         <qos>
@@ -3357,7 +3357,7 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
             "file_watch_threads_ok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <domainparticipant_factory profile_name="factory" is_default_profile="true">
                         <qos>
@@ -3380,7 +3380,7 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
             "all_present_ok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <domainparticipant_factory profile_name="factory" is_default_profile="true">
                         <qos>
@@ -3412,7 +3412,7 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
             "qos_duplicated",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <domainparticipant_factory profile_name="factory" is_default_profile="true">
                         <qos>
@@ -3437,7 +3437,7 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
             "entity_factory_wrong_tag",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <domainparticipant_factory profile_name="factory" is_default_profile="true">
                         <qos>
@@ -3457,7 +3457,7 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
             "entity_factory_duplicated_autoenable_created_entities_tag",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <domainparticipant_factory profile_name="factory" is_default_profile="true">
                         <qos>
@@ -3478,7 +3478,7 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
             "entity_factory_duplicated_autoenable_created_entities_and_wrong_tag",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <domainparticipant_factory profile_name="factory" is_default_profile="true">
                         <qos>
@@ -3499,7 +3499,7 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
             "entity_factory_duplicated",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <domainparticipant_factory profile_name="factory" is_default_profile="true">
                         <qos>
@@ -3534,7 +3534,7 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
             "shm_watchdog_thread_duplicated",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <domainparticipant_factory profile_name="factory" is_default_profile="true">
                         <qos>
@@ -3572,7 +3572,7 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
             "file_watch_threads_duplicated",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <domainparticipant_factory profile_name="factory" is_default_profile="true">
                         <qos>
@@ -3666,7 +3666,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             "builtin_controllers_sender_thread_ok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <participant profile_name="participant" is_default_profile="true">
                         <rtps>
@@ -3693,7 +3693,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             "builtin_controllers_sender_thread_nok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <participant profile_name="participant" is_default_profile="true">
                         <rtps>
@@ -3720,7 +3720,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             "timed_events_thread_ok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <participant profile_name="participant" is_default_profile="true">
                         <rtps>
@@ -3747,7 +3747,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             "timed_events_thread_nok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <participant profile_name="participant" is_default_profile="true">
                         <rtps>
@@ -3774,7 +3774,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             "discovery_server_thread_ok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <participant profile_name="participant" is_default_profile="true">
                         <rtps>
@@ -3801,7 +3801,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             "discovery_server_thread_nok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <participant profile_name="participant" is_default_profile="true">
                         <rtps>
@@ -3828,7 +3828,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             "builtin_transports_reception_threads_ok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <participant profile_name="participant" is_default_profile="true">
                         <rtps>
@@ -3855,7 +3855,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             "builtin_transports_reception_threads_nok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <participant profile_name="participant" is_default_profile="true">
                         <rtps>
@@ -3883,7 +3883,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             "security_log_thread_ok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <participant profile_name="participant" is_default_profile="true">
                         <rtps>
@@ -3908,7 +3908,7 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
             "security_log_thread_nok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <participant profile_name="participant" is_default_profile="true">
                         <rtps>
@@ -3989,7 +3989,7 @@ TEST_F(XMLProfileParserBasicTests, datareader_thread_settings)
             "data_sharing_listener_thread_ok",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <data_reader profile_name="datareader" is_default_profile="true">
                             <qos>
@@ -4013,7 +4013,7 @@ TEST_F(XMLProfileParserBasicTests, datareader_thread_settings)
             "data_sharing_listener_thread_empty",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <data_reader profile_name="datareader" is_default_profile="true">
                             <qos>
@@ -4033,7 +4033,7 @@ TEST_F(XMLProfileParserBasicTests, datareader_thread_settings)
             "no_data_sharing_listener_thread",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <data_reader profile_name="datareader" is_default_profile="true">
                             <qos>
@@ -4051,7 +4051,7 @@ TEST_F(XMLProfileParserBasicTests, datareader_thread_settings)
             "data_sharing_listener_thread_wrong_value",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <data_reader profile_name="datareader" is_default_profile="true">
                             <qos>
@@ -4075,7 +4075,7 @@ TEST_F(XMLProfileParserBasicTests, datareader_thread_settings)
             "data_sharing_listener_thread_wrong_tag",
             R"(
                 <?xml version="1.0" encoding="UTF-8" ?>
-                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+                <dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
                     <profiles>
                         <data_reader profile_name="datareader" is_default_profile="true">
                             <qos>

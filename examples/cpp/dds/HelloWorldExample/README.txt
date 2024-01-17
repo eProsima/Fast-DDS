@@ -9,7 +9,7 @@ In order to use xml profiles (--env or shorcut -e cli flags):
 The profile loaded will be the mark as default one with the corresponding attribute. For example:
 
     <?xml version="1.0" encoding="UTF-8" ?>
-    <profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <profiles xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
         <participant profile_name="name_is_mandatory" is_default_profile="true">
             <rtps>
                 <name>Profiles example name</name>

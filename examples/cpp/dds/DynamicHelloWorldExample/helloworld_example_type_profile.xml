@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<types xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
+<types xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles" >
     <type>
         <struct name="HelloWorld">
             <member name="message" type="string"/>
