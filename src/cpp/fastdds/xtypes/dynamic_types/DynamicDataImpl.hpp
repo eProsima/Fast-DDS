@@ -388,7 +388,7 @@ protected:
 private:
 
     void add_sequence_value(
-            TypeKind sequence_kind,
+            const traits<DynamicTypeImpl>::ref_type& sequence_type,
             uint32_t sequence_size) noexcept;
 
     void add_value(
@@ -402,18 +402,20 @@ private:
 
     /*!
      * Auxiliary function to clear completely a sequence.
-     * Only valid for TK_SEQUENCE.
+     * Only valid for TK_ARRAY or TK_SEQUENCE.
      */
-    ReturnCode_t clear_all_sequence() noexcept;
+    ReturnCode_t clear_all_sequence(
+            TypeKind type_kind) noexcept;
 
     ReturnCode_t clear_all_values(
             bool only_non_keyed) noexcept;
 
     /*!
      * Auxiliary function to clear a sequence element.
-     * Only valid for TK_SEQUENCE.
+     * Only valid for TK_ARRAY and TK_SEQUENCE.
      */
     ReturnCode_t clear_sequence_element(
+            TypeKind type_kind,
             MemberId id) noexcept;
 
     /*!
