@@ -45,7 +45,7 @@ using namespace eprosima::fastdds::xml::detail;
 XMLP_ret XMLParser::loadDefaultXMLFile(
         up_base_node_t& root)
 {
-    return loadXML(DEFAULT_FASTRTPS_PROFILES, root);
+    return loadXML(DEFAULT_FASTDDS_PROFILES, root);
 }
 
 XMLP_ret XMLParser::parseXML(
@@ -1837,7 +1837,7 @@ XMLP_ret XMLParser::loadXML(
     tinyxml2::XMLDocument xmlDoc;
     if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
     {
-        if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
+        if (filename != std::string(DEFAULT_FASTDDS_PROFILES))
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Error opening '" << filename << "'");
         }

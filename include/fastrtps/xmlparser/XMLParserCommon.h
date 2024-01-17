@@ -31,8 +31,8 @@ enum class XMLP_ret
 };
 
 
-extern const char* DEFAULT_FASTRTPS_ENV_VARIABLE;
-extern const char* DEFAULT_FASTRTPS_PROFILES;
+extern const char* DEFAULT_FASTDDS_ENV_VARIABLE;
+extern const char* DEFAULT_FASTDDS_PROFILES;
 extern const char* DEFAULT_STATISTICS_DATAWRITER_PROFILE;
 extern const char* SKIP_DEFAULT_XML_FILE;
 
