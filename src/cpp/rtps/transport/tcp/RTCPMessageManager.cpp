@@ -856,5 +856,5 @@ bool RTCPMessageManager::isCompatibleProtocol(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
