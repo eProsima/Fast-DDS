@@ -269,7 +269,7 @@ inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
     valid &= (seqNum.high >= 0);
     if (valid && std::numeric_limits<int32_t>::max() == seqNum.high)
     {
-        numBits = (std::min)(numBits, std::numeric_limits<uint32_t>::max() - seqNum.low);
+        numBits = (std::min)(numBits, (std::numeric_limits<uint32_t>::max)() - seqNum.low);
     }
 
     uint32_t n_longs = (numBits + 31u) / 32u;

@@ -47,7 +47,7 @@ struct DataReaderInstance
     //! The list of alive writers for this instance
     WriterCollection alive_writers;
     //! GUID and strength of the current maximum strength writer
-    WriterOwnership current_owner{ {}, std::numeric_limits<uint32_t>::max() };
+    WriterOwnership current_owner{ {}, (std::numeric_limits<uint32_t>::max)() };
     //! The time when the group will miss the deadline
     std::chrono::steady_clock::time_point next_deadline_us;
     //! Current view state of the instance
@@ -195,10 +195,10 @@ private:
             current_owner.first = writer_guid;
             ret_val = true;
         }
-        else if (std::numeric_limits<uint32_t>::max() == ownership_strength) // uint32_t::max indicates we are in SHARED_OWNERSHIP_QOS.
+        else if ((std::numeric_limits<uint32_t>::max)() == ownership_strength) // uint32_t::max indicates we are in SHARED_OWNERSHIP_QOS.
         {
             assert(eprosima::fastrtps::rtps::c_Guid_Unknown == current_owner.first);
-            assert(std::numeric_limits<uint32_t>::max() == current_owner.second);
+            assert((std::numeric_limits<uint32_t>::max)() == current_owner.second);
             ret_val = true;
         }
         else if (eprosima::fastrtps::rtps::c_Guid_Unknown == current_owner.first) // Without owner.
@@ -247,7 +247,7 @@ private:
                 writer_guid < current_owner.first)
                 )
         {
-            if (std::numeric_limits<uint32_t>::max() != ownership_strength) // Not SHARED_OWNERSHIP_QOS
+            if ((std::numeric_limits<uint32_t>::max)() != ownership_strength) // Not SHARED_OWNERSHIP_QOS
             {
                 current_owner.first = writer_guid;
                 current_owner.second = ownership_strength;
