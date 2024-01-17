@@ -26,8 +26,6 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicDataHelper.hpp>
 #include <fastrtps/types/TypeObjectFactory.h>
@@ -173,11 +171,6 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
 
                 if (subscriber_->mp_subscriber == nullptr)
                 {
-                    //SubscriberAttributes Rparam;
-                    //Rparam = subscriber_->att_;
-                    //Rparam.topic = subscriber_->topic_;
-                    //Rparam.topic.topicName = topic_name;
-                    //Rparam.qos = subscriber_->qos_;
                     subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
                         SUBSCRIBER_QOS_DEFAULT, nullptr);
 

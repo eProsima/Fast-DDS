@@ -17,12 +17,11 @@
  *
  */
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/log/Log.hpp>
+
 #include "HelloWorldPublisher.h"
 #include "HelloWorldSubscriber.h"
-
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-
-#include <fastrtps/log/Log.h>
 
 using eprosima::fastdds::dds::Log;
 

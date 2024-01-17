@@ -20,16 +20,16 @@
 #ifndef LIVELINESSSUBSCRIBER_H_
 #define LIVELINESSSUBSCRIBER_H_
 
-#include "TopicPubSubTypes.h"
-#include "Topic.h"
-
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+
+#include "TopicPubSubTypes.h"
+#include "Topic.h"
 
 class LivelinessSubscriber
 {
@@ -43,7 +43,7 @@ public:
 
     //! Initialize the subscriber
     bool init(
-            eprosima::fastrtps::LivelinessQosPolicyKind kind,
+            eprosima::fastdds::dds::LivelinessQosPolicyKind kind,
             int liveliness_ms);
 
     //! RUN the subscriber
