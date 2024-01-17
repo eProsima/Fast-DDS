@@ -12,38 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTRTPS_FASTRTPS_DLL_H_
-#define _FASTRTPS_FASTRTPS_DLL_H_
+#ifndef _FASTDDS_FASTDDS_DLL_H_
+#define _FASTDDS_FASTDDS_DLL_H_
 
-#include <fastrtps/config.h>
+#include <fastdds/config.h>
 
 // normalize macros
-#if !defined(FASTRTPS_DYN_LINK) && !defined(FASTRTPS_STATIC_LINK) \
+#if !defined(FASTDDS_DYN_LINK) && !defined(FASTDDS_STATIC_LINK) \
     && !defined(EPROSIMA_ALL_DYN_LINK) && !defined(EPROSIMA_ALL_STATIC_LINK)
-#define FASTRTPS_STATIC_LINK
+#define FASTDDS_STATIC_LINK
 #endif
 
-#if defined(EPROSIMA_ALL_DYN_LINK) && !defined(FASTRTPS_DYN_LINK)
-#define FASTRTPS_DYN_LINK
+#if defined(EPROSIMA_ALL_DYN_LINK) && !defined(FASTDDS_DYN_LINK)
+#define FASTDDS_DYN_LINK
 #endif
 
-#if defined(FASTRTPS_DYN_LINK) && defined(FASTRTPS_STATIC_LINK)
-#error Must not define both FASTRTPS_DYN_LINK and FASTRTPS_STATIC_LINK
+#if defined(FASTDDS_DYN_LINK) && defined(FASTDDS_STATIC_LINK)
+#error Must not define both FASTDDS_DYN_LINK and FASTDDS_STATIC_LINK
 #endif
 
-#if defined(EPROSIMA_ALL_NO_LIB) && !defined(FASTRTPS_NO_LIB)
-#define FASTRTPS_NO_LIB
+#if defined(EPROSIMA_ALL_NO_LIB) && !defined(FASTDDS_NO_LIB)
+#define FASTDDS_NO_LIB
 #endif
 
 // enable dynamic linking
 
 #if defined(_WIN32)
-#if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTRTPS_DYN_LINK)
-#if defined(fastrtps_EXPORTS)
+#if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTDDS_DYN_LINK)
+#if defined(fastdds_EXPORTS)
 #define RTPS_DllAPI __declspec( dllexport )
 #else
 #define RTPS_DllAPI __declspec( dllimport )
-#endif // FASTRTPS_SOURCE
+#endif // FASTDDS_SOURCE
 #else
 #define RTPS_DllAPI
 #endif
@@ -53,17 +53,17 @@
 
 // Auto linking.
 
-#if !defined(FASTRTPS_SOURCE) && !defined(EPROSIMA_ALL_NO_LIB) \
-    && !defined(FASTRTPS_NO_LIB)
+#if !defined(FASTDDS_SOURCE) && !defined(EPROSIMA_ALL_NO_LIB) \
+    && !defined(FASTDDS_NO_LIB)
 
 // Set properties.
-#define EPROSIMA_LIB_NAME fastrtps
+#define EPROSIMA_LIB_NAME fastdds
 
-#if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTRTPS_DYN_LINK)
+#if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTDDS_DYN_LINK)
 #define EPROSIMA_DYN_LINK
 #endif
 
 #include <fastrtps/eProsima_auto_link.h>
 #endif // auto-linking disabled
 
-#endif // _fastrtps_fastrtps_DLL_H_
+#endif // _FASTDDS_FASTDDS_DLL_H_
