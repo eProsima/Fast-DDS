@@ -152,7 +152,8 @@ size_t TCPChannelResourceBasic::send(
     {
         std::lock_guard<std::mutex> send_guard(send_mutex_);
 
-        if (parent_->configuration()->non_blocking_send && !check_socket_send_buffer(header_size + size, socket_->native_handle()))
+        if (parent_->configuration()->non_blocking_send &&
+                !check_socket_send_buffer(header_size + size, socket_->native_handle()))
         {
             return 0;
         }

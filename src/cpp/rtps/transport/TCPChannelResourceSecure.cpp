@@ -210,9 +210,11 @@ size_t TCPChannelResourceSecure::send(
 
     if (eConnecting < connection_status_)
     {
-        if (parent_->configuration()->non_blocking_send && !check_socket_send_buffer(header_size + size, secure_socket_->lowest_layer().native_handle()))
+        if (parent_->configuration()->non_blocking_send &&
+                !check_socket_send_buffer(header_size + size,
+                secure_socket_->lowest_layer().native_handle()))
         {
-                return 0;
+            return 0;
         }
 
         std::vector<asio::const_buffer> buffers;

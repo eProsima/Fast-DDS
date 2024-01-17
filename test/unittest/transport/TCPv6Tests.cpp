@@ -272,7 +272,7 @@ TEST_F(TCPv6Tests, non_blocking_send)
     // feasible. For the saturation of the sending socket, it's necessary first to
     // saturate the reception socket of the datareader. This saturation requires
     // preventing the datareader from reading from the socket, what inevitably
-    // happens continuously if instantiating and connecting the receiver transport. 
+    // happens continuously if instantiating and connecting the receiver transport.
     // Hence, a raw socket is opened and connected to the server. There won't be read
     // calls the socket.
     Locator_t serverLoc;
@@ -290,32 +290,33 @@ TEST_F(TCPv6Tests, non_blocking_send)
 
     asio::ip::tcp::socket socket = asio::ip::tcp::socket (io_service);
     asio::async_connect(
-                socket,
-                endpoints,
-                [this](std::error_code ec
+        socket,
+        endpoints,
+        [this](std::error_code ec
 #if ASIO_VERSION >= 101200
-                , asio::ip::tcp::endpoint
+        , asio::ip::tcp::endpoint
 #else
-                , asio::ip::tcp::resolver::iterator
+        , asio::ip::tcp::resolver::iterator
 #endif // if ASIO_VERSION >= 101200
-                )
-                {
-                    ASSERT_TRUE(!ec);
-                }
-                );
+        )
+        {
+            ASSERT_TRUE(!ec);
+        }
+        );
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     /*
-    Get server's accepted channel. This is retrieved from the unbound_channel_resources_,
-    which is a vector where client channels are pushed immediately after the server accepts
-    a connection. This channel will not be present in the server's channel_resources_ map
-    as communication lacks most of the discovery messages using a raw socket as participant.
-    */
+       Get server's accepted channel. This is retrieved from the unbound_channel_resources_,
+       which is a vector where client channels are pushed immediately after the server accepts
+       a connection. This channel will not be present in the server's channel_resources_ map
+       as communication lacks most of the discovery messages using a raw socket as participant.
+     */
     auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
     ASSERT_TRUE(sender_unbound_channel_resources.size() == 1);
-    auto sender_channel_resource = std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
-    
+    auto sender_channel_resource =
+            std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
+
     // Prepare the message
     asio::error_code ec;
     std::vector<octet> message(msg_size, 0);
@@ -323,7 +324,7 @@ TEST_F(TCPv6Tests, non_blocking_send)
     size_t size = message.size();
 
     // Send the message with no header
-    for(int i=0;i<5;i++)
+    for (int i = 0; i < 5; i++)
     {
         sender_channel_resource->send(nullptr, 0, data, size, ec);
     }
