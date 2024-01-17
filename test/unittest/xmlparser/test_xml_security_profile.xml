@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
     <profiles>
         <participant profile_name="test_participant_security_profile">
             <rtps>

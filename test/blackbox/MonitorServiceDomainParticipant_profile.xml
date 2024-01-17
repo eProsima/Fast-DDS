@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"  ?>
-<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
     <profiles>
         <participant profile_name="monitor_service_property_participant" is_default_profile="true">
             <rtps>

@@ -102,7 +102,7 @@ install(EXPORT ${PROJECT_NAME}-targets
         )
 
 # export xsd schema
-install(FILES ../../resources/xsd/fastRTPS_profiles.xsd
+install(FILES ../../resources/xsd/fastdds_profiles.xsd
         DESTINATION ${DATA_INSTALL_DIR}
         COMPONENT cmake
         )
