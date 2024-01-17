@@ -78,6 +78,7 @@ target_compile_definitions(DataReaderTests PRIVATE
 target_include_directories(DataReaderTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${Asio_INCLUDE_DIR}
     )
 target_link_libraries(DataReaderTests fastrtps fastcdr foonathan_memory
     GTest::gmock
