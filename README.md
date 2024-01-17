@@ -42,20 +42,17 @@
 **Fast DDS is undergoing major changes implicating API breaks.**
 **It is strongly advisable to use the latest stable branch, [2.13.x](https://github.com/eProsima/Fast-DDS/tree/2.13.x), to ensure compilation.**
 
-*eprosima Fast DDS* (formerly Fast RTPS) is a C++ implementation of the DDS (Data Distribution Service) standard of the OMG (Object Management Group). eProsima Fast DDS implements the RTPS (Real Time Publish Subscribe) protocol, which provides publisher-subscriber communications over unreliable transports such as UDP,
-as defined and maintained by the Object Management Group (OMG) consortium. RTPS is also the wire interoperability protocol defined for the Data Distribution
-Service (DDS) standard. *eProsima Fast DDS* expose an API to access directly the RTPS protocol, giving the user full access to the protocol internals.
+*eprosima Fast DDS* is a C++ implementation of the DDS (Data Distribution Service) standard of the OMG (Object Management Group).
+eProsima Fast DDS implements the RTPS (Real Time Publish Subscribe) protocol, which provides publisher-subscriber communications over unreliable transports such as UDP, as defined and maintained by the Object Management Group (OMG) consortium.
+RTPS is also the wire interoperability protocol defined for the Data Distribution Service (DDS) standard.
+*eProsima Fast DDS* expose an API to access directly the RTPS protocol, giving the user full access to the protocol internals.
 
 Some of the main features of this library are:
 
-* Configurable best-effort and reliable publish-subscribe communication policies for real-time
-applications.
-* Plug and play connectivity so that any new applications are automatically discovered by any other
-members of the network.
-* Modularity and scalability to allow continuous growth with complex and simple devices in the
-network.
-* Configurable network behavior and interchangeable transport layer: Choose the best protocol and
-system input/output channel combination for each deployment.
+* Configurable best-effort and reliable publish-subscribe communication policies for real-time applications.
+* Plug and play connectivity so that any new applications are automatically discovered by any other members of the network.
+* Modularity and scalability to allow continuous growth with complex and simple devices in the network.
+* Configurable network behavior and interchangeable transport layer: Choose the best protocol and system input/output channel combination for each deployment.
 * Two API Layers: a high-level Publisher-Subscriber one focused on usability (DDS) and a lower-level Writer-Reader one that provides finer access to the inner workings of the RTPS protocol.
 
 *eProsima Fast DDS* has been adopted by multiple organizations in many sectors including these important cases:
@@ -63,8 +60,8 @@ system input/output channel combination for each deployment.
 * Robotics: ROS (Robotic Operating System) as their default middleware for every ROS 2 long term (LTS) releases and most of the non-LTS releases.
 * EU R&D: FIWARE Incubated GE.
 
-This project is part of [FIWARE](https://www.fiware.org/). For more information check the FIWARE Catalogue entry for
-[Robotics](https://github.com/Fiware/catalogue/tree/master/robotics).
+This project is part of [FIWARE](https://www.fiware.org/).
+For more information check the FIWARE Catalogue entry for [Robotics](https://github.com/Fiware/catalogue/tree/master/robotics).
 
 ## Want us to share your project with the community?
 
@@ -101,13 +98,13 @@ You can access the documentation online, which is hosted on [Read the Docs](http
 
 ## Quality Declaration
 
-*eprosima Fast DDS* claims to be in the **Quality Level 1** category based on the guidelines provided by
-[ROS 2](https://ros.org/reps/rep-2004.html).
+*eprosima Fast DDS* claims to be in the **Quality Level 1** category based on the guidelines provided by [ROS 2](https://ros.org/reps/rep-2004.html).
 See the [Quality Declaration](https://github.com/eProsima/Fast-DDS/blob/master/QUALITY.md) for more details.
 
 ## Quick Demo
 
-eProsima provides the eProsima Fast DDS Suite Docker image for those who want a quick demonstration of Fast-DDS running on an Ubuntu platform. It can be downloaded from [eProsima's downloads page](https://eprosima.com/index.php/downloads-all).
+eProsima provides the eProsima Fast DDS Suite Docker image for those who want a quick demonstration of Fast-DDS running on an Ubuntu platform.
+It can be downloaded from [eProsima's downloads page](https://eprosima.com/index.php/downloads-all).
 
 This Docker image was built for Ubuntu 20.04 (Focal Fossa).
 
@@ -130,54 +127,44 @@ This Docker Image comes bundled with the following:
 
 ### Shapes Demo
 
-eProsima Shapes Demo is an application in which Publishers and Subscribers are shapes of different
-colors and sizes moving on a board. Each shape refers to its own topic: Square, Triangle or Circle.
-A single instance of the eProsima Shapes Demo can publish on or subscribe to several topics at a
-time.
+eProsima Shapes Demo is an application in which Publishers and Subscribers are shapes of different colors and sizes moving on a board.
+Each shape refers to its own topic: Square, Triangle or Circle.
+A single instance of the eProsima Shapes Demo can publish on or subscribe to several topics at a time.
 
-You can read more about this application on the
-[Shapes Demo documentation page](https://eprosima-shapes-demo.readthedocs.io/).
+You can read more about this application on the [Shapes Demo documentation page](https://eprosima-shapes-demo.readthedocs.io/).
 
 To run this application once inside the Docker container run:
 
     $ ShapesDemo
 
-eProsima Shapes Demo usage information can be found on the
-[Shapes Demo First Steps page](https://eprosima-shapes-demo.readthedocs.io/en/latest/first_steps/first_steps.html).
+eProsima Shapes Demo usage information can be found on the [Shapes Demo First Steps page](https://eprosima-shapes-demo.readthedocs.io/en/latest/first_steps/first_steps.html).
 
 ### Fast DDS Monitor
 
-eProsima Fast DDS Monitor is a graphical desktop application aimed at monitoring DDS environments
-deployed using the *eProsima Fast DDS* library. Thus, the user can monitor in real time the status
-of publication/subscription communications between DDS entities. They can also choose from a wide
-variety of communication parameters to be measured (latency, throughput,packet loss, etc.), as well
-as record and compute in real time statistical measurements on these parameters (mean, variance,
-standard deviation, etc.).
+eProsima Fast DDS Monitor is a graphical desktop application aimed at monitoring DDS environments deployed using the *eProsima Fast DDS* library.
+Thus, the user can monitor in real time the status of publication/subscription communications between DDS entities.
+They can also choose from a wide variety of communication parameters to be measured (latency, throughput,packet loss, etc.), as well as record and compute in real time statistical measurements on these parameters (mean, variance, standard deviation, etc.).
 
-You can read more about this application on the
-[Fast DDS Monitor documentation page](https://fast-dds-monitor.readthedocs.io/).
+You can read more about this application on the [Fast DDS Monitor documentation page](https://fast-dds-monitor.readthedocs.io/).
 
 To run this application once inside the Docker container run:
 
     $ fastdds_monitor
 
-eProsima Fast DDS Monitor usage information can be found on the
-[Fast DDS Monitor User Manual](
-https://fast-dds-monitor.readthedocs.io/en/latest/rst/user_manual/initialize_monitoring.html).
+eProsima Fast DDS Monitor usage information can be found on the [Fast DDS Monitor User Manual](https://fast-dds-monitor.readthedocs.io/en/latest/rst/user_manual/initialize_monitoring.html).
 
 
 ### Fast DDS libraries and Examples
 
-Included in this Docker container is a set of binary examples that showcase several functionalities of the
-Fast DDS libraries. These examples' path can be accessed from a terminal by typing
+Included in this Docker container is a set of binary examples that showcase several functionalities of the Fast DDS libraries.
+These examples' path can be accessed from a terminal by typing
 
     $ goToExamples
 
-From this folder you can access all examples, both for DDS and RTPS. We detail the steps to launch two such
-examples below.
+From this folder you can access all examples, both for DDS and RTPS.
+We detail the steps to launch two such examples below.
 
-To launch the Hello World example (a minimal example that will perform a Publisher/Subscriber match and start
-sending samples) you could run:
+To launch the Hello World example (a minimal example that will perform a Publisher/Subscriber match and start sending samples) you could run:
 
     $ goToExamples
     $ cd dds/HelloWorldExample/bin
@@ -185,8 +172,8 @@ sending samples) you could run:
     split-window "./HelloWorldExample subscriber" \; \
     select-layout even-vertical
 
-This example is not constrained to the current instance. It's possible to run several instances of this
-container to check the communication between them by running the following from each container.
+This example is not constrained to the current instance.
+It is possible to run several instances of this container to check the communication between them by running the following from each container.
 
     $ goToExamples
     $ cd dds/HelloWorldExample/bin
@@ -198,9 +185,9 @@ or
     $ cd dds/HelloWorldExample/bin
     $ ./HelloWorldExample subscriber
 
-Another example you could launch is the Benchmark example. This example creates either a Publisher or a Subscriber and
-on a successful match starts sending samples. After a few seconds the process that launched the Publisher will show
-a report with the number of samples transmitted.
+Another example you could launch is the Benchmark example.
+This example creates either a Publisher or a Subscriber and on a successful match starts sending samples.
+After a few seconds the process that launched the Publisher will show a report with the number of samples transmitted.
 
 On the subscriber side, run:
 
@@ -240,5 +227,4 @@ More information: <a href="http://rosin-project.eu">rosin-project.eu</a>
 <img src="http://rosin-project.eu/wp-content/uploads/rosin_eu_flag.jpg"
      alt="eu_flag" height="45" align="left" >
 
-This project has received funding from the European Union’s Horizon 2020
-research and innovation programme under grant agreement no. 732287.
+This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement no. 732287.
