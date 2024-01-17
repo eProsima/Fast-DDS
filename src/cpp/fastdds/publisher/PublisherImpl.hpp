@@ -66,7 +66,7 @@ class TypeSupport;
 
 /**
  * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
- * @ingroup FASTRTPS_MODULE
+ * @ingroup FASTDDS_MODULE
  */
 class PublisherImpl
 {
