@@ -314,7 +314,7 @@ std::shared_ptr<ParticipantCryptoHandle> AESGCMGMAC_KeyFactory::register_matched
 
         (*RPCrypto)->max_blocks_per_session = local_participant_handle->max_blocks_per_session;
         (*RPCrypto)->Session.session_block_counter = local_participant_handle->max_blocks_per_session + 1;
-        (*RPCrypto)->Session.session_id = std::numeric_limits<uint32_t>::max();
+        (*RPCrypto)->Session.session_id = (std::numeric_limits<uint32_t>::max)();
         if ((*RPCrypto)->Session.session_id == local_participant_handle->Session.session_id)
         {
             (*RPCrypto)->Session.session_id -= 1;
@@ -529,7 +529,7 @@ DatareaderCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_datareade
 
     auto session = &(*RRCrypto)->Sessions[0];
     session->session_block_counter = local_writer_handle->Sessions[0].session_block_counter;
-    session->session_id = std::numeric_limits<uint32_t>::max();
+    session->session_id = (std::numeric_limits<uint32_t>::max)();
     if (session->session_id == local_writer_handle->Sessions[0].session_id)
     {
         session->session_id -= 1;
@@ -551,7 +551,7 @@ DatareaderCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_datareade
 
         session++;
         session->session_block_counter = local_writer_handle->Sessions[0].session_block_counter;
-        session->session_id = std::numeric_limits<uint32_t>::max();
+        session->session_id = (std::numeric_limits<uint32_t>::max)();
         if (session->session_id == local_writer_handle->Sessions[0].session_id)
         {
             session->session_id -= 1;
@@ -732,7 +732,7 @@ DatawriterCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_datawrite
     (*RWCrypto)->max_blocks_per_session = local_reader_handle->max_blocks_per_session;
     auto session = &(*RWCrypto)->Sessions[0];
     session->session_block_counter = local_reader_handle->Sessions[0].session_block_counter;
-    session->session_id = std::numeric_limits<uint32_t>::max();
+    session->session_id = (std::numeric_limits<uint32_t>::max)();
     if (session->session_id == local_reader_handle->Sessions[0].session_id)
     {
         session->session_id -= 1;

@@ -585,7 +585,7 @@ bool StatefulReader::processDataMsg(
                 logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
                         << change->serializedPayload.length << " bytes and max size in reader "
                         << m_guid << " is "
-                        << (fixed_payload_size_ > 0 ? fixed_payload_size_ : std::numeric_limits<uint32_t>::max()));
+                        << (fixed_payload_size_ > 0 ? fixed_payload_size_ : (std::numeric_limits<uint32_t>::max)()));
                 change_pool_->release_cache(change_to_add);
                 return false;
             }
@@ -1013,6 +1013,19 @@ bool StatefulReader::change_received(
         }
     }
 
+<<<<<<< HEAD
+=======
+    // Update Ownership strength.
+    if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind)
+    {
+        a_change->reader_info.writer_ownership_strength = prox->ownership_strength();
+    }
+    else
+    {
+        a_change->reader_info.writer_ownership_strength = (std::numeric_limits<uint32_t>::max)();
+    }
+
+>>>>>>> 9b31bc25f (Fix max clash with Windows CI (#4248))
     // NOTE: Depending on QoS settings, one change can be removed from history
     // inside the call to mp_history->received_change
     if (mp_history->received_change(a_change, unknown_missing_changes_up_to))

@@ -67,7 +67,7 @@ void CacheChangePool::init(
     }
     else
     {
-        max_pool_size_ = std::numeric_limits<uint32_t>::max();
+        max_pool_size_ = (std::numeric_limits<uint32_t>::max)();
     }
 
     switch (memory_mode_)

@@ -212,7 +212,7 @@ void TopicPayloadPool::update_maximum_size(
     {
         if (config.maximum_size == 0)
         {
-            max_pool_size_ = std::numeric_limits<uint32_t>::max();
+            max_pool_size_ = (std::numeric_limits<uint32_t>::max)();
             ++infinite_histories_count_;
         }
         else
