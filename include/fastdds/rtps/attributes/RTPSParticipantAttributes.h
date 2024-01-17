@@ -304,7 +304,7 @@ public:
      * Get the static endpoint XML filename
      * @return Static endpoint XML filename
      */
-    FASTRTPS_DEPRECATED("Use static_edp_xml_config()")
+    FASTDDS_DEPRECATED("Use static_edp_xml_config()")
     const char* getStaticEndpointXMLFilename() const
     {
         return static_edp_xml_config();
@@ -315,7 +315,7 @@ public:
      * @param str Static endpoint XML filename
      * @deprecated
      */
-    FASTRTPS_DEPRECATED("Use static_edp_xml_config()")
+    FASTDDS_DEPRECATED("Use static_edp_xml_config()")
     void setStaticEndpointXMLFilename(
             const char* str)
     {

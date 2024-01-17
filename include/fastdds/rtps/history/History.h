@@ -71,7 +71,7 @@ public:
      * @return True if reserved
      * @warning This method has been deprecated and will be removed on v3.0.0
      */
-    FASTRTPS_DEPRECATED("Use new_change on RTPSWriter or reserveCache on RTPSReader")
+    FASTDDS_DEPRECATED("Use new_change on RTPSWriter or reserveCache on RTPSReader")
     RTPS_DllAPI inline bool reserve_Cache(
             CacheChange_t** change,
             const std::function<uint32_t()>& calculateSizeFunc)
@@ -86,7 +86,7 @@ public:
      * @return True if reserved
      * @warning This method has been deprecated and will be removed on v3.0.0
      */
-    FASTRTPS_DEPRECATED("Use new_change on RTPSWriter or reserveCache on RTPSReader")
+    FASTDDS_DEPRECATED("Use new_change on RTPSWriter or reserveCache on RTPSReader")
     RTPS_DllAPI inline bool reserve_Cache(
             CacheChange_t** change,
             uint32_t dataSize)
@@ -99,7 +99,7 @@ public:
      * @param ch Pointer to the CacheChange_t.
      * @warning This method has been deprecated and will be removed on v3.0.0
      */
-    FASTRTPS_DEPRECATED("Use release_change on RTPSWriter or releaseCache on RTPSReader")
+    FASTDDS_DEPRECATED("Use release_change on RTPSWriter or releaseCache on RTPSReader")
     RTPS_DllAPI inline void release_Cache(
             CacheChange_t* ch)
     {

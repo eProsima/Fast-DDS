@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTRTPS_CONFIG_H_
-#define _FASTRTPS_CONFIG_H_
+#ifndef _FASTDDS_CONFIG_H_
+#define _FASTDDS_CONFIG_H_
 
-#define FASTRTPS_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
-#define FASTRTPS_VERSION_MINOR @PROJECT_VERSION_MINOR@
-#define FASTRTPS_VERSION_MICRO @PROJECT_VERSION_PATCH@
-#define FASTRTPS_VERSION_STR "@PROJECT_VERSION@"
+#define FASTDDS_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define FASTDDS_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define FASTDDS_VERSION_MICRO @PROJECT_VERSION_PATCH@
+#define FASTDDS_VERSION_STR "@PROJECT_VERSION@"
 
 #define GEN_API_VER 2
 
@@ -105,23 +105,23 @@
 
 // Deprecated macro
 #if __cplusplus >= 201402L
-#define FASTRTPS_DEPRECATED(msg) [[ deprecated(msg) ]]
+#define FASTDDS_DEPRECATED(msg) [[ deprecated(msg) ]]
 #elif defined(__GNUC__) || defined(__clang__)
-#define FASTRTPS_DEPRECATED(msg) __attribute__ ((deprecated(msg)))
+#define FASTDDS_DEPRECATED(msg) __attribute__ ((deprecated(msg)))
 #elif defined(_MSC_VER)
-#define FASTRTPS_DEPRECATED(msg) __declspec(deprecated(msg))
+#define FASTDDS_DEPRECATED(msg) __declspec(deprecated(msg))
 #else
-#define FASTRTPS_DEPRECATED(msg)
+#define FASTDDS_DEPRECATED(msg)
 #endif /* if __cplusplus >= 201402L */
 
 // Deprecation with version
 #define FASTDDS_DEPRECATED_UNTIL(major, entity_name, msg)                                                           \
-    static_assert(FASTRTPS_VERSION_MAJOR < major, #entity_name " reached deprecation version " #major);             \
-    FASTRTPS_DEPRECATED(#entity_name " has been deprecated and will be removed on major version " #major ". " msg)
+    static_assert(FASTDDS_VERSION_MAJOR < major, #entity_name " reached deprecation version " #major);             \
+    FASTDDS_DEPRECATED(#entity_name " has been deprecated and will be removed on major version " #major ". " msg)
 
 #define FASTDDS_TODO_BEFORE(major, minor, msg)                                          \
-    static_assert((FASTRTPS_VERSION_MAJOR < major) ||                                   \
-            (FASTRTPS_VERSION_MAJOR == major && FASTRTPS_VERSION_MINOR < minor),  \
+    static_assert((FASTDDS_VERSION_MAJOR < major) ||                                   \
+            (FASTDDS_VERSION_MAJOR == major && FASTDDS_VERSION_MINOR < minor),  \
             "TODO before version " #major "." #minor " : " #msg);
 
 #if FASTCDR_VERSION_MAJOR > 1
@@ -130,4 +130,4 @@
 #define FASTDDS_SER_METHOD_DEPRECATED(major, entity_name, msg)
 #endif
 
-#endif // _FASTRTPS_CONFIG_H_
+#endif // _FASTDDS_CONFIG_H_
