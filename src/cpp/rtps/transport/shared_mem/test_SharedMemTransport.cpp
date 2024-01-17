@@ -23,7 +23,7 @@ namespace rtps {
 test_SharedMemTransportDescriptor::test_SharedMemTransportDescriptor()
     : SharedMemTransportDescriptor()
 {
-    big_buffer_size_ = std::numeric_limits<uint32_t>::max();
+    big_buffer_size_ = (std::numeric_limits<uint32_t>::max)();
     big_buffer_size_send_count_ = nullptr;
     big_buffer_size_recv_count_ = nullptr;
 }

@@ -137,7 +137,7 @@ struct SecureDataTag
 
 struct KeySessionData
 {
-    uint32_t session_id = std::numeric_limits<uint32_t>::max();
+    uint32_t session_id = (std::numeric_limits<uint32_t>::max)();
     std::array<uint8_t, 32> SessionKey = c_empty_key_material;
     uint64_t session_block_counter = 0;
 };
