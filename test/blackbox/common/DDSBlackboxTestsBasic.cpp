@@ -42,6 +42,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include "BlackboxTests.hpp"
+#include "../api/dds-pim/CustomPayloadPool.hpp"
 #include "../api/dds-pim/PubSubReader.hpp"
 #include "../api/dds-pim/PubSubWriter.hpp"
 #include "../api/dds-pim/PubSubWriterReader.hpp"
@@ -694,6 +695,67 @@ TEST(DDSBasic, participant_ignore_local_endpoints_two_participants)
 
     // Wait for reception
     EXPECT_EQ(reader.block_for_all(std::chrono::seconds(1)), 5);
+}
+
+/**
+ * @test This test checks both the visibility of custom pool functions
+ *  for DataReader and DataWriters while also testing their correct
+ *  behavior
+ */
+TEST(DDSBasic, endpoint_custom_payload_pools)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    // Register type
+    TypeSupport type;
+
+    type.reset(new StringTestPubSubType());
+    type.register_type(participant);
+    ASSERT_NE(nullptr, type);
+
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    // Next QoS config checks the default qos configuration,
+    // create_datareader() should not return nullptr.
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+
+    std::shared_ptr<CustomPayloadPool> reader_payload_pool = std::make_shared<CustomPayloadPool>();
+
+    std::shared_ptr<CustomPayloadPool> writer_payload_pool = std::make_shared<CustomPayloadPool>();
+
+    DataReader* data_reader = subscriber->create_datareader_with_payload_pool(
+        topic, reader_qos, reader_payload_pool, nullptr, StatusMask::all());
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+
+    DataWriter* data_writer = publisher->create_datawriter_with_payload_pool(
+        topic, writer_qos, writer_payload_pool, nullptr, StatusMask::all());
+
+    ASSERT_NE(data_reader, nullptr);
+    ASSERT_NE(data_writer, nullptr);
+
+    StringTest data;
+    data.message("Lorem Ipsum");
+
+    data_writer->write(&data, HANDLE_NIL);
+
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    ASSERT_EQ(reader_payload_pool->requested_payload_count, 1u);
+    ASSERT_EQ(writer_payload_pool->requested_payload_count, 1u);
+
+    participant->delete_contained_entities();
 }
 
 } // namespace dds
