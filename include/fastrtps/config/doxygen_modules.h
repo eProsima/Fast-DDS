@@ -22,37 +22,33 @@
 //Description of doxygen modules, not used in actual code.
 
 /*!
- * @defgroup FASTRTPS_GENERAL_API eProsima Fast RTPS API Reference
- * @brief eProsima Fast RTPS API grouped in modules.
+ * @defgroup FASTDDS_GENERAL_API eProsima Fast DDS API Reference
+ * @brief eProsima Fast DDS API grouped in modules.
  */
-
-
 
 /*!
  * @defgroup RTPS_MODULE RTPS
- * @ingroup FASTRTPS_GENERAL_API
+ * @ingroup FASTDDS_GENERAL_API
  * @brief RTPS API
  * This is an implementation of the RTPS communication standard defined by the OMG.
  */
 
-
 /*!
- * @defgroup FASTRTPS_MODULE Publisher Subscriber Public API
- * @ingroup FASTRTPS_GENERAL_API
- * @brief Publisher Subscriber Public API
- * This Module contains the Publisher Subscriber Layer created to facilitate the use of the RTPS protocol.
+ * @defgroup FASTDDS_MODULE DDS Public API
+ * @ingroup FASTDDS_GENERAL_API
+ * @brief DDS Public API
+ * This Module contains the DDS Layer defined by the OMG.
  */
 
-/** @defgroup FASTRTPS_ATTRIBUTES_MODULE Fast RTPS Attributes Module.
- * @ingroup FASTRTPS_MODULE
- * @brief Attributes class used to define the public entities that the user should use to control this library.
+/** @defgroup FASTDDS_QOS_MODULE Fast DDS Quality of Service (QoS) Module.
+ * @ingroup FASTDDS_MODULE
+ * @brief QOS class used to define the public entities that the user should use to control this library.
  */
 
 /** @defgroup RTPS_ATTRIBUTES_MODULE RTPS Attributes Module.
  * @ingroup RTPS_MODULE
  * @brief Attributes class used to define the public entities that the user should use to control this library.
  */
-
 
 /** @defgroup COMMON_MODULE Common Module.
  * @ingroup RTPS_MODULE
@@ -61,8 +57,7 @@
 
 /** @defgroup NETWORK_MODULE Network Module
  * @ingroup RTPS_MODULE
- * Includes the elements necessary to interface between the
- * transport layer and the FastRTPS library.
+ * Includes the elements necessary to interface between the transport layer and the Fast DDS library.
  */
 
 /** @defgroup TRANSPORT_MODULE Transport Module.
@@ -88,9 +83,9 @@
  */
 
 /** @defgroup MANAGEMENT_MODULE Management Module
- * @ingroup FASTRTPS_GENERAL_API
- * This module contains classes and methods associated with the management of all other objects. The most important ones
- * are the communication (ResourceSend and ResourceListen) and event (ResourceEvent) resources.
+ * @ingroup FASTDDS_GENERAL_API
+ * This module contains classes and methods associated with the management of all other objects.
+ * The most important ones are the communication (ResourceSend and ResourceListen) and event (ResourceEvent) resources.
  */
 
 /** @defgroup BUILTIN_MODULE Builtin Protocols Module
@@ -116,23 +111,18 @@
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /** @defgroup UTILITIES_MODULE Shared Utilities
- * @ingroup FASTRTPS_GENERAL_API
- * Shared utilities that can be used by one or more classes in different modules. They are not strictly part of the RTPS implementation
- * but very useful to implement different functionalities.
+ * @ingroup FASTDDS_GENERAL_API
+ * Shared utilities that can be used by one or more classes in different modules.
+ * They are not strictly part of the RTPS implementation but very useful to implement different functionalities.
  */
 
 /**
  * @namespace eprosima eProsima namespace.
- * @ingroup FASTRTPS_GENERAL_API
+ * @ingroup FASTDDS_GENERAL_API
  */
 
 /**
- * @namespace eprosima::fastrtps Contains the publisher subscriber layer.
- * @ingroup FASTRTPS_MODULE
- */
-
-/**
- * @namespace eprosima::fastrtps::rtps Contains the RTPS protocol implementation
+ * @namespace eprosima::fastdds::rtps Contains the RTPS protocol implementation
  * @ingroup RTPS_MODULE
  */
 

@@ -61,7 +61,7 @@ class TypeSupport;
 
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
- *  @ingroup FASTRTPS_MODULE
+ *  @ingroup FASTDDS_MODULE
  */
 class SubscriberImpl
 {

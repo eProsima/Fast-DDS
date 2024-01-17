@@ -77,7 +77,7 @@ class ReaderFilterCollection;
 
 /**
  * This is the implementation class of the DomainParticipant.
- * @ingroup FASTRTPS_MODULE
+ * @ingroup FASTDDS_MODULE
  */
 class DomainParticipantImpl
 {
