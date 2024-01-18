@@ -106,7 +106,7 @@ private:
 
     uint32_t next_index_ {0};
 
-    MemberId next_id {0};
+    MemberId next_id_ {0};
 
     int32_t default_union_label_ {0};
 };
