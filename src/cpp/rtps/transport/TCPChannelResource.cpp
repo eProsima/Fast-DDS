@@ -304,7 +304,7 @@ bool TCPChannelResource::check_socket_send_buffer(
 #ifndef _WIN32
     if (ioctl(socket_native_handle, TIOCOUTQ, &bytesInSendQueue) == -1)
     {
-        return false;
+        bytesInSendQueue = 0;
     }
 #endif // ifndef _WIN32
 

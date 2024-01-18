@@ -292,7 +292,7 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
      * When set to false, calls to send() will block until the send buffer has space for the
      * datagram. This may cause application lock.
      */
-    bool non_blocking_send = false;
+    bool non_blocking_send;
 
     //! Add listener port to the listening_ports list
     void add_listener_port(

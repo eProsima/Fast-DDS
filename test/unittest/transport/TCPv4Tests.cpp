@@ -1372,8 +1372,8 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_with_sni)
 }
 
 #ifndef _WIN32
-// The primary purpose of this test is to test the secure socket sending functionality to a someone that does
-// not read or does so insufficiently fast.
+// The primary purpose of this test is to check the non-blocking behavior of a secure socket sending data to a
+// destination that does not read or does it so slowly.
 TEST_F(TCPv4Tests, secure_non_blocking_send)
 {
     uint16_t port = g_default_port;
@@ -1396,14 +1396,14 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     MockTCPv4Transport senderTransportUnderTest(senderDescriptor);
     senderTransportUnderTest.init();
 
-    //Create a TCP Client socket
+    // Create a TCP Client socket.
     // The creation of a reception transport for testing this functionality is not
     // feasible. For the saturation of the sending socket, it's necessary first to
     // saturate the reception socket of the datareader. This saturation requires
     // preventing the datareader from reading from the socket, what inevitably
     // happens continuously if instantiating and connecting the receiver transport.
     // Hence, a raw socket is opened and connected to the server. There won't be read
-    // calls the socket.
+    // calls on that socket.
     Locator_t serverLoc;
     serverLoc.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(serverLoc, 127, 0, 0, 1);
