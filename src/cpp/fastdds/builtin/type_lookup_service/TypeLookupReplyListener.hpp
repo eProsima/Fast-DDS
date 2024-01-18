@@ -17,12 +17,20 @@
  *
  */
 
-#ifndef _FASTDDS_TYPELOOKUP_SERVICE_REPLY_LISTENER_HPP_
-#define _FASTDDS_TYPELOOKUP_SERVICE_REPLY_LISTENER_HPP_
+#ifndef _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REPLY_LISTENER_HPP_
+#define _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REPLY_LISTENER_HPP_
+
+#include <mutex>
+#include <queue>
+#include <unordered_map>
+#include <unordered_set>
+#include <condition_variable>
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
+#include <utils/thread.hpp>
+#include <utils/threading.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -39,6 +47,12 @@ namespace dds {
 namespace builtin {
 
 class TypeLookupManager;
+
+struct ReplyWithServerGUID
+{
+    TypeLookup_Reply reply;
+    fastrtps::rtps::GuidPrefix_t type_server;
+};
 
 /**
  * Class TypeLookupReplyListener that receives the typelookup request messages of remote endpoints.
@@ -60,9 +74,26 @@ public:
      */
     virtual ~TypeLookupReplyListener() override;
 
+private:
+
+    /**
+     * @brief Starts the thread that process the received replies.
+     */
+    void start_reply_processor_thread();
+
+    /**
+     * @brief Stops the thread that process the received replies.
+     */
+    void stop_reply_processor_thread();
+
+    /**
+     * @brief Process the replies in the queue.
+     */
+    void process_reply();
+
     /**
      * @brief Registers TypeIdentifier and TypeObject in TypeObjectRegistry.
-     * Also notifies all callbacks for the type and removes the current SampleIdentity from the list.
+     * This method also notifies all type related callbacks and removes the current SampleIdentity from the pending request list.
      * @param request_id[in] The SampleIdentity of the request.
      * @param reply[in] The reply data.
      */
@@ -93,23 +124,20 @@ public:
             fastrtps::rtps::RTPSReader* reader,
             const fastrtps::rtps::CacheChange_t* const change) override;
 
-    /**
-     * @brief This method is called when all the readers matched with this Writer acknowledge that a cache
-     * change has been received.
-     * @param change The cache change
-     */
-    void onWriterChangeReceivedByAll(
-            fastrtps::rtps::RTPSWriter*,
-            fastrtps::rtps::CacheChange_t* change) override;
-
-private:
 
     //! A pointer to the typelookup manager.
     TypeLookupManager* typelookup_manager_;
+
+    eprosima::thread replies_processor_thread;
+    std::queue<ReplyWithServerGUID> replies_queue_;
+    std::mutex replies_processor_cv_mutex_;
+    std::condition_variable replies_processor_cv_;
+    bool processing_;
+    rtps::ThreadSettings replies_processor_thread_settings_;
 };
 
 } /* namespace builtin */
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif /* _FASTDDS_TYPELOOKUP_SERVICE_REPLY_LISTENER_HPP_*/
+#endif /* _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REPLY_LISTENER_HPP_*/

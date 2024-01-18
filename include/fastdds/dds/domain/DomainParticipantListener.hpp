@@ -101,7 +101,7 @@ public:
      * @param[out] participant Pointer to the Participant which discovered the remote DataReader.
      * @param[out] info Remote DataReader information. User can take ownership of the object.
      */
-    virtual void on_subscriber_discovery(
+    virtual void on_data_reader_discovery(
             DomainParticipant* participant,
             fastrtps::rtps::ReaderDiscoveryInfo&& info)
     {
@@ -119,7 +119,7 @@ public:
      * @param[out] info Remote DataReader information. User can take ownership of the object.
      * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered DataReader.
      */
-    virtual void on_subscriber_discovery(
+    virtual void on_data_reader_discovery(
             DomainParticipant* participant,
             fastrtps::rtps::ReaderDiscoveryInfo&& info,
             bool& should_be_ignored)
@@ -136,7 +136,7 @@ public:
      * @param[out] participant Pointer to the Participant which discovered the remote DataWriter.
      * @param[out] info Remote DataWriter information. User can take ownership of the object.
      */
-    virtual void on_publisher_discovery(
+    virtual void on_data_writer_discovery(
             DomainParticipant* participant,
             fastrtps::rtps::WriterDiscoveryInfo&& info)
     {
@@ -154,7 +154,7 @@ public:
      * @param[out] info Remote DataWriter information. User can take ownership of the object.
      * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered DataWriter.
      */
-    virtual void on_publisher_discovery(
+    virtual void on_data_writer_discovery(
             DomainParticipant* participant,
             fastrtps::rtps::WriterDiscoveryInfo&& info,
             bool& should_be_ignored)

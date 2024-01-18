@@ -17,17 +17,21 @@
  *
  */
 
-#ifndef _FASTDDS_TYPELOOKUP_SERVICE_REQUEST_LISTENER_HPP_
-#define _FASTDDS_TYPELOOKUP_SERVICE_REQUEST_LISTENER_HPP_
+#ifndef _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REQUEST_LISTENER_HPP_
+#define _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REQUEST_LISTENER_HPP_
 
 #include <mutex>
+#include <queue>
 #include <unordered_map>
 #include <unordered_set>
+#include <condition_variable>
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 #include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
+#include <utils/thread.hpp>
+#include <utils/threading.hpp>
 
 namespace std {
 
@@ -87,6 +91,23 @@ public:
      */
     virtual ~TypeLookupRequestListener() override;
 
+private:
+
+    /**
+     * @brief Starts the thread that process the received requests.
+     */
+    void start_request_processor_thread();
+
+    /**
+     * @brief Stops the thread that process the received requests.
+     */
+    void stop_request_processor_thread();
+
+    /**
+     * @brief Process the requests in the queue.
+     */
+    void process_requests();
+
     /**
      * @brief Gets TypeObject from TypeObjectRegistry, creates and sends reply.
      * @param request_id[in] The SampleIdentity of the request.
@@ -118,6 +139,24 @@ public:
             const std::vector<uint8_t>& continuation_point);
 
     /**
+     * @brief Creates a sends TypeLookup_Reply.
+     * @param request_id[in] The SampleIdentity of the request.
+     * @param exception_code[in] The RemoteExceptionCode_t used in the header.
+     * @param out[in] The result of the request being answered.
+     */
+    void answer_request(
+            SampleIdentity request_id,
+            rpc::RemoteExceptionCode_t exception_code,
+            TypeLookup_getTypeDependencies_Out& out);
+    void answer_request(
+            SampleIdentity request_id,
+            rpc::RemoteExceptionCode_t exception_code,
+            TypeLookup_getTypes_Out& out);
+    void answer_request(
+            SampleIdentity request_id,
+            rpc::RemoteExceptionCode_t exception_code);
+
+    /**
      * @brief Method call when this class is notified of a new cache change.
      * @param reader The reader receiving the cache change.
      * @param change The cache change.
@@ -125,17 +164,6 @@ public:
     void onNewCacheChangeAdded(
             fastrtps::rtps::RTPSReader* reader,
             const fastrtps::rtps::CacheChange_t* const change) override;
-
-    /**
-     * @brief This method is called when all the readers matched with this Writer acknowledge that a cache
-     * change has been received.
-     * @param change The cache change
-     */
-    void onWriterChangeReceivedByAll(
-            fastrtps::rtps::RTPSWriter*,
-            fastrtps::rtps::CacheChange_t* change) override;
-
-private:
 
     //! A pointer to the typelookup manager.
     TypeLookupManager* typelookup_manager_;
@@ -146,10 +174,17 @@ private:
     //! Collection of the requests that needed continuation points.
     std::unordered_map <xtypes::TypeIdentifierSeq,
             std::unordered_set<xtypes::TypeIdentfierWithSize>> requests_with_continuation_;
+
+    eprosima::thread request_processor_thread;
+    std::queue<TypeLookup_Request> requests_queue_;
+    std::mutex request_processor_cv_mutex_;
+    std::condition_variable request_processor_cv_;
+    bool processing_;
+    rtps::ThreadSettings request_processor_thread_settings_;
 };
 
 } /* namespace builtin */
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif /* _FASTDDS_TYPELOOKUP_SERVICE_REQUEST_LISTENER_HPP_*/
+#endif /* _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REQUEST_LISTENER_HPP_*/

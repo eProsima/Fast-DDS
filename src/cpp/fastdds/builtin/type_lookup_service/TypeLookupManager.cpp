@@ -259,8 +259,6 @@ SampleIdentity TypeLookupManager::get_type_dependencies(
         const fastrtps::rtps::GuidPrefix_t& type_server,
         const std::vector<uint8_t>& continuation_point) const
 {
-    SampleIdentity id = INVALID_SAMPLE_IDENTITY;
-
     TypeLookup_getTypeDependencies_In in;
     in.type_ids(id_seq);
     if (!continuation_point.empty())
@@ -268,14 +266,19 @@ SampleIdentity TypeLookupManager::get_type_dependencies(
         in.continuation_point(continuation_point);
     }
 
+    // Create a generic TypeLookup_Request
     TypeLookup_RequestPubSubType type;
-    TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
+    TypeLookup_Request* request = create_request(type_server, type);
+
+    // Add the specific data to the request
     request->data().getTypeDependencies(in);
 
-    if (send_request(type_server, *request))
+    SampleIdentity id = INVALID_SAMPLE_IDENTITY;
+    if (send(*request))
     {
         id = request->header().requestId();
     }
+    // Delete request data after sending
     type.deleteData(request);
     return id;
 }
@@ -284,111 +287,45 @@ SampleIdentity TypeLookupManager::get_types(
         const xtypes::TypeIdentifierSeq& id_seq,
         const fastrtps::rtps::GuidPrefix_t& type_server) const
 {
-    SampleIdentity id = INVALID_SAMPLE_IDENTITY;
-
     TypeLookup_getTypes_In in;
     in.type_ids(id_seq);
+
+    // Create a generic TypeLookup_Request
     TypeLookup_RequestPubSubType type;
-    TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.createData());
+    TypeLookup_Request* request = create_request(type_server, type);
+
+    // Add the specific data to the request
     request->data().getTypes(in);
 
-    if (send_request(type_server, *request))
+    SampleIdentity id = INVALID_SAMPLE_IDENTITY;
+    if (send(*request))
     {
         id = request->header().requestId();
     }
+    // Delete request data after sending
     type.deleteData(request);
     return id;
 }
 
 ReturnCode_t TypeLookupManager::async_get_type(
-        eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&& temp_writer_data,
+        eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr& temp_writer_data,
         const AsyncGetTypeWriterCallback& callback)
 {
-    ReturnCode_t result = check_type_identifier_received(std::move(temp_writer_data), callback);
-    if (RETCODE_OK == result)
-    {
-        // The type is already known, invoke the callback
-        callback(std::move(temp_writer_data));
-    }
-    return result;
+    return check_type_identifier_received<eprosima::fastrtps::rtps::WriterProxyData>(
+        temp_writer_data, callback, async_get_type_writer_callbacks_);
 }
 
 ReturnCode_t TypeLookupManager::async_get_type(
-        eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&&  temp_reader_data,
+        eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&  temp_reader_data,
         const AsyncGetTypeReaderCallback& callback)
 {
-    ReturnCode_t result = check_type_identifier_received(std::move(temp_reader_data), callback);
-    if (RETCODE_OK == result)
-    {
-        // The type is already known, invoke the callback
-        callback(std::move(temp_reader_data));
-    }
-    return result;
-}
-
-ReturnCode_t TypeLookupManager::check_type_identifier_received(
-        const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
-        const fastrtps::rtps::GuidPrefix_t& type_server)
-{
-    // Check if the type is known
-    if (fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                    is_type_identifier_known(type_identifier_with_size))
-    {
-        return RETCODE_OK;
-    }
-
-    // Check if TypeIdentfierWithSize already exists in the map
-    auto writer_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
-    if (writer_it != async_get_type_writer_callbacks_.end())
-    {
-        // Return without sending new request
-        return RETCODE_NO_DATA;
-    }
-
-    // If not found in the writer map, check the reader map
-    auto reader_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
-    if (reader_it != async_get_type_reader_callbacks_.end())
-    {
-        // Return without sending new request
-        return RETCODE_NO_DATA;
-    }
-
-    // TypeIdentfierWithSize doesn't exist, create a new entry
-    xtypes::TypeIdentifierSeq unknown_type{type_identifier_with_size.type_id()};
-    SampleIdentity get_type_dependencies_request = get_type_dependencies(unknown_type, type_server);
-    if (INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
-    {
-        // Store the sent request
-        add_async_get_type_request(get_type_dependencies_request, type_identifier_with_size);
-        return RETCODE_NO_DATA;
-    }
-    else
-    {
-        // Failed to send request, return error
-        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Failed to send get_type_dependencies request");
-        return RETCODE_ERROR;
-    }
-}
-
-ReturnCode_t TypeLookupManager::check_type_identifier_received(
-        eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&& temp_writer_data,
-        const AsyncGetTypeWriterCallback& callback)
-{
-    return check_type_identifier_received_impl<eprosima::fastrtps::rtps::WriterProxyData>(
-        std::move(temp_writer_data), callback, async_get_type_writer_callbacks_);
-}
-
-ReturnCode_t TypeLookupManager::check_type_identifier_received(
-        eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&& temp_reader_data,
-        const AsyncGetTypeReaderCallback& callback)
-{
-    return check_type_identifier_received_impl<eprosima::fastrtps::rtps::ReaderProxyData>(
-        std::move(temp_reader_data), callback, async_get_type_reader_callbacks_);
+    return check_type_identifier_received<eprosima::fastrtps::rtps::ReaderProxyData>(
+        temp_reader_data, callback, async_get_type_reader_callbacks_);
 }
 
 template <typename ProxyType, typename AsyncCallback>
-ReturnCode_t TypeLookupManager::check_type_identifier_received_impl(
-        typename eprosima::ProxyPool<ProxyType>::smart_ptr&& temp_proxy_data,
+ReturnCode_t TypeLookupManager::check_type_identifier_received(
+        typename eprosima::ProxyPool<ProxyType>::smart_ptr& temp_proxy_data,
         const AsyncCallback& callback,
         std::unordered_map<xtypes::TypeIdentfierWithSize,
         std::vector<std::pair<typename eprosima::ProxyPool<ProxyType>::smart_ptr,
@@ -402,40 +339,42 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received_impl(
     if (fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                     is_type_identifier_known(type_identifier_with_size))
     {
+        // The type is already known, invoke the callback
+        callback(temp_proxy_data);
         return RETCODE_OK;
     }
 
-    // Check if TypeIdentfierWithSize already exists in the map
-    std::lock_guard<std::mutex> lock(async_get_types_mutex_);
-    auto it = async_get_type_callbacks.find(type_identifier_with_size);
-    if (it != async_get_type_callbacks.end())
     {
-        // TypeIdentfierWithSize exists, add the callback
-        it->second.push_back(std::make_pair(std::move(temp_proxy_data), callback));
-        // Return without sending new request
+        // Check if TypeIdentfierWithSize already exists in the map
+        std::lock_guard<std::mutex> lock(async_get_types_mutex_);
+        auto it = async_get_type_callbacks.find(type_identifier_with_size);
+        if (it != async_get_type_callbacks.end())
+        {
+            // TypeIdentfierWithSize exists, add the callback
+            it->second.push_back(std::make_pair(std::move(temp_proxy_data), callback));
+            // Return without sending new request
+            return RETCODE_NO_DATA;
+        }
+    }
+
+    // TypeIdentfierWithSize doesn't exist, create a new entry
+    SampleIdentity get_type_dependencies_request = get_type_dependencies(
+        {type_identifier_with_size.type_id()}, type_server);
+    if (INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
+    {
+        // Store the sent requests and callback
+        add_async_get_type_request(get_type_dependencies_request, type_identifier_with_size);
+        std::vector<std::pair<typename eprosima::ProxyPool<ProxyType>::smart_ptr, AsyncCallback>> types;
+        types.push_back(std::make_pair(std::move(temp_proxy_data), callback));
+        async_get_type_callbacks.emplace(type_identifier_with_size, std::move(types));
+
         return RETCODE_NO_DATA;
     }
     else
     {
-        // TypeIdentfierWithSize doesn't exist, create a new entry
-        xtypes::TypeIdentifierSeq unknown_type{type_identifier_with_size.type_id()};
-        SampleIdentity get_type_dependencies_request = get_type_dependencies(unknown_type, type_server);
-        if (INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
-        {
-            // Store the sent requests and callback
-            add_async_get_type_request(get_type_dependencies_request, type_identifier_with_size);
-            std::vector<std::pair<typename eprosima::ProxyPool<ProxyType>::smart_ptr, AsyncCallback>> types;
-            types.push_back(std::make_pair(std::move(temp_proxy_data), callback));
-            async_get_type_callbacks.emplace(type_identifier_with_size, std::move(types));
-
-            return RETCODE_NO_DATA;
-        }
-        else
-        {
-            // Failed to send request, return error
-            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Failed to send get_type_dependencies request");
-            return RETCODE_ERROR;
-        }
+        // Failed to send request, return error
+        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Failed to send get_type_dependencies request");
+        return RETCODE_ERROR;
     }
 }
 
@@ -448,7 +387,7 @@ void TypeLookupManager::notify_callbacks(
     {
         for (auto& proxy_callback_pair : writer_callbacks_it->second)
         {
-            proxy_callback_pair.second(std::move(proxy_callback_pair.first));
+            proxy_callback_pair.second(proxy_callback_pair.first);
         }
         //Erase the solved TypeIdentfierWithSize
         remove_async_get_type_callback(type_identifier_with_size);
@@ -459,7 +398,7 @@ void TypeLookupManager::notify_callbacks(
     {
         for (auto& proxy_callback_pair : reader_callbacks_it->second)
         {
-            proxy_callback_pair.second(std::move(proxy_callback_pair.first));
+            proxy_callback_pair.second(proxy_callback_pair.first);
         }
         // Erase the solved TypeIdentfierWithSize
         remove_async_get_type_callback(type_identifier_with_size);
@@ -524,7 +463,7 @@ bool TypeLookupManager::remove_async_get_type_callback(
     }
 }
 
-bool TypeLookupManager::remove_async_get_types_request(
+bool TypeLookupManager::remove_async_get_type_request(
         SampleIdentity request)
 {
     std::unique_lock<std::mutex> lock(async_get_types_mutex_);
@@ -536,7 +475,7 @@ bool TypeLookupManager::remove_async_get_types_request(
     catch (const std::exception& e)
     {
         EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
-                "Error in TypeLookupManager::remove_async_get_types_request: " << e.what());
+                "Error in TypeLookupManager::remove_async_get_type_request: " << e.what());
         return false;
     }
 }
@@ -563,6 +502,7 @@ bool TypeLookupManager::create_endpoints()
     watt.endpoint.topicKind = fastrtps::rtps::NO_KEY;
     watt.endpoint.reliabilityKind = fastrtps::rtps::RELIABLE;
     watt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
+    watt.mode = fastrtps::rtps::ASYNCHRONOUS_WRITER;
 
     // Built-in request writer
     request_listener_ = new TypeLookupRequestListener(this);
@@ -716,95 +656,102 @@ bool TypeLookupManager::create_endpoints()
     return ret;
 }
 
-bool TypeLookupManager::send_request(
+TypeLookup_Request* TypeLookupManager::create_request(
         const fastrtps::rtps::GuidPrefix_t& type_server,
-        TypeLookup_Request& request) const
+        TypeLookup_RequestPubSubType& pupsubtype) const
 {
-    request.header().instanceName() = get_instance_name(type_server);
-    request.header().requestId().writer_guid(guid_rtps_2_dds(builtin_request_writer_->getGuid()));
-    request.header().requestId().sequence_number(sequence_number_rtps_2_dds(request_seq_number_));
+    TypeLookup_Request* request = static_cast<TypeLookup_Request*>(pupsubtype.createData());
+    request->header().instanceName() = get_instance_name(type_server);
+    request->header().requestId().writer_guid(guid_rtps_2_dds(builtin_request_writer_->getGuid()));
+    request->header().requestId().sequence_number(sequence_number_rtps_2_dds(request_seq_number_));
     request_seq_number_++;
-
-    CacheChange_t* change = builtin_request_writer_->new_change(
-        [&request]()
-        {
-            eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-            size_t current_alignment {0};
-            return static_cast<uint32_t>(calculator.calculate_serialized_size(request, current_alignment) + 4);
-        },
-        ALIVE);
-
-    if (change != nullptr)
-    {
-        CDRMessage_t msg(change->serializedPayload);
-
-        bool valid = CDRMessage::addOctet(&msg, 0);
-        change->serializedPayload.encapsulation = static_cast<uint16_t>(PL_DEFAULT_ENCAPSULATION);
-        msg.msg_endian = DEFAULT_ENDIAN;
-        valid &= CDRMessage::addOctet(&msg, PL_DEFAULT_ENCAPSULATION);
-        valid &= CDRMessage::addUInt16(&msg, 0);
-
-        change->serializedPayload.pos = msg.pos;
-        change->serializedPayload.length = msg.length;
-
-        SerializedPayload_t payload;
-        payload.max_size = change->serializedPayload.max_size - 4;
-        payload.data = change->serializedPayload.data + 4;
-        if (valid && request_type_.serialize(&request, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION))
-        {
-            change->serializedPayload.length += payload.length;
-            change->serializedPayload.pos += payload.pos;
-            payload.data = nullptr;
-            return builtin_request_writer_history_->add_change(change);
-        }
-    }
-    builtin_request_writer_history_->remove_change(change);
-    return false;
+    return request;
 }
 
-bool TypeLookupManager::send_reply(
+bool TypeLookupManager::prepare_send_payload(
+        fastrtps::rtps::CacheChange_t* change,
+        fastrtps::rtps::SerializedPayload_t& payload) const
+{
+    CDRMessage_t msg(change->serializedPayload);
+    bool valid = CDRMessage::addOctet(&msg, 0);
+    change->serializedPayload.encapsulation = static_cast<uint16_t>(PL_DEFAULT_ENCAPSULATION);
+    msg.msg_endian = DEFAULT_ENDIAN;
+    valid &= CDRMessage::addOctet(&msg, PL_DEFAULT_ENCAPSULATION);
+    valid &= CDRMessage::addUInt16(&msg, 0);
+    change->serializedPayload.pos = msg.pos;
+    change->serializedPayload.length = msg.length;
+    payload.max_size = change->serializedPayload.max_size - 4;
+    payload.data = change->serializedPayload.data + 4;
+    return valid;
+}
+
+bool TypeLookupManager::send(
+        TypeLookup_Request& request) const
+{
+    return send_impl(request, &request_type_, builtin_request_writer_, builtin_request_writer_history_);
+}
+
+bool TypeLookupManager::send(
         TypeLookup_Reply& reply) const
 {
-    CacheChange_t* change = builtin_reply_writer_->new_change(
-        [&reply]()
+    return send_impl(reply, &reply_type_, builtin_reply_writer_, builtin_reply_writer_history_);
+}
+
+template <typename Type, typename PubSubType>
+bool TypeLookupManager::send_impl(
+        Type& msg,
+        PubSubType* pubsubtype,
+        fastrtps::rtps::StatefulWriter* writer,
+        fastrtps::rtps::WriterHistory* writer_history) const
+{
+    // Create a new CacheChange_t using the provided StatefulWriter
+    CacheChange_t* change = writer->new_change(
+        [&msg]()
         {
+            // Calculate the serialized size of the message using a CdrSizeCalculator
             eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
             size_t current_alignment {0};
-            return static_cast<uint32_t>(calculator.calculate_serialized_size(reply, current_alignment) + 4);
+            return static_cast<uint32_t>(calculator.calculate_serialized_size(msg, current_alignment) + 4);
         },
         ALIVE);
 
-    if (change != nullptr)
+    // Check if the creation of CacheChange_t was successful
+    if (!change)
     {
-        CDRMessage_t msg(change->serializedPayload);
-
-        bool valid = CDRMessage::addOctet(&msg, 0);
-        change->serializedPayload.encapsulation = static_cast<uint16_t>(PL_DEFAULT_ENCAPSULATION);
-        msg.msg_endian = DEFAULT_ENDIAN;
-        valid &= CDRMessage::addOctet(&msg, PL_DEFAULT_ENCAPSULATION);
-        valid &= CDRMessage::addUInt16(&msg, 0);
-
-        change->serializedPayload.pos = msg.pos;
-        change->serializedPayload.length = msg.length;
-
-        SerializedPayload_t payload;
-        payload.max_size = change->serializedPayload.max_size - 4;
-        payload.data = change->serializedPayload.data + 4;
-        if (valid && reply_type_.serialize(&reply, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION))
-        {
-            change->serializedPayload.length += payload.length;
-            change->serializedPayload.pos += payload.pos;
-            payload.data = nullptr;
-            return builtin_reply_writer_history_->add_change(change);
-        }
+        return false;
     }
-    builtin_request_writer_history_->remove_change(change);
-    return false;
+
+    // Prepare the payload for sending the message
+    SerializedPayload_t payload;
+    if (!prepare_send_payload(change, payload))
+    {
+        return false;
+    }
+
+    // Serialize the message using the provided PubSubType
+    bool result = pubsubtype->serialize(&msg, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    // If serialization was successful, update the change and add it to the WriterHistory
+    if (result)
+    {
+        change->serializedPayload.length += payload.length;
+        change->serializedPayload.pos += payload.pos;
+        result = writer_history->add_change(change);
+    }
+    // Release the payload data
+    payload.data = nullptr;
+
+    // If adding the change to WriterHistory failed, remove the change
+    if (!result)
+    {
+        writer_history->remove_change(change);
+    }
+
+    return result;
 }
 
-bool TypeLookupManager::receive_request(
+bool TypeLookupManager::prepare_receive_payload(
         fastrtps::rtps::CacheChange_t& change,
-        TypeLookup_Request& request) const
+        SerializedPayload_t& payload) const
 {
     CDRMessage_t msg(change.serializedPayload);
     msg.pos += 1;
@@ -825,55 +772,54 @@ bool TypeLookupManager::receive_request(
     change.serializedPayload.encapsulation = static_cast<uint16_t>(encapsulation);
     msg.pos += 2; // Skip encapsulation options.
 
-    SerializedPayload_t payload;
+    //SerializedPayload_t payload;
     payload.max_size = change.serializedPayload.max_size - 4;
     payload.length = change.serializedPayload.length - 4;
     payload.data = change.serializedPayload.data + 4;
-    bool result = request_type_.deserialize(&payload, &request);
-    payload.data = nullptr;
-    if (result && request.header().instanceName() != local_instance_name_)
-    {
-        // Ignore request
-        result = false;
-    }
-    return result;
+    return true;
 }
 
-bool TypeLookupManager::receive_reply(
+bool TypeLookupManager::receive(
+        fastrtps::rtps::CacheChange_t& change,
+        TypeLookup_Request& request) const
+{
+    if (receive_impl(change, request, &request_type_) &&
+            request.header().instanceName() != local_instance_name_)
+    {
+        // Ignore request
+        return false;
+    }
+    return true;
+}
+
+bool TypeLookupManager::receive(
         fastrtps::rtps::CacheChange_t& change,
         TypeLookup_Reply& reply) const
 {
-    CDRMessage_t msg(change.serializedPayload);
-    msg.pos += 1;
-    octet encapsulation = 0;
-    CDRMessage::readOctet(&msg, &encapsulation);
-    if (encapsulation == PL_CDR_BE)
-    {
-        msg.msg_endian = BIGEND;
-    }
-    else if (encapsulation == PL_CDR_LE)
-    {
-        msg.msg_endian = LITTLEEND;
-    }
-    else
-    {
-        return false;
-    }
-    change.serializedPayload.encapsulation = static_cast<uint16_t>(encapsulation);
-    msg.pos += 2;     // Skip encapsulation options.
-
-    SerializedPayload_t payload;
-    payload.max_size = change.serializedPayload.max_size - 4;
-    payload.length = change.serializedPayload.length - 4;
-    payload.data = change.serializedPayload.data + 4;
-    bool result = reply_type_.deserialize(&payload, &reply);
-    payload.data = nullptr;
-    if (result &&
+    if (receive_impl(change, reply, &reply_type_) &&
             guid_dds_2_rtps(reply.header().relatedRequestId().writer_guid()) != builtin_request_writer_->getGuid())
     {
         // Ignore reply
-        result = false;
+        return false;
     }
+    return true;
+}
+
+template <typename Type, typename PubSubType>
+bool TypeLookupManager::receive_impl(
+        fastrtps::rtps::CacheChange_t& change,
+        Type& msg,
+        PubSubType* pubsubtype) const
+{
+    SerializedPayload_t payload;
+    if (!prepare_receive_payload(change, payload))
+    {
+        return false;
+    }
+
+    bool result = pubsubtype->deserialize(&payload, &msg);
+    payload.data = nullptr;
+
     return result;
 }
 

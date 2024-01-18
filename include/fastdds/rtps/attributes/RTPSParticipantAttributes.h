@@ -443,6 +443,7 @@ public:
                (this->security_log_thread == b.security_log_thread) &&
 #endif // if HAVE_SECURITY
                (this->discovery_server_thread == b.discovery_server_thread) &&
+               (this->typelookup_service_threads == b.typelookup_service_threads) &&
                (this->builtin_transports_reception_threads == b.builtin_transports_reception_threads);
 
     }
@@ -558,6 +559,9 @@ public:
 
     //! Thread settings for the discovery server thread
     fastdds::rtps::ThreadSettings discovery_server_thread;
+
+    //! Thread settings for the discovery server thread
+    fastdds::rtps::ThreadSettings typelookup_service_threads;
 
     //! Thread settings for the builtin transports reception threads
     fastdds::rtps::ThreadSettings builtin_transports_reception_threads;

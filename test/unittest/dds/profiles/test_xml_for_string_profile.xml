@@ -138,6 +138,10 @@
                     <affinity>15</affinity>
                     <stack_size>1048576</stack_size>
                 </discovery_server_thread>
+                <typelookup_service_threads>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </typelookup_service_threads>
                 <builtin_transports_reception_threads>
                     <affinity>15</affinity>
                     <stack_size>1048576</stack_size>
@@ -283,6 +287,10 @@
                     <affinity>15</affinity>
                     <stack_size>1048576</stack_size>
                 </discovery_server_thread>
+                <typelookup_service_threads>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </typelookup_service_threads>
                 <builtin_transports_reception_threads>
                     <affinity>15</affinity>
                     <stack_size>1048576</stack_size>

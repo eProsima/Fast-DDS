@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
-#define _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
+#ifndef _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_SERVICE_MANAGER_HPP_
+#define _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_SERVICE_MANAGER_HPP_
 
 #include <mutex>
 #include <unordered_map>
@@ -104,9 +104,9 @@ namespace builtin {
 const SampleIdentity INVALID_SAMPLE_IDENTITY;
 
 using AsyncGetTypeWriterCallback = std::function<
-    void (eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr && temp_writer_data)>;
+    void (eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&)>;
 using AsyncGetTypeReaderCallback = std::function<
-    void (eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr && temp_reader_data)>;
+    void (eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&)>;
 
 /**
  * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.3 specification.
@@ -153,7 +153,7 @@ public:
      * Create and send a request using the builtin TypeLookup Service to retrieve all the type dependencies
      * associated with a sequence of TypeIdentifiers.
      * @param id_seq[in] Sequence of TypeIdentifiers for which dependencies are needed.
-     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
+     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being resolved.
      * @param continuation_point[in] Continuation point for a previous partially answered request.
      * @return The SampleIdentity of the sent request.
      */
@@ -183,48 +183,15 @@ public:
      *                      RETCODE_ERROR if any request was not sent correctly.
      */
     ReturnCode_t async_get_type(
-            eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&& temp_proxy_data,
+            eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr& temp_proxy_data,
             const AsyncGetTypeWriterCallback& callback);
     ReturnCode_t async_get_type(
-            eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&& temp_proxy_data,
+            eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr& temp_proxy_data,
             const AsyncGetTypeReaderCallback& callback);
 
 private:
 
     /**
-     * Checks if the given TypeIdentfierWithSize is known by the TypeObjectRegistry.
-     * Uses get_type_dependencies() and get_types() to get those that are not known.
-     * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
-     * TypeIdentfierWithSize was not in the map before.
-     * @param type_identifier_with_size[in] TypeIdentfierWithSize to check.
-     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
-     * @return ReturnCode_t RETCODE_OK if type is known.
-     *                      RETCODE_NO_DATA if the type is being discovered.
-     *                      RETCODE_ERROR if the request was not sent or the callback was not added correctly.
-     */
-    ReturnCode_t check_type_identifier_received(
-            const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
-            const fastrtps::rtps::GuidPrefix_t& type_server);
-    /**
-     * Checks if the given TypeIdentfierWithSize is known by the TypeObjectRegistry.
-     * Uses get_type_dependencies() and get_types() to get those that are not known.
-     * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
-     * TypeIdentfierWithSize was not in the map before.
-     * @param temp_proxy_data[in] Temporary Writer/Reader ProxyData that originated the request.
-     * @param callback[in] Callback to add.
-     * @return ReturnCode_t RETCODE_OK if type is known.
-     *                      RETCODE_NO_DATA if the type is being discovered.
-     *                      RETCODE_ERROR if the request was not sent or the callback was not added correctly.
-     */
-    ReturnCode_t check_type_identifier_received(
-            eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&& temp_writer_data,
-            const AsyncGetTypeWriterCallback& callback);
-    ReturnCode_t check_type_identifier_received(
-            eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&&  temp_reader_data,
-            const AsyncGetTypeReaderCallback& callback);
-
-    /**
-     * Implementation for check_type_identifier_received method.
      * Checks if the given TypeIdentfierWithSize is known by the TypeObjectRegistry.
      * Uses get_type_dependencies() and get_types() to get those that are not known.
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
@@ -237,8 +204,8 @@ private:
      *                      RETCODE_ERROR if the request was not sent or the callback was not added correctly.
      */
     template <typename ProxyType, typename AsyncCallback>
-    ReturnCode_t check_type_identifier_received_impl(
-            typename eprosima::ProxyPool<ProxyType>::smart_ptr&& temp_proxy_data,
+    ReturnCode_t check_type_identifier_received(
+            typename eprosima::ProxyPool<ProxyType>::smart_ptr& temp_proxy_data,
             const AsyncCallback& callback,
             std::unordered_map<xtypes::TypeIdentfierWithSize,
             std::vector<std::pair<typename eprosima::ProxyPool<ProxyType>::smart_ptr,
@@ -275,46 +242,103 @@ private:
      * @param request[in] SampleIdentity to be removed.
      * @return true if removed, false otherwise.
      */
-    bool remove_async_get_types_request(
+    bool remove_async_get_type_request(
             SampleIdentity request);
 
     /**
-     * Complete requests common fields, create CacheChange, serialize request and add change to writer history.
-     * @param type_id[in] TypeIdentfierWithSize that originated the request.
+     * Creates a TypeLookup_Request with for the choosen type_server.
+     * @param type_server[in] GuidPrefix_t corresponding to the remote participant.
+     * @param pupsubtype[out] PubSubType in charge of TypeLookup_Request .
+     * @return the TypeLookup_Request created.
+     */
+    TypeLookup_Request* create_request(
+            const fastrtps::rtps::GuidPrefix_t& type_server,
+            TypeLookup_RequestPubSubType& pupsubtype) const;
+
+    /**
+     * Prepares the the payload for sending a CacheChange before serializing.
+     * @param change[in] CacheChange_t received.
+     * @param payload[out] SerializedPayload_t prepared.
+     * @return true if received payload is prepared, false otherwise.
+     */
+    bool prepare_send_payload(
+            fastrtps::rtps::CacheChange_t* change,
+            fastrtps::rtps::SerializedPayload_t& payload) const;
+
+    /**
+     * Uses the send_impl with the appropriate parameters.
      * @param request[in] TypeLookup_Request to be sent.
      * @return true if request was sent, false otherwise.
      */
-    bool send_request(
-            const fastrtps::rtps::GuidPrefix_t& type_server,
+    bool send(
             TypeLookup_Request& request) const;
-
     /**
-     * Complete reply common fields, create CacheChange, serialize reply and add change to writer history.
+     * Uses the send_impl with the appropriate parameters.
      * @param reply[in] TypeLookup_Reply to be sent.
      * @return true if reply was sent, false otherwise.
      */
-    bool send_reply(
+    bool send(
             TypeLookup_Reply& reply) const;
 
     /**
-     * Used for request reception. Deserialize the request and check if it is directed to the local DomainParticipant.
+     * Implementation for the send methods.
+     * Creates CacheChange, serializes the message and adds change to writer history.
+     * @param msg[in] Message to be sent.
+     * @param pubsubtype[in] PubSubType of the msg.
+     * @param writer[in]Pointer to the RTPSWriter.
+     * @param writer_history[in] Pointer to the Writer History.
+     * @return true if message was sent, false otherwise.
+     */
+    template <typename Type, typename PubSubType>
+    bool send_impl(
+            Type& msg,
+            PubSubType* pubsubtype,
+            fastrtps::rtps::StatefulWriter* writer,
+            fastrtps::rtps::WriterHistory* writer_history) const;
+
+    /**
+     * Prepares the the received payload of a CacheChange before deserializing.
+     * @param change[in] CacheChange_t received.
+     * @param payload[out] SerializedPayload_t prepared.
+     * @return true if received payload is prepared, false otherwise.
+     */
+    bool prepare_receive_payload(
+            fastrtps::rtps::CacheChange_t& change,
+            fastrtps::rtps::SerializedPayload_t& payload) const;
+
+    /**
+     * Uses the send_impl with the appropriate parameters and checks if it is directed to the local DomainParticipant.
      * @param change[in] CacheChange_t of the request.
      * @param request[out] TypeLookup_Request after deserialization.
      * @return true if the request is deserialized and directed to the local participant, false otherwise.
      */
-    bool receive_request(
+    bool receive(
             fastrtps::rtps::CacheChange_t& change,
             TypeLookup_Request& request) const;
 
     /**
-     * Used for reply reception. Deserialize and check that the reply's recipient is the local participant.
+     * Uses the send_impl with the appropriate parameters and checks if that the reply's recipient is the local participant.
      * @param change[in] CacheChange_t of the reply.
      * @param reply[out] TypeLookup_Reply after deserialize.
      * @return true if the request is deserialized and the reply's recipient is us, false otherwise.
      */
-    bool receive_reply(
+    bool receive(
             fastrtps::rtps::CacheChange_t& change,
             TypeLookup_Reply& reply) const;
+
+    /**
+     * Implementation for the receive methods.
+     * Derializes the message received.
+     * @param change[in] CacheChange_t of the message.
+     * @param msg[in] Message to be sent.
+     * @param pubsubtype[in] PubSubType of the msg.
+     * @return true if message is correct, false otherwise.
+     */
+    template <typename Type, typename PubSubType>
+    bool receive_impl(
+            fastrtps::rtps::CacheChange_t& change,
+            Type& msg,
+            PubSubType* pubsubtype) const;
 
     /**
      * Get the RTPS participant
@@ -418,4 +442,4 @@ private:
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif /* _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP */
+#endif /* _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_SERVICE_MANAGER_HPP_ */

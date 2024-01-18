@@ -372,7 +372,7 @@ TEST(DataWriterTests, get_guid)
     {
     public:
 
-        void on_publisher_discovery(
+        void on_data_writer_discovery(
                 DomainParticipant*,
                 fastrtps::rtps::WriterDiscoveryInfo&& info)
         {
