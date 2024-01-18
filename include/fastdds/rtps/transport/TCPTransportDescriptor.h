@@ -53,10 +53,6 @@ namespace rtps {
  *
  * - \c tls_config: Configuration for TLS.
  *
- * - \c non_blocking_send: do not block on send operations. When it is set to true, send operations will return
- * immediately if the buffer is full, but no error will be returned to the upper layer. This means that the
- * application will behave as if the datagram is sent and lost.
- *
  * @ingroup TRANSPORT_MODULE
  */
 struct TCPTransportDescriptor : public SocketTransportDescriptor
@@ -279,20 +275,6 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
 
     //! Thread settings for the accept connections thread
     ThreadSettings accept_thread;
-
-    /**
-     * Whether to use non-blocking calls to send().
-     *
-     * When set to true, calls to send() will return immediately if the send buffer is full.
-     * This may happen when receive buffer on reader's side is full. No error will be returned
-     * to the upper layer. This means that the application will behave
-     * as if the datagram is sent but lost (i.e. throughput may be reduced). This value is
-     * specially useful on high-frequency writers.
-     *
-     * When set to false, calls to send() will block until the send buffer has space for the
-     * datagram. This may cause application lock.
-     */
-    bool non_blocking_send;
 
     //! Add listener port to the listening_ports list
     void add_listener_port(

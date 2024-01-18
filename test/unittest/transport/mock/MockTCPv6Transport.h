@@ -41,7 +41,7 @@ public:
         return channel_resources_;
     }
 
-    std::vector<std::shared_ptr<TCPChannelResource>> get_unbound_channel_resources()
+    const std::vector<std::shared_ptr<TCPChannelResource>>& get_unbound_channel_resources() const
     {
         return unbound_channel_resources_;
     }

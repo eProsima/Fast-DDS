@@ -710,14 +710,6 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
                     return XMLP_ret::XML_ERROR;
                 }
             }
-            // non_blocking_send - boolType
-            else if (strcmp(name, NON_BLOCKING_SEND) == 0)
-            {
-                if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &pTCPDesc->non_blocking_send, 0))
-                {
-                    return XMLP_ret::XML_ERROR;
-                }
-            }
             else if (strcmp(name, LISTENING_PORTS) == 0)
             {
                 // listening_ports uint16ListType

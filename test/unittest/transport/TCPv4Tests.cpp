@@ -21,6 +21,7 @@
 #include "mock/MockTCPChannelResource.h"
 #include "mock/MockTCPv4Transport.h"
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPFinder.h>
@@ -1384,7 +1385,6 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
     TCPv4TransportDescriptor senderDescriptor;
     senderDescriptor.add_listener_port(port);
-    senderDescriptor.non_blocking_send = true;
     senderDescriptor.sendBufferSize = msg_size;
     senderDescriptor.tls_config.handshake_role = TLSHSRole::CLIENT;
     senderDescriptor.tls_config.verify_file = "ca.crt";
@@ -1394,7 +1394,9 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     senderDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
     senderDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
     MockTCPv4Transport senderTransportUnderTest(senderDescriptor);
-    senderTransportUnderTest.init();
+    eprosima::fastrtps::rtps::RTPSParticipantAttributes att;
+    att.properties.properties().emplace_back("fastdds.tcp_transport.non_blocking_send", "true");
+    senderTransportUnderTest.init(&att.properties);
 
     // Create a TCP Client socket.
     // The creation of a reception transport for testing this functionality is not
@@ -1933,10 +1935,11 @@ TEST_F(TCPv4Tests, non_blocking_send)
     // Create a TCP Server transport
     TCPv4TransportDescriptor senderDescriptor;
     senderDescriptor.add_listener_port(port);
-    senderDescriptor.non_blocking_send = true;
     senderDescriptor.sendBufferSize = msg_size;
     MockTCPv4Transport senderTransportUnderTest(senderDescriptor);
-    senderTransportUnderTest.init();
+    eprosima::fastrtps::rtps::RTPSParticipantAttributes att;
+    att.properties.properties().emplace_back("fastdds.tcp_transport.non_blocking_send", "true");
+    senderTransportUnderTest.init(&att.properties);
 
     //Create a TCP Client socket
     // The creation of a reception transport for testing this functionality is not

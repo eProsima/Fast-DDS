@@ -101,7 +101,6 @@ static std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> create_tcpv4_tra
     descriptor->check_crc = false;
     descriptor->apply_security = false;
     descriptor->enable_tcp_nodelay = true;
-    descriptor->non_blocking_send = true;
 
     descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     descriptor->accept_thread = att.builtin_transports_reception_threads;
@@ -121,7 +120,6 @@ static std::shared_ptr<fastdds::rtps::TCPv6TransportDescriptor> create_tcpv6_tra
     descriptor->check_crc = false;
     descriptor->apply_security = false;
     descriptor->enable_tcp_nodelay = true;
-    descriptor->non_blocking_send = true;
 
     descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     descriptor->accept_thread = att.builtin_transports_reception_threads;
@@ -210,6 +208,7 @@ static void setup_transports_large_data(
 
         auto tcp_transport = create_tcpv4_transport(att);
         att.userTransports.push_back(tcp_transport);
+        att.properties.properties().emplace_back("fastdds.tcp_transport.non_blocking_send", "true");
 
         Locator_t tcp_loc;
         tcp_loc.kind = LOCATOR_KIND_TCPv4;
@@ -246,6 +245,7 @@ static void setup_transports_large_datav6(
 
         auto tcp_transport = create_tcpv6_transport(att);
         att.userTransports.push_back(tcp_transport);
+        att.properties.properties().emplace_back("fastdds.tcp_transport.non_blocking_send", "true");
 
         Locator_t tcp_loc;
         tcp_loc.kind = LOCATOR_KIND_TCPv6;
