@@ -871,6 +871,7 @@ void TCPTransportInterface::perform_listen_operation(
     if (rtcp_message_manager)
     {
         channel = channel_weak.lock();
+        endpoint_to_locator(channel->remote_endpoint(), remote_locator);
 
         if (channel)
         {
@@ -1363,7 +1364,8 @@ void TCPTransportInterface::SocketAccepted(
             create_listening_thread(channel);
 
             EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
-                    << IPLocator::to_string(locator) << ", remote: "
+                    << channel->local_endpoint().address() << ":"
+                    << channel->local_endpoint().port() << "), remote: "
                     << channel->remote_endpoint().address() << ":"
                     << channel->remote_endpoint().port() << ")");
         }
@@ -1406,10 +1408,11 @@ void TCPTransportInterface::SecureSocketAccepted(
             secure_channel->set_options(configuration());
             create_listening_thread(secure_channel);
 
-            EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
-                                                                    << ", remote: " << socket->lowest_layer().remote_endpoint().address()
-                                                                    << ":" << socket->lowest_layer().remote_endpoint().port() <<
-                    ")");
+            EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: "
+                    << socket->lowest_layer().local_endpoint().address() << ":"
+                    << socket->lowest_layer().local_endpoint().port() << "), remote: "
+                    << socket->lowest_layer().remote_endpoint().address() << ":"
+                    << socket->lowest_layer().remote_endpoint().port() << ")");
         }
         else
         {
