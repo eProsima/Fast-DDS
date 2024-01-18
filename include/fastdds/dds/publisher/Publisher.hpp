@@ -167,6 +167,23 @@ public:
      * This operation creates a DataWriter. The returned DataWriter will be attached and belongs to the Publisher.
      *
      * @param topic Topic the DataWriter will be listening
+     * @param qos QoS of the DataWriter.
+     * @param payload_pool IPayloadPool shared pointer that defines writer payload (default: nullptr).
+     * @param listener Pointer to the listener (default: nullptr).
+     * @param mask StatusMask that holds statuses the listener responds to (default: all).
+     * @return Pointer to the created DataWriter. nullptr if failed.
+     */
+    RTPS_DllAPI DataWriter* create_datawriter_with_payload_pool(
+            Topic* topic,
+            const DataWriterQos& qos,
+            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool,
+            DataWriterListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * This operation creates a DataWriter. The returned DataWriter will be attached and belongs to the Publisher.
+     *
+     * @param topic Topic the DataWriter will be listening
      * @param profile_name DataWriter profile name.
      * @param listener Pointer to the listener (default: nullptr).
      * @param mask StatusMask that holds statuses the listener responds to (default: all).
@@ -175,6 +192,23 @@ public:
     RTPS_DllAPI DataWriter* create_datawriter_with_profile(
             Topic* topic,
             const std::string& profile_name,
+            DataWriterListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * This operation creates a DataWriter. The returned DataWriter will be attached and belongs to the Publisher.
+     *
+     * @param topic Topic the DataWriter will be listening
+     * @param profile_name DataWriter profile name.
+     * @param payload_pool IPayloadPool shared pointer that defines writer payload (default: nullptr).
+     * @param listener Pointer to the listener (default: nullptr).
+     * @param mask StatusMask that holds statuses the listener responds to (default: all).
+     * @return Pointer to the created DataWriter. nullptr if failed.
+     */
+    RTPS_DllAPI DataWriter* create_datawriter_with_profile_with_payload_pool(
+            Topic* topic,
+            const std::string& profile_name,
+            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool,
             DataWriterListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
