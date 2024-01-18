@@ -46,13 +46,15 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
             traits<DynamicTypeMemberImpl>::ref_type member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
                                                                      members_.at(members_.size() - 1))};
             assert(MEMBER_ID_INVALID != member_impl->get_descriptor().id());
-            next_id = member_impl->get_descriptor().id() + 1;
+            next_id_ = member_impl->get_descriptor().id() + 1;
         }
+
+        next_index_ = members_.size();
     }
     else if (TK_UNION == type_descriptor_.kind())
     {
         // MemberId 0 is reserved to discriminator.
-        next_id = 1;
+        next_id_ = 1;
     }
 }
 
@@ -298,7 +300,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     {
         if (MEMBER_ID_INVALID == member_id)
         {
-            dyn_member->get_descriptor().id(next_id++);
+            dyn_member->get_descriptor().id(next_id_++);
         }
 
         // Check there is already a member with same id.

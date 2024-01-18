@@ -607,7 +607,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
         uint32_t payloadSize =
                 static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
         SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload));
+        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
         ASSERT_TRUE(payload.length == payloadSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
@@ -625,7 +625,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
         uint32_t payloadSize =
                 static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
         SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload));
+        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
         ASSERT_TRUE(payload.length == payloadSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
@@ -1641,7 +1641,7 @@ TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
         uint32_t payloadSize =
                 static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
         SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload));
+        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
         ASSERT_TRUE(payload.length == payloadSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
@@ -1659,7 +1659,7 @@ TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
         uint32_t payloadSize =
                 static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
         SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload));
+        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
         ASSERT_TRUE(payload.length == payloadSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
@@ -2388,7 +2388,7 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
         uint32_t payloadSize =
                 static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
         SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload));
+        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
         ASSERT_TRUE(payload.length == payloadSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
@@ -2406,7 +2406,7 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
         uint32_t payloadSize =
                 static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
         SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload));
+        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
         ASSERT_TRUE(payload.length == payloadSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
@@ -2609,7 +2609,7 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
         uint32_t payloadSize =
                 static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
         SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload));
+        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
         ASSERT_TRUE(payload.length == payloadSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(nested_alias_type)};
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
@@ -2627,7 +2627,7 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
         uint32_t payloadSize =
                 static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
         SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload));
+        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
         ASSERT_TRUE(payload.length == payloadSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(nested_alias_type)};
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
@@ -3040,16 +3040,16 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
         ASSERT_TRUE(data2->equals(data));
 
-        seq_data = data->loan_value(0);
+        seq_data = data2->loan_value(0);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_EQ(good_seq, Int32Seq({1, 2, 3}));
-        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data->return_loaned_value(seq_data));
-        seq_data = data->loan_value(1);
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data2->return_loaned_value(seq_data));
+        seq_data = data2->loan_value(1);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_EQ(good_seq, Int32Seq({0, 1}));
-        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data->return_loaned_value(seq_data));
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data2->return_loaned_value(seq_data));
 
         DynamicDataFactory::get_instance()->delete_data(data2);
     }
@@ -3068,16 +3068,16 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
         ASSERT_TRUE(data2->equals(data));
 
-        seq_data = data->loan_value(0);
+        seq_data = data2->loan_value(0);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_EQ(good_seq, Int32Seq({1, 2, 3}));
-        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data->return_loaned_value(seq_data));
-        seq_data = data->loan_value(1);
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data2->return_loaned_value(seq_data));
+        seq_data = data2->loan_value(1);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_EQ(good_seq, Int32Seq({0, 1}));
-        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data->return_loaned_value(seq_data));
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data2->return_loaned_value(seq_data));
 
         DynamicDataFactory::get_instance()->delete_data(data2);
     }
@@ -3342,26 +3342,26 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
         ASSERT_TRUE(data2->equals(data));
 
-        seq_data = data->loan_value(0);
+        seq_data = data2->loan_value(0);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_EQ(good_seq, Int32Seq({1, 2}));
-        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data->return_loaned_value(seq_data));
-        seq_data = data->loan_value(1);
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data2->return_loaned_value(seq_data));
+        seq_data = data2->loan_value(1);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_EQ(good_seq, Int32Seq({0, 1}));
-        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data->return_loaned_value(seq_data));
-        seq_data = data->loan_value(2);
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data2->return_loaned_value(seq_data));
+        seq_data = data2->loan_value(2);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_EQ(good_seq, Int32Seq({3, 4}));
-        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data->return_loaned_value(seq_data));
-        seq_data = data->loan_value(3);
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data2->return_loaned_value(seq_data));
+        seq_data = data2->loan_value(3);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_EQ(good_seq, Int32Seq({1, 0}));
-        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data->return_loaned_value(seq_data));
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data2->return_loaned_value(seq_data));
 
         DynamicDataFactory::get_instance()->delete_data(data2);
     }
@@ -3845,346 +3845,563 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
    ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
    ASSERT_TRUE(data3->equals(*data));
    }
-
-   TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
-   {
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   std::unique_ptr<const DynamicTypeBuilder> base_type_builder { factory.create_int32_type()};
-   ASSERT_TRUE(base_type_builder);
-   std::unique_ptr<const DynamicType> base_type {base_type_builder->build()};
-
-   std::unique_ptr<const DynamicTypeBuilder> base_type_builder2 { factory.create_int64_type()};
-   ASSERT_TRUE(base_type_builder2);
-   std::unique_ptr<const DynamicType> base_type2 {base_type_builder2->build()};
-
-   std::unique_ptr<DynamicTypeBuilder> struct_type_builder { factory.create_struct_type()};
-   ASSERT_TRUE(struct_type_builder);
-
-   // Add members to the struct.
-   ASSERT_TRUE(struct_type_builder->add_member({0, "int32", base_type.get()}) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_TRUE(struct_type_builder->add_member({1, "int64", base_type2.get()}) == eprosima::fastdds::dds::RETCODE_OK);
-
-   std::unique_ptr<const DynamicType> struct_type {struct_type_builder->build()};
-   ASSERT_TRUE(struct_type);
-   std::unique_ptr<DynamicData> struct_data {DynamicDataFactory::get_instance().create_data(*struct_type)};
-   ASSERT_TRUE(struct_data != nullptr);
-
-   ASSERT_FALSE(struct_data->set_int32_value(10, 1) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
-
-   // Set and get the child values.
-   int32_t test1(234);
-   ASSERT_TRUE(struct_data->set_int32_value(test1, 0) == eprosima::fastdds::dds::RETCODE_OK);
-   int32_t test2(0);
-   ASSERT_TRUE(struct_data->get_int32_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_TRUE(test1 == test2);
-   int64_t test3(234);
-   ASSERT_TRUE(struct_data->set_int64_value(test3, 1) == eprosima::fastdds::dds::RETCODE_OK);
-   int64_t test4(0);
-   ASSERT_TRUE(struct_data->get_int64_value(test4, 1) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_TRUE(test3 == test4);
-
-   // Serialize <-> Deserialize Test
-   DynamicPubSubType pubsubType(*struct_type);
-   uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data.get())());
-   SerializedPayload_t payload(payloadSize);
-   ASSERT_TRUE(pubsubType.serialize(struct_data.get(), &payload));
-   ASSERT_TRUE(payload.length == payloadSize);
-
-   std::unique_ptr<DynamicData> data2 {DynamicDataFactory::get_instance().create_data(*struct_type)};
-   ASSERT_TRUE(pubsubType.deserialize(&payload, data2.get()));
-   ASSERT_TRUE(data2->equals(*struct_data));
-
-   // SERIALIZATION TEST
-   StructStruct seq;
-   StructStructPubSubType seqpb;
-
-   uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data.get())());
-   SerializedPayload_t dynamic_payload(payloadSize3);
-   ASSERT_TRUE(pubsubType.serialize(struct_data.get(), &dynamic_payload));
-   ASSERT_TRUE(dynamic_payload.length == payloadSize3);
-   ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
-
-   uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
-   SerializedPayload_t static_payload(static_payloadSize);
-   ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
-   ASSERT_TRUE(static_payload.length == static_payloadSize);
-   std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*struct_type)};
-   ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
-   ASSERT_TRUE(data3->equals(*struct_data));
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
-   {
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   std::unique_ptr<const DynamicTypeBuilder> base_type_builder { factory.create_int32_type()};
-   ASSERT_TRUE(base_type_builder);
-   std::unique_ptr<const DynamicType> base_type {base_type_builder->build()};
-
-   std::unique_ptr<const DynamicTypeBuilder> base_type_builder2 { factory.create_int64_type()};
-   ASSERT_TRUE(base_type_builder2);
-   std::unique_ptr<const DynamicType> base_type2 {base_type_builder2->build()};
-
-   std::unique_ptr<DynamicTypeBuilder> struct_type_builder { factory.create_struct_type()};
-   ASSERT_TRUE(struct_type_builder);
-
-   // Add members to the struct.
-   EXPECT_EQ(struct_type_builder->add_member({0, "int32", base_type.get()}), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(struct_type_builder->add_member({1, "int64", base_type2.get()}), eprosima::fastdds::dds::RETCODE_OK);
-
-   std::unique_ptr<const DynamicType> struct_type {struct_type_builder->build()};
-   ASSERT_TRUE(struct_type);
-
-   // Create the child struct.
-   std::unique_ptr<DynamicTypeBuilder> child_struct_type_builder { factory.create_child_struct_type(*struct_type)};
-   ASSERT_TRUE(child_struct_type_builder);
-
-   // Add a new member to the child struct.
-   EXPECT_EQ(child_struct_type_builder->add_member({2, "child_int32",
-                                              base_type.get()}), eprosima::fastdds::dds::RETCODE_OK);
-
-   {
-   eprosima::fastdds::dds::Log::ScopeLogs _("disable"); // avoid expected errors logging
-   // try to add a member to override one of the parent struct.
-   EXPECT_NE(child_struct_type_builder->add_member({3, "int32",
-                                                  base_type.get()}), eprosima::fastdds::dds::RETCODE_OK);
-   }
-
-   // Add a new member at front
-   EXPECT_EQ(child_struct_type_builder->add_member({0, "first_child",
-                                              base_type2.get()}), eprosima::fastdds::dds::RETCODE_OK);
-
-   // Add a new member at end
-   EXPECT_EQ(child_struct_type_builder->add_member({INDEX_INVALID, "last_child",
-                                              base_type2.get()}), eprosima::fastdds::dds::RETCODE_OK);
-
-   std::unique_ptr<const DynamicType> child_struct_type {child_struct_type_builder->build()};
-   ASSERT_TRUE(child_struct_type);
-
-   // Validate the member related APIs
-
-   EXPECT_EQ(child_struct_type->get_member_count(), 5u);
-
-   MemberDescriptor members[5];
-
-   //TODO(richiware) EXPECT_EQ(child_struct_type->get_member(members[0], 0), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(members[0].get_name(), "int32");
-   EXPECT_EQ(members[0].get_index(), 0u);
-   EXPECT_EQ(members[0].get(), 0);
-   EXPECT_EQ(*members[0].get_type(), *base_type);
-
-   //TODO(richiware) EXPECT_EQ(child_struct_type->get_member(members[1], 1), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(members[1].get_name(), "int64");
-   EXPECT_EQ(members[1].get_index(), 1u);
-   EXPECT_EQ(members[1].get(), 1);
-   EXPECT_EQ(*members[1].get_type(), *base_type2);
-
-   //TODO(richiware) EXPECT_EQ(child_struct_type->get_member(members[2], 3), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(members[2].get_name(), "first_child");
-   EXPECT_EQ(members[2].get_index(), 2u);
-   EXPECT_EQ(members[2].get(), 3);
-   EXPECT_EQ(*members[2].get_type(), *base_type2);
-
-   //TODO(richiware) EXPECT_EQ(child_struct_type->get_member(members[3], 2), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(members[3].get_name(), "child_int32");
-   EXPECT_EQ(members[3].get_index(), 3u);
-   EXPECT_EQ(members[3].get(), 2);
-   EXPECT_EQ(*members[3].get_type(), *base_type);
-
-   //TODO(richiware) EXPECT_EQ(child_struct_type->get_member(members[4], 4), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(members[4].get_name(), "last_child");
-   EXPECT_EQ(members[4].get_index(), 4u);
-   EXPECT_EQ(members[4].get(), 4);
-   EXPECT_EQ(*members[4].get_type(), *base_type2);
-
-   for (auto& m : members)
-   {
-   //TODO(richiware) EXPECT_TRUE(child_struct_type->exists_member_by_name(m.get_name()));
-   //TODO(richiware) EXPECT_TRUE(child_struct_type->exists_member_by(m.get()));
-   //TODO(richiware) EXPECT_EQ(child_struct_type->get_member_by_name(m.get_name()), m.get());
-   //TODO(richiware) EXPECT_EQ(child_struct_type->get_member_at_index(m.get_index()), m.get());
-
-   MemberDescriptor aux;
-   //TODO(richiware) EXPECT_EQ(child_struct_type->get_member_by_index(aux, m.get_index()), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(aux, m);
-
-   //TODO(richiware) EXPECT_EQ(child_struct_type->get_member_by_name(aux, m.get_name()), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(aux, m);
-   }
-
-   auto member_seq = child_struct_type->get_all_members();
-   EXPECT_EQ(member_seq.size(), 5u);
-
-   EXPECT_TRUE(std::equal(member_seq.begin(), member_seq.end(), members,
-     [](const MemberDescriptor* a, const MemberDescriptor& b) -> bool
-     {
-         return *a == b;
-     }));
-
-   // ancillary collection
-   std::set<MemberDescriptor, DynamicTypesTests::order_member_desc> aux;
-
-   auto name_map = child_struct_type->get_all_members_by_name();
-   EXPECT_EQ(name_map.size(), 5u);
-   std::transform(name_map.begin(), name_map.end(), std::inserter(aux, aux.end()),
-     [](std::pair<const std::string, const DynamicTypeMember*>& p)
-     {
-         return *p.second;
-     });
-   EXPECT_TRUE(std::equal(aux.begin(), aux.end(), members));
-
-   aux.clear();
-   auto id_map = child_struct_type->get_all_members_by();
-   EXPECT_EQ(id_map.size(), 5u);
-   std::transform(id_map.begin(), id_map.end(), std::inserter(aux, aux.end()),
-     [](std::pair<const MemberId, const DynamicTypeMember*>& p)
-     {
-         return *p.second;
-     });
-   EXPECT_TRUE(std::equal(aux.begin(), aux.end(), members));
-
-   // Validating data management
-
-   std::unique_ptr<DynamicData> struct_data {DynamicDataFactory::get_instance().create_data(*child_struct_type)};
-   ASSERT_TRUE(struct_data != nullptr);
-
-   // Setting invalid types should fail
-   EXPECT_NE(struct_data->set_int32_value(10, 1), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_NE(struct_data->set_string_value("", MEMBER_ID_INVALID), eprosima::fastdds::dds::RETCODE_OK);
-
-   // Set and get the parent values.
-   int32_t test1(234);
-   EXPECT_EQ(struct_data->set_int32_value(test1, 0), eprosima::fastdds::dds::RETCODE_OK);
-   int32_t test2(0);
-   EXPECT_EQ(struct_data->get_int32_value(test2, 0), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(test1, test2);
-
-   int64_t test3(234);
-   EXPECT_EQ(struct_data->set_int64_value(test3, 1), eprosima::fastdds::dds::RETCODE_OK);
-   int64_t test4(0);
-   EXPECT_EQ(struct_data->get_int64_value(test4, 1), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(test3, test4);
-
-   // Set and get the child value.
-   EXPECT_EQ(struct_data->set_int32_value(test1, 2), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(struct_data->get_int32_value(test2, 2), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(test1, test2);
-
-   EXPECT_EQ(struct_data->set_int64_value(test3, 3), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(struct_data->get_int64_value(test4, 3), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(test3, test4);
-
-   EXPECT_EQ(struct_data->set_int64_value(test3, 4), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(struct_data->get_int64_value(test4, 4), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(test3, test4);
-
-   // Serialize <-> Deserialize Test
-   DynamicPubSubType pubsubType(*child_struct_type);
-   uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data.get())());
-   SerializedPayload_t payload(payloadSize);
-   ASSERT_TRUE(pubsubType.serialize(struct_data.get(), &payload));
-   ASSERT_TRUE(payload.length == payloadSize);
-
-   std::unique_ptr<DynamicData> data2 {DynamicDataFactory::get_instance().create_data(*child_struct_type)};
-   ASSERT_TRUE(pubsubType.deserialize(&payload, data2.get()));
-   ASSERT_TRUE(data2->equals(*struct_data));
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
-   {
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   std::unique_ptr<const DynamicTypeBuilder> base_type_builder {factory.create_int32_type()};
-   ASSERT_TRUE(base_type_builder);
-   std::unique_ptr<const DynamicType> base_type {base_type_builder->build()};
-
-   std::unique_ptr<const DynamicTypeBuilder> base_type_builder2 {factory.create_int64_type()};
-   ASSERT_TRUE(base_type_builder2);
-   std::unique_ptr<const DynamicType> base_type2 {base_type_builder2->build()};
-
-   std::unique_ptr<DynamicTypeBuilder> struct_type_builder { factory.create_struct_type()};
-   ASSERT_TRUE(struct_type_builder);
-
-   // Add members to the struct.
-   ASSERT_TRUE(struct_type_builder->add_member({0, "int32", base_type.get()}) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_TRUE(struct_type_builder->add_member({1, "int64", base_type2.get()}) == eprosima::fastdds::dds::RETCODE_OK);
-
-   std::unique_ptr<const DynamicType> struct_type {struct_type_builder->build()};
-   ASSERT_TRUE(struct_type);
-
-   // Create the parent struct.
-   std::unique_ptr<DynamicTypeBuilder> parent_struct_type_builder { factory.create_struct_type()};
-   ASSERT_TRUE(parent_struct_type_builder);
-
-   // Add members to the parent struct.
-   ASSERT_TRUE(parent_struct_type_builder->add_member({0, "child_struct",
-                                                 struct_type.get()}) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_TRUE(parent_struct_type_builder->add_member({1, "child_int64",
-                                                 base_type2.get()}) == eprosima::fastdds::dds::RETCODE_OK);
-
-   auto parent_struct_type = parent_struct_type_builder->build();
-   ASSERT_TRUE(parent_struct_type);
-
-   std::unique_ptr<DynamicData> struct_data {DynamicDataFactory::get_instance().create_data(*parent_struct_type)};
-   ASSERT_TRUE(struct_data != nullptr);
-
-   ASSERT_FALSE(struct_data->set_int32_value(10, 1) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
-
-   // Set and get the child values.
-   int64_t test1(234);
-   ASSERT_TRUE(struct_data->set_int64_value(test1, 1) == eprosima::fastdds::dds::RETCODE_OK);
-   int64_t test2(0);
-   ASSERT_TRUE(struct_data->get_int64_value(test2, 1) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_TRUE(test1 == test2);
-
-   auto child_struct_data = struct_data->loan_value(0);
-   ASSERT_TRUE(child_struct_data != nullptr);
-
-   // Set and get the child values.
-   int32_t test3(234);
-   ASSERT_TRUE(child_struct_data->set_int32_value(test3, 0) == eprosima::fastdds::dds::RETCODE_OK);
-   int32_t test4(0);
-   ASSERT_TRUE(child_struct_data->get_int32_value(test4, 0) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_TRUE(test3 == test4);
-   int64_t test5(234);
-   ASSERT_TRUE(child_struct_data->set_int64_value(test5, 1) == eprosima::fastdds::dds::RETCODE_OK);
-   int64_t test6(0);
-   ASSERT_TRUE(child_struct_data->get_int64_value(test6, 1) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_TRUE(test5 == test6);
-
-   // Serialize <-> Deserialize Test
-   DynamicPubSubType pubsubType(parent_struct_type);
-   uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data.get())());
-   SerializedPayload_t payload(payloadSize);
-   ASSERT_TRUE(pubsubType.serialize(struct_data.get(), &payload));
-   ASSERT_TRUE(payload.length == payloadSize);
-
-   std::unique_ptr<DynamicData> data2 {DynamicDataFactory::get_instance().create_data(*parent_struct_type)};
-   ASSERT_TRUE(pubsubType.deserialize(&payload, data2.get()));
-   ASSERT_TRUE(data2->equals(*struct_data));
-
-   // SERIALIZATION TEST
-   StructStructStruct seq;
-   StructStructStructPubSubType seqpb;
-
-   uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data.get())());
-   SerializedPayload_t dynamic_payload(payloadSize3);
-   ASSERT_TRUE(pubsubType.serialize(struct_data.get(), &dynamic_payload));
-   ASSERT_TRUE(dynamic_payload.length == payloadSize3);
-   ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
-
-   uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
-   SerializedPayload_t static_payload(static_payloadSize);
-   ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
-   ASSERT_TRUE(static_payload.length == static_payloadSize);
-   std::unique_ptr<DynamicData> data3 {DynamicDataFactory::get_instance().create_data(*parent_struct_type)};
-   ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3.get()));
-   ASSERT_TRUE(data3->equals(*struct_data));
-   }
-
+ */
+
+TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("StructTest");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    ASSERT_TRUE(builder);
+
+    // Add members to the struct.
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT32));
+    member_descriptor->name("int32");
+    member_descriptor->id(0);
+    ASSERT_EQ(builder->add_member(member_descriptor), eprosima::fastdds::dds::RETCODE_OK);
+
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT64));
+    member_descriptor->name("int64");
+    member_descriptor->id(1);
+    ASSERT_EQ(builder->add_member(member_descriptor), eprosima::fastdds::dds::RETCODE_OK);
+
+    DynamicType::_ref_type struct_type {builder->build()};
+    ASSERT_TRUE(struct_type);
+
+    DynamicData::_ref_type struct_data {DynamicDataFactory::get_instance()->create_data(struct_type)};
+    ASSERT_TRUE(struct_data);
+
+    ASSERT_NE(struct_data->set_int32_value(1, 10), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_NE(struct_data->set_string_value(MEMBER_ID_INVALID, ""), eprosima::fastdds::dds::RETCODE_OK);
+
+    // Set and get the child values.
+    int32_t test1 {234};
+    ASSERT_EQ(struct_data->set_int32_value(0, test1), eprosima::fastdds::dds::RETCODE_OK);
+    uint32_t wrong {0};
+    ASSERT_NE(struct_data->get_uint32_value(wrong, 0), eprosima::fastdds::dds::RETCODE_OK);
+    int32_t test2 {0};
+    ASSERT_EQ(struct_data->get_int32_value(test2, 0), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(test1, test2);
+    int64_t test3 {234};
+    ASSERT_EQ(struct_data->set_int64_value(1, test3), eprosima::fastdds::dds::RETCODE_OK);
+    int64_t test4 {0};
+    ASSERT_EQ(struct_data->get_int64_value(test4, 1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(test3, test4);
+
+    ASSERT_EQ(2, struct_data->get_item_count());
+
+    // XCDRv1
+    {
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(struct_type);
+        uint32_t payloadSize =
+                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&struct_data, XCDR_DATA_REPRESENTATION)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(&struct_data, &payload, XCDR_DATA_REPRESENTATION));
+        ASSERT_TRUE(payload.length == payloadSize);
+        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(struct_type)};
+        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
+        ASSERT_TRUE(data2->equals(struct_data));
+        ASSERT_EQ(data2->get_int32_value(test2, 0), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test1, test2);
+        ASSERT_EQ(data2->get_int64_value(test4, 1), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test3, test4);
+        DynamicDataFactory::get_instance()->delete_data(data2);
+    }
+
+    // XCDRv2
+    {
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(struct_type);
+        uint32_t payloadSize =
+                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&struct_data, XCDR2_DATA_REPRESENTATION)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(&struct_data, &payload, XCDR2_DATA_REPRESENTATION));
+        ASSERT_TRUE(payload.length == payloadSize);
+        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(struct_type)};
+        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
+        ASSERT_TRUE(data2->equals(struct_data));
+        ASSERT_EQ(data2->get_int32_value(test2, 0), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test1, test2);
+        ASSERT_EQ(data2->get_int64_value(test4, 1), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test3, test4);
+        DynamicDataFactory::get_instance()->delete_data(data2);
+    }
+
+    // Remove the elements.
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->clear_all_values());
+    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int32_value(test2, 0));
+    ASSERT_EQ(0, test2);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int64_value(test4, 1));
+    ASSERT_EQ(0, test4);
+
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_int32_value(0, test1));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_int64_value(1, test3));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->clear_nonkey_values());
+    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int32_value(test2, 0));
+    ASSERT_EQ(0, test2);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int64_value(test4, 1));
+    ASSERT_EQ(0, test4);
+
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_int32_value(0, test1));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_int64_value(1, test3));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->clear_value(1));
+    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int32_value(test2, 0));
+    ASSERT_EQ(test1, test2);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int64_value(test4, 1));
+    ASSERT_EQ(0, test4);
+
+    DynamicDataFactory::get_instance()->delete_data(struct_data);
+}
+
+TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Create the base struct.
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("BaseStructTest");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    ASSERT_TRUE(builder);
+
+    // Add members to the struct.
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT32));
+    member_descriptor->name("int32");
+    member_descriptor->id(0);
+    ASSERT_EQ(builder->add_member(member_descriptor), eprosima::fastdds::dds::RETCODE_OK);
+
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT64));
+    member_descriptor->name("int64");
+    member_descriptor->id(1);
+    ASSERT_EQ(builder->add_member(member_descriptor), eprosima::fastdds::dds::RETCODE_OK);
+
+    DynamicType::_ref_type base_struct_type {builder->build()};
+    ASSERT_TRUE(base_struct_type);
+
+    // Create the derived struct.
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("DerivedStructTest");
+    type_descriptor->base_type(base_struct_type);
+    builder = factory->create_type(type_descriptor);
+    ASSERT_TRUE(builder);
+
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT32));
+
+    {
+        eprosima::fastdds::dds::Log::ScopeLogs _("disable"); // avoid expected errors logging
+        member_descriptor->name("child_int32");
+        member_descriptor->id(1);
+        ASSERT_NE(builder->add_member(member_descriptor), eprosima::fastdds::dds::RETCODE_OK);
+        member_descriptor->name("int32");
+        member_descriptor->id(2);
+        ASSERT_NE(builder->add_member(member_descriptor), eprosima::fastdds::dds::RETCODE_OK);
+    }
+
+    member_descriptor->name("child_int32");
+    member_descriptor->id(2);
+    ASSERT_EQ(builder->add_member(member_descriptor), eprosima::fastdds::dds::RETCODE_OK);
+
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->create_string_type(0)->build());
+    member_descriptor->name("child_string");
+    member_descriptor->id(4);
+    ASSERT_EQ(builder->add_member(member_descriptor), eprosima::fastdds::dds::RETCODE_OK);
+
+    DynamicType::_ref_type derived_struct_type {builder->build()};
+    ASSERT_TRUE(derived_struct_type);
+
+    ASSERT_EQ(4u, derived_struct_type->get_member_count());
+
+    DynamicTypeMember::_ref_type member;
+    DynamicTypeMember::_ref_type member_aux;
+    MemberDescriptor::_ref_type descriptor = traits<MemberDescriptor>::make_shared();
+
+    ASSERT_EQ(derived_struct_type->get_member(member, 0), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(member->get_descriptor(descriptor), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(descriptor->name(), "int32");
+    ASSERT_EQ(descriptor->index(), 0u);
+    ASSERT_EQ(descriptor->id(), 0);
+    ASSERT_TRUE(descriptor->type()->equals(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT32)));
+    ASSERT_EQ(derived_struct_type->get_member_by_name(member_aux,
+            descriptor->name()), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_TRUE(member->equals(member_aux));
+    ASSERT_EQ(derived_struct_type->get_member_by_index(member_aux, descriptor->index()),
+            eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_TRUE(member->equals(member_aux));
+
+    ASSERT_EQ(derived_struct_type->get_member(member, 1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(member->get_descriptor(descriptor), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(descriptor->name(), "int64");
+    ASSERT_EQ(descriptor->index(), 1u);
+    ASSERT_EQ(descriptor->id(), 1);
+    ASSERT_TRUE(descriptor->type()->equals(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT64)));
+    ASSERT_EQ(derived_struct_type->get_member_by_name(member_aux,
+            descriptor->name()), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_TRUE(member->equals(member_aux));
+    ASSERT_EQ(derived_struct_type->get_member_by_index(member_aux, descriptor->index()),
+            eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_TRUE(member->equals(member_aux));
+
+    ASSERT_EQ(derived_struct_type->get_member(member, 2), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(member->get_descriptor(descriptor), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(descriptor->name(), "child_int32");
+    ASSERT_EQ(descriptor->index(), 2u);
+    ASSERT_EQ(descriptor->id(), 2);
+    ASSERT_TRUE(descriptor->type()->equals(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT32)));
+    ASSERT_EQ(derived_struct_type->get_member_by_name(member_aux,
+            descriptor->name()), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_TRUE(member->equals(member_aux));
+    ASSERT_EQ(derived_struct_type->get_member_by_index(member_aux, descriptor->index()),
+            eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_TRUE(member->equals(member_aux));
+
+    ASSERT_EQ(derived_struct_type->get_member(member, 4), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(member->get_descriptor(descriptor), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(descriptor->name(), "child_string");
+    ASSERT_EQ(descriptor->index(), 3u);
+    ASSERT_EQ(descriptor->id(), 4);
+    ASSERT_TRUE(descriptor->type()->equals(factory->create_string_type(0)->build()));
+    ASSERT_EQ(derived_struct_type->get_member_by_name(member_aux,
+            descriptor->name()), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_TRUE(member->equals(member_aux));
+    ASSERT_EQ(derived_struct_type->get_member_by_index(member_aux, descriptor->index()),
+            eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_TRUE(member->equals(member_aux));
+
+
+    DynamicTypeMembersById members_by_id;
+    ASSERT_EQ(derived_struct_type->get_all_members(members_by_id), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(members_by_id.size(), 4u);
+
+    DynamicTypeMembersByName members_by_name;
+    ASSERT_EQ(derived_struct_type->get_all_members_by_name(members_by_name), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(members_by_name.size(), 4u);
+
+
+    // Validating data management
+
+    DynamicData::_ref_type struct_data {DynamicDataFactory::get_instance()->create_data(derived_struct_type)};
+    ASSERT_TRUE(derived_struct_type);
+
+    // Setting invalid types should fail
+    ASSERT_NE(struct_data->set_int32_value(1, 10), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_NE(struct_data->set_string_value(MEMBER_ID_INVALID, ""), eprosima::fastdds::dds::RETCODE_OK);
+
+    // Set and get the parent values.
+    int32_t test1 {234};
+    ASSERT_EQ(struct_data->set_int32_value(0, test1), eprosima::fastdds::dds::RETCODE_OK);
+    int32_t test2 {0};
+    ASSERT_EQ(struct_data->get_int32_value(test2, 0), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(test1, test2);
+
+    int64_t test3 {234};
+    ASSERT_EQ(struct_data->set_int64_value(1, test3), eprosima::fastdds::dds::RETCODE_OK);
+    int64_t test4 {0};
+    ASSERT_EQ(struct_data->get_int64_value(test4, 1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(test3, test4);
+
+    // Set and get the child value.
+    ASSERT_EQ(struct_data->set_int32_value(2, test1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(struct_data->get_int32_value(test2, 2), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(test1, test2);
+
+    std::string test5 {"Testing"};
+    ASSERT_EQ(struct_data->set_string_value(4, test5), eprosima::fastdds::dds::RETCODE_OK);
+    std::string test6;
+    ASSERT_EQ(struct_data->get_string_value(test6, 4), eprosima::fastdds::dds::RETCODE_OK);
+
+    ASSERT_EQ(4, struct_data->get_item_count());
+
+    // XCDRv1
+    {
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(derived_struct_type);
+        uint32_t payloadSize =
+                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&struct_data, XCDR_DATA_REPRESENTATION)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(&struct_data, &payload, XCDR_DATA_REPRESENTATION));
+        ASSERT_TRUE(payload.length == payloadSize);
+        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(derived_struct_type)};
+        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
+        ASSERT_TRUE(data2->equals(struct_data));
+        ASSERT_EQ(data2->get_int32_value(test2, 0), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test1, test2);
+        ASSERT_EQ(data2->get_int64_value(test4, 1), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test3, test4);
+        ASSERT_EQ(data2->get_int32_value(test2, 2), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test1, test2);
+        ASSERT_EQ(data2->get_string_value(test6, 4), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test5, test6);
+        DynamicDataFactory::get_instance()->delete_data(data2);
+    }
+
+    // XCDRv2
+    {
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(derived_struct_type);
+        uint32_t payloadSize =
+                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&struct_data, XCDR2_DATA_REPRESENTATION)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(&struct_data, &payload, XCDR2_DATA_REPRESENTATION));
+        ASSERT_TRUE(payload.length == payloadSize);
+        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(derived_struct_type)};
+        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
+        ASSERT_TRUE(data2->equals(struct_data));
+        ASSERT_EQ(data2->get_int32_value(test2, 0), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test1, test2);
+        ASSERT_EQ(data2->get_int64_value(test4, 1), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test3, test4);
+        ASSERT_EQ(data2->get_int32_value(test2, 2), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test1, test2);
+        ASSERT_EQ(data2->get_string_value(test6, 4), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test5, test6);
+        DynamicDataFactory::get_instance()->delete_data(data2);
+    }
+
+    // Remove the elements.
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->clear_all_values());
+    ASSERT_EQ(4, struct_data->get_item_count());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int32_value(test2, 0));
+    ASSERT_EQ(0, test2);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int64_value(test4, 1));
+    ASSERT_EQ(0, test4);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int32_value(test2, 2));
+    ASSERT_EQ(0, test2);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_string_value(test6, 4));
+    ASSERT_EQ("", test6);
+
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_int32_value(0, test1));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_int64_value(1, test3));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_int32_value(2, test1));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_string_value(4, test5));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->clear_nonkey_values());
+    ASSERT_EQ(4, struct_data->get_item_count());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int32_value(test2, 0));
+    ASSERT_EQ(0, test2);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int64_value(test4, 1));
+    ASSERT_EQ(0, test4);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int32_value(test2, 2));
+    ASSERT_EQ(0, test2);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_string_value(test6, 4));
+    ASSERT_EQ("", test6);
+
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_int32_value(0, test1));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_int64_value(1, test3));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_int32_value(2, test1));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_string_value(4, test5));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->clear_value(1));
+    ASSERT_NE(eprosima::fastdds::dds::RETCODE_OK, struct_data->clear_value(3));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->clear_value(4));
+    ASSERT_EQ(4, struct_data->get_item_count());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int32_value(test2, 0));
+    ASSERT_EQ(test1, test2);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int64_value(test4, 1));
+    ASSERT_EQ(0, test4);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int32_value(test2, 2));
+    ASSERT_EQ(test1, test2);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_string_value(test6, 4));
+    ASSERT_EQ("", test6);
+
+    DynamicDataFactory::get_instance()->delete_data(struct_data);
+}
+
+TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("InnerStructTest");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    ASSERT_TRUE(builder);
+
+    // Add members to the struct.
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT32));
+    member_descriptor->name("int32");
+    member_descriptor->id(0);
+    ASSERT_EQ(builder->add_member(member_descriptor), eprosima::fastdds::dds::RETCODE_OK);
+
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT64));
+    member_descriptor->name("int64");
+    member_descriptor->id(1);
+    ASSERT_EQ(builder->add_member(member_descriptor), eprosima::fastdds::dds::RETCODE_OK);
+
+    DynamicType::_ref_type inner_struct_type {builder->build()};
+    ASSERT_TRUE(inner_struct_type);
+
+    // Create the parent struct.
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("StructTest");
+    builder = factory->create_type(type_descriptor);
+    ASSERT_TRUE(builder);
+
+    // Add members to the struct.
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(inner_struct_type);
+    member_descriptor->name("Structure");
+    member_descriptor->id(0);
+    ASSERT_EQ(builder->add_member(member_descriptor), eprosima::fastdds::dds::RETCODE_OK);
+
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT64));
+    member_descriptor->name("int64");
+    member_descriptor->id(10);
+    ASSERT_EQ(builder->add_member(member_descriptor), eprosima::fastdds::dds::RETCODE_OK);
+
+    DynamicType::_ref_type struct_type {builder->build()};
+    ASSERT_TRUE(struct_type);
+
+    DynamicData::_ref_type struct_data {DynamicDataFactory::get_instance()->create_data(struct_type)};
+    ASSERT_TRUE(struct_data);
+
+    ASSERT_NE(struct_data->set_int32_value(1, 10), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_NE(struct_data->set_string_value(MEMBER_ID_INVALID, ""), eprosima::fastdds::dds::RETCODE_OK);
+
+    // Set and get the child values.
+    const int64_t test1 {234};
+    ASSERT_EQ(struct_data->set_int64_value(10, test1), eprosima::fastdds::dds::RETCODE_OK);
+    int64_t test2 {0};
+    ASSERT_EQ(struct_data->get_int64_value(test2, 10), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(test1, test2);
+
+    auto inner_struct_data = struct_data->loan_value(0);
+    ASSERT_TRUE(inner_struct_data);
+
+    // Set and get the child values.
+    const int32_t test3 {234};
+    ASSERT_EQ(inner_struct_data->set_int32_value(0, test3), eprosima::fastdds::dds::RETCODE_OK);
+    int32_t test4 {0};
+    ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(test3, test4);
+    const int64_t test5 {234};
+    ASSERT_EQ(inner_struct_data->set_int64_value(1, test5), eprosima::fastdds::dds::RETCODE_OK);
+    int64_t test6 {0};
+    ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(test5, test6);
+
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+
+    ASSERT_EQ(2, struct_data->get_item_count());
+
+    // XCDRv1
+    {
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(struct_type);
+        uint32_t payloadSize =
+                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&struct_data, XCDR_DATA_REPRESENTATION)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(&struct_data, &payload, XCDR_DATA_REPRESENTATION));
+        ASSERT_TRUE(payload.length == payloadSize);
+        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(struct_type)};
+        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
+        ASSERT_TRUE(data2->equals(struct_data));
+        ASSERT_EQ(data2->get_int64_value(test2, 10), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test3, test4);
+        inner_struct_data = struct_data->loan_value(0);
+        ASSERT_TRUE(inner_struct_data);
+        ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test3, test4);
+        ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test5, test6);
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+
+        DynamicDataFactory::get_instance()->delete_data(data2);
+    }
+
+    // XCDRv2
+    {
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(struct_type);
+        uint32_t payloadSize =
+                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&struct_data, XCDR2_DATA_REPRESENTATION)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(&struct_data, &payload, XCDR2_DATA_REPRESENTATION));
+        ASSERT_TRUE(payload.length == payloadSize);
+        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(struct_type)};
+        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
+        ASSERT_TRUE(data2->equals(struct_data));
+        ASSERT_EQ(data2->get_int64_value(test2, 10), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test3, test4);
+        inner_struct_data = struct_data->loan_value(0);
+        ASSERT_TRUE(inner_struct_data);
+        ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test3, test4);
+        ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(test5, test6);
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+
+        DynamicDataFactory::get_instance()->delete_data(data2);
+    }
+
+    // Remove the elements.
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->clear_all_values());
+    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int64_value(test2, 10));
+    ASSERT_EQ(0, test2);
+    inner_struct_data = struct_data->loan_value(0);
+    ASSERT_TRUE(inner_struct_data);
+    ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(0, test4);
+    ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(0, test6);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_int64_value(10, test1));
+    inner_struct_data = struct_data->loan_value(0);
+    ASSERT_TRUE(inner_struct_data);
+    ASSERT_EQ(inner_struct_data->set_int32_value(0, test3), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(inner_struct_data->set_int64_value(1, test5), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->clear_nonkey_values());
+    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int64_value(test2, 10));
+    ASSERT_EQ(0, test2);
+    inner_struct_data = struct_data->loan_value(0);
+    ASSERT_TRUE(inner_struct_data);
+    ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(0, test4);
+    ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(0, test6);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->set_int64_value(10, test1));
+    inner_struct_data = struct_data->loan_value(0);
+    ASSERT_TRUE(inner_struct_data);
+    ASSERT_EQ(inner_struct_data->set_int32_value(0, test3), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(inner_struct_data->set_int64_value(1, test5), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->clear_value(0));
+    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->get_int64_value(test2, 10));
+    ASSERT_EQ(test1, test2);
+    inner_struct_data = struct_data->loan_value(0);
+    ASSERT_TRUE(inner_struct_data);
+    ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(0, test4);
+    ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(0, test6);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+
+    DynamicDataFactory::get_instance()->delete_data(struct_data);
+}
+
+/*
    TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
    {
    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
@@ -4206,24 +4423,24 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
    // A plain braced-init-list cannot be used for the labels because that would inhibit
    // template argument deduction, see § 14.8.2.5/5 of the C++11 standard
    ASSERT_EQ(union_type_builder.add_member(0, "first",
-     discriminant_type.get(), "", std::vector<uint64_t>{ 0 }, true),
-     eprosima::fastdds::dds::RETCODE_OK);
+   discriminant_type.get(), "", std::vector<uint64_t>{ 0 }, true),
+   eprosima::fastdds::dds::RETCODE_OK);
    ASSERT_EQ(union_type_builder.add_member(1, "second", another_member_type, "", std::vector<uint64_t>{ 1 },
-     false),
-     eprosima::fastdds::dds::RETCODE_OK);
+   false),
+   eprosima::fastdds::dds::RETCODE_OK);
 
    {
    eprosima::fastdds::dds::Log::ScopeLogs _("disable"); // avoid expected errors logging
 
    // Try to add a second "DEFAULT" value to the union
    ASSERT_FALSE(union_type_builder.add_member(3, "third", discrimitor_type.get(), "",
-         std::vector<uint64_t>{ 0 },
-         true) == eprosima::fastdds::dds::RETCODE_OK);
+      std::vector<uint64_t>{ 0 },
+      true) == eprosima::fastdds::dds::RETCODE_OK);
 
    // Try to add a second value to the same case label
    ASSERT_FALSE(union_type_builder.add_member(4, "third", discrimitor_type.get(), "",
-         std::vector<uint64_t>{ 1 },
-         false) == eprosima::fastdds::dds::RETCODE_OK);
+      std::vector<uint64_t>{ 1 },
+      false) == eprosima::fastdds::dds::RETCODE_OK);
    }
 
    // Create a data of this union
@@ -4307,20 +4524,20 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
 
    // Add members to the union.
    ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", std::vector<uint64_t>{ 0 },
-     true) == eprosima::fastdds::dds::RETCODE_OK);
+   true) == eprosima::fastdds::dds::RETCODE_OK);
    ASSERT_TRUE(union_type_builder->add_member(1, "second", base_type2, "", std::vector<uint64_t>{ 1 },
-     false) == eprosima::fastdds::dds::RETCODE_OK);
+   false) == eprosima::fastdds::dds::RETCODE_OK);
 
    {
    eprosima::fastdds::dds::Log::ScopeLogs _("disable"); // avoid expected errors logging
 
    // Try to add a second "DEFAULT" value to the union
    ASSERT_FALSE(union_type_builder->add_member(3, "third", base_type, "", std::vector<uint64_t>{ 0 },
-         true) == eprosima::fastdds::dds::RETCODE_OK);
+      true) == eprosima::fastdds::dds::RETCODE_OK);
 
    // Try to add a second value to the same case label
    ASSERT_FALSE(union_type_builder->add_member(4, "third", base_type, "", std::vector<uint64_t>{ 1 },
-         false) == eprosima::fastdds::dds::RETCODE_OK);
+      false) == eprosima::fastdds::dds::RETCODE_OK);
    }
 
    // Create a data of this union
@@ -4332,9 +4549,9 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
 
    // Add Members to the parent union
    ASSERT_TRUE(parent_union_type_builder->add_member(0, "first", base_type, "", std::vector<uint64_t>{ 0 },
-     true) == eprosima::fastdds::dds::RETCODE_OK);
+   true) == eprosima::fastdds::dds::RETCODE_OK);
    ASSERT_TRUE(parent_union_type_builder->add_member(1, "second", union_type, "", std::vector<uint64_t>{ 1 },
-     false) == eprosima::fastdds::dds::RETCODE_OK);
+   false) == eprosima::fastdds::dds::RETCODE_OK);
 
    std::unique_ptr<const DynamicType> created_type {parent_union_type_builder->build()};
    ASSERT_TRUE(created_type);
@@ -4481,7 +4698,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
    std::unique_ptr<DynamicTypeBuilder> alias_builder { factory.create_alias_type(*enum_type, "MyAliasEnum")};
    std::unique_ptr<const DynamicType> alias_type {alias_builder->build()};
    std::unique_ptr<DynamicTypeBuilder> alias_alias_builder { factory.create_alias_type(*alias_type,
-                                                               "MyAliasAliasEnum")};
+                                                            "MyAliasAliasEnum")};
    std::unique_ptr<const DynamicType> alias_alias_type {alias_alias_builder->build()};
 
    // Struct AliasAliasStruct
@@ -5106,7 +5323,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
 
    // Alias
    std::unique_ptr<const DynamicType> myAlias_type =
-         factory.get_alias_type(*wstring_type, "MyAliasWString");
+      factory.get_alias_type(*wstring_type, "MyAliasWString");
 
    // Struct StructAliasWString
    std::unique_ptr<DynamicTypeBuilder> alias_wstring_builder { factory.create_struct_type()};
@@ -5170,13 +5387,13 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
    // Typedef aka Alias
    std::unique_ptr<DynamicTypeBuilder> array_builder { factory.create_array_type(
  * factory.get_int32_type(),
-                                                     { 2, 2 })};
+                                                  { 2, 2 })};
    std::unique_ptr<DynamicTypeBuilder> myArray_builder { factory.create_alias_type(*array_builder.build(), "MyArray")};
 
    // Struct ArrayArrayStruct
    std::unique_ptr<DynamicTypeBuilder> aas_builder { factory.create_struct_type()};
    std::unique_ptr<DynamicTypeBuilder> aMyArray_builder { factory.create_array_type(*myArray_builder.build(),
-                                                            { 2, 2 })};
+                                                         { 2, 2 })};
    aas_builder.add_member(0, "my_array_array", aMyArray_builder.build());
    aas_builder->set_name("ArrayArrayStruct");
    std::unique_ptr<const DynamicType> aas_type = aas_builder.build();
@@ -5234,16 +5451,16 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
    // Typedef aka Alias
    std::unique_ptr<DynamicTypeBuilder> array_builder { factory.create_array_type(
  * factory.get_int32_type(),
-                                                     { 2, 2 })};
+                                                  { 2, 2 })};
    std::unique_ptr<DynamicTypeBuilder> myArray_builder { factory.create_alias_type(
  * array_builder.build(),
-                                                       "MyArray")};
+                                                    "MyArray")};
 
    // Struct ArrayArrayStruct
    std::unique_ptr<DynamicTypeBuilder> aas_builder { factory.create_struct_type()};
    std::unique_ptr<DynamicTypeBuilder> aMyArray_builder { factory.create_array_type(
  * myArray_builder.build(),
-                                                        { 2, 2 })};
+                                                     { 2, 2 })};
    aas_builder.add_member(0, "my_array_array", aMyArray_builder.build());
    aas_builder->set_name("ArrayArrayStruct");
 
@@ -5251,7 +5468,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
    std::unique_ptr<DynamicTypeBuilder> aaas_builder { factory.create_struct_type()};
    std::unique_ptr<DynamicTypeBuilder> aas_array_builder { factory.create_array_type(
  * aas_builder.build(),
-                                                         { 2, 2 })};
+                                                      { 2, 2 })};
    aaas_builder.add_member(0, "my_array_array_array", aas_array_builder.build());
    aaas_builder->set_name("ArrayArrayArrayStruct");
    std::unique_ptr<const DynamicType> aaas_type = aaas_builder.build();
@@ -5278,7 +5495,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
 
    std::unique_ptr<DynamicTypeBuilder> seq_builder { factory.create_sequence_type(
  * factory.get_int32_type(),
-                                                   2)};
+                                                2)};
 
    std::unique_ptr<DynamicTypeBuilder> seqs_builder { factory.create_struct_type()};
    seqs_builder.add_member(0, "my_sequence", seq_builder.build());
@@ -5307,10 +5524,10 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
 
    std::unique_ptr<DynamicTypeBuilder> seq_builder { factory.create_sequence_type(
  * factory.get_int32_type(),
-                                                   2)};
+                                                2)};
    std::unique_ptr<DynamicTypeBuilder> alias_builder { factory.create_alias_type(
  * seq_builder.build(),
-                                                     "my_sequence_sequence_inner")};
+                                                  "my_sequence_sequence_inner")};
 
    std::unique_ptr<DynamicTypeBuilder> sss_builder { factory.create_struct_type()};
    std::unique_ptr<DynamicTypeBuilder> seq_seq_builder { factory.create_sequence_type(*alias_builder.build(), 2)};
@@ -5341,7 +5558,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
    std::unique_ptr<DynamicTypeBuilder> map_builder { factory.create_map_type(
  * factory.get_int32_type(),
  * factory.get_int32_type(),
-                                                   7)};
+                                                7)};
 
    std::unique_ptr<DynamicTypeBuilder> maps_builder { factory.create_struct_type()};
    maps_builder.add_member(0, "my_map", map_builder.build());
@@ -5372,14 +5589,14 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
    std::unique_ptr<DynamicTypeBuilder> map_builder { factory.create_map_type(
  * int32_type,
  * int32_type,
-                                                   2)};
+                                                2)};
    std::unique_ptr<DynamicTypeBuilder> alias_builder { factory.create_alias_type(
  * map_builder.build(),
-                                                     "my_map_map_inner")};
+                                                  "my_map_map_inner")};
    std::unique_ptr<DynamicTypeBuilder> map_map_builder { factory.create_map_type(
  * int32_type,
  * alias_builder.build(),
-                                                       2)};
+                                                    2)};
 
    std::unique_ptr<DynamicTypeBuilder> maps_builder { factory.create_struct_type()};
    maps_builder.add_member(0, "my_map_map", map_map_builder.build());
@@ -5633,15 +5850,15 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
    //
    XML:
    < bitset name = "MyBitSet" >
-     < bitfield name = "a" bit_bound = "3" / >
-     < bitfield name = "b" bit_bound = "1" / >
-     < bitfield bit_bound = "4" / >
-     < bitfield name = "c" bit_bound = "10" / >
-     < bitfield name = "d" bit_bound = "12" type = "int16" / >
-     < / bitset >
+   < bitfield name = "a" bit_bound = "3" / >
+   < bitfield name = "b" bit_bound = "1" / >
+   < bitfield bit_bound = "4" / >
+   < bitfield name = "c" bit_bound = "10" / >
+   < bitfield name = "d" bit_bound = "12" type = "int16" / >
+   < / bitset >
 
    IDL:
-     bitset MyBitset
+   bitset MyBitset
    {
    bitfield<3> a; // @bit_bound=3 @position=0
    bitfield<1> b; // @bit_bound=1 @position=3
@@ -5729,7 +5946,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
    os << *bitset_type;
 
    const std::string reference =
-     "\n\tname:     MyBitSet\n\tkind:     TK_BITSET\n\tbounds:   1\n\tmembers:\
+   "\n\tname:     MyBitSet\n\tkind:     TK_BITSET\n\tbounds:   1\n\tmembers:\
    \n\t\tindex:    0\n\t\tname:     a\n\t\tid:       0\n\t\ttype:     \n\t\t\tname:     char\n\t\t\tkind:\
    TK_CHAR8\n\t\t\tbounds:   0\n\t\tmember annotations:\n\t\t\tannotation:bit_bound\n\t\t\t\tkey:\
    'value'\n\t\t\t\tvalue:   3\n\t\t\tannotation:position\n\t\t\t\tkey:     'value'\n\t\t\t\tvalue:\

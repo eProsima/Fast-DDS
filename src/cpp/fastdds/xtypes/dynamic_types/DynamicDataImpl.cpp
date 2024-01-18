@@ -1177,7 +1177,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
 ReturnCode_t DynamicDataImpl::clear_value(
         MemberId id) noexcept
 {
-    ReturnCode_t ret_val = RETCODE_OK;
+    ReturnCode_t ret_val = RETCODE_BAD_PARAMETER;
     TypeKind type_kind = get_enclosing_typekind(type_);
 
     if (TK_ARRAY == type_kind || TK_SEQUENCE == type_kind)
@@ -1198,6 +1198,7 @@ ReturnCode_t DynamicDataImpl::clear_value(
 
             data->clear_all_values();
             set_default_value(member, data);
+            ret_val = RETCODE_OK;
         }
     }
     else if (TK_BITMASK != type_kind && TK_BITSET != type_kind && TK_MAP != type_kind && TK_ARRAY != type_kind)
@@ -1205,10 +1206,7 @@ ReturnCode_t DynamicDataImpl::clear_value(
         if (MEMBER_ID_INVALID == id)
         {
             set_value("", MEMBER_ID_INVALID);
-        }
-        else
-        {
-            ret_val = RETCODE_BAD_PARAMETER;
+            ret_val = RETCODE_OK;
         }
     }
 
@@ -1594,10 +1592,9 @@ ReturnCode_t DynamicDataImpl::set_string_value(
                     "Error setting string value. The given string is greater than the length limit.");
             return RETCODE_BAD_PARAMETER;
         }
-        return set_value<std::string, TK_STRING8, StringSeq>(id, value);
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return set_value<std::string, TK_STRING8, StringSeq>(id, value);
 }
 
 ReturnCode_t DynamicDataImpl::get_wstring_value(
@@ -1622,11 +1619,9 @@ ReturnCode_t DynamicDataImpl::set_wstring_value(
                     "Error setting string value. The given string is greater than the length limit.");
             return RETCODE_BAD_PARAMETER;
         }
-
-        return set_value<std::wstring, TK_STRING16, WstringSeq>(id, value);
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return set_value<std::wstring, TK_STRING16, WstringSeq>(id, value);
 }
 
 ReturnCode_t DynamicDataImpl::get_complex_value(
@@ -2696,7 +2691,7 @@ void DynamicDataImpl::serialize(
                     {
                         auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
 
-                        cdr << MemberId(member->get_id()) << member_data;
+                        cdr << eprosima::fastcdr::MemberId{member->get_id()} << member_data;
                     }
                 }
             }
