@@ -19,18 +19,10 @@
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
 
-#include <future>
-#include <unordered_set>
-#include <utility>
-
-#include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
-#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/writer/StatefulWriter.h>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/RTPSDomainImpl.hpp>
 
 using eprosima::fastrtps::rtps::RTPSReader;
@@ -70,13 +62,13 @@ inline size_t calculate_continuation_point(
  * @return The continuation_point.
  */
 inline std::vector<uint8_t> create_continuation_point(
-        int value)
+        size_t value)
 {
     std::vector<uint8_t> continuation_point(32, 0);
 
-    for (int value_i = 0; value_i < value; value_i++)
+    for (size_t value_i = 0; value_i < value; value_i++)
     {
-        for (int i = continuation_point.size() - 1; i >= 0; --i)
+        for (size_t i = continuation_point.size() - 1; i != SIZE_MAX; --i)
         {
             if (continuation_point[i] < 255)
             {
@@ -97,40 +89,158 @@ TypeLookupRequestListener::TypeLookupRequestListener(
         TypeLookupManager* manager)
     : typelookup_manager_(manager)
 {
+    start_request_processor_thread();
 }
 
 TypeLookupRequestListener::~TypeLookupRequestListener()
 {
+    stop_request_processor_thread();
+}
+
+void TypeLookupRequestListener::start_request_processor_thread()
+{
+    std::unique_lock<std::mutex> guard(request_processor_cv_mutex_);
+    // Check if is not already in progress and the thread is not joinable
+    if (!processing_ && !request_processor_thread.joinable())
+    {
+        processing_ = true;
+        // Lambda function to be executed by the thread
+        auto thread_func = [this]()
+                {
+                    process_requests();
+                };
+        // Create and start the processing thread
+        request_processor_thread = eprosima::create_thread(thread_func,
+                        typelookup_manager_->participant_->getAttributes().typelookup_service_threads,
+                        "dds.tls.requests.%u");
+    }
+}
+
+void TypeLookupRequestListener::stop_request_processor_thread()
+{
+    {
+        // Set processing_ to false to signal the processing thread to stop
+        std::unique_lock<std::mutex> guard(request_processor_cv_mutex_);
+        processing_ = false;
+    }
+
+    if (request_processor_thread.joinable())
+    {
+        // Notify the processing thread to wake up and check the exit condition
+        request_processor_cv_.notify_all();
+        // Check if the calling thread is not the processing thread and join it
+        if (!request_processor_thread.is_calling_thread())
+        {
+            request_processor_thread.join();
+        }
+    }
+}
+
+void TypeLookupRequestListener::process_requests()
+{
+    std::unique_lock<std::mutex> guard(request_processor_cv_mutex_);
+
+    while (processing_)
+    {
+        // Wait until either processing is done or there are requests in the queue
+        request_processor_cv_.wait(guard,
+                [&]()
+                {
+                    return !processing_ || !requests_queue_.empty();
+                });
+
+        if (!requests_queue_.empty())
+        {
+            TypeLookup_Request& request = requests_queue_.front();
+            {
+                // Process the TypeLookup_Request based on its type
+                switch (request.data()._d())
+                {
+                    case TypeLookup_getTypes_HashId:
+                    {
+                        check_get_types_request(request.header().requestId(), request.data().getTypes());
+                        break;
+                    }
+                    case TypeLookup_getDependencies_HashId:
+                    {
+                        check_get_type_dependencies_request(request.header().requestId(),
+                                request.data().getTypeDependencies());
+                        break;
+                    }
+                    default:
+                        // If the type of request is not known, log an error and answer with an exception
+                        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Received unknown request type.");
+                        answer_request(
+                            request.header().requestId(),
+                            rpc::RemoteExceptionCode_t::REMOTE_EX_UNSUPPORTED);
+                        break;
+                }
+            }
+            // Remove the requests from the queue
+            requests_queue_.pop();
+        }
+    }
 }
 
 void TypeLookupRequestListener::check_get_types_request(
         SampleIdentity request_id,
         const TypeLookup_getTypes_In& request)
 {
+    // Always Sends EK_COMPLETE
+    // TODO: Add a property to the participant to configure this behavior. Allowing it to respond with EK_MINIMAL when possible.
     TypeLookup_getTypes_Out out;
+    ReturnCode_t type_result = RETCODE_ERROR;
+    xtypes::TypeObject obj;
+    xtypes::TypeIdentifier complete_id;
+    xtypes::TypeIdentifier minimal_id;
     // Iterate through requested type_ids
     for (const xtypes::TypeIdentifier& type_id : request.type_ids())
     {
-        xtypes::TypeObject obj;
-        if (RETCODE_OK == fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                        get_type_object(type_id, obj))
+        // If TypeIdentifier is EK_MINIMAL add complete_to_minimal to answer
+        if (type_id._d() == xtypes::EK_MINIMAL)
         {
-            xtypes::TypeIdentifierTypeObjectPair pair;
-            pair.type_identifier(type_id);
-            pair.type_object(obj);
-            // Add the pair to the result
-            out.types().push_back(std::move(pair));
-        }
-    }
-    // Create and send the reply
-    TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
-    TypeLookup_getTypes_Result result;
-    result.result(out);
-    reply->return_value().getType(result);
-    reply->header().relatedRequestId() = request_id;
+            minimal_id = type_id;
+            // Get complete TypeIdentifier from registry
+            complete_id = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                            complete_from_minimal_type_identifier(minimal_id);
 
-    typelookup_manager_->send_reply(*reply);
-    typelookup_manager_->reply_type_.deleteData(reply);
+            xtypes::TypeIdentifierPair id_pair;
+            id_pair.type_identifier1(complete_id);
+            id_pair.type_identifier2(minimal_id);
+            // Add the id pair to the result
+            out.complete_to_minimal().push_back(std::move(id_pair));
+        }
+        else
+        {
+            complete_id = type_id;
+        }
+
+        type_result = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                        get_type_object(complete_id, obj);
+        if (RETCODE_OK != type_result)
+        {
+            // If any object is unknown, abort and answer with exception
+            break;
+        }
+
+        xtypes::TypeIdentifierTypeObjectPair id_obj_pair;
+        id_obj_pair.type_identifier(complete_id);
+        id_obj_pair.type_object(obj);
+        // Add the id/obj pair to the result
+        out.types().push_back(std::move(id_obj_pair));
+    }
+
+    if (RETCODE_OK == type_result)
+    {
+        // Prepare and send the reply
+        answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_OK, out);
+    }
+    else
+    {
+        // If any of the types is not found, log error
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Error getting type.");
+        answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT);
+    }
 }
 
 void TypeLookupRequestListener::check_get_type_dependencies_request(
@@ -138,21 +248,25 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
         const TypeLookup_getTypeDependencies_In& request)
 {
     std::unordered_set<xtypes::TypeIdentfierWithSize> type_dependencies;
-    ReturnCode_t type_dependencies_result;
+    ReturnCode_t type_dependencies_result = RETCODE_ERROR;
     // Check if the received request has been done before and needed a continuation point
     {
         std::lock_guard<std::mutex> lock(requests_with_continuation_mutex_);
-        auto requests_it = requests_with_continuation_.find(request.type_ids());
-        if (requests_it != requests_with_continuation_.end())
+        if (!request.continuation_point().empty())
         {
-            // Get the dependencies without chechking the registry
-            type_dependencies = requests_it->second;
-            type_dependencies_result = RETCODE_OK;
+            auto requests_it = requests_with_continuation_.find(request.type_ids());
+            if (requests_it != requests_with_continuation_.end())
+            {
+                // Get the dependencies without chechking the registry
+                type_dependencies = requests_it->second;
+                type_dependencies_result = RETCODE_OK;
+            }
         }
         else
         {
             // Get the dependencies from the registry
-            type_dependencies_result = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+            type_dependencies_result =
+                    fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                             get_type_dependencies(request.type_ids(), type_dependencies);
 
             // If there are too many dependent types, store the type dependencies for future requests
@@ -168,14 +282,13 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
         // Prepare and send the reply
         TypeLookup_getTypeDependencies_Out out = prepare_get_type_dependencies_response(
             request.type_ids(), type_dependencies, request.continuation_point());
-        TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
-        TypeLookup_getTypeDependencies_Result result;
-        result.result(out);
-        reply->return_value().getTypeDependencies(result);
-        reply->header().relatedRequestId() = request_id;
-
-        typelookup_manager_->send_reply(*reply);
-        typelookup_manager_->reply_type_.deleteData(reply);
+        answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_OK, out);
+    }
+    else
+    {
+        // If the type dependencies are not found, log error
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Error getting type dependencies.");
+        answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT);
     }
 }
 
@@ -185,12 +298,14 @@ TypeLookup_getTypeDependencies_Out TypeLookupRequestListener::prepare_get_type_d
         const std::vector<uint8_t>& continuation_point)
 {
     TypeLookup_getTypeDependencies_Out out;
-    std::vector<xtypes::TypeIdentfierWithSize> dependent_types;
 
     // Check if all dependencies can be sent in a single response
     if (type_dependencies.size() < MAX_DEPENDENCIES_PER_REPLY)
     {
-        std::copy(type_dependencies.begin(), type_dependencies.end(), std::back_inserter(dependent_types));
+        for (const auto& type_identifier : type_dependencies)
+        {
+            out.dependent_typeids().emplace_back(type_identifier);
+        }
     }
     else
     {
@@ -201,11 +316,14 @@ TypeLookup_getTypeDependencies_Out TypeLookupRequestListener::prepare_get_type_d
             start_index = calculate_continuation_point(continuation_point) * MAX_DEPENDENCIES_PER_REPLY;
         }
 
-        // Copy the dependencies within the specified range
+        // Copy the dependencies within the specified range directly to out
         auto start_it = std::next(type_dependencies.begin(), start_index);
         auto end_it = std::next(start_it, std::min<size_t>(MAX_DEPENDENCIES_PER_REPLY,
                         type_dependencies.size() - start_index));
-        std::copy(start_it, end_it, std::back_inserter(dependent_types));
+        for (auto it = start_it; it != end_it; ++it)
+        {
+            out.dependent_typeids().emplace_back(*it);
+        }
 
         if ((start_index + MAX_DEPENDENCIES_PER_REPLY) > type_dependencies.size())
         {
@@ -224,10 +342,56 @@ TypeLookup_getTypeDependencies_Out TypeLookupRequestListener::prepare_get_type_d
         }
     }
 
-    // Set the dependent types in the reply
-    out.dependent_typeids(dependent_types);
-
     return out;
+}
+
+void TypeLookupRequestListener::answer_request(
+        SampleIdentity request_id,
+        rpc::RemoteExceptionCode_t exception_code,
+        TypeLookup_getTypeDependencies_Out& out)
+{
+    TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
+
+    TypeLookup_getTypeDependencies_Result result;
+    result.result(out);
+    reply->return_value().getTypeDependencies(result);
+
+    reply->header().relatedRequestId(request_id);
+    reply->header().remoteEx(exception_code);
+
+    typelookup_manager_->send(*reply);
+    typelookup_manager_->reply_type_.deleteData(reply);
+}
+
+void TypeLookupRequestListener::answer_request(
+        SampleIdentity request_id,
+        rpc::RemoteExceptionCode_t exception_code,
+        TypeLookup_getTypes_Out& out)
+{
+    TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
+
+    TypeLookup_getTypes_Result result;
+    result.result(out);
+    reply->return_value().getType(result);
+
+    reply->header().relatedRequestId(request_id);
+    reply->header().remoteEx(exception_code);
+
+    typelookup_manager_->send(*reply);
+    typelookup_manager_->reply_type_.deleteData(reply);
+}
+
+void TypeLookupRequestListener::answer_request(
+        SampleIdentity request_id,
+        rpc::RemoteExceptionCode_t exception_code)
+{
+    TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
+
+    reply->header().relatedRequestId(request_id);
+    reply->header().remoteEx(exception_code);
+
+    typelookup_manager_->send(*reply);
+    typelookup_manager_->reply_type_.deleteData(reply);
 }
 
 void TypeLookupRequestListener::onNewCacheChangeAdded(
@@ -243,30 +407,17 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
         EPROSIMA_LOG_WARNING(TL_REQUEST_READER, "Received data from a bad endpoint.");
         reader->getHistory()->remove_change(change);
     }
-    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Received new cache change");
 
     // Process the received TypeLookup Request and handle different types of requests
     TypeLookup_Request request;
-    if (typelookup_manager_->receive_request(*change, request))
+    if (typelookup_manager_->receive(*change, request))
     {
-        switch (request.data()._d())
+        // Add request to the processing queue
+        requests_queue_.push(request);
         {
-            case TypeLookup_getTypes_HashId:
-            {
-                std::async(std::launch::async,
-                        &TypeLookupRequestListener::check_get_types_request, this,
-                        request.header().requestId(), request.data().getTypes());
-                break;
-            }
-            case TypeLookup_getDependencies_HashId:
-            {
-                std::async(std::launch::async,
-                        &TypeLookupRequestListener::check_get_type_dependencies_request, this,
-                        request.header().requestId(), request.data().getTypeDependencies());
-                break;
-            }
-            default:
-                break;
+            // Notify processor
+            std::unique_lock<std::mutex> guard(request_processor_cv_mutex_);
+            request_processor_cv_.notify_all();
         }
     }
 

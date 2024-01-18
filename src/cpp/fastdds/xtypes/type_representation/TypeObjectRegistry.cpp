@@ -750,6 +750,35 @@ ReturnCode_t TypeObjectRegistry::get_type_dependencies_impl(
     return ret_code;
 }
 
+const TypeIdentifier TypeObjectRegistry::complete_from_minimal_type_identifier(
+        const TypeIdentifier& type_id)
+{
+    if (EK_MINIMAL == type_id._d() ||
+            (TI_PLAIN_SEQUENCE_SMALL == type_id._d() && type_id.seq_sdefn().header().equiv_kind() == EK_MINIMAL) ||
+            (TI_PLAIN_SEQUENCE_LARGE == type_id._d() && type_id.seq_ldefn().header().equiv_kind() == EK_MINIMAL) ||
+            (TI_PLAIN_ARRAY_SMALL == type_id._d() && type_id.array_sdefn().header().equiv_kind() == EK_MINIMAL) ||
+            (TI_PLAIN_ARRAY_LARGE == type_id._d() && type_id.array_ldefn().header().equiv_kind() == EK_MINIMAL) ||
+            (TI_PLAIN_MAP_SMALL == type_id._d() && (type_id.map_sdefn().header().equiv_kind() == EK_MINIMAL ||
+            type_id.map_sdefn().key_identifier()->_d() == EK_MINIMAL)) ||
+            (TI_PLAIN_MAP_LARGE == type_id._d() && (type_id.map_ldefn().header().equiv_kind() == EK_MINIMAL ||
+            type_id.map_ldefn().key_identifier()->_d() == EK_MINIMAL)))
+    {
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        for (const auto& it : local_type_identifiers_)
+        {
+            if (it.second.type_identifier1() == type_id)
+            {
+                return it.second.type_identifier2();
+            }
+            else if (it.second.type_identifier2() == type_id)
+            {
+                return it.second.type_identifier1();
+            }
+        }
+    }
+    return type_id;
+}
+
 void TypeObjectRegistry::add_dependency(
         const TypeIdentifier& type_id,
         std::unordered_set<TypeIdentfierWithSize>& type_dependencies)

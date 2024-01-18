@@ -21,22 +21,14 @@
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
-#include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/writer/StatefulWriter.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/RTPSDomainImpl.hpp>
-
 
 using eprosima::fastrtps::rtps::RTPSReader;
 using eprosima::fastrtps::rtps::CacheChange_t;
 using eprosima::fastdds::dds::Log;
 using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
-
 
 namespace eprosima {
 namespace fastdds {
@@ -47,10 +39,96 @@ TypeLookupReplyListener::TypeLookupReplyListener(
         TypeLookupManager* manager)
     : typelookup_manager_(manager)
 {
+    start_reply_processor_thread();
 }
 
 TypeLookupReplyListener::~TypeLookupReplyListener()
 {
+    stop_reply_processor_thread();
+}
+
+void TypeLookupReplyListener::start_reply_processor_thread()
+{
+    std::unique_lock<std::mutex> guard(replies_processor_cv_mutex_);
+    // Check if is not already in progress and the thread is not joinable
+    if (!processing_ && !replies_processor_thread.joinable())
+    {
+        processing_ = true;
+        // Lambda function to be executed by the thread
+        auto thread_func = [this]()
+                {
+                    process_reply();
+                };
+        // Create and start the processing thread
+        replies_processor_thread = eprosima::create_thread(thread_func,
+                        typelookup_manager_->participant_->getAttributes().typelookup_service_threads,
+                        "dds.tls.replies.%u");
+    }
+}
+
+void TypeLookupReplyListener::stop_reply_processor_thread()
+{
+    {
+        // Set processing_ to false to signal the processing thread to stop
+        std::unique_lock<std::mutex> guard(replies_processor_cv_mutex_);
+        processing_ = false;
+    }
+
+    if (replies_processor_thread.joinable())
+    {
+        // Notify the processing thread to wake up and check the exit condition
+        replies_processor_cv_.notify_all();
+        // Check if the calling thread is not the processing thread and join it
+        if (!replies_processor_thread.is_calling_thread())
+        {
+            replies_processor_thread.join();
+        }
+    }
+}
+
+void TypeLookupReplyListener::process_reply()
+{
+    std::unique_lock<std::mutex> guard(replies_processor_cv_mutex_);
+
+    while (processing_)
+    {
+        // Wait until either processing is done or there are replies in the queue
+        replies_processor_cv_.wait(guard,
+                [&]()
+                {
+                    return !processing_ || !replies_queue_.empty();
+                });
+
+        if (!replies_queue_.empty())
+        {
+            TypeLookup_Reply& reply = replies_queue_.front().reply;
+            {
+                // Process the TypeLookup_Reply based on its type
+                switch (reply.return_value()._d())
+                {
+                    case TypeLookup_getTypes_HashId:
+                    {
+                        check_get_types_reply(reply.header().relatedRequestId(),
+                                reply.return_value().getType().result());
+                        break;
+                    }
+                    case TypeLookup_getDependencies_HashId:
+                    {
+                        check_get_type_dependencies_reply(
+                            reply.header().relatedRequestId(), replies_queue_.front().type_server,
+                            reply.return_value().getTypeDependencies().result());
+                        break;
+                    }
+                    default:
+                        // If the type of request is not known, log an error
+                        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Received uknown reply type.");
+                        break;
+                }
+            }
+            // Remove the requests from the queue
+            replies_queue_.pop();
+        }
+    }
 }
 
 void TypeLookupReplyListener::check_get_types_reply(
@@ -61,17 +139,31 @@ void TypeLookupReplyListener::check_get_types_reply(
     auto requests_it = typelookup_manager_->async_get_type_requests_.find(request_id);
     if (requests_it != typelookup_manager_->async_get_type_requests_.end())
     {
+        ReturnCode_t register_result = RETCODE_ERROR;
         for (xtypes::TypeIdentifierTypeObjectPair pair : reply.types())
         {
-            if (RETCODE_OK == fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+            if (RETCODE_OK != fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                             register_type_object(pair.type_identifier(), pair.type_object()))
             {
-                // Notify the callbacks associated with the request
-                typelookup_manager_->notify_callbacks(requests_it->second);
+                // If registration fails for any type, break out of the loop
+                register_result = RETCODE_PRECONDITION_NOT_MET;
+                break;
             }
         }
+
+        if (RETCODE_OK == register_result)
+        {
+            // Notify the callbacks associated with the request
+            typelookup_manager_->notify_callbacks(requests_it->second);
+        }
+        else
+        {
+            // If any of the types is not registered, log error
+            EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Error registering type.");
+        }
+
         // Remove the processed SampleIdentity from the outstanding requests
-        typelookup_manager_->remove_async_get_types_request(request_id);
+        typelookup_manager_->remove_async_get_type_request(request_id);
     }
 }
 
@@ -88,22 +180,37 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
         return;
     }
 
-    // Check each dependent TypeIdentifierWithSize to ensure all dependencies are known
-    bool all_dependencies_known = std::all_of(
-        reply.dependent_typeids().begin(), reply.dependent_typeids().end(),
-        [&](const xtypes::TypeIdentfierWithSize& type_id)
-        {
-            // Check if the dependent TypeIdentifierWithSize is known; creating a new request if it is not
-            return RETCODE_OK == typelookup_manager_->check_type_identifier_received(type_id, type_server);
-        });
+    // Add the dependent types to the list for the get_type request
+    xtypes::TypeIdentifierSeq needed_types;
+    std::unordered_set<xtypes::TypeIdentifier> unique_types;
 
-    // If the received reply has continuation point, send next request
-    if (!reply.continuation_point().empty())
+    for (xtypes::TypeIdentfierWithSize type : reply.dependent_typeids())
     {
-        // Make a new request with the continuation point
-        xtypes::TypeIdentifierSeq unknown_type{requests_it->second.type_id()};
+        // Check if the type is known
+        if (!fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                        is_type_identifier_known(type))
+        {
+            // Insert the type into the unordered_set and check if the insertion was successful
+            if (unique_types.insert(type.type_id()).second)
+            {
+                // If the insertion was successful, it means the type was not already in the set
+                needed_types.push_back(type.type_id());
+            }
+            // If the insertion was not successful, the type is a duplicate and can be ignored
+        }
+    }
+
+    // If there is no continuation point, add the parent type
+    if (reply.continuation_point().empty())
+    {
+        needed_types.push_back(requests_it->second.type_id());
+    }
+    // Make a new request with the continuation point
+    else
+    {
         SampleIdentity next_request_id = typelookup_manager_->
-                        get_type_dependencies(unknown_type, type_server, reply.continuation_point());
+                        get_type_dependencies({requests_it->second.type_id()}, type_server,
+                        reply.continuation_point());
         if (INVALID_SAMPLE_IDENTITY != next_request_id)
         {
             // Store the sent requests and associated TypeIdentfierWithSize
@@ -112,31 +219,26 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
         else
         {
             // Failed to send request
-            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Failed to send get_type_dependencies request");
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Failed to send get_type_dependencies request");
         }
     }
-    // If all dependencies are known and there is no continuation point, request the parent type
-    else if (all_dependencies_known)
+
+    // Send the type request
+    SampleIdentity get_types_request = typelookup_manager_->get_types(needed_types, type_server);
+
+    if (INVALID_SAMPLE_IDENTITY != get_types_request)
     {
-        xtypes::TypeIdentifierSeq unknown_type{requests_it->second.type_id()};
-
-        // Initiate a type request to obtain the parent type
-        SampleIdentity get_types_request = typelookup_manager_->get_types(unknown_type, type_server);
-
-        if (INVALID_SAMPLE_IDENTITY != get_types_request)
-        {
-            // Store the type request
-            typelookup_manager_->add_async_get_type_request(get_types_request, requests_it->second);
-        }
-        else
-        {
-            // Failed to send request
-            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Failed to send get_types request");
-        }
+        // Store the type request
+        typelookup_manager_->add_async_get_type_request(get_types_request, requests_it->second);
+    }
+    else
+    {
+        // Failed to send request
+        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Failed to send get_types request");
     }
 
     // Remove the processed SampleIdentity from the outstanding requests
-    typelookup_manager_->remove_async_get_types_request(request_id);
+    typelookup_manager_->remove_async_get_type_request(request_id);
 }
 
 void TypeLookupReplyListener::onNewCacheChangeAdded(
@@ -152,27 +254,27 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
         EPROSIMA_LOG_WARNING(TL_REPLY_READER, "Received data from a bad endpoint.");
         reader->getHistory()->remove_change(change);
     }
-    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Received new cache change");
 
     // Process the received TypeLookup Reply and handle different types of replies
     TypeLookup_Reply reply;
-    if (typelookup_manager_->receive_reply(*change, reply))
+    if (typelookup_manager_->receive(*change, reply))
     {
-        switch (reply.return_value()._d())
+        // Check if the reply has any exceptions
+        if (reply.header().remoteEx() != rpc::RemoteExceptionCode_t::REMOTE_EX_OK)
         {
-            case TypeLookup_getTypes_HashId:
-            {
-                check_get_types_reply(reply.header().relatedRequestId(), reply.return_value().getType().result());
-                break;
-            }
-            case TypeLookup_getDependencies_HashId:
-            {
-                check_get_type_dependencies_reply(reply.header().relatedRequestId(), change->writerGUID.guidPrefix,
-                        reply.return_value().getTypeDependencies().result());
-                break;
-            }
-            default:
-                break;
+            // TODO: Implement specific handling for each exception
+            EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
+                    "Received reply with exception code: " << static_cast<int>(reply.header().remoteEx()));
+            // If the reply was not ok, ignore it
+            return;
+        }
+
+        // Add reply to the processing queue
+        replies_queue_.push(ReplyWithServerGUID{reply, change->writerGUID.guidPrefix});
+        {
+            // Notify processor
+            std::unique_lock<std::mutex> guard(replies_processor_cv_mutex_);
+            replies_processor_cv_.notify_all();
         }
     }
 
@@ -188,6 +290,7 @@ void TypeLookupReplyListener::onWriterChangeReceivedByAll(
 }
 
 } // namespace builtin
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

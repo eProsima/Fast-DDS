@@ -165,6 +165,12 @@
                     <affinity>12</affinity>
                     <stack_size>12</stack_size>
                 </discovery_server_thread>
+                <typelookup_service_threads>
+                    <scheduling_policy>12</scheduling_policy>
+                    <priority>12</priority>
+                    <affinity>12</affinity>
+                    <stack_size>12</stack_size>
+                </typelookup_service_threads>
                 <builtin_transports_reception_threads>
                     <scheduling_policy>12</scheduling_policy>
                     <priority>12</priority>
