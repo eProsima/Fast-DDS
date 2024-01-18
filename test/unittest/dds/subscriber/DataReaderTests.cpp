@@ -581,7 +581,7 @@ TEST_F(DataReaderTests, get_guid)
     {
     public:
 
-        void on_subscriber_discovery(
+        void on_data_reader_discovery(
                 DomainParticipant*,
                 ReaderDiscoveryInfo&& info)
         {

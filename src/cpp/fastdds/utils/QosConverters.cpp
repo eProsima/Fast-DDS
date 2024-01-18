@@ -159,6 +159,7 @@ void set_qos_from_attributes(
     qos.builtin_controllers_sender_thread() = attr.builtin_controllers_sender_thread;
     qos.timed_events_thread() = attr.timed_events_thread;
     qos.discovery_server_thread() = attr.discovery_server_thread;
+    qos.typelookup_service_threads() = attr.typelookup_service_threads;
 #if HAVE_SECURITY
     qos.security_log_thread() = attr.security_log_thread;
 #endif // if HAVE_SECURITY
@@ -205,6 +206,7 @@ void set_attributes_from_qos(
     attr.builtin_controllers_sender_thread = qos.builtin_controllers_sender_thread();
     attr.timed_events_thread = qos.timed_events_thread();
     attr.discovery_server_thread = qos.discovery_server_thread();
+    attr.typelookup_service_threads = qos.typelookup_service_threads();
 #if HAVE_SECURITY
     attr.security_log_thread = qos.security_log_thread();
 #endif // if HAVE_SECURITY

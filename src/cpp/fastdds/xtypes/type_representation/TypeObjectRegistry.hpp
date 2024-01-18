@@ -269,6 +269,16 @@ public:
             const TypeObject& type_object,
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
 
+    /**
+     * @brief Get Complete TypeIdentifier from Minimal TypeIdentifier.
+     *
+     * @param minimal_type_id Direct hash minimal TypeIdentifier
+     * @return TypeIdentifier Complete TypeIdentifier related to the given Minimal TypeIdentifier.
+     *         Same TypeIdentifier if the given TypeIdentifier is not a direct hash minimal TypeIdentifier.
+     */
+    const TypeIdentifier complete_from_minimal_type_identifier(
+            const TypeIdentifier& minimal_type_id);
+
     // Only DomainParticipantFactory is allowed to instantiate the TypeObjectRegistry class.
     // It cannot be protected as the standard library needs to access the constructor to allocate the resources.
     // Rule of zero: resource managing types.

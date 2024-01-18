@@ -115,7 +115,7 @@ protected:
             }
         }
 
-        void on_publisher_discovery(
+        void on_data_writer_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
                 eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
         {
