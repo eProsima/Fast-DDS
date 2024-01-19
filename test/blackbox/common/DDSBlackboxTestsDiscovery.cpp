@@ -427,8 +427,10 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
 
         void on_participant_discovery(
                 DomainParticipant* participant,
-                ParticipantDiscoveryInfo&& info)
+                ParticipantDiscoveryInfo&& info,
+                bool& should_be_ignored)
         {
+            static_cast<void>(should_be_ignored);
             std::unique_lock<std::mutex> lck(*mtx_);
             if (info.status ==
                     eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
@@ -602,8 +604,10 @@ TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
 
         void on_participant_discovery(
                 DomainParticipant* /*participant*/,
-                ParticipantDiscoveryInfo&& info) override
+                ParticipantDiscoveryInfo&& info,
+                bool& should_be_ignored) override
         {
+            static_cast<void>(should_be_ignored);
             if (info.status == info.DISCOVERED_PARTICIPANT)
             {
                 std::lock_guard<std::mutex> guard(mtx);

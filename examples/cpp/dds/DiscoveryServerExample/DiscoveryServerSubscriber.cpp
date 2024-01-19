@@ -292,8 +292,10 @@ void HelloWorldSubscriber::SubListener::on_data_available(
 
 void HelloWorldSubscriber::SubListener::on_participant_discovery(
         eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+        bool& should_be_ignored)
 {
+    static_cast<void>(should_be_ignored);
     if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;

@@ -103,7 +103,8 @@ private:
     {
         virtual void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
-                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                bool& should_be_ignored) override;
     };
 
     PartListener part_listener_;
