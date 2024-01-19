@@ -86,10 +86,6 @@ static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
 static const int s_default_keep_alive_timeout = 15000; // 15 SECONDS
 //static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
 
-FASTDDS_TODO_BEFORE(3, 0,
-        "Eliminate s_default_tcp_negotitation_timeout, variable used to initialize deprecate attribute.")
-static const int s_default_tcp_negotitation_timeout = 5000; // 5 Seconds
-
 TCPTransportDescriptor::TCPTransportDescriptor()
     : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
     , keep_alive_frequency_ms(s_default_keep_alive_frequency)
@@ -97,9 +93,7 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , max_logical_port(100)
     , logical_port_range(20)
     , logical_port_increment(2)
-    , tcp_negotiation_timeout(s_default_tcp_negotitation_timeout)
     , enable_tcp_nodelay(false)
-    , wait_for_tcp_negotiation(false)
     , calculate_crc(true)
     , check_crc(true)
     , apply_security(false)
@@ -115,9 +109,7 @@ TCPTransportDescriptor::TCPTransportDescriptor(
     , max_logical_port(t.max_logical_port)
     , logical_port_range(t.logical_port_range)
     , logical_port_increment(t.logical_port_increment)
-    , tcp_negotiation_timeout(t.tcp_negotiation_timeout)
     , enable_tcp_nodelay(t.enable_tcp_nodelay)
-    , wait_for_tcp_negotiation(t.wait_for_tcp_negotiation)
     , calculate_crc(t.calculate_crc)
     , check_crc(t.check_crc)
     , apply_security(t.apply_security)
@@ -142,9 +134,7 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator =(
     max_logical_port = t.max_logical_port;
     logical_port_range = t.logical_port_range;
     logical_port_increment = t.logical_port_increment;
-    tcp_negotiation_timeout = t.tcp_negotiation_timeout;
     enable_tcp_nodelay = t.enable_tcp_nodelay;
-    wait_for_tcp_negotiation = t.wait_for_tcp_negotiation;
     calculate_crc = t.calculate_crc;
     check_crc = t.check_crc;
     apply_security = t.apply_security;
@@ -163,9 +153,7 @@ bool TCPTransportDescriptor::operator ==(
            this->max_logical_port == t.max_logical_port &&
            this->logical_port_range == t.logical_port_range &&
            this->logical_port_increment == t.logical_port_increment &&
-           this->tcp_negotiation_timeout == t.tcp_negotiation_timeout &&
            this->enable_tcp_nodelay == t.enable_tcp_nodelay &&
-           this->wait_for_tcp_negotiation == t.wait_for_tcp_negotiation &&
            this->calculate_crc == t.calculate_crc &&
            this->check_crc == t.check_crc &&
            this->apply_security == t.apply_security &&
