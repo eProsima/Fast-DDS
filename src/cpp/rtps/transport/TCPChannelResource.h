@@ -94,6 +94,8 @@ public:
     bool is_logical_port_added(
             uint16_t port);
 
+    bool is_pending_logical_port_empty();
+
     bool connection_established()
     {
         return connection_status_ == eConnectionStatus::eEstablished;

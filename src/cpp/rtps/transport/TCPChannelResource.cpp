@@ -111,6 +111,12 @@ bool TCPChannelResource::is_logical_port_opened(
     return std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port) != logical_output_ports_.end();
 }
 
+bool TCPChannelResource::is_pending_logical_port_empty()
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    return pending_logical_output_ports_.empty();
+}
+
 bool TCPChannelResource::is_logical_port_added(
         uint16_t port)
 {
