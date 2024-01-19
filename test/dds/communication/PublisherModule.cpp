@@ -213,7 +213,8 @@ void PublisherModule::on_publication_matched(
 
 void PublisherModule::on_participant_discovery(
         DomainParticipant* /*participant*/,
-        ParticipantDiscoveryInfo&& info)
+        ParticipantDiscoveryInfo&& info,
+        bool& /*should_be_ignored*/)
 {
     if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {

@@ -63,7 +63,8 @@ public:
      */
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
+            fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+            bool& should_be_ignored) override;
 
 #if HAVE_SECURITY
     void onParticipantAuthentication(

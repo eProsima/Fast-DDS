@@ -182,8 +182,10 @@ void LivelinessSubscriber::run(
 
 void LivelinessSubscriber::PartListener::on_participant_discovery(
         DomainParticipant*,
-        ParticipantDiscoveryInfo&& info)
+        ParticipantDiscoveryInfo&& info,
+        bool& should_be_ignored)
 {
+    static_cast<void>(should_be_ignored);
     if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Participant discovered" << std::endl;

@@ -80,8 +80,10 @@ class PubSubWriter
 
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                bool& should_be_ignored) override
         {
+            static_cast<void>(should_be_ignored);
             if (writer_.onDiscovery_ != nullptr)
             {
                 writer_.discovery_result_ = writer_.onDiscovery_(info);

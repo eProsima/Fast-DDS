@@ -264,17 +264,6 @@ public:
 
     void on_participant_discovery(
             fastdds::dds::DomainParticipant* participant,
-            fastrtps::rtps::ParticipantDiscoveryInfo&& /*info*/) override
-    {
-        if (std::find(p_matched_.begin(), p_matched_.end(), participant->guid()) == p_matched_.end())
-        {
-            matched++;
-            p_matched_.push_back(participant->guid());
-        }
-    }
-
-    void on_participant_discovery(
-            fastdds::dds::DomainParticipant* participant,
             fastrtps::rtps::ParticipantDiscoveryInfo&& /*info*/,
             bool& /*should_be_ignored*/) override
     {

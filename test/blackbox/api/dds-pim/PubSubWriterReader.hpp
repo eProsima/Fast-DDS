@@ -82,9 +82,11 @@ class PubSubWriterReader
 #endif // if HAVE_SECURITY
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
-                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                bool& should_be_ignored) override
         {
-            (void)participant;
+            static_cast<void>(should_be_ignored);
+            static_cast<void>(participant);
 
             switch (info.status)
             {
