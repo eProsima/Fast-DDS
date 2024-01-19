@@ -83,7 +83,7 @@ bool TestReaderRegistered::reg()
     Tatt.topicKind = NO_KEY;
     Tatt.topicDataType = "string";
     Tatt.topicName = "exampleTopic";
-    ReaderQos Rqos;
+    eprosima::fastdds::dds::ReaderQos Rqos;
     return mp_participant->registerReader(mp_reader, Tatt, Rqos);
 }
 
