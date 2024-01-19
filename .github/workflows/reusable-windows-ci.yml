@@ -51,8 +51,17 @@ jobs:
         with:
           cmakeVersion: '3.22.6'
 
+      - name: Setting ninja
+        id: ninja
+        if: github.event.schedule == ''
+        shell: pwsh
+        run: |
+          echo "cmake_generator=ninja" >> $Env:GITHUB_OUTPUT
+
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        with:
+          windows_compile_environment: msvc
 
       - name: Patch SDK for source indexing
         run: |
@@ -459,7 +468,8 @@ jobs:
                       "--symlink-install",
                       "--event-handlers=console_direct+",
                       "--packages-up-to", "fastrtps",
-                      "--mixin", $translate["${{ matrix.cmake-config }}"]
+                      "--mixin", $translate["${{ matrix.cmake-config }}"],
+                      "ccache", "${{ steps.ninja.outputs.cmake_generator }}"
 
           $cmakeargs = '--cmake-args --no-warn-unused-cli ${{ inputs.cmake-args }} '
 
