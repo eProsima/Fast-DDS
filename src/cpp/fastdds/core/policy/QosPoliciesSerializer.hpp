@@ -867,7 +867,7 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
 
     for (size_t i = 0; i < num_domains; ++i)
     {
-        uint64_t domain;
+        uint64_t domain {0};
         valid &= fastrtps::rtps::CDRMessage::readUInt64(cdr_message, &domain);
         qos_policy.add_domain_id(domain);
     }
