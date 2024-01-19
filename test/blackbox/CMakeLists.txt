@@ -13,7 +13,6 @@
 # limitations under the License.
 
 option(RTPS_API_TESTS "Enable tests using RTPS API" ON)
-option(FASTRTPS_API_TESTS "Enable tests using FastRTPS API" OFF)
 option(FASTDDS_PIM_API_TESTS "Enable tests using FastDDS API" ON)
 
 if(WIN32)
@@ -180,46 +179,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partitions_profile.xml
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/builtin_transports_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/builtin_transports_profile.xml)
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/datagrams" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
-
-if(FASTRTPS_API_TESTS)
-    set(BLACKBOXTESTS_FASTRTPS_SOURCE
-        ${BLACKBOXTESTS_SOURCE}
-        api/fastrtps_deprecated/ReqRepHelloWorldRequester.cpp
-        api/fastrtps_deprecated/ReqRepHelloWorldReplier.cpp
-        )
-
-    add_executable(BlackboxTests_FastRTPS ${BLACKBOXTESTS_FASTRTPS_SOURCE})
-    target_compile_definitions(BlackboxTests_FastRTPS PRIVATE
-        BOOST_ASIO_STANDALONE
-        ASIO_STANDALONE
-        $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
-        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-        $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
-        )
-    target_include_directories(BlackboxTests_FastRTPS PRIVATE
-        ${Asio_INCLUDE_DIR}
-        api/fastrtps_deprecated)
-    target_link_libraries(BlackboxTests_FastRTPS
-        fastrtps
-        fastcdr
-        foonathan_memory
-        GTest::gtest
-        $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
-        )
-
-    gtest_discover_tests(BlackboxTests_FastRTPS
-        PROPERTIES
-            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
-            ENVIRONMENT "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
-            ENVIRONMENT "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
-            ENVIRONMENT "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
-            ENVIRONMENT "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
-            ENVIRONMENT $<IF:$<BOOL:${OPENSSL_CONF}>,OPENSSL_CONF=${OPENSSL_CONF},>
-        TEST_FILTER ${pkcs_filter} ${dns_filter}
-        NO_PRETTY_VALUES
-        )
-endif(FASTRTPS_API_TESTS)
 
 if(FASTDDS_PIM_API_TESTS)
     set(BLACKBOXTESTS_FASTDDS_PIM_SOURCE

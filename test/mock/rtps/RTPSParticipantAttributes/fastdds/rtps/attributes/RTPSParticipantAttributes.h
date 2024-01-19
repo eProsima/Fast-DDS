@@ -302,28 +302,6 @@ public:
     }
 
     /**
-     * Get the static endpoint XML filename
-     * @return Static endpoint XML filename
-     */
-    FASTRTPS_DEPRECATED("Use static_edp_xml_config()")
-    const char* getStaticEndpointXMLFilename() const
-    {
-        return static_edp_xml_config();
-    }
-
-    /**
-     * Set the static endpoint XML filename
-     * @param str Static endpoint XML filename
-     * @deprecated
-     */
-    FASTRTPS_DEPRECATED("Use static_edp_xml_config()")
-    void setStaticEndpointXMLFilename(
-            const char* str)
-    {
-        static_edp_xml_config_ = "file://" + std::string(str);
-    }
-
-    /**
      * Set the static endpoint XML configuration.
      * @param str URI specifying the static endpoint XML configuration.
      * The string could contain a filename (file://) or the XML content directly (data://).
