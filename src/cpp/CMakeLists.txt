@@ -234,7 +234,6 @@ set(${PROJECT_NAME}_source_files
     utils/md5.cpp
     utils/StringMatching.cpp
     utils/IPLocator.cpp
-    utils/System.cpp
     utils/SystemInfo.cpp
     utils/TimedConditionVariable.cpp
     utils/string_convert.cpp
