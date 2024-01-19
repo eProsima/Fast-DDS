@@ -70,27 +70,6 @@ ExtendedAnnotationParameterValue& ExtendedAnnotationParameterValue::operator =(
     return *this;
 }
 
-size_t ExtendedAnnotationParameterValue::getCdrSerializedSize(
-        const ExtendedAnnotationParameterValue& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void ExtendedAnnotationParameterValue::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void ExtendedAnnotationParameterValue::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 size_t ExtendedAnnotationParameterValue::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
@@ -1248,27 +1227,6 @@ ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value()
     return m_extended_value;
 }
 
-size_t AnnotationParameterValue::getCdrSerializedSize(
-        const AnnotationParameterValue& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void AnnotationParameterValue::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void AnnotationParameterValue::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool AnnotationParameterValue::operator ==(
         const AnnotationParameterValue& other) const
 {
@@ -1382,18 +1340,6 @@ bool AppliedAnnotationParameter::operator ==(
            m_value == other.m_value;
 }
 
-void AppliedAnnotationParameter::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void AppliedAnnotationParameter::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool AppliedAnnotationParameter::isKeyDefined()
 {
     return false;
@@ -1452,18 +1398,6 @@ bool AppliedAnnotation::operator ==(
         return compareSequence(m_param_seq, other.m_param_seq);
     }
     return false;
-}
-
-void AppliedAnnotation::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void AppliedAnnotation::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool AppliedAnnotation::isKeyDefined()
@@ -1526,18 +1460,6 @@ bool AppliedVerbatimAnnotation::operator ==(
     return m_placement == other.m_placement &&
            m_language == other.m_language &&
            m_text == other.m_text;
-}
-
-void AppliedVerbatimAnnotation::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void AppliedVerbatimAnnotation::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool AppliedVerbatimAnnotation::isKeyDefined()
@@ -1605,18 +1527,6 @@ bool AppliedBuiltinMemberAnnotations::operator ==(
            m_min == other.m_min &&
            m_max == other.m_max &&
            m_hash_id == other.m_hash_id;
-}
-
-void AppliedBuiltinMemberAnnotations::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void AppliedBuiltinMemberAnnotations::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool AppliedBuiltinMemberAnnotations::isKeyDefined()

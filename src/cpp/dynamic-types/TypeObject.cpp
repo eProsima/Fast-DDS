@@ -73,27 +73,6 @@ CommonStructMember& CommonStructMember::operator =(
     return *this;
 }
 
-size_t CommonStructMember::getCdrSerializedSize(
-        const CommonStructMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonStructMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonStructMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CommonStructMember::operator ==(
         const CommonStructMember& other) const
 {
@@ -154,27 +133,6 @@ CompleteMemberDetail& CompleteMemberDetail::operator =(
     return *this;
 }
 
-size_t CompleteMemberDetail::getCdrSerializedSize(
-        const CompleteMemberDetail& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteMemberDetail::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteMemberDetail::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteMemberDetail::operator ==(
         const CompleteMemberDetail& other) const
 {
@@ -231,27 +189,6 @@ MinimalMemberDetail& MinimalMemberDetail::operator =(
     return *this;
 }
 
-size_t MinimalMemberDetail::getCdrSerializedSize(
-        const MinimalMemberDetail& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalMemberDetail::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalMemberDetail::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalMemberDetail::operator ==(
         const MinimalMemberDetail& other) const
 {
@@ -305,27 +242,6 @@ CompleteStructMember& CompleteStructMember::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t CompleteStructMember::getCdrSerializedSize(
-        const CompleteStructMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteStructMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteStructMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteStructMember::operator ==(
@@ -384,27 +300,6 @@ MinimalStructMember& MinimalStructMember::operator =(
     return *this;
 }
 
-size_t MinimalStructMember::getCdrSerializedSize(
-        const MinimalStructMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalStructMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalStructMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalStructMember::operator ==(
         const MinimalStructMember& other) const
 {
@@ -457,27 +352,6 @@ AppliedBuiltinTypeAnnotations& AppliedBuiltinTypeAnnotations::operator =(
     return *this;
 }
 
-size_t AppliedBuiltinTypeAnnotations::getCdrSerializedSize(
-        const AppliedBuiltinTypeAnnotations& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void AppliedBuiltinTypeAnnotations::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void AppliedBuiltinTypeAnnotations::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool AppliedBuiltinTypeAnnotations::operator ==(
         const AppliedBuiltinTypeAnnotations& other) const
 {
@@ -521,27 +395,6 @@ MinimalTypeDetail& MinimalTypeDetail::operator =(
         MinimalTypeDetail&&)
 {
     return *this;
-}
-
-size_t MinimalTypeDetail::getCdrSerializedSize(
-        const MinimalTypeDetail& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalTypeDetail::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalTypeDetail::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalTypeDetail::consistent(
@@ -593,27 +446,6 @@ CompleteTypeDetail& CompleteTypeDetail::operator =(
     m_type_name = std::move(x.m_type_name);
 
     return *this;
-}
-
-size_t CompleteTypeDetail::getCdrSerializedSize(
-        const CompleteTypeDetail& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteTypeDetail::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteTypeDetail::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteTypeDetail::operator ==(
@@ -679,27 +511,6 @@ CompleteStructHeader& CompleteStructHeader::operator =(
     return *this;
 }
 
-size_t CompleteStructHeader::getCdrSerializedSize(
-        const CompleteStructHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteStructHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteStructHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteStructHeader::operator ==(
         const CompleteStructHeader& other) const
 {
@@ -754,27 +565,6 @@ MinimalStructHeader& MinimalStructHeader::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t MinimalStructHeader::getCdrSerializedSize(
-        const MinimalStructHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalStructHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalStructHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalStructHeader::operator ==(
@@ -835,27 +625,6 @@ CompleteStructType& CompleteStructType::operator =(
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-size_t CompleteStructType::getCdrSerializedSize(
-        const CompleteStructType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteStructType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteStructType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteStructType::operator ==(
@@ -979,27 +748,6 @@ MinimalStructType& MinimalStructType::operator =(
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-size_t MinimalStructType::getCdrSerializedSize(
-        const MinimalStructType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalStructType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalStructType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalStructType::operator ==(
@@ -1129,27 +877,6 @@ CommonUnionMember& CommonUnionMember::operator =(
     return *this;
 }
 
-size_t CommonUnionMember::getCdrSerializedSize(
-        const CommonUnionMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonUnionMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonUnionMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CommonUnionMember::operator ==(
         const CommonUnionMember& other) const
 {
@@ -1232,27 +959,6 @@ CompleteUnionMember& CompleteUnionMember::operator =(
     return *this;
 }
 
-size_t CompleteUnionMember::getCdrSerializedSize(
-        const CompleteUnionMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteUnionMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteUnionMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteUnionMember::operator ==(
         const CompleteUnionMember& other) const
 {
@@ -1309,27 +1015,6 @@ MinimalUnionMember& MinimalUnionMember::operator =(
     return *this;
 }
 
-size_t MinimalUnionMember::getCdrSerializedSize(
-        const MinimalUnionMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalUnionMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalUnionMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalUnionMember::operator ==(
         const MinimalUnionMember& other) const
 {
@@ -1384,27 +1069,6 @@ CommonDiscriminatorMember& CommonDiscriminatorMember::operator =(
     m_type_id = std::move(x.m_type_id);
 
     return *this;
-}
-
-size_t CommonDiscriminatorMember::getCdrSerializedSize(
-        const CommonDiscriminatorMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonDiscriminatorMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonDiscriminatorMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonDiscriminatorMember::operator ==(
@@ -1466,27 +1130,6 @@ CompleteDiscriminatorMember& CompleteDiscriminatorMember::operator =(
     return *this;
 }
 
-size_t CompleteDiscriminatorMember::getCdrSerializedSize(
-        const CompleteDiscriminatorMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteDiscriminatorMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteDiscriminatorMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteDiscriminatorMember::operator ==(
         const CompleteDiscriminatorMember& other) const
 {
@@ -1543,27 +1186,6 @@ MinimalDiscriminatorMember& MinimalDiscriminatorMember::operator =(
     return *this;
 }
 
-size_t MinimalDiscriminatorMember::getCdrSerializedSize(
-        const MinimalDiscriminatorMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalDiscriminatorMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalDiscriminatorMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalDiscriminatorMember::operator ==(
         const MinimalDiscriminatorMember& other) const
 {
@@ -1614,27 +1236,6 @@ CompleteUnionHeader& CompleteUnionHeader::operator =(
     return *this;
 }
 
-size_t CompleteUnionHeader::getCdrSerializedSize(
-        const CompleteUnionHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteUnionHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteUnionHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteUnionHeader::operator ==(
         const CompleteUnionHeader& other) const
 {
@@ -1683,27 +1284,6 @@ MinimalUnionHeader& MinimalUnionHeader::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t MinimalUnionHeader::getCdrSerializedSize(
-        const MinimalUnionHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalUnionHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalUnionHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalUnionHeader::operator ==(
@@ -1766,27 +1346,6 @@ CompleteUnionType& CompleteUnionType::operator =(
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-size_t CompleteUnionType::getCdrSerializedSize(
-        const CompleteUnionType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteUnionType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteUnionType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteUnionType::operator ==(
@@ -1918,27 +1477,6 @@ MinimalUnionType& MinimalUnionType::operator =(
     return *this;
 }
 
-size_t MinimalUnionType::getCdrSerializedSize(
-        const MinimalUnionType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalUnionType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalUnionType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalUnionType::operator ==(
         const MinimalUnionType& other) const
 {
@@ -2060,27 +1598,6 @@ CommonAnnotationParameter& CommonAnnotationParameter::operator =(
     return *this;
 }
 
-size_t CommonAnnotationParameter::getCdrSerializedSize(
-        const CommonAnnotationParameter& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonAnnotationParameter::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonAnnotationParameter::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CommonAnnotationParameter::operator ==(
         const CommonAnnotationParameter& other) const
 {
@@ -2139,27 +1656,6 @@ CompleteAnnotationParameter& CompleteAnnotationParameter::operator =(
     m_default_value = std::move(x.m_default_value);
 
     return *this;
-}
-
-size_t CompleteAnnotationParameter::getCdrSerializedSize(
-        const CompleteAnnotationParameter& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteAnnotationParameter::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteAnnotationParameter::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteAnnotationParameter::operator ==(
@@ -2223,27 +1719,6 @@ MinimalAnnotationParameter& MinimalAnnotationParameter::operator =(
     return *this;
 }
 
-size_t MinimalAnnotationParameter::getCdrSerializedSize(
-        const MinimalAnnotationParameter& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalAnnotationParameter::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalAnnotationParameter::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalAnnotationParameter::operator ==(
         const MinimalAnnotationParameter& other) const
 {
@@ -2297,27 +1772,6 @@ CompleteAnnotationHeader& CompleteAnnotationHeader::operator =(
     return *this;
 }
 
-size_t CompleteAnnotationHeader::getCdrSerializedSize(
-        const CompleteAnnotationHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteAnnotationHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteAnnotationHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteAnnotationHeader::operator ==(
         const CompleteAnnotationHeader& other) const
 {
@@ -2355,33 +1809,6 @@ MinimalAnnotationHeader& MinimalAnnotationHeader::operator =(
         const MinimalAnnotationHeader&)
 {
     return *this;
-}
-
-MinimalAnnotationHeader& MinimalAnnotationHeader::operator =(
-        MinimalAnnotationHeader&&)
-{
-    return *this;
-}
-
-size_t MinimalAnnotationHeader::getCdrSerializedSize(
-        const MinimalAnnotationHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalAnnotationHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalAnnotationHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalAnnotationHeader::consistent(
@@ -2434,27 +1861,6 @@ CompleteAnnotationType& CompleteAnnotationType::operator =(
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-size_t CompleteAnnotationType::getCdrSerializedSize(
-        const CompleteAnnotationType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteAnnotationType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteAnnotationType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteAnnotationType::operator ==(
@@ -2521,27 +1927,6 @@ MinimalAnnotationType& MinimalAnnotationType::operator =(
     return *this;
 }
 
-size_t MinimalAnnotationType::getCdrSerializedSize(
-        const MinimalAnnotationType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalAnnotationType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalAnnotationType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalAnnotationType::operator ==(
         const MinimalAnnotationType& other) const
 {
@@ -2602,27 +1987,6 @@ CommonAliasBody& CommonAliasBody::operator =(
     return *this;
 }
 
-size_t CommonAliasBody::getCdrSerializedSize(
-        const CommonAliasBody& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonAliasBody::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonAliasBody::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CommonAliasBody::operator ==(
         const CommonAliasBody& other) const
 {
@@ -2680,27 +2044,6 @@ CompleteAliasBody& CompleteAliasBody::operator =(
     return *this;
 }
 
-size_t CompleteAliasBody::getCdrSerializedSize(
-        const CompleteAliasBody& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteAliasBody::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteAliasBody::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteAliasBody::operator ==(
         const CompleteAliasBody& other) const
 {
@@ -2755,27 +2098,6 @@ MinimalAliasBody& MinimalAliasBody::operator =(
     return *this;
 }
 
-size_t MinimalAliasBody::getCdrSerializedSize(
-        const MinimalAliasBody& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalAliasBody::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalAliasBody::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalAliasBody::operator ==(
         const MinimalAliasBody& other) const
 {
@@ -2824,27 +2146,6 @@ CompleteAliasHeader& CompleteAliasHeader::operator =(
     return *this;
 }
 
-size_t CompleteAliasHeader::getCdrSerializedSize(
-        const CompleteAliasHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteAliasHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteAliasHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteAliasHeader::operator ==(
         const CompleteAliasHeader& other) const
 {
@@ -2885,27 +2186,6 @@ MinimalAliasHeader& MinimalAliasHeader::operator =(
         MinimalAliasHeader&&)
 {
     return *this;
-}
-
-size_t MinimalAliasHeader::getCdrSerializedSize(
-        const MinimalAliasHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalAliasHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalAliasHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 CompleteAliasType::CompleteAliasType()
@@ -2950,27 +2230,6 @@ CompleteAliasType& CompleteAliasType::operator =(
     m_body = std::move(x.m_body);
 
     return *this;
-}
-
-size_t CompleteAliasType::getCdrSerializedSize(
-        const CompleteAliasType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteAliasType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteAliasType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteAliasType::operator ==(
@@ -3032,27 +2291,6 @@ MinimalAliasType& MinimalAliasType::operator =(
     return *this;
 }
 
-size_t MinimalAliasType::getCdrSerializedSize(
-        const MinimalAliasType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalAliasType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalAliasType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalAliasType::operator ==(
         const MinimalAliasType& other) const
 {
@@ -3106,27 +2344,6 @@ CompleteElementDetail& CompleteElementDetail::operator =(
     m_ann_custom = std::move(x.m_ann_custom);
 
     return *this;
-}
-
-size_t CompleteElementDetail::getCdrSerializedSize(
-        const CompleteElementDetail& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteElementDetail::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteElementDetail::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteElementDetail::operator ==(
@@ -3188,27 +2405,6 @@ CommonCollectionElement& CommonCollectionElement::operator =(
     return *this;
 }
 
-size_t CommonCollectionElement::getCdrSerializedSize(
-        const CommonCollectionElement& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonCollectionElement::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonCollectionElement::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CommonCollectionElement::operator ==(
         const CommonCollectionElement& other) const
 {
@@ -3264,27 +2460,6 @@ CompleteCollectionElement& CompleteCollectionElement::operator =(
     return *this;
 }
 
-size_t CompleteCollectionElement::getCdrSerializedSize(
-        const CompleteCollectionElement& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteCollectionElement::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteCollectionElement::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteCollectionElement::operator ==(
         const CompleteCollectionElement& other) const
 {
@@ -3337,27 +2512,6 @@ MinimalCollectionElement& MinimalCollectionElement::operator =(
     return *this;
 }
 
-size_t MinimalCollectionElement::getCdrSerializedSize(
-        const MinimalCollectionElement& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalCollectionElement::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalCollectionElement::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalCollectionElement::operator ==(
         const MinimalCollectionElement& other) const
 {
@@ -3406,27 +2560,6 @@ CommonCollectionHeader& CommonCollectionHeader::operator =(
     m_bound = std::move(x.m_bound);
 
     return *this;
-}
-
-size_t CommonCollectionHeader::getCdrSerializedSize(
-        const CommonCollectionHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonCollectionHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonCollectionHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonCollectionHeader::operator ==(
@@ -3484,27 +2617,6 @@ CompleteCollectionHeader& CompleteCollectionHeader::operator =(
     return *this;
 }
 
-size_t CompleteCollectionHeader::getCdrSerializedSize(
-        const CompleteCollectionHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteCollectionHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteCollectionHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteCollectionHeader::operator ==(
         const CompleteCollectionHeader& other) const
 {
@@ -3555,27 +2667,6 @@ MinimalCollectionHeader& MinimalCollectionHeader::operator =(
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-size_t MinimalCollectionHeader::getCdrSerializedSize(
-        const MinimalCollectionHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalCollectionHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalCollectionHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalCollectionHeader::operator ==(
@@ -3634,27 +2725,6 @@ CompleteSequenceType& CompleteSequenceType::operator =(
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-size_t CompleteSequenceType::getCdrSerializedSize(
-        const CompleteSequenceType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteSequenceType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteSequenceType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteSequenceType::operator ==(
@@ -3718,27 +2788,6 @@ MinimalSequenceType& MinimalSequenceType::operator =(
     return *this;
 }
 
-size_t MinimalSequenceType::getCdrSerializedSize(
-        const MinimalSequenceType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalSequenceType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalSequenceType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalSequenceType::operator ==(
         const MinimalSequenceType& other) const
 {
@@ -3790,27 +2839,6 @@ CommonArrayHeader& CommonArrayHeader::operator =(
     m_bound_seq = std::move(x.m_bound_seq);
 
     return *this;
-}
-
-size_t CommonArrayHeader::getCdrSerializedSize(
-        const CommonArrayHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonArrayHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonArrayHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonArrayHeader::operator ==(
@@ -3884,27 +2912,6 @@ CompleteArrayHeader& CompleteArrayHeader::operator =(
     return *this;
 }
 
-size_t CompleteArrayHeader::getCdrSerializedSize(
-        const CompleteArrayHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteArrayHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteArrayHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteArrayHeader::operator ==(
         const CompleteArrayHeader& other) const
 {
@@ -3955,27 +2962,6 @@ MinimalArrayHeader& MinimalArrayHeader::operator =(
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-size_t MinimalArrayHeader::getCdrSerializedSize(
-        const MinimalArrayHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalArrayHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalArrayHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalArrayHeader::operator ==(
@@ -4034,27 +3020,6 @@ CompleteArrayType& CompleteArrayType::operator =(
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-size_t CompleteArrayType::getCdrSerializedSize(
-        const CompleteArrayType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteArrayType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteArrayType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteArrayType::operator ==(
@@ -4116,27 +3081,6 @@ MinimalArrayType& MinimalArrayType::operator =(
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-size_t MinimalArrayType::getCdrSerializedSize(
-        const MinimalArrayType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalArrayType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalArrayType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalArrayType::operator ==(
@@ -4202,27 +3146,6 @@ CompleteMapType& CompleteMapType::operator =(
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-size_t CompleteMapType::getCdrSerializedSize(
-        const CompleteMapType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteMapType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteMapType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteMapType::operator ==(
@@ -4292,27 +3215,6 @@ MinimalMapType& MinimalMapType::operator =(
     return *this;
 }
 
-size_t MinimalMapType::getCdrSerializedSize(
-        const MinimalMapType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalMapType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalMapType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalMapType::operator ==(
         const MinimalMapType& other) const
 {
@@ -4372,27 +3274,6 @@ CommonEnumeratedLiteral& CommonEnumeratedLiteral::operator =(
     return *this;
 }
 
-size_t CommonEnumeratedLiteral::getCdrSerializedSize(
-        const CommonEnumeratedLiteral& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonEnumeratedLiteral::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonEnumeratedLiteral::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CommonEnumeratedLiteral::operator ==(
         const CommonEnumeratedLiteral& other) const
 {
@@ -4446,27 +3327,6 @@ CompleteEnumeratedLiteral& CompleteEnumeratedLiteral::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t CompleteEnumeratedLiteral::getCdrSerializedSize(
-        const CompleteEnumeratedLiteral& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteEnumeratedLiteral::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteEnumeratedLiteral::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteEnumeratedLiteral::operator ==(
@@ -4525,27 +3385,6 @@ MinimalEnumeratedLiteral& MinimalEnumeratedLiteral::operator =(
     return *this;
 }
 
-size_t MinimalEnumeratedLiteral::getCdrSerializedSize(
-        const MinimalEnumeratedLiteral& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalEnumeratedLiteral::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalEnumeratedLiteral::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalEnumeratedLiteral::operator ==(
         const MinimalEnumeratedLiteral& other) const
 {
@@ -4596,27 +3435,6 @@ CommonEnumeratedHeader& CommonEnumeratedHeader::operator =(
     m_bit_bound = std::move(x.m_bit_bound);
 
     return *this;
-}
-
-size_t CommonEnumeratedHeader::getCdrSerializedSize(
-        const CommonEnumeratedHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonEnumeratedHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonEnumeratedHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonEnumeratedHeader::operator ==(
@@ -4675,27 +3493,6 @@ CompleteEnumeratedHeader& CompleteEnumeratedHeader::operator =(
     return *this;
 }
 
-size_t CompleteEnumeratedHeader::getCdrSerializedSize(
-        const CompleteEnumeratedHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteEnumeratedHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteEnumeratedHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteEnumeratedHeader::operator ==(
         const CompleteEnumeratedHeader& other) const
 {
@@ -4746,27 +3543,6 @@ MinimalEnumeratedHeader& MinimalEnumeratedHeader::operator =(
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-size_t MinimalEnumeratedHeader::getCdrSerializedSize(
-        const MinimalEnumeratedHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalEnumeratedHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalEnumeratedHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalEnumeratedHeader::operator ==(
@@ -4825,27 +3601,6 @@ CompleteEnumeratedType& CompleteEnumeratedType::operator =(
     m_literal_seq = std::move(x.m_literal_seq);
 
     return *this;
-}
-
-size_t CompleteEnumeratedType::getCdrSerializedSize(
-        const CompleteEnumeratedType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteEnumeratedType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteEnumeratedType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteEnumeratedType::operator ==(
@@ -4971,27 +3726,6 @@ MinimalEnumeratedType& MinimalEnumeratedType::operator =(
     return *this;
 }
 
-size_t MinimalEnumeratedType::getCdrSerializedSize(
-        const MinimalEnumeratedType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalEnumeratedType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalEnumeratedType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalEnumeratedType::operator ==(
         const MinimalEnumeratedType& other) const
 {
@@ -5111,27 +3845,6 @@ CommonBitflag& CommonBitflag::operator =(
     return *this;
 }
 
-size_t CommonBitflag::getCdrSerializedSize(
-        const CommonBitflag& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonBitflag::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonBitflag::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CommonBitflag::operator ==(
         const CommonBitflag& other) const
 {
@@ -5185,27 +3898,6 @@ CompleteBitflag& CompleteBitflag::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t CompleteBitflag::getCdrSerializedSize(
-        const CompleteBitflag& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteBitflag::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteBitflag::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteBitflag::operator ==(
@@ -5264,27 +3956,6 @@ MinimalBitflag& MinimalBitflag::operator =(
     return *this;
 }
 
-size_t MinimalBitflag::getCdrSerializedSize(
-        const MinimalBitflag& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalBitflag::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalBitflag::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalBitflag::operator ==(
         const MinimalBitflag& other) const
 {
@@ -5335,27 +4006,6 @@ CommonBitmaskHeader& CommonBitmaskHeader::operator =(
     m_bit_bound = std::move(x.m_bit_bound);
 
     return *this;
-}
-
-size_t CommonBitmaskHeader::getCdrSerializedSize(
-        const CommonBitmaskHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonBitmaskHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonBitmaskHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CommonBitmaskHeader::operator ==(
@@ -5416,27 +4066,6 @@ CompleteBitmaskType& CompleteBitmaskType::operator =(
     m_flag_seq = std::move(x.m_flag_seq);
 
     return *this;
-}
-
-size_t CompleteBitmaskType::getCdrSerializedSize(
-        const CompleteBitmaskType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteBitmaskType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteBitmaskType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteBitmaskType::operator ==(
@@ -5560,27 +4189,6 @@ MinimalBitmaskType& MinimalBitmaskType::operator =(
     m_flag_seq = std::move(x.m_flag_seq);
 
     return *this;
-}
-
-size_t MinimalBitmaskType::getCdrSerializedSize(
-        const MinimalBitmaskType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalBitmaskType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalBitmaskType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalBitmaskType::operator ==(
@@ -5710,27 +4318,6 @@ CommonBitfield& CommonBitfield::operator =(
     return *this;
 }
 
-size_t CommonBitfield::getCdrSerializedSize(
-        const CommonBitfield& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CommonBitfield::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CommonBitfield::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CommonBitfield::operator ==(
         const CommonBitfield& other) const
 {
@@ -5791,27 +4378,6 @@ CompleteBitfield& CompleteBitfield::operator =(
     return *this;
 }
 
-size_t CompleteBitfield::getCdrSerializedSize(
-        const CompleteBitfield& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteBitfield::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteBitfield::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteBitfield::operator ==(
         const CompleteBitfield& other) const
 {
@@ -5866,27 +4432,6 @@ MinimalBitfield& MinimalBitfield::operator =(
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-size_t MinimalBitfield::getCdrSerializedSize(
-        const MinimalBitfield& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalBitfield::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalBitfield::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalBitfield::operator ==(
@@ -5949,27 +4494,6 @@ CompleteBitsetHeader& CompleteBitsetHeader::operator =(
     return *this;
 }
 
-size_t CompleteBitsetHeader::getCdrSerializedSize(
-        const CompleteBitsetHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteBitsetHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteBitsetHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteBitsetHeader::operator ==(
         const CompleteBitsetHeader& other) const
 {
@@ -6017,27 +4541,6 @@ MinimalBitsetHeader& MinimalBitsetHeader::operator =(
 {
     m_base_type = std::move(x.m_base_type);
     return *this;
-}
-
-size_t MinimalBitsetHeader::getCdrSerializedSize(
-        const MinimalBitsetHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalBitsetHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalBitsetHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalBitsetHeader::operator ==(
@@ -6095,27 +4598,6 @@ CompleteBitsetType& CompleteBitsetType::operator =(
     m_field_seq = std::move(x.m_field_seq);
 
     return *this;
-}
-
-size_t CompleteBitsetType::getCdrSerializedSize(
-        const CompleteBitsetType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteBitsetType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteBitsetType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteBitsetType::operator ==(
@@ -6241,27 +4723,6 @@ MinimalBitsetType& MinimalBitsetType::operator =(
     return *this;
 }
 
-size_t MinimalBitsetType::getCdrSerializedSize(
-        const MinimalBitsetType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalBitsetType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalBitsetType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalBitsetType::operator ==(
         const MinimalBitsetType& other) const
 {
@@ -6371,27 +4832,6 @@ CompleteExtendedType& CompleteExtendedType::operator =(
     return *this;
 }
 
-size_t CompleteExtendedType::getCdrSerializedSize(
-        const CompleteExtendedType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteExtendedType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteExtendedType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool CompleteExtendedType::consistent(
         const CompleteExtendedType&,
         const TypeConsistencyEnforcementQosPolicy&) const
@@ -6427,27 +4867,6 @@ MinimalExtendedType& MinimalExtendedType::operator =(
         MinimalExtendedType&&)
 {
     return *this;
-}
-
-size_t MinimalExtendedType::getCdrSerializedSize(
-        const MinimalExtendedType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalExtendedType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalExtendedType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool MinimalExtendedType::consistent(
@@ -6497,27 +4916,6 @@ TypeIdentifierTypeObjectPair& TypeIdentifierTypeObjectPair::operator =(
     return *this;
 }
 
-size_t TypeIdentifierTypeObjectPair::getCdrSerializedSize(
-        const TypeIdentifierTypeObjectPair& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void TypeIdentifierTypeObjectPair::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void TypeIdentifierTypeObjectPair::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 TypeIdentifierPair::TypeIdentifierPair()
 {
 }
@@ -6556,27 +4954,6 @@ TypeIdentifierPair& TypeIdentifierPair::operator =(
     m_type_identifier2 = std::move(x.m_type_identifier2);
 
     return *this;
-}
-
-size_t TypeIdentifierPair::getCdrSerializedSize(
-        const TypeIdentifierPair& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void TypeIdentifierPair::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void TypeIdentifierPair::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 TypeIdentifierWithSize::TypeIdentifierWithSize()
@@ -6618,27 +4995,6 @@ TypeIdentifierWithSize& TypeIdentifierWithSize::operator =(
     m_typeobject_serialized_size = std::move(x.m_typeobject_serialized_size);
 
     return *this;
-}
-
-size_t TypeIdentifierWithSize::getCdrSerializedSize(
-        const TypeIdentifierWithSize& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void TypeIdentifierWithSize::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void TypeIdentifierWithSize::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 TypeIdentifierWithDependencies::TypeIdentifierWithDependencies()
@@ -6684,27 +5040,6 @@ TypeIdentifierWithDependencies& TypeIdentifierWithDependencies::operator =(
     m_dependent_typeids = std::move(x.m_dependent_typeids);
 
     return *this;
-}
-
-size_t TypeIdentifierWithDependencies::getCdrSerializedSize(
-        const TypeIdentifierWithDependencies& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void TypeIdentifierWithDependencies::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void TypeIdentifierWithDependencies::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7466,27 +5801,6 @@ CompleteExtendedType& CompleteTypeObject::extended_type()
 
 
     return m_extended_type;
-}
-
-size_t CompleteTypeObject::getCdrSerializedSize(
-        const CompleteTypeObject& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void CompleteTypeObject::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void CompleteTypeObject::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool CompleteTypeObject::operator ==(
@@ -8347,27 +6661,6 @@ MinimalExtendedType& MinimalTypeObject::extended_type()
     return m_extended_type;
 }
 
-size_t MinimalTypeObject::getCdrSerializedSize(
-        const MinimalTypeObject& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void MinimalTypeObject::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void MinimalTypeObject::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool MinimalTypeObject::operator ==(
         const MinimalTypeObject& other) const
 {
@@ -8739,27 +7032,6 @@ MinimalTypeObject& TypeObject::minimal()
     return m_minimal;
 }
 
-size_t TypeObject::getCdrSerializedSize(
-        const TypeObject& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void TypeObject::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void TypeObject::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool TypeObject::operator ==(
         const TypeObject& other) const
 {
@@ -8816,27 +7088,6 @@ TypeInformation& TypeInformation::operator =(
     m_complete = std::move(x.m_complete);
 
     return *this;
-}
-
-size_t TypeInformation::getCdrSerializedSize(
-        const TypeInformation& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void TypeInformation::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void TypeInformation::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 OctetSeq& operator ++(

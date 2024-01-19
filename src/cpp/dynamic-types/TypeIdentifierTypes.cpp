@@ -74,27 +74,6 @@ StringSTypeDefn& StringSTypeDefn::operator =(
     return *this;
 }
 
-size_t StringSTypeDefn::getCdrSerializedSize(
-        const StringSTypeDefn& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void StringSTypeDefn::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void StringSTypeDefn::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool StringSTypeDefn::consistent(
         const StringSTypeDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
@@ -146,27 +125,6 @@ StringLTypeDefn& StringLTypeDefn::operator =(
     m_bound = x.m_bound;
 
     return *this;
-}
-
-size_t StringLTypeDefn::getCdrSerializedSize(
-        const StringLTypeDefn& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void StringLTypeDefn::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void StringLTypeDefn::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool StringLTypeDefn::consistent(
@@ -224,27 +182,6 @@ PlainCollectionHeader& PlainCollectionHeader::operator =(
     m_element_flags = x.m_element_flags;
 
     return *this;
-}
-
-size_t PlainCollectionHeader::getCdrSerializedSize(
-        const PlainCollectionHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void PlainCollectionHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void PlainCollectionHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool PlainCollectionHeader::consistent(
@@ -358,27 +295,6 @@ PlainSequenceSElemDefn& PlainSequenceSElemDefn::operator =(
     }
 
     return *this;
-}
-
-size_t PlainSequenceSElemDefn::getCdrSerializedSize(
-        const PlainSequenceSElemDefn& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void PlainSequenceSElemDefn::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void PlainSequenceSElemDefn::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool PlainSequenceSElemDefn::consistent(
@@ -505,27 +421,6 @@ PlainSequenceLElemDefn& PlainSequenceLElemDefn::operator =(
     return *this;
 }
 
-size_t PlainSequenceLElemDefn::getCdrSerializedSize(
-        const PlainSequenceLElemDefn& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void PlainSequenceLElemDefn::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void PlainSequenceLElemDefn::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool PlainSequenceLElemDefn::consistent(
         const PlainSequenceLElemDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
@@ -650,27 +545,6 @@ PlainArraySElemDefn& PlainArraySElemDefn::operator =(
     }
 
     return *this;
-}
-
-size_t PlainArraySElemDefn::getCdrSerializedSize(
-        const PlainArraySElemDefn& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void PlainArraySElemDefn::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void PlainArraySElemDefn::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool PlainArraySElemDefn::consistent(
@@ -808,27 +682,6 @@ PlainArrayLElemDefn& PlainArrayLElemDefn::operator =(
     }
 
     return *this;
-}
-
-size_t PlainArrayLElemDefn::getCdrSerializedSize(
-        const PlainArrayLElemDefn& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void PlainArrayLElemDefn::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void PlainArrayLElemDefn::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool PlainArrayLElemDefn::consistent(
@@ -1034,27 +887,6 @@ PlainMapSTypeDefn& PlainMapSTypeDefn::operator =(
     }
 
     return *this;
-}
-
-size_t PlainMapSTypeDefn::getCdrSerializedSize(
-        const PlainMapSTypeDefn& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void PlainMapSTypeDefn::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void PlainMapSTypeDefn::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool PlainMapSTypeDefn::consistent(
@@ -1276,27 +1108,6 @@ PlainMapLTypeDefn& PlainMapLTypeDefn::operator =(
     return *this;
 }
 
-size_t PlainMapLTypeDefn::getCdrSerializedSize(
-        const PlainMapLTypeDefn& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void PlainMapLTypeDefn::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void PlainMapLTypeDefn::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool PlainMapLTypeDefn::consistent(
         const PlainMapLTypeDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
@@ -1390,27 +1201,6 @@ StronglyConnectedComponentId& StronglyConnectedComponentId::operator =(
     return *this;
 }
 
-size_t StronglyConnectedComponentId::getCdrSerializedSize(
-        const StronglyConnectedComponentId& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void StronglyConnectedComponentId::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void StronglyConnectedComponentId::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool StronglyConnectedComponentId::consistent(
         const StronglyConnectedComponentId& x,
         const TypeConsistencyEnforcementQosPolicy&) const
@@ -1449,27 +1239,6 @@ ExtendedTypeDefn& ExtendedTypeDefn::operator =(
         ExtendedTypeDefn&&)
 {
     return *this;
-}
-
-size_t ExtendedTypeDefn::getCdrSerializedSize(
-        const ExtendedTypeDefn& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void ExtendedTypeDefn::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void ExtendedTypeDefn::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
 }
 
 bool ExtendedTypeDefn::consistent(
