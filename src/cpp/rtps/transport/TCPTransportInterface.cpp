@@ -50,7 +50,6 @@
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/System.h>
 
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <utils/SystemInfo.hpp>

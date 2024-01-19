@@ -40,7 +40,6 @@
 
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/System.h>
 #include <fastrtps/utils/md5.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <rtps/RTPSDomainImpl.hpp>
