@@ -25,8 +25,8 @@ if(NOT foonathan_memory_FOUND)
     find_package(foonathan_memory REQUIRED)
 endif()
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps 2.12 REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 #Check C++11
@@ -55,6 +55,6 @@ target_compile_definitions(DDSHelloWorldExampleTCP PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_link_libraries(DDSHelloWorldExampleTCP fastrtps fastcdr foonathan_memory fastdds::optionparser)
+target_link_libraries(DDSHelloWorldExampleTCP fastdds fastcdr foonathan_memory fastdds::optionparser)
 install(TARGETS DDSHelloWorldExampleTCP
     RUNTIME DESTINATION examples/cpp/dds/HelloWorldExampleTCP/${BIN_INSTALL_DIR})

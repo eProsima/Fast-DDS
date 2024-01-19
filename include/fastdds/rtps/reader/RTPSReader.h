@@ -284,7 +284,7 @@ public:
     virtual bool isInCleanState() = 0;
 
     //! The liveliness changed status struct as defined in the DDS
-    LivelinessChangedStatus liveliness_changed_status_;
+    fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
 
     inline void enableMessagesFromUnkownWriters(
             bool enable)

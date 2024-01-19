@@ -12,7 +12,7 @@ NAME=Fast-DDS
 FAST-DDS_INSTALL_ROOT ?= $(INSTALL_ROOT_$(OS))
 
 # These commands require GNU Make
-FAST-DDS_CMAKE_VERSION = $(shell bash -c "grep VERSION $(PROJECT_ROOT)/../CMakeLists.txt | grep fastrtps ")
+FAST-DDS_CMAKE_VERSION = $(shell bash -c "grep VERSION $(PROJECT_ROOT)/../CMakeLists.txt | grep fastdds ")
 FAST-DDS_VERSION = .$(subst $\",,$(word 3,$(FAST-DDS_CMAKE_VERSION)))
 
 #choose Release or Debug

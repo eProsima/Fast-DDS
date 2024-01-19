@@ -21,8 +21,8 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr 2 REQUIRED)
 endif()
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps 2.12 REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 #Check C++11
@@ -43,6 +43,6 @@ target_compile_definitions(CustomPayloadPoolExample PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(CustomPayloadPoolExample fastrtps fastcdr fastdds::optionparser)
+target_link_libraries(CustomPayloadPoolExample fastdds fastcdr fastdds::optionparser)
 install(TARGETS CustomPayloadPoolExample
     RUNTIME DESTINATION examples/cpp/dds/CustomPayloadPoolExample/${BIN_INSTALL_DIR})

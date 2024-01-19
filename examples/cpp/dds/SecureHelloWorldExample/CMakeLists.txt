@@ -25,8 +25,8 @@ if(NOT foonathan_memory_FOUND)
     find_package(foonathan_memory REQUIRED)
 endif()
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps 2.12 REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 #Check C++11
@@ -48,7 +48,7 @@ target_compile_definitions(DDSSecureHelloWorldExample PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(DDSSecureHelloWorldExample PRIVATE)
-target_link_libraries(DDSSecureHelloWorldExample fastrtps fastcdr foonathan_memory)
+target_link_libraries(DDSSecureHelloWorldExample fastdds fastcdr foonathan_memory)
 install(TARGETS DDSSecureHelloWorldExample
     RUNTIME DESTINATION examples/cpp/dds/SecureHelloWorldExample/${BIN_INSTALL_DIR})
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/certs

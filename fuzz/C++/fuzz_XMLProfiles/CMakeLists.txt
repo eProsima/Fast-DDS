@@ -25,12 +25,12 @@ if(NOT foonathan_memory_FOUND)
     find_package(foonathan_memory REQUIRED)
 endif()
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps 2.12 REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 message(STATUS "Configuring fuzz_XMLProfiles...")
 file(GLOB SOURCES_CXX "*.cxx")
 
 add_executable(fuzz_XMLProfiles ${SOURCES_CXX} ${SOURCES_CPP})
-target_link_libraries(fuzz_XMLProfiles fastrtps fastcdr foonathan_memory $ENV{LIB_FUZZING_ENGINE})
+target_link_libraries(fuzz_XMLProfiles fastdds fastcdr foonathan_memory $ENV{LIB_FUZZING_ENGINE})

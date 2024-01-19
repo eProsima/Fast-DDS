@@ -40,10 +40,10 @@ LivelinessManager::~LivelinessManager()
 
 bool LivelinessManager::add_writer(
         GUID_t guid,
-        LivelinessQosPolicyKind kind,
+        fastdds::dds::LivelinessQosPolicyKind kind,
         Duration_t lease_duration)
 {
-    if (!manage_automatic_ && kind == LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+    if (!manage_automatic_ && kind == fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
     {
         EPROSIMA_LOG_WARNING(RTPS_WRITER, "Liveliness manager not managing automatic writers, writer not added");
         return false;
@@ -91,7 +91,7 @@ bool LivelinessManager::add_writer(
 
 bool LivelinessManager::remove_writer(
         GUID_t guid,
-        LivelinessQosPolicyKind kind,
+        fastdds::dds::LivelinessQosPolicyKind kind,
         Duration_t lease_duration)
 {
     bool removed = false;
@@ -159,7 +159,7 @@ bool LivelinessManager::remove_writer(
 
 bool LivelinessManager::assert_liveliness(
         GUID_t guid,
-        LivelinessQosPolicyKind kind,
+        fastdds::dds::LivelinessQosPolicyKind kind,
         Duration_t lease_duration)
 {
     bool found = false;
@@ -182,8 +182,8 @@ bool LivelinessManager::assert_liveliness(
                 found = true;
 
                 // Execute the callbacks
-                if (writer.kind == LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS ||
-                        writer.kind == LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+                if (writer.kind == fastdds::dds::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS ||
+                        writer.kind == fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
                 {
                     for (LivelinessData& w: writers_)
                     {
@@ -193,7 +193,7 @@ bool LivelinessManager::assert_liveliness(
                         }
                     }
                 }
-                else if (writer.kind == LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                else if (writer.kind == fastdds::dds::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS)
                 {
                     assert_writer_liveliness(writer);
                 }
@@ -232,10 +232,10 @@ bool LivelinessManager::assert_liveliness(
 }
 
 bool LivelinessManager::assert_liveliness(
-        LivelinessQosPolicyKind kind)
+        fastdds::dds::LivelinessQosPolicyKind kind)
 {
 
-    if (!manage_automatic_ && kind == LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+    if (!manage_automatic_ && kind == fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
     {
         EPROSIMA_LOG_WARNING(RTPS_WRITER, "Liveliness manager not managing automatic writers, writer not added");
         return false;
@@ -357,7 +357,7 @@ bool LivelinessManager::timer_expired()
 }
 
 bool LivelinessManager::is_any_alive(
-        LivelinessQosPolicyKind kind)
+        fastdds::dds::LivelinessQosPolicyKind kind)
 {
     // Keep this lock order to prevent ABBA deadlocks
     shared_lock<shared_mutex> _(col_mutex_);

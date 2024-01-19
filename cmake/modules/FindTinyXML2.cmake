@@ -2,7 +2,7 @@
 # TINYXML2_INCLUDE_DIR
 # TINYXML2_SOURCE_DIR
 
-option(TINYXML2_FROM_SOURCE "Integrate TinyXML2 source code inside Fast RTPS" OFF)
+option(TINYXML2_FROM_SOURCE "Integrate TinyXML2 source code inside Fast DDS" OFF)
 
 # Option for evaluating whether we are looking in for tinyxml2 in submodule
 set(TINYXML2_FROM_THIRDPARTY OFF)

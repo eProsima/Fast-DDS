@@ -25,8 +25,8 @@ if(NOT foonathan_memory_FOUND)
     find_package(foonathan_memory REQUIRED)
 endif()
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps 2.12 REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 #Check C++11
@@ -52,7 +52,7 @@ target_compile_definitions(DDSStaticHelloWorldExample PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_link_libraries(DDSStaticHelloWorldExample fastrtps fastcdr foonathan_memory)
+target_link_libraries(DDSStaticHelloWorldExample fastdds fastcdr foonathan_memory)
 install(TARGETS DDSStaticHelloWorldExample
         RUNTIME DESTINATION examples/cpp/dds/StaticHelloWorldExample/${BIN_INSTALL_DIR})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldPublisher_static_disc.xml

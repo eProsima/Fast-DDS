@@ -21,8 +21,8 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr 2 REQUIRED)
 endif()
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps 2.12 REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 #Check C++11
@@ -46,7 +46,7 @@ target_compile_definitions(DDSDynamicHelloWorldExample PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
 
-target_link_libraries(DDSDynamicHelloWorldExample fastrtps fastcdr)
+target_link_libraries(DDSDynamicHelloWorldExample fastdds fastcdr)
 install(TARGETS DDSDynamicHelloWorldExample
     RUNTIME DESTINATION examples/cpp/dds/DynamicHelloWorldExample/${BIN_INSTALL_DIR})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/helloworld_example_type_profile.xml

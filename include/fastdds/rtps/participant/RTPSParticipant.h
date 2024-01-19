@@ -155,7 +155,7 @@ public:
     bool registerWriter(
             RTPSWriter* Writer,
             const TopicAttributes& topicAtt,
-            const WriterQos& wqos);
+            const fastdds::dds::WriterQos& wqos);
 
     /**
      * Register a RTPSReader in the builtin Protocols.
@@ -168,7 +168,7 @@ public:
     bool registerReader(
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
-            const ReaderQos& rqos,
+            const fastdds::dds::ReaderQos& rqos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**
@@ -188,7 +188,7 @@ public:
     bool updateWriter(
             RTPSWriter* Writer,
             const TopicAttributes& topicAtt,
-            const WriterQos& wqos);
+            const fastdds::dds::WriterQos& wqos);
 
     /**
      * Update reader QOS
@@ -201,7 +201,7 @@ public:
     bool updateReader(
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
-            const ReaderQos& rqos,
+            const fastdds::dds::ReaderQos& rqos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**

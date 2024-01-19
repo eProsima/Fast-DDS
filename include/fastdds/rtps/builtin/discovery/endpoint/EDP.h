@@ -171,7 +171,7 @@ public:
     bool newLocalReaderProxyData(
             RTPSReader* R,
             const TopicAttributes& att,
-            const ReaderQos& qos,
+            const fastdds::dds::ReaderQos& qos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
     /**
      * Create a new ReaderPD for a local Writer.
@@ -183,7 +183,7 @@ public:
     bool newLocalWriterProxyData(
             RTPSWriter* W,
             const TopicAttributes& att,
-            const WriterQos& qos);
+            const fastdds::dds::WriterQos& qos);
     /**
      * A previously created Reader has been updated
      * @param R               Pointer to the reader
@@ -195,7 +195,7 @@ public:
     bool updatedLocalReader(
             RTPSReader* R,
             const TopicAttributes& att,
-            const ReaderQos& qos,
+            const fastdds::dds::ReaderQos& qos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
     /**
      * A previously created Writer has been updated
@@ -207,7 +207,7 @@ public:
     bool updatedLocalWriter(
             RTPSWriter* W,
             const TopicAttributes& att,
-            const WriterQos& qos);
+            const fastdds::dds::WriterQos& qos);
 
     /**
      * Check the validity of a matching between a local RTPSWriter and a ReaderProxyData object.

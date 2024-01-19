@@ -385,7 +385,7 @@ public:
     }
 
     //!WriterQOS
-    WriterQos m_qos;
+    fastdds::dds::WriterQos m_qos;
 
     /**
      * Set participant client server sample identity

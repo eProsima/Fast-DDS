@@ -9,14 +9,13 @@
                 "-DCMAKE_CXX_FLAGS='-fsanitize=thread -O2 -g -fno-omit-frame-pointer'"
             ]
         },
-        "fastrtps":
+        "fastdds":
         {
             "cmake-args":
             [
                 "-DCOMPILE_EXAMPLES=OFF",
                 "-DEPROSIMA_BUILD_TESTS=ON",
                 "-DRTPS_API_TESTS=ON",
-                "-DFASTRTPS_API_TESTS=OFF",
                 "-DFASTDDS_PIM_API_TESTS=ON",
                 "-DPERFORMANCE_TESTS=ON",
                 "-DNO_TLS=OFF",

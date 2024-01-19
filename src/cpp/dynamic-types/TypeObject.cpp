@@ -1811,6 +1811,12 @@ MinimalAnnotationHeader& MinimalAnnotationHeader::operator =(
     return *this;
 }
 
+MinimalAnnotationHeader& MinimalAnnotationHeader::operator =(
+        MinimalAnnotationHeader&&)
+{
+    return *this;
+}
+
 bool MinimalAnnotationHeader::consistent(
         const MinimalAnnotationHeader&,
         const TypeConsistencyEnforcementQosPolicy&) const

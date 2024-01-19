@@ -43,14 +43,14 @@ jobs:
       - name: Sync eProsima/Fast-DDS repository
         uses: actions/checkout@v3
         with:
-          path: src/fastrtps
+          path: src/fastdds
           submodules: true
 
       - name: Install Fast DDS packages
-        uses: ./src/fastrtps/.github/actions/install-apt-packages
+        uses: ./src/fastdds/.github/actions/install-apt-packages
 
       - name: Install documentation packages
-        uses: ./src/fastrtps/.github/actions/install-apt-packages-documentation
+        uses: ./src/fastdds/.github/actions/install-apt-packages-documentation
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
@@ -58,7 +58,7 @@ jobs:
       - name: Download FastDDS dependencies
         run: |
           pip3 install vcstool
-          vcs import --skip-existing src < ./src/fastrtps/fastrtps.repos
+          vcs import --skip-existing src < ./src/fastdds/fastdds.repos
 
       - name: Determine the Fast DDS Documentation branch to be used
         run: |

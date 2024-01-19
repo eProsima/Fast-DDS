@@ -16,7 +16,7 @@ set(@PROJECT_NAME@_VERSION @PROJECT_VERSION@)
 
 @PACKAGE_INIT@
 
-@FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION@
+@FASTDDS_PACKAGE_OPT_BIN_DIR_CONDITION@
     set_and_check(@PROJECT_NAME@_BIN_DIR "@PACKAGE_BIN_INSTALL_DIR@")
 endif()
 set_and_check(@PROJECT_NAME@_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
@@ -25,67 +25,67 @@ set_and_check(@PROJECT_NAME@_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
 find_package(fastcdr REQUIRED)
 find_package(foonathan_memory REQUIRED)
 find_package(TinyXML2 QUIET)
-@FASTRTPS_INSTALLER_DEPS_ANCILLARY@
-@FASTRTPS_PACKAGE_UNIX_OPT_DEPS@
+@FASTDDS_INSTALLER_DEPS_ANCILLARY@
+@FASTDDS_PACKAGE_UNIX_OPT_DEPS@
 
-set(fastrtps_known_comps static shared)
-set(fastrtps_comp_static NO)
-set(fastrtps_comp_shared NO)
-foreach (fastrtps_comp IN LISTS ${CMAKE_FIND_PACKAGE_NAME}_FIND_COMPONENTS)
-    if (fastrtps_comp IN_LIST fastrtps_known_comps)
-        set(fastrtps_comp_${fastrtps_comp} YES)
+set(fastdds_known_comps static shared)
+set(fastdds_comp_static NO)
+set(fastdds_comp_shared NO)
+foreach (fastdds_comp IN LISTS ${CMAKE_FIND_PACKAGE_NAME}_FIND_COMPONENTS)
+    if (fastdds_comp IN_LIST fastdds_known_comps)
+        set(fastdds_comp_${fastdds_comp} YES)
     else ()
         set(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE
-            "fastrtps does not recognize component `${fastrtps_comp}`.")
+            "fastdds does not recognize component `${fastdds_comp}`.")
         set(${CMAKE_FIND_PACKAGE_NAME}_FOUND FALSE)
         return()
     endif ()
 endforeach ()
 
-if (fastrtps_comp_static AND fastrtps_comp_shared)
+if (fastdds_comp_static AND fastdds_comp_shared)
     set(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE
-        "fastrtps `static` and `shared` components are mutually exclusive.")
+        "fastdds `static` and `shared` components are mutually exclusive.")
     set(${CMAKE_FIND_PACKAGE_NAME}_FOUND FALSE)
     return()
 endif ()
 
-set(fastrtps_static_targets "${CMAKE_CURRENT_LIST_DIR}/fastrtps-static-targets.cmake")
-set(fastrtps_shared_targets "${CMAKE_CURRENT_LIST_DIR}/fastrtps-shared-targets.cmake")
+set(fastdds_static_targets "${CMAKE_CURRENT_LIST_DIR}/fastdds-static-targets.cmake")
+set(fastdds_shared_targets "${CMAKE_CURRENT_LIST_DIR}/fastdds-shared-targets.cmake")
 
-macro(fastrtps_load_targets type)
-    if (NOT EXISTS "${fastrtps_${type}_targets}")
+macro(fastdds_load_targets type)
+    if (NOT EXISTS "${fastdds_${type}_targets}")
         set(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE
-            "fastrtps `${type}` libraries were requested but not found.")
+            "fastdds `${type}` libraries were requested but not found.")
         set(${CMAKE_FIND_PACKAGE_NAME}_FOUND FALSE)
         return()
     endif ()
 
     # find related dependency packages like OpenSSL
-    @FASTRTPS_INSTALLER_OPT_DEPS@
-    @FASTRTPS_PACKAGE_WIN32_OPT_DEPS@
+    @FASTDDS_INSTALLER_OPT_DEPS@
+    @FASTDDS_PACKAGE_WIN32_OPT_DEPS@
 
-    include("${fastrtps_${type}_targets}")
+    include("${fastdds_${type}_targets}")
 endmacro()
 
-if (fastrtps_comp_static)
-    fastrtps_load_targets(static)
-elseif (fastrtps_comp_shared)
-    fastrtps_load_targets(shared)
-elseif (DEFINED fastrtps_SHARED_LIBS AND fastrtps_SHARED_LIBS)
-    fastrtps_load_targets(shared)
-elseif (DEFINED fastrtps_SHARED_LIBS AND NOT fastrtps_SHARED_LIBS)
-    fastrtps_load_targets(static)
+if (fastdds_comp_static)
+    fastdds_load_targets(static)
+elseif (fastdds_comp_shared)
+    fastdds_load_targets(shared)
+elseif (DEFINED fastdds_SHARED_LIBS AND fastdds_SHARED_LIBS)
+    fastdds_load_targets(shared)
+elseif (DEFINED fastdds_SHARED_LIBS AND NOT fastdds_SHARED_LIBS)
+    fastdds_load_targets(static)
 elseif (BUILD_SHARED_LIBS)
-    if (EXISTS "${fastrtps_shared_targets}")
-        fastrtps_load_targets(shared)
+    if (EXISTS "${fastdds_shared_targets}")
+        fastdds_load_targets(shared)
     else ()
-        fastrtps_load_targets(static)
+        fastdds_load_targets(static)
     endif ()
 else ()
-    if (EXISTS "${fastrtps_static_targets}")
-        fastrtps_load_targets(static)
+    if (EXISTS "${fastdds_static_targets}")
+        fastdds_load_targets(static)
     else ()
-        fastrtps_load_targets(shared)
+        fastdds_load_targets(shared)
     endif ()
 endif ()
 

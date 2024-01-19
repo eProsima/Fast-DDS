@@ -96,7 +96,7 @@ EDP::~EDP()
 bool EDP::newLocalReaderProxyData(
         RTPSReader* reader,
         const TopicAttributes& att,
-        const ReaderQos& rqos,
+        const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP, "Adding " << reader->getGuid().entityId << " in topic " << att.topicName);
@@ -254,7 +254,7 @@ bool EDP::newLocalReaderProxyData(
 bool EDP::newLocalWriterProxyData(
         RTPSWriter* writer,
         const TopicAttributes& att,
-        const WriterQos& wqos)
+        const fastdds::dds::WriterQos& wqos)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP, "Adding " << writer->getGuid().entityId << " in topic " << att.topicName);
 
@@ -397,7 +397,7 @@ bool EDP::newLocalWriterProxyData(
 bool EDP::updatedLocalReader(
         RTPSReader* reader,
         const TopicAttributes& att,
-        const ReaderQos& rqos,
+        const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     auto init_fun = [this, reader, &rqos, &att, content_filter](
@@ -511,7 +511,7 @@ bool EDP::updatedLocalReader(
 bool EDP::updatedLocalWriter(
         RTPSWriter* writer,
         const TopicAttributes& att,
-        const WriterQos& wqos)
+        const fastdds::dds::WriterQos& wqos)
 {
     auto init_fun = [this, writer, &wqos, &att](
         WriterProxyData* wdata,

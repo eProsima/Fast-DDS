@@ -31,7 +31,7 @@ namespace rtps {
 
 using LivelinessCallback = std::function<void (
                     const GUID_t&,
-                    const LivelinessQosPolicyKind&,
+                    const fastdds::dds::LivelinessQosPolicyKind&,
                     const Duration_t&,
                     int32_t alive_change,
                     int32_t not_alive_change)>;
@@ -77,7 +77,7 @@ public:
      */
     bool add_writer(
             GUID_t guid,
-            LivelinessQosPolicyKind kind,
+            fastdds::dds::LivelinessQosPolicyKind kind,
             Duration_t lease_duration);
 
     /**
@@ -89,7 +89,7 @@ public:
      */
     bool remove_writer(
             GUID_t guid,
-            LivelinessQosPolicyKind kind,
+            fastdds::dds::LivelinessQosPolicyKind kind,
             Duration_t lease_duration);
 
     /**
@@ -101,7 +101,7 @@ public:
      */
     bool assert_liveliness(
             GUID_t guid,
-            LivelinessQosPolicyKind kind,
+            fastdds::dds::LivelinessQosPolicyKind kind,
             Duration_t lease_duration);
 
     /**
@@ -110,7 +110,7 @@ public:
      * @return True if liveliness was successfully asserted
      */
     bool assert_liveliness(
-            LivelinessQosPolicyKind kind);
+            fastdds::dds::LivelinessQosPolicyKind kind);
 
     /**
      * @brief A method to check any writer of the given kind is alive
@@ -118,7 +118,7 @@ public:
      * @return True if at least one writer of this kind is alive. False otherwise
      */
     bool is_any_alive(
-            LivelinessQosPolicyKind kind);
+            fastdds::dds::LivelinessQosPolicyKind kind);
 
     /**
      * @brief A method to return liveliness data

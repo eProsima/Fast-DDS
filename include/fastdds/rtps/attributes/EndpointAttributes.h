@@ -76,7 +76,7 @@ public:
     PropertyPolicy properties;
 
     //!Ownership
-    OwnershipQosPolicyKind ownershipKind = SHARED_OWNERSHIP_QOS;
+    fastdds::dds::OwnershipQosPolicyKind ownershipKind = fastdds::dds::OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS;
 
     EndpointAttributes()
     {
@@ -128,7 +128,7 @@ public:
      * @param cfg Configuration to be set
      */
     inline void set_data_sharing_configuration(
-            DataSharingQosPolicy cfg)
+            fastdds::dds::DataSharingQosPolicy cfg)
     {
         datasharing_ = cfg;
     }
@@ -137,7 +137,7 @@ public:
      * Get the DataSharing configuration
      * @return Configuration of data sharing
      */
-    inline const DataSharingQosPolicy& data_sharing_configuration() const
+    inline const fastdds::dds::DataSharingQosPolicy& data_sharing_configuration() const
     {
         return datasharing_;
     }
@@ -169,7 +169,7 @@ private:
 #endif // HAVE_SECURITY
 
     //! Settings for datasharing
-    DataSharingQosPolicy datasharing_;
+    fastdds::dds::DataSharingQosPolicy datasharing_;
 };
 
 } /* namespace rtps */

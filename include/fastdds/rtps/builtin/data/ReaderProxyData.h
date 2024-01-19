@@ -441,7 +441,7 @@ public:
     //!
     bool m_expectsInlineQos;
     //!Reader Qos
-    ReaderQos m_qos;
+    fastdds::dds::ReaderQos m_qos;
 
 #if HAVE_SECURITY
     //!EndpointSecurityInfo.endpoint_security_attributes

@@ -44,7 +44,7 @@ jobs:
       - name: Sync eProsima/Fast-DDS repository
         uses: actions/checkout@v3
         with:
-          path: src/fastrtps
+          path: src/fastdds
 
       - name: Get minimum supported version of CMake
         uses: lukka/get-cmake@latest
@@ -377,28 +377,28 @@ jobs:
           # Nightly job
           if ("${{ inputs.label }}".Contains("nightly"))
           {
-              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_${{ inputs.fastdds_branch }}.repos"
+              $depends_repos_path = ".\src\fastdds\.github\workflows\config\nightly_${{ inputs.fastdds_branch }}.repos"
               if (!(Test-Path -Path $depends_repos_path))
               {
-                $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_master.repos"
+                $depends_repos_path = ".\src\fastdds\.github\workflows\config\nightly_master.repos"
               }
-              $meta_path = ".\src\fastrtps\.github\workflows\config\nightly.meta"
+              $meta_path = ".\src\fastdds\.github\workflows\config\nightly.meta"
           }
           # Either PR or manual
           else
           {
-              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_${{ inputs.fastdds_branch }}.repos"
+              $depends_repos_path = ".\src\fastdds\.github\workflows\config\default_ci_${{ inputs.fastdds_branch }}.repos"
               if (!(Test-Path -Path $depends_repos_path))
               {
-                $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_master.repos"
+                $depends_repos_path = ".\src\fastdds\.github\workflows\config\default_ci_master.repos"
               }
-              $meta_path = ".\src\fastrtps\.github\workflows\config\default_ci.meta"
+              $meta_path = ".\src\fastdds\.github\workflows\config\default_ci.meta"
           }
           Write-Output "Selected repos files: $depends_repos_path"
           Write-Output "Selected metas files: $meta_path"
 
           # Get the repository's repos file
-          $repos_path = ".\src\fastrtps\fastrtps.repos"
+          $repos_path = ".\src\fastdds\fastdds.repos"
           $repos = Get-Content $repos_path | ConvertFrom-Yaml
 
           # Merge with the extra dependencies .repos file
@@ -429,7 +429,7 @@ jobs:
           }
 
           "::group::merged vcstool repos file"
-          $repos | ConvertTo-Yaml | Tee-Object -FilePath fastrtps.repos
+          $repos | ConvertTo-Yaml | Tee-Object -FilePath fastdds.repos
           "::endgroup::"
 
           # Generate the meta file
@@ -439,7 +439,7 @@ jobs:
           "::endgroup::"
 
           # create source dir and download the sources
-          vcs import src --input fastrtps.repos --skip-existing
+          vcs import src --input fastdds.repos --skip-existing
 
       - name: Build
         id: build
@@ -456,7 +456,7 @@ jobs:
           $buildargs = "--merge-install",
                       "--symlink-install",
                       "--event-handlers=console_direct+",
-                      "--packages-up-to", "fastrtps",
+                      "--packages-up-to", "fastdds",
                       "--mixin", $translate["${{ matrix.cmake-config }}"]
 
           $cmakeargs = '--cmake-args --no-warn-unused-cli ${{ inputs.cmake-args }} '
@@ -532,13 +532,13 @@ jobs:
           $ctestargs = '${{ inputs.ctest-args }}'.split(" ")
 
           # Show the arguments
-          EchoArgs --packages-select fastrtps --event-handlers=console_direct+ `
+          EchoArgs --packages-select fastdds --event-handlers=console_direct+ `
             --merge-install --executor sequential --ctest-args $ctestargs --repeat until-pass:3 `
             --timeout 300 --output-junit $junit
 
           # Run the testing
           "::group::ctest summary"
-          colcon test --packages-select fastrtps --event-handlers=console_direct+ `
+          colcon test --packages-select fastdds --event-handlers=console_direct+ `
             --merge-install --executor sequential --ctest-args $ctestargs --repeat until-pass:3 `
             --timeout 300 --output-junit $junit
           "::endgroup::"
@@ -598,7 +598,7 @@ jobs:
             # Let's create a summary table
             $table = @{}
 
-            $logfile = gi ./log/latest_test/fastrtps/stdout.log
+            $logfile = gi ./log/latest_test/fastdds/stdout.log
 
             # Check total and passed
             $pattern = '(?:(?<timestamp>[\d-:T]+)\.\S+ |^)(?:.\[0;32m)?(\d+)% tests passed(?:.\[0;0m)?,' +
@@ -626,7 +626,7 @@ jobs:
             $table.disabled = (gc $logfile).where({ $_ -match $pattern }, 'Default').Count
 
             # Get generator
-            $table.generator = (gi ./build/fastrtps/CMakeCache.txt |
+            $table.generator = (gi ./build/fastdds/CMakeCache.txt |
                   sls "CMAKE_GENERATOR:INTERNAL=(?<gen>.*)").Matches.Groups.Where{$_.Name -eq "gen"}.Value
 
             # Print summary
@@ -641,8 +641,8 @@ jobs:
               $logFolder = New-Item -Type Directory -Path test_logs
 
               # copy the error reports and command log from colcon logs
-              copy .\log\latest_test\fastrtps\stdout_stderr.log $logFolder
-              copy .\log\latest_test\fastrtps\command.log $logFolder
+              copy .\log\latest_test\fastdds\stdout_stderr.log $logFolder
+              copy .\log\latest_test\fastdds\command.log $logFolder
               "TestLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
 
               colcon test-result --verbose | sls "^\- " | Tee-Object -FilePath $Env:GITHUB_STEP_SUMMARY -Append
@@ -667,8 +667,8 @@ jobs:
             $exes | ? basename -in $test_bin | Move-Item -Destination $dumpfolder
 
             # 3. Enable source indexing to reported pdb files
-            & src/fastrtps/.github/workflows/utils/add_source_listing.ps1 `
-              -pdbs (ls $dumpfolder -Filter *.pdb | ? Name -notmatch fastrtps).FullName
+            & src/fastdds/.github/workflows/utils/add_source_listing.ps1 `
+              -pdbs (ls $dumpfolder -Filter *.pdb | ? Name -notmatch fastdds).FullName
 
             "::group::Crash dump files"
             gci $dumpfolder | Sort-Object LastWriteTime

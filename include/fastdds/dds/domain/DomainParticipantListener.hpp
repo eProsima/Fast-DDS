@@ -69,22 +69,6 @@ public:
      *
      * @param[out] participant Pointer to the Participant which discovered the remote participant.
      * @param[out] info Remote participant information. User can take ownership of the object.
-     */
-    FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
-    virtual void on_participant_discovery(
-            DomainParticipant* participant,
-            fastrtps::rtps::ParticipantDiscoveryInfo&& info)
-    {
-        static_cast<void>(participant);
-        static_cast<void>(info);
-    }
-
-    /*!
-     * This method is called when a new Participant is discovered, or a previously discovered participant changes
-     * its QOS or is removed.
-     *
-     * @param[out] participant Pointer to the Participant which discovered the remote participant.
-     * @param[out] info Remote participant information. User can take ownership of the object.
      * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
      */
     virtual void on_participant_discovery(

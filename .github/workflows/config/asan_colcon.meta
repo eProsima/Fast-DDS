@@ -1,14 +1,13 @@
 {
     "names":
     {
-        "fastrtps":
+        "fastdds":
         {
             "cmake-args":
             [
                 "-DCMAKE_BUILD_TYPE=Debug",
                 "-DEPROSIMA_BUILD_TESTS=ON",
                 "-DRTPS_API_TESTS=ON",
-                "-DFASTRTPS_API_TESTS=ON",
                 "-DFASTDDS_PIM_API_TESTS=ON",
                 "-DPERFORMANCE_TESTS=ON",
                 "-DNO_TLS=OFF",
