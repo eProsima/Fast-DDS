@@ -20,8 +20,8 @@ project(fast-discovery-server VERSION 1.0.1 LANGUAGES CXX)
 # Load external dependencies
 ###############################################################################
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps 2.12 REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 ###############################################################################
@@ -34,7 +34,7 @@ if (MSVC)
     if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
         # add fast headers to enable class view on visual studio IDE
-        get_target_property(FAST_INCLUDE_DIR fastrtps INTERFACE_INCLUDE_DIRECTORIES)
+        get_target_property(FAST_INCLUDE_DIR fastdds INTERFACE_INCLUDE_DIRECTORIES)
         list(GET FAST_INCLUDE_DIR 0 FAST_INCLUDE_DIR)
 
         file(GLOB_RECURSE ALL_FAST_HEADERS
@@ -62,7 +62,7 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE FAST_SERVER_VERSION=\"${PROJECT_VERSION}\"
     PRIVATE FAST_SERVER_BINARY=\"$<TARGET_FILE_NAME:${PROJECT_NAME}>\" )
 
-target_link_libraries(${PROJECT_NAME} fastrtps fastcdr fastdds::optionparser)
+target_link_libraries(${PROJECT_NAME} fastdds fastcdr fastdds::optionparser)
 
 # Properties that change bin names depending on current config.
 # This is convenient because on installation all bins share folder
@@ -76,7 +76,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSI
 ###############################################################################
 
 # If not isolated integrate
-if(CMAKE_PROJECT_NAME STREQUAL "fastrtps" )
+if(CMAKE_PROJECT_NAME STREQUAL "fastdds" )
     set(BIN_INSTALL_DIR tools/fds/${BIN_INSTALL_DIR} CACHE PATH "Installation directory for binaries within Fast-DDS")
 else()
     set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")

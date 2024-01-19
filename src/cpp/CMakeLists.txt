@@ -82,15 +82,6 @@ set(${PROJECT_NAME}_source_files
     rtps/participant/RTPSParticipant.cpp
     rtps/participant/RTPSParticipantImpl.cpp
     rtps/RTPSDomain.cpp
-    fastrtps_deprecated/Domain.cpp
-    fastrtps_deprecated/participant/Participant.cpp
-    fastrtps_deprecated/participant/ParticipantImpl.cpp
-    fastrtps_deprecated/publisher/Publisher.cpp
-    fastrtps_deprecated/publisher/PublisherImpl.cpp
-    fastrtps_deprecated/publisher/PublisherHistory.cpp
-    fastrtps_deprecated/subscriber/Subscriber.cpp
-    fastrtps_deprecated/subscriber/SubscriberImpl.cpp
-    fastrtps_deprecated/subscriber/SubscriberHistory.cpp
     fastdds/publisher/DataWriter.cpp
     fastdds/publisher/DataWriterImpl.cpp
     fastdds/publisher/DataWriterHistory.cpp
@@ -514,13 +505,13 @@ if(MSVC OR MSVC_IDE)
     if(INSTALLER_PLATFORM AND OPENSSL_FOUND)
 
         # Get Fast-DDS version suitable manifest format
-        set(FASTDDS_CANONICAL_VERSION ${fastrtps_VERSION})
+        set(FASTDDS_CANONICAL_VERSION ${fastdds_VERSION})
 
         if( NOT FASTDDS_CANONICAL_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
-            message(FATAL_ERROR "Fast-DDS version number ${fastrtps_VERSION} must include major, minor and patch.")
+            message(FATAL_ERROR "Fast-DDS version number ${fastdds_VERSION} must include major, minor and patch.")
         endif()
 
-        if( NOT fastrtps_VERSION_TWEAK)
+        if( NOT fastdds_VERSION_TWEAK)
             set(FASTDDS_CANONICAL_VERSION "${FASTDDS_CANONICAL_VERSION}.0")
         endif()
 
@@ -577,7 +568,7 @@ if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} PROPERTIES VS_WINRT_COMPONENT "true")
     endif()
 elseif(BUILD_SHARED_LIBS)
-    set(VERSION_SCRIPT_SUPPORT_FLAGS -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libfastrtps.version)
+    set(VERSION_SCRIPT_SUPPORT_FLAGS -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libfastdds.version)
     set(OLD_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
     set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${VERSION_SCRIPT_SUPPORT_FLAGS})
     CHECK_CXX_SOURCE_COMPILES("int main(int, char**){return 0;}" HAS_VERSION_SCRIPT_SUPPORT)
@@ -688,9 +679,9 @@ endif()
 include(CMakePackageConfigHelpers)
 
 if(BUILD_SHARED_LIBS)
-    set(FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION "if(MSVC OR MSVC_IDE)")
+    set(FASTDDS_PACKAGE_OPT_BIN_DIR_CONDITION "if(MSVC OR MSVC_IDE)")
 else()
-    set(FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION "if(0)")
+    set(FASTDDS_PACKAGE_OPT_BIN_DIR_CONDITION "if(0)")
 endif()
 
 # include the option parser targets
@@ -701,12 +692,12 @@ if(COMPILE_TOOLS)
     set(INCLUDE_FASTDDS_TARGETS "${INCLUDE_FASTDDS_TARGETS}\ninclude(\${CMAKE_CURRENT_LIST_DIR}/fast-discovery-server-targets.cmake)")
 endif()
 
-# Add fastrtps dependencies in its CMake config file.
+# Add fastdds dependencies in its CMake config file.
 if(LINK_SSL)
     if(INSTALLER_PLATFORM)
         # OpenSSL dependency is only propagated on static linking
         # We must use the deployed OpenSSL binaries to prevent compatibility issues
-        set(FASTRTPS_INSTALLER_DEPS_ANCILLARY "\
+        set(FASTDDS_INSTALLER_DEPS_ANCILLARY "\
         function(find_fastdds_deployed_openssl)\n\
             if(OPENSSL_FOUND AND NOT(OPENSSL_VERSION STREQUAL \"${OPENSSL_VERSION}\") )\n\
                 message(WARNING \"OpenSSL already loaded. Version \${OPENSSL_VERSION} differs from version ${OPENSSL_VERSION}, used in Fast-DDS binaries building, ABI issues may arise\")\n\
@@ -716,17 +707,17 @@ if(LINK_SSL)
             find_package(OpenSSL REQUIRED)\n\
         endfunction()"
         )
-        set(FASTRTPS_INSTALLER_OPT_DEPS "\
+        set(FASTDDS_INSTALLER_OPT_DEPS "\
         if (\${type} STREQUAL \"static\")\n\
             find_fastdds_deployed_openssl()\n\
         endif()")
 
     elseif(WIN32)
         # windows from sources only requires OpenSSL on static libraries
-        set(FASTRTPS_PACKAGE_WIN32_OPT_DEPS "find_package(OpenSSL REQUIRED)")
+        set(FASTDDS_PACKAGE_WIN32_OPT_DEPS "find_package(OpenSSL REQUIRED)")
     else()
         # linux from sources requires OpenSSL always
-        set(FASTRTPS_PACKAGE_UNIX_OPT_DEPS "find_package(OpenSSL REQUIRED)")
+        set(FASTDDS_PACKAGE_UNIX_OPT_DEPS "find_package(OpenSSL REQUIRED)")
     endif()
 endif()
 

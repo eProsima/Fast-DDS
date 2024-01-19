@@ -25,8 +25,8 @@ if(NOT foonathan_memory_FOUND)
     find_package(foonathan_memory REQUIRED)
 endif()
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps 2.12 REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 2.12 REQUIRED)
 endif()
 
 #Check C++11
@@ -46,7 +46,7 @@ target_compile_definitions(DDSLateJoiners PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_link_libraries(DDSLateJoiners fastrtps fastcdr foonathan_memory)
+target_link_libraries(DDSLateJoiners fastdds fastcdr foonathan_memory)
 install(TARGETS DDSLateJoiners
     RUNTIME DESTINATION examples/cpp/dds/LateJoiners/${BIN_INSTALL_DIR}
     )

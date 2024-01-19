@@ -108,9 +108,9 @@ public:
     //!
     bool isAlive;
     //!
-    ParameterPropertyList_t m_properties;
+    fastdds::dds::ParameterPropertyList_t m_properties;
     //!
-    UserDataQosPolicy m_userData;
+    fastdds::dds::UserDataQosPolicy m_userData;
     //!
     TimedEvent* lease_duration_event;
     //!

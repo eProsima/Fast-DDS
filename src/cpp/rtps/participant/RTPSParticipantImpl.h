@@ -906,7 +906,7 @@ public:
     bool registerWriter(
             RTPSWriter* Writer,
             const TopicAttributes& topicAtt,
-            const WriterQos& wqos);
+            const fastdds::dds::WriterQos& wqos);
 
     /**
      * Register a Reader in the BuiltinProtocols.
@@ -919,7 +919,7 @@ public:
     bool registerReader(
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
-            const ReaderQos& rqos,
+            const fastdds::dds::ReaderQos& rqos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**
@@ -939,7 +939,7 @@ public:
     bool updateLocalWriter(
             RTPSWriter* Writer,
             const TopicAttributes& topicAtt,
-            const WriterQos& wqos);
+            const fastdds::dds::WriterQos& wqos);
 
     /**
      * Update local reader QoS
@@ -952,7 +952,7 @@ public:
     bool updateLocalReader(
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
-            const ReaderQos& rqos,
+            const fastdds::dds::ReaderQos& rqos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**

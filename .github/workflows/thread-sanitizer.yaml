@@ -70,27 +70,27 @@ jobs:
         with:
           packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
 
-      - name: Get fastrtps.repos file
+      - name: Get fastdds.repos file
         uses: eProsima/eProsima-CI/ubuntu/get_file_from_repo@v0
         with:
           source_repository: eProsima/Fast-DDS
           source_repository_branch: ${{ env.FASTDDS_BRANCH }}
-          file_name: fastrtps.repos
-          file_result: fastrtps.repos
+          file_name: fastdds.repos
+          file_result: fastdds.repos
 
       - name: Fetch Fast DDS & dependencies
         uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
-          vcs_repos_file: fastrtps.repos
+          vcs_repos_file: fastdds.repos
           destination_workspace: src
 
       - name: Checkout Fast DDS branch
         run: |
-          cd ./src/fastrtps
+          cd ./src/fastdds
           git checkout ${{ env.FASTDDS_BRANCH }}
 
       - name: Install apt packages
-        uses: ./src/fastrtps/.github/actions/install-apt-packages
+        uses: ./src/fastdds/.github/actions/install-apt-packages
 
       - name: Install GTest
         uses: eProsima/eProsima-CI/ubuntu/install_gtest@v0
@@ -99,17 +99,17 @@ jobs:
 
       - name: Build workspace
         run: |
-          cat src/fastrtps/.github/workflows/config/tsan_colcon.meta
+          cat src/fastdds/.github/workflows/config/tsan_colcon.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --metas src/fastrtps/.github/workflows/config/tsan_colcon.meta \
+            --metas src/fastdds/.github/workflows/config/tsan_colcon.meta \
             --cmake-args -DCMAKE_BUILD_TYPE=Debug ${{ inputs.optional_cmake_args }}
 
       - name: Run tests Fast DDS
         run: |
           source install/setup.bash && \
           colcon test \
-            --packages-select fastrtps \
+            --packages-select fastdds \
             --event-handlers=console_direct+ \
             --return-code-on-test-failure \
             --ctest-args \
@@ -132,7 +132,7 @@ jobs:
           # Create a dir for the exports
           $exports = New-Item -ItemType Directory -Path ./exports
           # Move to the reports dir
-          pushd ./log/latest_test/fastrtps
+          pushd ./log/latest_test/fastdds
           # Install the report parser module
           Find-Module -Repository PSGallery -Name SanReportParser | Install-Module -Scope CurrentUser -Force
           # Parse the report files

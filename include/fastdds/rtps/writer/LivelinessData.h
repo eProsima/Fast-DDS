@@ -51,7 +51,7 @@ struct LivelinessData
      */
     LivelinessData(
             GUID_t guid_in,
-            LivelinessQosPolicyKind kind_in,
+            fastdds::dds::LivelinessQosPolicyKind kind_in,
             Duration_t lease_duration_in)
         : guid(guid_in)
         , kind(kind_in)
@@ -61,7 +61,7 @@ struct LivelinessData
 
     LivelinessData()
         : guid()
-        , kind(LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+        , kind(fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
         , lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , status(WriterStatus::NOT_ASSERTED)
     {}
@@ -97,7 +97,7 @@ struct LivelinessData
     GUID_t guid;
 
     //! Writer liveliness kind
-    LivelinessQosPolicyKind kind;
+    fastdds::dds::LivelinessQosPolicyKind kind;
 
     //! The lease duration
     Duration_t lease_duration;

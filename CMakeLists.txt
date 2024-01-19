@@ -29,9 +29,9 @@ endif()
 ###############################################################################
 # Project                                                                     #
 ###############################################################################
-project(fastrtps VERSION "3.0.0" LANGUAGES C CXX)
+project(fastdds VERSION "3.0.0" LANGUAGES C CXX)
 
-set(PROJECT_NAME_LARGE "Fast RTPS")
+set(PROJECT_NAME_LARGE "Fast DDS")
 string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
 
 message(STATUS "Version: ${PROJECT_VERSION}")
@@ -234,7 +234,7 @@ if(NOT BUILD_SHARED_LIBS)
     set(FASTDDS_STATIC ON)
 endif()
 
-eprosima_find_package(fastcdr REQUIRED)
+eprosima_find_package(fastcdr 2 REQUIRED)
 eprosima_find_thirdparty(Asio asio VERSION 1.10.8)
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
 

@@ -100,7 +100,7 @@ public:
      */
     bool add_local_writer(
             RTPSWriter* W,
-            const WriterQos& wqos);
+            const fastdds::dds::WriterQos& wqos);
     /**
      * Remove a local writer from the liveliness protocol.
      * @param W Pointer to the RTPSWriter.
@@ -117,7 +117,7 @@ public:
      */
     bool add_local_reader(
             RTPSReader* reader,
-            const ReaderQos& rqos);
+            const fastdds::dds::ReaderQos& rqos);
 
     /**
      * @brief Removes a local reader from the livliness protocol

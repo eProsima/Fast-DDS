@@ -88,7 +88,7 @@ class WriterAttributes
 public:
 
     WriterAttributes()
-        : liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
+        : liveliness_kind(fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
         , liveliness_lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , liveliness_announcement_period(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , mode(SYNCHRONOUS_WRITER)
