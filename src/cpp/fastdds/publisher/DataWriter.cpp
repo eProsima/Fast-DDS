@@ -106,17 +106,6 @@ ReturnCode_t DataWriter::write_w_timestamp(
     return impl_->write_w_timestamp(data, handle, timestamp);
 }
 
-ReturnCode_t DataWriter::write_w_timestamp(
-        void* data,
-        const InstanceHandle_t& handle,
-        const fastrtps::rtps::Time_t& timestamp)
-{
-    static_cast<void> (data);
-    static_cast<void> (handle);
-    static_cast<void> (timestamp);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-}
-
 InstanceHandle_t DataWriter::register_instance(
         void* instance)
 {
@@ -128,16 +117,6 @@ InstanceHandle_t DataWriter::register_instance_w_timestamp(
         const fastrtps::Time_t& timestamp)
 {
     return impl_->register_instance_w_timestamp(instance, timestamp);
-}
-
-InstanceHandle_t DataWriter::register_instance_w_timestamp(
-        void* instance,
-        const fastrtps::rtps::Time_t& timestamp)
-{
-    static_cast<void> (instance);
-    static_cast<void> (timestamp);
-    EPROSIMA_LOG_WARNING(DATA_WRITER, "register_instance_w_timestamp method not yet implemented");
-    return HANDLE_NIL;
 }
 
 ReturnCode_t DataWriter::unregister_instance(
@@ -153,17 +132,6 @@ ReturnCode_t DataWriter::unregister_instance_w_timestamp(
         const fastrtps::Time_t& timestamp)
 {
     return impl_->unregister_instance_w_timestamp(instance, handle, timestamp);
-}
-
-ReturnCode_t DataWriter::unregister_instance_w_timestamp(
-        void* instance,
-        const InstanceHandle_t& handle,
-        const fastrtps::rtps::Time_t& timestamp)
-{
-    static_cast<void> (instance);
-    static_cast<void> (handle);
-    static_cast<void> (timestamp);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DataWriter::get_key_value(
@@ -312,16 +280,6 @@ ReturnCode_t DataWriter::get_matched_subscription_data(
 
 ReturnCode_t DataWriter::get_matched_subscriptions(
         std::vector<InstanceHandle_t>& subscription_handles) const
-{
-    static_cast<void> (subscription_handles);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-       return impl_->get_matched_subscription_data(subscription_handles);
-     */
-}
-
-ReturnCode_t DataWriter::get_matched_subscriptions(
-        std::vector<InstanceHandle_t*>& subscription_handles) const
 {
     static_cast<void> (subscription_handles);
     return ReturnCode_t::RETCODE_UNSUPPORTED;
