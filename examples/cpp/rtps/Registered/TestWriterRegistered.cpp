@@ -88,7 +88,7 @@ bool TestWriterRegistered::reg()
     Tatt.topicKind = NO_KEY;
     Tatt.topicDataType = "string";
     Tatt.topicName = "exampleTopic";
-    WriterQos Wqos;
+    eprosima::fastdds::dds::WriterQos Wqos;
     return mp_participant->registerWriter(mp_writer, Tatt, Wqos);
 }
 
