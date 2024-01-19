@@ -38,8 +38,8 @@ jobs:
         cmake-config:
           - 'RelWithDebInfo'
         vs-toolset:
-          - 'v141'
-          - 'v142'
+          - '14.16'
+          - '14.29'
     steps:
       - name: Sync eProsima/Fast-DDS repository
         uses: actions/checkout@v3
@@ -101,14 +101,18 @@ jobs:
           $env_variables +=
             'CXXFLAGS=/MP',
             'CONFIG_TYPE=--config ${{ matrix.cmake-config }}',
-            'BIN_ARCH=-A x64',
-            'HOST_ARCH=-T ${{ matrix.vs-toolset }},host=x64',
             ('VSPWSH=' + $pwshmodule)
 
           # download the pull request branches on fetch
           git config --global remote.origin.fetch '+refs/pull/*:refs/remotes/origin/pull/*'
 
           $env_variables | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+
+      - name: Set up MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+          toolset: ${{ matrix.vs-toolset }}
 
       - name: Enable WER
         id: WERSetup
@@ -472,14 +476,6 @@ jobs:
                       "ccache", "${{ steps.ninja.outputs.cmake_generator }}"
 
           $cmakeargs = '--cmake-args --no-warn-unused-cli ${{ inputs.cmake-args }} '
-
-          # On Windows we must load the developer environment and chose a config
-          $pwshmodule = gi $Env:VSPWSH
-          Import-Module $pwshmodule
-          Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
-                            -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
-
-          $cmakeargs += "$Env:BIN_ARCH $Env:HOST_ARCH"
 
           # Show the args
           EchoArgs $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon-args }} $cmakeargs.split(" ")
