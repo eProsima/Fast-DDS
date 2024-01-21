@@ -51,12 +51,15 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
-                data.var_type1(), current_alignment);
+                data.index(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
-                data.var_type2(), current_alignment);
+                data.var_type1(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                data.var_type2(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                 data.var_type3(), current_alignment);
 
 
@@ -77,9 +80,10 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
-        << eprosima::fastcdr::MemberId(0) << data.var_type1()
-        << eprosima::fastcdr::MemberId(1) << data.var_type2()
-        << eprosima::fastcdr::MemberId(2) << data.var_type3()
+        << eprosima::fastcdr::MemberId(0) << data.index()
+        << eprosima::fastcdr::MemberId(1) << data.var_type1()
+        << eprosima::fastcdr::MemberId(2) << data.var_type2()
+        << eprosima::fastcdr::MemberId(3) << data.var_type3()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -98,14 +102,18 @@ eProsima_user_DllExport void deserialize(
                 switch (mid.id)
                 {
                                         case 0:
-                                                dcdr >> data.var_type1();
+                                                dcdr >> data.index();
                                             break;
 
                                         case 1:
-                                                dcdr >> data.var_type2();
+                                                dcdr >> data.var_type1();
                                             break;
 
                                         case 2:
+                                                dcdr >> data.var_type2();
+                                            break;
+
+                                        case 3:
                                                 dcdr >> data.var_type3();
                                             break;
 

@@ -32,7 +32,6 @@
 #include <condition_variable>
 #include <functional>
 #include <map>
-#include <map>
 #include <mutex>
 
 namespace eprosima {
@@ -64,7 +63,7 @@ struct SubKnownType
 };
 
 // Define a macro to simplify type registration
-#define REGISTER_TYPE(Type) \
+#define SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type) \
     type_creator_functions_[#Type] = std::bind(&TypeLookupSubscriber::create_known_type_impl<Type, Type ## PubSubType>, \
                     this, \
                     std::placeholders::_1)
@@ -79,6 +78,8 @@ public:
     }
 
     ~TypeLookupSubscriber();
+
+    void create_type_creator_functions();
 
     bool init(
             std::vector<std::string> known_types);
@@ -98,7 +99,8 @@ public:
             uint32_t timeout);
 
     bool run(
-            uint32_t samples);
+            uint32_t samples,
+            uint32_t timeout);
 
     void on_subscription_matched(
             DataReader* /*reader*/,
@@ -115,6 +117,8 @@ private:
 
     std::mutex mutex_;
     std::condition_variable cv_;
+
+    std::mutex matched_mutex_;
     unsigned int matched_ = 0;
 
     std::mutex received_samples_mutex_;

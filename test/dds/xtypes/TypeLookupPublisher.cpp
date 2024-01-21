@@ -40,7 +40,6 @@ using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 
 static int PUB_DOMAIN_ID_ = 10;
-static int PUB_MAX_TIMEOUT_ = 10;
 
 TypeLookupPublisher::~TypeLookupPublisher()
 {
@@ -66,9 +65,118 @@ TypeLookupPublisher::~TypeLookupPublisher()
     }
 }
 
+void TypeLookupPublisher::create_type_creator_functions()
+{
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type1);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type2);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type3);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type3);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type4);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type5);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type6);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type7);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type8);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type9);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type10);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type11);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type12);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type13);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type14);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type15);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type16);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type17);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type18);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type19);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type20);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type21);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type22);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type23);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type24);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type25);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type26);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type27);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type28);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type29);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type30);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type31);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type32);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type33);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type34);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type35);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type36);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type37);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type38);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type39);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type40);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type41);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type42);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type43);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type44);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type45);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type46);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type47);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type48);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type49);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type50);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type51);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type52);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type53);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type54);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type55);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type56);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type57);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type58);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type59);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type60);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type61);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type62);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type63);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type64);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type65);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type66);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type67);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type68);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type69);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type70);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type71);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type72);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type73);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type74);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type75);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type76);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type77);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type78);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type79);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type80);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type81);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type82);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type83);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type84);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type85);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type86);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type87);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type88);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type89);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type90);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type91);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type92);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type93);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type94);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type95);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type96);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type97);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type98);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type99);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(Type100);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(TypeBig);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(TypeDep);
+}
+
 bool TypeLookupPublisher::init(
         std::vector<std::string> known_types)
 {
+    create_type_creator_functions();
+
     auto settings = fastrtps::xmlparser::XMLProfileManager::library_settings();
     settings.intraprocess_delivery = fastrtps::INTRAPROCESS_OFF;
     fastrtps::xmlparser::XMLProfileManager::library_settings(settings);
@@ -80,12 +188,6 @@ bool TypeLookupPublisher::init(
         std::cout << "ERROR TypeLookupSubscriber: create_participant" << std::endl;
         return false;
     }
-
-    REGISTER_TYPE(Type1);
-    REGISTER_TYPE(Type2);
-    REGISTER_TYPE(Type3);
-    REGISTER_TYPE(TypeBig);
-    REGISTER_TYPE(TypeDep);
 
     for (const auto& type : known_types)
     {
@@ -163,7 +265,7 @@ bool TypeLookupPublisher::create_known_type_impl(
     a_type.callback_ = [type](void* data, int current_sample)
             {
                 Type* typed_data = static_cast<Type*>(data);
-                //typed_data->index(current_sample);
+                typed_data->index(current_sample);
             };
 
     known_types_.emplace(type, a_type);
@@ -182,20 +284,24 @@ bool TypeLookupPublisher::wait_discovery(
         uint32_t expected_match,
         uint32_t timeout)
 {
-    std::unique_lock<std::mutex> lock(mutex_);
-    bool result = cv_.wait_for(lock, std::chrono::seconds(timeout), [&]()
+    std::unique_lock<std::mutex> lock(matched_mutex_);
+    bool result = cv_.wait_for(lock, std::chrono::seconds(timeout),
+                    [&]()
                     {
+                        std::cout <<  "TypeLookupPublisher::wait_discovery(" <<
+                            matched_ << "/" << expected_match << ")" << std::endl;
                         return matched_ == expected_match;
                     });
     return result;
 }
 
 bool TypeLookupPublisher::run(
-        uint32_t samples)
+        uint32_t samples,
+        uint32_t timeout)
 {
     std::unique_lock<std::mutex> lock(mutex_);
     return cv_.wait_for(
-        lock, std::chrono::seconds(PUB_MAX_TIMEOUT_), [&]
+        lock, std::chrono::seconds(timeout), [&]
         {
             uint32_t current_sample = 0;
             void* sample = nullptr;
@@ -205,17 +311,17 @@ bool TypeLookupPublisher::run(
                 for (auto it = known_types_.begin(); it != known_types_.end(); ++it)
                 {
                     sample =  it->second.type_.create_data();
-
                     it->second.callback_(sample, current_sample);
 
                     std::cout << "Publisher " << it->second.type_.get_type_name() <<
                         " writting sample: " << current_sample << std::endl;
+
                     it->second.writer_->write(sample);
                     it->second.type_.delete_data(sample);
 
                     ++sent_samples_[it->second.writer_->guid()];
 
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
                 ++current_sample;
             }
@@ -227,7 +333,7 @@ void TypeLookupPublisher::on_publication_matched(
         DataWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::unique_lock<std::mutex> lock(matched_mutex_);
     if (info.current_count_change == 1)
     {
         ++matched_;
@@ -238,7 +344,7 @@ void TypeLookupPublisher::on_publication_matched(
     }
     else
     {
-        std::cout << "ERROR TypeLookupSubscriber: info.current_count_change" << std::endl;
+        std::cout << "ERROR TypeLookupPublisher: info.current_count_change" << std::endl;
     }
     cv_.notify_all();
 }

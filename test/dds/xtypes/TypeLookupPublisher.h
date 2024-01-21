@@ -61,7 +61,7 @@ struct PubKnownType
 };
 
 // Define a macro to simplify type registration
-#define REGISTER_TYPE(Type) \
+#define PUBLISHER_TYPE_CREATOR_FUNCTION(Type) \
     type_creator_functions_[#Type] = std::bind(&TypeLookupPublisher::create_known_type_impl<Type, Type ## PubSubType>, \
                     this, \
                     std::placeholders::_1)
@@ -77,6 +77,8 @@ public:
     }
 
     ~TypeLookupPublisher();
+
+    void create_type_creator_functions();
 
     bool init(
             std::vector<std::string> known_types);
@@ -96,7 +98,8 @@ public:
             uint32_t timeout);
 
     bool run(
-            uint32_t samples);
+            uint32_t samples,
+            uint32_t timeout);
 
     void on_publication_matched(
             DataWriter* /*writer*/,
@@ -110,6 +113,7 @@ private:
 
     std::mutex mutex_;
     std::condition_variable cv_;
+    std::mutex matched_mutex_;
     unsigned int matched_ = 0;
 
     std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> sent_samples_;

@@ -37,7 +37,6 @@ using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 
 static int SUB_DOMAIN_ID_ = 10;
-static int SUB_MAX_TIMEOUT_ = 10;
 
 TypeLookupSubscriber::~TypeLookupSubscriber()
 {
@@ -63,9 +62,118 @@ TypeLookupSubscriber::~TypeLookupSubscriber()
     }
 }
 
+void TypeLookupSubscriber::create_type_creator_functions()
+{
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type1);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type2);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type3);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type3);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type4);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type5);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type6);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type7);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type8);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type9);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type10);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type11);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type12);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type13);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type14);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type15);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type16);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type17);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type18);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type19);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type20);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type21);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type22);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type23);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type24);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type25);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type26);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type27);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type28);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type29);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type30);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type31);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type32);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type33);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type34);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type35);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type36);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type37);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type38);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type39);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type40);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type41);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type42);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type43);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type44);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type45);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type46);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type47);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type48);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type49);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type50);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type51);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type52);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type53);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type54);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type55);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type56);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type57);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type58);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type59);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type60);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type61);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type62);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type63);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type64);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type65);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type66);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type67);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type68);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type69);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type70);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type71);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type72);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type73);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type74);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type75);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type76);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type77);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type78);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type79);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type80);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type81);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type82);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type83);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type84);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type85);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type86);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type87);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type88);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type89);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type90);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type91);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type92);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type93);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type94);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type95);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type96);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type97);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type98);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type99);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type100);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(TypeBig);
+    SUBSCRIBER_TYPE_CREATOR_FUNCTION(TypeDep);
+}
+
 bool TypeLookupSubscriber::init(
         std::vector<std::string> known_types)
 {
+    create_type_creator_functions();
+
     auto settings = fastrtps::xmlparser::XMLProfileManager::library_settings();
     settings.intraprocess_delivery = fastrtps::INTRAPROCESS_OFF;
     fastrtps::xmlparser::XMLProfileManager::library_settings(settings);
@@ -81,12 +189,6 @@ bool TypeLookupSubscriber::init(
         std::cout << "ERROR TypeLookupSubscriber: create_participant" << std::endl;
         return false;
     }
-
-    REGISTER_TYPE(Type1);
-    REGISTER_TYPE(Type2);
-    REGISTER_TYPE(Type3);
-    REGISTER_TYPE(TypeBig);
-    REGISTER_TYPE(TypeDep);
 
     for (const auto& type : known_types)
     {
@@ -160,8 +262,7 @@ bool TypeLookupSubscriber::create_known_type_impl(
     a_type.callback_ = [](void* data)
             {
                 Type* sample = static_cast<Type*>(data);
-                //std::cout <<  "index(" << sample->index() << ")" << std::endl;
-                std::cout <<  ")" << std::endl;
+                std::cout <<  "index(" << sample->index() << ")" << std::endl;
             };
 
     known_types_.emplace(type, a_type);
@@ -181,9 +282,12 @@ bool TypeLookupSubscriber::wait_discovery(
         uint32_t expected_match,
         uint32_t timeout)
 {
-    std::unique_lock<std::mutex> lock(mutex_);
-    bool result = cv_.wait_for(lock, std::chrono::seconds(timeout), [&]()
+    std::unique_lock<std::mutex> lock(matched_mutex_);
+    bool result = cv_.wait_for(lock, std::chrono::seconds(timeout),
+                    [&]()
                     {
+                        std::cout <<  "TypeLookupSubscriber::wait_discovery(" <<
+                            matched_ << "/" << expected_match << ")" << std::endl;
                         return matched_ == expected_match;
                     });
 
@@ -191,11 +295,12 @@ bool TypeLookupSubscriber::wait_discovery(
 }
 
 bool TypeLookupSubscriber::run(
-        uint32_t samples)
+        uint32_t samples,
+        uint32_t timeout)
 {
     std::unique_lock<std::mutex> lock(mutex_);
     return cv_.wait_for(
-        lock, std::chrono::seconds(SUB_MAX_TIMEOUT_), [&]
+        lock, std::chrono::seconds(timeout), [&]
         {
             if (known_types_.size() != received_samples_.size())
             {
@@ -218,7 +323,7 @@ void TypeLookupSubscriber::on_subscription_matched(
         DataReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::unique_lock<std::mutex> lock(matched_mutex_);
     if (info.current_count_change == 1)
     {
         ++matched_;
@@ -248,6 +353,7 @@ void TypeLookupSubscriber::on_data_available(
                 " received sample:" << info.sample_identity.sequence_number() << "->";
             // Call the callback function to process the received data
             known_types_[reader->type().get_type_name()].callback_(sample_data);
+
             received_samples_[info.sample_identity.writer_guid()]++;
             cv_.notify_all();
         }

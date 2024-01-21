@@ -4,6 +4,7 @@
 
 struct TypeDep
 {
+	unsigned short index;
 	Type1 var_type1;
 	Type2 var_type2;
 	Type3 var_type3;
