@@ -81,6 +81,12 @@ bool TypeLookupPublisher::init(
         return false;
     }
 
+    REGISTER_TYPE(Type1);
+    REGISTER_TYPE(Type2);
+    REGISTER_TYPE(Type3);
+    REGISTER_TYPE(TypeBig);
+    REGISTER_TYPE(TypeDep);
+
     for (const auto& type : known_types)
     {
         create_known_type(type);
@@ -97,25 +103,18 @@ bool TypeLookupPublisher::create_known_type(
         return true;
     }
 
-    bool type_created = false;
-    if (type == "Type1")
+    // Find the type creator in the map
+    auto it = type_creator_functions_.find(type);
+    if (it != type_creator_functions_.end())
     {
-        type_created = create_known_type_impl<Type1, Type1PubSubType>(type);
-    }
-    else if (type == "Type2")
-    {
-        type_created = create_known_type_impl<Type2, Type2PubSubType>(type);
-    }
-    else if (type == "Type3")
-    {
-        type_created = create_known_type_impl<Type3, Type3PubSubType>(type);
+        // Call the associated type creator function
+        return it->second(type);
     }
     else
     {
-        std::cout << "ERROR TypeLookupSubscriber: init uknown type: " << type << std::endl;
+        std::cout << "ERROR TypeLookupSubscriber: init unknown type: " << type << std::endl;
+        return false;
     }
-
-    return type_created;
 }
 
 template <typename Type, typename TypePubSubType>
@@ -164,7 +163,7 @@ bool TypeLookupPublisher::create_known_type_impl(
     a_type.callback_ = [type](void* data, int current_sample)
             {
                 Type* typed_data = static_cast<Type*>(data);
-                typed_data->index(current_sample);
+                //typed_data->index(current_sample);
             };
 
     known_types_.emplace(type, a_type);

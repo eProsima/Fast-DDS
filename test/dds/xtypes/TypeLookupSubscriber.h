@@ -26,14 +26,14 @@
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
-#include "idl/XtypesTestsType1PubSubTypes.h"
-#include "idl/XtypesTestsType2PubSubTypes.h"
-#include "idl/XtypesTestsType3PubSubTypes.h"
+#include "TypeLookupTestsTypes.h"
 
-#include <mutex>
-#include <condition_variable>
-#include <map>
 #include <chrono>
+#include <condition_variable>
+#include <functional>
+#include <map>
+#include <map>
+#include <mutex>
 
 namespace eprosima {
 namespace fastdds {
@@ -62,6 +62,12 @@ struct SubKnownType
 
     std::function<void(void* data)> callback_;
 };
+
+// Define a macro to simplify type registration
+#define REGISTER_TYPE(Type) \
+    type_creator_functions_[#Type] = std::bind(&TypeLookupSubscriber::create_known_type_impl<Type, Type ## PubSubType>, \
+                    this, \
+                    std::placeholders::_1)
 
 class TypeLookupSubscriber
     : public DomainParticipantListener
@@ -116,6 +122,7 @@ private:
 
     DomainParticipant* participant_ = nullptr;
 
+    std::map<std::string, std::function<bool(const std::string&)>> type_creator_functions_;
     std::map<std::string, SubKnownType> known_types_;
 };
 

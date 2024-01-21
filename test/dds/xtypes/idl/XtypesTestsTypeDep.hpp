@@ -81,11 +81,11 @@ public:
     eProsima_user_DllExport TypeDep(
             const TypeDep& x)
     {
-                    m_var_type1 = x.m_var_type1;
+        m_var_type1 = x.m_var_type1;
 
-                    m_var_type2 = x.m_var_type2;
+        m_var_type2 = x.m_var_type2;
 
-                    m_var_type3 = x.m_var_type3;
+        m_var_type3 = x.m_var_type3;
 
     }
 
@@ -109,11 +109,11 @@ public:
             const TypeDep& x)
     {
 
-                    m_var_type1 = x.m_var_type1;
+        m_var_type1 = x.m_var_type1;
 
-                    m_var_type2 = x.m_var_type2;
+        m_var_type2 = x.m_var_type2;
 
-                    m_var_type3 = x.m_var_type3;
+        m_var_type3 = x.m_var_type3;
 
         return *this;
     }
@@ -140,8 +140,8 @@ public:
             const TypeDep& x) const
     {
         return (m_var_type1 == x.m_var_type1 &&
-           m_var_type2 == x.m_var_type2 &&
-           m_var_type3 == x.m_var_type3);
+               m_var_type2 == x.m_var_type2 &&
+               m_var_type3 == x.m_var_type3);
     }
 
     /*!
@@ -192,7 +192,6 @@ public:
         return m_var_type1;
     }
 
-
     /*!
      * @brief This function copies the value in member var_type2
      * @param _var_type2 New value to be copied in member var_type2
@@ -231,7 +230,6 @@ public:
         return m_var_type2;
     }
 
-
     /*!
      * @brief This function copies the value in member var_type3
      * @param _var_type3 New value to be copied in member var_type3
@@ -269,8 +267,6 @@ public:
     {
         return m_var_type3;
     }
-
-
 
 private:
 
