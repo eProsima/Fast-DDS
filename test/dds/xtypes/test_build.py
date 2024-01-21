@@ -67,7 +67,7 @@ def execute_commands(commands, logger):
     for command in commands:
         logger.info(f'Executing: {command}')
         processes.append(subprocess.Popen(command))
-        time.sleep(0.25)  # Delay for consistency
+        time.sleep(1)  # Delay for consistency
 
     ret_value = 0
 
