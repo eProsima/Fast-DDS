@@ -364,7 +364,7 @@ private:
     rtps::ThreadSettings thread_settings_;
 };
 
-std::shared_ptr<LogResources> get_log_resources()
+const std::shared_ptr<LogResources>& get_log_resources()
 {
     static std::shared_ptr<LogResources> instance = std::make_shared<LogResources>();
     return instance;
