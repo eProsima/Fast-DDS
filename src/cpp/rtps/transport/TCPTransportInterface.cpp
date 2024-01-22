@@ -724,13 +724,16 @@ bool TCPTransportInterface::OpenOutputChannel(
 
         // At this point, if there is no SenderResource to reuse, the channel was created for reception (through an
         // acceptor) or we have to create a new one.
+        // If the remote physical port is higher than our listening port, a new CONNECT channel needs to be created and connected
+        // If the remote physical port is lower than our listening port, this Endpoint will act as server and a WAIT_CONNECTION
+        // channel will be created to be modified later in the SocketAccepted call when the connection is established.
 
-        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
         EPROSIMA_LOG_INFO(RTCP, "Called to OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(
                     locator) << "; logical: "
                                                                           << IPLocator::getLogicalPort(
                     locator) << ") @ " << IPLocator::to_string(locator));
 
+        std::unique_lock<std::mutex> socketsLock(sockets_map_mutex_);
         auto channel_resource = channel_resources_.find(physical_locator);
 
         // Maybe as WAN?
@@ -749,33 +752,106 @@ bool TCPTransportInterface::OpenOutputChannel(
 
         std::shared_ptr<TCPChannelResource> channel;
 
+        // (Server-Client Topology OR LARGE DATA with TCP connection before PDP discovery) - Server side
         if (channel_resource != channel_resources_.end())
         {
+            // There is an existing channel_resource created for reception with the remote locator as key. Use it.
             channel = channel_resource->second;
+            socketsLock.unlock();
+            // This large_data_mutex is necessary to prevent sending the same logical port request of processBindConnectionRequest()
+            std::unique_lock<std::mutex> large_dataLock(large_data_mutex_);
+            channel->add_logical_port(logical_port, rtcp_message_manager_.get());
         }
+        // (Server-Client Topology - Client Side) OR LARGE DATA Topology
         else
         {
-            // Create output channel
-            EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel (physical: "
-                    << IPLocator::getPhysicalPort(locator) << "; logical: "
-                    << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
+            socketsLock.unlock();
+            // Check type of channel that needs to be created
+            const TCPTransportDescriptor* config = configuration();
+            if (config != nullptr)
+            {
+                auto create_connect_channel = [&]() {
+                    EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [CONNECT] (physical: "
+                            << IPLocator::getPhysicalPort(locator) << "; logical: "
+                            << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
 
-            channel.reset(
+                    socketsLock.lock();
+
+                    // Create a TCP_CONNECT_TYPE channel
+                    channel.reset(
 #if TLS_FOUND
-                (configuration()->apply_security) ?
-                static_cast<TCPChannelResource*>(
-                    new TCPChannelResourceSecure(this, io_service_, ssl_context_,
-                    physical_locator, configuration()->maxMessageSize)) :
+                    (configuration()->apply_security) ?
+                    static_cast<TCPChannelResource*>(
+                        new TCPChannelResourceSecure(this, io_service_, ssl_context_,
+                        physical_locator, configuration()->maxMessageSize)) :
 #endif // if TLS_FOUND
-                static_cast<TCPChannelResource*>(
-                    new TCPChannelResourceBasic(this, io_service_, physical_locator,
-                    configuration()->maxMessageSize))
-                );
+                    static_cast<TCPChannelResource*>(
+                        new TCPChannelResourceBasic(this, io_service_, physical_locator,
+                        configuration()->maxMessageSize))
+                    );
 
-            channel_resources_[physical_locator] = channel;
-            channel->connect(channel_resources_[physical_locator]);
+                    channel_resources_[physical_locator] = channel;
+                    channel->connect(channel_resources_[physical_locator]);
+                    channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+                    socketsLock.unlock();
+                };
+
+                if (config->listening_ports.empty())
+                {
+                    // Create CONNECT channel to act as clients
+                    create_connect_channel();
+                }
+                // LARGE DATA Topology
+                else
+                {
+                    std::unique_lock<std::mutex> large_dataLock(large_data_mutex_);
+                    std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
+
+                    if (unbound_channel_resources_.empty())
+                    {
+                        // Server side
+                        if (IPLocator::getPhysicalPort(physical_locator) < *(config->listening_ports.begin()))
+                        {
+                            // Act as server and wait to the other endpoint to connect. Create a WAIT_CONNECTION channel now to
+                            // assign it to send_resource_list, but it will be updated later in SocketAccepted()
+                            EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [WAIT_CONNECTION] (physical: "
+                                    << IPLocator::getPhysicalPort(locator) << "; logical: "
+                                    << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
+
+                            // Create a TCP_WAIT_CONNECTION_TYPE channel
+                            channel.reset(
+#if TLS_FOUND
+                            (configuration()->apply_security) ?
+                            static_cast<TCPChannelResource*>(
+                                new TCPChannelResourceSecure(this, io_service_, ssl_context_,
+                                physical_locator, configuration()->maxMessageSize)) :
+#endif // if TLS_FOUND
+                            static_cast<TCPChannelResource*>(
+                                new TCPChannelResourceBasic(this, io_service_, physical_locator,
+                                configuration()->maxMessageSize, TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE))
+                            );
+                            // Add it to unbound_channel_resource to modified it later in SocketAccepted(), instead of adding it to channel_resources
+                            unbound_channel_resources_.push_back(channel);
+                            channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+                        }
+                        // Client side
+                        else
+                        {
+                            // Create CONNECT channel to act as clients
+                            create_connect_channel();
+                        }
+                    }
+                    // Server side, PDP discovery occurs before bind_socket() and after SocketAccepted()
+                    else
+                    {
+                        channel = *(unbound_channel_resources_.begin());
+                        // Set the new locator because SocketAccepted() instantiates it with default config
+                        channel->set_locator(physical_locator);
+                        channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+                    }
+                }
+            }
         }
-
         statistics_info_.add_entry(locator);
         success = true;
         channel->add_logical_port(logical_port, rtcp_message_manager_.get());
