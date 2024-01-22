@@ -607,7 +607,7 @@ public:
 private:
 
     //! Name of the participant.
-    string_255 name{"RTPSParticipant"};
+    fastcdr::string_255 name{"RTPSParticipant"};
 };
 
 }  // namespace rtps

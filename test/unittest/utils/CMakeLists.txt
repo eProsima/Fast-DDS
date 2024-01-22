@@ -79,7 +79,7 @@ target_compile_definitions(FixedSizeStringTests PRIVATE
     )
 target_include_directories(FixedSizeStringTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-target_link_libraries(FixedSizeStringTests GTest::gtest ${MOCKS})
+target_link_libraries(FixedSizeStringTests fastcdr GTest::gtest ${MOCKS})
 gtest_discover_tests(FixedSizeStringTests)
 
 
