@@ -843,8 +843,12 @@ bool MessageReceiver::proc_Submsg_Data(
     if (dataFlag || keyFlag)
     {
         uint32_t payload_size;
-        payload_size = smh->submessageLength -
-                (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE + octetsToInlineQos + inlineQosSize);
+
+        if (smh->submessageLength < RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE + octetsToInlineQos + inlineQosSize )
+            return false;
+        else
+            payload_size = smh->submessageLength -
+                    (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE + octetsToInlineQos + inlineQosSize);
 
         if (dataFlag)
         {
