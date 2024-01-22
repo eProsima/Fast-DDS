@@ -463,15 +463,26 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
     //EPROSIMA_LOG_ERROR(DEBUG, "Receive Connection Request with locator: " << IPLocator::to_string(request.transportLocator())
     //    << " and will respond with our locator: " << response.locator());
 
-    ResponseCode code = channel->process_bind_request(request.transportLocator());
-
-    if (RETCODE_OK == code)
     {
-        // In server side, at this moment, the channel has to be included in the map.
-        mTransport->bind_socket(channel);
-    }
+        std::unique_lock<std::mutex> large_dataLock(mTransport->large_data_mutex_);
+        ResponseCode code = channel->process_bind_request(request.transportLocator());
 
-    sendData(channel, BIND_CONNECTION_RESPONSE, transaction_id, &payload, code);
+        if (RETCODE_OK == code)
+        {
+            // In server side, at this moment, the channel has to be included in the map.
+            std::cout<<"Process Bind Connect Request" << std::endl;
+            mTransport->bind_socket(channel);
+        }
+
+        sendData(channel, BIND_CONNECTION_RESPONSE, transaction_id, &payload, code);
+
+        if (!channel->is_pending_logical_port_empty())
+        {
+            // Let the client process the bind connection response
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            channel->send_pending_open_logical_ports(this);
+        }
+    }
 
     return RETCODE_OK;
 }
