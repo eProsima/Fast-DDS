@@ -1524,25 +1524,50 @@ void TCPTransportInterface::SecureSocketAccepted(
     {
         if (!error.value())
         {
-            // ADD LOGIG HERE TOO
+            // Check if PDP discovery occured before channel was created in LARGE DATA Topology
+            auto check_reuse = [](const shared_ptr<TCPChannelResource>& channel_resource)
+            {
+                return channel_resource->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE;
+            };
 
-            // Store the new connection.
-            std::shared_ptr<TCPChannelResource> secure_channel(new TCPChannelResourceSecure(this,
+            // large_data_mutex not needed because this method is protected with unbound_map_mutex
+            std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
+
+            auto it_reuse = std::find_if(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), check_reuse);
+
+            if (it_reuse != unbound_channel_resources_.end())
+            {
+                // LARGE DATA Topology, PDP discovery before TCP connection
+                (std::dynamic_pointer_cast<TCPChannelResourceSecure>(*it_reuse))->waitConnection_to_accept(socket);
+
+                (*it_reuse)->set_options(configuration());
+                create_listening_thread(*it_reuse);
+
+                EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
+                    << IPLocator::to_string(locator) << ", remote: "
+                    << (*it_reuse)->remote_endpoint().address() << ":"
+                    << (*it_reuse)->remote_endpoint().port() << ")");
+
+                unbound_lock.unlock();
+            }
+            else
+            {
+                // Server-Client Topology OR LARGE DATA Topology when TCP Connection occurs before PDP discovery
+                std::shared_ptr<TCPChannelResource> secure_channel(new TCPChannelResourceSecure(this,
                     io_service_, ssl_context_, socket, configuration()->maxMessageSize));
 
-            {
-                std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
                 unbound_channel_resources_.push_back(secure_channel);
-            }
+                unbound_lock.unlock();
 
-            secure_channel->set_options(configuration());
-            create_listening_thread(secure_channel);
+                secure_channel->set_options(configuration());
+                create_listening_thread(secure_channel);
 
-            EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: "
+                EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: "
                     << socket->lowest_layer().local_endpoint().address() << ":"
                     << socket->lowest_layer().local_endpoint().port() << "), remote: "
                     << socket->lowest_layer().remote_endpoint().address() << ":"
                     << socket->lowest_layer().remote_endpoint().port() << ")");
+            }
         }
         else
         {
