@@ -80,34 +80,14 @@ target_link_libraries(SimpleCommunicationPubSub fastrtps fastcdr foonathan_memor
 ###############################################################################
 # Necessary files
 ###############################################################################
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_communication.py
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_mix_communication.py
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/two_publishers_communication.py
     ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.py
-    ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/automatic_liveliness_assertion.py
-    ${CMAKE_CURRENT_BINARY_DIR}/automatic_liveliness_assertion.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message.py
     ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_besteffort_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_besteffort_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_reliable_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_reliable_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_reliable_besteffort_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_reliable_besteffort_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_besteffort_pub_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_besteffort_pub_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_besteffort_sub_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_besteffort_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.120_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.120_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.360_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.360_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/multiple_subs_secure_crypto_communication.py
     ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_crypto_besteffort_pub_profile.xml
@@ -543,6 +523,7 @@ if(Python3_Interpreter_FOUND)
 
     endif()
 
+<<<<<<< HEAD
     add_test(NAME LivelinessAssertion
         COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${Python3_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
@@ -573,6 +554,9 @@ if(Python3_Interpreter_FOUND)
         set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
+=======
+
+>>>>>>> c3be93453 (Refs #20391: Migrate liveliness tests)
 
     add_test(NAME TwoPublishersCommunicationBestEffort
         COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${Python3_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
@@ -584,14 +568,14 @@ if(Python3_Interpreter_FOUND)
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-    set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-        "XML_FILE=simple_besteffort_profile.xml")
+
     if(WIN32)
         string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
         set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
 
+<<<<<<< HEAD
     add_test(NAME TwoPublishersCommunicationReliable
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py)
 
@@ -631,6 +615,8 @@ if(Python3_Interpreter_FOUND)
         set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
+=======
+>>>>>>> c3be93453 (Refs #20391: Migrate liveliness tests)
 
     add_test(NAME SHMCommunicationSubscriberDiesWhileProcessingMessage
         COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${Python3_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
