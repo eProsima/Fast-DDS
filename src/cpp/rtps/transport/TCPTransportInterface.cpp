@@ -770,32 +770,34 @@ bool TCPTransportInterface::OpenOutputChannel(
             const TCPTransportDescriptor* config = configuration();
             if (config != nullptr)
             {
-                auto create_connect_channel = [&]() {
-                    EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [CONNECT] (physical: "
-                            << IPLocator::getPhysicalPort(locator) << "; logical: "
-                            << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
+                auto create_connect_channel = [&]()
+                        {
+                            EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [CONNECT] (physical: "
+                                    << IPLocator::getPhysicalPort(locator) << "; logical: "
+                                    << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
 
-                    socketsLock.lock();
+                            socketsLock.lock();
 
-                    // Create a TCP_CONNECT_TYPE channel
-                    channel.reset(
+                            // Create a TCP_CONNECT_TYPE channel
+                            channel.reset(
 #if TLS_FOUND
-                    (configuration()->apply_security) ?
-                    static_cast<TCPChannelResource*>(
-                        new TCPChannelResourceSecure(this, io_service_, ssl_context_,
-                        physical_locator, configuration()->maxMessageSize)) :
+                                (configuration()->apply_security) ?
+                                static_cast<TCPChannelResource*>(
+                                    new TCPChannelResourceSecure(this, io_service_, ssl_context_,
+                                    physical_locator, configuration()->maxMessageSize)) :
 #endif // if TLS_FOUND
-                    static_cast<TCPChannelResource*>(
-                        new TCPChannelResourceBasic(this, io_service_, physical_locator,
-                        configuration()->maxMessageSize))
-                    );
+                                static_cast<TCPChannelResource*>(
+                                    new TCPChannelResourceBasic(this, io_service_, physical_locator,
+                                    configuration()->maxMessageSize))
+                                );
 
-                    channel_resources_[physical_locator] = channel;
-                    channel->connect(channel_resources_[physical_locator]);
-                    channel->add_logical_port(logical_port, rtcp_message_manager_.get());
-                    socketsLock.unlock();
-                };
+                            channel_resources_[physical_locator] = channel;
+                            channel->connect(channel_resources_[physical_locator]);
+                            channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+                            socketsLock.unlock();
+                        };
 
+                // Server-Client Topology - Client Side
                 if (config->listening_ports.empty())
                 {
                     // Create CONNECT channel to act as clients
@@ -821,15 +823,17 @@ bool TCPTransportInterface::OpenOutputChannel(
                             // Create a TCP_WAIT_CONNECTION_TYPE channel
                             channel.reset(
 #if TLS_FOUND
-                            (configuration()->apply_security) ?
-                            static_cast<TCPChannelResource*>(
-                                new TCPChannelResourceSecure(this, io_service_, ssl_context_,
-                                physical_locator, configuration()->maxMessageSize, TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE)) :
+                                (configuration()->apply_security) ?
+                                static_cast<TCPChannelResource*>(
+                                    new TCPChannelResourceSecure(this, io_service_, ssl_context_,
+                                    physical_locator, configuration()->maxMessageSize,
+                                    TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE)) :
 #endif // if TLS_FOUND
-                            static_cast<TCPChannelResource*>(
-                                new TCPChannelResourceBasic(this, io_service_, physical_locator,
-                                configuration()->maxMessageSize, TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE))
-                            );
+                                static_cast<TCPChannelResource*>(
+                                    new TCPChannelResourceBasic(this, io_service_, physical_locator,
+                                    configuration()->maxMessageSize,
+                                    TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE))
+                                );
                             // Add it to unbound_channel_resource to modified it later in SocketAccepted(), instead of adding it to channel_resources
                             unbound_channel_resources_.push_back(channel);
                             channel->add_logical_port(logical_port, rtcp_message_manager_.get());
@@ -1335,7 +1339,6 @@ bool TCPTransportInterface::send(
         wan_locator.kind = remote_locator.kind;
         wan_locator.port = IPLocator::toPhysicalLocator(remote_locator).port;
         IPLocator::setIPv4(wan_locator, IPLocator::toWanstring(remote_locator)); // WAN to IP
-        //std::cout << "WANLocator: " << IPLocator::to_string(wan_locator) << std::endl;
         if (channel->locator() == wan_locator)
         {
             locator_mismatch = false;
@@ -1344,9 +1347,6 @@ bool TCPTransportInterface::send(
 
     if (locator_mismatch || send_buffer_size > configuration()->sendBufferSize)
     {
-        //std::cout << "ChannelLocator: " << IPLocator::to_string(channel->locator()) << std::endl;
-        //std::cout << "RemoteLocator: " << IPLocator::to_string(remote_locator) << std::endl;
-
         return false;
     }
 
@@ -1451,16 +1451,18 @@ void TCPTransportInterface::SocketAccepted(
     {
         if (!error.value())
         {
-            // Check if PDP discovery occured before channel was created in LARGE DATA Topology
+            // Check if PDP discovery occurred before channel was created in LARGE DATA Topology
             auto check_reuse = [](const shared_ptr<TCPChannelResource>& channel_resource)
-            {
-                return channel_resource->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE;
-            };
+                    {
+                        return channel_resource->tcp_connection_type() ==
+                               TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE;
+                    };
 
             // large_data_mutex not needed because this method is protected with unbound_map_mutex
             std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
 
-            auto it_reuse = std::find_if(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), check_reuse);
+            auto it_reuse = std::find_if(unbound_channel_resources_.begin(),
+                            unbound_channel_resources_.end(), check_reuse);
 
             if (it_reuse != unbound_channel_resources_.end())
             {
@@ -1471,10 +1473,10 @@ void TCPTransportInterface::SocketAccepted(
                 create_listening_thread(*it_reuse);
 
                 EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
-                    << channel->local_endpoint().address() << ":"
-                    << channel->local_endpoint().port() << "), remote: "
-                    << channel->remote_endpoint().address() << ":"
-                    << channel->remote_endpoint().port() << ")");
+                        << (*it_reuse)->local_endpoint().address() << ":"
+                        << (*it_reuse)->local_endpoint().port() << "), remote: "
+                        << (*it_reuse)->remote_endpoint().address() << ":"
+                        << (*it_reuse)->remote_endpoint().port() << ")");
 
                 unbound_lock.unlock();
             }
@@ -1482,7 +1484,7 @@ void TCPTransportInterface::SocketAccepted(
             {
                 // Server-Client Topology OR LARGE DATA Topology when TCP Connection occurs before PDP discovery
                 std::shared_ptr<TCPChannelResource> channel(new TCPChannelResourceBasic(this,
-                    io_service_, socket, configuration()->maxMessageSize));
+                        io_service_, socket, configuration()->maxMessageSize));
 
                 unbound_channel_resources_.push_back(channel);
                 unbound_lock.unlock();
@@ -1491,10 +1493,10 @@ void TCPTransportInterface::SocketAccepted(
                 create_listening_thread(channel);
 
                 EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
-                    << channel->local_endpoint().address() << ":"
-                    << channel->local_endpoint().port() << "), remote: "
-                    << channel->remote_endpoint().address() << ":"
-                    << channel->remote_endpoint().port() << ")");
+                        << channel->local_endpoint().address() << ":"
+                        << channel->local_endpoint().port() << "), remote: "
+                        << channel->remote_endpoint().address() << ":"
+                        << channel->remote_endpoint().port() << ")");
             }
         }
         else
@@ -1524,16 +1526,18 @@ void TCPTransportInterface::SecureSocketAccepted(
     {
         if (!error.value())
         {
-            // Check if PDP discovery occured before channel was created in LARGE DATA Topology
+            // Check if PDP discovery occurred before channel was created in LARGE DATA Topology
             auto check_reuse = [](const shared_ptr<TCPChannelResource>& channel_resource)
-            {
-                return channel_resource->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE;
-            };
+                    {
+                        return channel_resource->tcp_connection_type() ==
+                               TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE;
+                    };
 
             // large_data_mutex not needed because this method is protected with unbound_map_mutex
             std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
 
-            auto it_reuse = std::find_if(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), check_reuse);
+            auto it_reuse = std::find_if(unbound_channel_resources_.begin(),
+                            unbound_channel_resources_.end(), check_reuse);
 
             if (it_reuse != unbound_channel_resources_.end())
             {
@@ -1544,9 +1548,9 @@ void TCPTransportInterface::SecureSocketAccepted(
                 create_listening_thread(*it_reuse);
 
                 EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
-                    << IPLocator::to_string(locator) << ", remote: "
-                    << (*it_reuse)->remote_endpoint().address() << ":"
-                    << (*it_reuse)->remote_endpoint().port() << ")");
+                        << IPLocator::to_string(locator) << ", remote: "
+                        << (*it_reuse)->remote_endpoint().address() << ":"
+                        << (*it_reuse)->remote_endpoint().port() << ")");
 
                 unbound_lock.unlock();
             }
@@ -1554,7 +1558,7 @@ void TCPTransportInterface::SecureSocketAccepted(
             {
                 // Server-Client Topology OR LARGE DATA Topology when TCP Connection occurs before PDP discovery
                 std::shared_ptr<TCPChannelResource> secure_channel(new TCPChannelResourceSecure(this,
-                    io_service_, ssl_context_, socket, configuration()->maxMessageSize));
+                        io_service_, ssl_context_, socket, configuration()->maxMessageSize));
 
                 unbound_channel_resources_.push_back(secure_channel);
                 unbound_lock.unlock();
@@ -1563,10 +1567,10 @@ void TCPTransportInterface::SecureSocketAccepted(
                 create_listening_thread(secure_channel);
 
                 EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: "
-                    << socket->lowest_layer().local_endpoint().address() << ":"
-                    << socket->lowest_layer().local_endpoint().port() << "), remote: "
-                    << socket->lowest_layer().remote_endpoint().address() << ":"
-                    << socket->lowest_layer().remote_endpoint().port() << ")");
+                        << socket->lowest_layer().local_endpoint().address() << ":"
+                        << socket->lowest_layer().local_endpoint().port() << "), remote: "
+                        << socket->lowest_layer().remote_endpoint().address() << ":"
+                        << socket->lowest_layer().remote_endpoint().port() << ")");
             }
         }
         else

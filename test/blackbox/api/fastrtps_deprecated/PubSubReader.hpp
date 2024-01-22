@@ -740,7 +740,8 @@ public:
         return *this;
     }
 
-    PubSubReader& setup_large_data_tcp(bool v6 = false)
+    PubSubReader& setup_large_data_tcp(
+            bool v6 = false)
     {
         participant_attr_.rtps.useBuiltinTransports = false;
 

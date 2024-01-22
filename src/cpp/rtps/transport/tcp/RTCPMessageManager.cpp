@@ -470,7 +470,6 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
         if (RETCODE_OK == code)
         {
             // In server side, at this moment, the channel has to be included in the map.
-            std::cout<<"Process Bind Connect Request" << std::endl;
             mTransport->bind_socket(channel);
         }
 

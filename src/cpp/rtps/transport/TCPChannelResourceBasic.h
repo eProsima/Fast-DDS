@@ -82,7 +82,8 @@ public:
         return socket_;
     }
 
-    void waitConnection_to_accept(const std::shared_ptr<asio::ip::tcp::socket> socket);
+    void waitConnection_to_accept(
+            const std::shared_ptr<asio::ip::tcp::socket> socket);
 
 private:
 
