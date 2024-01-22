@@ -126,16 +126,27 @@ void PDPListener::onNewCacheChangeAdded(
 
             // Check if participant already exists (updated info)
             ParticipantProxyData* pdata = nullptr;
+            bool already_processed = false;
             for (ParticipantProxyData* it : parent_pdp_->participant_proxies_)
             {
                 if (guid == it->m_guid)
                 {
                     pdata = it;
+                    // This means this is the same DATA(p) that we have already processed
+                    if (it->m_sample_identity == change->write_params.sample_identity())
+                    {
+                        already_processed = true;
+                    }
                     break;
                 }
             }
 
-            process_alive_data(pdata, temp_participant_data_, writer_guid, reader, lock);
+            // Only notified the DATA(p) if it is not a repeated one
+            if (!already_processed)
+            {
+                temp_participant_data_.m_sample_identity = change->write_params.sample_identity();
+                process_alive_data(pdata, temp_participant_data_, writer_guid, reader, lock);
+            }
         }
     }
     else if (reader->matched_writer_is_matched(writer_guid))
