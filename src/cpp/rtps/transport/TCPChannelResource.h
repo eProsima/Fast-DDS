@@ -112,6 +112,11 @@ public:
         return locator_;
     }
 
+    void set_locator(Locator locator)
+    {
+        locator_ = locator;
+    }
+
     ResponseCode process_bind_request(
             const Locator& locator);
 

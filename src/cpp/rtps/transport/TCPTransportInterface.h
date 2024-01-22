@@ -105,6 +105,8 @@ protected:
     std::condition_variable rtcp_message_manager_cv_;
     mutable std::mutex sockets_map_mutex_;
     mutable std::mutex unbound_map_mutex_;
+    // Mutex used to contol access to the channel during the setup of the LARGE_DATA builtin transport
+    std::mutex large_data_mutex_;
 
     std::map<Locator, std::shared_ptr<TCPChannelResource>> channel_resources_; // The key is the "Physical locator"
     std::vector<std::shared_ptr<TCPChannelResource>> unbound_channel_resources_;
