@@ -213,8 +213,8 @@ TEST_P(DDSDataWriter, WithTimestampOperations)
 
     // Create and initialize reader
     PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    reader.durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    reader.durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .history_depth(10)
             .init();
     ASSERT_TRUE(reader.isInitialized());
@@ -222,8 +222,8 @@ TEST_P(DDSDataWriter, WithTimestampOperations)
 
     // Create and initialize writer
     PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-    writer.durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    writer.durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .history_depth(10)
             .init();
     ASSERT_TRUE(writer.isInitialized());

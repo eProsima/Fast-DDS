@@ -15,10 +15,11 @@
 #ifndef MOCK_TRANSPORT_H
 #define MOCK_TRANSPORT_H
 
-#include <fastrtps/transport/TransportInterface.h>
-#include <fastrtps/transport/SocketTransportDescriptor.h>
 #include <utility>
 #include <vector>
+
+#include <fastdds/rtps/transport/SocketTransportDescriptor.h>
+#include <fastdds/rtps/transport/TransportInterface.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -47,7 +48,7 @@ private:
     Locator_t locator_;
 };
 
-class MockTransport : public TransportInterface
+class MockTransport : public fastdds::rtps::TransportInterface
 {
 public:
 
@@ -66,12 +67,12 @@ public:
             const Locator_t&)  const override;
 
     bool OpenOutputChannel(
-            SendResourceList& sender_resource_list,
+            fastdds::rtps::SendResourceList& sender_resource_list,
             const Locator_t&) override;
 
     bool OpenInputChannel(
             const Locator_t&,
-            TransportReceiverInterface*,
+            fastdds::rtps::TransportReceiverInterface*,
             uint32_t) override;
 
     bool CloseInputChannel(
@@ -117,7 +118,7 @@ public:
         return false;
     }
 
-    TransportDescriptorInterface* get_configuration() override
+    fastdds::rtps::TransportDescriptorInterface* get_configuration() override
     {
         return nullptr;
     }
@@ -223,7 +224,7 @@ public:
     static std::vector<MockTransport*> mockTransportInstances;
 };
 
-class MockTransportDescriptor : public SocketTransportDescriptor
+class MockTransportDescriptor : public fastdds::rtps::SocketTransportDescriptor
 {
 public:
 
@@ -234,7 +235,7 @@ public:
 
     int maximumChannels;
     int supportedKind;
-    TransportInterface* create_transport() const override
+    fastdds::rtps::TransportInterface* create_transport() const override
     {
         return new MockTransport(*this);
     }

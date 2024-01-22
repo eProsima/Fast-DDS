@@ -222,11 +222,11 @@ private:
         PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
         // Reliable keep all to wait of all acked as end condition
-        writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
+        writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+                .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
 
-        reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
+        reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+                .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
 
         // Builtin transport configuration according to test_case
         switch (test_case)
@@ -345,7 +345,7 @@ TEST(ChainingTransportTests, basic_test)
     reader.disable_builtin_transport()
             .add_user_transport_to_pparams(reader_transport)
             .property_policy(test_property_policy)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -454,7 +454,7 @@ TEST(ChainingTransportTests, tcp_client_server_with_wan_correct_sender_resources
 
     reader.disable_builtin_transport()
             .add_user_transport_to_pparams(reader_transport)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .property_policy(test_property_policy)
             .metatraffic_unicast_locator_list(reader_locators)
             .set_default_unicast_locators(reader_locators)

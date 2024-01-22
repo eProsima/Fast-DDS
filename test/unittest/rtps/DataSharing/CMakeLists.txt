@@ -38,7 +38,7 @@ target_include_directories(SHMSegmentTests PRIVATE
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
     )
 target_link_libraries(SHMSegmentTests
-    fastcdr fastrtps foonathan_memory
+    fastcdr fastdds foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS}
     ${CMAKE_DL_LIBS}

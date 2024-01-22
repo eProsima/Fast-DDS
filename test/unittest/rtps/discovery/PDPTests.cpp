@@ -13,12 +13,13 @@
 // limitations under the License.
 
 #include <chrono>
-#include <iostream>
 #include <future>
+#include <iostream>
 #include <memory>
+#include <string>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <string>
 
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
@@ -27,10 +28,10 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>

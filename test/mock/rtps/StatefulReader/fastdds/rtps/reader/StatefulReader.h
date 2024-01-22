@@ -15,10 +15,10 @@
 #ifndef _FASTDDS_RTPS_READER_STATEFULREADER_H_
 #define _FASTDDS_RTPS_READER_STATEFULREADER_H_
 
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/attributes/ReaderAttributes.h>
-#include <fastrtps/rtps/common/Guid.h>
 
 namespace eprosima {
 namespace fastrtps {

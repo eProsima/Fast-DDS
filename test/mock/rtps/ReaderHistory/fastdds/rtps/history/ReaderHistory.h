@@ -19,14 +19,14 @@
 #ifndef _FASTDDS_RTPS_READERHISTORY_H_
 #define _FASTDDS_RTPS_READERHISTORY_H_
 
-#include <fastrtps/rtps/common/CacheChange.h>
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
-#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
-#include <fastrtps/utils/TimedMutex.hpp>
-
 #include <mutex>
 
 #include <gmock/gmock.h>
+
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastrtps/utils/TimedMutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {

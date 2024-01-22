@@ -15,23 +15,24 @@
 #ifndef __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
 #define __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
 
+#include <gtest/gtest.h>
+
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/reader/StatelessReader.h>
+#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <fastdds/rtps/security/common/Handle.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/writer/StatelessWriter.h>
+
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <fastrtps/rtps/security/common/Handle.h>
 #include <rtps/security/MockAuthenticationPlugin.h>
 #include <rtps/security/MockCryptographyPlugin.h>
-#include <fastrtps/rtps/writer/StatelessWriter.h>
-#include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/reader/StatelessReader.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <rtps/security/SecurityPluginFactory.h>
 #include <rtps/security/SecurityManager.h>
-#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDP.h>
-
-#include <gtest/gtest.h>
+#include <rtps/security/SecurityPluginFactory.h>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;

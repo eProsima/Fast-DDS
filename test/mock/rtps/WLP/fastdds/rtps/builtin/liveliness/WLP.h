@@ -20,12 +20,13 @@
 #ifndef _FASTDDS_RTPS_WLP_H_
 #define _FASTDDS_RTPS_WLP_H_
 
-#include <vector>
 #include <mutex>
+#include <vector>
+
 #include <gmock/gmock.h>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/common/Guid.h>
-#include <fastrtps/qos/QosPolicies.h>
 
 namespace eprosima {
 namespace fastrtps {

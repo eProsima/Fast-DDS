@@ -20,7 +20,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/Semaphore.h>
 
@@ -76,7 +76,7 @@ public:
 
     void HELPER_SetDescriptorDefaults();
 
-    TCPv6TransportDescriptor descriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor descriptor;
     std::unique_ptr<std::thread> senderThread;
     std::unique_ptr<std::thread> receiverThread;
 };
@@ -162,7 +162,7 @@ TEST_F(TCPv6Tests, opening_and_closing_input_channel)
 
     RTPSParticipantAttributes p_attr{};
     NetworkFactory factory{p_attr};
-    factory.RegisterTransport<TCPv6Transport, TCPv6TransportDescriptor>(descriptor);
+    factory.RegisterTransport<TCPv6Transport, eprosima::fastdds::rtps::TCPv6TransportDescriptor>(descriptor);
     std::vector<std::shared_ptr<ReceiverResource>> receivers;
     factory.BuildReceiverResources(multicastFilterLocator, receivers, 0x8FFF);
     ReceiverResource* receiver = receivers.back().get();
@@ -181,7 +181,7 @@ TEST_F(TCPv6Tests, opening_and_closing_input_channel)
 TEST_F(TCPv6Tests, autofill_port)
 {
     // Check normal port assignation
-    TCPv6TransportDescriptor test_descriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor test_descriptor;
     test_descriptor.add_listener_port(g_default_port);
     TCPv6Transport transportUnderTest(test_descriptor);
     transportUnderTest.init();
@@ -189,7 +189,7 @@ TEST_F(TCPv6Tests, autofill_port)
     EXPECT_TRUE(transportUnderTest.configuration()->listening_ports[0] == g_default_port);
 
     // Check default port assignation
-    TCPv6TransportDescriptor test_descriptor_autofill;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor test_descriptor_autofill;
     test_descriptor_autofill.add_listener_port(0);
     TCPv6Transport transportUnderTest_autofill(test_descriptor_autofill);
     transportUnderTest_autofill.init();
@@ -198,7 +198,7 @@ TEST_F(TCPv6Tests, autofill_port)
     EXPECT_TRUE(transportUnderTest_autofill.configuration()->listening_ports.size() == 1);
 
     uint16_t port = 12345;
-    TCPv6TransportDescriptor test_descriptor_multiple_autofill;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor test_descriptor_multiple_autofill;
     test_descriptor_multiple_autofill.add_listener_port(0);
     test_descriptor_multiple_autofill.add_listener_port(port);
     test_descriptor_multiple_autofill.add_listener_port(0);
@@ -221,7 +221,7 @@ TEST_F(TCPv6Tests, autofill_port)
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
 
-    TCPv6TransportDescriptor recvDescriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor recvDescriptor;
     recvDescriptor.add_listener_port(g_default_port);
     recvDescriptor.apply_security = true;
     recvDescriptor.tls_config.password = "testkey";
@@ -238,7 +238,7 @@ TEST_F(TCPv6Tests, autofill_port)
     TCPv6Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
 
-    TCPv6TransportDescriptor sendDescriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor sendDescriptor;
     sendDescriptor.apply_security = true;
     sendDescriptor.tls_config.password = "testkey";
     sendDescriptor.tls_config.cert_chain_file = "mainsubcert.pem";

@@ -16,8 +16,8 @@
 # CMake modules tests
 ###############################################################################
 
-set(build_dir "${fastrtps_BINARY_DIR}/test/force_cxx")
-set(module_dir "${fastrtps_SOURCE_DIR}/cmake/common")
+set(build_dir "${fastdds_BINARY_DIR}/test/force_cxx")
+set(module_dir "${fastdds_SOURCE_DIR}/cmake/common")
 set(script "${CMAKE_CURRENT_LIST_DIR}/force_cxx/build.cmake")
 
 # The C++ sources use fold expressions which were introduced in C++17 

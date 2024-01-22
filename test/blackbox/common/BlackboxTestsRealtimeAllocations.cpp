@@ -81,7 +81,7 @@ TEST_P(RealtimeAllocations, PubSubReliableWithLimitedSubscribers)
     reader
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -103,7 +103,7 @@ TEST_P(RealtimeAllocations, PubSubReliableWithLimitedSubscribers)
     reader2
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .init();
     ASSERT_TRUE(reader2.isInitialized());
     reader2.wait_discovery();
@@ -133,13 +133,13 @@ TEST_P(RealtimeAllocations, AsyncPubSubReliableWithLimitedSubscribers)
     reader
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer
-            .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
+            .asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE)
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
             .matched_readers_allocation(1u, 1u)
@@ -156,7 +156,7 @@ TEST_P(RealtimeAllocations, AsyncPubSubReliableWithLimitedSubscribers)
     reader2
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .init();
     ASSERT_TRUE(reader2.isInitialized());
     reader2.wait_discovery();
@@ -193,7 +193,7 @@ TEST_P(RealtimeAllocations, PubSubBestEffortWithLimitedSubscribers)
     writer
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
             .matched_readers_allocation(1u, 1u)
             .expect_no_allocs()
             .init();
@@ -242,10 +242,10 @@ TEST_P(RealtimeAllocations, AsyncPubSubBestEffortWithLimitedSubscribers)
     ASSERT_TRUE(reader.isInitialized());
 
     writer
-            .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
+            .asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE)
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
             .matched_readers_allocation(1u, 1u)
             .expect_no_allocs()
             .init();
@@ -291,7 +291,7 @@ TEST_P(RealtimeAllocations, PubSubReliableWithLimitedPublishers)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
             .matched_writers_allocation(1u, 1u)
             .expect_no_allocs()
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -348,13 +348,13 @@ TEST_P(RealtimeAllocations, AsyncPubSubReliableWithLimitedPublishers)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
             .matched_writers_allocation(1u, 1u)
             .expect_no_allocs()
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer
-            .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
+            .asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE)
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
             .init();
@@ -367,7 +367,7 @@ TEST_P(RealtimeAllocations, AsyncPubSubReliableWithLimitedPublishers)
 
     // Initialize second writer and wait until it discovers the reader
     writer2
-            .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
+            .asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE)
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
             .init();
@@ -412,7 +412,7 @@ TEST_P(RealtimeAllocations, PubSubBestEffortWithLimitedPublishers)
     ASSERT_TRUE(reader.isInitialized());
 
     writer
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
             .init();
@@ -425,7 +425,7 @@ TEST_P(RealtimeAllocations, PubSubBestEffortWithLimitedPublishers)
 
     // Initialize second writer and wait until it discovers the reader
     writer2
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
             .init();
@@ -470,8 +470,8 @@ TEST_P(RealtimeAllocations, AsyncPubSubBestEffortWithLimitedPublishers)
     ASSERT_TRUE(reader.isInitialized());
 
     writer
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
+            .asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE)
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
             .init();
@@ -484,8 +484,8 @@ TEST_P(RealtimeAllocations, AsyncPubSubBestEffortWithLimitedPublishers)
 
     // Initialize second writer and wait until it discovers the reader
     writer2
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-            .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
+            .asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE)
             .history_depth(10)
             .resource_limits_max_samples(10).resource_limits_allocated_samples(10)
             .init();

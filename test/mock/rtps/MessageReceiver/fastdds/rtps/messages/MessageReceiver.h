@@ -21,9 +21,10 @@
 #ifndef _FASTDDS_RTPS_MESSAGERECEIVER_H_
 #define _FASTDDS_RTPS_MESSAGERECEIVER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include <fastrtps/rtps/common/all_common.h>
-#include <fastrtps/rtps/writer/StatelessWriter.h>
-#include <fastrtps/rtps/writer/StatefulWriter.h>
+
+#include <fastdds/rtps/common/all_common.h>
+#include <fastdds/rtps/writer/StatelessWriter.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
 
 
 namespace eprosima {

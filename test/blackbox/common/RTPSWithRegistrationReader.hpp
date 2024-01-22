@@ -20,27 +20,26 @@
 #ifndef _TEST_BLACKBOX_RTPSWITHREGISTRATIONREADER_HPP_
 #define _TEST_BLACKBOX_RTPSWITHREGISTRATIONREADER_HPP_
 
-#include <fastrtps/rtps/rtps_fwd.h>
-#include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/attributes/ReaderAttributes.h>
-#include <fastrtps/qos/ReaderQos.h>
+#include <condition_variable>
+#include <list>
+
+#include <asio.hpp>
+#include <fastcdr/Cdr.h>
+#include <fastcdr/FastBuffer.h>
+#include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/RTPSDomain.h>
 #include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/rtps/rtps_fwd.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/utils/TimedMutex.hpp>
-
-#include <fastcdr/FastBuffer.h>
-#include <fastcdr/Cdr.h>
-
-#include <list>
-#include <condition_variable>
-#include <asio.hpp>
 #include <gtest/gtest.h>
 
 using eprosima::fastrtps::rtps::IPLocator;
@@ -439,11 +438,11 @@ public:
 
         if (kind == eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE)
         {
-            reader_qos_.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+            reader_qos_.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
         }
         else
         {
-            reader_qos_.m_reliability.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+            reader_qos_.m_reliability.kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
         }
 
         return *this;
@@ -630,7 +629,7 @@ private:
     eprosima::fastrtps::rtps::RTPSReader* reader_;
     eprosima::fastrtps::rtps::ReaderAttributes reader_attr_;
     eprosima::fastrtps::TopicAttributes topic_attr_;
-    eprosima::fastrtps::ReaderQos reader_qos_;
+    eprosima::fastdds::dds::ReaderQos reader_qos_;
     eprosima::fastrtps::rtps::ReaderHistory* history_;
     eprosima::fastrtps::rtps::HistoryAttributes hattr_;
     std::atomic<bool> initialized_;

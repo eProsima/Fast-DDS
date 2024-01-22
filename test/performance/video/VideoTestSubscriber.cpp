@@ -22,8 +22,8 @@
 #include <numeric>
 #include <thread>
 
+#include <fastdds/dds/log/Colors.h>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/log/Colors.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "VideoTestSubscriber.hpp"

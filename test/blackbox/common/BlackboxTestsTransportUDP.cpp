@@ -20,9 +20,9 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
-#include <fastrtps/log/Log.h>
 #include <fastrtps/utils/IPFinder.h>
 
 #include "BlackboxTests.hpp"
@@ -389,7 +389,7 @@ TEST_P(TransportUDP, DefaultMulticastLocatorsParticipant)
 // Checking correct copying of participant metatraffic locators to the datawriters/datatreaders
 TEST_P(TransportUDP, MetatrafficMulticastLocatorsParticipant)
 {
-    Log::SetVerbosity(Log::Kind::Warning);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
 
     size_t writer_samples = 5;
 
@@ -466,7 +466,7 @@ TEST_P(TransportUDP, DefaultMulticastLocatorsParticipantZeroPort)
 // Checking correct copying of participant metatraffic locators to the datawriters/datatreaders
 TEST_P(TransportUDP, MetatrafficMulticastLocatorsParticipantZeroPort)
 {
-    Log::SetVerbosity(Log::Kind::Warning);
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
 
     size_t writer_samples = 5;
 

@@ -12,29 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
 
 #include <chrono>
 #include <cstdint>
 #include <memory>
 #include <thread>
 
-#include <gtest/gtest.h>
-
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/log/Log.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <gtest/gtest.h>
 
+#include <rtps/transport/test_UDPv4Transport.h>
+
+#include "BlackboxTests.hpp"
 #include "RTPSAsSocketReader.hpp"
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
-#include <rtps/transport/test_UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -820,7 +820,7 @@ TEST(RTPS, MultithreadedWriterCreation)
                     rtps_participant, writer_attr, history, nullptr);
 
                 /* Register writer in participant */
-                eprosima::fastrtps::WriterQos writer_qos;
+                eprosima::fastdds::dds::WriterQos writer_qos;
                 ASSERT_EQ(rtps_participant->registerWriter(writer, topic_attr, writer_qos), true);
 
                 {
@@ -1020,12 +1020,12 @@ TEST(RTPS, reliable_has_been_fully_delivered)
  */
 TEST(RTPS, participant_ignore_local_endpoints)
 {
-    class CustomLogConsumer : public LogConsumer
+    class CustomLogConsumer : public eprosima::fastdds::dds::LogConsumer
     {
     public:
 
         void Consume(
-                const Log::Entry&) override
+                const eprosima::fastdds::dds::Log::Entry&) override
         {
             logs_consumed_++;
             cv_.notify_all();
@@ -1074,11 +1074,11 @@ TEST(RTPS, participant_ignore_local_endpoints)
         std::cout << "---------------------------------------" << std::endl;
 
         /* Set up */
-        Log::Reset();
-        Log::SetVerbosity(Log::Error);
+        eprosima::fastdds::dds::Log::Reset();
+        eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Error);
         CustomLogConsumer* log_consumer = new CustomLogConsumer();
         std::unique_ptr<CustomLogConsumer> log_consumer_unique_ptr(log_consumer);
-        Log::RegisterConsumer(std::move(log_consumer_unique_ptr));
+        eprosima::fastdds::dds::Log::RegisterConsumer(std::move(log_consumer_unique_ptr));
 
         // Create the RTPSParticipant with the appropriate value for the property
         eprosima::fastrtps::rtps::RTPSParticipantAttributes patt;
@@ -1121,7 +1121,7 @@ TEST(RTPS, participant_ignore_local_endpoints)
 
         /* Tear-down */
         eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant);
-        Log::Reset();
+        eprosima::fastdds::dds::Log::Reset();
     }
 }
 

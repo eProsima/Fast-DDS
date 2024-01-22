@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_READER_STATELESSREADER_H_
 #define _FASTDDS_RTPS_READER_STATELESSREADER_H_
 
-#include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
 namespace eprosima {
 namespace fastrtps {

@@ -2877,10 +2877,10 @@ TEST_F(DataReaderTests, read_conditions_management)
 TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
 {
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
-    writer_qos.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
     DataReader& data_reader = *data_reader_;
@@ -2989,10 +2989,10 @@ TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
 TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
 {
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
-    writer_qos.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
     DataReader& data_reader = *data_reader_;
@@ -3088,10 +3088,10 @@ TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
 TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
 {
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
-    writer_qos.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
     DataReader& data_reader = *data_reader_;

@@ -69,7 +69,7 @@ if(PYTHONINTERP_FOUND)
 
     # Calculate environment
     set(TEST_ENVIRONMENT
-        "PATH=$ENV{PATH};$<TARGET_FILE_DIR:fastcdr>;$<TARGET_FILE_DIR:fastrtps>")
+        "PATH=$ENV{PATH};$<TARGET_FILE_DIR:fastcdr>;$<TARGET_FILE_DIR:fastdds>")
 
     if(WIN32)
 

@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/qos/QosPolicies.h>
-#include <fastdds/dds/log/Log.hpp>
-#include "idl/TypesTypeObject.h"
-#include "idl/WideEnumTypeObject.h"
 #include <gtest/gtest.h>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/TypeObjectFactory.h>
+
+#include "idl/TypesTypeObject.h"
+#include "idl/WideEnumTypeObject.h"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
@@ -48,7 +50,7 @@ public:
 TEST_F(XTypesTests, EnumMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* my_enum = GetMinimalMyEnumStructObject();
     const TypeObject* my_bad_enum = GetMinimalMyBadEnumStructObject();
     const TypeObject* my_wide_enum = GetMinimalMyEnumWideStructObject();
@@ -59,7 +61,7 @@ TEST_F(XTypesTests, EnumMinimalCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(my_enum->consistent(*my_enum, consistencyQos));
@@ -83,7 +85,7 @@ TEST_F(XTypesTests, EnumMinimalCoercion)
 TEST_F(XTypesTests, EnumCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* my_enum = GetCompleteMyEnumStructObject();
     const TypeObject* my_bad_enum = GetCompleteMyBadEnumStructObject();
     const TypeObject* my_wide_enum = GetCompleteMyEnumWideStructObject();
@@ -94,7 +96,7 @@ TEST_F(XTypesTests, EnumCompleteCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(my_enum->consistent(*my_enum, consistencyQos));
@@ -118,7 +120,7 @@ TEST_F(XTypesTests, EnumCompleteCoercion)
 TEST_F(XTypesTests, AliasMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* my_enum = GetMinimalMyEnumStructObject();
     const TypeObject* my_alias_enum = GetMinimalMyAliasEnumStructObject();
 
@@ -128,7 +130,7 @@ TEST_F(XTypesTests, AliasMinimalCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(my_enum->consistent(*my_alias_enum, consistencyQos));
@@ -143,7 +145,7 @@ TEST_F(XTypesTests, AliasMinimalCoercion)
 TEST_F(XTypesTests, AliasCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* my_enum = GetCompleteMyEnumStructObject();
     const TypeObject* my_alias_enum = GetCompleteMyAliasEnumStructObject();
 
@@ -153,7 +155,7 @@ TEST_F(XTypesTests, AliasCompleteCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(my_enum->consistent(*my_alias_enum, consistencyQos));
@@ -168,7 +170,7 @@ TEST_F(XTypesTests, AliasCompleteCoercion)
 TEST_F(XTypesTests, BasicStructMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* basic_struct = GetMinimalBasicStructObject();
     const TypeObject* basic_names_struct = GetMinimalBasicNamesStructObject();
     const TypeObject* basic_bad_struct = GetMinimalBasicBadStructObject();
@@ -181,7 +183,7 @@ TEST_F(XTypesTests, BasicStructMinimalCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(basic_struct->consistent(*basic_names_struct, consistencyQos));
@@ -206,7 +208,7 @@ TEST_F(XTypesTests, BasicStructMinimalCoercion)
     ASSERT_FALSE(basic_wide_bad_struct->consistent(*basic_struct, consistencyQos));
 
     // DISALLOW coercion
-    consistencyQos.m_kind = DISALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::DISALLOW_TYPE_COERCION;
     ASSERT_FALSE(basic_struct->consistent(*basic_wide_struct, consistencyQos));
     ASSERT_FALSE(basic_wide_struct->consistent(*basic_struct, consistencyQos));
 }
@@ -214,7 +216,7 @@ TEST_F(XTypesTests, BasicStructMinimalCoercion)
 TEST_F(XTypesTests, BasicStructCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* basic_struct = GetCompleteBasicStructObject();
     const TypeObject* basic_names_struct = GetCompleteBasicNamesStructObject();
     const TypeObject* basic_bad_struct = GetCompleteBasicBadStructObject();
@@ -227,7 +229,7 @@ TEST_F(XTypesTests, BasicStructCompleteCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(basic_struct->consistent(*basic_names_struct, consistencyQos));
@@ -252,7 +254,7 @@ TEST_F(XTypesTests, BasicStructCompleteCoercion)
     ASSERT_FALSE(basic_wide_bad_struct->consistent(*basic_struct, consistencyQos));
 
     // DISALLOW coercion
-    consistencyQos.m_kind = DISALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::DISALLOW_TYPE_COERCION;
     ASSERT_FALSE(basic_struct->consistent(*basic_wide_struct, consistencyQos));
     ASSERT_FALSE(basic_wide_struct->consistent(*basic_struct, consistencyQos));
 }
@@ -260,7 +262,7 @@ TEST_F(XTypesTests, BasicStructCompleteCoercion)
 TEST_F(XTypesTests, StringMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* my_string = GetMinimalStringStructObject();
     const TypeObject* my_lstring = GetMinimalLargeStringStructObject();
     const TypeObject* my_wstring = GetMinimalWStringStructObject();
@@ -272,7 +274,7 @@ TEST_F(XTypesTests, StringMinimalCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(my_string->consistent(*my_lstring, consistencyQos));
@@ -303,7 +305,7 @@ TEST_F(XTypesTests, StringMinimalCoercion)
 TEST_F(XTypesTests, StringCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* my_string = GetCompleteStringStructObject();
     const TypeObject* my_lstring = GetCompleteLargeStringStructObject();
     const TypeObject* my_wstring = GetCompleteWStringStructObject();
@@ -315,7 +317,7 @@ TEST_F(XTypesTests, StringCompleteCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(my_string->consistent(*my_lstring, consistencyQos));
@@ -346,7 +348,7 @@ TEST_F(XTypesTests, StringCompleteCoercion)
 TEST_F(XTypesTests, ArrayMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* my_array = GetMinimalArrayStructObject();
     const TypeObject* my_array_equal = GetMinimalArrayStructEqualObject();
     const TypeObject* my_array_bad = GetMinimalArrayBadStructObject();
@@ -359,7 +361,7 @@ TEST_F(XTypesTests, ArrayMinimalCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(my_array->consistent(*my_array_equal, consistencyQos));
@@ -379,7 +381,7 @@ TEST_F(XTypesTests, ArrayMinimalCoercion)
 TEST_F(XTypesTests, ArrayCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* my_array = GetCompleteArrayStructObject();
     const TypeObject* my_array_equal = GetCompleteArrayStructEqualObject();
     const TypeObject* my_array_bad = GetCompleteArrayBadStructObject();
@@ -392,7 +394,7 @@ TEST_F(XTypesTests, ArrayCompleteCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(my_array->consistent(*my_array_equal, consistencyQos));
@@ -412,7 +414,7 @@ TEST_F(XTypesTests, ArrayCompleteCoercion)
 TEST_F(XTypesTests, SequenceMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* my_sequence = GetMinimalSequenceStructObject();
     const TypeObject* my_sequence_equal = GetMinimalSequenceStructEqualObject();
     const TypeObject* my_sequence_bad = GetMinimalSequenceBadStructObject();
@@ -426,7 +428,7 @@ TEST_F(XTypesTests, SequenceMinimalCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(my_sequence->consistent(*my_sequence_equal, consistencyQos));
@@ -464,7 +466,7 @@ TEST_F(XTypesTests, SequenceMinimalCoercion)
 TEST_F(XTypesTests, SequenceCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* my_sequence = GetCompleteSequenceStructObject();
     const TypeObject* my_sequence_equal = GetCompleteSequenceStructEqualObject();
     const TypeObject* my_sequence_bad = GetCompleteSequenceBadStructObject();
@@ -478,7 +480,7 @@ TEST_F(XTypesTests, SequenceCompleteCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(my_sequence->consistent(*my_sequence_equal, consistencyQos));
@@ -516,7 +518,7 @@ TEST_F(XTypesTests, SequenceCompleteCoercion)
 TEST_F(XTypesTests, MapMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* my_map = GetMinimalMapStructObject();
     const TypeObject* my_map_equal = GetMinimalMapStructEqualObject();
     const TypeObject* my_map_bad_key = GetMinimalMapBadKeyStructObject();
@@ -531,7 +533,7 @@ TEST_F(XTypesTests, MapMinimalCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(my_map->consistent(*my_map_equal, consistencyQos));
@@ -572,7 +574,7 @@ TEST_F(XTypesTests, MapMinimalCoercion)
 TEST_F(XTypesTests, MapCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* my_map = GetCompleteMapStructObject();
     const TypeObject* my_map_equal = GetCompleteMapStructEqualObject();
     const TypeObject* my_map_bad_key = GetCompleteMapBadKeyStructObject();
@@ -587,7 +589,7 @@ TEST_F(XTypesTests, MapCompleteCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(my_map->consistent(*my_map_equal, consistencyQos));
@@ -628,7 +630,7 @@ TEST_F(XTypesTests, MapCompleteCoercion)
 TEST_F(XTypesTests, SimpleUnionMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* basic_union = GetMinimalSimpleUnionStructObject();
     const TypeObject* basic_union_equal = GetMinimalSimpleUnionStructEqualObject();
     const TypeObject* basic_union_names = GetMinimalSimpleUnionNamesStructObject();
@@ -643,7 +645,7 @@ TEST_F(XTypesTests, SimpleUnionMinimalCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(basic_union->consistent(*basic_union_equal, consistencyQos));
@@ -675,7 +677,7 @@ TEST_F(XTypesTests, SimpleUnionMinimalCoercion)
     ASSERT_FALSE(basic_wide_union->consistent(*basic_union, consistencyQos));
 
     // DISALLOW coercion
-    consistencyQos.m_kind = DISALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::DISALLOW_TYPE_COERCION;
     ASSERT_FALSE(basic_union->consistent(*basic_wide_union, consistencyQos));
     ASSERT_FALSE(basic_wide_union->consistent(*basic_union, consistencyQos));
 }
@@ -683,7 +685,7 @@ TEST_F(XTypesTests, SimpleUnionMinimalCoercion)
 TEST_F(XTypesTests, SimpleUnionCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
-    TypeConsistencyEnforcementQosPolicy consistencyQos;
+    eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy consistencyQos;
     const TypeObject* basic_union = GetCompleteSimpleUnionStructObject();
     const TypeObject* basic_union_equal = GetCompleteSimpleUnionStructEqualObject();
     const TypeObject* basic_union_names = GetCompleteSimpleUnionNamesStructObject();
@@ -698,7 +700,7 @@ TEST_F(XTypesTests, SimpleUnionCompleteCoercion)
     consistencyQos.m_ignore_sequence_bounds = true;
     consistencyQos.m_ignore_string_bounds = true;
     consistencyQos.m_prevent_type_widening = false;
-    consistencyQos.m_kind = ALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::ALLOW_TYPE_COERCION;
 
     // Check results
     ASSERT_TRUE(basic_union->consistent(*basic_union_equal, consistencyQos));
@@ -730,7 +732,7 @@ TEST_F(XTypesTests, SimpleUnionCompleteCoercion)
     ASSERT_FALSE(basic_wide_union->consistent(*basic_union, consistencyQos));
 
     // DISALLOW coercion
-    consistencyQos.m_kind = DISALLOW_TYPE_COERCION;
+    consistencyQos.m_kind = eprosima::fastdds::dds::DISALLOW_TYPE_COERCION;
     ASSERT_FALSE(basic_union->consistent(*basic_wide_union, consistencyQos));
     ASSERT_FALSE(basic_wide_union->consistent(*basic_union, consistencyQos));
 }

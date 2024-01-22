@@ -161,7 +161,7 @@ public:
 
     void on_requested_deadline_missed(
             DataReader*,
-            const fastrtps::RequestedDeadlineMissedStatus&)
+            const RequestedDeadlineMissedStatus&)
     {
         on_requested_deadline_missed_relay();
     }
@@ -170,7 +170,7 @@ public:
 
     void on_liveliness_changed(
             DataReader*,
-            const fastrtps::LivelinessChangedStatus&)
+            const LivelinessChangedStatus&)
     {
         on_liveliness_changed_relay();
     }
@@ -179,7 +179,7 @@ public:
 
     void on_sample_rejected(
             DataReader*,
-            const fastrtps::SampleRejectedStatus&)
+            const SampleRejectedStatus&)
     {
         on_sample_rejected_relay();
     }
@@ -236,7 +236,7 @@ public:
 
     void on_requested_deadline_missed(
             DataReader*,
-            const fastrtps::RequestedDeadlineMissedStatus&)
+            const RequestedDeadlineMissedStatus&)
     {
         on_requested_deadline_missed_relay();
     }
@@ -245,7 +245,7 @@ public:
 
     void on_liveliness_changed(
             DataReader*,
-            const fastrtps::LivelinessChangedStatus&)
+            const LivelinessChangedStatus&)
     {
         on_liveliness_changed_relay();
     }
@@ -254,7 +254,7 @@ public:
 
     void on_sample_rejected(
             DataReader*,
-            const fastrtps::SampleRejectedStatus&)
+            const SampleRejectedStatus&)
     {
         on_sample_rejected_relay();
     }
@@ -429,7 +429,7 @@ public:
 
     void on_requested_deadline_missed(
             DataReader*,
-            const fastrtps::RequestedDeadlineMissedStatus&)
+            const RequestedDeadlineMissedStatus&)
     {
         on_requested_deadline_missed_relay();
     }
@@ -438,7 +438,7 @@ public:
 
     void on_liveliness_changed(
             DataReader*,
-            const fastrtps::LivelinessChangedStatus&)
+            const LivelinessChangedStatus&)
     {
         on_liveliness_changed_relay();
     }
@@ -447,7 +447,7 @@ public:
 
     void on_sample_rejected(
             DataReader*,
-            const fastrtps::SampleRejectedStatus&)
+            const SampleRejectedStatus&)
     {
         on_sample_rejected_relay();
     }

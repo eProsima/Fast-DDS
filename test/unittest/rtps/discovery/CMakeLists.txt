@@ -152,7 +152,7 @@ set(PDPTESTS_SOURCE PDPTests.cpp
 
 add_executable(PDPTests ${PDPTESTS_SOURCE})
 
-target_compile_definitions(PDPTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(PDPTests PRIVATE FASTDDS_NO_LIB
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>

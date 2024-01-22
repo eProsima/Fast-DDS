@@ -18,9 +18,10 @@
 #ifndef _RTPS_SECURITY_MOCKCRYPTOTRANSFORM_H_
 #define _RTPS_SECURITY_MOCKCRYPTOTRANSFORM_H_
 
-#include <fastrtps/rtps/security/cryptography/CryptoTransform.h>
-#include <fastrtps/rtps/security/cryptography/CryptoTypes.h>
 #include <gmock/gmock.h>
+
+#include <fastdds/rtps/security/cryptography/CryptoTransform.h>
+#include <fastdds/rtps/security/cryptography/CryptoTypes.h>
 
 namespace eprosima {
 namespace fastrtps {

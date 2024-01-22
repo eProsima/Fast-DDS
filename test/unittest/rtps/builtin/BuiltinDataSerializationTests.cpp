@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "fastdds/rtps/messages/CDRMessage.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-
+#include "fastdds/rtps/messages/CDRMessage.h"
 #include <fastdds/core/policy/ParameterSerializer.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+
 #include <rtps/network/NetworkFactory.h>
 
 namespace eprosima {

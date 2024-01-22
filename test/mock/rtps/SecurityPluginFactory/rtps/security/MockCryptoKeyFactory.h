@@ -18,12 +18,12 @@
 #ifndef _RTPS_SECURITY_MOCKCRYPTOKEYFACTORY_H_
 #define _RTPS_SECURITY_MOCKCRYPTOKEYFACTORY_H_
 
-#include <fastrtps/rtps/security/cryptography/CryptoKeyFactory.h>
-#include <fastrtps/rtps/security/cryptography/CryptoTypes.h>
+#include <gmock/gmock.h>
+
+#include <fastdds/rtps/security/cryptography/CryptoKeyFactory.h>
+#include <fastdds/rtps/security/cryptography/CryptoTypes.h>
 
 #include <security/cryptography/AESGCMGMAC_Types.h>
-
-#include <gmock/gmock.h>
 
 #pragma warning(push)
 #pragma warning(disable : 4373)

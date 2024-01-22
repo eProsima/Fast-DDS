@@ -15,9 +15,8 @@
 #include <thread>
 
 #include <gtest/gtest.h>
-
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/log/Log.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
@@ -110,9 +109,9 @@ protected:
         testTransport->receiveBufferSize = 32768;
 
         writer
-                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
                 .resource_limits_max_samples(100)
-                .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
                 .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
                 .disable_builtin_transport()
                 .add_user_transport_to_pparams(testTransport)
@@ -139,10 +138,10 @@ protected:
         ASSERT_TRUE(writer.isInitialized());
 
         reader
-                .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+                .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
                 .history_depth(10)
-                .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+                .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
                 .socket_buffer_size(1048576)
                 .init();
 
@@ -176,9 +175,9 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanBefore)
     PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
 
     writer
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples(100)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
             .lifespan_period({1, 0})
             .init();
@@ -203,10 +202,10 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanBefore)
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
     reader
-            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(10)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -227,9 +226,9 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanSendingBef
     PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
 
     writer
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples(100)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
             .lifespan_period({0, 100})
             .init();
@@ -262,10 +261,10 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanSendingBef
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
     reader
-            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(10)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -286,9 +285,9 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanAfter)
     PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
 
     writer
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples(100)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
             .lifespan_period({1, 0})
             .init();
@@ -306,10 +305,10 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanAfter)
     writer.destroy();
 
     reader
-            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(10)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -396,8 +395,8 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithStaticDiscovery)
     WriterMulticastLocators.push_back(LocatorBuffer);
 
     writer
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .make_persistent(db_file_name(), "78.73.69.74.65.72.5f.70.65.72.73.5f|67.75.69.1")
             .static_discovery("file://PubSubWriterPersistence_static_disc.xml")
             .unicastLocatorList(WriterUnicastLocators)
@@ -423,9 +422,9 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithStaticDiscovery)
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
     reader
-            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(10)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .make_persistent(db_file_name(), "78.73.69.74.65.72.5f.70.65.72.73.5f|67.75.69.3")
             .static_discovery("file://PubSubReaderPersistence_static_disc.xml")
             .unicastLocatorList(ReaderUnicastLocators)

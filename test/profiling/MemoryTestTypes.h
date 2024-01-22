@@ -52,7 +52,7 @@ inline bool operator==(const MemoryType& lt1, const MemoryType& lt2)
     return true;
 }
 
-class MemoryDataType : public eprosima::fastrtps::TopicDataType
+class MemoryDataType : public eprosima::fastdds::dds::TopicDataType
 {
     public:
         MemoryDataType()
@@ -90,7 +90,7 @@ typedef struct TestCommandType
     TestCommandType(TESTCOMMAND com):m_command(com){}
 }TestCommandType;
 
-class TestCommandDataType : public eprosima::fastrtps::TopicDataType
+class TestCommandDataType : public eprosima::fastdds::dds::TopicDataType
 {
     public:
         TestCommandDataType()

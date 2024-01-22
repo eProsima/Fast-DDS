@@ -24,11 +24,9 @@
 #include <mutex>
 #include <set>
 
-#include <fastrtps/config.h>
-
+#include <fastdds/config.h>
 
 #include <statistics/types/types.h>
-
 
 namespace eprosima {
 namespace fastdds {

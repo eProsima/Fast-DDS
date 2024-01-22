@@ -19,9 +19,9 @@
 #ifndef _FASTDDS_RTPS_STATEFULWRITER_H_
 #define _FASTDDS_RTPS_STATEFULWRITER_H_
 
-#include <fastrtps/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
-#include <fastrtps/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
 namespace eprosima {
 namespace fastrtps {

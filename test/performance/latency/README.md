@@ -62,7 +62,7 @@ colcon build --cmake-args -DPERFORMANCE_TESTS=ON
 The latency test executable can be found in the `build` directory.
 
 ```
-build/fastrtps/test/performance/latency
+build/fastdds/test/performance/latency
 ├── CMakeFiles
 ├── cmake_install.cmake
 ├── CTestTestfile.cmake
@@ -153,10 +153,10 @@ The directory also comes with a Python script which automates the execution of t
 
 ```batch
 # Indicate where is the utility executable
-export LATENCY_TEST_BIN=build/fastrtps/test/performance/latency/LatencyTest
+export LATENCY_TEST_BIN=build/fastdds/test/performance/latency/LatencyTest
 
 # Call python script to run tests.
-python3 src/fastrtps/test/performance/latency/latency_tests.py
+python3 src/fastdds/test/performance/latency/latency_tests.py
 ```
 
 The python scripts offers several options:

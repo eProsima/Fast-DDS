@@ -20,20 +20,19 @@
 #ifndef _TEST_SUBSCRIBER_H_
 #define _TEST_SUBSCRIBER_H_
 
-#include <fastrtps/fastrtps_fwd.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <atomic>
+#include <condition_variable>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/rtps/common/Types.h>
-
-#include <condition_variable>
-#include <atomic>
 
 class TestSubscriber
 {
@@ -52,8 +51,8 @@ public:
             const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
             const eprosima::fastrtps::types::TypeInformation* type_info,
             const std::string& name,
-            const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
-            const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos,
+            const eprosima::fastdds::dds::DataRepresentationQosPolicy* dataRepresentationQos,
+            const eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos,
             bool use_typelookup = false);
 
     //!RUN the subscriber
@@ -117,8 +116,8 @@ private:
     bool using_typelookup_;
     bool tls_callback_called_;
     std::string topic_name_;
-    const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos_;
-    const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos_;
+    const eprosima::fastdds::dds::DataRepresentationQosPolicy* dataRepresentationQos_;
+    const eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos_;
 
 public:
 

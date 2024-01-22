@@ -13,16 +13,18 @@
 // limitations under the License.
 
 #include <future>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <rtps/reader/WriterProxy.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
+
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <rtps/reader/WriterProxy.h>
 
 #include <rtps/reader/WriterProxy.cpp>
 

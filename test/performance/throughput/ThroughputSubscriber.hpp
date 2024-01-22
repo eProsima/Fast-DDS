@@ -32,7 +32,7 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastrtps/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicPubSubType.h>
@@ -42,9 +42,9 @@
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/TypeDescriptor.h>
-#include "ThroughputTypes.hpp"
 
 #include "../optionarg.hpp"
+#include "ThroughputTypes.hpp"
 
 class ThroughputSubscriber
 {

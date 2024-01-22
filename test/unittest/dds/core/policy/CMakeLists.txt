@@ -20,7 +20,7 @@ set(PARAMETER_PROPERTY_LIST_TESTS
     ParameterPropertyList.cpp)
 
 add_executable(ParameterPropertyListTests ${PARAMETER_PROPERTY_LIST_TESTS})
-target_compile_definitions(ParameterPropertyListTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(ParameterPropertyListTests PRIVATE FASTDDS_NO_LIB
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -29,6 +29,6 @@ target_include_directories(ParameterPropertyListTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
 )
-target_link_libraries(ParameterPropertyListTests GTest::gtest fastcdr fastrtps)
+target_link_libraries(ParameterPropertyListTests GTest::gtest fastcdr fastdds)
 gtest_discover_tests(ParameterPropertyListTests)
 

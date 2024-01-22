@@ -18,11 +18,11 @@
 #ifndef _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
 #define _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
 
-#include <fastrtps/rtps/security/authentication/Authentication.h>
-#include <fastrtps/rtps/security/accesscontrol/AccessControl.h>
-#include <fastrtps/rtps/security/cryptography/Cryptography.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/security/accesscontrol/AccessControl.h>
+#include <fastdds/rtps/security/authentication/Authentication.h>
+#include <fastdds/rtps/security/cryptography/Cryptography.h>
 #include <fastdds/rtps/security/logging/Logging.h>
-#include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
 #include <rtps/security/ISecurityPluginFactory.h>
 

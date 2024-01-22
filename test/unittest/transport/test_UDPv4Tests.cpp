@@ -17,12 +17,14 @@
 #include <string>
 
 #include <gtest/gtest.h>
+
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/rtps/common/CDRMessage_t.h>
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include <fastrtps/qos/ParameterTypes.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
+
 #include <rtps/transport/test_UDPv4Transport.h>
 
 #if defined(_WIN32)
@@ -76,7 +78,7 @@ public:
     void HELPER_FillHeartbeatMessage(
             CDRMessage_t& message);
 
-    test_UDPv4TransportDescriptor descriptor;
+    eprosima::fastdds::rtps::test_UDPv4TransportDescriptor descriptor;
     std::unique_ptr<std::thread> senderThread;
     std::unique_ptr<std::thread> receiverThread;
 };

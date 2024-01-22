@@ -19,8 +19,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastrtps/utils/TimedMutex.hpp>
 
 #include <rtps/common/ChangeComparison.hpp>

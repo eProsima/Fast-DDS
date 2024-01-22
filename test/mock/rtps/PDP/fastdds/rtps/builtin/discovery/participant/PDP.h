@@ -19,13 +19,13 @@
 #ifndef _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDP_H_
 #define _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDP_H_
 
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/messages/CDRMessage.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
-#include <fastrtps/utils/ProxyPool.hpp>
-
 #include <gmock/gmock.h>
+
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastrtps/utils/ProxyPool.hpp>
 
 #ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyObserver.hpp>

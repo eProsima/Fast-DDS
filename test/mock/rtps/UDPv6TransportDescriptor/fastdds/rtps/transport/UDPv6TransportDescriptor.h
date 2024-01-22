@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UDPV6_TRANSPORT_DESCRIPTOR
-#define UDPV6_TRANSPORT_DESCRIPTOR
+#ifndef _FASTDDS_UDPV6_TRANSPORT_DESCRIPTOR_
+#define _FASTDDS_UDPV6_TRANSPORT_DESCRIPTOR_
 
-#include <fastrtps/transport/UDPTransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 
 namespace eprosima{
-namespace fastrtps{
+namespace fastdds{
 namespace rtps{
 
 using TransportInterface = fastdds::rtps::TransportInterface;
@@ -51,7 +51,7 @@ typedef struct UDPv6TransportDescriptor: public UDPTransportDescriptor
 } UDPv6TransportDescriptor;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // _FASTDDS_UDPV6_TRANSPORT_DESCRIPTOR_

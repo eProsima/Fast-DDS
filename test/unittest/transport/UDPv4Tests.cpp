@@ -18,7 +18,7 @@
 #include <asio.hpp>
 #include <gtest/gtest.h>
 
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/Semaphore.h>
@@ -70,7 +70,7 @@ public:
 
     void HELPER_SetDescriptorDefaults();
 
-    UDPv4TransportDescriptor descriptor;
+    eprosima::fastdds::rtps::UDPv4TransportDescriptor descriptor;
     std::unique_ptr<std::thread> senderThread;
     std::unique_ptr<std::thread> receiverThread;
 };
@@ -129,7 +129,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, multicastLocator));
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator)); // Includes loopback
     ASSERT_FALSE(send_resource_list.empty());
@@ -189,7 +189,7 @@ TEST_F(UDPv4Tests, send_to_loopback)
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, multicastLocator));
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator)); // Includes loopback
     ASSERT_FALSE(send_resource_list.empty());
@@ -238,7 +238,7 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     UDPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_UDPv4;
     genericOutputChannelLocator.port = g_default_port;
@@ -277,7 +277,7 @@ TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
     ASSERT_EQ(mainLocalLocator.port, remote_locator.port);
     ASSERT_EQ(mainLocalLocator.kind, remote_locator.kind);
 
-    ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), s_IPv4AddressAny);
+    ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), eprosima::fastdds::rtps::s_IPv4AddressAny);
 }
 
 TEST_F(UDPv4Tests, match_if_port_AND_address_matches)
@@ -304,7 +304,7 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
     UDPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
@@ -332,7 +332,7 @@ TEST_F(UDPv4Tests, send_to_blocked_interface)
     UDPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
@@ -362,7 +362,7 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
             UDPv4Transport transportUnderTest(descriptor);
             transportUnderTest.init();
 
-            SendResourceList send_resource_list;
+            eprosima::fastdds::rtps::SendResourceList send_resource_list;
             Locator_t outputChannelLocator;
             outputChannelLocator.port = g_default_port;
             outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
@@ -429,7 +429,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_localhost)
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
     MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, unicastLocator));
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator)); // Includes loopback
     ASSERT_FALSE(send_resource_list.empty());
@@ -490,7 +490,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast)
         MockReceiverResource receiver(transportUnderTest, unicastLocator);
         MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-        SendResourceList send_resource_list;
+        eprosima::fastdds::rtps::SendResourceList send_resource_list;
         ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, unicastLocator));
         ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator)); // Includes loopback
         ASSERT_FALSE(send_resource_list.empty());
@@ -552,7 +552,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
         MockReceiverResource receiver(transportUnderTest, unicastLocator);
         MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-        SendResourceList send_resource_list;
+        eprosima::fastdds::rtps::SendResourceList send_resource_list;
         ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, unicastLocator));
         ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator)); // Includes loopback
         ASSERT_FALSE(send_resource_list.empty());
@@ -656,7 +656,7 @@ TEST_F(UDPv4Tests, simple_throughput)
     sub_locator.port = 50000;
     IPLocator::setIPv4(sub_locator, 127, 0, 0, 1);
 
-    UDPv4TransportDescriptor my_descriptor;
+    eprosima::fastdds::rtps::UDPv4TransportDescriptor my_descriptor;
 
     // Subscriber
 
@@ -681,7 +681,7 @@ TEST_F(UDPv4Tests, simple_throughput)
     LocatorList_t send_locators_list;
     send_locators_list.push_back(sub_locator);
 
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
     ASSERT_TRUE(pub_transport.OpenOutputChannel(send_resource_list, sub_locator));
 
     auto t0 = std::chrono::high_resolution_clock::now();

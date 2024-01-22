@@ -75,7 +75,7 @@ bool MockTransport::is_locator_allowed(
 }
 
 bool MockTransport::OpenOutputChannel(
-        SendResourceList& send_resource_list,
+        fastdds::rtps::SendResourceList& send_resource_list,
         const Locator_t& locator)
 {
     if (!IsLocatorSupported(locator))
@@ -98,7 +98,7 @@ bool MockTransport::OpenOutputChannel(
 
 bool MockTransport::OpenInputChannel(
         const Locator_t& locator,
-        TransportReceiverInterface*,
+        fastdds::rtps::TransportReceiverInterface*,
         uint32_t)
 {
     mockOpenInputChannels.push_back(locator.port);

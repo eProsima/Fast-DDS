@@ -19,16 +19,17 @@
 #ifndef _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
 #define _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
 
-#include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/common/RemoteLocators.hpp>
-#include <fastrtps/qos/WriterQos.h>
-#include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <gmock/gmock.h>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/publisher/qos/WriterQos.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
 
 #if HAVE_SECURITY
-#include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
-
-#include <gmock/gmock.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -200,17 +201,17 @@ public:
     }
 
     void type_id(
-            const TypeIdV1& other_type_id)
+            const fastdds::dds::TypeIdV1& other_type_id)
     {
         type_id_ = other_type_id;
     }
 
-    const TypeIdV1& type_id() const
+    const fastdds::dds::TypeIdV1& type_id() const
     {
         return type_id_;
     }
 
-    TypeIdV1& type_id()
+    fastdds::dds::TypeIdV1& type_id()
     {
         return type_id_;
     }
@@ -221,17 +222,17 @@ public:
     }
 
     void type(
-            const TypeObjectV1& other_type)
+            const fastdds::dds::TypeObjectV1& other_type)
     {
         type_ = other_type;
     }
 
-    const TypeObjectV1& type() const
+    const fastdds::dds::TypeObjectV1& type() const
     {
         return type_;
     }
 
-    TypeObjectV1& type()
+    fastdds::dds::TypeObjectV1& type()
     {
         return type_;
     }
@@ -242,17 +243,17 @@ public:
     }
 
     void type_information(
-            const xtypes::TypeInformation& other_type_info)
+            const fastdds::dds::xtypes::TypeInformation& other_type_info)
     {
         type_info_ = other_type_info;
     }
 
-    const xtypes::TypeInformation& type_information() const
+    const fastdds::dds::xtypes::TypeInformation& type_information() const
     {
         return type_info_;
     }
 
-    xtypes::TypeInformation& type_information()
+    fastdds::dds::xtypes::TypeInformation& type_information()
     {
         return type_info_;
     }
@@ -350,7 +351,7 @@ public:
     security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
 #endif // if HAVE_SECURITY
 
-    WriterQos m_qos;
+    fastdds::dds::WriterQos m_qos;
 
 private:
 
@@ -360,9 +361,9 @@ private:
     string_255 type_name_;
     TopicKind_t topic_kind_;
     bool is_alive_;
-    TypeIdV1 type_id_;
-    TypeObjectV1 type_;
-    xtypes::TypeInformation type_info_;
+    fastdds::dds::TypeIdV1 type_id_;
+    fastdds::dds::TypeObjectV1 type_;
+    fastdds::dds::xtypes::TypeInformation type_info_;
     uint32_t m_typeMaxSerialized;
     InstanceHandle_t m_key;
     InstanceHandle_t m_RTPSParticipantKey;

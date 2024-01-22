@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/rtps/common/RemoteLocators.hpp>
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <fastrtps/rtps/common/LocatorListComparisons.hpp>
+#include <string>
 
 #include <gtest/gtest.h>
 
-#include <string>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorListComparisons.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastrtps/utils/IPLocator.h>
 
 using namespace eprosima::fastrtps::rtps;
 

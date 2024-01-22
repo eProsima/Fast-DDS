@@ -7,7 +7,7 @@ target_compile_definitions(user_thread_nonblocked_test PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_link_libraries(user_thread_nonblocked_test mutex_testing_tool fastrtps fastcdr GTest::gtest)
+target_link_libraries(user_thread_nonblocked_test mutex_testing_tool fastdds fastcdr GTest::gtest)
 
 STRING(REPLACE " " "\\ " MUTEX_PRELOAD_LIBRARY_FILE "$<TARGET_FILE:mutex_testing_tool_preload>")
 gtest_discover_tests(user_thread_nonblocked_test
@@ -20,5 +20,5 @@ gtest_discover_tests(user_thread_nonblocked_test
 set(TIMED_CONDITION_VARIABLE_UNIT_TEST_SOURCE TimedConditionVariableUnitTest.cpp)
 
 add_executable(TimedConditionVariableUnitTest ${TIMED_CONDITION_VARIABLE_UNIT_TEST_SOURCE})
-target_link_libraries(TimedConditionVariableUnitTest fastrtps GTest::gtest)
+target_link_libraries(TimedConditionVariableUnitTest fastdds GTest::gtest)
 gtest_discover_tests(TimedConditionVariableUnitTest)

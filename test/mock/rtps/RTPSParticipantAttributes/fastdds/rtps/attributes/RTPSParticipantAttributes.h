@@ -36,9 +36,9 @@
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/utils/fixed_size_string.hpp>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -302,28 +302,6 @@ public:
     }
 
     /**
-     * Get the static endpoint XML filename
-     * @return Static endpoint XML filename
-     */
-    FASTRTPS_DEPRECATED("Use static_edp_xml_config()")
-    const char* getStaticEndpointXMLFilename() const
-    {
-        return static_edp_xml_config();
-    }
-
-    /**
-     * Set the static endpoint XML filename
-     * @param str Static endpoint XML filename
-     * @deprecated
-     */
-    FASTRTPS_DEPRECATED("Use static_edp_xml_config()")
-    void setStaticEndpointXMLFilename(
-            const char* str)
-    {
-        static_edp_xml_config_ = "file://" + std::string(str);
-    }
-
-    /**
      * Set the static endpoint XML configuration.
      * @param str URI specifying the static endpoint XML configuration.
      * The string could contain a filename (file://) or the XML content directly (data://).
@@ -508,10 +486,10 @@ public:
         att.userTransports.push_back(descriptor);
     }
 
-    static std::shared_ptr<fastrtps::rtps::UDPv4TransportDescriptor> create_udpv4_transport(
+    static std::shared_ptr<fastdds::rtps::UDPv4TransportDescriptor> create_udpv4_transport(
             const RTPSParticipantAttributes& att)
     {
-        auto descriptor = std::make_shared<fastrtps::rtps::UDPv4TransportDescriptor>();
+        auto descriptor = std::make_shared<fastdds::rtps::UDPv4TransportDescriptor>();
         descriptor->sendBufferSize = att.sendSocketBufferSize;
         descriptor->receiveBufferSize = att.listenSocketBufferSize;
         descriptor->default_reception_threads(att.builtin_transports_reception_threads);

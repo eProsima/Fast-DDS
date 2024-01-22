@@ -34,7 +34,7 @@ target_include_directories(ThroughputTest PRIVATE ${Asio_INCLUDE_DIR})
 
 target_link_libraries(
     ThroughputTest
-    fastrtps
+    fastdds
     fastcdr
     foonathan_memory
     fastdds::optionparser

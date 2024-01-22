@@ -210,8 +210,8 @@ TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
     PubSubReader<HelloWorldPubSubType> datareader(TEST_TOPIC_NAME);
 
     // datareader is initialized with all the network interfaces
-    datareader.durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).history_depth(100).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    datareader.durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS).history_depth(100).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(datareader.isInitialized());
 
     // datawriter: launch without interfaces

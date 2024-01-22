@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(fastrtps_allocation_test VERSION 1 LANGUAGES CXX)
+project(fastdds_allocation_test VERSION 1 LANGUAGES CXX)
 
 # Default to C++11
 if(NOT CMAKE_CXX_STANDARD)
@@ -44,7 +44,7 @@ if (osrf_testing_tools_cpp_FOUND)
         )
 
     add_executable(AllocationTest ${ALLOCTEST_EXAMPLE_SOURCES_CXX} ${ALLOCTEST_EXAMPLE_SOURCES_CPP})
-    target_link_libraries(AllocationTest fastrtps fastcdr foonathan_memory osrf_testing_tools_cpp::memory_tools)
+    target_link_libraries(AllocationTest fastdds fastcdr foonathan_memory osrf_testing_tools_cpp::memory_tools)
     install(TARGETS AllocationTest
         RUNTIME DESTINATION test/profiling/allocations/${BIN_INSTALL_DIR})
 else(osrf_testing_tools_cpp_FOUND)

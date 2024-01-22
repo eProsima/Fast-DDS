@@ -40,7 +40,7 @@ target_include_directories(RTPSStatisticsTests PRIVATE
     ${Asio_INCLUDE_DIR}
     )
 
-target_link_libraries(RTPSStatisticsTests fastrtps fastcdr GTest::gtest GTest::gmock)
+target_link_libraries(RTPSStatisticsTests fastdds fastcdr GTest::gtest GTest::gmock)
 gtest_discover_tests(RTPSStatisticsTests)
 
 set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
@@ -109,7 +109,7 @@ set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
 
 add_executable(MonitorServiceTests ${STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE})
 
-target_compile_definitions(MonitorServiceTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(MonitorServiceTests PRIVATE FASTDDS_NO_LIB
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>

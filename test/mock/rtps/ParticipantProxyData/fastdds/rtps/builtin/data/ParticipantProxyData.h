@@ -18,15 +18,15 @@
 #ifndef _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 #define _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 
-#include <fastrtps/rtps/common/CDRMessage_t.h>
-#include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/rtps/common/RemoteLocators.hpp>
-#include <fastrtps/rtps/common/Token.h>
-#include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastdds/rtps/common/Token.h>
 
 #if HAVE_SECURITY
-#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #endif // if HAVE_SECURITY
 
 namespace eprosima {

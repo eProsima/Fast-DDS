@@ -16,7 +16,7 @@
 
 #include <gtest/gtest.h>
 
-#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastdds/dds/log/Log.hpp>
 

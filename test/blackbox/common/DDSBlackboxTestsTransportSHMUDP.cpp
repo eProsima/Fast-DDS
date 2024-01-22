@@ -12,9 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
-#include "mock/BlackboxMockConsumer.h"
-
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
@@ -22,15 +19,18 @@
 #include <thread>
 
 #include <gtest/gtest.h>
-
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/log/Log.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <rtps/transport/test_UDPv4Transport.h>
+
+// BlackboxTests.hpp should be included before API
+#include "BlackboxTests.hpp"
 #include "../api/dds-pim/PubSubReader.hpp"
 #include "../api/dds-pim/PubSubWriter.hpp"
-#include <rtps/transport/test_UDPv4Transport.h>
+#include "mock/BlackboxMockConsumer.h"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -244,22 +244,22 @@ TEST(SHMUDP, SHM_metatraffic_wrong_config)
 
     /* Set up log */
     BlackboxMockConsumer* helper_consumer = new BlackboxMockConsumer();
-    Log::ClearConsumers();  // Remove default consumers
-    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(helper_consumer)); // Registering a consumer transfer ownership
+    eprosima::fastdds::dds::Log::ClearConsumers();  // Remove default consumers
+    eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(helper_consumer)); // Registering a consumer transfer ownership
     // Filter specific message
-    Log::SetVerbosity(Log::Kind::Warning);
-    Log::SetCategoryFilter(std::regex("RTPS_NETWORK"));
-    Log::SetErrorStringFilter(std::regex(".*__WRONG_VALUE__.*"));
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
+    eprosima::fastdds::dds::Log::SetCategoryFilter(std::regex("RTPS_NETWORK"));
+    eprosima::fastdds::dds::Log::SetErrorStringFilter(std::regex(".*__WRONG_VALUE__.*"));
 
     // Perform test
     shm_metatraffic_test(TEST_TOPIC_NAME, "__WRONG_VALUE__", false, false);
 
     /* Check logs */
-    Log::Flush();
+    eprosima::fastdds::dds::Log::Flush();
     EXPECT_EQ(helper_consumer->ConsumedEntries().size(), 1u);
 
     /* Clean-up */
-    Log::Reset();  // This calls to ClearConsumers, which deletes the registered consumer
+    eprosima::fastdds::dds::Log::Reset();  // This calls to ClearConsumers, which deletes the registered consumer
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

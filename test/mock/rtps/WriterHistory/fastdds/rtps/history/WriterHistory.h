@@ -21,12 +21,12 @@
 
 #include <condition_variable>
 
-#include <fastrtps/rtps/common/CacheChange.h>
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
-#include <fastrtps/utils/TimedMutex.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-
 #include <gmock/gmock.h>
+
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastrtps/utils/TimedMutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {

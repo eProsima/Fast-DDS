@@ -15,11 +15,11 @@
 #ifndef _FASTDDS_RTPS_RESOURCES_TIMEDEVENT_H_
 #define _FASTDDS_RTPS_RESOURCES_TIMEDEVENT_H_
 
+#include <chrono>
+
 #include <gmock/gmock.h>
 
-#include <fastrtps/rtps/common/Time_t.h>
-
-#include <chrono>
+#include <fastdds/rtps/common/Time_t.h>
 
 namespace eprosima {
 namespace fastrtps {

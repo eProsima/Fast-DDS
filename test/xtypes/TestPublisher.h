@@ -20,19 +20,19 @@
 #ifndef _TEST_PUBLISHER_H_
 #define _TEST_PUBLISHER_H_
 
-#include <fastrtps/fastrtps_fwd.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
+#include <condition_variable>
+#include <string>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
-#include <condition_variable>
+#include <fastdds/rtps/common/Types.h>
+#include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/rtps/common/Types.h>
-#include <string>
 
 class TestPublisher
 {
@@ -51,7 +51,7 @@ public:
             const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
             const eprosima::fastrtps::types::TypeInformation* type_info,
             const std::string& name,
-            const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
+            const eprosima::fastdds::dds::DataRepresentationQosPolicy* dataRepresentationQos,
             bool use_typelookup = false);
 
     //!Publish a sample

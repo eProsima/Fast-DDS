@@ -20,14 +20,11 @@
 #include <string>
 #include <thread>
 
-#include <gstreamer-1.0/gst/gst.h>
-
-#include <optionparser.hpp>
-
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/Domain.h>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <gstreamer-1.0/gst/gst.h>
+#include <optionparser.hpp>
 
 #include "VideoTestPublisher.hpp"
 #include "VideoTestSubscriber.hpp"

@@ -105,7 +105,7 @@ if(NOT QNX)
         )
     target_include_directories(RTPSWriterTests PRIVATE
         ${Asio_INCLUDE_DIR})
-    target_link_libraries(RTPSWriterTests fastcdr fastrtps foonathan_memory
+    target_link_libraries(RTPSWriterTests fastcdr fastdds foonathan_memory
         GTest::gmock
         ${CMAKE_DL_LIBS})
     gtest_discover_tests(RTPSWriterTests)

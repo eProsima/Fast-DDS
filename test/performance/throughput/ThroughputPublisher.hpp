@@ -34,20 +34,20 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastrtps/fastrtps_fwd.h>
-#include <fastrtps/rtps/attributes/PropertyPolicy.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicPubSubType.h>
-#include "ThroughputTypes.hpp"
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeDescriptor.h>
 
 #include "../optionarg.hpp"
+#include "ThroughputTypes.hpp"
 
 class ThroughputPublisher
 {

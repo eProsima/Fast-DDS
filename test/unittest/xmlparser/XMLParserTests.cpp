@@ -17,6 +17,9 @@
 #include <fstream>
 #include <sstream>
 
+#include <gtest/gtest.h>
+#include <tinyxml2.h>
+
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
@@ -25,18 +28,14 @@
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
-
-#include <tinyxml2.h>
-
-#include <gtest/gtest.h>
 
 #include "../logging/mock/MockConsumer.h"
 #include "wrapper/XMLParserTest.hpp"
@@ -943,8 +942,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        std::shared_ptr<rtps::UDPv4TransportDescriptor> pUDPv4Desc =
-                std::dynamic_pointer_cast<rtps::UDPv4TransportDescriptor>(
+        std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> pUDPv4Desc =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::UDPv4TransportDescriptor>(
             xmlparser::XMLProfileManager::getTransportById("TransportId1"));
         EXPECT_EQ(pUDPv4Desc->sendBufferSize, 8192u);
         EXPECT_EQ(pUDPv4Desc->receiveBufferSize, 8192u);
@@ -968,8 +967,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        std::shared_ptr<rtps::UDPv6TransportDescriptor> pUDPv6Desc =
-                std::dynamic_pointer_cast<rtps::UDPv6TransportDescriptor>(
+        std::shared_ptr<eprosima::fastdds::rtps::UDPv6TransportDescriptor> pUDPv6Desc =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::UDPv6TransportDescriptor>(
             xmlparser::XMLProfileManager::getTransportById("TransportId1"));
         EXPECT_EQ(pUDPv6Desc->sendBufferSize, 8192u);
         EXPECT_EQ(pUDPv6Desc->receiveBufferSize, 8192u);
@@ -1063,8 +1062,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        std::shared_ptr<rtps::TCPv4TransportDescriptor> pTCPv4Desc =
-                std::dynamic_pointer_cast<rtps::TCPv4TransportDescriptor>(
+        std::shared_ptr<eprosima::fastdds::rtps::TCPv4TransportDescriptor> pTCPv4Desc =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPv4TransportDescriptor>(
             xmlparser::XMLProfileManager::getTransportById("TransportId1"));
         EXPECT_EQ(pTCPv4Desc->sendBufferSize, 8192u);
         EXPECT_EQ(pTCPv4Desc->receiveBufferSize, 8192u);
@@ -1097,8 +1096,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        std::shared_ptr<rtps::TCPv6TransportDescriptor> pTCPv6Desc =
-                std::dynamic_pointer_cast<rtps::TCPv6TransportDescriptor>(
+        std::shared_ptr<eprosima::fastdds::rtps::TCPv6TransportDescriptor> pTCPv6Desc =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPv6TransportDescriptor>(
             xmlparser::XMLProfileManager::getTransportById("TransportId1"));
         EXPECT_EQ(pTCPv6Desc->sendBufferSize, 8192u);
         EXPECT_EQ(pTCPv6Desc->receiveBufferSize, 8192u);
@@ -1932,7 +1931,7 @@ TEST_F(XMLParserTests, parseTLSConfigPositiveClauses)
     std::unique_ptr<BaseNode> root;
     tinyxml2::XMLElement* titleElement;
     std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
-            std::make_shared<rtps::TCPv4TransportDescriptor>();
+            std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
 
     // Parametrized XML
     const char* xml =
@@ -1967,7 +1966,7 @@ TEST_F(XMLParserTests, parseTLSConfigNegativeClauses)
     std::unique_ptr<BaseNode> root;
     tinyxml2::XMLElement* titleElement;
     std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
-            std::make_shared<rtps::TCPv4TransportDescriptor>();
+            std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     constexpr size_t xml_len {600};
     char xml[xml_len];
 
@@ -2115,7 +2114,7 @@ TEST_F(XMLParserTests, parseTLSConfigHandshakeRole)
     std::unique_ptr<BaseNode> root;
     tinyxml2::XMLElement* titleElement;
     std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
-            std::make_shared<rtps::TCPv4TransportDescriptor>();
+            std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
 
     constexpr size_t xml_len {600};
     char xml[xml_len];
@@ -2134,10 +2133,10 @@ TEST_F(XMLParserTests, parseTLSConfigHandshakeRole)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_EQ(descriptor->tls_config.handshake_role,
-                TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::DEFAULT);
+                eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::DEFAULT);
     }
 
     // Check that the CLIENT setting return an xml ok code and is set correctly.
@@ -2146,10 +2145,10 @@ TEST_F(XMLParserTests, parseTLSConfigHandshakeRole)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_EQ(descriptor->tls_config.handshake_role,
-                TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::CLIENT);
+                eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::CLIENT);
     }
 
     // Check that the SERVER setting return an xml ok code and is set correctly.
@@ -2158,10 +2157,10 @@ TEST_F(XMLParserTests, parseTLSConfigHandshakeRole)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_EQ(descriptor->tls_config.handshake_role,
-                TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::SERVER);
+                eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::SERVER);
     }
 }
 
@@ -2197,12 +2196,12 @@ TEST_F(XMLParserTests, parseTLSConfigVerifyMode)
         titleElement = xml_doc.RootElement();
 
         std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
-                std::make_shared<rtps::TCPv4TransportDescriptor>();
+                std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
 
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
-        EXPECT_EQ(descriptor->tls_config.verify_mode, TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_NONE);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
+        EXPECT_EQ(descriptor->tls_config.verify_mode, eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_NONE);
     }
 
     // Check that the VERIFY_PEER setting return an xml ok code and is set correctly.
@@ -2212,12 +2211,12 @@ TEST_F(XMLParserTests, parseTLSConfigVerifyMode)
         titleElement = xml_doc.RootElement();
 
         std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
-                std::make_shared<rtps::TCPv4TransportDescriptor>();
+                std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
 
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
-        EXPECT_EQ(descriptor->tls_config.verify_mode, TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_PEER);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
+        EXPECT_EQ(descriptor->tls_config.verify_mode, eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_PEER);
     }
 
     // Check that the VERIFY_FAIL_IF_NO_PEER_CERT setting return an xml ok code and is set correctly.
@@ -2227,13 +2226,13 @@ TEST_F(XMLParserTests, parseTLSConfigVerifyMode)
         titleElement = xml_doc.RootElement();
 
         std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
-                std::make_shared<rtps::TCPv4TransportDescriptor>();
+                std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
 
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_EQ(descriptor->tls_config.verify_mode,
-                TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT);
+                eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT);
     }
 
     // Check that the VERIFY_CLIENT_ONCE setting return an xml ok code and is set correctly.
@@ -2243,12 +2242,12 @@ TEST_F(XMLParserTests, parseTLSConfigVerifyMode)
         titleElement = xml_doc.RootElement();
 
         std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
-                std::make_shared<rtps::TCPv4TransportDescriptor>();
+                std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_EQ(descriptor->tls_config.verify_mode,
-                TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_CLIENT_ONCE);
+                eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_CLIENT_ONCE);
     }
 }
 
@@ -2270,7 +2269,7 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
     std::unique_ptr<BaseNode> root;
     tinyxml2::XMLElement* titleElement;
     std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
-            std::make_shared<rtps::TCPv4TransportDescriptor>();
+            std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     constexpr size_t xml_len {600};
     char xml[xml_len];
 
@@ -2290,10 +2289,10 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::DEFAULT_WORKAROUNDS));
+            descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::DEFAULT_WORKAROUNDS));
     }
 
     // Check that the NO_COMPRESSION setting return an xml ok code and is set correctly.
@@ -2302,10 +2301,10 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_COMPRESSION));
+            descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_COMPRESSION));
     }
 
     // Check that the NO_SSLV2 setting return an xml ok code and is set correctly.
@@ -2314,10 +2313,10 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV2));
+            descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV2));
     }
 
     // Check that the NO_SSLV3 setting return an xml ok code and is set correctly.
@@ -2326,10 +2325,10 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV3));
+            descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV3));
     }
 
     // Check that the NO_TLSV1 setting return an xml ok code and is set correctly.
@@ -2338,10 +2337,10 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1));
+            descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1));
     }
 
     // Check that the NO_TLSV1_1 setting return an xml ok code and is set correctly.
@@ -2350,10 +2349,10 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_1));
+            descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_1));
     }
 
     // Check that the NO_TLSV1_2 setting return an xml ok code and is set correctly.
@@ -2362,10 +2361,10 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_2));
+            descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_2));
     }
 
     // Check that the NO_TLSV1_3 setting return an xml ok code and is set correctly.
@@ -2374,10 +2373,10 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_3));
+            descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_3));
     }
 
     // Check that the SINGLE_DH_USE setting return an xml ok code and is set correctly.
@@ -2386,10 +2385,10 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
-        std::shared_ptr<TCPTransportDescriptor> descriptor =
-                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::SINGLE_DH_USE));
+            descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::SINGLE_DH_USE));
     }
 }
 
@@ -3014,7 +3013,7 @@ TEST_F(XMLParserTests, parseXMLReceptionThreads)
         std::string title;
         std::string xml;
         xmlparser::XMLP_ret result;
-        PortBasedTransportDescriptor::ReceptionThreadsConfigMap threads_config;
+        eprosima::fastdds::rtps::PortBasedTransportDescriptor::ReceptionThreadsConfigMap threads_config;
     };
 
     ThreadSettings modified_thread_settings;
@@ -3124,7 +3123,7 @@ TEST_F(XMLParserTests, parseXMLReceptionThreads)
         tinyxml2::XMLDocument xml_doc;
         std::unique_ptr<BaseNode> root;
         tinyxml2::XMLElement* titleElement;
-        PortBasedTransportDescriptor::ReceptionThreadsConfigMap reception_threads;
+        eprosima::fastdds::rtps::PortBasedTransportDescriptor::ReceptionThreadsConfigMap reception_threads;
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS,
                 xml_doc.Parse(test_case.xml.c_str())) << "test_case = [" << test_case.title << "]";

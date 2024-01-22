@@ -15,37 +15,27 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <dds/core/types.hpp>
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/sub/DataReader.hpp>
-#include <dds/sub/qos/DataReaderQos.hpp>
-#include <dds/sub/Subscriber.hpp>
-#include <dds/topic/Topic.hpp>
+#include <fastcdr/Cdr.h>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
-
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-
-#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <fastcdr/Cdr.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastrtps::PublisherAttributes;
 using fastrtps::SubscriberAttributes;
 using fastrtps::rtps::PropertyPolicyHelper;
 using fastrtps::xmlparser::XMLProfileManager;
@@ -252,22 +242,6 @@ TEST(SubscriberTests, ChangeSubscriberQos)
     ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 
-}
-
-TEST(SubscriberTests, ChangePSMSubscriberQos)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-    ::dds::sub::Subscriber subscriber = ::dds::sub::Subscriber(participant);
-
-    ::dds::sub::qos::SubscriberQos qos = subscriber.qos();
-    ASSERT_EQ(qos, SUBSCRIBER_QOS_DEFAULT);
-
-    qos.entity_factory().autoenable_created_entities = false;
-    ASSERT_NO_THROW(subscriber.qos(qos));
-    ::dds::sub::qos::SubscriberQos pqos = subscriber.qos();
-
-    ASSERT_TRUE(qos == pqos);
-    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 }
 
 TEST(SubscriberTests, ChangeDefaultDataReaderQos)
@@ -516,24 +490,6 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(SubscriberTests, ChangePSMDefaultDataReaderQos)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-    ::dds::sub::Subscriber subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
-
-    ::dds::sub::qos::DataReaderQos qos = subscriber.default_datareader_qos();
-    ASSERT_EQ(qos, DATAREADER_QOS_DEFAULT);
-
-    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
-
-    ASSERT_NO_THROW(subscriber.default_datareader_qos(qos));
-
-    ::dds::sub::qos::DataReaderQos rqos = subscriber.default_datareader_qos();
-
-    ASSERT_EQ(qos, rqos);
-    ASSERT_EQ(rqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
-}
-
 TEST(SubscriberTests, GetSubscriberParticipant)
 {
     DomainParticipant* participant =
@@ -546,14 +502,6 @@ TEST(SubscriberTests, GetSubscriberParticipant)
 
     ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
-}
-
-TEST(SubscriberTests, GetPSMSubscriberParticipant)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-    ::dds::sub::Subscriber subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
-
-    ASSERT_EQ(subscriber.participant().delegate().get(), participant.delegate().get());
 }
 
 TEST(SubscriberTests, CreateDataReader)
@@ -726,32 +674,6 @@ TEST(SubscriberTests, DeleteSubscriberWithReaders)
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
-
-//TODO: [ILG] Activate the test once PSM API for DataReader is in place
-/*
-   TEST(SubscriberTests, CreatePSMDataReader)
-   {
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-
-    ::dds::sub::Subscriber subscriber = ::dds::core::null;
-    subscriber = ::dds::sub::Subscriber(participant);
-
-    ASSERT_NE(subscriber, ::dds::core::null);
-
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant.delegate().get());
-
-    ::dds::topic::Topic topic = ::dds::core::null;
-    topic = ::dds::topic::Topic(participant, "footopic", type_->getName(), TOPIC_QOS_DEFAULT);
-
-    ASSERT_NE(topic, ::dds::core::null);
-
-    ::dds::sub::DataReader data_reader = ::dds::core::null;
-    data_reader = ::dds::sub::DataReader(subscriber, topic);
-
-    ASSERT_NE(data_reader, ::dds::core::null);
-   }
- */
 
 void set_listener_test (
         Subscriber* subscriber,
@@ -962,7 +884,7 @@ TEST(SubscriberTests, DeleteContainedEntities)
     EXPECT_TRUE(data_reader_foo->wait_for_unread_message(wait_time));
 
     LoanableSequence<BarType> mock_coll;
-    SampleInfoSeq mock_seq;
+    fastdds::dds::SampleInfoSeq mock_seq;
 
     ASSERT_EQ(data_reader_foo->take(mock_coll, mock_seq), ReturnCode_t::RETCODE_OK);
 

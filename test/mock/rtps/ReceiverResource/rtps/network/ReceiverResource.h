@@ -16,10 +16,11 @@
 #define _FASTDDS_RTPS_RECEIVER_RESOURCE_H
 
 #include <functional>
-#include <vector>
 #include <memory>
-#include <fastrtps/transport/TransportInterface.h>
-#include <fastrtps/rtps/Endpoint.h>
+#include <vector>
+
+#include <fastdds/rtps/Endpoint.h>
+#include <fastdds/rtps/transport/TransportInterface.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -34,7 +35,7 @@ class RTPSParticipantImpl;
  * Mock ReceiverResource
  * @ingroup NETWORK_MODULE
  */
-class ReceiverResource : public TransportReceiverInterface
+class ReceiverResource : public fastdds::rtps::TransportReceiverInterface
 {
     friend class NetworkFactory;
 
@@ -99,7 +100,7 @@ public:
 protected:
 
     ReceiverResource(
-            TransportInterface& transport,
+            fastdds::rtps::TransportInterface& transport,
             const Locator_t& locator,
             uint32_t max_recv_buffer_size)
         : mValid(false)

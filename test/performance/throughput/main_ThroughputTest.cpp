@@ -12,21 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "ThroughputTypes.hpp"
-#include "ThroughputPublisher.hpp"
-#include "ThroughputSubscriber.hpp"
-
-#include "../optionarg.hpp"
-
-#include <string>
-#include <iostream>
-#include <iomanip>
 #include <bitset>
 #include <cstdint>
+#include <iomanip>
+#include <iostream>
+#include <string>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/Domain.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "../optionarg.hpp"
+#include "ThroughputPublisher.hpp"
+#include "ThroughputSubscriber.hpp"
+#include "ThroughputTypes.hpp"
 
 #if defined(_MSC_VER)
 #pragma warning (push)

@@ -62,7 +62,7 @@ inline bool operator==(const VideoType& lt1, const VideoType& lt2)
     return true;
 }
 
-class VideoDataType : public eprosima::fastrtps::TopicDataType
+class VideoDataType : public eprosima::fastdds::dds::TopicDataType
 {
     public:
         VideoDataType()
@@ -100,7 +100,7 @@ typedef struct TestCommandType
     TestCommandType(TESTCOMMAND com):m_command(com){}
 }TestCommandType;
 
-class TestCommandDataType : public eprosima::fastrtps::TopicDataType
+class TestCommandDataType : public eprosima::fastdds::dds::TopicDataType
 {
     public:
         TestCommandDataType()
