@@ -37,8 +37,9 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
         asio::io_service& service,
         asio::ssl::context& ssl_context,
         const Locator_t& locator,
-        uint32_t maxMsgSize)
-    : TCPChannelResource(parent, locator, maxMsgSize)
+        uint32_t maxMsgSize,
+        TCPConnectionType tcp_connection_type)
+    : TCPChannelResource(parent, locator, maxMsgSize, tcp_connection_type)
     , service_(service)
     , ssl_context_(ssl_context)
     , strand_read_(service)
@@ -332,6 +333,14 @@ void TCPChannelResourceSecure::shutdown(
         asio::socket_base::shutdown_type)
 {
     secure_socket_->shutdown();
+}
+
+void TCPChannelResourceSecure::waitConnection_to_accept(
+        const std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket)
+{
+    secure_socket_ = socket;
+    tcp_connection_type_ = TCPConnectionType::TCP_ACCEPT_TYPE;
+    connection_status_ = eConnectionStatus::eConnected;
 }
 
 } // namespace rtps
