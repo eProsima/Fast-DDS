@@ -112,7 +112,8 @@ public:
         return locator_;
     }
 
-    void set_locator(Locator locator)
+    void set_locator(
+            Locator locator)
     {
         locator_ = locator;
     }

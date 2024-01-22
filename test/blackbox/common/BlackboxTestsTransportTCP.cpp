@@ -739,7 +739,7 @@ TEST_P(TransportTCP, TCPv4_large_data_topology)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    // Reliable Keep_all to wait of all acked as end condition
+    // Reliable Keep_all to wait for all acked as end condition
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
             .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
 
@@ -783,7 +783,7 @@ TEST_P(TransportTCP, TCPv6_large_data_topology)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    // Reliable Keep_all to wait of all acked as end condition
+    // Reliable Keep_all to wait for all acked as end condition
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
             .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
 

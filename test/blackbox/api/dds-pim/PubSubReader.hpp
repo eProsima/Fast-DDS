@@ -967,7 +967,8 @@ public:
         return *this;
     }
 
-    PubSubReader& setup_large_data_tcp(bool v6 = false)
+    PubSubReader& setup_large_data_tcp(
+            bool v6 = false)
     {
         participant_qos_.transport().use_builtin_transports = false;
 
