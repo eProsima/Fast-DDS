@@ -824,7 +824,7 @@ bool TCPTransportInterface::OpenOutputChannel(
                             (configuration()->apply_security) ?
                             static_cast<TCPChannelResource*>(
                                 new TCPChannelResourceSecure(this, io_service_, ssl_context_,
-                                physical_locator, configuration()->maxMessageSize)) :
+                                physical_locator, configuration()->maxMessageSize, TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE)) :
 #endif // if TLS_FOUND
                             static_cast<TCPChannelResource*>(
                                 new TCPChannelResourceBasic(this, io_service_, physical_locator,
