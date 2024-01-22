@@ -1208,9 +1208,6 @@ bool TCPTransportInterface::send(
         //std::cout << "ChannelLocator: " << IPLocator::to_string(channel->locator()) << std::endl;
         //std::cout << "RemoteLocator: " << IPLocator::to_string(remote_locator) << std::endl;
 
-        EPROSIMA_LOG_WARNING(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remote_locator) \
-                                                                       << " @ IP: " <<
-                IPLocator::toIPv4string(remote_locator));
         return false;
     }
 
