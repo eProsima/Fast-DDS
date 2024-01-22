@@ -15,7 +15,7 @@
 #include <fastcdr/cdr/fixed_size_string.hpp>
 #include <gtest/gtest.h>
 
-using namespace eprosima::fastrtps;
+
 
 constexpr size_t MAX_CHARS = 255;
 constexpr size_t OTHER_MAX_CHARS = 127;
@@ -41,7 +41,7 @@ public:
 TEST_F(FixedSizeStringTests, default_constructor)
 {
     std::string std_s;
-    fixed_string<MAX_CHARS> fixed_s;
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_s;
 
     ASSERT_EQ(fixed_s.size(), 0u);
     ASSERT_EQ(fixed_s, "");
@@ -51,7 +51,7 @@ TEST_F(FixedSizeStringTests, default_constructor)
 TEST_F(FixedSizeStringTests, construct_with_empty_c_string)
 {
     std::string std_s;
-    fixed_string<MAX_CHARS> fixed_s("");
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_s("");
 
     ASSERT_EQ(fixed_s.size(), 0u);
     ASSERT_EQ(fixed_s, "");
@@ -61,7 +61,7 @@ TEST_F(FixedSizeStringTests, construct_with_empty_c_string)
 TEST_F(FixedSizeStringTests, construct_with_empty_std_string)
 {
     std::string std_s;
-    fixed_string<MAX_CHARS> fixed_s(std_s);
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_s(std_s);
 
     ASSERT_EQ(fixed_s.size(), 0u);
     ASSERT_EQ(fixed_s, "");
@@ -70,7 +70,7 @@ TEST_F(FixedSizeStringTests, construct_with_empty_std_string)
 
 TEST_F(FixedSizeStringTests, construct_with_c_string)
 {
-    fixed_string<MAX_CHARS> fixed_s(pattern0);
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_s(pattern0);
 
     ASSERT_EQ(fixed_s.size(), pattern0_len);
     ASSERT_EQ(fixed_s, pattern0);
@@ -79,7 +79,7 @@ TEST_F(FixedSizeStringTests, construct_with_c_string)
 TEST_F(FixedSizeStringTests, construct_with_std_string)
 {
     std::string std_string(pattern0);
-    fixed_string<MAX_CHARS> fixed_s(std_string);
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_s(std_string);
 
     ASSERT_EQ(fixed_s.size(), pattern0_len);
     ASSERT_EQ(fixed_s, std_string);
@@ -87,7 +87,7 @@ TEST_F(FixedSizeStringTests, construct_with_std_string)
 
 TEST_F(FixedSizeStringTests, construct_with_long_c_string)
 {
-    fixed_string<MAX_CHARS> fixed_s(long_pattern);
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_s(long_pattern);
 
     ASSERT_EQ(fixed_s.size(), MAX_CHARS);
     ASSERT_EQ(fixed_s, long_pattern);
@@ -96,7 +96,7 @@ TEST_F(FixedSizeStringTests, construct_with_long_c_string)
 TEST_F(FixedSizeStringTests, construct_with_long_std_string)
 {
     std::string std_string(long_pattern);
-    fixed_string<MAX_CHARS> fixed_s(std_string);
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_s(std_string);
 
     ASSERT_EQ(fixed_s.size(), MAX_CHARS);
     ASSERT_EQ(fixed_s, std_string);
@@ -104,7 +104,7 @@ TEST_F(FixedSizeStringTests, construct_with_long_std_string)
 
 TEST_F(FixedSizeStringTests, assign_operators_and_inequality)
 {
-    fixed_string<MAX_CHARS> fixed_s;
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_s;
 
     std::string std_s_empty;
     std::string std_s(pattern0);
@@ -149,8 +149,8 @@ TEST_F(FixedSizeStringTests, assign_operators_and_inequality)
 
 TEST_F(FixedSizeStringTests, different_fixed_sizes)
 {
-    fixed_string<MAX_CHARS> s1;
-    fixed_string<OTHER_MAX_CHARS> s2;
+    eprosima::fastcdr::fixed_string<MAX_CHARS> s1;
+    eprosima::fastcdr::fixed_string<OTHER_MAX_CHARS> s2;
 
     ASSERT_EQ(s1, s2);
 
@@ -179,11 +179,11 @@ TEST_F(FixedSizeStringTests, comparisons)
     std::string std_string_b = "test string b";
     std::string std_string_c = "test string c";
     std::string std_string_large = "test string b ";
-    fixed_string<MAX_CHARS> fixed_short = "test string";
-    fixed_string<MAX_CHARS> fixed_a = "test string a";
-    fixed_string<MAX_CHARS> fixed_b = "test string b";
-    fixed_string<MAX_CHARS> fixed_c = "test string c";
-    fixed_string<MAX_CHARS> fixed_large = "test string b ";
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_short = "test string";
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_a = "test string a";
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_b = "test string b";
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_c = "test string c";
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_large = "test string b ";
 
     ASSERT_NE(fixed_b, c_string_short);
     ASSERT_NE(fixed_b, c_string_a);
@@ -224,8 +224,8 @@ TEST_F(FixedSizeStringTests, comparisons)
 
 TEST_F(FixedSizeStringTests, less_than_operator_fixed_string)
 {
-    fixed_string<MAX_CHARS> fixed_string_short = "test string";
-    fixed_string<MAX_CHARS> fixed_string_long = "test string long";
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_string_short = "test string";
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_string_long = "test string long";
 
     ASSERT_FALSE(fixed_string_short < fixed_string_short);
     ASSERT_FALSE(fixed_string_long < fixed_string_long);
@@ -235,7 +235,7 @@ TEST_F(FixedSizeStringTests, less_than_operator_fixed_string)
 
 TEST_F(FixedSizeStringTests, less_than_operator_std_string)
 {
-    fixed_string<MAX_CHARS> fixed_string_short = "test string";
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_string_short = "test string";
     std::string std_string_long = "test string long";
     std::string std_string_short = "test";
 
@@ -245,8 +245,8 @@ TEST_F(FixedSizeStringTests, less_than_operator_std_string)
 
 TEST_F(FixedSizeStringTests, greater_than_operator_fixed_string)
 {
-    fixed_string<MAX_CHARS> fixed_string_short = "test string";
-    fixed_string<MAX_CHARS> fixed_string_long = "test string long";
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_string_short = "test string";
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_string_long = "test string long";
 
     ASSERT_FALSE(fixed_string_short > fixed_string_short);
     ASSERT_FALSE(fixed_string_long > fixed_string_long);
@@ -256,7 +256,7 @@ TEST_F(FixedSizeStringTests, greater_than_operator_fixed_string)
 
 TEST_F(FixedSizeStringTests, greater_than_operator_std_string)
 {
-    fixed_string<MAX_CHARS> fixed_string_short = "test string";
+    eprosima::fastcdr::fixed_string<MAX_CHARS> fixed_string_short = "test string";
     std::string std_string_long = "test string long";
     std::string std_string_short = "test";
 

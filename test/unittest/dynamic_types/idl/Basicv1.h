@@ -2666,26 +2666,26 @@ public:
      * @param _my_large_string New value to be copied in member my_large_string
      */
     eProsima_user_DllExport void my_large_string(
-            const eprosima::fastrtps::fixed_string<41925>& _my_large_string);
+            const eprosima::fastcdr::fixed_string<41925>& _my_large_string);
 
     /*!
      * @brief This function moves the value in member my_large_string
      * @param _my_large_string New value to be moved in member my_large_string
      */
     eProsima_user_DllExport void my_large_string(
-            eprosima::fastrtps::fixed_string<41925>&& _my_large_string);
+            eprosima::fastcdr::fixed_string<41925>&& _my_large_string);
 
     /*!
      * @brief This function returns a constant reference to member my_large_string
      * @return Constant reference to member my_large_string
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<41925>& my_large_string() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<41925>& my_large_string() const;
 
     /*!
      * @brief This function returns a reference to member my_large_string
      * @return Reference to member my_large_string
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<41925>& my_large_string();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<41925>& my_large_string();
 
 
     /*!
@@ -2741,7 +2741,7 @@ public:
 
 private:
 
-    eprosima::fastrtps::fixed_string<41925> m_my_large_string;
+    eprosima::fastcdr::fixed_string<41925> m_my_large_string;
 
 };
 

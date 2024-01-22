@@ -156,26 +156,26 @@ public:
      * @param _payload New value to be copied in member payload
      */
     eProsima_user_DllExport void payload(
-            const eprosima::fastrtps::fixed_string<256>& _payload);
+            const eprosima::fastcdr::fixed_string<256>& _payload);
 
     /*!
      * @brief This function moves the value in member payload
      * @param _payload New value to be moved in member payload
      */
     eProsima_user_DllExport void payload(
-            eprosima::fastrtps::fixed_string<256>&& _payload);
+            eprosima::fastcdr::fixed_string<256>&& _payload);
 
     /*!
      * @brief This function returns a constant reference to member payload
      * @return Constant reference to member payload
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<256>& payload() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<256>& payload() const;
 
     /*!
      * @brief This function returns a reference to member payload
      * @return Reference to member payload
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<256>& payload();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<256>& payload();
 
 
     /*!
@@ -232,7 +232,7 @@ public:
 private:
 
     uint16_t m_deadlinekey;
-    eprosima::fastrtps::fixed_string<256> m_payload;
+    eprosima::fastcdr::fixed_string<256> m_payload;
 
 };
 

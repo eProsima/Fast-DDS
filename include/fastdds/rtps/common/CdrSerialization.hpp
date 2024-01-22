@@ -74,7 +74,7 @@ public:
 };
 
 template<size_t MAX_CHARS>
-using fixed_string = eprosima::fastrtps::fixed_string<MAX_CHARS>;
+using fastcdr::fixed_string = eprosima::fastcdr::fixed_string<MAX_CHARS>;
 
 } // namespace fastcdr
 } // namespace eprosima

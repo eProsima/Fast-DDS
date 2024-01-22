@@ -156,26 +156,26 @@ public:
      * @param _message New value to be copied in member message
      */
     eProsima_user_DllExport void message(
-            const eprosima::fastrtps::fixed_string<20>& _message);
+            const eprosima::fastcdr::fixed_string<20>& _message);
 
     /*!
      * @brief This function moves the value in member message
      * @param _message New value to be moved in member message
      */
     eProsima_user_DllExport void message(
-            eprosima::fastrtps::fixed_string<20>&& _message);
+            eprosima::fastcdr::fixed_string<20>&& _message);
 
     /*!
      * @brief This function returns a constant reference to member message
      * @return Constant reference to member message
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<20>& message() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<20>& message() const;
 
     /*!
      * @brief This function returns a reference to member message
      * @return Reference to member message
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<20>& message();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<20>& message();
 
 
     /*!
@@ -232,7 +232,7 @@ public:
 private:
 
     uint32_t m_index;
-    eprosima::fastrtps::fixed_string<20> m_message;
+    eprosima::fastcdr::fixed_string<20> m_message;
 
 };
 

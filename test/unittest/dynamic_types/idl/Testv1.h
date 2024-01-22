@@ -919,26 +919,26 @@ public:
      * @param _my_small_string_8 New value to be copied in member my_small_string_8
      */
     eProsima_user_DllExport void my_small_string_8(
-            const eprosima::fastrtps::fixed_string<128>& _my_small_string_8);
+            const eprosima::fastcdr::fixed_string<128>& _my_small_string_8);
 
     /*!
      * @brief This function moves the value in member my_small_string_8
      * @param _my_small_string_8 New value to be moved in member my_small_string_8
      */
     eProsima_user_DllExport void my_small_string_8(
-            eprosima::fastrtps::fixed_string<128>&& _my_small_string_8);
+            eprosima::fastcdr::fixed_string<128>&& _my_small_string_8);
 
     /*!
      * @brief This function returns a constant reference to member my_small_string_8
      * @return Constant reference to member my_small_string_8
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<128>& my_small_string_8() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<128>& my_small_string_8() const;
 
     /*!
      * @brief This function returns a reference to member my_small_string_8
      * @return Reference to member my_small_string_8
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<128>& my_small_string_8();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<128>& my_small_string_8();
 
 
     /*!
@@ -946,26 +946,26 @@ public:
      * @param _my_large_string_8 New value to be copied in member my_large_string_8
      */
     eProsima_user_DllExport void my_large_string_8(
-            const eprosima::fastrtps::fixed_string<500>& _my_large_string_8);
+            const eprosima::fastcdr::fixed_string<500>& _my_large_string_8);
 
     /*!
      * @brief This function moves the value in member my_large_string_8
      * @param _my_large_string_8 New value to be moved in member my_large_string_8
      */
     eProsima_user_DllExport void my_large_string_8(
-            eprosima::fastrtps::fixed_string<500>&& _my_large_string_8);
+            eprosima::fastcdr::fixed_string<500>&& _my_large_string_8);
 
     /*!
      * @brief This function returns a constant reference to member my_large_string_8
      * @return Constant reference to member my_large_string_8
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<500>& my_large_string_8() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<500>& my_large_string_8() const;
 
     /*!
      * @brief This function returns a reference to member my_large_string_8
      * @return Reference to member my_large_string_8
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<500>& my_large_string_8();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<500>& my_large_string_8();
 
 
     /*!
@@ -973,26 +973,26 @@ public:
      * @param _my_array_string New value to be copied in member my_array_string
      */
     eProsima_user_DllExport void my_array_string(
-            const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& _my_array_string);
+            const std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& _my_array_string);
 
     /*!
      * @brief This function moves the value in member my_array_string
      * @param _my_array_string New value to be moved in member my_array_string
      */
     eProsima_user_DllExport void my_array_string(
-            std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>&& _my_array_string);
+            std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>&& _my_array_string);
 
     /*!
      * @brief This function returns a constant reference to member my_array_string
      * @return Constant reference to member my_array_string
      */
-    eProsima_user_DllExport const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& my_array_string() const;
+    eProsima_user_DllExport const std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& my_array_string() const;
 
     /*!
      * @brief This function returns a reference to member my_array_string
      * @return Reference to member my_array_string
      */
-    eProsima_user_DllExport std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& my_array_string();
+    eProsima_user_DllExport std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& my_array_string();
 
 
     /*!
@@ -1143,9 +1143,9 @@ private:
     std::map<int32_t, std::vector<std::vector<uint8_t>>> m_my_map_long_seq_octet;
     std::map<int32_t, MyOctetArray500> m_my_map_long_octet_array_500;
     std::map<int32_t, std::map<uint8_t, BSAlias5>> m_my_map_long_lol_type;
-    eprosima::fastrtps::fixed_string<128> m_my_small_string_8;
-    eprosima::fastrtps::fixed_string<500> m_my_large_string_8;
-    std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5> m_my_array_string;
+    eprosima::fastcdr::fixed_string<128> m_my_small_string_8;
+    eprosima::fastcdr::fixed_string<500> m_my_large_string_8;
+    std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5> m_my_array_string;
     MA3 m_multi_alias_array_42;
     std::array<MyMiniArray, 5> m_my_array_arrays;
     std::array<MySequenceLong, 23> m_my_sequences_array;
