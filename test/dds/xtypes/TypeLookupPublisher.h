@@ -31,6 +31,7 @@
 #include <functional>
 #include <mutex>
 #include <map>
+#include <future>
 
 namespace eprosima {
 namespace fastdds {
@@ -94,7 +95,7 @@ public:
             const xtypes::TypeInformationParameter& type_info);
 
     bool wait_discovery(
-            uint32_t expected_match,
+            uint32_t expected_matches,
             uint32_t timeout);
 
     bool run(
@@ -111,17 +112,19 @@ public:
 
 private:
 
+    DomainParticipant* participant_ = nullptr;
+
     std::mutex mutex_;
     std::condition_variable cv_;
-    std::mutex matched_mutex_;
     unsigned int matched_ = 0;
+    unsigned int expected_matches_ = 0;
 
     std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> sent_samples_;
 
-    DomainParticipant* participant_ = nullptr;
-
-    std::map<std::string, std::function<bool(const std::string&)>> type_creator_functions_;
+    std::mutex known_types_mutex_;
     std::map<std::string, PubKnownType> known_types_;
+    std::map<std::string, std::function<bool(const std::string&)>> type_creator_functions_;
+    std::vector<std::thread> create_known_types_threads;
 };
 
 } // dds

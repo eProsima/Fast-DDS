@@ -25,6 +25,7 @@
 #include <memory>
 #include <string>
 #include <thread>
+#include <future>
 
 #include <asio.hpp>
 
@@ -62,6 +63,11 @@ TypeLookupPublisher::~TypeLookupPublisher()
     if (nullptr != participant_)
     {
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
+
+    for (auto& thread : create_known_types_threads)
+    {
+        thread.join();
     }
 }
 
@@ -191,20 +197,18 @@ bool TypeLookupPublisher::init(
 
     for (const auto& type : known_types)
     {
-        create_known_type(type);
+        if (!create_known_type(type))
+        {
+            return false;
+        }
     }
+
     return true;
 }
 
 bool TypeLookupPublisher::create_known_type(
         const std::string& type)
 {
-    // Check if the type is already created
-    if (nullptr != participant_->find_type(type))
-    {
-        return true;
-    }
-
     // Find the type creator in the map
     auto it = type_creator_functions_.find(type);
     if (it != type_creator_functions_.end())
@@ -241,7 +245,8 @@ bool TypeLookupPublisher::create_known_type_impl(
     // CREATE THE TOPIC
     std::ostringstream topic_name;
     topic_name << type << "_" << asio::ip::host_name() << "_" << PUB_DOMAIN_ID_;
-    a_type.topic_ = participant_->create_topic(topic_name.str(), a_type.type_.get_type_name(), TOPIC_QOS_DEFAULT);
+    a_type.topic_ =
+            participant_->create_topic(topic_name.str(), a_type.type_.get_type_name(), TOPIC_QOS_DEFAULT);
     if (a_type.topic_ == nullptr)
     {
         std::cout << "ERROR TypeLookupSubscriber: create_topic: " << type << std::endl;
@@ -253,6 +258,7 @@ bool TypeLookupPublisher::create_known_type_impl(
     wqos.liveliness().lease_duration = 3;
     wqos.liveliness().announcement_period = 1;
     wqos.liveliness().kind = AUTOMATIC_LIVELINESS_QOS;
+    wqos.data_sharing().off();
 
     a_type.writer_ = a_type.publisher_->create_datawriter(a_type.topic_, wqos, this);
     if (a_type.writer_ == nullptr)
@@ -268,7 +274,11 @@ bool TypeLookupPublisher::create_known_type_impl(
                 typed_data->index(current_sample);
             };
 
-    known_types_.emplace(type, a_type);
+    {
+        std::lock_guard<std::mutex> guard(known_types_mutex_);
+        known_types_.emplace(type, a_type);
+    }
+
     return true;
 }
 
@@ -281,18 +291,23 @@ bool TypeLookupPublisher::check_registered_type(
 }
 
 bool TypeLookupPublisher::wait_discovery(
-        uint32_t expected_match,
+        uint32_t expected_matches,
         uint32_t timeout)
 {
-    std::unique_lock<std::mutex> lock(matched_mutex_);
+    expected_matches_ = expected_matches;
+    std::unique_lock<std::mutex> lock(mutex_);
     bool result = cv_.wait_for(lock, std::chrono::seconds(timeout),
                     [&]()
                     {
-                        std::cout <<  "TypeLookupPublisher::wait_discovery(" <<
-                            matched_ << "/" << expected_match << ")" << std::endl;
-                        return matched_ == expected_match;
+                        return matched_ == expected_matches_;
                     });
-    return result;
+    if (!result)
+    {
+        std::cout << "TypeLookupPublisher discovery Timeout with matched = "
+                  << matched_ << std::endl;
+        return false;
+    }
+    return true;
 }
 
 bool TypeLookupPublisher::run(
@@ -300,9 +315,10 @@ bool TypeLookupPublisher::run(
         uint32_t timeout)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    return cv_.wait_for(
+    bool result = cv_.wait_for(
         lock, std::chrono::seconds(timeout), [&]
         {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
             uint32_t current_sample = 0;
             void* sample = nullptr;
 
@@ -327,13 +343,29 @@ bool TypeLookupPublisher::run(
             }
             return true;
         });
+
+    if (!result)
+    {
+        std::cout << "TypeLookupPublisher run Timeout" << std::endl;
+
+        for (auto& sent_sample : sent_samples_)
+        {
+            if (samples != sent_sample.second)
+            {
+                std::cout << sent_sample.first << "Wrote: "
+                          << sent_sample.second <<  " samples" << std::endl;
+            }
+        }
+        return false;
+    }
+    return true;
 }
 
 void TypeLookupPublisher::on_publication_matched(
         DataWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(matched_mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     if (info.current_count_change == 1)
     {
         ++matched_;
@@ -353,14 +385,17 @@ void TypeLookupPublisher::on_data_reader_discovery(
         eprosima::fastdds::dds::DomainParticipant* /*participant*/,
         eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info)
 {
-    xtypes::TypeInformationParameter type_info = info.info.type_information();
-
-    if (check_registered_type(type_info))
+    // Check if the type is already created
+    if (nullptr == participant_->find_type(info.info.typeName().to_string()))
     {
-        create_known_type(info.info.typeName().to_string());
-    }
-    else
-    {
-        throw TypeLookupPublisherTypeNotRegisteredException(info.info.typeName().to_string());
+        if (check_registered_type(info.info.type_information()))
+        {
+            create_known_types_threads.emplace_back(&TypeLookupPublisher::create_known_type, this,
+                    info.info.typeName().to_string());
+        }
+        else
+        {
+            throw TypeLookupPublisherTypeNotRegisteredException(info.info.typeName().to_string());
+        }
     }
 }

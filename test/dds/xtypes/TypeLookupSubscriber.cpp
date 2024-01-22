@@ -60,6 +60,11 @@ TypeLookupSubscriber::~TypeLookupSubscriber()
     {
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
+
+    for (auto& thread : create_known_types_threads)
+    {
+        thread.join();
+    }
 }
 
 void TypeLookupSubscriber::create_type_creator_functions()
@@ -192,7 +197,10 @@ bool TypeLookupSubscriber::init(
 
     for (const auto& type : known_types)
     {
-        create_known_type(type);
+        if (!create_known_type(type))
+        {
+            return false;
+        }
     }
 
     return true;
@@ -204,10 +212,11 @@ bool TypeLookupSubscriber::create_known_type(
     // Check if the type is already created
     if (nullptr != participant_->find_type(type))
     {
-        return true;
+        return false;
     }
 
     // Find the type creator in the map
+    //std::map<std::string, std::function<bool(const std::string&)>> type_creator_functions_;
     auto it = type_creator_functions_.find(type);
     if (it != type_creator_functions_.end())
     {
@@ -242,7 +251,8 @@ bool TypeLookupSubscriber::create_known_type_impl(
     //CREATE THE TOPIC
     std::ostringstream topic_name;
     topic_name << type << "_" << asio::ip::host_name() << "_" << SUB_DOMAIN_ID_;
-    a_type.topic_ = participant_->create_topic(topic_name.str(), a_type.type_.get_type_name(), TOPIC_QOS_DEFAULT);
+    a_type.topic_ =
+            participant_->create_topic(topic_name.str(), a_type.type_.get_type_name(), TOPIC_QOS_DEFAULT);
     if (a_type.topic_ == nullptr)
     {
         std::cout << "ERROR TypeLookupSubscriber: create_topic" << std::endl;
@@ -251,6 +261,8 @@ bool TypeLookupSubscriber::create_known_type_impl(
 
     //CREATE THE DATAREADER
     DataReaderQos rqos = a_type.subscriber_->get_default_datareader_qos();
+    rqos.data_sharing().off();
+
     a_type.reader_ = a_type.subscriber_->create_datareader(a_type.topic_, rqos);
     if (a_type.reader_ == nullptr)
     {
@@ -265,7 +277,10 @@ bool TypeLookupSubscriber::create_known_type_impl(
                 std::cout <<  "index(" << sample->index() << ")" << std::endl;
             };
 
-    known_types_.emplace(type, a_type);
+    {
+        std::lock_guard<std::mutex> guard(known_types_mutex_);
+        known_types_.emplace(type, a_type);
+    }
 
     return true;
 }
@@ -279,19 +294,23 @@ bool TypeLookupSubscriber::check_registered_type(
 }
 
 bool TypeLookupSubscriber::wait_discovery(
-        uint32_t expected_match,
+        uint32_t expected_matches,
         uint32_t timeout)
 {
-    std::unique_lock<std::mutex> lock(matched_mutex_);
+    expected_matches_ = expected_matches;
+    std::unique_lock<std::mutex> lock(mutex_);
     bool result = cv_.wait_for(lock, std::chrono::seconds(timeout),
                     [&]()
                     {
-                        std::cout <<  "TypeLookupSubscriber::wait_discovery(" <<
-                            matched_ << "/" << expected_match << ")" << std::endl;
-                        return matched_ == expected_match;
+                        return matched_ == expected_matches_;
                     });
-
-    return result;
+    if (!result)
+    {
+        std::cout << "TypeLookupSubscriber discovery Timeout with matched = "
+                  << matched_ << std::endl;
+        return false;
+    }
+    return true;
 }
 
 bool TypeLookupSubscriber::run(
@@ -299,31 +318,53 @@ bool TypeLookupSubscriber::run(
         uint32_t timeout)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    return cv_.wait_for(
+    bool result =  cv_.wait_for(
         lock, std::chrono::seconds(timeout), [&]
         {
-            if (known_types_.size() != received_samples_.size())
+            if (expected_matches_ != received_samples_.size())
             {
                 return false;
             }
 
-            std::lock_guard<std::mutex> lock(received_samples_mutex_);
             for (auto& received_sample : received_samples_)
             {
                 if (samples != received_sample.second)
+
                 {
                     return false;
                 }
             }
             return true;
         });
+
+    if (!result)
+    {
+        std::cout << "TypeLookupSubscriber run Timeout" << std::endl;
+
+        if (expected_matches_ != received_samples_.size())
+        {
+            std::cout << "expected_matches_ = " << expected_matches_ <<
+                " matched_ = " << received_samples_.size() << std::endl;
+        }
+        for (auto& received_sample : received_samples_)
+        {
+            if (samples != received_sample.second)
+            {
+                std::cout << "From: " << received_sample.first <<
+                    " samples: " << received_sample.second << "/" << samples << std::endl;
+            }
+        }
+
+        return false;
+    }
+    return true;
 }
 
 void TypeLookupSubscriber::on_subscription_matched(
         DataReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(matched_mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     if (info.current_count_change == 1)
     {
         ++matched_;
@@ -364,14 +405,17 @@ void TypeLookupSubscriber::on_data_writer_discovery(
         eprosima::fastdds::dds::DomainParticipant* /*participant*/,
         eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info)
 {
-    xtypes::TypeInformationParameter type_info = info.info.type_information();
-
-    if (check_registered_type(type_info))
+    // Check if the type is already created
+    if (nullptr == participant_->find_type(info.info.typeName().to_string()))
     {
-        create_known_type(info.info.typeName().to_string());
-    }
-    else
-    {
-        throw TypeLookupSubscriberTypeNotRegisteredException(info.info.typeName().to_string());
+        if (check_registered_type(info.info.type_information()))
+        {
+            create_known_types_threads.emplace_back(&TypeLookupSubscriber::create_known_type, this,
+                    info.info.typeName().to_string());
+        }
+        else
+        {
+            throw TypeLookupSubscriberTypeNotRegisteredException(info.info.typeName().to_string());
+        }
     }
 }

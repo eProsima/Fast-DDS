@@ -5,7 +5,7 @@
             "kind": "subscriber",
             "samples": "10",
             "timeout": "10",
-            "expected_types": "2",
+            "expected_matches": "2",
             "known_types": [
                 "Type1",
                 "TypeDep"
@@ -15,7 +15,7 @@
             "kind": "publisher",
             "samples": "10",
             "timeout": "10",
-            "expected_types": "2",
+            "expected_matches": "2",
             "known_types": [
                 "Type1"
             ]
