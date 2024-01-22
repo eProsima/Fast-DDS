@@ -48,7 +48,8 @@ protected:
     enum TCPConnectionType
     {
         TCP_ACCEPT_TYPE = 0,
-        TCP_CONNECT_TYPE = 1
+        TCP_CONNECT_TYPE = 1,
+        TCP_WAIT_CONNECTION_TYPE = 2
     };
 
     enum eConnectionStatus
@@ -153,11 +154,12 @@ public:
 
 protected:
 
-    // Constructor called when trying to connect to a remote server
+    // Constructor called when trying to connect to a remote server OR when using LARGE_DATA topology
     TCPChannelResource(
             TCPTransportInterface* parent,
             const Locator& locator,
-            uint32_t maxMsgSize);
+            uint32_t maxMsgSize,
+            TCPConnectionType tcp_connection_type = TCPConnectionType::TCP_CONNECT_TYPE);
 
     // Constructor called when local server accepted connection
     TCPChannelResource(
