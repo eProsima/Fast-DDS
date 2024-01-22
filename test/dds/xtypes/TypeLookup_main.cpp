@@ -32,7 +32,7 @@ struct CommandLineArgs
     int kind;
     int samples;
     int timeout;
-    int expected_types;
+    int expected_matches;
     std::vector<std::string> known_types;
 };
 
@@ -70,9 +70,9 @@ CommandLineArgs parse_args(
         {
             args.timeout = std::stoi(value);
         }
-        else if (key == "expected_types")
+        else if (key == "expected_matches")
         {
-            args.expected_types = std::stoi(value);
+            args.expected_matches = std::stoi(value);
         }
         else if (key == "known_types")
         {
@@ -103,13 +103,13 @@ int main(
     CommandLineArgs args = parse_args(argc, argv);
 
     if (args.kind == 0 || args.samples == 0  || args.timeout == 0  ||
-            args.expected_types == 0 || args.known_types.empty())
+            args.expected_matches == 0 || args.known_types.empty())
     {
         std::cout << "Invalid command-line arguments. Usage: " <<
             "./DDSXtypesCommunication " <<
             "kind=<publisher/subscriber> " <<
             "samples=<amount> " <<
-            "expected_types=<amount> " <<
+            "expected_matches=<amount> " <<
             "timeout=<timeout> " <<
             "known_types=<Type1,Type2,...>" << std::endl;
         return -1;
@@ -121,13 +121,13 @@ int main(
             case 1: {
                 eprosima::fastdds::dds::TypeLookupPublisher pub;
                 return (pub.init(args.known_types) &&
-                       pub.wait_discovery(args.expected_types, args.timeout) &&
+                       pub.wait_discovery(args.expected_matches, args.timeout) &&
                        pub.run(args.samples, args.timeout)) ? 0 : -1;
             }
             case 2: {
                 eprosima::fastdds::dds::TypeLookupSubscriber sub;
                 return (sub.init(args.known_types) &&
-                       sub.wait_discovery(args.expected_types, args.timeout) &&
+                       sub.wait_discovery(args.expected_matches, args.timeout) &&
                        sub.run(args.samples, args.timeout)) ? 0 : -1;
             }
             default:

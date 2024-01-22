@@ -28,7 +28,7 @@ def define_args(participant):
     args.extend([f"kind={participant.get('kind')}"])
     args.extend([f"samples={participant.get('samples', 10)}"])
     args.extend([f"timeout={participant.get('timeout', 10)}"])
-    args.extend([f"expected_types={participant.get('expected_types', 1)}"])
+    args.extend([f"expected_matches={participant.get('expected_matches', 1)}"])
 
     if 'known_types' in participant and isinstance(participant['known_types'], list):
         args.append(f'known_types={",".join(participant["known_types"])}')
