@@ -18,8 +18,10 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-MockReceiverResource::MockReceiverResource(TransportInterface& transport, const Locator_t& locator)
-        : msg_receiver(nullptr)
+MockReceiverResource::MockReceiverResource(
+        eprosima::fastdds::rtps::TransportInterface& transport,
+        const Locator_t& locator)
+    : msg_receiver(nullptr)
 {
     m_maxMsgSize = 0x8FFF;
     // Internal channel is opened and assigned to this resource.

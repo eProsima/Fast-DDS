@@ -149,7 +149,7 @@ TEST_P(PubSubBasic, PubSubAsNonReliableHelloworld)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).init();
+    writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -178,8 +178,8 @@ TEST_P(PubSubBasic, AsyncPubSubAsNonReliableHelloworld)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -204,7 +204,7 @@ TEST_P(PubSubBasic, PubSubAsReliableHelloworld)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -235,12 +235,12 @@ TEST_P(PubSubBasic, AsyncPubSubAsReliableHelloworld)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -291,7 +291,7 @@ TEST_P(PubSubBasic, PubSubAsReliableData64kb)
     PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -320,8 +320,8 @@ TEST_P(PubSubBasic, PubSubMoreThan256Unacknowledged)
 {
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).
+            durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -333,9 +333,9 @@ TEST_P(PubSubBasic, PubSubMoreThan256Unacknowledged)
 
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).
+            durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -350,7 +350,7 @@ TEST_P(PubSubBasic, PubSubAsReliableHelloworldMulticastDisabled)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             disable_multicast(0).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -392,7 +392,7 @@ TEST_P(PubSubBasic, ReceivedDynamicDataWithNoSizeLimit)
 
     reader.history_depth(100)
             .partition("A")
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -427,7 +427,7 @@ TEST_P(PubSubBasic, ReceivedDynamicDataWithinSizeLimit)
             .partitions_max_size(28)
             .history_depth(100)
             .partition("A")
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -458,7 +458,7 @@ TEST_P(PubSubBasic, ReceivedUserDataExceedsSizeLimit)
 
     reader.user_data_max_size(4)
             .history_depth(100)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -483,7 +483,7 @@ TEST_P(PubSubBasic, ReceivedPartitionDataExceedsSizeLimit)
     reader.partitions_max_size(20)
             .history_depth(100)
             .partition("A")
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -880,8 +880,8 @@ TEST_P(PubSubBasic, ReliableHelloworldLateJoinersStress)
         readers.emplace_back(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
         const auto& new_reader = readers.back();
 
-        new_reader->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+        new_reader->reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+                .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
                 .history_depth(10)
                 .init();
         ASSERT_TRUE(new_reader->isInitialized()) << " on iteration " << i;

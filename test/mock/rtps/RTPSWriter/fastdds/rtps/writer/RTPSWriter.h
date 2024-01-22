@@ -19,17 +19,19 @@
 #ifndef _FASTDDS_RTPS_RTPSWRITER_H_
 #define _FASTDDS_RTPS_RTPSWRITER_H_
 
-#include <fastrtps/rtps/attributes/WriterAttributes.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/Endpoint.h>
-#include <fastrtps/rtps/common/CacheChange.h>
+#include <condition_variable>
+
+#include <gmock/gmock.h>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/writer/DeliveryRetCode.hpp>
 #include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
-
-#include <condition_variable>
-#include <gmock/gmock.h>
+#include <fastdds/rtps/writer/WriterListener.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -138,7 +140,7 @@ public:
 
     MOCK_METHOD0(getMaxDataSize, uint32_t ());
 
-    MOCK_CONST_METHOD0(get_liveliness_kind, const LivelinessQosPolicyKind& ());
+    MOCK_CONST_METHOD0(get_liveliness_kind, const fastdds::dds::LivelinessQosPolicyKind& ());
 
     MOCK_CONST_METHOD0(get_liveliness_lease_duration, const Duration_t& ());
 

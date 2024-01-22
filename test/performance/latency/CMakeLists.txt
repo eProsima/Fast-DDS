@@ -34,7 +34,7 @@ target_include_directories(LatencyTest PRIVATE ${Asio_INCLUDE_DIR})
 
 target_link_libraries(
     LatencyTest
-    fastrtps
+    fastdds
     fastcdr
     foonathan_memory
     fastdds::optionparser

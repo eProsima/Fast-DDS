@@ -387,11 +387,11 @@ public:
 
         if (kind == eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT)
         {
-            writer_qos_.m_reliability.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+            writer_qos_.m_reliability.kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
         }
         else
         {
-            writer_qos_.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+            writer_qos_.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
         }
 
         return *this;
@@ -595,7 +595,7 @@ private:
     bool destroy_participant_{false};
     eprosima::fastrtps::rtps::RTPSWriter* writer_;
     eprosima::fastrtps::rtps::WriterAttributes writer_attr_;
-    eprosima::fastrtps::WriterQos writer_qos_;
+    eprosima::fastdds::dds::WriterQos writer_qos_;
     eprosima::fastrtps::TopicAttributes topic_attr_;
     eprosima::fastrtps::rtps::WriterHistory* history_;
     eprosima::fastrtps::rtps::HistoryAttributes hattr_;

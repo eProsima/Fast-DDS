@@ -37,7 +37,7 @@ public:
     void configDatareader(
             const std::string& suffix) override
     {
-        datareader_qos_.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+        datareader_qos_.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
         std::ostringstream t;
 
@@ -49,7 +49,7 @@ public:
     void configDatawriter(
             const std::string& suffix) override
     {
-        datawriter_qos_.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+        datawriter_qos_.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
         // Increase default max_blocking_time to 1 second, as our CI infrastructure shows some
         // big CPU overhead sometimes
@@ -64,7 +64,7 @@ public:
     }
 
     ReqRepAsReliableHelloWorldRequester& durability_kind(
-            const eprosima::fastrtps::DurabilityQosPolicyKind kind)
+            const eprosima::fastdds::dds::DurabilityQosPolicyKind kind)
     {
         datawriter_qos_.durability().kind = kind;
         datareader_qos_.durability().kind = kind;

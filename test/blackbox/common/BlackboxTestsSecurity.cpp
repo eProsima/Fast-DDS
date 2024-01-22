@@ -276,7 +276,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
             "file://" + std::string(certs_path) + "/mainsubkey.pem"));
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_property_policy).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -331,7 +331,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_ok_same_participan
     property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
             "file://" + std::string(certs_path) + "/mainpubkey.pem"));
 
-    wreader.sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    wreader.sub_history_depth(10).sub_reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     wreader.pub_history_depth(10);
     wreader.property_policy(property_policy).init();
 
@@ -361,7 +361,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
         PropertyPolicy pub_property_policy;
 
         reader.history_depth(10).
-                reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+                reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
         ASSERT_TRUE(reader.isInitialized());
 
@@ -398,7 +398,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
                 "file://" + std::string(certs_path) + "/mainsubkey.pem"));
 
         reader.history_depth(10).
-                reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+                reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
                 property_policy(sub_property_policy).init();
 
         ASSERT_TRUE(reader.isInitialized());
@@ -429,7 +429,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
             "file://" + std::string(certs_path) + "/mainsubkey.pem"));
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_property_policy).init();
 
     // To simulate lossy conditions, we are going to remove the default
@@ -720,7 +720,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_ok)
     pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
     writer.history_depth(10).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             property_policy(pub_property_policy).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -792,7 +792,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_transport_ok)
     pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
     writer.history_depth(10).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             property_policy(pub_property_policy).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -866,7 +866,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_udp_transport_ok)
     pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
     writer.history_depth(10).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             property_policy(pub_property_policy).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -911,7 +911,7 @@ TEST(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_ok)
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_property_policy).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -973,7 +973,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_rtps_ok_same_participant)
             "builtin.AES-GCM-GMAC"));
     property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
-    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .sub_durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
     wreader.property_policy(property_policy).init();
 
@@ -1031,7 +1031,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_large_string)
     pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
     writer.history_depth(10).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             property_policy(pub_property_policy).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -1076,7 +1076,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_large_string
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_property_policy).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -1160,8 +1160,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_data300kb)
     uint32_t periodInMs = 500;
 
     writer.history_depth(5).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
             add_throughput_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_property_policy).init();
@@ -1208,7 +1208,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_data300kb)
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
     reader.history_depth(5).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_property_policy).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -1231,7 +1231,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_data300kb)
     uint32_t periodInMs = 50;
 
     writer.history_depth(5).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
             add_throughput_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_property_policy).init();
@@ -1297,7 +1297,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_ok)
     pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
     writer.history_depth(10).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
 
@@ -1344,7 +1344,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_ok)
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_part_property_policy).
             entity_property_policy(sub_property_policy).init();
 
@@ -1409,7 +1409,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_submessage_ok_same_partici
     pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
-    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .sub_durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
     wreader.property_policy(property_policy).
             pub_property_policy(pub_property_policy).
@@ -1471,7 +1471,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_larg
     pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
     writer.history_depth(10).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
 
@@ -1518,7 +1518,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_large_
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_part_property_policy).
             entity_property_policy(sub_property_policy).init();
 
@@ -1606,8 +1606,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_data
     uint32_t periodInMs = 500;
 
     writer.history_depth(5).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
             add_throughput_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_part_property_policy).
@@ -1656,7 +1656,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_data30
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
     reader.history_depth(5).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_part_property_policy).
             entity_property_policy(sub_property_policy).init();
 
@@ -1680,7 +1680,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_data30
     uint32_t periodInMs = 50;
 
     writer.history_depth(5).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
             add_throughput_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_part_property_policy).
@@ -1747,7 +1747,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_ok)
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     writer.history_depth(10).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
 
@@ -1794,7 +1794,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_ok)
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_part_property_policy).
             entity_property_policy(sub_property_policy).init();
 
@@ -1859,7 +1859,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participan
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
-    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .sub_durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
     wreader.property_policy(property_policy).
             pub_property_policy(pub_property_policy).
@@ -1900,7 +1900,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participan
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
-    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .sub_durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
     wreader.property_policy(property_policy).
             pub_property_policy(pub_property_policy).
@@ -1962,7 +1962,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_large_s
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     writer.history_depth(10).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
 
@@ -2009,7 +2009,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_large_str
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_part_property_policy).
             entity_property_policy(sub_property_policy).init();
 
@@ -2097,8 +2097,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_data300
     uint32_t periodInMs = 500;
 
     writer.history_depth(5).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
             add_throughput_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_part_property_policy).
@@ -2147,7 +2147,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_data300kb
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     reader.history_depth(5).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_part_property_policy).
             entity_property_policy(sub_property_policy).init();
 
@@ -2171,7 +2171,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_data300kb
     uint32_t periodInMs = 50;
 
     writer.history_depth(5).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
             add_throughput_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_part_property_policy).
@@ -2242,7 +2242,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_ok)
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     writer.history_depth(10).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
 
@@ -2291,7 +2291,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_ok)
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_part_property_policy).
             entity_property_policy(sub_property_policy).init();
 
@@ -2380,7 +2380,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_large_strin
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     writer.history_depth(10).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
 
@@ -2429,7 +2429,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_large_string)
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_part_property_policy).
             entity_property_policy(sub_property_policy).init();
 
@@ -2523,8 +2523,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_data300kb)
     uint32_t periodInMs = 1000;
 
     writer.history_depth(5).
-            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
             add_throughput_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_part_property_policy).
@@ -2575,7 +2575,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb)
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     reader.history_depth(5).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_part_property_policy).
             entity_property_policy(sub_property_policy).init();
 
@@ -2601,7 +2601,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb)
     uint32_t periodInMs = 50;
 
     writer.history_depth(5).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
             add_throughput_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_part_property_policy).
@@ -2653,7 +2653,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb_mix
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     reader.history_depth(5).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_part_property_policy).
             entity_property_policy(sub_property_policy).init();
 
@@ -2674,7 +2674,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb_mix
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     writer.history_depth(2).resource_limits_max_samples(2).resource_limits_allocated_samples(2).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
 
@@ -2766,7 +2766,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_user_data)
             });
 
     reader.history_depth(100).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_part_property_policy).
             entity_property_policy(sub_property_policy).init();
 
@@ -2816,7 +2816,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_governance_rule_o
                 "file://" + std::string(certs_path) + "/permissions.smime"));
 
         reader.history_depth(10).
-                reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+                reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
                 property_policy(sub_property_policy).init();
 
         ASSERT_TRUE(reader.isInitialized());
@@ -3097,7 +3097,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
                 "file://" + std::string(certs_path) + "/permissions_helloworld.smime"));
 
         reader.history_depth(10).
-                reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+                reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
                 property_policy(sub_property_policy).init();
 
         ASSERT_TRUE(reader.isInitialized());
@@ -3238,7 +3238,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
                 "file://" + std::string(certs_path) + "/permissions_helloworld_partitions.smime"));
 
         reader.history_depth(10).
-                reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+                reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
                 property_policy(sub_property_policy).
                 partition("Partition1").init();
 
@@ -3325,7 +3325,7 @@ void prepare_pkcs11_nodes(
             "file://" + std::string(certs_path) + "/permissions_helloworld.smime"));
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_property_policy).init();
 
     pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
@@ -3495,7 +3495,7 @@ static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation
 {
     CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
-    reader.history_depth(10).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(10).init();
@@ -3723,7 +3723,7 @@ TEST(Security, AllowUnauthenticatedParticipants_TwoSecureParticipantsWithDiffere
             "file://" + std::string(certs_path) + "/permissions_helloworld_securehelloworld_other_ca.smime"));
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_property_policy).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -3748,7 +3748,7 @@ TEST(Security, AllowUnauthenticatedParticipants_TwoSecureParticipantsWithDiffere
             "file://" + std::string(certs_path) + "/permissions_helloworld_securehelloworld.smime"));
 
     writer.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(pub_property_policy).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -3806,7 +3806,7 @@ TEST(Security, AllowUnauthenticatedParticipants_TwoParticipantsDifferentCertific
             "file://" + std::string(certs_path) + "/permissions_helloworld_securehelloworld_other_ca.smime"));
 
     reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_property_policy).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -3831,7 +3831,7 @@ TEST(Security, AllowUnauthenticatedParticipants_TwoParticipantsDifferentCertific
             "file://" + std::string(certs_path) + "/permissions_helloworld_securehelloworld.smime"));
 
     writer.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(pub_property_policy).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -3862,17 +3862,17 @@ TEST(Security, InANonSecureParticipantWithTwoSecureParticipantScenario_TheTwoSec
     CommonPermissionsConfigure(secure_reader, secure_writer, governance_file, permissions_file);
 
     secure_writer.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(secure_writer.isInitialized());
 
     non_secure_reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(non_secure_reader.isInitialized());
 
     secure_reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(secure_reader.isInitialized());
 
@@ -4650,8 +4650,8 @@ TEST(Security, MaliciousHeartbeatIgnore)
     reader.add_to_unicast_locator_list("127.0.0.1", 7000);
 
     // Set common QoS
-    reader.history_depth(10).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
-    writer.history_depth(10).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+    writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
 
     // Configure security
     const std::string governance_file("governance_helloworld_all_enable.smime");
@@ -4763,8 +4763,8 @@ TEST_P(Security, MaliciousParticipantRemovalIgnore)
     };
 
     // Set common QoS
-    reader.history_depth(10).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
-    writer.history_depth(10).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+    writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
 
     // Configure security
     const std::string governance_file("governance_helloworld_all_enable.smime");

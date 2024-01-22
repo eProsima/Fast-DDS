@@ -201,7 +201,7 @@ class PubSubWriter
 
         void on_offered_deadline_missed(
                 eprosima::fastdds::dds::DataWriter* datawriter,
-                const eprosima::fastrtps::OfferedDeadlineMissedStatus& status) override
+                const eprosima::fastdds::dds::OfferedDeadlineMissedStatus& status) override
         {
             static_cast<void>(datawriter);
             times_deadline_missed_ = status.total_count;
@@ -217,7 +217,7 @@ class PubSubWriter
 
         void on_liveliness_lost(
                 eprosima::fastdds::dds::DataWriter* datawriter,
-                const eprosima::fastrtps::LivelinessLostStatus& status) override
+                const eprosima::fastdds::dds::LivelinessLostStatus& status) override
         {
             static_cast<void>(datawriter);
             times_liveliness_lost_ = status.total_count;
@@ -830,7 +830,7 @@ public:
 
     /*** Function to change QoS ***/
     PubSubWriter& reliability(
-            const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
+            const eprosima::fastdds::dds::ReliabilityQosPolicyKind kind)
     {
         datawriter_qos_.reliability().kind = kind;
         return *this;
@@ -851,7 +851,7 @@ public:
     }
 
     PubSubWriter& liveliness_kind(
-            const eprosima::fastrtps::LivelinessQosPolicyKind kind)
+            const eprosima::fastdds::dds::LivelinessQosPolicyKind kind)
     {
         datawriter_qos_.liveliness().kind = kind;
         return *this;
@@ -930,14 +930,14 @@ public:
     }
 
     PubSubWriter& asynchronously(
-            const eprosima::fastrtps::PublishModeQosPolicyKind kind)
+            const eprosima::fastdds::dds::PublishModeQosPolicyKind kind)
     {
         datawriter_qos_.publish_mode().kind = kind;
         return *this;
     }
 
     PubSubWriter& history_kind(
-            const eprosima::fastrtps::HistoryQosPolicyKind kind)
+            const eprosima::fastdds::dds::HistoryQosPolicyKind kind)
     {
         datawriter_qos_.history().kind = kind;
         return *this;
@@ -1041,7 +1041,7 @@ public:
     }
 
     PubSubWriter& durability_kind(
-            const eprosima::fastrtps::DurabilityQosPolicyKind kind)
+            const eprosima::fastdds::dds::DurabilityQosPolicyKind kind)
     {
         datawriter_qos_.durability().kind = kind;
         return *this;
@@ -1652,7 +1652,7 @@ public:
     {
         participant_qos_.properties().properties().emplace_back("dds.persistence.plugin", "builtin.SQLITE3");
         participant_qos_.properties().properties().emplace_back("dds.persistence.sqlite3.filename", filename);
-        datawriter_qos_.durability().kind = eprosima::fastrtps::TRANSIENT_DURABILITY_QOS;
+        datawriter_qos_.durability().kind = eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS;
         datawriter_qos_.properties().properties().emplace_back("dds.persistence.guid", persistence_guid);
 
         return *this;

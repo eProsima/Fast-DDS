@@ -15,18 +15,19 @@
 #ifndef _UNITTEST_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHYPLUGINTESTS_HPP_
 #define _UNITTEST_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHYPLUGINTESTS_HPP_
 
-#include <security/cryptography/AESGCMGMAC.h>
-#include <security/authentication/PKIIdentityHandle.h>
-#include <security/accesscontrol/AccessPermissionsHandle.h>
-#include <fastrtps/rtps/common/CDRMessage_t.h>
-
-#include <security/MockAccessControlPlugin.h>
-#include <security/MockAuthenticationPlugin.h>
+#include <cstdlib>
+#include <cstring>
 
 #include <gtest/gtest.h>
 #include <openssl/rand.h>
-#include <cstdlib>
-#include <cstring>
+
+#include <fastdds/rtps/common/CDRMessage_t.h>
+
+#include <security/accesscontrol/AccessPermissionsHandle.h>
+#include <security/authentication/PKIIdentityHandle.h>
+#include <security/cryptography/AESGCMGMAC.h>
+#include <security/MockAccessControlPlugin.h>
+#include <security/MockAuthenticationPlugin.h>
 
 class CryptographyPluginTest : public ::testing::Test
 {

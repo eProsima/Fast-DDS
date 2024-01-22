@@ -65,7 +65,7 @@ colcon build --cmake-args -DPERFORMANCE_TESTS=ON
 The throughput test executable can be found in the `build` directory.
 
 ```
-build/fastrtps/test/performance/throughput
+build/fastdds/test/performance/throughput
 ├── CMakeFiles
 ├── cmake_install.cmake
 ├── CTestTestfile.cmake
@@ -167,10 +167,10 @@ The directory also comes with a Python script which automates the execution of t
 
 ```batch
 # Indicate where is the utility executable
-export THROUGHPUT_TEST_BIN=build/fastrtps/test/performance/throughtput/ThroughputTest
+export THROUGHPUT_TEST_BIN=build/fastdds/test/performance/throughtput/ThroughputTest
 
 # Call python script to run tests.
-python3 src/fastrtps/test/performance/throughput/throughput_tests.py
+python3 src/fastdds/test/performance/throughput/throughput_tests.py
 ```
 
 The python scripts offers several options:

@@ -18,9 +18,10 @@
 #ifndef _RTPS_SECURITY_MOCKCRYPTOKEYEXCHANGE_H_
 #define _RTPS_SECURITY_MOCKCRYPTOKEYEXCHANGE_H_
 
-#include <fastrtps/rtps/security/cryptography/CryptoKeyExchange.h>
-#include <fastrtps/rtps/security/cryptography/CryptoTypes.h>
 #include <gmock/gmock.h>
+
+#include <fastdds/rtps/security/cryptography/CryptoKeyExchange.h>
+#include <fastdds/rtps/security/cryptography/CryptoTypes.h>
 
 namespace eprosima {
 namespace fastrtps {

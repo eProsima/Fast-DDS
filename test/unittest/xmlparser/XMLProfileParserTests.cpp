@@ -29,8 +29,8 @@
 #include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-#include <fastrtps/transport/TCPTransportDescriptor.h>
-#include <fastrtps/transport/UDPTransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPTransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -1662,8 +1662,8 @@ TEST_F(XMLProfileParserBasicTests, tls_config)
 
     xmlparser::sp_transport_t transport = xmlparser::XMLProfileManager::getTransportById("Test");
 
-    using TCPDescriptor = std::shared_ptr<TCPTransportDescriptor>;
-    TCPDescriptor descriptor = std::dynamic_pointer_cast<TCPTransportDescriptor>(transport);
+    using TCPDescriptor = std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor>;
+    TCPDescriptor descriptor = std::dynamic_pointer_cast<eprosima::fastdds::rtps::TCPTransportDescriptor>(transport);
 
     /*
        <tls>
@@ -1687,16 +1687,16 @@ TEST_F(XMLProfileParserBasicTests, tls_config)
     EXPECT_EQ("DH.pem", descriptor->tls_config.tmp_dh_file);
     EXPECT_EQ("verify.pem", descriptor->tls_config.verify_file);
     EXPECT_EQ("my_server.com", descriptor->tls_config.server_name);
-    EXPECT_EQ(TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_PEER, descriptor->tls_config.verify_mode);
-    EXPECT_TRUE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1));
-    EXPECT_TRUE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_1));
-    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV2));
-    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV3));
-    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_2));
-    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_3));
-    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::DEFAULT_WORKAROUNDS));
-    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_COMPRESSION));
-    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::SINGLE_DH_USE));
+    EXPECT_EQ(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_PEER, descriptor->tls_config.verify_mode);
+    EXPECT_TRUE(descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1));
+    EXPECT_TRUE(descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_1));
+    EXPECT_FALSE(descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV2));
+    EXPECT_FALSE(descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV3));
+    EXPECT_FALSE(descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_2));
+    EXPECT_FALSE(descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_3));
+    EXPECT_FALSE(descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::DEFAULT_WORKAROUNDS));
+    EXPECT_FALSE(descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::NO_COMPRESSION));
+    EXPECT_FALSE(descriptor->tls_config.get_option(eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions::SINGLE_DH_USE));
 
     EXPECT_EQ(descriptor->tls_config.verify_paths.size(), static_cast<size_t>(3));
     EXPECT_EQ(descriptor->tls_config.verify_paths[0], "Path1");
@@ -1705,7 +1705,7 @@ TEST_F(XMLProfileParserBasicTests, tls_config)
     EXPECT_EQ(descriptor->tls_config.verify_depth, static_cast<int32_t>(55));
     EXPECT_TRUE(descriptor->tls_config.default_verify_path);
 
-    EXPECT_EQ(descriptor->tls_config.handshake_role, TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::SERVER);
+    EXPECT_EQ(descriptor->tls_config.handshake_role, eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::SERVER);
 }
 
 TEST_F(XMLProfileParserBasicTests, UDP_transport_descriptors_config)
@@ -1715,8 +1715,8 @@ TEST_F(XMLProfileParserBasicTests, UDP_transport_descriptors_config)
 
     xmlparser::sp_transport_t transport = xmlparser::XMLProfileManager::getTransportById("Test");
 
-    using UDPDescriptor = std::shared_ptr<UDPTransportDescriptor>;
-    UDPDescriptor descriptor = std::dynamic_pointer_cast<UDPTransportDescriptor>(transport);
+    using UDPDescriptor = std::shared_ptr<eprosima::fastdds::rtps::UDPTransportDescriptor>;
+    UDPDescriptor descriptor = std::dynamic_pointer_cast<eprosima::fastdds::rtps::UDPTransportDescriptor>(transport);
 
     ASSERT_NE(descriptor, nullptr);
     EXPECT_EQ(descriptor->sendBufferSize, 8192u);

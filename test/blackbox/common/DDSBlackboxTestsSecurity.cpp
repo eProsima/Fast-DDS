@@ -27,7 +27,7 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
@@ -98,7 +98,7 @@ void test_big_message_corner_case(
     auto qos{ fastdds::PARTICIPANT_QOS_DEFAULT };
     set_authentication_config(qos.properties().properties());
     set_participant_crypto_config(qos.properties().properties());
-    auto transport = std::make_shared<rtps::UDPv4TransportDescriptor>();
+    auto transport = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
     transport->interfaceWhiteList.push_back("127.0.0.1");
     qos.transport().use_builtin_transports = false;
     qos.transport().user_transports.push_back(transport);

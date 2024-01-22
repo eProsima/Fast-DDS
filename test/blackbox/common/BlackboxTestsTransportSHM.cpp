@@ -43,11 +43,11 @@ TEST(SHM, TransportPubSub)
 
     auto testTransport = std::make_shared<SharedMemTransportDescriptor>();
 
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     writer.disable_builtin_transport().
             add_user_transport_to_pparams(testTransport).init();
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     reader.disable_builtin_transport().
             add_user_transport_to_pparams(testTransport).init();
 
@@ -92,19 +92,19 @@ TEST(SHM, IgnoreNonExistentSegment)
     PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
     writer
-            .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .asynchronously(eprosima::fastdds::dds::SYNCHRONOUS_PUBLISH_MODE)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .disable_builtin_transport()
             .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
             .init();
     ASSERT_TRUE(writer.isInitialized());
 
     reader
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .disable_builtin_transport()
             .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
             .init();
@@ -133,8 +133,8 @@ TEST(SHM, IgnoreNonExistentSegment)
                     {
                         PubSubWriter<Data1mbPubSubType> late_writer(TEST_TOPIC_NAME);
                         late_writer
-                                .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
-                                .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                                .asynchronously(eprosima::fastdds::dds::SYNCHRONOUS_PUBLISH_MODE)
+                                .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
                                 .disable_builtin_transport()
                                 .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
                                 .init();
@@ -181,14 +181,14 @@ TEST(SHM, Test300KFragmentation)
     shm_transport->big_buffer_size_recv_count_ = &big_buffers_recv_count;
 
     writer
-            .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .asynchronously(eprosima::fastdds::dds::SYNCHRONOUS_PUBLISH_MODE)
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
             .disable_builtin_transport()
             .add_user_transport_to_pparams(shm_transport)
             .init();
 
     reader
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
             .disable_builtin_transport()
             .add_user_transport_to_pparams(shm_transport)
             .init();
@@ -233,14 +233,14 @@ TEST(SHM, Test300KNoFragmentation)
     shm_transport->big_buffer_size_recv_count_ = &big_buffers_recv_count;
 
     writer
-            .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .asynchronously(eprosima::fastdds::dds::SYNCHRONOUS_PUBLISH_MODE)
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
             .disable_builtin_transport()
             .add_user_transport_to_pparams(shm_transport)
             .init();
 
     reader
-            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
             .disable_builtin_transport()
             .add_user_transport_to_pparams(shm_transport)
             .init();
@@ -292,15 +292,15 @@ TEST(SHM, SHM_UDP_300KFragmentation)
     shm_transport->big_buffer_size_send_count_ = &big_buffers_send_count;
     shm_transport->big_buffer_size_recv_count_ = &big_buffers_recv_count;
 
-    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    writer.asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE);
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     writer
             .disable_builtin_transport()
             .add_user_transport_to_pparams(shm_transport)
             .add_user_transport_to_pparams(udp_transport)
             .init();
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     reader
             .disable_builtin_transport()
             .add_user_transport_to_pparams(shm_transport)
@@ -356,14 +356,14 @@ TEST(SHM, UDPvsSHM_UDP)
     shm_transport->big_buffer_size_send_count_ = &big_buffers_send_count;
     shm_transport->big_buffer_size_recv_count_ = &big_buffers_recv_count;
 
-    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    writer.asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE);
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     writer
             .disable_builtin_transport()
             .add_user_transport_to_pparams(udp_transport)
             .init();
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     reader
             .disable_builtin_transport()
             .add_user_transport_to_pparams(shm_transport)
@@ -412,15 +412,15 @@ TEST(SHM, SHM_UDPvsUDP)
 
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
 
-    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    writer.asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE);
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     writer
             .disable_builtin_transport()
             .add_user_transport_to_pparams(shm_transport)
             .add_user_transport_to_pparams(udp_transport)
             .init();
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     reader
             .disable_builtin_transport()
             .add_user_transport_to_pparams(udp_transport)

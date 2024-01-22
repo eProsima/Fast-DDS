@@ -26,8 +26,8 @@
 #include <thread>
 
 #include <dds/core/LengthUnlimited.hpp>
+#include <fastdds/dds/log/Colors.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/log/Colors.h>
 
 #ifndef _WIN32
 #define localtime_s(X, Y) localtime_r(Y, X)
@@ -166,7 +166,7 @@ bool MemoryTestPublisher::init(
     if (m_data_size > 60000)
     {
         PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        PubDataparam.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
+        PubDataparam.qos.m_publishMode.kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
     }
 
     if (m_sXMLConfigFile.length() > 0)
@@ -201,7 +201,7 @@ bool MemoryTestPublisher::init(
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
+    PubCommandParam.qos.m_publishMode.kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
 
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
 

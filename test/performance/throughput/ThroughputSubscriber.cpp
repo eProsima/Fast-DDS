@@ -390,7 +390,7 @@ bool ThroughputSubscriber::init(
 
     // Reliability
     ReliabilityQosPolicy rp;
-    rp.kind = reliable_ ? eprosima::fastrtps::RELIABLE_RELIABILITY_QOS: eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+    rp.kind = reliable_ ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS: eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
     dr_qos_.reliability(rp);
 
     // Set data sharing according with cli. Is disabled by default in all xml profiles

@@ -15,13 +15,13 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
 
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -266,23 +266,23 @@ TEST_F(EdpTests, CheckPartitionCompatibility)
 
 TEST_F(EdpTests, CheckDurabilityCompatibility)
 {
-    std::vector<QosTestingCase<DurabilityQosPolicyKind>> testing_cases{
-        { PERSISTENT_DURABILITY_QOS, PERSISTENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { PERSISTENT_DURABILITY_QOS, TRANSIENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { PERSISTENT_DURABILITY_QOS, TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { PERSISTENT_DURABILITY_QOS, VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { TRANSIENT_DURABILITY_QOS, PERSISTENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
-        { TRANSIENT_DURABILITY_QOS, TRANSIENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { TRANSIENT_DURABILITY_QOS, TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { TRANSIENT_DURABILITY_QOS, VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { TRANSIENT_LOCAL_DURABILITY_QOS, PERSISTENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
-        { TRANSIENT_LOCAL_DURABILITY_QOS, TRANSIENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
-        { TRANSIENT_LOCAL_DURABILITY_QOS, TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { TRANSIENT_LOCAL_DURABILITY_QOS, VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { VOLATILE_DURABILITY_QOS, PERSISTENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
-        { VOLATILE_DURABILITY_QOS, TRANSIENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
-        { VOLATILE_DURABILITY_QOS, TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
-        { VOLATILE_DURABILITY_QOS, VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
+    std::vector<QosTestingCase<fastdds::dds::DurabilityQosPolicyKind>> testing_cases{
+        { fastdds::dds::PERSISTENT_DURABILITY_QOS, fastdds::dds::PERSISTENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::PERSISTENT_DURABILITY_QOS, fastdds::dds::TRANSIENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::PERSISTENT_DURABILITY_QOS, fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::PERSISTENT_DURABILITY_QOS, fastdds::dds::VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::TRANSIENT_DURABILITY_QOS, fastdds::dds::PERSISTENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
+        { fastdds::dds::TRANSIENT_DURABILITY_QOS, fastdds::dds::TRANSIENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::TRANSIENT_DURABILITY_QOS, fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::TRANSIENT_DURABILITY_QOS, fastdds::dds::VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::PERSISTENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
+        { fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::TRANSIENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
+        { fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::VOLATILE_DURABILITY_QOS, fastdds::dds::PERSISTENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
+        { fastdds::dds::VOLATILE_DURABILITY_QOS, fastdds::dds::TRANSIENT_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
+        { fastdds::dds::VOLATILE_DURABILITY_QOS, fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::DURABILITY_QOS_POLICY_ID},
+        { fastdds::dds::VOLATILE_DURABILITY_QOS, fastdds::dds::VOLATILE_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
     };
 
     for (auto testing_case : testing_cases)
@@ -311,11 +311,11 @@ TEST_F(EdpTests, CheckDeadlineCompatibility)
 
 TEST_F(EdpTests, CheckOwnershipCompatibility)
 {
-    std::vector<QosTestingCase<OwnershipQosPolicyKind>> testing_cases{
-        { SHARED_OWNERSHIP_QOS, SHARED_OWNERSHIP_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { SHARED_OWNERSHIP_QOS, EXCLUSIVE_OWNERSHIP_QOS, fastdds::dds::OWNERSHIP_QOS_POLICY_ID},
-        { EXCLUSIVE_OWNERSHIP_QOS, SHARED_OWNERSHIP_QOS, fastdds::dds::OWNERSHIP_QOS_POLICY_ID},
-        { EXCLUSIVE_OWNERSHIP_QOS, EXCLUSIVE_OWNERSHIP_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
+    std::vector<QosTestingCase<fastdds::dds::OwnershipQosPolicyKind>> testing_cases{
+        { fastdds::dds::SHARED_OWNERSHIP_QOS, fastdds::dds::SHARED_OWNERSHIP_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::SHARED_OWNERSHIP_QOS, fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS, fastdds::dds::OWNERSHIP_QOS_POLICY_ID},
+        { fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS, fastdds::dds::SHARED_OWNERSHIP_QOS, fastdds::dds::OWNERSHIP_QOS_POLICY_ID},
+        { fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS, fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
     };
 
     for (auto testing_case : testing_cases)
@@ -328,17 +328,17 @@ TEST_F(EdpTests, CheckOwnershipCompatibility)
 
 TEST_F(EdpTests, CheckLivelinessKindCompatibility)
 {
-    std::vector<QosTestingCase<LivelinessQosPolicyKind>> testing_cases{
-        { MANUAL_BY_TOPIC_LIVELINESS_QOS, MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { MANUAL_BY_TOPIC_LIVELINESS_QOS, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { MANUAL_BY_TOPIC_LIVELINESS_QOS, AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
-        { MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
+    std::vector<QosTestingCase<fastdds::dds::LivelinessQosPolicyKind>> testing_cases{
+        { fastdds::dds::MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
+        { fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
           fastdds::dds::INVALID_QOS_POLICY_ID},
-        { MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { AUTOMATIC_LIVELINESS_QOS, MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
-        { AUTOMATIC_LIVELINESS_QOS, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
-        { AUTOMATIC_LIVELINESS_QOS, AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
+        { fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::AUTOMATIC_LIVELINESS_QOS, fastdds::dds::MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
+        { fastdds::dds::AUTOMATIC_LIVELINESS_QOS, fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
+        { fastdds::dds::AUTOMATIC_LIVELINESS_QOS, fastdds::dds::AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
     };
 
     for (auto testing_case : testing_cases)
@@ -367,11 +367,11 @@ TEST_F(EdpTests, CheckLeaseDurationCompatibility)
 
 TEST_F(EdpTests, CheckReliabilityCompatibility)
 {
-    std::vector<QosTestingCase<ReliabilityQosPolicyKind>> testing_cases{
-        { RELIABLE_RELIABILITY_QOS, RELIABLE_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { RELIABLE_RELIABILITY_QOS, BEST_EFFORT_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { BEST_EFFORT_RELIABILITY_QOS, RELIABLE_RELIABILITY_QOS, fastdds::dds::RELIABILITY_QOS_POLICY_ID},
-        { BEST_EFFORT_RELIABILITY_QOS, BEST_EFFORT_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
+    std::vector<QosTestingCase<fastdds::dds::ReliabilityQosPolicyKind>> testing_cases{
+        { fastdds::dds::RELIABLE_RELIABILITY_QOS, fastdds::dds::RELIABLE_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::RELIABLE_RELIABILITY_QOS, fastdds::dds::BEST_EFFORT_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { fastdds::dds::BEST_EFFORT_RELIABILITY_QOS, fastdds::dds::RELIABLE_RELIABILITY_QOS, fastdds::dds::RELIABILITY_QOS_POLICY_ID},
+        { fastdds::dds::BEST_EFFORT_RELIABILITY_QOS, fastdds::dds::BEST_EFFORT_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID}
     };
 
     for (auto testing_case : testing_cases)
@@ -401,28 +401,28 @@ TEST_F(EdpTests, CheckPositiveAckCompatibility)
 
 TEST_F(EdpTests, CheckDataRepresentationCompatibility)
 {
-    using DataRepresentationQosVector = std::vector<DataRepresentationId>;
+    using DataRepresentationQosVector = std::vector<fastdds::dds::DataRepresentationId>;
     std::vector<QosTestingCase<DataRepresentationQosVector>> testing_cases{
         { {}, {}, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { {}, {DataRepresentationId::XCDR_DATA_REPRESENTATION}, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { {}, {DataRepresentationId::XCDR_DATA_REPRESENTATION, DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+        { {}, {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION}, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {}, {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION, fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
             fastdds::dds::INVALID_QOS_POLICY_ID},
-        { {}, {DataRepresentationId::XCDR2_DATA_REPRESENTATION}, fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
-        { {DataRepresentationId::XCDR_DATA_REPRESENTATION}, {}, fastdds::dds::INVALID_QOS_POLICY_ID},
-        { {DataRepresentationId::XCDR_DATA_REPRESENTATION}, {DataRepresentationId::XCDR_DATA_REPRESENTATION},
+        { {}, {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION}, fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
+        { {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION}, {}, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION}, {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION},
             fastdds::dds::INVALID_QOS_POLICY_ID},
-        { {DataRepresentationId::XCDR_DATA_REPRESENTATION},
-            {DataRepresentationId::XCDR_DATA_REPRESENTATION, DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+        { {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION},
+            {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION, fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
             fastdds::dds::INVALID_QOS_POLICY_ID},
-        { {DataRepresentationId::XCDR_DATA_REPRESENTATION}, {DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+        { {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION}, {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
             fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
-        { {DataRepresentationId::XCDR2_DATA_REPRESENTATION}, {}, fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
-        { {DataRepresentationId::XCDR2_DATA_REPRESENTATION}, {DataRepresentationId::XCDR_DATA_REPRESENTATION},
+        { {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION}, {}, fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
+        { {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION}, {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION},
             fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
-        { {DataRepresentationId::XCDR2_DATA_REPRESENTATION},
-            {DataRepresentationId::XCDR_DATA_REPRESENTATION, DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+        { {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION, fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
             fastdds::dds::INVALID_QOS_POLICY_ID},
-        { {DataRepresentationId::XCDR2_DATA_REPRESENTATION}, {DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+        { {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION}, {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
             fastdds::dds::INVALID_QOS_POLICY_ID}
     };
 

@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/rtps/common/CacheChange.h>
-
 #include <climits>
 #include <vector>
+
 #include <gtest/gtest.h>
+
+#include <fastdds/rtps/common/CacheChange.h>
 
 using namespace eprosima::fastrtps::rtps;
 

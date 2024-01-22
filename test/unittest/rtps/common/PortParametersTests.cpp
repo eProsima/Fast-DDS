@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/rtps/common/PortParameters.h>
-
 #include <climits>
+
 #include <gtest/gtest.h>
+
+#include <fastdds/rtps/common/PortParameters.h>
 
 using namespace eprosima::fastrtps::rtps;
 

@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TCP_TRANSPORT_DESCRIPTOR_H
-#define TCP_TRANSPORT_DESCRIPTOR_H
+#ifndef _FASTDDS_TCP_TRANSPORT_DESCRIPTOR_H_
+#define _FASTDDS_TCP_TRANSPORT_DESCRIPTOR_H_
 
-#include <fastrtps/transport/SocketTransportDescriptor.h>
+#include <fastdds/rtps/transport/SocketTransportDescriptor.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -204,7 +204,7 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
 } TCPTransportDescriptor;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // TCP_TRANSPORT_DESCRIPTOR_H
+#endif // _FASTDDS_TCP_TRANSPORT_DESCRIPTOR_H_
