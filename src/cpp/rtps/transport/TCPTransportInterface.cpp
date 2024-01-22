@@ -827,6 +827,7 @@ void TCPTransportInterface::perform_listen_operation(
     if (rtcp_message_manager)
     {
         channel = channel_weak.lock();
+        endpoint_to_locator(channel->remote_endpoint(), remote_locator);
 
         if (channel)
         {
@@ -1312,9 +1313,17 @@ void TCPTransportInterface::SocketAccepted(
             channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
                     channel_weak_ptr, rtcp_manager_weak_ptr));
 
+<<<<<<< HEAD
             EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
                                                                     << ", remote: " << channel->remote_endpoint().address()
                                                                     << ":" << channel->remote_endpoint().port() << ")");
+=======
+            EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
+                    << channel->local_endpoint().address() << ":"
+                    << channel->local_endpoint().port() << "), remote: "
+                    << channel->remote_endpoint().address() << ":"
+                    << channel->remote_endpoint().port() << ")");
+>>>>>>> 36f7f57b0 (Fix wrong log info messages on TCP (#4258))
         }
         else
         {
@@ -1358,10 +1367,11 @@ void TCPTransportInterface::SecureSocketAccepted(
             secure_channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
                     channel_weak_ptr, rtcp_manager_weak_ptr));
 
-            EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
-                                                                    << ", remote: " << socket->lowest_layer().remote_endpoint().address()
-                                                                    << ":" << socket->lowest_layer().remote_endpoint().port() <<
-                    ")");
+            EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: "
+                    << socket->lowest_layer().local_endpoint().address() << ":"
+                    << socket->lowest_layer().local_endpoint().port() << "), remote: "
+                    << socket->lowest_layer().remote_endpoint().address() << ":"
+                    << socket->lowest_layer().remote_endpoint().port() << ")");
         }
         else
         {
