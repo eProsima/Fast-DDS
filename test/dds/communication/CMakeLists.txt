@@ -125,10 +125,18 @@ list(APPEND XML_CONFIGURATION_FILES
     simple_besteffort_zerocopy_profile.xml
     TCP_server_profile.xml
     TCP_client_profile.xml
+    liveliness_assertion_profile.xml
     )
+
 # Python file
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_build.py
     ${CMAKE_CURRENT_BINARY_DIR}/test_build.py COPYONLY)
+# Python file Liveliness
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.py
+    ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/automatic_liveliness_assertion.py
+    ${CMAKE_CURRENT_BINARY_DIR}/automatic_liveliness_assertion.py COPYONLY)
+
 
 # XML files
 foreach(XML_FILE IN LISTS XML_CONFIGURATION_FILES)
@@ -142,6 +150,9 @@ foreach(TEST_FILE IN LISTS TEST_DEFINITIONS)
         ${CMAKE_CURRENT_BINARY_DIR}/${TEST_FILE}.json COPYONLY)
 endforeach()
 
+# Cmake file
+configure_file(${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake @ONLY)
 
 if(SECURITY)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
@@ -165,7 +176,7 @@ endif()
 # Tests specification
 ###############################################################################
 if(PYTHONINTERP_FOUND)
-    # Dynamic types test
+    ### Dynamic types test ###
     add_test(NAME DDSSimpleCommunicationTypeDiscovery
         COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication_dynamic.py)
 
@@ -182,7 +193,8 @@ if(PYTHONINTERP_FOUND)
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
 
-    # Standard types test
+
+    ### Standard types test ###
     set(TEST_BUILDER ${BINARY_TEST_DIR}test_build.py)
 
     foreach(TEST_DEFINITION IN LISTS TEST_DEFINITIONS)
@@ -208,4 +220,37 @@ if(PYTHONINTERP_FOUND)
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
     endforeach()
+
+
+    ### Liveliness tests ###
+    add_test(NAME LivelinessAssertion
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
+    # Set test with label NoMemoryCheck
+    set_property(TEST LivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
+
+    set_property(TEST LivelinessAssertion PROPERTY ENVIRONMENT
+        "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSCommunicationPublisher>")
+    set_property(TEST LivelinessAssertion APPEND PROPERTY ENVIRONMENT
+        "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSCommunicationSubscriber>")
+    if(WIN32)
+        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+        set_property(TEST LivelinessAssertion APPEND PROPERTY ENVIRONMENT
+            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+    endif()
+
+    add_test(NAME AutomaticLivelinessAssertion
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/automatic_liveliness_assertion.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
+    # Set test with label NoMemoryCheck
+    set_property(TEST AutomaticLivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
+
+    set_property(TEST AutomaticLivelinessAssertion PROPERTY ENVIRONMENT
+        "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSCommunicationPublisher>")
+    set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
+        "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSCommunicationSubscriber>")
+    if(WIN32)
+        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+        set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
+            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+    endif()
+
 endif()

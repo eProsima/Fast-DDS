@@ -80,34 +80,14 @@ target_link_libraries(SimpleCommunicationPubSub fastdds fastcdr foonathan_memory
 ###############################################################################
 # Necessary files
 ###############################################################################
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_communication.py
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_mix_communication.py
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/two_publishers_communication.py
     ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.py
-    ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/automatic_liveliness_assertion.py
-    ${CMAKE_CURRENT_BINARY_DIR}/automatic_liveliness_assertion.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message.py
     ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_besteffort_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_besteffort_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_reliable_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_reliable_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_reliable_besteffort_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_reliable_besteffort_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_besteffort_pub_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_besteffort_pub_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_besteffort_sub_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_besteffort_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.120_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.120_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.360_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.360_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/multiple_subs_secure_crypto_communication.py
     ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_crypto_besteffort_pub_profile.xml
@@ -203,95 +183,6 @@ if(SECURITY)
 endif()
 
 if(PYTHONINTERP_FOUND)
-    add_test(NAME SimpleCommunicationBestEffort
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
-
-    # Set test with label NoMemoryCheck
-    set_property(TEST SimpleCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
-
-    set_property(TEST SimpleCommunicationBestEffort PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-    set_property(TEST SimpleCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-    set_property(TEST SimpleCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-        "XML_FILE=simple_besteffort_profile.xml")
-    if(WIN32)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set_property(TEST SimpleCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-    endif()
-
-    add_test(NAME SimpleCommunicationReliable
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
-
-    # Set test with label NoMemoryCheck
-    set_property(TEST SimpleCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
-
-    set_property(TEST SimpleCommunicationReliable PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-    set_property(TEST SimpleCommunicationReliable APPEND PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-    set_property(TEST SimpleCommunicationReliable APPEND PROPERTY ENVIRONMENT
-        "XML_FILE=simple_reliable_profile.xml")
-    if(WIN32)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set_property(TEST SimpleCommunicationReliable APPEND PROPERTY ENVIRONMENT
-            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-    endif()
-
-    add_test(NAME SimpleCommunicationReliableBestEffort
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
-
-    # Set test with label NoMemoryCheck
-    set_property(TEST SimpleCommunicationReliableBestEffort PROPERTY LABELS "NoMemoryCheck")
-
-    set_property(TEST SimpleCommunicationReliableBestEffort PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-    set_property(TEST SimpleCommunicationReliableBestEffort APPEND PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-    set_property(TEST SimpleCommunicationReliableBestEffort APPEND PROPERTY ENVIRONMENT
-        "XML_FILE=simple_reliable_besteffort_profile.xml")
-    if(WIN32)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set_property(TEST SimpleCommunicationReliableBestEffort APPEND PROPERTY ENVIRONMENT
-            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-    endif()
-
-    add_test(NAME SimpleMixCommunicationBestEffort
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
-
-    # Set test with label NoMemoryCheck
-    set_property(TEST SimpleMixCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
-
-    set_property(TEST SimpleMixCommunicationBestEffort PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-    set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationPubSub>")
-    set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-        "XML_FILE=simple_besteffort_profile.xml")
-    if(WIN32)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-    endif()
-
-    add_test(NAME SimpleMixCommunicationReliable
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
-
-    # Set test with label NoMemoryCheck
-    set_property(TEST SimpleMixCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
-
-    set_property(TEST SimpleMixCommunicationReliable PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-    set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationPubSub>")
-    set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
-        "XML_FILE=simple_reliable_profile.xml")
-    if(WIN32)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
-            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-    endif()
 
     if(SECURITY)
         add_test(NAME SimpleCommunicationSecureBestEffort
@@ -543,36 +434,7 @@ if(PYTHONINTERP_FOUND)
 
     endif()
 
-    add_test(NAME LivelinessAssertion
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
-    # Set test with label NoMemoryCheck
-    set_property(TEST LivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
-
-    set_property(TEST LivelinessAssertion PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-    set_property(TEST LivelinessAssertion APPEND PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-    if(WIN32)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set_property(TEST LivelinessAssertion APPEND PROPERTY ENVIRONMENT
-            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-    endif()
-    add_test(NAME AutomaticLivelinessAssertion
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/automatic_liveliness_assertion.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
-
-    # Set test with label NoMemoryCheck
-    set_property(TEST AutomaticLivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
-
-    set_property(TEST AutomaticLivelinessAssertion PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-    set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-    if(WIN32)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
-            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-    endif()
 
     add_test(NAME TwoPublishersCommunicationBestEffort
         COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
@@ -584,53 +446,13 @@ if(PYTHONINTERP_FOUND)
         "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
     set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
         "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-    set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-        "XML_FILE=simple_besteffort_profile.xml")
+
     if(WIN32)
         string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
         set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
 
-    add_test(NAME TwoPublishersCommunicationReliable
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py)
-
-    # Set test with label NoMemoryCheck
-    set_property(TEST TwoPublishersCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
-
-    set_property(TEST TwoPublishersCommunicationReliable PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-    set_property(TEST TwoPublishersCommunicationReliable APPEND PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-    set_property(TEST TwoPublishersCommunicationReliable APPEND PROPERTY ENVIRONMENT
-        "XML_FILE=simple_reliable_profile.xml")
-    if(WIN32)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set_property(TEST TwoPublishersCommunicationReliable APPEND PROPERTY ENVIRONMENT
-            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-    endif()
-
-    add_test(NAME SimpleCommunicationBestEffortFixed
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
-
-    # Set test with label NoMemoryCheck
-    set_property(TEST SimpleCommunicationBestEffortFixed PROPERTY LABELS "NoMemoryCheck")
-
-    set_property(TEST SimpleCommunicationBestEffortFixed PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-    set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-    set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
-        "XML_FILE=simple_besteffort_profile.xml")
-    set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
-        "EXTRA_PUB_ARG=--fixed_type")
-    set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
-        "EXTRA_SUB_ARG=--fixed_type")
-    if(WIN32)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
-            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-    endif()
 
     add_test(NAME SHMCommunicationSubscriberDiesWhileProcessingMessage
         COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
