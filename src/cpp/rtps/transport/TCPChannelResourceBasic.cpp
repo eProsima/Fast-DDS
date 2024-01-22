@@ -210,6 +210,14 @@ void TCPChannelResourceBasic::shutdown(
     socket_->shutdown(what);
 }
 
+void TCPChannelResourceBasic::waitConnection_to_accept(
+        const std::shared_ptr<asio::ip::tcp::socket> socket)
+{
+    socket_ = socket;
+    tcp_connection_type_ = TCPConnectionType::TCP_ACCEPT_TYPE;
+    connection_status_ = eConnectionStatus::eConnected;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
