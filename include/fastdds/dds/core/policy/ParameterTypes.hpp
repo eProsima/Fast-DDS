@@ -25,7 +25,7 @@
 #include <fastdds/rtps/common/Token.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
@@ -352,7 +352,7 @@ public:
     ParameterString_t(
             ParameterId_t pid,
             uint16_t in_length,
-            const fastrtps::string_255& strin)
+            const fastcdr::string_255& strin)
         : Parameter_t(pid, in_length)
         , string_(strin)
     {
@@ -392,7 +392,7 @@ public:
 private:
 
     //!Name. <br> By default, empty string.
-    fastrtps::string_255 string_;
+    fastcdr::string_255 string_;
 };
 
 /**

@@ -18,7 +18,7 @@
  */
 
 #include <fastdds/rtps/common/CacheChange.h>
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 #include <fastdds/rtps/common/Guid.h>
 
 #include <rtps/builtin/discovery/database/DiscoveryParticipantChangeData.hpp>
@@ -87,7 +87,7 @@ public:
 
     DiscoveryEDPDataQueueInfo(
             eprosima::fastrtps::rtps::CacheChange_t* change,
-            const eprosima::fastrtps::string_255& topic)
+            const eprosima::fastcdr::string_255& topic)
         : DiscoveryDataQueueInfo(change)
         , topic_(topic)
     {
@@ -97,14 +97,14 @@ public:
     {
     }
 
-    eprosima::fastrtps::string_255 topic()
+    eprosima::fastcdr::string_255 topic()
     {
         return topic_;
     }
 
 private:
 
-    const eprosima::fastrtps::string_255 topic_;
+    const eprosima::fastcdr::string_255 topic_;
 
 };
 

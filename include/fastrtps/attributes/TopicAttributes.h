@@ -75,7 +75,7 @@ public:
         * Get the topic data type
         * @return Topic data type
         */
-        const string_255& getTopicDataType() const {
+        const fastcdr::string_255& getTopicDataType() const {
             return topicDataType;
         }
 
@@ -91,16 +91,16 @@ public:
          * Get the topic name
          * @return Topic name
          */
-        const string_255& getTopicName() const {
+        const fastcdr::string_255& getTopicName() const {
             return topicName;
         }
 
         //! TopicKind_t, default value NO_KEY.
         rtps::TopicKind_t topicKind;
         //! Topic Name.
-        string_255 topicName;
+        fastcdr::string_255 topicName;
         //!Topic Data Type.
-        string_255 topicDataType;
+        fastcdr::string_255 topicDataType;
         //!QOS Regarding the History to be saved.
         HistoryQosPolicy historyQos;
         //!QOS Regarding the resources to allocate.

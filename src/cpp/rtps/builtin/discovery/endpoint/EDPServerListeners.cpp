@@ -22,7 +22,7 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
 

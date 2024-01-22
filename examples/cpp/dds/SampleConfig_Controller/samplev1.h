@@ -27,7 +27,7 @@
 #define _FAST_DDS_GENERATED_SAMPLE_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <array>
 #include <bitset>

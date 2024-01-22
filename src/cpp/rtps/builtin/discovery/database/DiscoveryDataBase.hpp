@@ -27,7 +27,7 @@
 #include <set>
 #include <vector>
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/common/CacheChange.h>

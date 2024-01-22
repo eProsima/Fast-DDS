@@ -24,7 +24,7 @@
 #if FASTCDR_VERSION_MAJOR == 1
 
 #include <fastcdr/exceptions/BadParamException.h>
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastcdr {

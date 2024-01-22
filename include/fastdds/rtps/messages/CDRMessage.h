@@ -16,6 +16,7 @@
  * @file CDRMessage.h
  */
 
+
 #ifndef _FASTDDS_RTPS_CDRMESSAGE_H_
 #define _FASTDDS_RTPS_CDRMESSAGE_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
@@ -28,9 +29,10 @@
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Locator.h>
-#include <fastrtps/utils/fixed_size_string.hpp>
 
 #include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
+
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -124,7 +126,7 @@ inline bool readString(
 
 inline bool readString(
         CDRMessage_t* msg,
-        string_255* stri);
+        fastcdr::string_255* stri);
 
 inline bool readOctetVector(
         CDRMessage_t* msg,
@@ -278,7 +280,7 @@ inline bool add_string(
 
 inline bool add_string(
         CDRMessage_t* msg,
-        const string_255& in_str);
+        const fastcdr::string_255& in_str);
 
 inline bool addOctetVector(
         CDRMessage_t* msg,

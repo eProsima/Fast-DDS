@@ -22,7 +22,7 @@
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <rtps/builtin/discovery/database/DiscoverySharedInfo.hpp>
 

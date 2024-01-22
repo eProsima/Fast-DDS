@@ -697,7 +697,7 @@ protected:
         void on_type_discovery(
                 fastrtps::rtps::RTPSParticipant* participant,
                 const fastrtps::rtps::SampleIdentity& request_sample_id,
-                const fastrtps::string_255& topic,
+                const fastcdr::string_255& topic,
                 const fastrtps::types::TypeIdentifier* identifier,
                 const fastrtps::types::TypeObject* object,
                 fastrtps::types::DynamicType_ptr dyn_type) override;
@@ -709,8 +709,8 @@ protected:
 
         void on_type_information_received(
                 fastrtps::rtps::RTPSParticipant* participant,
-                const fastrtps::string_255& topic_name,
-                const fastrtps::string_255& type_name,
+                const fastcdr::string_255& topic_name,
+                const fastcdr::string_255& type_name,
                 const fastrtps::types::TypeInformation& type_information) override;
 
         DomainParticipantImpl* participant_;

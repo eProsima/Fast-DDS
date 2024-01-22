@@ -24,7 +24,7 @@
 
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -199,7 +199,7 @@ public:
     }
 
     static inline uint32_t cdr_serialized_size(
-            const fastrtps::string_255& str)
+            const fastcdr::string_255& str)
     {
         // Size including NUL char at the end
         uint32_t str_siz = static_cast<uint32_t>(str.size()) + 1;
@@ -323,7 +323,7 @@ inline bool ParameterSerializer<ParameterString_t>::read_content_from_cdr_messag
     }
 
     parameter.length = parameter_length;
-    fastrtps::string_255 aux;
+    fastcdr::string_255 aux;
     bool valid = fastrtps::rtps::CDRMessage::readString(cdr_message, &aux);
     parameter.setName(aux.c_str());
     return valid;
@@ -831,7 +831,7 @@ public:
             // sequence length
             ret_val += 4;
             // Add all parameters
-            for (const fastrtps::string_255& param : parameter.expression_parameters)
+            for (const fastcdr::string_255& param : parameter.expression_parameters)
             {
                 ret_val += cdr_serialized_size(param);
             }
@@ -870,7 +870,7 @@ public:
             uint32_t num_params = static_cast<uint32_t>(parameter.expression_parameters.size());
             valid &= fastrtps::rtps::CDRMessage::addUInt32(cdr_message, num_params);
             // Add all parameters
-            for (const fastrtps::string_255& param : parameter.expression_parameters)
+            for (const fastcdr::string_255& param : parameter.expression_parameters)
             {
                 valid &= fastrtps::rtps::CDRMessage::add_string(cdr_message, param);
             }
@@ -928,7 +928,7 @@ public:
                 {
                     for (uint32_t i = 0; valid && i < num_parameters; ++i)
                     {
-                        fastrtps::string_255* p = parameter.expression_parameters.push_back({});
+                        fastcdr::string_255* p = parameter.expression_parameters.push_back({});
                         assert(nullptr != p);
                         valid = read_string(cdr_message, *p);
                     }
@@ -950,7 +950,7 @@ public:
 private:
 
     static inline uint32_t cdr_serialized_size(
-            const fastrtps::string_255& str)
+            const fastcdr::string_255& str)
     {
         // Size including NUL char at the end
         uint32_t str_siz = static_cast<uint32_t>(str.size()) + 1;
@@ -972,7 +972,7 @@ private:
 
     static inline bool read_string(
             fastrtps::rtps::CDRMessage_t* cdr_message,
-            fastrtps::string_255& str)
+            fastcdr::string_255& str)
     {
         uint32_t str_size = 0;
         bool valid;

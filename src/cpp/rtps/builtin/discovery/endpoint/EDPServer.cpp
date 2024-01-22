@@ -24,7 +24,7 @@
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
