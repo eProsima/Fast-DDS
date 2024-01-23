@@ -228,16 +228,6 @@ set(${PROJECT_NAME}_source_files
     utils/TimedConditionVariable.cpp
     utils/string_convert.cpp
 
-    dds/core/types.cpp
-    dds/core/Exception.cpp
-    dds/domain/DomainParticipant.cpp
-    dds/pub/Publisher.cpp
-    dds/pub/AnyDataWriter.cpp
-    dds/pub/DataWriter.cpp
-    dds/sub/Subscriber.cpp
-    dds/sub/DataReader.cpp
-    dds/topic/Topic.cpp
-
     statistics/fastdds/domain/DomainParticipant.cpp
     statistics/fastdds/publisher/qos/DataWriterQos.cpp
     statistics/fastdds/subscriber/qos/DataReaderQos.cpp
