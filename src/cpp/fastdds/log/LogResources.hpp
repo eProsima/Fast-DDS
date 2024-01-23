@@ -24,7 +24,7 @@ namespace detail {
 
 struct LogResources;
 
-std::shared_ptr<LogResources> get_log_resources();
+const std::shared_ptr<LogResources>& get_log_resources();
 
 }  // namespace detail
 }  // namespace dds
