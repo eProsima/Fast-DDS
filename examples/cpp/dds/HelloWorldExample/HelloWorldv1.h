@@ -178,11 +178,11 @@ public:
 
 
     /*!
-    * @brief This function returns the maximum serialized size of an object
-    * depending on the buffer alignment.
-    * @param current_alignment Buffer alignment.
-    * @return Maximum serialized size.
-    */
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -216,17 +216,16 @@ public:
 
 
     /*!
-    * @brief This function tells you if the Key has been defined for this type
-    */
+     * @brief This function tells you if the Key has been defined for this type
+     */
     eProsima_user_DllExport static bool isKeyDefined();
 
     /*!
-    * @brief This function serializes the key members of an object using CDR serialization.
-    * @param cdr CDR serialization object.
-    */
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
     eProsima_user_DllExport void serializeKey(
             eprosima::fastcdr::Cdr& cdr) const;
-
 
 private:
 

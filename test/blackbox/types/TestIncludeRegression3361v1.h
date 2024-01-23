@@ -69,7 +69,7 @@ class Cdr;
 
 
 namespace TestModule {
-    typedef std::string MACHINEID;
+typedef std::string MACHINEID;
 
 } // namespace TestModule
 
