@@ -561,6 +561,9 @@ int fastdds_discovery_server(
         // Handle signal SIGINT for every thread
         signal(SIGINT, sigint_handler);
         signal(SIGTERM, sigint_handler);
+#ifndef _WIN32
+        signal(SIGHUP, sigint_handler);
+#endif // ifndef _WIN32
 
         bool has_security = false;
         if (guid_prefix != pServer->guid().guidPrefix)
