@@ -27,7 +27,6 @@
 #define _FAST_DDS_GENERATED_FLOWCONTROLEXAMPLE_H_
 
 
-#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <array>
 #include <bitset>

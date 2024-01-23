@@ -34,7 +34,6 @@
 #include <string>
 #include <vector>
 
-#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)

@@ -16,7 +16,6 @@
  * @file CDRMessage.h
  */
 
-
 #ifndef _FASTDDS_RTPS_CDRMESSAGE_H_
 #define _FASTDDS_RTPS_CDRMESSAGE_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

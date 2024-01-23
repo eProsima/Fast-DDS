@@ -26,7 +26,6 @@
 #ifndef _FAST_DDS_GENERATED_FILTERINGEXAMPLE_H_
 #define _FAST_DDS_GENERATED_FILTERINGEXAMPLE_H_
 
-
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <array>

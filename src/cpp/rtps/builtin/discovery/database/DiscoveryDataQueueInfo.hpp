@@ -17,8 +17,6 @@
  *
  */
 
-#include <fastcdr/cdr/fixed_size_string.hpp>
-
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/Guid.h>
 
