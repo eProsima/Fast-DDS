@@ -28,6 +28,7 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/DynamicData.h>
@@ -175,7 +176,7 @@ private:
     std::vector<std::chrono::duration<double, std::micro>> times_;
 
     /* Data */
-    eprosima::fastrtps::SampleInfo_t sampleinfo_;
+    eprosima::fastdds::dds::SampleInfo sampleinfo_;
     std::vector<TimeStats> stats_;
     uint64_t raw_sample_count_ = 0;
 
