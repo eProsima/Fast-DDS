@@ -53,7 +53,18 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
     }
     else if (TK_UNION == type_descriptor_.kind())
     {
-        // MemberId 0 is reserved to discriminator.
+        MemberDescriptorImpl discriminator_descriptor;
+        discriminator_descriptor.id(0);
+        discriminator_descriptor.index(0);
+        discriminator_descriptor.name("discriminator");
+        discriminator_descriptor.type(type_descriptor.discriminator_type());
+
+        traits<DynamicTypeMemberImpl>::ref_type dyn_member = std::make_shared<DynamicTypeMemberImpl>(
+            discriminator_descriptor);
+        members_.push_back(dyn_member);
+        member_by_name_.emplace(std::make_pair("discriminator", dyn_member));
+        member_.emplace(std::make_pair(0, dyn_member));
+        next_index_ = 1;
         next_id_ = 1;
     }
 }
@@ -261,15 +272,23 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
                         EPROSIMA_LOG_ERROR(DYN_TYPES,
                                 "Member " << member_impl->member_descriptor_.name().c_str() << " already contains the label " <<
                                 label);
-                        return false;
+                        return RETCODE_BAD_PARAMETER;
                     }
                 }
 
-                if (new_label >= default_union_label_)
+                // Recalculate the default discriminator value (for default case or default implicit member).
+                if (new_label >= default_discriminator_value_)
                 {
-                    default_union_label_ = new_label + 1;
+                    default_discriminator_value_ = new_label + 1;
                 }
             }
+        }
+
+        // In case of default case, store the related MemberId.
+        if (descriptor_impl->is_default_label())
+        {
+            assert(MEMBER_ID_INVALID != descriptor_impl->id());
+            default_union_member_ = descriptor_impl->id();
         }
     }
 
@@ -437,7 +456,8 @@ traits<DynamicType>::ref_type DynamicTypeBuilderImpl::build() noexcept
         ret_val->member_ = member_;
         ret_val->member_by_name_ = member_by_name_;
         ret_val->members_ = members_;
-        ret_val->default_union_label_ = default_union_label_;
+        ret_val->default_discriminator_value_ = default_discriminator_value_;
+        ret_val->default_union_member_ = default_union_member_;
     }
 
     return ret_val;

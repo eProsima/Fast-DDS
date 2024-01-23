@@ -94,6 +94,16 @@ public:
         return type_descriptor_;
     }
 
+    int32_t default_discriminator_value() const noexcept
+    {
+        return default_discriminator_value_;
+    }
+
+    MemberId default_union_member() const noexcept
+    {
+        return default_union_member_;
+    }
+
 protected:
 
     traits<DynamicType>::ref_type _this();
@@ -112,7 +122,9 @@ private:
 
     std::vector<VerbatimTextDescriptorImpl> verbatim_;
 
-    int32_t default_union_label_ {0};
+    int32_t default_discriminator_value_ {0};
+
+    MemberId default_union_member_ {MEMBER_ID_INVALID};
 };
 
 } // namespace dds

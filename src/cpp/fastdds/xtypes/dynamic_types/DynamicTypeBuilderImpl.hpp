@@ -108,7 +108,9 @@ private:
 
     MemberId next_id_ {0};
 
-    int32_t default_union_label_ {0};
+    int32_t default_discriminator_value_ {0};
+
+    MemberId default_union_member_ {MEMBER_ID_INVALID};
 };
 
 } // namespace dds
