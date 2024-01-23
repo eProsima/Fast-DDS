@@ -142,11 +142,11 @@ void TypeLookupReplyListener::check_get_types_reply(
         ReturnCode_t register_result = RETCODE_ERROR;
         for (xtypes::TypeIdentifierTypeObjectPair pair : reply.types())
         {
-            if (RETCODE_OK != fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                            register_type_object(pair.type_identifier(), pair.type_object()))
+            register_result = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                            register_type_object(pair.type_identifier(), pair.type_object());
+            if (RETCODE_OK != register_result)
             {
                 // If registration fails for any type, break out of the loop
-                register_result = RETCODE_PRECONDITION_NOT_MET;
                 break;
             }
         }
