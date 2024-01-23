@@ -1,6 +1,10 @@
 Forthcoming
 -----------
 
+* Rename project to `fastdds`.
+* Rename to `FASTDDS_DEFAULT_PROFILES_FILE` and `FASTDDS_DEFAULT_PROFILES` environment variables when loading XML profiles.
+* Remove API marked as deprecated.
+
 Version 2.13.0
 --------------
 
