@@ -732,6 +732,94 @@ TEST_P(TransportTCP, TCPv6_autofill_port)
     EXPECT_TRUE(IPLocator::getPhysicalPort(p2_locators.begin()[0]) == port);
 }
 
+// Test TCPv4 transport on LARGE_DATA topology
+TEST_P(TransportTCP, TCPv4_large_data_topology)
+{
+    /* Test configuration */
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Reliable Keep_all to wait of all acked as end condition
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
+
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
+
+    // Force TCP EDP discovery & data communication and UDP PDP discovery (NO SHM)
+    bool use_v6 = false;
+    writer.setup_large_data_tcp(use_v6);
+    reader.setup_large_data_tcp(use_v6);
+
+    /* Run test */
+    // Init writer
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Init reader
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Send data
+    auto data = default_helloworld_data_generator();
+    reader.startReception(data);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    // Wait for reception acknowledgement
+    reader.block_for_all();
+    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
+
+}
+
+// Test TCPv6 transport on LARGE_DATA topology
+TEST_P(TransportTCP, TCPv6_large_data_topology)
+{
+    /* Test configuration */
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Reliable Keep_all to wait of all acked as end condition
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
+
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
+
+    // Force TCP EDP discovery & data communication and UDP PDP discovery (NO SHM)
+    bool use_v6 = true;
+    writer.setup_large_data_tcp(use_v6);
+    reader.setup_large_data_tcp(use_v6);
+
+    /* Run test */
+    // Init writer
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Init reader
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Send data
+    auto data = default_helloworld_data_generator();
+    reader.startReception(data);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    // Wait for reception acknowledgement
+    reader.block_for_all();
+    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
+
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
