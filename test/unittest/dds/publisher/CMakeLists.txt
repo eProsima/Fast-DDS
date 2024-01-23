@@ -297,7 +297,6 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     endif(TINYXML2_INCLUDE_DIR)
 
     set(PUBLISHERTESTS_SOURCE PublisherTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dds/pub/DataWriter.cpp
     )
 
 if(WIN32)
