@@ -962,27 +962,18 @@ bool ReaderProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_TYPE_IDV1:
                     {
-                        if (!fastdds::dds::QosPoliciesSerializer<TypeIdV1>::read_from_cdr_message(type_id(), msg,
-                                plength))
-                        {
-                            return false;
-                        }
+                        EPROSIMA_LOG_WARNING(RTPS_PROXY_DATA, "PID_TYPE_IDV1 not supported");
                         break;
                     }
                     case fastdds::dds::PID_TYPE_OBJECTV1:
                     {
-                        if (!fastdds::dds::QosPoliciesSerializer<TypeObjectV1>::read_from_cdr_message(type(), msg,
-                                plength))
-                        {
-                            return false;
-                        }
+                        EPROSIMA_LOG_WARNING(RTPS_PROXY_DATA, "PID_TYPE_OBJECTV1 not supported");
                         break;
                     }
                     case fastdds::dds::PID_TYPE_INFORMATION:
                     {
                         if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::
-                                read_from_cdr_message(
-                                    type_information(), msg, plength))
+                                read_from_cdr_message(type_information(), msg, plength))
                         {
                             return false;
                         }

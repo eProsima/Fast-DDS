@@ -87,6 +87,9 @@ public:
 
         //! Bit index for matching failing due to inconsistent partitions
         static const uint32_t partitions = (0x00000001 << 3u);
+
+        //! Bit index for matching failing due to inconsistent TypeInformation
+        static const uint32_t different_typeinfo = (0x00000001 << 4u);
     };
 
     /**
