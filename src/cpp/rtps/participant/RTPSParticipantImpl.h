@@ -555,8 +555,6 @@ private:
     std::string guid_str_;
     //!Persistence guid of the RTPSParticipant
     GUID_t m_persistence_guid;
-    //! Sending resources. - DEPRECATED -Stays commented for reference purposes
-    // ResourceSend* mp_send_thr;
     //! Event Resource
     ResourceEvent mp_event_thr;
     //! BuiltinProtocols of this RTPSParticipant

@@ -81,6 +81,7 @@ public:
      * @param[out] payload Pointer to the payload
      * @return True if correct.
      */
+    // TODO(jlbueno) Remove when Fast DDS-Gen is updated
     // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
     RTPS_DllAPI virtual bool serialize(
             void* data,

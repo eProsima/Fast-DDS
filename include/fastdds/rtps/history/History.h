@@ -65,48 +65,6 @@ public:
     HistoryAttributes m_att;
 
     /**
-     * Reserve a CacheChange_t from the CacheChange pool.
-     * @param[out] change Pointer to pointer to the CacheChange_t to reserve
-     * @param[in] calculateSizeFunc Function to calculate the size of the payload.
-     * @return True if reserved
-     * @warning This method has been deprecated and will be removed on v3.0.0
-     */
-    FASTDDS_DEPRECATED("Use new_change on RTPSWriter or reserveCache on RTPSReader")
-    RTPS_DllAPI inline bool reserve_Cache(
-            CacheChange_t** change,
-            const std::function<uint32_t()>& calculateSizeFunc)
-    {
-        return do_reserve_cache(change, calculateSizeFunc());
-    }
-
-    /**
-     * Reserve a CacheChange_t from the CacheChange pool.
-     * @param[out] change Pointer to pointer to the CacheChange_t to reserve
-     * @param[in] dataSize Required size for the payload.
-     * @return True if reserved
-     * @warning This method has been deprecated and will be removed on v3.0.0
-     */
-    FASTDDS_DEPRECATED("Use new_change on RTPSWriter or reserveCache on RTPSReader")
-    RTPS_DllAPI inline bool reserve_Cache(
-            CacheChange_t** change,
-            uint32_t dataSize)
-    {
-        return do_reserve_cache(change, dataSize);
-    }
-
-    /**
-     * release a previously reserved CacheChange_t.
-     * @param ch Pointer to the CacheChange_t.
-     * @warning This method has been deprecated and will be removed on v3.0.0
-     */
-    FASTDDS_DEPRECATED("Use release_change on RTPSWriter or releaseCache on RTPSReader")
-    RTPS_DllAPI inline void release_Cache(
-            CacheChange_t* ch)
-    {
-        do_release_cache(ch);
-    }
-
-    /**
      * Check if the history is full
      * @return true if the History is full.
      */
