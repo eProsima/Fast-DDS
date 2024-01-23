@@ -25,9 +25,6 @@ set(STRINGMATCHINGTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
-set(FIXEDSIZESTRINGTESTS_SOURCE
-    FixedSizeStringTests.cpp)
-
 set(BITMAPRANGETESTS_SOURCE
     BitmapRangeTests.cpp)
 
@@ -70,17 +67,6 @@ if(MSVC OR MSVC_IDE)
         )
 endif()
 gtest_discover_tests(StringMatchingTests)
-
-
-add_executable(FixedSizeStringTests ${FIXEDSIZESTRINGTESTS_SOURCE})
-target_compile_definitions(FixedSizeStringTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
-target_include_directories(FixedSizeStringTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-target_link_libraries(FixedSizeStringTests fastcdr GTest::gtest ${MOCKS})
-gtest_discover_tests(FixedSizeStringTests)
 
 
 add_executable(BitmapRangeTests ${BITMAPRANGETESTS_SOURCE})

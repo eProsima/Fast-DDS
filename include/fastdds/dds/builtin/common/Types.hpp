@@ -29,12 +29,7 @@ namespace fastdds {
 namespace dds {
 namespace rpc {
 
-using InstanceName =
-#if FASTCDR_VERSION_MAJOR == 1
-        fastcdr::string_255;
-#else
-        fastcdr::string_255;
-#endif // FASTCDR_VERSION_MAJOR == 1
+using InstanceName = fastcdr::string_255;
 
 enum RemoteExceptionCode_t
 {
