@@ -17,9 +17,9 @@
 
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 class TCPTransportInterface;
 
@@ -33,18 +33,25 @@ class TCPTransportInterface;
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct TCPv6TransportDescriptor: public TCPTransportDescriptor
+typedef struct TCPv6TransportDescriptor : public TCPTransportDescriptor
 {
-    virtual ~TCPv6TransportDescriptor(){}
+    virtual ~TCPv6TransportDescriptor()
+    {
+    }
 
-    virtual TransportInterface* create_transport() const override {	return nullptr;	}
+    virtual TransportInterface* create_transport() const override
+    {
+        return nullptr;
+    }
 
     RTPS_DllAPI TCPv6TransportDescriptor()
     {
 
     }
 
-    RTPS_DllAPI TCPv6TransportDescriptor(const TCPv6TransportDescriptor& /*t*/) : TCPv6TransportDescriptor()
+    RTPS_DllAPI TCPv6TransportDescriptor(
+            const TCPv6TransportDescriptor& /*t*/)
+        : TCPv6TransportDescriptor()
     {
 
     }

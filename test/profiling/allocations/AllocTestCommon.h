@@ -22,8 +22,7 @@
 
 #include <string>
 
-namespace eprosima_profiling
-{
+namespace eprosima_profiling {
 
 /**
  * Used to run callgrind with --zero-before=callgrind_zero_count.

@@ -24,66 +24,106 @@
 
 class VideoType
 {
-    public:
+public:
 
-        uint32_t seqnum;
-        uint64_t timestamp;
-        uint64_t duration;
-        std::vector<uint8_t> data;
+    uint32_t seqnum;
+    uint64_t timestamp;
+    uint64_t duration;
+    std::vector<uint8_t> data;
 
-        VideoType(): seqnum(0), timestamp(0), duration(0)
-        {}
+    VideoType()
+        : seqnum(0)
+        , timestamp(0)
+        , duration(0)
+    {
+    }
 
-        VideoType(uint32_t number) :
-            seqnum(0), timestamp(0), duration(0), data(number, 0)
-        {
-        }
+    VideoType(
+            uint32_t number)
+        : seqnum(0)
+        , timestamp(0)
+        , duration(0)
+        , data(number, 0)
+    {
+    }
 
-        ~VideoType() {}
+    ~VideoType()
+    {
+    }
+
 };
 
 
-inline bool operator==(const VideoType& lt1, const VideoType& lt2)
+inline bool operator ==(
+        const VideoType& lt1,
+        const VideoType& lt2)
 {
     if (lt1.seqnum != lt2.seqnum)
-        return false;
-    if (lt1.timestamp != lt2.timestamp)
-        return false;
-    if (lt1.duration != lt2.duration)
-        return false;
-
-    if(lt1.data.size()!=lt2.data.size())
-        return false;
-    for(size_t i = 0;i<lt1.data.size();++i)
     {
-        if(lt1.data.at(i) != lt2.data.at(i))
+        return false;
+    }
+    if (lt1.timestamp != lt2.timestamp)
+    {
+        return false;
+    }
+    if (lt1.duration != lt2.duration)
+    {
+        return false;
+    }
+
+    if (lt1.data.size() != lt2.data.size())
+    {
+        return false;
+    }
+    for (size_t i = 0; i < lt1.data.size(); ++i)
+    {
+        if (lt1.data.at(i) != lt2.data.at(i))
+        {
             return false;
+        }
     }
     return true;
 }
 
 class VideoDataType : public eprosima::fastdds::dds::TopicDataType
 {
-    public:
-        VideoDataType()
-        {
-            setName("VideoType");
-            m_typeSize = 17000;
-            m_isGetKeyDefined = false;
-        };
-        ~VideoDataType(){};
-        bool serialize(void*data, eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
-        bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data) override;
-        std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-        void* createData() override;
-        void deleteData(void* data) override;
-        bool getKey(void* /*data*/, eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/, bool force_md5 = false) override {
-            (void)force_md5;
-            return false;
-        }
+public:
+
+    VideoDataType()
+    {
+        setName("VideoType");
+        m_typeSize = 17000;
+        m_isGetKeyDefined = false;
+    }
+
+    ~VideoDataType()
+    {
+    }
+
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override;
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override;
+    void* createData() override;
+    void deleteData(
+            void* data) override;
+    bool getKey(
+            void* /*data*/,
+            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool force_md5 = false) override
+    {
+        (void)force_md5;
+        return false;
+    }
+
 };
 
-enum TESTCOMMAND:uint32_t{
+enum TESTCOMMAND : uint32_t
+{
     DEFAULT,
     READY,
     BEGIN,
@@ -94,31 +134,54 @@ enum TESTCOMMAND:uint32_t{
 typedef struct TestCommandType
 {
     TESTCOMMAND m_command;
-    TestCommandType(){
+    TestCommandType()
+    {
         m_command = DEFAULT;
     }
-    TestCommandType(TESTCOMMAND com):m_command(com){}
+
+    TestCommandType(
+            TESTCOMMAND com)
+        : m_command(com)
+    {
+    }
+
 }TestCommandType;
 
 class TestCommandDataType : public eprosima::fastdds::dds::TopicDataType
 {
-    public:
-        TestCommandDataType()
-        {
-            setName("TestCommandType");
-            m_typeSize = 4;
-            m_isGetKeyDefined = false;
-        };
-        ~TestCommandDataType(){};
-        bool serialize(void*data,eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
-        bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data) override;
-        std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-        void* createData() override;
-        void deleteData(void* data) override;
-        bool getKey(void* /*data*/, eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/, bool force_md5 = false) override {
-            (void)force_md5;
-            return false;
-        }
+public:
+
+    TestCommandDataType()
+    {
+        setName("TestCommandType");
+        m_typeSize = 4;
+        m_isGetKeyDefined = false;
+    }
+
+    ~TestCommandDataType()
+    {
+    }
+
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override;
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override;
+    void* createData() override;
+    void deleteData(
+            void* data) override;
+    bool getKey(
+            void* /*data*/,
+            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool force_md5 = false) override
+    {
+        (void)force_md5;
+        return false;
+    }
+
 };
 
 

@@ -21,19 +21,19 @@
 #if !defined(FASTDDS_DYN_LINK) && !defined(FASTDDS_STATIC_LINK) \
     && !defined(EPROSIMA_ALL_DYN_LINK) && !defined(EPROSIMA_ALL_STATIC_LINK)
 #define FASTDDS_STATIC_LINK
-#endif
+#endif // if !defined(FASTDDS_DYN_LINK) && !defined(FASTDDS_STATIC_LINK) && !defined(EPROSIMA_ALL_DYN_LINK) && !defined(EPROSIMA_ALL_STATIC_LINK)
 
 #if defined(EPROSIMA_ALL_DYN_LINK) && !defined(FASTDDS_DYN_LINK)
 #define FASTDDS_DYN_LINK
-#endif
+#endif // if defined(EPROSIMA_ALL_DYN_LINK) && !defined(FASTDDS_DYN_LINK)
 
 #if defined(FASTDDS_DYN_LINK) && defined(FASTDDS_STATIC_LINK)
 #error Must not define both FASTDDS_DYN_LINK and FASTDDS_STATIC_LINK
-#endif
+#endif // if defined(FASTDDS_DYN_LINK) && defined(FASTDDS_STATIC_LINK)
 
 #if defined(EPROSIMA_ALL_NO_LIB) && !defined(FASTDDS_NO_LIB)
 #define FASTDDS_NO_LIB
-#endif
+#endif // if defined(EPROSIMA_ALL_NO_LIB) && !defined(FASTDDS_NO_LIB)
 
 // enable dynamic linking
 
@@ -46,7 +46,7 @@
 #endif // FASTDDS_SOURCE
 #else
 #define RTPS_DllAPI
-#endif
+#endif // if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTDDS_DYN_LINK)
 #else
 #define RTPS_DllAPI
 #endif // _WIN32
@@ -61,7 +61,7 @@
 
 #if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTDDS_DYN_LINK)
 #define EPROSIMA_DYN_LINK
-#endif
+#endif // if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTDDS_DYN_LINK)
 
 #include <fastrtps/eProsima_auto_link.h>
 #endif // auto-linking disabled

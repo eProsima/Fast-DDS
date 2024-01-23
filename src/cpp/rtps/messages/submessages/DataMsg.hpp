@@ -125,13 +125,15 @@ struct DataMsgUtils
         {
             fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_sample_identity(msg,
                     change->write_params.related_sample_identity());
-            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_custom_related_sample_identity(msg,
-                    change->write_params.related_sample_identity());
+            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_custom_related_sample_identity(
+                msg,
+                change->write_params.related_sample_identity());
         }
 
         if (WITH_KEY == topicKind && (expectsInlineQos || ALIVE != change->kind))
         {
-            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg, change->instanceHandle);
+            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
+                    change->instanceHandle);
 
             if (ALIVE != change->kind)
             {
@@ -251,7 +253,9 @@ bool RTPSMessageCreator::addSubmessageData(
         added_no_error &=
                 fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
                         change->instanceHandle);
-        added_no_error &= fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
+        added_no_error &=
+                fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg,
+                        status);
         added_no_error &= fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_sentinel(msg);
     }
 

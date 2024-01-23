@@ -31,7 +31,7 @@ namespace fastrtps {
  *
  * Based on std::queue<T>.
  */
-template<typename T, typename Sequence = std::deque<T> >
+template<typename T, typename Sequence = std::deque<T>>
 class ConcurrentQueue final
 {
     using Queue = std::queue<T, Sequence>;
@@ -113,7 +113,8 @@ public:
     {
         std::unique_lock<std::mutex> lock(mutex_);
 
-        has_data_.wait(lock, [&](){
+        has_data_.wait(lock, [&]()
+                {
                     return !queue_.empty();
                 });
 

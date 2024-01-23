@@ -67,7 +67,7 @@ public:
      * Adds a sequence number to the GAP list.
      *
      * @remark Sequence numbers should be added in strict increasing order.
-     * 
+     *
      * @param gap_sequence Sequence number to be added to the GAP list.
      * @return false if a GAP message couldn't be added to the message group,
      *         true if no GAP message was needed or it was successfully added.
@@ -103,5 +103,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* RTPSGAPBUILDER_HPP */

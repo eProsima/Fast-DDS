@@ -29,7 +29,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
- /**
+/**
  * Class RTPSMessageGroup_t that contains the messages used to send multiples changes as one message.
  * @ingroup WRITER_MODULE
  */
@@ -40,14 +40,14 @@ public:
     RTPSMessageGroup_t(
 #if HAVE_SECURITY
             bool has_security,
-#endif
+#endif // if HAVE_SECURITY
             uint32_t payload,
             const GuidPrefix_t& participant_guid)
         : rtpsmsg_submessage_(0u)
         , rtpsmsg_fullmsg_(0u)
 #if HAVE_SECURITY
         , rtpsmsg_encrypt_(0u)
-#endif
+#endif // if HAVE_SECURITY
     {
         rtpsmsg_fullmsg_.reserve(payload);
         rtpsmsg_submessage_.reserve(payload);
@@ -57,7 +57,7 @@ public:
         {
             rtpsmsg_encrypt_.reserve(payload);
         }
-#endif
+#endif // if HAVE_SECURITY
 
         init(participant_guid);
     }
@@ -66,14 +66,14 @@ public:
             octet* buffer_ptr,
 #if HAVE_SECURITY
             bool has_security,
-#endif
+#endif // if HAVE_SECURITY
             uint32_t payload,
             const GuidPrefix_t& participant_guid)
         : rtpsmsg_submessage_(0u)
         , rtpsmsg_fullmsg_(0u)
 #if HAVE_SECURITY
         , rtpsmsg_encrypt_(0u)
-#endif
+#endif // if HAVE_SECURITY
     {
         rtpsmsg_fullmsg_.init(buffer_ptr, payload);
         buffer_ptr += payload;
@@ -85,7 +85,7 @@ public:
             buffer_ptr += payload;
             rtpsmsg_encrypt_.init(buffer_ptr, payload);
         }
-#endif
+#endif // if HAVE_SECURITY
 
         init(participant_guid);
     }
@@ -103,7 +103,7 @@ public:
 
 #if HAVE_SECURITY
     CDRMessage_t rtpsmsg_encrypt_;
-#endif
+#endif // if HAVE_SECURITY
 };
 
 } // namespace rtps

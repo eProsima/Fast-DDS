@@ -27,8 +27,7 @@
 
 using MemoryToolsService = osrf_testing_tools_cpp::memory_tools::MemoryToolsService;
 
-namespace eprosima_profiling
-{
+namespace eprosima_profiling {
 
 /**
  * Used to run callgrind with --zero-before=*callgrind_zero_count.
@@ -59,26 +58,34 @@ static std::atomic<std::atomic_size_t*> g_deallocationsPtr(g_deallocations);
 
 const std::regex is_fastdds("fastdds");
 
-static void allocation_account(MemoryToolsService & service)
+static void allocation_account(
+        MemoryToolsService& service)
 {
     // It makes no sense to track allocations if they don't come from our library
     auto stack = service.get_stack_trace();
     if (stack != nullptr && stack->matches_any_object_function(is_fastdds))
     {
         (*g_allocationsPtr.load())++;
-        if (g_print_alloc_traces) service.print_backtrace();
+        if (g_print_alloc_traces)
+        {
+            service.print_backtrace();
+        }
     }
     service.ignore();
 }
 
-static void deallocation_account(MemoryToolsService & service)
+static void deallocation_account(
+        MemoryToolsService& service)
 {
     // It makes no sense to track allocations if they don't come from our library
     auto stack = service.get_stack_trace();
     if (stack != nullptr && stack->matches_any_object_function(is_fastdds))
     {
         (*g_deallocationsPtr.load())++;
-        if (g_print_dealloc_traces) service.print_backtrace();
+        if (g_print_dealloc_traces)
+        {
+            service.print_backtrace();
+        }
     }
     service.ignore();
 }
@@ -163,11 +170,11 @@ void print_results(
         const std::string& entity,
         const std::string& config)
 {
-    if(!g_print_results)
+    if (!g_print_results)
     {
         return;
     }
-    
+
     std::string output_filename = file_prefix;
     if (file_prefix.length() == 0)
     {
@@ -185,10 +192,10 @@ void print_results(
     if (pos == 0)
     {
         output_stream << "\"Discovery allocations\", \"Discovery deallocations\","
-            << " \"First sample allocations\", \"First sample deallocations\","
-            << " \"Data exchange allocations\", \"Data exchange deallocations\","
-            << " \"Undiscovery allocations\", \"Undiscovery deallocations\""
-            << std::endl;
+                      << " \"First sample allocations\", \"First sample deallocations\","
+                      << " \"Data exchange allocations\", \"Data exchange deallocations\","
+                      << " \"Undiscovery allocations\", \"Undiscovery deallocations\""
+                      << std::endl;
     }
 
     for (size_t i = 0; i < 4; i++)

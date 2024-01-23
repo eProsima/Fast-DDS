@@ -68,9 +68,9 @@ public:
 
 // TODO(jlbueno): Uncomment after migrating to Fast DDS API
 /*
-// TCP and Domain management with logical ports tests
-TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P1_D0_D0)
-{
+   // TCP and Domain management with logical ports tests
+   TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P1_D0_D0)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
     const uint16_t nmsgs = 5;
@@ -95,10 +95,10 @@ TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P1_D0_D0)
         requester.send(count);
         requester.block();
     }
-}
+   }
 
-TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P1_D0_D1)
-{
+   TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P1_D0_D1)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
@@ -115,10 +115,10 @@ TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P1_D0_D1)
 
     ASSERT_FALSE(requester.is_matched());
     ASSERT_FALSE(replier.is_matched());
-}
+   }
 
-TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P1_D1_D0)
-{
+   TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P1_D1_D0)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
@@ -136,10 +136,10 @@ TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P1_D1_D0)
     ASSERT_FALSE(requester.is_matched());
     ASSERT_FALSE(replier.is_matched());
 
-}
+   }
 
-TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P3_D0_D0)
-{
+   TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P3_D0_D0)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
     const uint16_t nmsgs = 5;
@@ -162,10 +162,10 @@ TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P3_D0_D0)
         requester.block();
     }
 
-}
+   }
 
-TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P3_D0_D1)
-{
+   TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P3_D0_D1)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
@@ -182,10 +182,10 @@ TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P3_D0_D1)
 
     ASSERT_FALSE(requester.is_matched());
     ASSERT_FALSE(replier.is_matched());
-}
+   }
 
-TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P3_D1_D0)
-{
+   TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P3_D1_D0)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
@@ -203,10 +203,10 @@ TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P3_D1_D0)
     ASSERT_FALSE(requester.is_matched());
     ASSERT_FALSE(replier.is_matched());
 
-}
+   }
 
-TEST_P(TransportTCP, TCPDomainHelloWorld_P3_P0_D0_D0)
-{
+   TEST_P(TransportTCP, TCPDomainHelloWorld_P3_P0_D0_D0)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
     const uint16_t nmsgs = 5;
@@ -232,10 +232,10 @@ TEST_P(TransportTCP, TCPDomainHelloWorld_P3_P0_D0_D0)
         requester.block();
     }
 
-}
+   }
 
-TEST_P(TransportTCP, TCPDomainHelloWorld_P3_P0_D0_D1)
-{
+   TEST_P(TransportTCP, TCPDomainHelloWorld_P3_P0_D0_D1)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
@@ -252,10 +252,10 @@ TEST_P(TransportTCP, TCPDomainHelloWorld_P3_P0_D0_D1)
 
     ASSERT_FALSE(requester.is_matched());
     ASSERT_FALSE(replier.is_matched());
-}
+   }
 
-TEST_P(TransportTCP, TCPDomainHelloWorld_P3_P0_D1_D0)
-{
+   TEST_P(TransportTCP, TCPDomainHelloWorld_P3_P0_D1_D0)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
@@ -273,10 +273,10 @@ TEST_P(TransportTCP, TCPDomainHelloWorld_P3_P0_D1_D0)
     ASSERT_FALSE(requester.is_matched());
     ASSERT_FALSE(replier.is_matched());
 
-}
+   }
 
-TEST_P(TransportTCP, TCPDomainHelloWorld_P2_P3_D0_D0)
-{
+   TEST_P(TransportTCP, TCPDomainHelloWorld_P2_P3_D0_D0)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
     const uint16_t nmsgs = 5;
@@ -299,10 +299,10 @@ TEST_P(TransportTCP, TCPDomainHelloWorld_P2_P3_D0_D0)
         requester.block();
     }
 
-}
+   }
 
-TEST_P(TransportTCP, TCPDomainHelloWorld_P2_P3_D0_D1)
-{
+   TEST_P(TransportTCP, TCPDomainHelloWorld_P2_P3_D0_D1)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
@@ -319,10 +319,10 @@ TEST_P(TransportTCP, TCPDomainHelloWorld_P2_P3_D0_D1)
 
     ASSERT_FALSE(requester.is_matched());
     ASSERT_FALSE(replier.is_matched());
-}
+   }
 
-TEST_P(TransportTCP, TCPDomainHelloWorld_P2_P3_D1_D0)
-{
+   TEST_P(TransportTCP, TCPDomainHelloWorld_P2_P3_D1_D0)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
@@ -339,10 +339,10 @@ TEST_P(TransportTCP, TCPDomainHelloWorld_P2_P3_D1_D0)
 
     ASSERT_FALSE(requester.is_matched());
     ASSERT_FALSE(replier.is_matched());
-}
+   }
 
-TEST_P(TransportTCP, TCPMaxInitialPeer_P0_4_P3)
-{
+   TEST_P(TransportTCP, TCPMaxInitialPeer_P0_4_P3)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
@@ -360,10 +360,10 @@ TEST_P(TransportTCP, TCPMaxInitialPeer_P0_4_P3)
 
     ASSERT_TRUE(requester.is_matched());
     ASSERT_TRUE(replier.is_matched());
-}
+   }
 
-TEST_P(TransportTCP, TCPMaxInitialPeer_P0_4_P4)
-{
+   TEST_P(TransportTCP, TCPMaxInitialPeer_P0_4_P4)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
@@ -380,10 +380,10 @@ TEST_P(TransportTCP, TCPMaxInitialPeer_P0_4_P4)
 
     ASSERT_FALSE(requester.is_matched());
     ASSERT_FALSE(replier.is_matched());
-}
+   }
 
-TEST_P(TransportTCP, TCPMaxInitialPeer_P0_5_P4)
-{
+   TEST_P(TransportTCP, TCPMaxInitialPeer_P0_5_P4)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
@@ -401,14 +401,14 @@ TEST_P(TransportTCP, TCPMaxInitialPeer_P0_5_P4)
 
     ASSERT_TRUE(requester.is_matched());
     ASSERT_TRUE(replier.is_matched());
-}
-*/
+   }
+ */
 
 #if TLS_FOUND
 // TODO(jlbueno): Uncomment after migrating to Fast DDS API
 /*
-TEST_P(TransportTCP, TCP_TLS)
-{
+   TEST_P(TransportTCP, TCP_TLS)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
@@ -426,11 +426,11 @@ TEST_P(TransportTCP, TCP_TLS)
 
     ASSERT_TRUE(requester.is_matched());
     ASSERT_TRUE(replier.is_matched());
-}
+   }
 
-// Test successful removal of client after previously matched server is removed
-TEST_P(TransportTCP, TCP_TLS_client_disconnect_after_server)
-{
+   // Test successful removal of client after previously matched server is removed
+   TEST_P(TransportTCP, TCP_TLS_client_disconnect_after_server)
+   {
     TCPReqRepHelloWorldRequester* requester = new TCPReqRepHelloWorldRequester();
     TCPReqRepHelloWorldReplier* replier = new TCPReqRepHelloWorldReplier();
 
@@ -453,12 +453,12 @@ TEST_P(TransportTCP, TCP_TLS_client_disconnect_after_server)
     delete replier;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     delete requester;
-}
+   }
 
-// Test successful removal of server after previously matched client is removed
-// Issue -> https://eprosima.easyredmine.com/issues/16288
-TEST_P(TransportTCP, TCP_TLS_server_disconnect_after_client)
-{
+   // Test successful removal of server after previously matched client is removed
+   // Issue -> https://eprosima.easyredmine.com/issues/16288
+   TEST_P(TransportTCP, TCP_TLS_server_disconnect_after_client)
+   {
     TCPReqRepHelloWorldReplier* replier = new TCPReqRepHelloWorldReplier();
     TCPReqRepHelloWorldRequester* requester = new TCPReqRepHelloWorldRequester();
 
@@ -481,8 +481,8 @@ TEST_P(TransportTCP, TCP_TLS_server_disconnect_after_client)
     delete requester;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     delete replier;
-}
-*/
+   }
+ */
 
 void tls_init()
 {
@@ -500,8 +500,8 @@ void tls_init()
 // Regression test for ShrinkLocators/transform_remote_locators mechanism.
 // TODO(jlbueno): Uncomment after migrating to Fast DDS API
 /*
-TEST_P(TransportTCP, TCPLocalhost)
-{
+   TEST_P(TransportTCP, TCPLocalhost)
+   {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
     const uint16_t nmsgs = 5;
@@ -526,8 +526,8 @@ TEST_P(TransportTCP, TCPLocalhost)
         requester.send(count);
         requester.block();
     }
-}
-*/
+   }
+ */
 
 // Test for ==operator TCPTransportDescriptor is not required as it is an abstract class and in TCPv6 is same method
 // Test for copy TCPTransportDescriptor is not required as it is an abstract class and in TCPv6 is same method
@@ -625,8 +625,8 @@ TEST_P(TransportTCP, TCPv6_copy)
 // Issue -> https://github.com/eProsima/Fast-DDS/issues/2409
 // TODO(jlbueno): Uncomment after migrating to Fast DDS API
 /*
-TEST(TransportTCP, Client_reconnection)
-{
+   TEST(TransportTCP, Client_reconnection)
+   {
     TCPReqRepHelloWorldReplier* replier;
     TCPReqRepHelloWorldRequester* requester;
     const uint16_t nmsgs = 5;
@@ -682,8 +682,8 @@ TEST(TransportTCP, Client_reconnection)
 
     delete replier;
     delete requester;
-}
-*/
+   }
+ */
 
 // Test copy constructor and copy assignment for TCPv4
 TEST_P(TransportTCP, TCPv4_autofill_port)
