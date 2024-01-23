@@ -16,20 +16,18 @@
  * @file EDPServerListener.cpp
  *
  */
+#include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
+
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
-#include <fastcdr/cdr/fixed_size_string.hpp>
-
 #include <fastdds/dds/log/Log.hpp>
-
-#include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
-#include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
-#include <rtps/builtin/discovery/participant/PDPServer.hpp>
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {

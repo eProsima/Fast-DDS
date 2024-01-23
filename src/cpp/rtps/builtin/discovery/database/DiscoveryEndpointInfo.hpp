@@ -20,11 +20,12 @@
 #ifndef _FASTDDS_RTPS_DISCOVERY_ENDPOINT_INFO_H_
 #define _FASTDDS_RTPS_DISCOVERY_ENDPOINT_INFO_H_
 
-#include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <rtps/builtin/discovery/database/DiscoverySharedInfo.hpp>
+
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include <rtps/builtin/discovery/database/DiscoverySharedInfo.hpp>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
 #include <nlohmann/json.hpp>
 

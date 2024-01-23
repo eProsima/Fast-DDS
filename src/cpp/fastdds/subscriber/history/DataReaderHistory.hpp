@@ -25,6 +25,8 @@
 #include <memory>
 #include <utility>
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
@@ -42,7 +44,6 @@
 
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 
-#include <fastcdr/cdr/fixed_size_string.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 #include "DataReaderHistoryCounters.hpp"

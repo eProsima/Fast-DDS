@@ -21,7 +21,6 @@
 #define TYPES_HPP
 
 #include <fastcdr/config.h>
-
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
 

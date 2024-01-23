@@ -19,10 +19,10 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
+
 #include <memory>
 #include <regex>
-
-#include <fastcdr/cdr/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastdds {

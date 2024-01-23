@@ -22,10 +22,10 @@
 #include <array>
 #include <cstdint>
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
+
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
-
-#include <fastcdr/cdr/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastdds {

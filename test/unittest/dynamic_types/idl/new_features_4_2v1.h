@@ -26,9 +26,6 @@
 #ifndef _FAST_DDS_GENERATED_NEW_FEATURES_4_2_H_
 #define _FAST_DDS_GENERATED_NEW_FEATURES_4_2_H_
 
-
-#include <fastcdr/cdr/fixed_size_string.hpp>
-
 #include <array>
 #include <bitset>
 #include <cstdint>
@@ -36,6 +33,8 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)

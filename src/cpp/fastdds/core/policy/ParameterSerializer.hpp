@@ -22,10 +22,10 @@
 
 #include "ParameterList.hpp"
 
-#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
-#include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
+#include <fastdds/rtps/common/CDRMessage_t.h>
 namespace eprosima {
 namespace fastdds {
 namespace dds {
