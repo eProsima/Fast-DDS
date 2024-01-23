@@ -202,7 +202,7 @@ void TypeLookupRequestListener::check_get_types_request(
             minimal_id = type_id;
             // Get complete TypeIdentifier from registry
             complete_id = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                            complete_from_minimal_type_identifier(minimal_id);
+                            get_complementary_type_identifier(minimal_id);
 
             xtypes::TypeIdentifierPair id_pair;
             id_pair.type_identifier1(complete_id);

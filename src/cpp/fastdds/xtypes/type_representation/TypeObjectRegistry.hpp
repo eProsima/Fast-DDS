@@ -270,13 +270,13 @@ public:
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
 
     /**
-     * @brief Get Complete TypeIdentifier from Minimal TypeIdentifier.
+     * @brief Get Complementary TypeIdentifier.
      *
-     * @param minimal_type_id Direct hash minimal TypeIdentifier
-     * @return TypeIdentifier Complete TypeIdentifier related to the given Minimal TypeIdentifier.
-     *         Same TypeIdentifier if the given TypeIdentifier is not a direct hash minimal TypeIdentifier.
+     * @param type_id Direct hash TypeIdentifier
+     * @return TypeIdentifier complementary to the given type_id.
+     *         Same TypeIdentifier if the given TypeIdentifier is not a direct hash TypeIdentifier.
      */
-    const TypeIdentifier complete_from_minimal_type_identifier(
+    const TypeIdentifier get_complementary_type_identifier(
             const TypeIdentifier& minimal_type_id);
 
     // Only DomainParticipantFactory is allowed to instantiate the TypeObjectRegistry class.
@@ -734,16 +734,6 @@ protected:
      * @brief Register TypeIdentifiers corresponding to the primitive types.
      */
     void register_primitive_type_identifiers();
-
-    /**
-     * @brief Get Minimal TypeIdentifier from Complete TypeIdentifier.
-     *
-     * @param complete_type_id Direct hash complete TypeIdentifier
-     * @return TypeIdentifier Minimal TypeIdentifier related to the given Complete TypeIdentifier.
-     *         Same TypeIdentifier if the given TypeIdentifier is not a direct hash complete TypeIdentifier.
-     */
-    const TypeIdentifier minimal_from_complete_type_identifier(
-            const TypeIdentifier& complete_type_id);
 
     // Collection of local TypeIdentifiers hashed by type_name.
     // TypeIdentifierPair contains both the minimal and complete TypeObject TypeIdentifiers.
