@@ -34,7 +34,7 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 
-#include <rtps/xmlparser/XMLParserUtils.hpp>
+#include <xmlparser/XMLParserUtils.hpp>
 
 namespace eprosima {
 namespace fastrtps {

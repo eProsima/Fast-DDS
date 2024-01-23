@@ -33,7 +33,7 @@
 
 #include "../common/env_var_utils.hpp"
 #include "../logging/mock/MockConsumer.h"
-#include "rtps/xmlparser/XMLParserUtils.hpp"
+#include "xmlparser/XMLParserUtils.hpp"
 #include "wrapper/XMLParserTest.hpp"
 
 using namespace eprosima::fastdds::dds;

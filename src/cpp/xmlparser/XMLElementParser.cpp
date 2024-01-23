@@ -27,14 +27,14 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/UnitsParser.hpp>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <rtps/xmlparser/XMLParserUtils.hpp>
 #include <utils/SystemInfo.hpp>
 #include <utils/string_utilities.hpp>
-#include <fastrtps/utils/UnitsParser.hpp>
+#include <xmlparser/XMLParserUtils.hpp>
 
 namespace eprosima {
 namespace fastdds {
