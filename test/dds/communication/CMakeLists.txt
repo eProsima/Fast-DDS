@@ -46,7 +46,7 @@ target_compile_definitions(DDSSimpleCommunicationDynamicSubscriber PRIVATE
     )
 target_link_libraries(DDSSimpleCommunicationDynamicSubscriber fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
-# Standar tests
+# Standard tests
 set(COMMON_SOURCE
     ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorld.cxx
     ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldv1.cxx
@@ -176,7 +176,7 @@ endif()
 # Tests specification
 ###############################################################################
 if(PYTHONINTERP_FOUND)
-    ### Dynamic types test ###
+    # Dynamic types test
     add_test(NAME DDSSimpleCommunicationTypeDiscovery
         COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication_dynamic.py)
 
@@ -194,7 +194,7 @@ if(PYTHONINTERP_FOUND)
     endif()
 
 
-    ### Standard types test ###
+    # Standard types test
     set(TEST_BUILDER ${BINARY_TEST_DIR}test_build.py)
 
     foreach(TEST_DEFINITION IN LISTS TEST_DEFINITIONS)
@@ -222,7 +222,7 @@ if(PYTHONINTERP_FOUND)
     endforeach()
 
 
-    ### Liveliness tests ###
+    # Liveliness tests
     add_test(NAME LivelinessAssertion
         COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
     # Set test with label NoMemoryCheck
