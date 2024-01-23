@@ -84,74 +84,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/two_publishers_communication.py
     ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message.py
     ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_besteffort_pub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_besteffort_pub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_besteffort_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_besteffort_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/multiple_subs_secure_crypto_communication.py
-    ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_crypto_besteffort_pub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_crypto_besteffort_pub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_crypto_besteffort_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_crypto_besteffort_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_submsg_crypto_besteffort_pub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_submsg_crypto_besteffort_pub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_submsg_crypto_besteffort_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_submsg_crypto_besteffort_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_pub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_pub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_pubsub_secure_crypto_communication.py
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
-    ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_msg_crypto_pub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_msg_crypto_pub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_msg_crypto_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_msg_crypto_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_msg_crypto_ds_1_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_msg_crypto_ds_1_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_discovery_no_rtps_protection_pub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_discovery_no_rtps_protection_pub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_discovery_no_rtps_protection_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_discovery_no_rtps_protection_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_discovery_no_rtps_protection_ds_1_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_discovery_no_rtps_protection_ds_1_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_discovery_protection_pub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_discovery_protection_pub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_discovery_protection_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_discovery_protection_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_discovery_protection_ds_1_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_discovery_protection_ds_1_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_rtps_protection_pub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_rtps_protection_pub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_rtps_protection_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_rtps_protection_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_rtps_protection_ds_1_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_rtps_protection_ds_1_sub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_idx_1_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_idx_1_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_discovery_no_rtps_protection_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_discovery_no_rtps_protection_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_discovery_no_rtps_protection_idx_1_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_discovery_no_rtps_protection_idx_1_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_discovery_protection_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_discovery_protection_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_discovery_protection_idx_1_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_discovery_protection_idx_1_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_rtps_protection_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_rtps_protection_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_rtps_protection_idx_1_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_rtps_protection_idx_1_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_allow_unauthenticated_pub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_allow_unauthenticated_pub_profile.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_allow_unauthenticated_sub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_allow_unauthenticated_sub_profile.xml COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake @ONLY)
 
@@ -523,7 +455,6 @@ if(Python3_Interpreter_FOUND)
 
     endif()
 
-<<<<<<< HEAD
     add_test(NAME LivelinessAssertion
         COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${Python3_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
@@ -554,9 +485,6 @@ if(Python3_Interpreter_FOUND)
         set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
-=======
-
->>>>>>> c3be93453 (Refs #20391: Migrate liveliness tests)
 
     add_test(NAME TwoPublishersCommunicationBestEffort
         COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${Python3_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
@@ -575,7 +503,6 @@ if(Python3_Interpreter_FOUND)
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
 
-<<<<<<< HEAD
     add_test(NAME TwoPublishersCommunicationReliable
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py)
 
@@ -615,8 +542,6 @@ if(Python3_Interpreter_FOUND)
         set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
-=======
->>>>>>> c3be93453 (Refs #20391: Migrate liveliness tests)
 
     add_test(NAME SHMCommunicationSubscriberDiesWhileProcessingMessage
         COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${Python3_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
