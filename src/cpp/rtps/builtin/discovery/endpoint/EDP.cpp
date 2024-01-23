@@ -597,6 +597,15 @@ bool EDP::valid_matching(
         return false;
     }
 
+    if (wdata->type_information().assigned() && rdata->type_information().assigned())
+    {
+        if (wdata->type_information().type_information != rdata->type_information().type_information)
+        {
+            reason.set(MatchingFailureMask::different_typeinfo);
+            return false;
+        }
+    }
+
     if (wdata->topicKind() != rdata->topicKind())
     {
         EPROSIMA_LOG_WARNING(RTPS_EDP, "INCOMPATIBLE QOS:Remote Reader " << rdata->guid() << " is publishing in topic "
