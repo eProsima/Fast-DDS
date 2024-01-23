@@ -128,24 +128,25 @@ void EDPBasePUBListener::add_writer_from_change(
         // Remove change from history.
         reader_history->remove_change(reader_history->find_change(change), release_change);
 
+        // At this point, we can release the reader lock because the change is not used
+        reader->getMutex().unlock();
+
         // Check if TypeInformation exists to start the typelookup service
         if (temp_writer_data->type_information().assigned())
         {
-            // At this point, we can release the reader lock because the change is not used
-            reader->getMutex().unlock();
-
             edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
                 temp_writer_data,
                 after_typelookup_callback);
-
-            // Take the reader lock again if needed.
-            reader->getMutex().lock();
         }
+        // If TypeInformation does not exists, try fallbacks
         else
         {
-            // Check if TypeInformation does not exists, log error
-            EPROSIMA_LOG_ERROR(RTPS_EDP, "EDPBasePUBListener::add_writer_from_change: No TypeInformation");
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "EDPBasePUBListener: No TypeInformation. Using fallbacks");
+            after_typelookup_callback(temp_writer_data);
         }
+
+        // Take the reader lock again if needed.
+        reader->getMutex().lock();
     }
 }
 
@@ -262,24 +263,25 @@ void EDPBaseSUBListener::add_reader_from_change(
         // Remove change from history.
         reader_history->remove_change(reader_history->find_change(change), release_change);
 
+        // At this point, we can release the reader lock because the change is not used
+        reader->getMutex().unlock();
+
         // Check if TypeInformation exists to start the typelookup service
         if (temp_reader_data->type_information().assigned())
         {
-            // At this point, we can release the reader lock because the change is not used
-            reader->getMutex().unlock();
-
             edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
                 temp_reader_data,
                 after_typelookup_callback);
-
-            // Take the reader lock again if needed.
-            reader->getMutex().lock();
         }
+        // If TypeInformation does not exists, try fallbacks
         else
         {
-            // Check if TypeInformation does not exists, log error
-            EPROSIMA_LOG_ERROR(RTPS_EDP, "EDPBasePUBListener::add_reader_from_change: No TypeInformation");
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "EDPBasePUBListener: No TypeInformation. Using fallbacks");
+            after_typelookup_callback(temp_reader_data);
         }
+
+        // Take the reader lock again if needed.
+        reader->getMutex().lock();
     }
 }
 
