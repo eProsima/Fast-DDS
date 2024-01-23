@@ -18,6 +18,8 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
+#include "DynamicTypeImpl.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -188,13 +190,50 @@ bool TypeDescriptorImpl::is_consistent() noexcept
     }
 
     // Only union types need the discriminator of the union
-    if (TK_UNION == kind_ && !discriminator_type_)
+    if (TK_UNION == kind_)
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes an UNION but discriminant_type was not set");
-        return false;
+        if (!discriminator_type_)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes an UNION but discriminant_type was not set");
+            return false;
+        }
+        else
+        {
+            // Check discriminator kind and the type is a integer (labels are int32_t).
+            // boolean, byte, char8, char16, int8, uint8, int16, uint16, int32, uint32, enumera, alias
+            TypeKind discriminator_kind = discriminator_type_->get_kind();
+            auto discriminator_type = traits<DynamicType>::narrow<DynamicTypeImpl>(discriminator_type_);
+
+            if (TK_ALIAS == discriminator_kind)     // If alias, get enclosing type.
+            {
+                do {
+                    discriminator_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
+                        discriminator_type->get_descriptor().base_type());
+                    discriminator_kind = discriminator_type->get_kind();
+                } while (TK_ALIAS == discriminator_kind);
+            }
+
+            switch (discriminator_kind)
+            {
+                case TK_BOOLEAN:
+                case TK_BYTE:
+                case TK_CHAR8:
+                case TK_CHAR16:
+                case TK_INT8:
+                case TK_UINT8:
+                case TK_INT16:
+                case TK_UINT16:
+                case TK_INT32:
+                case TK_UINT32:
+                case TK_ENUM:
+                    break;
+                default:
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Discriminantor kind was not valid");
+                    return false;
+                    break;
+            }
+        }
     }
-    // TODO(richiware) if union, check discriminator kind and the type is a integer (labels are UINT64).
-    //boolean, byte, char8, char16, int8, uint8, int16, uint16, int32, uint32, enumera, alias
 
     // ElementType is used by these types to set the "value" type of the element, otherwise it should be null.
     if (!element_type_ && (

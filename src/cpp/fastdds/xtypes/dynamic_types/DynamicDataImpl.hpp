@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "DynamicTypeImpl.hpp"
+#include "TypeForKind.hpp"
 
 namespace eprosima {
 
@@ -39,6 +40,8 @@ class DynamicDataImpl : public traits<DynamicData>::base_type
     std::map<MemberId, std::shared_ptr<void>> value_;
 
     std::vector<MemberId> loaned_values_;
+
+    MemberId selected_union_member_ {MEMBER_ID_INVALID};
 
 public:
 
@@ -401,6 +404,62 @@ private:
             size_t& current_alignment) const noexcept;
 
     /*!
+     * Auxiliary function for checking the new discriminator value set by the user is correct.
+     */
+    template<typename T, typename std::enable_if<std::is_integral<T>::value, bool>::type = true>
+    bool check_new_discriminator_value(
+            const T& value)
+    {
+        bool ret_value = false;
+
+        if (MEMBER_ID_INVALID != selected_union_member_) // There is a member selected by current discriminator.
+        {
+            traits<DynamicTypeMember>::ref_type selected_member;
+            type_->get_member(selected_member, selected_union_member_);
+            auto sm_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(selected_member);
+
+            for (auto label : sm_impl->get_descriptor().label())
+            {
+                if (static_cast<int32_t>(value) == label)
+                {
+                    ret_value = true;
+                    break;
+                }
+            }
+        }
+        else // It is selected the implicit default member.
+        {
+            ret_value = true;
+
+            if (type_->default_discriminator_value() != static_cast<int32_t>(value))
+            {
+                for (auto member : type_->get_all_members_by_index())
+                {
+                    auto m_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+
+                    for (auto label : m_impl->get_descriptor().label())
+                    {
+                        if (static_cast<int32_t>(value) == label)
+                        {
+                            ret_value = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return ret_value;
+    }
+
+    template<typename T, typename std::enable_if<!std::is_integral<T>::value, bool>::type = true>
+    bool check_new_discriminator_value(
+            const T&)
+    {
+        return false;
+    }
+
+    /*!
      * Auxiliary function to clear completely a sequence.
      * Only valid for TK_ARRAY or TK_SEQUENCE.
      */
@@ -456,6 +515,11 @@ private:
      */
     uint32_t get_sequence_length();
 
+    template<TypeKind TK >
+    ReturnCode_t get_primitive_value(
+            TypeForKind<TK>& value,
+            MemberId member_id) noexcept;
+
     /*!
      * Auxiliary template with the common code for getting the values of a sequence from a TK_ARRAY or TK_SEQUENCE.
      */
@@ -464,14 +528,28 @@ private:
             Sequence& value,
             MemberId id) noexcept;
 
-    template<typename T, int TK, class Sequence>
+    template<TypeKind TK >
     ReturnCode_t get_value(
-            T& value,
+            TypeForKind<TK>& value,
             MemberId id) noexcept;
 
-    void set_value(
-            const ObjectName& value,
+    /*!
+     * Auxiliary function for setting the discriminator value to a label of the member specified by the MemberId.
+     */
+    void set_discriminator_value(
             MemberId id) noexcept;
+
+    /*!
+     * Auxiliary function to set the discriminator value on already given discriminator DynamicData.
+     */
+    void set_discriminator_value(
+            int32_t new_discriminator_value,
+            const traits<DynamicTypeImpl>::ref_type& discriminator_type,
+            traits<DynamicDataImpl>::ref_type& data) noexcept;
+
+    template<TypeKind TK>
+    ReturnCode_t set_primitive_value(
+            const TypeForKind<TK>& value) noexcept;
 
     /*!
      * Auxiliary template with the common code for setting the values of a sequence into a TK_ARRAY or TK_SEQUENCE.
@@ -481,13 +559,20 @@ private:
             MemberId id,
             const Sequence& value) noexcept;
 
+
+    /*!
+     * Auxiliary function to set the default value,specified by MemberDescriptor::default_value, to primitive types.
+     */
+    void set_value(
+            const ObjectName& value) noexcept;
+
     /*!
      * Auxiliary template with the common code for setting the value of a primitive type
      */
-    template<typename T, int TK, class Sequence>
+    template<TypeKind TK>
     ReturnCode_t set_value(
             MemberId id,
-            const T& value) noexcept;
+            const TypeForKind<TK>& value) noexcept;
 
     void set_default_value(
             const traits<DynamicTypeMemberImpl>::ref_type member,

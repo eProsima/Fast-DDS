@@ -105,7 +105,13 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type(
         traits<TypeDescriptor>::ref_type descriptor) noexcept
 {
     auto descriptor_impl = traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(descriptor);
-    return std::make_shared<DynamicTypeBuilderImpl>(*descriptor_impl);
+
+    if (descriptor_impl->is_consistent())
+    {
+        return std::make_shared<DynamicTypeBuilderImpl>(*descriptor_impl);
+    }
+
+    return {};
 }
 
 traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_copy(
