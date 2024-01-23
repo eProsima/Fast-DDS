@@ -144,7 +144,7 @@ private:
 
     class PartListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
-public:
+    public:
 
         PartListener(
                 TestPublisher* parent)
@@ -174,11 +174,12 @@ public:
         TestPublisher* parent_;
         std::atomic<bool> discovered_;
 
-    } part_listener_;
+    }
+    part_listener_;
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener()
         {
@@ -197,7 +198,8 @@ public:
 
         TestPublisher* mParent;
         int n_matched;
-    } m_pubListener;
+    }
+    m_pubListener;
 
     void runThread();
 };

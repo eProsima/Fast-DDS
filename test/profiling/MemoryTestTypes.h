@@ -24,56 +24,91 @@
 
 class MemoryType
 {
-    public:
+public:
 
-        uint32_t seqnum;
-        std::vector<uint8_t> data;
+    uint32_t seqnum;
+    std::vector<uint8_t> data;
 
-        MemoryType(): seqnum(0) {}
+    MemoryType()
+        : seqnum(0)
+    {
+    }
 
-        MemoryType(uint32_t number) :
-            seqnum(0), data(number,0) {}
+    MemoryType(
+            uint32_t number)
+        : seqnum(0)
+        , data(number, 0)
+    {
+    }
 
-        ~MemoryType() {}
+    ~MemoryType()
+    {
+    }
+
 };
 
 
-inline bool operator==(const MemoryType& lt1, const MemoryType& lt2)
+inline bool operator ==(
+        const MemoryType& lt1,
+        const MemoryType& lt2)
 {
-    if(lt1.seqnum!=lt2.seqnum)
-        return false;
-    if(lt1.data.size()!=lt2.data.size())
-        return false;
-    for(size_t i = 0;i<lt1.data.size();++i)
+    if (lt1.seqnum != lt2.seqnum)
     {
-        if(lt1.data.at(i) != lt2.data.at(i))
+        return false;
+    }
+    if (lt1.data.size() != lt2.data.size())
+    {
+        return false;
+    }
+    for (size_t i = 0; i < lt1.data.size(); ++i)
+    {
+        if (lt1.data.at(i) != lt2.data.at(i))
+        {
             return false;
+        }
     }
     return true;
 }
 
 class MemoryDataType : public eprosima::fastdds::dds::TopicDataType
 {
-    public:
-        MemoryDataType()
-        {
-            setName("MemoryType");
-            m_typeSize = 17000;
-            m_isGetKeyDefined = false;
-        };
-        ~MemoryDataType(){};
-        bool serialize(void*data, eprosima::fastrtps::rtps::SerializedPayload_t* payload);
-        bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data);
-        std::function<uint32_t()> getSerializedSizeProvider(void* data);
-        void* createData();
-        void deleteData(void* data);
-        bool getKey(void* /*data*/, eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/, bool force_md5 = false) override {
-            (void)force_md5;
-            return false;
-        }        
+public:
+
+    MemoryDataType()
+    {
+        setName("MemoryType");
+        m_typeSize = 17000;
+        m_isGetKeyDefined = false;
+    }
+
+    ~MemoryDataType()
+    {
+    }
+
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data);
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data);
+    void* createData();
+    void deleteData(
+            void* data);
+    bool getKey(
+            void* /*data*/,
+            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool force_md5 = false) override
+    {
+        (void)force_md5;
+        return false;
+    }
+
 };
 
-enum TESTCOMMAND:uint32_t{
+enum TESTCOMMAND : uint32_t
+{
     DEFAULT,
     READY,
     BEGIN,
@@ -84,31 +119,54 @@ enum TESTCOMMAND:uint32_t{
 typedef struct TestCommandType
 {
     TESTCOMMAND m_command;
-    TestCommandType(){
+    TestCommandType()
+    {
         m_command = DEFAULT;
     }
-    TestCommandType(TESTCOMMAND com):m_command(com){}
+
+    TestCommandType(
+            TESTCOMMAND com)
+        : m_command(com)
+    {
+    }
+
 }TestCommandType;
 
 class TestCommandDataType : public eprosima::fastdds::dds::TopicDataType
 {
-    public:
-        TestCommandDataType()
-        {
-            setName("TestCommandType");
-            m_typeSize = 4;
-            m_isGetKeyDefined = false;
-        };
-        ~TestCommandDataType(){};
-        bool serialize(void*data,eprosima::fastrtps::rtps::SerializedPayload_t* payload);
-        bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data);
-        std::function<uint32_t()> getSerializedSizeProvider(void* data);
-        void* createData();
-        void deleteData(void* data);
-        bool getKey(void* /*data*/, eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/, bool force_md5 = false) override {
-            (void)force_md5;
-            return false;
-        }        
+public:
+
+    TestCommandDataType()
+    {
+        setName("TestCommandType");
+        m_typeSize = 4;
+        m_isGetKeyDefined = false;
+    }
+
+    ~TestCommandDataType()
+    {
+    }
+
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data);
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data);
+    void* createData();
+    void deleteData(
+            void* data);
+    bool getKey(
+            void* /*data*/,
+            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool force_md5 = false) override
+    {
+        (void)force_md5;
+        return false;
+    }
+
 };
 
 

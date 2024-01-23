@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file MockCryptoKeyExchange.h	
+ * @file MockCryptoKeyExchange.h
  */
 #ifndef _RTPS_SECURITY_MOCKCRYPTOKEYEXCHANGE_H_
 #define _RTPS_SECURITY_MOCKCRYPTOKEYEXCHANGE_H_
@@ -30,49 +30,51 @@ namespace security {
 
 class MockCryptoKeyExchange : public CryptoKeyExchange
 {
-    public:
+public:
 
-        virtual ~MockCryptoKeyExchange(){}
+    virtual ~MockCryptoKeyExchange()
+    {
+    }
 
-        MOCK_METHOD4(create_local_participant_crypto_tokens, bool (
+    MOCK_METHOD4(create_local_participant_crypto_tokens, bool (
                 ParticipantCryptoTokenSeq&,
                 const ParticipantCryptoHandle&,
                 ParticipantCryptoHandle&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD4(set_remote_participant_crypto_tokens, bool (
+    MOCK_METHOD4(set_remote_participant_crypto_tokens, bool (
                 const ParticipantCryptoHandle&,
                 ParticipantCryptoHandle&,
                 const ParticipantCryptoTokenSeq&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD4(create_local_datawriter_crypto_tokens, bool (
+    MOCK_METHOD4(create_local_datawriter_crypto_tokens, bool (
                 DatawriterCryptoTokenSeq&,
                 DatawriterCryptoHandle&,
                 DatareaderCryptoHandle&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD4(create_local_datareader_crypto_tokens, bool (
+    MOCK_METHOD4(create_local_datareader_crypto_tokens, bool (
                 DatareaderCryptoTokenSeq&,
                 DatareaderCryptoHandle&,
                 DatawriterCryptoHandle&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD4(set_remote_datareader_crypto_tokens, bool (
+    MOCK_METHOD4(set_remote_datareader_crypto_tokens, bool (
                 DatawriterCryptoHandle&,
                 DatareaderCryptoHandle&,
                 const DatareaderCryptoTokenSeq&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD4(set_remote_datawriter_crypto_tokens, bool (
+    MOCK_METHOD4(set_remote_datawriter_crypto_tokens, bool (
                 DatareaderCryptoHandle&,
                 DatawriterCryptoHandle&,
                 const DatawriterCryptoTokenSeq&,
-                SecurityException&));
+                SecurityException &));
 
-        MOCK_METHOD2(return_crypto_tokens, bool (
+    MOCK_METHOD2(return_crypto_tokens, bool (
                 const CryptoTokenSeq&,
-                SecurityException&));
+                SecurityException &));
 
 };
 

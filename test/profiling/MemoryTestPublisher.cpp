@@ -166,7 +166,8 @@ bool MemoryTestPublisher::init(
     if (m_data_size > 60000)
     {
         PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        PubDataparam.qos.m_publishMode.kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
+        PubDataparam.qos.m_publishMode.kind =
+                eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
     }
 
     if (m_sXMLConfigFile.length() > 0)
