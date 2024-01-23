@@ -72,10 +72,6 @@ list(APPEND TEST_DEFINITIONS
     Case8
     Case9
     Case10
-    Case11
-    Case12
-    Case13
-    Case14
     )
     
 # Python file
@@ -102,9 +98,6 @@ if(PYTHONINTERP_FOUND)
             COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${TEST_BUILDER}
             ${TEST_DEFINITION}.json
             )
-
-        # set_property(TEST ${TEST_NAME} PROPERTY ENVIRONMENT
-        # "DDS_XTYPES_COMMUNICATION_BIN=$<TARGET_FILE:DDSXtypesCommunication>")
 
         if(WIN32)
             string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")

@@ -1,5 +1,5 @@
 {
-    "description": "Case 8: Subscriber from Type1 to Type39, Publisher knows Type1 ",
+    "description": "Case 8: Subscriber from Type1, Publisher knows Type1...Type100 ",
     "participants": [
         {
             "kind": "subscriber",
