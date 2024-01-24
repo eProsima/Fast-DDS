@@ -794,7 +794,8 @@ public:
         return *this;
     }
 
-    PubSubReader& expect_inline_qos(bool expect)
+    PubSubReader& expect_inline_qos(
+            bool expect)
     {
         subscriber_attr_.expectsInlineQos = expect;
         return *this;
