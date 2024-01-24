@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys, os, subprocess, glob
+import sys, os, subprocess, glob, time
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
 publisher_command = os.environ.get("SIMPLE_COMMUNICATION_PUBLISHER_BIN")
 if not publisher_command:
-    publisher_files = glob.glob(os.path.join(script_dir, "**/CommunicationPublisher*"), recursive=True)
+    publisher_files = glob.glob(os.path.join(script_dir, "**/SimpleCommunicationPublisher*"), recursive=True)
     pf = iter(publisher_files)
     publisher_command = next(pf, None)
     while publisher_command and (not os.path.isfile(publisher_command) or not os.access(publisher_command,
@@ -27,7 +27,7 @@ if not publisher_command:
 assert publisher_command
 subscriber_command = os.environ.get("SIMPLE_COMMUNICATION_SUBSCRIBER_BIN")
 if not subscriber_command:
-    subscriber_files = glob.glob(os.path.join(script_dir, "**/CommunicationSubscriber*"), recursive=True)
+    subscriber_files = glob.glob(os.path.join(script_dir, "**/SimpleCommunicationSubscriber*"), recursive=True)
     pf = iter(subscriber_files)
     subscriber_command = next(pf, None)
     while subscriber_command and (not os.path.isfile(subscriber_command) or not os.access(subscriber_command,
@@ -40,14 +40,6 @@ if extra_pub_arg:
     extra_pub_args = extra_pub_arg.split()
 else:
     extra_pub_args = []
-extra_pub_arg = os.environ.get("EXTRA_PUB_ARG")
-
-extra_sub_arg = os.environ.get("EXTRA_SUB_ARG")
-if extra_sub_arg:
-    extra_sub_args = extra_sub_arg.split()
-else:
-    extra_sub_args = []
-extra_sub_arg = os.environ.get("EXTRA_SUB_ARG")
 
 real_xml_file_pub = None
 real_xml_file_sub = None
@@ -63,16 +55,17 @@ else:
     if xml_file_sub:
         real_xml_file_sub = os.path.join(script_dir, xml_file_sub)
 
-
-subscriber1_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid())]
-        + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else [])
-        + extra_sub_args)
-publisher_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid())]
+subscriber1_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid()), "--publishers", "2", "--samples", "10"]
+        + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else []))
+publisher1_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid()), "--samples", "10"]
         + (["--xmlfile", real_xml_file_pub] if real_xml_file_pub else [])
         + extra_pub_args)
-subscriber2_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid())]
-        + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else [])
-        + extra_sub_args)
+time.sleep(1)
+publisher2_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid()), "--samples", "10"]
+        + (["--xmlfile", real_xml_file_pub] if real_xml_file_pub else [])
+        + extra_pub_args)
+subscriber2_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid()), "--publishers", "2", "--samples", "10"]
+        + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else []))
 
 subscriber1_proc.communicate()
 retvalue = subscriber1_proc.returncode
@@ -80,6 +73,7 @@ subscriber2_proc.communicate()
 if retvalue == 0:
     retvalue = subscriber2_proc.returncode
 
-publisher_proc.kill()
+publisher1_proc.kill()
+publisher2_proc.kill()
 
 sys.exit(retvalue)
