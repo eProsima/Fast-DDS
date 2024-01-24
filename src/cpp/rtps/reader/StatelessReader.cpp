@@ -714,6 +714,7 @@ bool StatelessReader::processDataFragMsg(
                             // Sample fits inside pending change. Reuse it.
                             work_change->copy_not_memcpy(change_to_add);
                             work_change->serializedPayload.length = sampleSize;
+                            work_change->instanceHandle.clear();
                             work_change->setFragmentSize(change_to_add->getFragmentSize(), true);
                         }
                         else
@@ -739,7 +740,7 @@ bool StatelessReader::processDataFragMsg(
                         {
                             work_change->copy_not_memcpy(change_to_add);
                             work_change->serializedPayload.length = sampleSize;
-                            work_change->instanceHandle = c_InstanceHandle_Unknown;
+                            work_change->instanceHandle.clear();
                             work_change->setFragmentSize(change_to_add->getFragmentSize(), true);
                         }
                     }
