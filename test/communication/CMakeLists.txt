@@ -80,8 +80,7 @@ target_link_libraries(SimpleCommunicationPubSub fastdds fastcdr foonathan_memory
 ###############################################################################
 # Necessary files
 ###############################################################################
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/two_publishers_communication.py
-    ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py COPYONLY)
+
 configure_file(${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake @ONLY)
 
@@ -112,28 +111,3 @@ if(SECURITY)
         ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld_securehelloworld.smime COPYONLY)
 endif()
 
-if(PYTHONINTERP_FOUND)
-
-
-
-
-    add_test(NAME TwoPublishersCommunicationBestEffort
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
-
-    # Set test with label NoMemoryCheck
-    set_property(TEST TwoPublishersCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
-
-    set_property(TEST TwoPublishersCommunicationBestEffort PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-    set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-
-    if(WIN32)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-    endif()
-
-
-
-endif()

@@ -135,6 +135,7 @@ list(APPEND PYTHON_FILES
     liveliness_assertion.py
     automatic_liveliness_assertion.py
     shm_communication_subscriber_dies_while_processing_message.py
+    two_publishers_communication.py
     )
 
 # Python files
@@ -274,6 +275,42 @@ if(PYTHONINTERP_FOUND)
     if(WIN32)
         string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
         set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage APPEND PROPERTY ENVIRONMENT
+            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+    endif()
+
+    add_test(NAME TwoPublishersCommunicationBestEffort
+    COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
+
+    # Set test with label NoMemoryCheck
+    set_property(TEST TwoPublishersCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
+
+    set_property(TEST TwoPublishersCommunicationBestEffort PROPERTY ENVIRONMENT
+        "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSCommunicationPublisher>")
+    set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
+        "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSCommunicationSubscriber>")
+    set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
+        "XML_FILE=simple_besteffort_profile.xml")
+    if(WIN32)
+        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+        set_property(TEST TwoPublishersCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
+            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+    endif()
+
+    add_test(NAME TwoPublishersCommunicationReliable
+        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py)
+
+    # Set test with label NoMemoryCheck
+    set_property(TEST TwoPublishersCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
+
+    set_property(TEST TwoPublishersCommunicationReliable PROPERTY ENVIRONMENT
+        "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSCommunicationPublisher>")
+    set_property(TEST TwoPublishersCommunicationReliable APPEND PROPERTY ENVIRONMENT
+        "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSCommunicationSubscriber>")
+    set_property(TEST TwoPublishersCommunicationReliable APPEND PROPERTY ENVIRONMENT
+        "XML_FILE=simple_reliable_profile.xml")
+    if(WIN32)
+        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+        set_property(TEST TwoPublishersCommunicationReliable APPEND PROPERTY ENVIRONMENT
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
 
