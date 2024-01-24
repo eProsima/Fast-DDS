@@ -28,7 +28,7 @@ set(COMMON_SOURCE
     )
 
 set(DDS_PUBLISHER_SOURCE ${COMMON_SOURCE}
-    ${PROJECT_SOURCE_DIR}/test/dds/communication/PublisherModule.cpp
+    PublisherModule.cpp
     ${PROJECT_SOURCE_DIR}/test/dds/communication/PublisherMain.cpp
     )
 add_executable(CommunicationPublisher ${DDS_PUBLISHER_SOURCE})
@@ -40,7 +40,7 @@ target_include_directories(CommunicationPublisher PRIVATE ${PROJECT_SOURCE_DIR}/
 target_link_libraries(CommunicationPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
 set(DDS_SUBSCRIBER_SOURCE ${COMMON_SOURCE}
-    ${PROJECT_SOURCE_DIR}/test/dds/communication/SubscriberModule.cpp
+    SubscriberModule.cpp
     ${PROJECT_SOURCE_DIR}/test/dds/communication/SubscriberMain.cpp
     )
 add_executable(CommunicationSubscriber ${DDS_SUBSCRIBER_SOURCE})
@@ -89,6 +89,7 @@ list(APPEND XML_CONFIGURATION_FILES
     )
 
 list(APPEND PYTHON_FILES
+    simple_communication
     multiple_subs_secure_crypto_communication
     secure_ds_pubsub_secure_crypto_communication
     multiple_secure_ds_pubsub_secure_crypto_communication

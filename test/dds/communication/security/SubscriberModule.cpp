@@ -91,7 +91,7 @@ bool SubscriberModule::init(
 
     // Generate topic name
     std::ostringstream topic_name;
-    topic_name << "DDSCommunicationTestsTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
+    topic_name << "HelloWorldTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
     //CREATE THE SUBSCRIBER
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
