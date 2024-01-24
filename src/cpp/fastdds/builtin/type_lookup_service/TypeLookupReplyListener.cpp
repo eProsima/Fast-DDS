@@ -109,7 +109,7 @@ void TypeLookupReplyListener::process_reply()
                     case TypeLookup_getTypes_HashId:
                     {
                         check_get_types_reply(reply.header().relatedRequestId(),
-                                reply.return_value().getType().result());
+                                reply.return_value().getType().result(), reply.header().relatedRequestId());
                         break;
                     }
                     case TypeLookup_getDependencies_HashId:
@@ -133,7 +133,9 @@ void TypeLookupReplyListener::process_reply()
 
 void TypeLookupReplyListener::check_get_types_reply(
         const SampleIdentity& request_id,
-        const TypeLookup_getTypes_Out& reply)
+        const TypeLookup_getTypes_Out& reply,
+        SampleIdentity related_request
+        )
 {
     // Check if the received reply SampleIdentity corresponds to an outstanding request
     auto requests_it = typelookup_manager_->async_get_type_requests_.find(request_id);
@@ -153,8 +155,19 @@ void TypeLookupReplyListener::check_get_types_reply(
 
         if (RETCODE_OK == register_result)
         {
-            // Notify the callbacks associated with the request
-            typelookup_manager_->notify_callbacks(requests_it->second);
+            // Check if this reply has a continuation_point
+            std::unique_lock<std::mutex> guard(replies_with_continuation_mutex_);
+            auto it = std::find(replies_with_continuation_.begin(), replies_with_continuation_.end(), related_request);
+            if (it != replies_with_continuation_.end())
+            {
+                // If it is, remove it from the list and continue
+                replies_with_continuation_.erase(it);
+            }
+            else
+            {
+                // If it is not, notify the callbacks associated with the request
+                typelookup_manager_->notify_callbacks(requests_it->second);
+            }
         }
         else
         {
@@ -230,6 +243,13 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
     {
         // Store the type request
         typelookup_manager_->add_async_get_type_request(get_types_request, requests_it->second);
+
+        // If this get_types request has a continuation_point, store it in the list
+        if (!reply.continuation_point().empty())
+        {
+            std::unique_lock<std::mutex> guard(replies_with_continuation_mutex_);
+            replies_with_continuation_.push_back(get_types_request);
+        }
     }
     else
     {
