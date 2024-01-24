@@ -18,7 +18,7 @@ script_dir = os.path.dirname(os.path.realpath(__file__))
 
 publisher_command = os.environ.get("SIMPLE_COMMUNICATION_PUBLISHER_BIN")
 if not publisher_command:
-    publisher_files = glob.glob(os.path.join(script_dir, "**/SimpleCommunicationPublisher*"), recursive=True)
+    publisher_files = glob.glob(os.path.join(script_dir, "**/CommunicationPublisher*"), recursive=True)
     pf = iter(publisher_files)
     publisher_command = next(pf, None)
     while publisher_command and (not os.path.isfile(publisher_command) or not os.access(publisher_command,
@@ -27,7 +27,7 @@ if not publisher_command:
 assert publisher_command
 subscriber_command = os.environ.get("SIMPLE_COMMUNICATION_SUBSCRIBER_BIN")
 if not subscriber_command:
-    subscriber_files = glob.glob(os.path.join(script_dir, "**/SimpleCommunicationSubscriber*"), recursive=True)
+    subscriber_files = glob.glob(os.path.join(script_dir, "**/CommunicationSubscriber*"), recursive=True)
     pf = iter(subscriber_files)
     subscriber_command = next(pf, None)
     while subscriber_command and (not os.path.isfile(subscriber_command) or not os.access(subscriber_command,
