@@ -205,9 +205,6 @@ void TCPTransportInterface::clean()
         }
     }
 
-<<<<<<< HEAD
-    if (io_service_thread_)
-=======
     if (initial_peer_local_locator_socket_)
     {
         if (initial_peer_local_locator_socket_->is_open())
@@ -218,8 +215,7 @@ void TCPTransportInterface::clean()
         initial_peer_local_locator_socket_.reset();
     }
 
-    if (io_service_thread_.joinable())
->>>>>>> b43f3a065 (TCP unique client announced local port (#4216))
+    if (io_service_thread_)
     {
         io_service_.stop();
         io_service_thread_->join();
@@ -1699,15 +1695,6 @@ void TCPTransportInterface::update_network_interfaces()
     // TODO(jlbueno)
 }
 
-<<<<<<< HEAD
-=======
-bool TCPTransportInterface::is_localhost_allowed() const
-{
-    Locator local_locator;
-    fill_local_ip(local_locator);
-    return is_locator_allowed(local_locator);
-}
-
 void TCPTransportInterface::fill_local_physical_port(
         Locator& locator) const
 {
@@ -1721,7 +1708,6 @@ void TCPTransportInterface::fill_local_physical_port(
     }
 }
 
->>>>>>> b43f3a065 (TCP unique client announced local port (#4216))
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

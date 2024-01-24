@@ -23,14 +23,8 @@
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/utils/Semaphore.h>
-<<<<<<< HEAD
 #include <fastrtps/utils/IPLocator.h>
-=======
-
-#include <MockReceiverResource.h>
 #include "mock/MockTCPv6Transport.h"
-#include <rtps/network/NetworkFactory.h>
->>>>>>> b43f3a065 (TCP unique client announced local port (#4216))
 #include <rtps/transport/TCPv6Transport.h>
 
 using namespace eprosima::fastrtps::rtps;
