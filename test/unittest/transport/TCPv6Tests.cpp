@@ -253,8 +253,8 @@ TEST_F(TCPv6Tests, client_announced_local_port_uniqueness)
 }
 
 #ifndef _WIN32
-// The primary purpose of this test is to test the socket sending functionality to a someone that does
-// not read or does so insufficiently fast.
+// The primary purpose of this test is to check the non-blocking behavior of a secure socket sending data to a
+// destination that does not read or does it so slowly.
 TEST_F(TCPv6Tests, non_blocking_send)
 {
     uint16_t port = g_default_port;
@@ -268,14 +268,14 @@ TEST_F(TCPv6Tests, non_blocking_send)
     att.properties.properties().emplace_back("fastdds.tcp_transport.non_blocking_send", "true");
     senderTransportUnderTest.init(&att.properties);
 
-    //Create a TCP Client socket
+    // Create a TCP Client socket.
     // The creation of a reception transport for testing this functionality is not
     // feasible. For the saturation of the sending socket, it's necessary first to
     // saturate the reception socket of the datareader. This saturation requires
     // preventing the datareader from reading from the socket, what inevitably
     // happens continuously if instantiating and connecting the receiver transport.
     // Hence, a raw socket is opened and connected to the server. There won't be read
-    // calls the socket.
+    // calls on that socket.
     Locator_t serverLoc;
     serverLoc.kind = LOCATOR_KIND_TCPv6;
     IPLocator::setIPv6(serverLoc, "::1");
