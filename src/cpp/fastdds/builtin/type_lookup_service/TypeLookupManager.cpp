@@ -688,13 +688,23 @@ bool TypeLookupManager::prepare_send_payload(
 bool TypeLookupManager::send(
         TypeLookup_Request& request) const
 {
-    return send_impl(request, &request_type_, builtin_request_writer_, builtin_request_writer_history_);
+    if (!send_impl(request, &request_type_, builtin_request_writer_, builtin_request_writer_history_))
+    {
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE, "Error sending request.");
+        return false;
+    }
+    return true;
 }
 
 bool TypeLookupManager::send(
         TypeLookup_Reply& reply) const
 {
-    return send_impl(reply, &reply_type_, builtin_reply_writer_, builtin_reply_writer_history_);
+    if (!send_impl(reply, &reply_type_, builtin_reply_writer_, builtin_reply_writer_history_))
+    {
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE, "Error sending reply.");
+        return false;
+    }
+    return true;
 }
 
 template <typename Type, typename PubSubType>
@@ -783,8 +793,13 @@ bool TypeLookupManager::receive(
         fastrtps::rtps::CacheChange_t& change,
         TypeLookup_Request& request) const
 {
-    if (receive_impl(change, request, &request_type_) &&
-            request.header().instanceName() != local_instance_name_)
+    if (!receive_impl(change, request, &request_type_))
+    {
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE, "Error receiving request.");
+        return false;
+    }
+
+    if (request.header().instanceName() != local_instance_name_)
     {
         // Ignore request
         return false;
@@ -796,8 +811,13 @@ bool TypeLookupManager::receive(
         fastrtps::rtps::CacheChange_t& change,
         TypeLookup_Reply& reply) const
 {
-    if (receive_impl(change, reply, &reply_type_) &&
-            guid_dds_2_rtps(reply.header().relatedRequestId().writer_guid()) != builtin_request_writer_->getGuid())
+    if (!receive_impl(change, reply, &reply_type_))
+    {
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE, "Error receiving reply.");
+        return false;
+    }
+
+    if (guid_dds_2_rtps(reply.header().relatedRequestId().writer_guid()) != builtin_request_writer_->getGuid())
     {
         // Ignore reply
         return false;

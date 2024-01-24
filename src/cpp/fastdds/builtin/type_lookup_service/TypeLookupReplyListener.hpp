@@ -96,10 +96,12 @@ private:
      * This method also notifies all type related callbacks and removes the current SampleIdentity from the pending request list.
      * @param request_id[in] The SampleIdentity of the request.
      * @param reply[in] The reply data.
+     * @param related_request[in] The request that this reply answers.
      */
     void check_get_types_reply(
             const SampleIdentity& request_id,
-            const TypeLookup_getTypes_Out& reply);
+            const TypeLookup_getTypes_Out& reply,
+            SampleIdentity related_request);
 
     /**
      * @brief Checks if all dependencies are solved.
@@ -127,6 +129,12 @@ private:
 
     //! A pointer to the typelookup manager.
     TypeLookupManager* typelookup_manager_;
+
+    //! Mutex to protect access to replies_with_continuation_.
+    std::mutex replies_with_continuation_mutex_;
+
+    //! Collection of the replies that needed continuation points.
+    std::vector<SampleIdentity> replies_with_continuation_;
 
     eprosima::thread replies_processor_thread;
     std::queue<ReplyWithServerGUID> replies_queue_;
