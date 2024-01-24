@@ -102,7 +102,7 @@ bool DirectMessageSender::send(
         uint32_t total_bytes,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
-    return participant_->sendSync(buffers, num_buffers, total_bytes,
+    return participant_->sendSync(buffers, num_buffers, total_bytes, participant_->getGuid(),
                    Locators(locators_->begin()), Locators(locators_->end()), max_blocking_time_point);
 }
 

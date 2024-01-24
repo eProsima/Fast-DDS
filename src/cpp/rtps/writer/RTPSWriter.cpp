@@ -440,7 +440,7 @@ bool RTPSWriter::send_nts(
     RTPSParticipantImpl* participant = getRTPSParticipant();
 
     return locator_selector.locator_selector.selected_size() == 0 ||
-           participant->sendSync(buffers, num_buffers, total_bytes,
+           participant->sendSync(buffers, num_buffers, total_bytes, m_guid,
                    locator_selector.locator_selector.begin(), locator_selector.locator_selector.end(), max_blocking_time_point);
 }
 

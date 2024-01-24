@@ -201,11 +201,6 @@ public:
             FragmentNumberSet_t fn_state,
             int32_t count);
 
-    inline uint32_t get_current_bytes_processed() const
-    {
-        return currentBytesSent_ + full_msg_->length;
-    }
-
     /**
      * To be used whenever destination locators/guids change between two add_xxx calls.
      * Automatically called inside add_xxx calls if destinations_have_changed() method of
@@ -310,8 +305,6 @@ private:
     CDRMessage_t* full_msg_ = nullptr;
 
     CDRMessage_t* submessage_msg_ = nullptr;
-
-    uint32_t currentBytesSent_;
 
     GuidPrefix_t current_dst_;
 

@@ -187,13 +187,13 @@ bool ReaderLocator::send(
     {
         if (general_locator_info_.unicast.size() > 0)
         {
-            return participant_owner_->sendSync(buffers, num_buffers, total_bytes,
+            return participant_owner_->sendSync(buffers, num_buffers, total_bytes, owner_->getGuid(),
                            Locators(general_locator_info_.unicast.begin()), Locators(general_locator_info_.unicast.end()),
                            max_blocking_time_point);
         }
         else
         {
-            return participant_owner_->sendSync(buffers, num_buffers, total_bytes,
+            return participant_owner_->sendSync(buffers, num_buffers, total_bytes, owner_->getGuid(),
                            Locators(general_locator_info_.multicast.begin()), Locators(general_locator_info_.multicast.end()),
                            max_blocking_time_point);
         }

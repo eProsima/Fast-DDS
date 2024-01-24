@@ -234,12 +234,17 @@ size_t TCPChannelResourceSecure::send(
                         socket->async_write_some(buffers,
                         [&, socket](const std::error_code& error, size_t bytes_transferred)
                         {
-                            write_bytes_promise.set_value(bytes_transferred);
-                        }
-                        else
-                        {
-                            write_bytes_promise.set_value(0);
-                        }
+                            ec = error;
+
+                            if (!error)
+                            {
+                                write_bytes_promise.set_value(bytes_transferred);
+                            }
+                            else
+                            {
+                                write_bytes_promise.set_value(0);
+                            }
+                        });
                     }
                     else
                     {

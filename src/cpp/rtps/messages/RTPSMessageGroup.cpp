@@ -305,18 +305,12 @@ void RTPSMessageGroup::send()
         {
             std::lock_guard<RTPSMessageSenderInterface> lock(*sender_);
 
-            append_pending_payload();
-
-            CDRMessage::initCDRMsg(encrypt_msg_);
-            full_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
-            encrypt_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
-            encrypt_msg_->length = RTPSMESSAGE_HEADER_SIZE;
-            memcpy(encrypt_msg_->buffer, full_msg_->buffer, RTPSMESSAGE_HEADER_SIZE);
-
 #if HAVE_SECURITY
             // TODO(Ricardo) Control message size if it will be encrypted.
             if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
             {
+                append_pending_payload();
+
                 CDRMessage::initCDRMsg(encrypt_msg_);
                 full_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
                 encrypt_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
@@ -357,7 +351,7 @@ void RTPSMessageGroup::send()
             {
                 throw timeout();
             }
-            currentBytesSent_ += msgToSend->length;
+            current_sent_bytes_ += msgToSend->length;
         }
     }
 }
@@ -616,32 +610,13 @@ bool RTPSMessageGroup::add_data_frag(
     bool protect_submessage = endpoint_->getAttributes().security_attributes().is_submessage_protected;
     copy_data = protect_payload || protect_submessage;
 #endif // if HAVE_SECURITY
-    const EntityId_t& readerId = get_entity_id(sender_.remote_guids());
+    const EntityId_t& readerId = get_entity_id(sender_->remote_guids());
 
     // Calculate fragment start
     uint32_t fragment_start = change.getFragmentSize() * (fragment_number - 1);
     // Calculate fragment size. If last fragment, size may be smaller
     uint32_t fragment_size = fragment_number < change.getFragmentCount() ? change.getFragmentSize() :
             change.serializedPayload.length - fragment_start;
-    // Check limitation
-    if (data_exceeds_limitation(fragment_size, sent_bytes_limitation_, current_sent_bytes_, full_msg_->length))
-    {
-        flush_and_reset();
-        throw limit_exceeded();
-    }
-
-    // Check preconditions. If fail flush and reset.
-    check_and_maybe_flush();
-    add_info_ts_in_buffer(change.sourceTimestamp);
-
-    CacheChangeInlineQoSWriter qos_writer(change);
-    InlineQosWriter* inline_qos;
-    inline_qos = (change.inline_qos.length > 0 && nullptr != change.inline_qos.data) ? &qos_writer : nullptr;
-
-#if HAVE_SECURITY
-    uint32_t from_buffer_position = submessage_msg_->pos;
-#endif // if HAVE_SECURITY
-    const EntityId_t& readerId = get_entity_id(sender_->remote_guids());
 
     // TODO (Ricardo). Check to create special wrapper.
     CacheChange_t change_to_add;
@@ -675,7 +650,7 @@ bool RTPSMessageGroup::add_data_frag(
 
     if (!RTPSMessageCreator::addSubmessageDataFrag(submessage_msg_, &change, fragment_number,
             change_to_add.serializedPayload, endpoint_->getAttributes().topicKind, readerId,
-            expectsInlineQos, inline_qos, copy_data, pending_data_, pending_data_size_, pending_padding_))
+            expectsInlineQos, inlineQos, copy_data, pending_data_, pending_data_size_, pending_padding_))
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER, "Cannot add DATA_FRAG submsg to the CDRMessage. Buffer too small");
         change_to_add.serializedPayload.data = nullptr;
