@@ -24,16 +24,9 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <dds/core/types.hpp>
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/domain/qos/DomainParticipantQos.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/pub/qos/PublisherQos.hpp>
-#include <dds/sub/Subscriber.hpp>
-#include <dds/sub/qos/SubscriberQos.hpp>
-#include <dds/topic/Topic.hpp>
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/TopicBuiltinTopicData.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
@@ -42,18 +35,18 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -67,9 +60,7 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/SystemInfo.hpp>
 
-#include "../../common/GTestPrinters.hpp"
 #include "../../logging/mock/MockConsumer.h"
-#include "fastdds/dds/domain/DomainParticipant.hpp"
 
 #if defined(__cplusplus_winrt)
 #define GET_PID GetCurrentProcessId
