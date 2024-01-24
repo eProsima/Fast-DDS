@@ -187,13 +187,12 @@ TEST(KeyedTopic, UnregisterWhenHistoryKeepAll)
 TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
 {
     PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-    // By default, the reader's expect_inline_qos is false
     PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
 
-    bool writer_sends_inline_qos = false;
-    bool writer_sends_pid_key_hash = false;
+    bool writer_sends_inline_qos = true;
+    bool writer_sends_pid_key_hash = true;
 
     testTransport->drop_data_messages_filter_ = [&writer_sends_inline_qos,
                     &writer_sends_pid_key_hash](eprosima::fastrtps::rtps::CDRMessage_t& msg) -> bool
@@ -211,7 +210,7 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
                 // Filters are only applied to user data
                 // no need to check if the packets comer from a builtin
 
-                writer_sends_inline_qos = (flags & (1 << 1));
+                writer_sends_inline_qos &= static_cast<bool>((flags & (1 << 1)));
 
                 // Stop seeking if inline qos are not present
                 // Fail the test afterwards
@@ -223,6 +222,7 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
                 {
                     // Process inline qos
                     msg.pos = inline_qos_pos;
+                    bool key_hash_was_found = false;
                     while (msg.pos < msg.length)
                     {
                         uint16_t pid = 0;
@@ -234,7 +234,7 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
 
                         if (pid == eprosima::fastdds::dds::PID_KEY_HASH)
                         {
-                            writer_sends_pid_key_hash = true;
+                            key_hash_was_found = true;
                         }
                         else if (pid == eprosima::fastdds::dds::PID_SENTINEL)
                         {
@@ -244,6 +244,7 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
                         msg.pos = next_pos;
                     }
 
+                    writer_sends_pid_key_hash &= key_hash_was_found;
                     msg.pos = old_pos;
                 }
 
@@ -258,7 +259,9 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.init();
+    reader.
+            expect_inline_qos(false).
+            init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -275,7 +278,8 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
     EXPECT_TRUE(data.empty());
     reader.block_for_all();
 
-    EXPECT_TRUE(writer_sends_inline_qos & writer_sends_pid_key_hash);
+    EXPECT_TRUE(writer_sends_inline_qos);
+    EXPECT_TRUE(writer_sends_pid_key_hash);
 }
 
 /* Uncomment when DDS API supports NO_WRITERS_ALIVE
