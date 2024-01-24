@@ -66,6 +66,7 @@ ParticipantProxyData::ParticipantProxyData(
     , should_check_lease_duration(false)
     , m_readers(new ProxyHashTable<ReaderProxyData>(allocation.readers))
     , m_writers(new ProxyHashTable<WriterProxyData>(allocation.writers))
+    , m_sample_identity()
 {
     m_userData.set_max_size(static_cast<uint32_t>(allocation.data_limits.max_user_data));
 }
@@ -99,6 +100,7 @@ ParticipantProxyData::ParticipantProxyData(
     // so there is no need to copy m_readers and m_writers
     , m_readers(nullptr)
     , m_writers(nullptr)
+    , m_sample_identity(pdata.m_sample_identity)
     , lease_duration_(pdata.lease_duration_)
 {
 }
@@ -717,6 +719,7 @@ void ParticipantProxyData::copy(
     isAlive = pdata.isAlive;
     m_userData = pdata.m_userData;
     m_properties = pdata.m_properties;
+    m_sample_identity = pdata.m_sample_identity;
 
     // This method is only called when a new participant is discovered.The destination of the copy
     // will always be a new ParticipantProxyData or one from the pool, so there is no need for
