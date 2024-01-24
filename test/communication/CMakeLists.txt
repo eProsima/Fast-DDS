@@ -82,8 +82,6 @@ target_link_libraries(SimpleCommunicationPubSub fastrtps fastcdr foonathan_memor
 ###############################################################################
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/two_publishers_communication.py
     ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message.py
-    ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake @ONLY)
 
