@@ -1548,6 +1548,43 @@ TEST_F(TCPv4Tests, autofill_port)
     EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports.size() == 3);
 }
 
+// This test verifies server's channel resources mapping keys uniqueness, where keys are clients locators.
+// Clients typically communicated its PID as its locator port. When having several clients in the same
+// process this lead to overwriting server's channel resources map elements.
+TEST_F(TCPv4Tests, client_announced_local_port_uniqueness)
+{
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    MockTCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv4TransportDescriptor sendDescriptor_1;
+    TCPv4Transport sendTransportUnderTest_1(sendDescriptor_1);
+    sendTransportUnderTest_1.init();
+
+    TCPv4TransportDescriptor sendDescriptor_2;
+    TCPv4Transport sendTransportUnderTest_2(sendDescriptor_2);
+    sendTransportUnderTest_2.init();
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+    outputLocator.port = g_default_port;
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    SendResourceList send_resource_list_1;
+    ASSERT_TRUE(sendTransportUnderTest_1.OpenOutputChannel(send_resource_list_1, outputLocator));
+    ASSERT_FALSE(send_resource_list_1.empty());
+
+    SendResourceList send_resource_list_2;
+    ASSERT_TRUE(sendTransportUnderTest_2.OpenOutputChannel(send_resource_list_2, outputLocator));
+    ASSERT_FALSE(send_resource_list_2.empty());
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    ASSERT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2);
+}
+
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.add_listener_port(g_default_port);

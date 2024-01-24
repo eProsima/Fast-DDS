@@ -23,7 +23,14 @@
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/utils/Semaphore.h>
+<<<<<<< HEAD
 #include <fastrtps/utils/IPLocator.h>
+=======
+
+#include <MockReceiverResource.h>
+#include "mock/MockTCPv6Transport.h"
+#include <rtps/network/NetworkFactory.h>
+>>>>>>> b43f3a065 (TCP unique client announced local port (#4216))
 #include <rtps/transport/TCPv6Transport.h>
 
 using namespace eprosima::fastrtps::rtps;
@@ -202,6 +209,43 @@ TEST_F(TCPv6Tests, autofill_port)
         transportUnderTest_multiple_autofill.configuration()->listening_ports[0] !=
         transportUnderTest_multiple_autofill.configuration()->listening_ports[2]);
     EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports.size() == 3);
+}
+
+// This test verifies server's channel resources mapping keys uniqueness, where keys are clients locators.
+// Clients typically communicated its PID as its locator port. When having several clients in the same
+// process this lead to overwriting server's channel resources map elements.
+TEST_F(TCPv6Tests, client_announced_local_port_uniqueness)
+{
+    TCPv6TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    MockTCPv6Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv6TransportDescriptor sendDescriptor_1;
+    TCPv6Transport sendTransportUnderTest_1(sendDescriptor_1);
+    sendTransportUnderTest_1.init();
+
+    TCPv6TransportDescriptor sendDescriptor_2;
+    TCPv6Transport sendTransportUnderTest_2(sendDescriptor_2);
+    sendTransportUnderTest_2.init();
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv6;
+    IPLocator::setIPv6(outputLocator, "::1");
+    outputLocator.port = g_default_port;
+    IPLocator::setLogicalPort(outputLocator, 7610);
+
+    SendResourceList send_resource_list_1;
+    ASSERT_TRUE(sendTransportUnderTest_1.OpenOutputChannel(send_resource_list_1, outputLocator));
+    ASSERT_FALSE(send_resource_list_1.empty());
+
+    SendResourceList send_resource_list_2;
+    ASSERT_TRUE(sendTransportUnderTest_2.OpenOutputChannel(send_resource_list_2, outputLocator));
+    ASSERT_FALSE(send_resource_list_2.empty());
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    ASSERT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2);
 }
 /*
    TEST_F(TCPv6Tests, send_and_receive_between_both_secure_ports)
