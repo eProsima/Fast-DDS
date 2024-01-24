@@ -19,10 +19,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/pub/AnyDataWriter.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/pub/qos/DataWriterQos.hpp>
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -36,13 +32,13 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/publisher/DataWriterImpl.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
-#include "../../logging/mock/MockConsumer.h"
+#include <fastdds/publisher/DataWriterImpl.hpp>
 
 #include "../../common/CustomPayloadPool.hpp"
+#include "../../logging/mock/MockConsumer.h"
 
 namespace eprosima {
 namespace fastdds {
