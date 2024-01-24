@@ -126,17 +126,22 @@ list(APPEND XML_CONFIGURATION_FILES
     TCP_server_profile.xml
     TCP_client_profile.xml
     liveliness_assertion_profile.xml
+    liveliness_assertion.360_profile.xml
+    shm_communication_subscriber_dies_while_processing_message_profile.xml
     )
 
-# Python file
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_build.py
-    ${CMAKE_CURRENT_BINARY_DIR}/test_build.py COPYONLY)
-# Python file Liveliness
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.py
-    ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/automatic_liveliness_assertion.py
-    ${CMAKE_CURRENT_BINARY_DIR}/automatic_liveliness_assertion.py COPYONLY)
+list(APPEND PYTHON_FILES
+    test_build.py
+    liveliness_assertion.py
+    automatic_liveliness_assertion.py
+    shm_communication_subscriber_dies_while_processing_message.py
+    )
 
+# Python files
+foreach(PY_FILE IN LISTS PYTHON_FILES)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${PY_FILE}
+        ${CMAKE_CURRENT_BINARY_DIR}/${PY_FILE} COPYONLY)
+endforeach()
 
 # XML files
 foreach(XML_FILE IN LISTS XML_CONFIGURATION_FILES)
@@ -250,6 +255,25 @@ if(PYTHONINTERP_FOUND)
     if(WIN32)
         string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
         set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
+            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+    endif()
+
+    # Shm test
+    add_test(NAME SHMCommunicationSubscriberDiesWhileProcessingMessage
+    COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
+
+    # Set test with label NoMemoryCheck
+    set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage PROPERTY LABELS "NoMemoryCheck")
+
+    set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage PROPERTY ENVIRONMENT
+        "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSCommunicationPublisher>")
+    set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage APPEND PROPERTY ENVIRONMENT
+        "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSCommunicationSubscriber>")
+    set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage APPEND PROPERTY ENVIRONMENT
+        "XML_FILE=shm_communication_subscriber_dies_while_processing_message_profile.xml")
+    if(WIN32)
+        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+        set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage APPEND PROPERTY ENVIRONMENT
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
 

@@ -82,8 +82,6 @@ target_link_libraries(SimpleCommunicationPubSub fastdds fastcdr foonathan_memory
 ###############################################################################
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/two_publishers_communication.py
     ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message.py
-    ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake @ONLY)
 
@@ -137,22 +135,5 @@ if(PYTHONINTERP_FOUND)
     endif()
 
 
-    add_test(NAME SHMCommunicationSubscriberDiesWhileProcessingMessage
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
-
-    # Set test with label NoMemoryCheck
-    set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage PROPERTY LABELS "NoMemoryCheck")
-
-    set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-    set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage APPEND PROPERTY ENVIRONMENT
-        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-    set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage APPEND PROPERTY ENVIRONMENT
-        "XML_FILE=shm_communication_subscriber_dies_while_processing_message_profile.xml")
-    if(WIN32)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage APPEND PROPERTY ENVIRONMENT
-            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-    endif()
 
 endif()
