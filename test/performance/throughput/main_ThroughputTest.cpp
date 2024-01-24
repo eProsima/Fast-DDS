@@ -19,7 +19,6 @@
 #include <string>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "../optionarg.hpp"
 #include "ThroughputPublisher.hpp"

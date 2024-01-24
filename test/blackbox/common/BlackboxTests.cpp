@@ -14,16 +14,15 @@
 
 #include "BlackboxTests.hpp"
 
+#include <cstdlib>
+#include <memory>
+#include <string>
+#include <thread>
+
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/RTPSDomain.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastdds/dds/log/Log.hpp>
-
-#include <thread>
-#include <memory>
-#include <cstdlib>
-#include <string>
+#include <fastdds/rtps/RTPSDomain.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

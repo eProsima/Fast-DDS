@@ -12,25 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
+#include <cstdlib>
+#include <string>
+#include <tuple>
+#include <vector>
 
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <gtest/gtest.h>
+
+#include "BlackboxTests.hpp"
 #include "mock/BlackboxMockConsumer.h"
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
-
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/core/policy/ParameterTypes.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <gtest/gtest.h>
-
-#include <cstdlib>
-#include <string>
-#include <tuple>
-#include <vector>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

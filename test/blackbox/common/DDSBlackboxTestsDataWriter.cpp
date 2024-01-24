@@ -14,16 +14,14 @@
 
 #include <chrono>
 
-#include "BlackboxTests.hpp"
-
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
-
+#include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <gtest/gtest.h>
 
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <rtps/transport/test_UDPv4Transport.h>
+
+#include "BlackboxTests.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 using namespace eprosima::fastrtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;

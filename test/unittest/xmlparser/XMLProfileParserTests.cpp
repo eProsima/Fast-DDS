@@ -32,7 +32,8 @@
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <xmlparser/XMLProfileManager.h>
 
 #include "../common/env_var_utils.hpp"
 

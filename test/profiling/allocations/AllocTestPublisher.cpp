@@ -26,7 +26,6 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/publisher/Publisher.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "AllocTestCommon.h"
 

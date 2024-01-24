@@ -27,9 +27,10 @@
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/xmlparser/XMLTree.h>
+
+#include <xmlparser/XMLParser.h>
+#include <xmlparser/XMLProfileManager.h>
+#include <xmlparser/XMLTree.h>
 
 #include "../common/env_var_utils.hpp"
 #include "../logging/mock/MockConsumer.h"

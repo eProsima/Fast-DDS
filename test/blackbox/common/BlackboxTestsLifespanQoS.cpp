@@ -12,17 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
-
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
-#include "ReqRepAsReliableHelloWorldRequester.hpp"
-#include "ReqRepAsReliableHelloWorldReplier.hpp"
-
 #include <gtest/gtest.h>
 
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/xmlparser//XMLProfileManager.h>
+
+#include "BlackboxTests.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+#include "ReqRepAsReliableHelloWorldReplier.hpp"
+#include "ReqRepAsReliableHelloWorldRequester.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

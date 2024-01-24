@@ -24,12 +24,11 @@
 #include <type_traits>
 
 #include <asio.hpp>
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastcdr/Cdr.h>
-
+#include "fastdds/dds/common/InstanceHandle.hpp"
+#include "fastdds/dds/core/policy/QosPolicies.hpp"
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/core/Entity.hpp>
@@ -57,12 +56,11 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <xmlparser/XMLProfileManager.h>
 
 #include "../../common/CustomPayloadPool.hpp"
 #include "../../logging/mock/MockConsumer.h"
-#include "fastdds/dds/common/InstanceHandle.hpp"
-#include "fastdds/dds/core/policy/QosPolicies.hpp"
 #include "FooBoundedType.hpp"
 #include "FooBoundedTypeSupport.hpp"
 #include "FooType.hpp"

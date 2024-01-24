@@ -12,28 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
 
 #if HAVE_SECURITY
 
-#include <atomic>
 #include <algorithm>
+#include <atomic>
 #include <fstream>
 #include <map>
-
-#include <gtest/gtest.h>
-
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
-#include "PubSubWriterReader.hpp"
-#include "PubSubParticipant.hpp"
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <gtest/gtest.h>
 
 #include <rtps/transport/test_UDPv4Transport.h>
+
+#include "BlackboxTests.hpp"
+#include "PubSubParticipant.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+#include "PubSubWriterReader.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

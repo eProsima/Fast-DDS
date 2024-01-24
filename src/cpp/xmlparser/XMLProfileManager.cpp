@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <xmlparser/XMLProfileManager.h>
 
 #include <cstdlib>
 #ifdef _WIN32
@@ -23,7 +23,8 @@
 
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/xmlparser/XMLTree.h>
+
+#include <xmlparser/XMLTree.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastdds;

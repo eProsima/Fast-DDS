@@ -12,20 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
-
 #if HAVE_SQLITE3
 
 #include <cstring>
-#include <thread>
-#include <sstream>
 #include <iomanip>
-
-#include "RTPSWithRegistrationWriter.hpp"
-#include "RTPSWithRegistrationReader.hpp"
+#include <sstream>
+#include <thread>
 
 #include <gtest/gtest.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "BlackboxTests.hpp"
+#include "RTPSWithRegistrationReader.hpp"
+#include "RTPSWithRegistrationWriter.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

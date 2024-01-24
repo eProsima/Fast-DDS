@@ -18,12 +18,11 @@
 
 #include <gtest/gtest.h>
 
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <rtps/transport/test_UDPv4Transport.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include <rtps/transport/test_UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastdds::rtps;

@@ -23,7 +23,8 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastdds {

@@ -1,5 +1,3 @@
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
 #include "fuzz_utils.h"
 
 using namespace eprosima;

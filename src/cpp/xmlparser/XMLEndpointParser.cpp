@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastrtps/xmlparser/XMLEndpointParser.h>
+#include <xmlparser/XMLEndpointParser.h>
 
 #include <cstdlib>
 #include <string>

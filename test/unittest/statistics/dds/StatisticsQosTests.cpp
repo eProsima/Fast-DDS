@@ -15,7 +15,6 @@
 #include <string>
 
 #include <gtest/gtest.h>
-
 #include <tinyxml2.h>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -29,11 +28,11 @@
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #endif // ifdef FASTDDS_STATISTICS
+#include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastdds {

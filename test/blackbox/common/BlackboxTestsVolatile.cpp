@@ -12,17 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <gtest/gtest.h>
 
+#include <rtps/transport/test_UDPv4Transport.h>
+
+#include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
-
-#include <gtest/gtest.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastdds/rtps/common/CDRMessage_t.h>
-#include <rtps/transport/test_UDPv4Transport.h>
+#include "ReqRepAsReliableHelloWorldRequester.hpp"
 
 using namespace eprosima::fastrtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;

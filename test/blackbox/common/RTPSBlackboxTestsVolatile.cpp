@@ -12,15 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
-
 #include <chrono>
 #include <thread>
 
 #include <gtest/gtest.h>
 
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
+#include "BlackboxTests.hpp"
 #include "RTPSAsSocketReader.hpp"
 #include "RTPSAsSocketWriter.hpp"
 

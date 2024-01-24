@@ -18,11 +18,10 @@
 #include <memory>
 #include <thread>
 
-#include <gtest/gtest.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <gtest/gtest.h>
 
 #include <rtps/transport/test_UDPv4Transport.h>
 

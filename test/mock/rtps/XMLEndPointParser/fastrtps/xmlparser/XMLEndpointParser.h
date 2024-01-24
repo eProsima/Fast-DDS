@@ -21,7 +21,7 @@
 #define XMLENDPOINTPARSER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/xmlparser/XMLParserCommon.h>
+#include <xmlparser/XMLParserCommon.h>
 
 namespace eprosima {
 namespace fastrtps {

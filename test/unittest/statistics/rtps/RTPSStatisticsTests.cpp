@@ -43,7 +43,6 @@
 #include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/transport/test_UDPv4Transport.h>
@@ -51,6 +50,7 @@
 #include <statistics/types/types.h>
 #include <statistics/types/types.h>
 #include <utils/SystemInfo.hpp>
+#include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastdds {

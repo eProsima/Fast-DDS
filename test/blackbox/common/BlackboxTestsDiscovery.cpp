@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <gtest/gtest.h>
 #ifndef _WIN32
 #include <stdlib.h>
 #endif // _WIN32
-
 #include <thread>
+
+#include <gtest/gtest.h>
 
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+
 #include <rtps/transport/test_UDPv4Transport.h>
 #include <utils/SystemInfo.hpp>
 

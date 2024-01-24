@@ -14,9 +14,8 @@
 
 #include <thread>
 
-#include <gtest/gtest.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"

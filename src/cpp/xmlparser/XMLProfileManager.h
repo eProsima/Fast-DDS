@@ -26,8 +26,9 @@
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
+
+#include <xmlparser/XMLParser.h>
+#include <xmlparser/XMLParserCommon.h>
 
 namespace eprosima {
 namespace fastrtps {

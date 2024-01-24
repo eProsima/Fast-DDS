@@ -17,10 +17,11 @@
  *
  */
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+
 #include <thread>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
@@ -31,14 +32,14 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/xmlparser/XMLEndpointParser.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/shared_memory/SharedMemWatchdog.hpp>
 #include <utils/SystemInfo.hpp>
+#include <xmlparser/XMLEndpointParser.h>
+#include <xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps::xmlparser;
 

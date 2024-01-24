@@ -12,16 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <gtest/gtest.h>
-
-#include "BlackboxTests.hpp"
-
-#include "PubSubParticipant.hpp"
-
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <gtest/gtest.h>
+
+#include "BlackboxTests.hpp"
+#include "PubSubParticipant.hpp"
 
 namespace test {
 const std::string EXTERNAL_PROPERTY_NAME  = "CustomExternalProperty";

@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
-
-#include "RTPSWithRegistrationReader.hpp"
-#include "RTPSWithRegistrationWriter.hpp"
-
-#include <gtest/gtest.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
 #include <unordered_map>
 #include <vector>
+
+#include <gtest/gtest.h>
+
+#include "BlackboxTests.hpp"
+#include "RTPSWithRegistrationReader.hpp"
+#include "RTPSWithRegistrationWriter.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

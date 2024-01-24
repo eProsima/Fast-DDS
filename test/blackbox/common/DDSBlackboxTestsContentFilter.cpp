@@ -16,13 +16,11 @@
 #include <thread>
 
 #include <gtest/gtest.h>
-
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "../types/HelloWorldTypeObject.h"
 #include "../types/TestRegression3361PubSubTypes.h"

@@ -14,9 +14,8 @@
 
 #include <thread>
 
-#include <gtest/gtest.h>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"

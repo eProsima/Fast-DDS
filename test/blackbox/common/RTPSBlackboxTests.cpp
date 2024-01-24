@@ -19,7 +19,6 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"

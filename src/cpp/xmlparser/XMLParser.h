@@ -34,7 +34,8 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
+
+#include <xmlparser/XMLParserCommon.h>
 
 namespace tinyxml2 {
 class XMLElement;

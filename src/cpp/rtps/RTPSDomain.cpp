@@ -31,24 +31,22 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-
-#include <rtps/transport/UDPv4Transport.h>
-#include <rtps/transport/UDPv6Transport.h>
-#include <rtps/transport/test_UDPv4Transport.h>
-#include <rtps/transport/TCPv4Transport.h>
-#include <rtps/transport/TCPv6Transport.h>
-
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <rtps/RTPSDomainImpl.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <rtps/common/GuidUtils.hpp>
 #include <rtps/network/ExternalLocatorsProcessor.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/transport/TCPv4Transport.h>
+#include <rtps/transport/TCPv6Transport.h>
+#include <rtps/transport/test_UDPv4Transport.h>
+#include <rtps/transport/UDPv4Transport.h>
+#include <rtps/transport/UDPv6Transport.h>
 #include <utils/Host.hpp>
 #include <utils/SystemInfo.hpp>
+#include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastrtps {

@@ -12,13 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
-
 #if HAVE_SQLITE3
-
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
-
 #include <cstring>
 #include <fstream>
 #include <functional>
@@ -27,7 +21,10 @@
 #include <thread>
 
 #include <gtest/gtest.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "BlackboxTests.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::dds;

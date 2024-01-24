@@ -22,8 +22,6 @@
 
 #include <fastdds/dds/log/Colors.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "../optionarg.hpp"
 #include "LatencyTestPublisher.hpp"

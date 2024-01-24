@@ -55,10 +55,10 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/SystemInfo.hpp>
+#include <xmlparser/XMLProfileManager.h>
 
 #include "../../logging/mock/MockConsumer.h"
 
