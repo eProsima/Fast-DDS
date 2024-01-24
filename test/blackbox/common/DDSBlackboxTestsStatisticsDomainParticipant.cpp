@@ -26,9 +26,6 @@
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/types/TypesBase.h>
-#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
-#include <statistics/types/types.h>
-#include <statistics/types/typesPubSubTypes.h>
 
 class WriterReaderDataTest : public eprosima::fastdds::statistics::WriterReaderData
 {

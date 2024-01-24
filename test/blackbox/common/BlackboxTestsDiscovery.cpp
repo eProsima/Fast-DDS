@@ -22,9 +22,6 @@
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 
-#include <rtps/transport/test_UDPv4Transport.h>
-#include <utils/SystemInfo.hpp>
-
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"

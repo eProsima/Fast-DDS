@@ -25,8 +25,6 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <gtest/gtest.h>
 
-#include <rtps/transport/test_UDPv4Transport.h>
-
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"

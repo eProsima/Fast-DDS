@@ -14,14 +14,12 @@
 
 #include <thread>
 
-#include <gtest/gtest.h>
-
 #include <fastrtps/utils/TimeConversion.h>
+#include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include <rtps/transport/test_UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

@@ -27,8 +27,6 @@
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
 
-#include <rtps/transport/test_UDPv4Transport.h>
-
 #include "BlackboxTests.hpp"
 #include "RTPSAsSocketReader.hpp"
 #include "RTPSAsSocketWriter.hpp"

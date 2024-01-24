@@ -18,8 +18,6 @@
 
 #include <gtest/gtest.h>
 
-#include <rtps/transport/test_UDPv4Transport.h>
-
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"

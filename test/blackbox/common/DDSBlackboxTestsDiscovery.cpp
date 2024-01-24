@@ -12,24 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <cstdlib>
-#include <ctime>
-
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
+#include <cstdlib>
+#include <ctime>
 #include <future>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
-
-#include <gtest/gtest.h>
-
-#include "BlackboxTests.hpp"
-#include "PubSubParticipant.hpp"
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -41,9 +33,13 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <rtps/transport/test_UDPv4Transport.h>
-#include <utils/SystemInfo.hpp>
+#include <gtest/gtest.h>
+
+#include "BlackboxTests.hpp"
+#include "PubSubParticipant.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+
 
 // Regression test for redmine issue 11857
 TEST(DDSDiscovery, IgnoreParticipantFlags)

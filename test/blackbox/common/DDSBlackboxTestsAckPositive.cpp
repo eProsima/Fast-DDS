@@ -40,8 +40,6 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/types/TypesBase.h>
 
-#include <rtps/transport/test_UDPv4Transport.h>
-
 #include "BlackboxTests.hpp"
 #include "../api/dds-pim/CustomPayloadPool.hpp"
 #include "../api/dds-pim/PubSubReader.hpp"

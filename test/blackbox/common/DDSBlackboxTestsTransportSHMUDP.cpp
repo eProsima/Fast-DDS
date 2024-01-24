@@ -23,8 +23,6 @@
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
 
-#include <rtps/transport/test_UDPv4Transport.h>
-
 // BlackboxTests.hpp should be included before API
 #include "BlackboxTests.hpp"
 #include "../api/dds-pim/PubSubReader.hpp"

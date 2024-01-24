@@ -17,12 +17,8 @@
 #include <fastdds/statistics/topic_names.hpp>
 #include <gtest/gtest.h>
 
-#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
-#include <statistics/rtps/StatisticsBase.hpp>
-#include <statistics/types/monitorservice_typesPubSubTypes.h>
-
 #include "BlackboxTests.hpp"
-#include "../dds-pim/PubSubReader.hpp"
+#include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
 using namespace eprosima::fastdds;
