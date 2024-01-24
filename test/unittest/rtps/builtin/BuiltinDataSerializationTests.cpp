@@ -445,7 +445,7 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
 
         // PID_PARTICIPANT_GUID
         0x50, 0, 16, 0,
-        1, 16, 54, 83, 136, 247, 149, 252, 47, 105, 174, 141, 0, 0, 1, 193,
+        2, 0, 54, 83, 136, 247, 149, 252, 47, 105, 174, 141, 0, 0, 1, 193,
 
         // PID_NETWORK_CONFIGURATION_SET
         0x07, 0x80, 8, 0,
