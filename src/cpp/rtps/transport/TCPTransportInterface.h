@@ -431,10 +431,6 @@ public:
     void keep_alive();
 
     void update_network_interfaces() override;
-<<<<<<< HEAD
-=======
-
-    bool is_localhost_allowed() const override;
 
     /**
      * Method to fill local locator physical port.
@@ -442,7 +438,6 @@ public:
      */
     void fill_local_physical_port(
             Locator& locator) const;
->>>>>>> b43f3a065 (TCP unique client announced local port (#4216))
 };
 
 } // namespace rtps
