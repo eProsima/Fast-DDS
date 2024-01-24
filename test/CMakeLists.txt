@@ -48,7 +48,6 @@ if(EPROSIMA_BUILD_TESTS)
     include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)
 
     add_subdirectory(blackbox)
-    add_subdirectory(communication)
     add_subdirectory(unittest)
     add_subdirectory(xtypes)
     add_subdirectory(dds/communication)

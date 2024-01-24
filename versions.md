@@ -1,5 +1,6 @@
 Forthcoming
 -----------
+Migrate communication tests in `dds/communication` folder
 
 Version 2.13.0
 --------------
