@@ -146,7 +146,7 @@ void PDPListener::onNewCacheChangeAdded(
                 }
             }
 
-            // Only notified the DATA(p) if it is not a repeated one
+            // Only process the DATA(p) if it is not a repeated one
             if (!already_processed)
             {
                 temp_participant_data_.m_sample_identity.writer_guid(change->writerGUID);
