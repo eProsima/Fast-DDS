@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,26 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef MOCK_TRANSPORT_TCP4_STUFF_H
-#define MOCK_TRANSPORT_TCP4_STUFF_H
+#ifndef MOCK_TRANSPORT_TCP6_STUFF_H
+#define MOCK_TRANSPORT_TCP6_STUFF_H
 
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <rtps/transport/TCPv4Transport.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <rtps/transport/TCPv6Transport.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
+using TCPv6Transport = eprosima::fastdds::rtps::TCPv6Transport;
 using TCPChannelResource = eprosima::fastdds::rtps::TCPChannelResource;
 
-class MockTCPv4Transport : public TCPv4Transport
+class MockTCPv6Transport : public TCPv6Transport
 {
 public:
 
-    MockTCPv4Transport(
-            const TCPv4TransportDescriptor& descriptor)
-        : TCPv4Transport(descriptor)
+    MockTCPv6Transport(
+            const TCPv6TransportDescriptor& descriptor)
+        : TCPv6Transport(descriptor)
     {
     }
 
@@ -46,4 +46,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif //MOCK_TRANSPORT_TCP4_STUFF_H
+#endif //MOCK_TRANSPORT_TCP6_STUFF_H
