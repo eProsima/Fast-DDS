@@ -263,6 +263,20 @@ bool TypeDescriptorImpl::is_consistent() noexcept
         return false;
     }
 
+    if (TK_MAP == kind_ && (TK_ANNOTATION == key_element_type()->get_kind() ||
+            TK_ARRAY == key_element_type()->get_kind() ||
+            TK_BITSET == key_element_type()->get_kind() ||
+            TK_BITMASK == key_element_type()->get_kind() ||
+            TK_MAP == key_element_type()->get_kind() ||
+            TK_SEQUENCE == key_element_type()->get_kind() ||
+            TK_STRUCTURE == key_element_type()->get_kind() ||
+            TK_UNION == key_element_type()->get_kind()
+            ))
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes a MAP with an invalid key_element_type");
+        return false;
+    }
+
     if (!is_type_name_consistent(name_))
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor name is not a fully qualified name");
