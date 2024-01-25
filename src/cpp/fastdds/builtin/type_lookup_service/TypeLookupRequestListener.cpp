@@ -249,8 +249,9 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
 {
     std::unordered_set<xtypes::TypeIdentfierWithSize> type_dependencies;
     ReturnCode_t type_dependencies_result = RETCODE_ERROR;
-    // Check if the received request has been done before and needed a continuation point
+    if (!request.type_ids().empty())
     {
+        // Check if the received request has been done before and needed a continuation point
         std::lock_guard<std::mutex> lock(requests_with_continuation_mutex_);
         if (!request.continuation_point().empty())
         {
@@ -406,6 +407,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
         // Log a warning and remove the change from the history
         EPROSIMA_LOG_WARNING(TL_REQUEST_READER, "Received data from a bad endpoint.");
         reader->getHistory()->remove_change(change);
+        return;
     }
 
     // Process the received TypeLookup Request and handle different types of requests

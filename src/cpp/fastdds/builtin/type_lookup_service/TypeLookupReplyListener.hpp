@@ -74,7 +74,7 @@ public:
      */
     virtual ~TypeLookupReplyListener() override;
 
-private:
+protected:
 
     /**
      * @brief Starts the thread that process the received replies.
