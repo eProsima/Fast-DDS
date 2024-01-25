@@ -20,17 +20,19 @@ This sub-command finds and remove unused shared-memory files.
 """
 
 import os
+from pathlib import Path
 import platform
 import re
-from pathlib import Path
 
-if os.name == 'posix':
+
+if os.name == "posix":
     import fcntl
-elif os.name == 'nt':
+elif os.name == "nt":
+    import msvcrt
+
+    import pywintypes
     import win32con
     import win32file
-    import pywintypes
-    import msvcrt
 
 
 class Clean:
@@ -44,13 +46,13 @@ class Clean:
         zombie_segments = self.__clean_zombie_segments()
         zombie_ports = self.__clean_zombie_ports()
 
-        print('shm.clean:')
-        print(self.__ports_in_use, 'ports in use')
-        print(self.__segments_in_use, 'segments in use')
+        print("shm.clean:")
+        print(self.__ports_in_use, "ports in use")
+        print(self.__segments_in_use, "segments in use")
         # each port has 3 files
-        print(int(len(zombie_ports) / 3), 'zombie ports cleaned')
+        print(int(len(zombie_ports) / 3), "zombie ports cleaned")
         # each segment has 2 files
-        print(int(len(zombie_segments) / 2), 'zombie segments cleaned')
+        print(int(len(zombie_segments) / 2), "zombie segments cleaned")
 
     def __shm_dir(self):
         """
@@ -61,18 +63,17 @@ class Clean:
 
         """
         # Windows
-        if os.name == 'nt':
-            shm_path = Path('c:\\programdata\\eprosima\\'
-                            'fastrtps_interprocess\\').resolve()
-        elif os.name == 'posix':
+        if os.name == "nt":
+            shm_path = Path("c:\\programdata\\eprosima\\" "fastrtps_interprocess\\").resolve()
+        elif os.name == "posix":
             # MAC
-            if platform.mac_ver()[0] != '':
-                shm_path = Path('/private/tmp/boost_interprocess/').resolve()
+            if platform.mac_ver()[0] != "":
+                shm_path = Path("/private/tmp/boost_interprocess/").resolve()
             # Linux
             else:
-                shm_path = Path('/dev/shm/').resolve()
+                shm_path = Path("/dev/shm/").resolve()
         else:
-            raise RuntimeError(f'{os.name} not supported')
+            raise RuntimeError(f"{os.name} not supported")
 
         return shm_path
 
@@ -91,13 +92,13 @@ class Clean:
             The deleted file names
 
         """
-        segment_lock_re = re.compile('^fastrtps_(\\d|[a-z]){16}_el|_sl')
+        segment_lock_re = re.compile("^fastrtps_(\\d|[a-z]){16}(_el|_sl|$)")
 
         # Each segment has an "_el" lock file that is locked if the segment
         # is open and the owner process is alive
         segment_locks = [
-            str(self.__shm_dir() / file_name) for file_name in
-            self.__list_dir() if segment_lock_re.match(file_name)]
+            str(self.__shm_dir() / file_name) for file_name in self.__list_dir() if segment_lock_re.match(file_name)
+        ]
         zombie_files = []
 
         # Check is_file_locked for each lock file
@@ -123,28 +124,26 @@ class Clean:
             the deleted file names
 
         """
-        port_lock_re = re.compile('^fastrtps_port\\d{,5}_el|_sl')
+        port_lock_re = re.compile("^fastrtps_port\\d{,5}(_el|_sl|$)")
         # Each port has an "_el | _sl" lock file that is locked if the port
         # is open and the owner process is alive
-        port_locks = [
-            file_name for file_name in self.__list_dir() if port_lock_re.match(
-                file_name)]
+        port_locks = [file_name for file_name in self.__list_dir() if port_lock_re.match(file_name)]
         zombie_files = []
 
         # Check is_file_locked for each lock file
         for file in port_locks:
+            print(file)
             if not self.__is_file_locked(self.__shm_dir() / file):
                 # Not locked so delete lock file, segment file and
                 # port_mutex_file
                 port_lock_file = self.__shm_dir() / file
                 port_segment_file = self.__shm_dir() / file[:-3]
-                port_mutex_file = self.__shm_dir() / self.__port_mutex_name(
-                    file[:-3])
+                port_mutex_file = self.__shm_dir() / self.__port_mutex_name(file)
                 self.__remove_file(port_segment_file)
                 self.__remove_file(port_lock_file)
+                print(port_mutex_file)
                 self.__remove_file(port_mutex_file)
-                zombie_files += [
-                    port_lock_file, port_segment_file, port_mutex_file]
+                zombie_files += [port_lock_file, port_segment_file, port_mutex_file]
             else:
                 self.__ports_in_use += 1
 
@@ -161,10 +160,10 @@ class Clean:
             mutex file name
 
         """
-        if os.name == 'posix':
-            return ''.join(['sem.', port_file_name, '_mutex'])
+        if os.name == "posix":
+            return "".join(["sem.", port_file_name, "_mutex"])
         else:
-            return ''.join([port_file_name, '_mutex'])
+            return "".join([port_file_name, "_mutex"])
 
     def __remove_file(self, file):
         """
@@ -189,11 +188,11 @@ class Clean:
 
         """
         try:
-            with open(file, 'ab') as fd:
-                if os.name == 'posix':
+            with open(file, "ab") as fd:
+                if os.name == "posix":
                     # Lock file in Exclusive mode. Fail if the file is locked.
                     fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                elif os.name == 'nt':
+                elif os.name == "nt":
                     # Get WIN32 handle to the file
                     h_file = win32file._get_osfhandle(fd.fileno())
                     # Lock file in Exclusive mode. Fail if the file is locked.
@@ -203,3 +202,8 @@ class Clean:
             return False
         except OSError:
             return True
+
+
+if __name__ == "__main__":
+    clean = Clean()
+    clean.run()
