@@ -178,6 +178,11 @@ public:
             Log::Kind);
 };
 
+//! Streams Log::Kind serialization
+std::ostream& operator <<(
+        std::ostream& os,
+        const Log::Kind& kind);
+
 /**
  * Consumes a log entry to output it somewhere.
  */

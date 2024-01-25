@@ -523,6 +523,30 @@ void LogConsumer::print_new_line(
     stream << def << std::endl;
 }
 
+std::ostream& operator <<(std::ostream& os, const Log::Kind& kind)
+{
+    switch (kind)
+    {
+        case Log::Kind::Info:
+            os << "INFO";
+            break;
+
+        case Log::Kind::Warning:
+            os << "WARNING";
+            break;
+
+        case Log::Kind::Error:
+            os << "ERROR";
+            break;
+
+        default:
+            os << "Invalid Verbosity Kind.";
+            break;
+    }
+
+    return os;
+}
+
 } //namespace dds
 } //namespace fastdds
 } //namespace eprosima
