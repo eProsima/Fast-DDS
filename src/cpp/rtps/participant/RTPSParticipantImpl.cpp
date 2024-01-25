@@ -275,7 +275,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         sanitize_transports_timer_.reset(new TimedEvent(mp_event_thr, [&]()
         {
             return sanitize_transports();
-        }, 5));
+        }, SANITIZE_TRANSPORTS_INTERVAL_MS));
+        
+        sanitize_transports_timer_->restart_timer();
     }
 
     /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators

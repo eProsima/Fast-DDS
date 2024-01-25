@@ -1945,8 +1945,21 @@ void TCPTransportInterface::fill_local_physical_port(
 bool TCPTransportInterface::sanitize_transport(
         SendResourceList& send_resource_list) const
 {
-    std::cout<< "Sanitize transport" << std::endl;
-    static_cast<void>(send_resource_list);
+    // Remove send resources with disconnected channels
+    for (auto it = send_resource_list.begin(); it != send_resource_list.end();) {
+        
+        auto send_resource_channel = static_cast<TCPSenderResource*>(it->get())->channel(); 
+        
+        if(send_resource_channel && send_resource_channel->connection_status() == TCPChannelResource::eConnectionStatus::eDisconnected)
+        {
+            it = send_resource_list.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+
     return true;
 }
 
