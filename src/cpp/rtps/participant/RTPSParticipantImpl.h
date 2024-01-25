@@ -781,6 +781,12 @@ private:
     bool should_match_local_endpoints(
             const RTPSParticipantAttributes& att);
 
+    //! Timed event to check the liveliness of the SendResources.
+    std::unique_ptr<fastrtps::rtps::TimedEvent> sanitize_transports_timer_;
+    
+    //! Timed event callback to sanitize the transports.
+    bool sanitize_transports();
+
 public:
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes() const

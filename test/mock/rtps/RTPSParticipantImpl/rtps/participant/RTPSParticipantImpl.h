@@ -331,6 +331,8 @@ public:
 
     MOCK_METHOD(bool, ignore_participant, (const GuidPrefix_t&));
 
+    MOCK_METHOD(bool, sanitize_transports, ());
+
 private:
 
     MockParticipantListener listener_;

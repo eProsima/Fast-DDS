@@ -23,6 +23,8 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 
+#include <rtps/transport/TCPTransportInterface.h>
+
 using namespace std;
 using namespace eprosima::fastdds::rtps;
 
@@ -467,6 +469,22 @@ void NetworkFactory::update_network_interfaces()
     {
         transport->update_network_interfaces();
     }
+}
+
+bool NetworkFactory::sanitize_transports(
+        SendResourceList& send_resource_list) const
+{
+    for (auto& transport : mRegisteredTransports)
+    {
+        // TODO: Sanitize all transports
+        if (transport->kind() == LOCATOR_KIND_TCPv4 ||
+                transport->kind() == LOCATOR_KIND_TCPv6)
+        {
+            TCPTransportInterface* tcp_transport = static_cast<TCPTransportInterface*>(transport.get());
+            return tcp_transport->sanitize_transport(send_resource_list);
+        }
+    }
+    return true;
 }
 
 } // namespace rtps

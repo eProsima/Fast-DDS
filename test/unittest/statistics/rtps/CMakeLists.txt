@@ -43,6 +43,26 @@ target_include_directories(RTPSStatisticsTests PRIVATE
 target_link_libraries(RTPSStatisticsTests fastrtps fastcdr GTest::gtest GTest::gmock)
 gtest_discover_tests(RTPSStatisticsTests)
 
+set(TCPTransportInterface_SOURCE
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
+    )
+if(TLS_FOUND)
+    set(TCPTransportInterface_SOURCE
+        ${TCPTransportInterface_SOURCE}
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
+        )
+endif()
+
 set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
     MonitorServiceTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
@@ -105,6 +125,7 @@ set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesv1.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesv1.cxx
+    ${TCPTransportInterface_SOURCE}
     )
 
 add_executable(MonitorServiceTests ${STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE})
@@ -141,11 +162,15 @@ target_include_directories(MonitorServiceTests PRIVATE
     ${Asio_INCLUDE_DIR}
     )
 
-target_link_libraries(MonitorServiceTests fastcdr GTest::gtest GTest::gmock)
+target_link_libraries(MonitorServiceTests
+    fastcdr
+    GTest::gtest
+    GTest::gmock
+    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
+    
 gtest_discover_tests(MonitorServiceTests)
 
 if(QNX)
     target_link_libraries(RTPSStatisticsTests socket)
     target_link_libraries(MonitorServiceTests socket)
 endif()
-

@@ -1942,6 +1942,14 @@ void TCPTransportInterface::fill_local_physical_port(
     }
 }
 
+bool TCPTransportInterface::sanitize_transport(
+        SendResourceList& send_resource_list) const
+{
+    std::cout<< "Sanitize transport" << std::endl;
+    static_cast<void>(send_resource_list);
+    return true;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
