@@ -1966,7 +1966,7 @@ TEST_F(TCPv4Tests, non_blocking_send)
     asio::async_connect(
         socket,
         endpoints,
-        [this](std::error_code ec
+        [](std::error_code ec
 #if ASIO_VERSION >= 101200
         , asio::ip::tcp::endpoint
 #else

@@ -306,6 +306,8 @@ bool TCPChannelResource::check_socket_send_buffer(
     {
         bytesInSendQueue = 0;
     }
+#else // ifdef _WIN32
+    static_cast<void>(socket_native_handle);
 #endif // ifndef _WIN32
 
 
