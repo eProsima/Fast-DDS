@@ -22,9 +22,9 @@
 #ifndef _FAST_DDS_GENERATED_ADVANCEDCONFIGURATIONCDRAUX_HPP_
 #define _FAST_DDS_GENERATED_ADVANCEDCONFIGURATIONCDRAUX_HPP_
 
-#include "HelloWorld.hpp"
+#include "AdvancedConfiguration.hpp"
 
-constexpr uint32_t AdvancedConfiguration_max_cdr_typesize {132UL};
+constexpr uint32_t AdvancedConfiguration_max_cdr_typesize {32UL};
 constexpr uint32_t AdvancedConfiguration_max_key_cdr_typesize {0UL};
 
 
@@ -33,8 +33,6 @@ namespace fastcdr {
 
 class Cdr;
 class CdrSizeCalculator;
-
-
 
 
 
