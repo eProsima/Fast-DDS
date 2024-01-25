@@ -783,6 +783,7 @@ private:
 
     //! Timed event to check the liveliness of the SendResources.
     std::unique_ptr<fastrtps::rtps::TimedEvent> sanitize_transports_timer_;
+    static constexpr uint16_t SANITIZE_TRANSPORTS_INTERVAL_MS = 7000;
     
     //! Timed event callback to sanitize the transports.
     bool sanitize_transports();
