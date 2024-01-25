@@ -23,8 +23,6 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 
-#include <rtps/transport/UDPv4Transport.h>
-
 using namespace std;
 using namespace eprosima::fastdds::rtps;
 
