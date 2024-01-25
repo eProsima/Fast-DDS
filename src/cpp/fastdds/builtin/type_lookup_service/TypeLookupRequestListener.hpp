@@ -91,7 +91,7 @@ public:
      */
     virtual ~TypeLookupRequestListener() override;
 
-private:
+protected:
 
     /**
      * @brief Starts the thread that process the received requests.
