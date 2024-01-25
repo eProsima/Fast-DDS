@@ -39,6 +39,10 @@ class DynamicDataImpl : public traits<DynamicData>::base_type
 
     std::map<MemberId, std::shared_ptr<void>> value_;
 
+    std::map<std::string, MemberId> key_to_id_;
+
+    MemberId next_map_member_id_ {0};
+
     std::vector<MemberId> loaned_values_;
 
     MemberId selected_union_member_ {MEMBER_ID_INVALID};
@@ -361,10 +365,10 @@ public:
             const WstringSeq& value) noexcept override;
 
     void serialize(
-            eprosima::fastcdr::Cdr& cdr) const noexcept;
+            eprosima::fastcdr::Cdr& cdr) const;
 
     bool deserialize(
-            eprosima::fastcdr::Cdr& cdr) noexcept;
+            eprosima::fastcdr::Cdr& cdr);
 
     size_t calculate_serialized_size(
             eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -394,7 +398,7 @@ private:
             const traits<DynamicTypeImpl>::ref_type& sequence_type,
             uint32_t sequence_size) noexcept;
 
-    void add_value(
+    std::map<MemberId, std::shared_ptr<void>>::iterator add_value(
             TypeKind kind,
             MemberId id) noexcept;
 
@@ -402,6 +406,12 @@ private:
             eprosima::fastcdr::CdrSizeCalculator& calculator,
             const traits<DynamicTypeImpl>::ref_type type,
             size_t& current_alignment) const noexcept;
+
+    /*!
+     * Auxiliary function for checking if the string containing the map key is correct depending on the key_type.
+     */
+    bool check_key_map(
+            const ObjectName& key_map);
 
     /*!
      * Auxiliary function for checking the new discriminator value set by the user is correct.
@@ -495,7 +505,7 @@ private:
 
     bool deserialize(
             eprosima::fastcdr::Cdr& cdr,
-            const traits<DynamicTypeImpl>::ref_type type) noexcept;
+            const traits<DynamicTypeImpl>::ref_type type);
 
     /*!
      * @brief Given a type, returns the enclosing type if exists.
@@ -517,15 +527,17 @@ private:
 
     template<TypeKind TK >
     ReturnCode_t get_primitive_value(
+            TypeKind element_kind,
+            std::map<MemberId, std::shared_ptr<void>>::iterator value_iterator,
             TypeForKind<TK>& value,
             MemberId member_id) noexcept;
 
     /*!
      * Auxiliary template with the common code for getting the values of a sequence from a TK_ARRAY or TK_SEQUENCE.
      */
-    template<typename T, int TK, class Sequence>
+    template<TypeKind TK>
     ReturnCode_t get_sequence_values(
-            Sequence& value,
+            SequenceKind<TK>& value,
             MemberId id) noexcept;
 
     template<TypeKind TK >
@@ -547,17 +559,22 @@ private:
             const traits<DynamicTypeImpl>::ref_type& discriminator_type,
             traits<DynamicDataImpl>::ref_type& data) noexcept;
 
+    /*!
+     * Auxiliary function to set a primitive value taking into account if there is promotion of the type.
+     */
     template<TypeKind TK>
     ReturnCode_t set_primitive_value(
+            TypeKind element_kind,
+            std::map<MemberId, std::shared_ptr<void>>::iterator value_iterator,
             const TypeForKind<TK>& value) noexcept;
 
     /*!
      * Auxiliary template with the common code for setting the values of a sequence into a TK_ARRAY or TK_SEQUENCE.
      */
-    template<typename T, int TK, class Sequence>
+    template<TypeKind TK>
     ReturnCode_t set_sequence_values(
             MemberId id,
-            const Sequence& value) noexcept;
+            const SequenceKind<TK>& value) noexcept;
 
 
     /*!
@@ -580,7 +597,7 @@ private:
 
     void serialize(
             eprosima::fastcdr::Cdr& cdr,
-            const traits<DynamicTypeImpl>::ref_type type) const noexcept;
+            const traits<DynamicTypeImpl>::ref_type type) const;
 
 };
 
