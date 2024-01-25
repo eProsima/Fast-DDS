@@ -562,13 +562,7 @@ int fastdds_discovery_server(
         signal(SIGINT, sigint_handler);
         signal(SIGTERM, sigint_handler);
         signal(SIGQUIT, sigint_handler);
-        signal(SIGILL, sigint_handler);
-        signal(SIGABRT, sigint_handler);
-        signal(SIGBUS, sigint_handler);
-        signal(SIGFPE, sigint_handler);
 #ifndef _WIN32
-        signal(SIGSEGV, sigint_handler);
-        signal(SIGPIPE, sigint_handler);
         signal(SIGHUP, sigint_handler);
 #endif // ifndef _WIN32
 
