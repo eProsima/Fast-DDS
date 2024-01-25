@@ -23,8 +23,8 @@
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 
-#include "TCPReqRepHelloWorldRequester.hpp"
-#include "TCPReqRepHelloWorldReplier.hpp"
+#include "../api/dds-pim/TCPReqRepHelloWorldRequester.hpp"
+#include "../api/dds-pim/TCPReqRepHelloWorldReplier.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
@@ -66,6 +66,11 @@ public:
     std::shared_ptr<TCPTransportDescriptor> test_transport_;
 };
 
+<<<<<<< HEAD
+=======
+// TODO(jlbueno): Uncomment after migrating to Fast DDS API
+
+>>>>>>> 039a85b58 (Refs #19452: Update fastdds APIs of TCPReqRepHelloWorldReplier and TCPReqRepHelloWorldRequester)
 // TCP and Domain management with logical ports tests
 TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P1_D0_D0)
 {
@@ -400,8 +405,16 @@ TEST_P(TransportTCP, TCPMaxInitialPeer_P0_5_P4)
     ASSERT_TRUE(requester.is_matched());
     ASSERT_TRUE(replier.is_matched());
 }
+<<<<<<< HEAD
 
 #if TLS_FOUND
+=======
+
+
+#if TLS_FOUND
+// TODO(jlbueno): Uncomment after migrating to Fast DDS API
+
+>>>>>>> 039a85b58 (Refs #19452: Update fastdds APIs of TCPReqRepHelloWorldReplier and TCPReqRepHelloWorldRequester)
 TEST_P(TransportTCP, TCP_TLS)
 {
     TCPReqRepHelloWorldRequester requester;
@@ -477,6 +490,10 @@ TEST_P(TransportTCP, TCP_TLS_server_disconnect_after_client)
     std::this_thread::sleep_for(std::chrono::seconds(1));
     delete replier;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 039a85b58 (Refs #19452: Update fastdds APIs of TCPReqRepHelloWorldReplier and TCPReqRepHelloWorldRequester)
 
 void tls_init()
 {
@@ -492,6 +509,11 @@ void tls_init()
 #endif // if TLS_FOUND
 
 // Regression test for ShrinkLocators/transform_remote_locators mechanism.
+<<<<<<< HEAD
+=======
+// TODO(jlbueno): Uncomment after migrating to Fast DDS API
+
+>>>>>>> 039a85b58 (Refs #19452: Update fastdds APIs of TCPReqRepHelloWorldReplier and TCPReqRepHelloWorldRequester)
 TEST_P(TransportTCP, TCPLocalhost)
 {
     TCPReqRepHelloWorldRequester requester;
@@ -519,6 +541,10 @@ TEST_P(TransportTCP, TCPLocalhost)
         requester.block();
     }
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 039a85b58 (Refs #19452: Update fastdds APIs of TCPReqRepHelloWorldReplier and TCPReqRepHelloWorldRequester)
 
 // Test for ==operator TCPTransportDescriptor is not required as it is an abstract class and in TCPv6 is same method
 // Test for copy TCPTransportDescriptor is not required as it is an abstract class and in TCPv6 is same method
@@ -614,6 +640,11 @@ TEST_P(TransportTCP, TCPv6_copy)
 
 // Test connection is successfully restablished after dropping and relaunching a TCP client (requester)
 // Issue -> https://github.com/eProsima/Fast-DDS/issues/2409
+<<<<<<< HEAD
+=======
+// TODO(jlbueno): Uncomment after migrating to Fast DDS API
+
+>>>>>>> 039a85b58 (Refs #19452: Update fastdds APIs of TCPReqRepHelloWorldReplier and TCPReqRepHelloWorldRequester)
 TEST(TransportTCP, Client_reconnection)
 {
     TCPReqRepHelloWorldReplier* replier;
@@ -672,6 +703,10 @@ TEST(TransportTCP, Client_reconnection)
     delete replier;
     delete requester;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 039a85b58 (Refs #19452: Update fastdds APIs of TCPReqRepHelloWorldReplier and TCPReqRepHelloWorldRequester)
 
 // Test copy constructor and copy assignment for TCPv4
 TEST_P(TransportTCP, TCPv4_autofill_port)

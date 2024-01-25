@@ -22,11 +22,13 @@
 
 #include "../../types/HelloWorldPubSubTypes.h"
 
-#include <fastrtps/fastrtps_fwd.h>
-#include <fastrtps/subscriber/SubscriberListener.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/publisher/PublisherListener.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <list>
 #include <condition_variable>
@@ -46,7 +48,7 @@ class TCPReqRepHelloWorldRequester
 {
 public:
 
-    class ReplyListener : public eprosima::fastrtps::SubscriberListener
+    class ReplyListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
 
@@ -60,19 +62,16 @@ public:
         {
         }
 
-        void onNewDataMessage(
-                eprosima::fastrtps::Subscriber* sub);
-        void onSubscriptionMatched(
-                eprosima::fastrtps::Subscriber* /*sub*/,
-                eprosima::fastrtps::rtps::MatchingInfo& info)
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* datareader) override;
+
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader*,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override
         {
-            if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
+            if (0 < info.current_count_change)
             {
                 requester_.matched();
-            }
-            else if (info.status == eprosima::fastrtps::rtps::REMOVED_MATCHING)
-            {
-                requester_.unmatched();
             }
         }
 
@@ -85,7 +84,7 @@ public:
     }
     reply_listener_;
 
-    class RequestListener : public eprosima::fastrtps::PublisherListener
+    class RequestListener : public eprosima::fastdds::dds::DataWriterListener
     {
     public:
 
@@ -99,11 +98,11 @@ public:
         {
         }
 
-        void onPublicationMatched(
-                eprosima::fastrtps::Publisher* /*pub*/,
-                eprosima::fastrtps::rtps::MatchingInfo& info)
+        void on_publication_matched(
+                eprosima::fastdds::dds::DataWriter*,
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override
         {
-            if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
+            if (0 < info.current_count_change)
             {
                 requester_.matched();
             }
@@ -145,39 +144,32 @@ public:
             const uint16_t number);
     bool is_matched();
 
-    virtual void configSubscriber(
+    virtual void configDatareader(
             const std::string& suffix)
     {
-        sattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-
         std::ostringstream t;
 
         t << "TCPReqRepHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
 
-        sattr.topic.topicName = t.str();
+        datareader_topicname_ = t.str();
     }
 
-    virtual void configPublisher(
+    virtual void configDatawriter(
             const std::string& suffix)
     {
-        puattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-
-        // Increase default max_blocking_time to 1 second, as our CI infrastructure shows some
-        // big CPU overhead sometimes
-        puattr.qos.m_reliability.max_blocking_time.seconds = 1;
-        puattr.qos.m_reliability.max_blocking_time.nanosec = 0;
-
         std::ostringstream t;
 
         t << "TCPReqRepHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
 
-        puattr.topic.topicName = t.str();
+        datawriter_topicname_ = t.str();
     }
 
 protected:
 
-    eprosima::fastrtps::PublisherAttributes puattr;
-    eprosima::fastrtps::SubscriberAttributes sattr;
+    eprosima::fastdds::dds::DataWriterQos datawriter_qos_;
+    eprosima::fastdds::dds::DataReaderQos datareader_qos_;
+    std::string datareader_topicname_;
+    std::string datawriter_topicname_;
 
 private:
 
@@ -186,16 +178,20 @@ private:
 
     uint16_t current_number_;
     uint16_t number_received_;
-    eprosima::fastrtps::Participant* participant_;
-    eprosima::fastrtps::Subscriber* reply_subscriber_;
-    eprosima::fastrtps::Publisher* request_publisher_;
+    eprosima::fastdds::dds::DomainParticipant* participant_;
+    eprosima::fastdds::dds::Topic* reply_topic_;
+    eprosima::fastdds::dds::Subscriber* reply_subscriber_;
+    eprosima::fastdds::dds::DataReader* reply_datareader_;
+    eprosima::fastdds::dds::Topic* request_topic_;
+    eprosima::fastdds::dds::Publisher* request_publisher_;
+    eprosima::fastdds::dds::DataWriter* request_datawriter_;
     bool initialized_;
     std::mutex mutex_;
     std::condition_variable cv_;
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
-    std::atomic<unsigned int> matched_;
-    HelloWorldPubSubType type_;
+    unsigned int matched_;
+    eprosima::fastdds::dds::TypeSupport type_;
     eprosima::fastrtps::rtps::SampleIdentity related_sample_identity_;
     eprosima::fastrtps::rtps::SampleIdentity received_sample_identity_;
 };

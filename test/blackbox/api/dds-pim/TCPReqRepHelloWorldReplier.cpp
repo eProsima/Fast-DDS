@@ -20,14 +20,18 @@
 #include "../../common/BlackboxTests.hpp"
 #include "TCPReqRepHelloWorldReplier.hpp"
 
-#include <fastrtps/Domain.h>
-#include <fastrtps/participant/Participant.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
-#include <fastrtps/subscriber/Subscriber.h>
-#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 
-#include <fastrtps/publisher/Publisher.h>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
@@ -35,9 +39,9 @@
 
 #include <gtest/gtest.h>
 
-using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::dds;
 
 TCPReqRepHelloWorldReplier::TCPReqRepHelloWorldReplier()
     : request_listener_(*this)
@@ -49,15 +53,39 @@ TCPReqRepHelloWorldReplier::TCPReqRepHelloWorldReplier()
     , matched_(0)
 {
     // By default, memory mode is PREALLOCATED_WITH_REALLOC_MEMORY_MODE
-    sattr.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    puattr.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    datareader_qos_.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    datawriter_qos_.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 }
 
 TCPReqRepHelloWorldReplier::~TCPReqRepHelloWorldReplier()
 {
     if (participant_ != nullptr)
     {
-        Domain::removeParticipant(participant_);
+        if (request_subscriber_)
+        {
+            if (request_datareader_)
+            {
+                request_subscriber_->delete_datareader(request_datareader_);
+            }
+            participant_->delete_subscriber(request_subscriber_);
+        }
+        if (reply_publisher_)
+        {
+            if (reply_datawriter_)
+            {
+                reply_publisher_->delete_datawriter(reply_datawriter_);
+            }
+            participant_->delete_publisher(reply_publisher_);
+        }
+        if (request_topic_)
+        {
+            participant_->delete_topic(request_topic_);
+        }
+        if (reply_topic_)
+        {
+            participant_->delete_topic(reply_topic_);
+        }
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 }
 
@@ -68,18 +96,13 @@ void TCPReqRepHelloWorldReplier::init(
         uint32_t maxInitialPeer,
         const char* certs_folder)
 {
-    ParticipantAttributes pattr;
-    pattr.domainId = domainId;
-    pattr.rtps.participantID = participantId;
-    pattr.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    //pattr.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
-    //pattr.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(0, 2147483648);
-    pattr.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+    DomainParticipantQos participant_qos;
+    participant_qos.wire_protocol().participant_id = participantId;
+    participant_qos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+    participant_qos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
 
-    // TCP CONNECTION PEER.
-    //uint32_t kind = LOCATOR_KIND_TCPv4;
+    participant_qos.transport().use_builtin_transports = false;
 
-    pattr.rtps.useBuiltinTransports = false;
     std::shared_ptr<TCPTransportDescriptor> descriptor;
     if (use_ipv6)
     {
@@ -113,28 +136,53 @@ void TCPReqRepHelloWorldReplier::init(
         descriptor->tls_config.add_option(TLSOptions::NO_SSLV2);
     }
 
-    pattr.rtps.userTransports.push_back(descriptor);
+    participant_qos.transport().user_transports.push_back(descriptor);
 
-    participant_ = Domain::createParticipant(pattr);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(
+        domainId, participant_qos);
     ASSERT_NE(participant_, nullptr);
+    ASSERT_TRUE(participant_->is_enabled());
 
     // Register type
-    ASSERT_EQ(Domain::registerType(participant_, &type_), true);
+    type_.reset(new HelloWorldPubSubType());
+    ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
+
+    configDatareader("Request");
+    request_topic_ = participant_->create_topic(datareader_topicname_,
+                    type_->getName(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(request_topic_, nullptr);
+    ASSERT_TRUE(request_topic_->is_enabled());
+
+    configDatawriter("Reply");
+    reply_topic_ = participant_->create_topic(datawriter_topicname_,
+                    type_->getName(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(reply_topic_, nullptr);
+    ASSERT_TRUE(reply_topic_->is_enabled());
 
     //Create subscriber
-    sattr.topic.topicKind = NO_KEY;
-    sattr.topic.topicDataType = type_.getName();
-    configSubscriber("Request");
-    request_subscriber_ = Domain::createSubscriber(participant_, sattr, &request_listener_);
+    request_subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(request_subscriber_, nullptr);
+    ASSERT_TRUE(request_subscriber_->is_enabled());
 
     //Create publisher
-    puattr.topic.topicKind = NO_KEY;
-    puattr.topic.topicDataType = type_.getName();
-    puattr.topic.topicName = "HelloWorldTopicReply";
-    configPublisher("Reply");
-    reply_publisher_ = Domain::createPublisher(participant_, puattr, &reply_listener_);
+    reply_publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(reply_publisher_, nullptr);
+    ASSERT_TRUE(reply_publisher_->is_enabled());
+
+    //Create datareader
+    datareader_qos_.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    datareader_qos_.reliability().max_blocking_time = Duration_t(1, 0);
+    request_datareader_ = request_subscriber_->create_datareader(request_topic_, datareader_qos_,
+                    &request_listener_);
+    ASSERT_NE(request_datareader_, nullptr);
+    ASSERT_TRUE(request_datareader_->is_enabled());
+
+    //Create datawriter
+    datawriter_qos_.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    datawriter_qos_.reliability().max_blocking_time = Duration_t(1, 0);
+    reply_datawriter_ = reply_publisher_->create_datawriter(reply_topic_, datawriter_qos_, &reply_listener_);
+    ASSERT_NE(reply_datawriter_, nullptr);
+    ASSERT_TRUE(reply_datawriter_->is_enabled());
 
     initialized_ = true;
 }
@@ -148,7 +196,7 @@ void TCPReqRepHelloWorldReplier::newNumber(
     hello.index(number);
     hello.message("GoodBye");
     wparams.related_sample_identity(sample_identity);
-    ASSERT_EQ(reply_publisher_->write((void*)&hello, wparams), true);
+    ASSERT_EQ(reply_datawriter_->write((void*)&hello, wparams), true);
 }
 
 void TCPReqRepHelloWorldReplier::wait_discovery(
@@ -226,17 +274,17 @@ bool TCPReqRepHelloWorldReplier::is_matched()
     return matched_ > 1;
 }
 
-void TCPReqRepHelloWorldReplier::ReplyListener::onNewDataMessage(
-        Subscriber* sub)
+void TCPReqRepHelloWorldReplier::ReplyListener::on_data_available(
+        DataReader* datareader)
 {
-    ASSERT_NE(sub, nullptr);
+    ASSERT_NE(datareader, nullptr);
 
     HelloWorld hello;
-    SampleInfo_t info;
+    SampleInfo info;
 
-    if (sub->takeNextData((void*)&hello, &info))
+    if (ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&hello, &info))
     {
-        if (info.sampleKind == ALIVE)
+        if (info.valid_data)
         {
             ASSERT_EQ(hello.message().compare("HelloWorld"), 0);
             replier_.newNumber(info.sample_identity, hello.index());
