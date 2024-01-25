@@ -29,8 +29,8 @@
 
 #include <fastrtps/publisher/Publisher.h>
 
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/IPFinder.h>
 
@@ -38,6 +38,7 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 TCPReqRepHelloWorldRequester::TCPReqRepHelloWorldRequester()
     : reply_listener_(*this)

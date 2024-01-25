@@ -29,14 +29,15 @@
 
 #include <fastrtps/publisher/Publisher.h>
 
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 TCPReqRepHelloWorldReplier::TCPReqRepHelloWorldReplier()
     : request_listener_(*this)
