@@ -427,6 +427,44 @@ TEST(BuiltinDataSerializationTests, property_list_with_binary_properties)
     EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false)));
 }
 
+// Regression test for redmine ticket 20306
+TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids)
+{
+    octet data_p_buffer[] =
+    {
+        // Encapsulation
+        0x00, 0x03, 0x00, 0x00,
+
+        // PID_PROTOCOL_VERSION
+        0x15, 0, 4, 0,
+        2, 1, 0, 0,
+
+        // PID_VENDORID
+        0x16, 0, 4, 0,
+        2, 0, 0, 0,
+
+        // PID_PARTICIPANT_GUID
+        0x50, 0, 16, 0,
+        2, 0, 54, 83, 136, 247, 149, 252, 47, 105, 174, 141, 0, 0, 1, 193,
+
+        // PID_NETWORK_CONFIGURATION_SET
+        0x07, 0x80, 8, 0,
+        1, 2, 3, 4, 5, 6, 7, 8,
+
+        // PID_SENTINEL
+        0x01, 0, 0, 0
+    };
+
+    CDRMessage_t msg(0);
+    msg.init(data_p_buffer, static_cast<uint32_t>(sizeof(data_p_buffer)));
+    msg.length = msg.max_size;
+
+    ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
+    out.m_networkConfiguration = 0;
+    EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, true)));
+    ASSERT_EQ(out.m_networkConfiguration, 0u);
+}
+
 /*!
  * \test RTPS-CFT-CFP-01 Tests serialization of `ContentFilterProperty_t` works successfully without parameters.
  */
