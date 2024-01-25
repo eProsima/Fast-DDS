@@ -732,14 +732,14 @@ bool StatefulReader::processDataFragMsg(
 
             if (work_change != nullptr)
             {
-                work_change->add_fragments(change_to_add->serializedPayload, fragmentStartingNum,
-                        fragmentsInSubmessage);
-
                 // Set the instanceHandle only when fragment number 1 is received
                 if (!work_change->instanceHandle.isDefined() && fragmentStartingNum == 1)
                 {
                     work_change->instanceHandle = change_to_add->instanceHandle;
                 }
+
+                work_change->add_fragments(change_to_add->serializedPayload, fragmentStartingNum,
+                        fragmentsInSubmessage);
             }
 
             // If this is the first time we have received fragments for this change, add it to history

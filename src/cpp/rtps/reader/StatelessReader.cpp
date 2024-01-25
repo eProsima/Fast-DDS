@@ -750,17 +750,17 @@ bool StatelessReader::processDataFragMsg(
                 CacheChange_t* change_completed = nullptr;
                 if (work_change != nullptr)
                 {
+                    // Set the instanceHandle only when fragment number 1 is received
+                    if (!work_change->instanceHandle.isDefined() && fragmentStartingNum == 1)
+                    {
+                        work_change->instanceHandle = change_to_add->instanceHandle;
+                    }
+
                     if (work_change->add_fragments(change_to_add->serializedPayload, fragmentStartingNum,
                             fragmentsInSubmessage))
                     {
                         change_completed = work_change;
                         work_change = nullptr;
-                    }
-
-                    // Set the instanceHandle only when fragment number 1 is received
-                    if (!work_change->instanceHandle.isDefined() && fragmentStartingNum == 1)
-                    {
-                        work_change->instanceHandle = change_to_add->instanceHandle;
                     }
                 }
 
