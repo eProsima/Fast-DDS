@@ -134,8 +134,7 @@ void TypeLookupReplyListener::process_reply()
 void TypeLookupReplyListener::check_get_types_reply(
         const SampleIdentity& request_id,
         const TypeLookup_getTypes_Out& reply,
-        SampleIdentity related_request
-        )
+        SampleIdentity related_request)
 {
     // Check if the received reply SampleIdentity corresponds to an outstanding request
     auto requests_it = typelookup_manager_->async_get_type_requests_.find(request_id);
@@ -273,6 +272,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
         // Log a warning and remove the change from the history
         EPROSIMA_LOG_WARNING(TL_REPLY_READER, "Received data from a bad endpoint.");
         reader->getHistory()->remove_change(change);
+        return;
     }
 
     // Process the received TypeLookup Reply and handle different types of replies

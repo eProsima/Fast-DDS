@@ -189,7 +189,7 @@ public:
             eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr& temp_proxy_data,
             const AsyncGetTypeReaderCallback& callback);
 
-private:
+protected:
 
     /**
      * Checks if the given TypeIdentfierWithSize is known by the TypeObjectRegistry.

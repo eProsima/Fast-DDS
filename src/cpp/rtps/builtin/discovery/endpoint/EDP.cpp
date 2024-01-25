@@ -597,7 +597,8 @@ bool EDP::valid_matching(
         return false;
     }
 
-    if (wdata->type_information().assigned() && rdata->type_information().assigned())
+    if ((wdata->has_type_information() && wdata->type_information().assigned()) &&
+            (rdata->has_type_information() && rdata->type_information().assigned()))
     {
         if (wdata->type_information().type_information != rdata->type_information().type_information)
         {
