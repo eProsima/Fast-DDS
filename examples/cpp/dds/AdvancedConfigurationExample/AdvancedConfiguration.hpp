@@ -27,6 +27,7 @@
 #include <utility>
 #include <vector>
 
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -50,8 +51,6 @@
 #else
 #define ADVANCEDCONFIGURATION_DllAPI
 #endif // _WIN32
-
-
 
 /*!
  * @brief This class represents the structure AdvancedConfiguration defined by the user in the IDL file.
