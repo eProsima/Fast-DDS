@@ -246,6 +246,12 @@ public:
      */
     void update_network_interfaces();
 
+    /**
+     * Sanitize registered transports
+     */
+    bool sanitize_transports(
+            fastdds::rtps::SendResourceList& send_resource_list) const;
+
 private:
 
     std::vector<std::unique_ptr<fastdds::rtps::TransportInterface>> mRegisteredTransports;

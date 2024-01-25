@@ -270,6 +270,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     {
         return;
     }
+    else
+    {
+        sanitize_transports_timer_.reset(new TimedEvent(mp_event_thr, [&]()
+        {
+            return sanitize_transports();
+        }, 5));
+    }
 
     /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
        Else -> Take them */
@@ -2980,6 +2987,12 @@ bool RTPSParticipantImpl::should_match_local_endpoints(
         }
     }
     return should_match_local_endpoints;
+}
+
+bool RTPSParticipantImpl::sanitize_transports()
+{
+    std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
+    return m_network_Factory.sanitize_transports(send_resource_list_);
 }
 
 } /* namespace rtps */
