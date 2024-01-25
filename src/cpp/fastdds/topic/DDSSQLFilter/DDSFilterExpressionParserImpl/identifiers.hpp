@@ -154,12 +154,14 @@ struct identifier_processor
             case TI_STRING8_LARGE:
                 return DDSFilterValue::ValueKind::STRING;
 
+            case eprosima::fastdds::dds::xtypes::TK_INT8:
             case eprosima::fastdds::dds::xtypes::TK_INT16:
             case eprosima::fastdds::dds::xtypes::TK_INT32:
             case eprosima::fastdds::dds::xtypes::TK_INT64:
                 return DDSFilterValue::ValueKind::SIGNED_INTEGER;
 
             case eprosima::fastdds::dds::xtypes::TK_BYTE:
+            case eprosima::fastdds::dds::xtypes::TK_UINT8:
             case eprosima::fastdds::dds::xtypes::TK_UINT16:
             case eprosima::fastdds::dds::xtypes::TK_UINT32:
             case eprosima::fastdds::dds::xtypes::TK_UINT64:

@@ -128,6 +128,10 @@ bool DDSFilterField::set_value(
                 string_value = data->get_string_value(member_id);
                 break;
 
+            case eprosima::fastdds::dds::xtypes::TK_INT8:
+                signed_integer_value = data->get_int8_value(member_id);
+                break;
+
             case eprosima::fastdds::dds::xtypes::TK_INT16:
                 signed_integer_value = data->get_int16_value(member_id);
                 break;
@@ -141,6 +145,7 @@ bool DDSFilterField::set_value(
                 break;
 
             case eprosima::fastdds::dds::xtypes::TK_BYTE:
+            case eprosima::fastdds::dds::xtypes::TK_UINT8:
                 unsigned_integer_value = data->get_uint8_value(member_id);
                 break;
 

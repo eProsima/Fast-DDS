@@ -1451,53 +1451,6 @@ ReturnCode_t DomainParticipantImpl::register_type(
     return RETCODE_OK;
 }
 
-// TODO(XTypes): PENDING design to register discovered remote types
-// bool DomainParticipantImpl::register_dynamic_type_to_factories(
-//         const TypeSupport& type) const
-// {
-//     using namespace  eprosima::fastrtps::types;
-//     DynamicPubSubType* dpst = dynamic_cast<DynamicPubSubType*>(type.get());
-//     if (dpst != nullptr) // Registering a dynamic type.
-//     {
-//         TypeObjectFactory* objectFactory = TypeObjectFactory::get_instance();
-//         eprosima::fastrtps::types::DynamicTypeBuilderFactory* dynFactory =
-//                 eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance();
-//         const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(dpst->getName());
-//         if (id == nullptr)
-//         {
-//             std::map<MemberId, fastrtps::types::DynamicTypeMember*> membersMap;
-//             dpst->GetDynamicType()->get_all_members(membersMap);
-//             std::vector<const MemberDescriptor*> members;
-//             for (auto it : membersMap)
-//             {
-//                 members.push_back(it.second->get_descriptor());
-//             }
-//             TypeObject typeObj;
-//             dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members);
-//             // Minimal too
-//             dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members, false);
-//             const TypeIdentifier* type_id2 = objectFactory->get_type_identifier(dpst->getName());
-//             const TypeObject* type_obj = objectFactory->get_type_object(dpst->getName());
-//             if (type_id2 == nullptr)
-//             {
-//                 EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Cannot register dynamic type " << dpst->getName());
-//             }
-//             else
-//             {
-//                 objectFactory->add_type_object(dpst->getName(), type_id2, type_obj);
-
-//                 // Complete, just to make sure it is generated
-//                 const TypeIdentifier* type_id_complete = objectFactory->get_type_identifier(dpst->getName(), true);
-//                 const TypeObject* type_obj_complete = objectFactory->get_type_object(dpst->getName(), true);
-//                 objectFactory->add_type_object(dpst->getName(), type_id_complete, type_obj_complete); // Add complete
-//                 return true;
-//             }
-//         }
-//     }
-
-//     return false; // Isn't a registered dynamic type.
-// }
-
 ReturnCode_t DomainParticipantImpl::unregister_type(
         const std::string& type_name)
 {

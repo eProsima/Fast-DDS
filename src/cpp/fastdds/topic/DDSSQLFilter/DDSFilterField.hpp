@@ -24,8 +24,8 @@
 #include <vector>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
+#include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/types/DynamicData.h>
 
 #include "DDSFilterPredicate.hpp"
