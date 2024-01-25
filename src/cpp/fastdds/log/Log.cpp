@@ -474,11 +474,7 @@ void LogConsumer::print_header(
 
     std::string white = (color) ? C_B_WHITE : "";
 
-    std::string kind = (entry.kind == Log::Kind::Error) ? "Error" :
-            (entry.kind == Log::Kind::Warning) ? "Warning" :
-            (entry.kind == Log::Kind::Info) ? "Info" : "";
-
-    stream << c_b_color << "[" << white << entry.context.category << c_b_color << " " << kind << "] ";
+    stream << c_b_color << "[" << white << entry.context.category << c_b_color << " " << entry.kind << "] ";
 }
 
 void LogConsumer::print_context(
@@ -528,15 +524,15 @@ std::ostream& operator <<(std::ostream& os, const Log::Kind& kind)
     switch (kind)
     {
         case Log::Kind::Info:
-            os << "INFO";
+            os << "Info";
             break;
 
         case Log::Kind::Warning:
-            os << "WARNING";
+            os << "Warning";
             break;
 
         case Log::Kind::Error:
-            os << "ERROR";
+            os << "Error";
             break;
 
         default:
