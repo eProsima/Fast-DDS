@@ -299,18 +299,11 @@ TCPTransactionId RTCPMessageManager::sendConnectionRequest(
     Locator locator;
     mTransport->endpoint_to_locator(channel->local_endpoint(), locator);
 
-    auto config = mTransport->configuration();
-    if (!config->listening_ports.empty())
-    {
-        IPLocator::setPhysicalPort(locator, *(config->listening_ports.begin()));
-    }
-    else
-    {
-        IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::instance().process_id()));
-    }
+    mTransport->fill_local_physical_port(locator);
 
     if (locator.kind == LOCATOR_KIND_TCPv4)
     {
+        auto config = mTransport->configuration();
         const TCPv4TransportDescriptor* pTCPv4Desc = static_cast<TCPv4TransportDescriptor*>(config);
         IPLocator::setWan(locator, pTCPv4Desc->wan_addr[0], pTCPv4Desc->wan_addr[1], pTCPv4Desc->wan_addr[2],
                 pTCPv4Desc->wan_addr[3]);
