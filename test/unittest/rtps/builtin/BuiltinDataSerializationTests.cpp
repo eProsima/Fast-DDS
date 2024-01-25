@@ -462,7 +462,7 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
     ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
     out.m_networkConfiguration = 0;
     EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, true)));
-    ASSERT_EQ(out.m_networkConfiguration, 0);
+    ASSERT_EQ(out.m_networkConfiguration, 0u);
 }
 
 /*!
