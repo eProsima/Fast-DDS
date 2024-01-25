@@ -312,7 +312,7 @@ void TCPTransportInterface::calculate_crc(
 }
 
 uint16_t TCPTransportInterface::create_acceptor_socket(
-        const Locator& locator)
+        Locator& locator)
 {
     uint16_t final_port = 0;
     try
@@ -348,6 +348,14 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
             std::vector<std::string> vInterfaces = get_binding_interfaces_list();
             for (std::string& sInterface : vInterfaces)
             {
+                if (locator.kind == LOCATOR_KIND_TCPv4)
+                {
+                    IPLocator::setIPv4(locator, sInterface);
+                }
+                else if (locator.kind == LOCATOR_KIND_TCPv6)
+                {
+                    IPLocator::setIPv6(locator, sInterface);
+                }
 #if TLS_FOUND
                 if (configuration()->apply_security)
                 {
