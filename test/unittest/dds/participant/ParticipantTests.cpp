@@ -38,6 +38,7 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
@@ -363,6 +364,61 @@ TEST(ParticipantTests, ChangeDomainParticipantFactoryQos)
 
     ASSERT_EQ(qos, fqos);
     ASSERT_EQ(fqos.entity_factory().autoenable_created_entities, true);
+}
+
+TEST(ParticipantTests, DomainParticipantFactoryLibrarySettings)
+{
+    // Disable entities autoenabling
+    DomainParticipantFactoryQos qos;
+    qos.entity_factory().autoenable_created_entities = false;
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->set_qos(qos), ReturnCode_t::RETCODE_OK);
+
+    eprosima::fastdds::LibrarySettings library_settings;
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->get_library_settings(library_settings),
+            ReturnCode_t::RETCODE_OK);
+    // Get LibrarySettings default values
+#if HAVE_STRICT_REALTIME
+    EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_OFF, library_settings.intraprocess_delivery);
+#else
+    EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_FULL, library_settings.intraprocess_delivery);
+#endif
+    library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_USER_DATA_ONLY;
+    // Setting the library settings within an empty DomainParticipantFactory shall return true
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->set_library_settings(library_settings),
+            ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->get_library_settings(library_settings),
+            ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_USER_DATA_ONLY, library_settings.intraprocess_delivery);
+    // Create DomainParticipant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+    library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
+    // Setting LibrarySettings with any disabled DomainParticipant shall succeed
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->set_library_settings(library_settings),
+            ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->get_library_settings(library_settings),
+            ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_OFF, library_settings.intraprocess_delivery);
+    // Operation shall fail if there is any enabled DomainParticipant
+    EXPECT_EQ(participant->enable(), ReturnCode_t::RETCODE_OK);
+    library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_FULL;
+    // Setting LibrarySettings with any disabled DomainParticipant shall succeed
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->set_library_settings(library_settings),
+            ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->get_library_settings(library_settings),
+            ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_OFF, library_settings.intraprocess_delivery);
+    // Remove DomainParticipant
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant),
+            ReturnCode_t::RETCODE_OK);
+    library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_FULL;
+    // Setting LibrarySettings with no participants shall suceed
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->set_library_settings(library_settings),
+            ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->get_library_settings(library_settings),
+            ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_FULL, library_settings.intraprocess_delivery);
 }
 
 TEST(ParticipantTests, CreateDomainParticipant)
