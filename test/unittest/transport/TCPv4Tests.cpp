@@ -1778,7 +1778,7 @@ TEST_F(TCPv4Tests, client_announced_local_port_uniqueness)
 {
     TCPv4TransportDescriptor recvDescriptor;
     recvDescriptor.add_listener_port(g_default_port);
-    MockTCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    eprosima::fastdds::rtps::MockTCPv4Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
 
     TCPv4TransportDescriptor sendDescriptor_1;

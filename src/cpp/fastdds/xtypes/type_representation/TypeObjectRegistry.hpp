@@ -163,7 +163,7 @@ public:
      */
     ReturnCode_t get_type_object(
             const TypeIdentifier& type_identifier,
-            TypeObject& type_object);
+            TypeObject& type_object) override;
 
     /**
      * @brief Get the TypeInformation related to a specific type_name.
