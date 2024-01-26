@@ -215,6 +215,68 @@ TEST_F(TCPv6Tests, autofill_port)
     EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports.size() == 3);
 }
 
+static void GetIP6s(
+        std::vector<IPFinder::info_IP>& interfaces)
+{
+    IPFinder::getIPs(&interfaces, false);
+    auto new_end = remove_if(interfaces.begin(),
+                    interfaces.end(),
+                    [](IPFinder::info_IP ip)
+                    {
+                        return ip.type != IPFinder::IP6 && ip.type != IPFinder::IP6_LOCAL;
+                    });
+    interfaces.erase(new_end, interfaces.end());
+    std::for_each(interfaces.begin(), interfaces.end(), [](IPFinder::info_IP& loc)
+            {
+                loc.locator.kind = LOCATOR_KIND_TCPv6;
+            });
+}
+
+TEST_F(TCPv6Tests, check_TCPv6_interface_whitelist_initialization)
+{
+    std::vector<IPFinder::info_IP> interfaces;
+
+    GetIP6s(interfaces);
+
+    // asio::ip::addres_v6 appends the interface name to the IP address, but the locator does not
+    // Create two different vectors to compare them
+    std::vector<std::string> asio_interfaces;
+    std::vector<std::string> locator_interfaces;
+    for (auto& ip : interfaces)
+    {
+        asio_interfaces.push_back(ip.name);
+        locator_interfaces.push_back(IPLocator::toIPv6string(ip.locator));
+    }
+    // Add manually localhost to test adding multiple interfaces
+    asio_interfaces.push_back("::1");
+    locator_interfaces.push_back("::1");
+
+    TCPv6TransportDescriptor descriptor;
+    for (auto& ip : locator_interfaces)
+    {
+        descriptor.interfaceWhiteList.emplace_back(ip);
+    }
+    descriptor.add_listener_port(g_default_port);
+    MockTCPv6Transport transportUnderTest(descriptor);
+    transportUnderTest.init();
+
+    // Check that the transport whitelist and the acceptors map is the same size as the locator_interfaces
+    ASSERT_EQ(transportUnderTest.get_interface_whitelist().size(), descriptor.interfaceWhiteList.size());
+    ASSERT_EQ(transportUnderTest.get_acceptors_map().size(), descriptor.interfaceWhiteList.size());
+
+    // Check that every interface is in the whitelist
+    auto check_whitelist = transportUnderTest.get_interface_whitelist();
+    for (auto& ip : asio_interfaces)
+    {
+        ASSERT_NE(std::find(check_whitelist.begin(), check_whitelist.end(), asio::ip::address_v6::from_string(ip)), check_whitelist.end());
+    }
+
+    // Check that every interface is in the acceptors map
+    for (const auto& test : transportUnderTest.get_acceptors_map()) {
+        ASSERT_NE(std::find(locator_interfaces.begin(), locator_interfaces.end(), IPLocator::toIPv6string(test.first)), locator_interfaces.end());
+    }
+}
+
 // This test verifies server's channel resources mapping keys uniqueness, where keys are clients locators.
 // Clients typically communicated its PID as its locator port. When having several clients in the same
 // process this lead to overwriting server's channel resources map elements.
