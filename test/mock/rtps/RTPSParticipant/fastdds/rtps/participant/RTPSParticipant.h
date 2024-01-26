@@ -24,6 +24,7 @@
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
@@ -245,6 +246,7 @@ public:
     const GUID_t m_guid;
     mutable ResourceEvent mp_event_thr;
     RTPSParticipantAttributes attributes_;
+    RTPSParticipantImpl* mp_impl;
 };
 
 } /* namespace rtps */

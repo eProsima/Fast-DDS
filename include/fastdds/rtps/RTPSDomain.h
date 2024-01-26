@@ -23,6 +23,7 @@
 #include <mutex>
 #include <set>
 
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Types.h>
@@ -290,6 +291,25 @@ public:
      */
     RTPS_DllAPI static bool removeRTPSParticipant(
             RTPSParticipant* p);
+
+    /**
+     * @brief Get the library settings.
+     *
+     * @param library_settings LibrarySettings reference where the settings are returned.
+     * @return True.
+     */
+    RTPS_DllAPI static bool get_library_settings(
+            fastdds::LibrarySettings& library_settings);
+
+    /**
+     * @brief Set the library settings-
+     *
+     * @param library_settings LibrarySettings to be set.
+     * @return False if there is any RTPSParticipant already created.
+     *         True if correctly set.
+     */
+    RTPS_DllAPI static bool set_library_settings(
+            const fastdds::LibrarySettings& library_settings);
 
 private:
 

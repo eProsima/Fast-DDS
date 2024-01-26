@@ -27,6 +27,7 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -266,6 +267,28 @@ public:
      */
     RTPS_DllAPI ReturnCode_t set_qos(
             const DomainParticipantFactoryQos& qos);
+
+    /**
+     * @brief This operation returns the value of the DomainParticipant library settings.
+     *
+     * @param library_settings LibrarySettings reference where the settings are returned.
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_library_settings(
+            LibrarySettings& library_settings) const;
+
+    /**
+     * @brief This operation sets the library settings.
+     *
+     * Library settings must be set before enabling the DomainParticipants.
+     * Otherwise, failure of the setting operation is expected.
+     *
+     * @param library_settings LibrarySettings to be set.
+     * @return RETCODE_PRECONDITION_NOT_MET if any DomainParticipant is enabled.
+     *         RETCODE_OK otherwise.
+     */
+    RTPS_DllAPI ReturnCode_t set_library_settings(
+            const LibrarySettings& library_settings);
 
 protected:
 

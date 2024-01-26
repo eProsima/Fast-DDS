@@ -874,6 +874,36 @@ void RTPSDomainImpl::set_filewatch_thread_config(
     instance->callback_thread_config_ = callback_thread;
 }
 
+bool RTPSDomain::get_library_settings(
+        fastdds::LibrarySettings& library_settings)
+{
+    return RTPSDomainImpl::get_library_settings(library_settings);
+}
+
+bool RTPSDomainImpl::get_library_settings(
+        fastdds::LibrarySettings& library_settings)
+{
+//    library_settings = xmlparser::XMLProfileManager::library_settings();
+    return true;
+}
+
+bool RTPSDomain::set_library_settings(
+        const fastdds::LibrarySettings& library_settings)
+{
+    return RTPSDomainImpl::set_library_settings(library_settings);
+}
+
+bool RTPSDomainImpl::set_library_settings(
+        const fastdds::LibrarySettings& library_settings)
+{
+    if (!get_instance()->m_RTPSParticipants.empty())
+    {
+        return false;
+    }
+//    xmlparser::XMLProfileManager::library_settings(library_settings);
+    return true;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

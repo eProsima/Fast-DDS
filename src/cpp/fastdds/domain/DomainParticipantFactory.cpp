@@ -482,6 +482,23 @@ void DomainParticipantFactory::participant_has_been_deleted(
     }
 }
 
+ReturnCode_t DomainParticipantFactory::get_library_settings(
+        LibrarySettings& library_settings) const
+{
+    rtps_domain_->get_library_settings(library_settings);
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantFactory::set_library_settings(
+        const LibrarySettings& library_settings)
+{
+    if (rtps_domain_->set_library_settings(library_settings))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

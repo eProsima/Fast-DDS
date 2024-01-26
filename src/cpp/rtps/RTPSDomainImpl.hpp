@@ -214,6 +214,25 @@ public:
             const fastdds::rtps::ThreadSettings& watch_thread,
             const fastdds::rtps::ThreadSettings& callback_thread);
 
+    /**
+     * @brief Get the library settings.
+     * 
+     * @param library_settings LibrarySettings reference where the settings are returned.
+     * @return True. 
+     */
+    static bool get_library_settings(
+            fastdds::LibrarySettings& library_settings);
+
+    /**
+     * @brief Set the library settings-
+     * 
+     * @param library_settings LibrarySettings to be set.
+     * @return False if there is any RTPSParticipant already created.
+     *         True if correctly set.
+     */
+    static bool set_library_settings(
+            const fastdds::LibrarySettings& library_settings);
+
 private:
 
     /**
