@@ -35,6 +35,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using ::operator<<;
 
 ReaderProxyData::ReaderProxyData (
         const size_t max_unicast_locators,
@@ -979,6 +980,13 @@ bool ReaderProxyData::readFromCDRMessage(
 
                     case fastdds::dds::PID_DISABLE_POSITIVE_ACKS:
                     {
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != source_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA, "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
+                            return true;
+                        }
+
                         if (!fastdds::dds::QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::read_from_cdr_message(
                                     m_qos.m_disablePositiveACKs, msg, plength))
                         {
@@ -1023,6 +1031,13 @@ bool ReaderProxyData::readFromCDRMessage(
 
                     case fastdds::dds::PID_DATASHARING:
                     {
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != source_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA, "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
+                            return true;
+                        }
+
                         if (!fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::read_from_cdr_message(
                                     m_qos.data_sharing, msg, plength))
                         {

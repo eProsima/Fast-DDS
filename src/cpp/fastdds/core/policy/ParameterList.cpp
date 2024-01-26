@@ -17,11 +17,13 @@
  *
  */
 
+#include <functional>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+
 #include "ParameterList.hpp"
 #include "ParameterSerializer.hpp"
-
-#include <functional>
 
 namespace eprosima {
 namespace fastdds {
@@ -64,6 +66,17 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                     case PID_CUSTOM_RELATED_SAMPLE_IDENTITY:
                     case PID_RELATED_SAMPLE_IDENTITY:
                     {
+                        // TODO(eduponz): This check is done here because an implicit fall through rises a warning.
+                        // C++17 included a [[fallthrough]] attribute to avoid this kind of warning.
+                        if (pid == PID_RELATED_ENTITY_GUID)
+                        {
+                            // Ignore custom PID when coming from other vendors except RTI Connext
+                            if ((rtps::c_VendorId_eProsima != change.vendor_id) && (rtps::c_VendorId_rti_connext != change.vendor_id))
+                            {
+                                return true;
+                            }
+                        }
+
                         if (plength >= 24)
                         {
                             ParameterSampleIdentity_t p(pid, plength);
