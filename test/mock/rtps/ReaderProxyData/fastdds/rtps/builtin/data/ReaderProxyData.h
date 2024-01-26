@@ -19,16 +19,16 @@
 #ifndef _FASTDDS_RTPS_BUILTIN_DATA_READERPROXYDATA_H_
 #define _FASTDDS_RTPS_BUILTIN_DATA_READERPROXYDATA_H_
 
-#include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/common/RemoteLocators.hpp>
+#include <gmock/gmock.h>
+
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastrtps/qos/ReaderQos.h>
 #include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-
+#include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/common/RemoteLocators.hpp>
 #if HAVE_SECURITY
 #include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
-
-#include <gmock/gmock.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -143,7 +143,8 @@ public:
     bool readFromCDRMessage(
             CDRMessage_t* /*msg*/,
             const NetworkFactory& /*network*/,
-            bool /*is_shm_transport_possible*/)
+            bool /*is_shm_transport_possible*/,
+            fastdds::rtps::VendorId_t /*source_vendor_id*/)
     {
         return true;
     }

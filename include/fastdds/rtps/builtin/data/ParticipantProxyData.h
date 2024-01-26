@@ -21,18 +21,18 @@
 #define _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include <fastrtps/qos/QosPolicies.h>
-
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
-#include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
-#include <fastdds/rtps/common/Token.h>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
-
+#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #endif // if HAVE_SECURITY
+#include <fastrtps/qos/QosPolicies.h>
+
 
 #include <chrono>
 
@@ -76,7 +76,7 @@ public:
     //!GUID
     GUID_t m_guid;
     //!Vendor ID
-    VendorId_t m_VendorId;
+    fastdds::rtps::VendorId_t m_VendorId;
     //!Expects Inline QOS.
     bool m_expectsInlineQos;
     //!Available builtin endpoints
@@ -155,7 +155,8 @@ public:
             bool use_encapsulation,
             const NetworkFactory& network,
             bool is_shm_transport_available,
-            bool should_filter_locators);
+            bool should_filter_locators,
+            fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
 
     //! Clear the data (restore to default state).
     RTPS_DllAPI void clear();

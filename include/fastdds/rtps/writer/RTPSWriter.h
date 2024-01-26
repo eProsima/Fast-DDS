@@ -29,19 +29,20 @@
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
-#include "DeliveryRetCode.hpp"
-#include "LocatorSelectorSender.hpp"
+#ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
+#endif // ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 
-#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
-#ifdef FASTDDS_STATISTICS
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
-#endif // ifdef FASTDDS_STATISTICS
+#include "DeliveryRetCode.hpp"
+#include "LocatorSelectorSender.hpp"
 
 namespace eprosima {
 
@@ -423,9 +424,14 @@ public:
             uint32_t ack_count,
             const SequenceNumberSet_t& sn_set,
             bool final_flag,
-            bool& result)
+            bool& result,
+            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown)
     {
-        (void)reader_guid; (void)ack_count; (void)sn_set; (void)final_flag;
+        static_cast<void>(reader_guid);
+        static_cast<void>(ack_count);
+        static_cast<void>(sn_set);
+        static_cast<void>(final_flag);
+        static_cast<void>(origin_vendor_id);
 
         result = false;
         return writer_guid == m_guid;
@@ -448,9 +454,14 @@ public:
             uint32_t ack_count,
             const SequenceNumber_t& seq_num,
             const FragmentNumberSet_t fragments_state,
-            bool& result)
+            bool& result,
+            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown)
     {
-        (void)reader_guid; (void)ack_count; (void)seq_num; (void)fragments_state;
+        static_cast<void>(reader_guid);
+        static_cast<void>(ack_count);
+        static_cast<void>(seq_num);
+        static_cast<void>(fragments_state);
+        static_cast<void>(origin_vendor_id);
 
         result = false;
         return writer_guid == m_guid;

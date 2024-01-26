@@ -17,13 +17,13 @@
  *
  */
 
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/common/CDRMessage_t.h>
-
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/core/policy/QosPoliciesSerializer.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+
 #include <rtps/network/NetworkFactory.h>
 
 #include "ProxyDataFilters.hpp"
@@ -636,9 +636,10 @@ bool ReaderProxyData::readFromCDRMessage(
         CDRMessage_t* msg,
         const NetworkFactory& network,
         bool is_shm_transport_available,
-        bool should_filter_locators)
+        bool should_filter_locators,
+        fastdds::rtps::VendorId_t source_vendor_id)
 {
-    auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators](
+    auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 switch (pid)

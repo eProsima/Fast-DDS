@@ -24,6 +24,7 @@
 #include <unordered_map>
 
 #include <fastdds/rtps/common/all_common.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastrtps/utils/shared_mutex.hpp>
 
 namespace eprosima {
@@ -81,7 +82,7 @@ private:
     //!Protocol version of the message
     ProtocolVersion_t source_version_;
     //!VendorID that created the message
-    VendorId_t source_vendor_id_;
+    fastdds::rtps::VendorId_t source_vendor_id_;
     //!GuidPrefix of the entity that created the message
     GuidPrefix_t source_guid_prefix_;
     //!GuidPrefix of the entity that receives the message. GuidPrefix of the RTPSParticipant.

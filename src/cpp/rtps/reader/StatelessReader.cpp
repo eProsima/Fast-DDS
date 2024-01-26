@@ -21,14 +21,16 @@
 #include <mutex>
 #include <thread>
 
-#include <fastdds/rtps/reader/StatelessReader.h>
-#include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/writer/LivelinessManager.h>
+
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
@@ -806,7 +808,8 @@ bool StatelessReader::processHeartbeatMsg(
         const SequenceNumber_t& /*firstSN*/,
         const SequenceNumber_t& /*lastSN*/,
         bool /*finalFlag*/,
-        bool /*livelinessFlag*/)
+        bool /*livelinessFlag*/,
+        fastdds::rtps::VendorId_t /*origin_vendor_id*/)
 {
     return true;
 }
@@ -814,7 +817,8 @@ bool StatelessReader::processHeartbeatMsg(
 bool StatelessReader::processGapMsg(
         const GUID_t& /*writerGUID*/,
         const SequenceNumber_t& /*gapStart*/,
-        const SequenceNumberSet_t& /*gapList*/)
+        const SequenceNumberSet_t& /*gapList*/,
+        fastdds::rtps::VendorId_t /*origin_vendor_id*/)
 {
     return true;
 }
