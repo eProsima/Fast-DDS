@@ -20,7 +20,7 @@ jobs:
         ref: 3.0.x-devel
         fetch-depth: 0
 
-      # Step 3: Rebase
+      # Step 2: Rebase
     - name: Rebase current branch
       id: rebase_master
       run: |
@@ -28,7 +28,7 @@ jobs:
         git rebase master
       shell: bash
 
-      # Step 4: Push
+      # Step 3: Push
     - name: Force push if required
       id: push
       run: |
