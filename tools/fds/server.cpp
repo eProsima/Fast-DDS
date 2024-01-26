@@ -561,8 +561,8 @@ int fastdds_discovery_server(
         // Handle signal SIGINT for every thread
         signal(SIGINT, sigint_handler);
         signal(SIGTERM, sigint_handler);
-        signal(SIGQUIT, sigint_handler);
 #ifndef _WIN32
+        signal(SIGQUIT, sigint_handler);
         signal(SIGHUP, sigint_handler);
 #endif // ifndef _WIN32
 
