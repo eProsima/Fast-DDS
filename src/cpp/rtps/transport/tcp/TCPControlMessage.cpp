@@ -26,9 +26,10 @@ char dummy;
 } // namespace
 #endif // ifdef _WIN32
 
-
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+
 #include <rtps/transport/tcp/TCPControlMessage.h>
 
 using namespace eprosima::fastcdr::exception;
@@ -40,7 +41,7 @@ namespace fastdds {
 namespace rtps {
 
 using ProtocolVersion_t = fastrtps::rtps::ProtocolVersion_t;
-using VendorId_t = fastrtps::rtps::VendorId_t;
+using VendorId_t = fastdds::rtps::VendorId_t;
 using SerializedPayload_t = fastrtps::rtps::SerializedPayload_t;
 
 static void operator <<(

@@ -20,11 +20,13 @@
 #define _FASTDDS_RTPS_RTPS_MESSAGES_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/Guid.h>
-
 #include <iostream>
- #include <bitset>
+#include <bitset>
+
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -53,7 +55,7 @@ enum SubmessageId : uint8_t
      //!Protocol version
      ProtocolVersion_t version;
      //!Vendor ID
-     VendorId_t vendorId;
+     fastdds::rtps::VendorId_t vendorId;
      //!GUID prefix
      GuidPrefix_t guidPrefix;
      Header_t():

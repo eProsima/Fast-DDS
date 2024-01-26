@@ -1,0 +1,93 @@
+diff --git a/tools/fds/server.cpp b/tools/fds/server.cpp
+index 58a155ab9..7691c26c3 100644
+--- a/tools/fds/server.cpp
++++ b/tools/fds/server.cpp
+@@ -25,6 +25,7 @@
+ #include <vector>
+ 
+ #include <fastdds/dds/domain/DomainParticipant.hpp>
++#include <fastdds/dds/domain/DomainParticipantListener.hpp>
+ #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+ #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+ #include <fastdds/dds/log/Log.hpp>
+@@ -380,9 +381,79 @@ int fastdds_discovery_server(
+ 
+     fastrtps::rtps::GuidPrefix_t guid_prefix = participantQos.wire_protocol().prefix;
+ 
++    class CustomParticipantListener : public DomainParticipantListener
++    {
++        /* Custom Callback on_participant_discovery */
++        void on_participant_discovery(
++                DomainParticipant* participant,
++                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
++        {
++            static_cast<void>(participant);
++            switch (info.status){
++                case eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT:
++                    /* Process the case when a new DomainParticipant was found in the domain */
++                    std::cout << "    - New DomainParticipant '" << info.info.m_participantName <<
++                        "': " << info.info.m_guid << std::endl;
++                    break;
++                case eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT:
++                    /* Process the case when a DomainParticipant changed its QOS */
++                    break;
++                case eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT:
++                    /* Process the case when a DomainParticipant was removed from the domain */
++                    std::cout << "    - Removed DomainParticipant '" << info.info.m_participantName <<
++                        "': " << info.info.m_guid << std::endl;
++                    break;
++            }
++        }
++
++        /* Custom Callback on_subscriber_discovery */
++        void on_subscriber_discovery(
++                DomainParticipant* participant,
++                eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override
++        {
++            static_cast<void>(participant);
++            switch (info.status){
++                case eprosima::fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER:
++                    /* Process the case when a new subscriber was found in the domain */
++                    std::cout << "    - New DataReader in topic '" << info.info.topicName() << "'" << std::endl;;
++                    break;
++                case eprosima::fastrtps::rtps::ReaderDiscoveryInfo::CHANGED_QOS_READER:
++                    /* Process the case when a subscriber changed its QOS */
++                    break;
++                case eprosima::fastrtps::rtps::ReaderDiscoveryInfo::REMOVED_READER:
++                    /* Process the case when a subscriber was removed from the domain */
++                    std::cout << "    - Removed DataReader in topic '" << info.info.topicName() << "'" << std::endl;;
++                    break;
++            }
++        }
++
++        /* Custom Callback on_publisher_discovery */
++        void on_publisher_discovery(
++                DomainParticipant* participant,
++                eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
++        {
++            static_cast<void>(participant);
++            switch (info.status){
++                case eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER:
++                    /* Process the case when a new publisher was found in the domain */
++                    std::cout << "    - New DataWriter in to topic '" << info.info.topicName() << "'" << std::endl;;
++                    break;
++                case eprosima::fastrtps::rtps::WriterDiscoveryInfo::CHANGED_QOS_WRITER:
++                    /* Process the case when a publisher changed its QOS */
++                    break;
++                case eprosima::fastrtps::rtps::WriterDiscoveryInfo::REMOVED_WRITER:
++                    /* Process the case when a publisher was removed from the domain */
++                    std::cout << "    - Removed DataWriter in topic '" << info.info.topicName() << "'" << std::endl;;
++                    break;
++            }
++        }
++    };
++
++    CustomParticipantListener custom_listener;
++
+     // Create the server
+     int return_value = 0;
+-    DomainParticipant* pServer = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
++    DomainParticipant* pServer = DomainParticipantFactory::get_instance()->create_participant(0, participantQos, &custom_listener, StatusMask::none());
+ 
+     if (nullptr == pServer)
+     {
