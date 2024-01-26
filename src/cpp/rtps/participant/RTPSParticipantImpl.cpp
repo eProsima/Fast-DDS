@@ -273,10 +273,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     else
     {
         sanitize_transports_timer_.reset(new TimedEvent(mp_event_thr, [&]()
-        {
-            return sanitize_transports();
-        }, SANITIZE_TRANSPORTS_INTERVAL_MS));
-        
+                {
+                    return sanitize_transports();
+                }, SANITIZE_TRANSPORTS_INTERVAL_MS));
+
         sanitize_transports_timer_->restart_timer();
     }
 
