@@ -27,6 +27,7 @@
 #include "../api/dds-pim/TCPReqRepHelloWorldReplier.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include "DatagramInjectionTransport.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

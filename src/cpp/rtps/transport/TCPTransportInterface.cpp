@@ -1843,9 +1843,9 @@ bool TCPTransportInterface::sanitize_transport(
     // Remove send resources with disconnected channels
     for (auto it = send_resource_list.begin(); it != send_resource_list.end();) {
         
-        auto send_resource_channel = static_cast<TCPSenderResource*>(it->get())->channel(); 
+        TCPSenderResource* tcp_sender_resource = TCPSenderResource::cast(*this, it->get());
         
-        if(send_resource_channel && send_resource_channel->connection_status() == TCPChannelResource::eConnectionStatus::eDisconnected)
+        if(tcp_sender_resource && tcp_sender_resource->channel()->connection_status() == TCPChannelResource::eConnectionStatus::eDisconnected)
         {
             it = send_resource_list.erase(it);
         }
@@ -1854,7 +1854,6 @@ bool TCPTransportInterface::sanitize_transport(
             ++it;
         }
     }
-
     return true;
 }
 

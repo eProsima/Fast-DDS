@@ -68,7 +68,7 @@ public:
     }
 
     static TCPSenderResource* cast(
-            TransportInterface& transport,
+            const TransportInterface& transport,
             SenderResource* sender_resource)
     {
         TCPSenderResource* returned_resource = nullptr;
