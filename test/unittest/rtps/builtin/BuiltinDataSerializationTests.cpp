@@ -12,15 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "fastdds/rtps/messages/CDRMessage.h"
+#include <cstdint>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <fastdds/core/policy/ParameterList.hpp>
+#include <fastdds/core/policy/ParameterSerializer.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
-#include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <rtps/network/NetworkFactory.h>
 
 namespace eprosima {
@@ -427,42 +436,230 @@ TEST(BuiltinDataSerializationTests, property_list_with_binary_properties)
     EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, true)));
 }
 
-// Regression test for redmine ticket 20306
+// Regression test for redmine tickets 20306 and 20307
 TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids)
 {
-    octet data_p_buffer[] =
-    {
-        // Encapsulation
-        0x00, 0x03, 0x00, 0x00,
+    /* Convenient functions to group code */
+    auto participant_read = [](octet* buffer, uint32_t buffer_length, ParticipantProxyData& out) -> void {
+        CDRMessage_t msg(0);
+        msg.init(buffer, buffer_length);
+        msg.length = msg.max_size;
 
-        // PID_PROTOCOL_VERSION
-        0x15, 0, 4, 0,
-        2, 1, 0, 0,
-
-        // PID_VENDORID
-        0x16, 0, 4, 0,
-        2, 0, 0, 0,
-
-        // PID_PARTICIPANT_GUID
-        0x50, 0, 16, 0,
-        2, 0, 54, 83, 136, 247, 149, 252, 47, 105, 174, 141, 0, 0, 1, 193,
-
-        // PID_NETWORK_CONFIGURATION_SET
-        0x07, 0x80, 8, 0,
-        1, 2, 3, 4, 5, 6, 7, 8,
-
-        // PID_SENTINEL
-        0x01, 0, 0, 0
+        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, false, fastdds::rtps::VendorId_t({2, 0}))));
     };
 
-    CDRMessage_t msg(0);
-    msg.init(data_p_buffer, static_cast<uint32_t>(sizeof(data_p_buffer)));
-    msg.length = msg.max_size;
+    auto writer_read = [](octet* buffer, uint32_t buffer_length, WriterProxyData& out) -> void {
+        CDRMessage_t msg(0);
+        msg.init(buffer, buffer_length);
+        msg.length = msg.max_size;
 
-    ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
-    out.m_networkConfiguration = 0;
-    EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, true)));
-    ASSERT_EQ(out.m_networkConfiguration, 0u);
+        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, false, fastdds::rtps::VendorId_t({2, 0}))));
+    };
+
+    auto reader_read = [](octet* buffer, uint32_t buffer_length, ReaderProxyData& out) -> void {
+        CDRMessage_t msg(0);
+        msg.init(buffer, buffer_length);
+        msg.length = msg.max_size;
+
+        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, false, fastdds::rtps::VendorId_t({2, 0}))));
+    };
+
+    auto update_cache_change = [](CacheChange_t& change, octet* buffer, uint32_t buffer_length, uint32_t qos_size) -> void {
+        CDRMessage_t msg(0);
+        msg.init(buffer, buffer_length);
+        msg.length = msg.max_size;
+
+        EXPECT_TRUE(fastdds::dds::ParameterList::updateCacheChangeFromInlineQos(change, &msg, qos_size));
+    };
+
+    /* Custom PID tests */
+
+    // PID_PERSISTENCE_GUID
+    {
+        octet data_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_PERSISTENCE_GUID
+            0x02, 0x80, 8, 0,
+            1, 2, 3, 4, 5, 6, 7, 8,
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        uint32_t buffer_length = static_cast<uint32_t>(sizeof(data_buffer));
+
+        // ParticipantProxyData check
+        ParticipantProxyData participant_pdata(RTPSParticipantAllocationAttributes{});
+        participant_pdata.set_persistence_guid(c_Guid_Unknown);
+        participant_read(data_buffer, buffer_length, participant_pdata);
+        ASSERT_EQ(participant_pdata.get_persistence_guid(), c_Guid_Unknown);
+
+        // WriterProxyData check
+        WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
+        writer_pdata.persistence_guid(c_Guid_Unknown);
+        writer_read(data_buffer, buffer_length, writer_pdata);
+        ASSERT_EQ(writer_pdata.persistence_guid(), c_Guid_Unknown);
+
+        // ReaderProxyData check
+        ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
+        reader_read(data_buffer, buffer_length, reader_pdata);
+
+        // CacheChange_t check
+        CacheChange_t change;
+        update_cache_change(change, data_buffer, buffer_length, 0);
+    }
+
+    // PID_CUSTOM_RELATED_SAMPLE_IDENTITY
+    {
+        octet data_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_CUSTOM_RELATED_SAMPLE_IDENTITY
+            0x0f, 0x80, 8, 0,
+            1, 2, 3, 4, 5, 6, 7, 8,
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        uint32_t buffer_length = static_cast<uint32_t>(sizeof(data_buffer));
+
+        // ParticipantProxyData check
+        ParticipantProxyData participant_pdata(RTPSParticipantAllocationAttributes{});
+        participant_read(data_buffer, buffer_length, participant_pdata);
+
+        // WriterProxyData check
+        WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
+        writer_read(data_buffer, buffer_length, writer_pdata);
+
+        // ReaderProxyData check
+        ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
+        reader_read(data_buffer, buffer_length, reader_pdata);
+
+        // CacheChange_t check
+        CacheChange_t change;
+        GuidPrefix_t prefix;
+        prefix.value[0] = 1;
+        change.write_params.related_sample_identity().writer_guid(GUID_t(prefix, 1));
+        change.write_params.sample_identity().sequence_number() = {2, 0};
+        update_cache_change(change, data_buffer, buffer_length, 0);
+        ASSERT_EQ(change.write_params.related_sample_identity().writer_guid(), GUID_t(prefix, 1));
+        ASSERT_EQ(change.write_params.sample_identity().sequence_number(), SequenceNumber_t(2, 0));
+    }
+
+    // PID_DISABLE_POSITIVE_ACKS
+    {
+        octet data_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_DISABLE_POSITIVE_ACKS
+            0x05, 0x80, 8, 0,
+            1, 2, 3, 4, 5, 6, 7, 8,
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        uint32_t buffer_length = static_cast<uint32_t>(sizeof(data_buffer));
+
+        // ParticipantProxyData check
+        ParticipantProxyData participant_pdata(RTPSParticipantAllocationAttributes{});
+        participant_read(data_buffer, buffer_length, participant_pdata);
+
+        // WriterProxyData check
+        WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
+        writer_pdata.m_qos.m_disablePositiveACKs.enabled = false;
+        writer_read(data_buffer, buffer_length, writer_pdata);
+        ASSERT_EQ(writer_pdata.m_qos.m_disablePositiveACKs.enabled, false);
+
+        // ReaderProxyData check
+        ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
+        reader_pdata.m_qos.m_disablePositiveACKs.enabled = false;
+        reader_read(data_buffer, buffer_length, reader_pdata);
+        ASSERT_EQ(reader_pdata.m_qos.m_disablePositiveACKs.enabled, false);
+
+        // CacheChange_t check
+        CacheChange_t change;
+        update_cache_change(change, data_buffer, buffer_length, 0);
+    }
+
+    // PID_DATASHARING
+    {
+        octet data_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_DATASHARING
+            0x06, 0x80, 8, 0,
+            1, 2, 3, 4, 5, 6, 7, 8,
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        uint32_t buffer_length = static_cast<uint32_t>(sizeof(data_buffer));
+
+        // ParticipantProxyData check
+        ParticipantProxyData participant_pdata(RTPSParticipantAllocationAttributes{});
+        participant_read(data_buffer, buffer_length, participant_pdata);
+
+        // WriterProxyData check
+        WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
+        writer_pdata.m_qos.data_sharing.off();
+        writer_pdata.m_qos.data_sharing.set_max_domains(0);
+        writer_read(data_buffer, buffer_length, writer_pdata);
+        ASSERT_EQ(writer_pdata.m_qos.data_sharing, DataSharingQosPolicy());
+
+        // ReaderProxyData check
+        ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
+        reader_pdata.m_qos.data_sharing.off();
+        reader_pdata.m_qos.data_sharing.set_max_domains(0);
+        reader_pdata.m_qos.m_disablePositiveACKs.enabled = false;
+        reader_read(data_buffer, buffer_length, reader_pdata);
+        ASSERT_EQ(reader_pdata.m_qos.data_sharing, DataSharingQosPolicy());
+
+        // CacheChange_t check
+        CacheChange_t change;
+        update_cache_change(change, data_buffer, buffer_length, 0);
+    }
+
+    // PID_NETWORK_CONFIGURATION_SET
+    {
+        octet data_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_NETWORK_CONFIGURATION_SET
+            0x07, 0x80, 8, 0,
+            1, 2, 3, 4, 5, 6, 7, 8,
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        uint32_t buffer_length = static_cast<uint32_t>(sizeof(data_buffer));
+
+        // ParticipantProxyData check
+        ParticipantProxyData participant_pdata(RTPSParticipantAllocationAttributes{});
+        participant_pdata.m_networkConfiguration = 0;
+        participant_read(data_buffer, buffer_length, participant_pdata);
+        ASSERT_EQ(participant_pdata.m_networkConfiguration, 0u);
+
+        // WriterProxyData check
+        WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
+        writer_pdata.networkConfiguration(0);
+        writer_read(data_buffer, buffer_length, writer_pdata);
+        ASSERT_EQ(writer_pdata.networkConfiguration(), 0u);
+
+        // ReaderProxyData check
+        ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
+        reader_pdata.networkConfiguration(0);
+        reader_read(data_buffer, buffer_length, reader_pdata);
+        ASSERT_EQ(reader_pdata.networkConfiguration(), 0u);
+
+        // CacheChange_t check
+        CacheChange_t change;
+        update_cache_change(change, data_buffer, buffer_length, 0);
+    }
 }
 
 /*!

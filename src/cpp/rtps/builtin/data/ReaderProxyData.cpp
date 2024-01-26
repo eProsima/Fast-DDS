@@ -843,6 +843,13 @@ bool ReaderProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
                     {
+                        // Ignore custom PID when coming from other vendors except RTI Connext
+                        if ((c_VendorId_eProsima != source_vendor_id) && (fastdds::rtps::c_VendorId_rti_connext != source_vendor_id))
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA, "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
+                            return true;
+                        }
+
                         ParameterNetworkConfigSet_t p(pid, plength);
                         if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::read_from_cdr_message(p,
                                 msg, plength))
