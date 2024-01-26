@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * Added `non_blocking_send` to TCP Transport.
+* Added transports sanitizer timed event.
 
 Version 2.13.0
 --------------

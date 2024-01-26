@@ -247,7 +247,7 @@ public:
     void update_network_interfaces();
 
     /**
-     * Sanitize registered transports
+     * Sanitize registered transports on the periodical time event.
      */
     bool sanitize_transports(
             fastdds::rtps::SendResourceList& send_resource_list) const;
