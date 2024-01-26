@@ -197,6 +197,7 @@ void PDPListener::process_alive_data(
         if (old_data != nullptr)
         {
             ParticipantProxyData old_data_copy(*old_data);
+            old_data_copy.copy(*old_data);
 
             reader->getMutex().unlock();
             lock.unlock();
@@ -225,6 +226,7 @@ void PDPListener::process_alive_data(
         old_data->isAlive = true;
 
         ParticipantProxyData old_data_copy(*old_data);
+        old_data_copy.copy(*old_data);
 
         reader->getMutex().unlock();
 
