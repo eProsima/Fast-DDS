@@ -1946,11 +1946,14 @@ bool TCPTransportInterface::sanitize_transport(
         SendResourceList& send_resource_list) const
 {
     // Remove send resources with disconnected channels
-    for (auto it = send_resource_list.begin(); it != send_resource_list.end();) {
-        
+    for (auto it = send_resource_list.begin(); it != send_resource_list.end();)
+    {
+
         TCPSenderResource* tcp_sender_resource = TCPSenderResource::cast(*this, it->get());
-        
-        if(tcp_sender_resource && tcp_sender_resource->channel()->connection_status() == TCPChannelResource::eConnectionStatus::eDisconnected)
+
+        if (tcp_sender_resource &&
+                tcp_sender_resource->channel()->connection_status() ==
+                TCPChannelResource::eConnectionStatus::eDisconnected)
         {
             it = send_resource_list.erase(it);
         }

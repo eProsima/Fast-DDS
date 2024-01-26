@@ -48,7 +48,8 @@ void DatagramInjectionTransportDescriptor::update_send_resource_list(
     std::lock_guard<std::mutex> guard(mtx_);
 
     send_resource_list_.clear();
-    for (const auto& resource : send_resource_list) {
+    for (const auto& resource : send_resource_list)
+    {
         send_resource_list_.insert(resource.get());
     }
 }
