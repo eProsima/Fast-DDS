@@ -48,6 +48,8 @@ set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
 set(TIMETESTS_SOURCE TimeTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
+set(VENDORIDTESTS_SOURCE VendorIdTests.cpp)
+
 add_executable(CacheChangeTests ${CACHECHANGETESTS_SOURCE})
 target_compile_definitions(CacheChangeTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -164,3 +166,17 @@ target_include_directories(TimeTests PRIVATE ${GTEST_INCLUDE_DIRS}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(TimeTests GTest::gtest)
 gtest_discover_tests(TimeTests PROPERTIES LABELS "NoMemoryCheck")
+
+###################
+# VendorId_t test #
+###################
+
+add_executable(VendorIDTests ${VENDORIDTESTS_SOURCE})
+target_compile_definitions(VendorIDTests PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(VendorIDTests PRIVATE ${GTEST_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+target_link_libraries(VendorIDTests GTest::gtest)
+gtest_discover_tests(VendorIDTests PROPERTIES LABELS "NoMemoryCheck")

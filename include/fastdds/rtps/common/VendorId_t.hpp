@@ -21,6 +21,8 @@
 
 #include <array>
 #include <cstdint>
+#include <iomanip>
+#include <iostream>
 
 namespace eprosima {
 namespace fastdds {
@@ -36,5 +38,19 @@ const VendorId_t c_VendorId_rti_connext = {0x01, 0x01};
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
+
+/**
+ * @brief ostream operator<< for VendorId_t
+ *
+ * @param output: the output stream
+ * @param vendor_id: the vendor id to append to the output stream
+ */
+inline std::ostream& operator <<(
+        std::ostream& output,
+        eprosima::fastdds::rtps::VendorId_t vendor_id)
+{
+    output << "0x" << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(vendor_id[0]) << " 0x" << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(vendor_id[1]);
+    return output;
+}
 
 #endif /* _FASTDDS_RTPS_COMMON_VENDORIDT_HPP_ */
