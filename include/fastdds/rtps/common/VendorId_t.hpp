@@ -31,6 +31,7 @@ using VendorId_t = std::array<uint8_t, 2>;
 
 const VendorId_t c_VendorId_Unknown = {0x00, 0x00};
 const VendorId_t c_VendorId_eProsima = {0x01, 0x0F};
+const VendorId_t c_VendorId_rti_connext = {0x01, 0x01};
 
 } // namespace rtps
 } // namespace fastdds
