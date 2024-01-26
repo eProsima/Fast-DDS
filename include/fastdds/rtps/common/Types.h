@@ -107,6 +107,7 @@ struct RTPS_DllAPI ProtocolVersion_t
 {
     octet m_major;
     octet m_minor;
+
     ProtocolVersion_t():
 #if HAVE_SECURITY
         // As imposed by DDSSEC11-93

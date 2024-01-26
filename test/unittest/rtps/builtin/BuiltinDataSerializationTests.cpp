@@ -440,37 +440,45 @@ TEST(BuiltinDataSerializationTests, property_list_with_binary_properties)
 TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids)
 {
     /* Convenient functions to group code */
-    auto participant_read = [](octet* buffer, uint32_t buffer_length, ParticipantProxyData& out) -> void {
-        CDRMessage_t msg(0);
-        msg.init(buffer, buffer_length);
-        msg.length = msg.max_size;
+    auto participant_read = [](octet* buffer, uint32_t buffer_length, ParticipantProxyData& out) -> void
+            {
+                CDRMessage_t msg(0);
+                msg.init(buffer, buffer_length);
+                msg.length = msg.max_size;
 
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, false, fastdds::rtps::VendorId_t({2, 0}))));
-    };
+                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, false,
+                        fastdds::rtps::VendorId_t({2, 0}))));
+            };
 
-    auto writer_read = [](octet* buffer, uint32_t buffer_length, WriterProxyData& out) -> void {
-        CDRMessage_t msg(0);
-        msg.init(buffer, buffer_length);
-        msg.length = msg.max_size;
+    auto writer_read = [](octet* buffer, uint32_t buffer_length, WriterProxyData& out) -> void
+            {
+                CDRMessage_t msg(0);
+                msg.init(buffer, buffer_length);
+                msg.length = msg.max_size;
 
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, false, fastdds::rtps::VendorId_t({2, 0}))));
-    };
+                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, false,
+                        fastdds::rtps::VendorId_t({2, 0}))));
+            };
 
-    auto reader_read = [](octet* buffer, uint32_t buffer_length, ReaderProxyData& out) -> void {
-        CDRMessage_t msg(0);
-        msg.init(buffer, buffer_length);
-        msg.length = msg.max_size;
+    auto reader_read = [](octet* buffer, uint32_t buffer_length, ReaderProxyData& out) -> void
+            {
+                CDRMessage_t msg(0);
+                msg.init(buffer, buffer_length);
+                msg.length = msg.max_size;
 
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, false, fastdds::rtps::VendorId_t({2, 0}))));
-    };
+                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, false,
+                        fastdds::rtps::VendorId_t({2, 0}))));
+            };
 
-    auto update_cache_change = [](CacheChange_t& change, octet* buffer, uint32_t buffer_length, uint32_t qos_size) -> void {
-        CDRMessage_t msg(0);
-        msg.init(buffer, buffer_length);
-        msg.length = msg.max_size;
+    auto update_cache_change =
+            [](CacheChange_t& change, octet* buffer, uint32_t buffer_length, uint32_t qos_size) -> void
+            {
+                CDRMessage_t msg(0);
+                msg.init(buffer, buffer_length);
+                msg.length = msg.max_size;
 
-        EXPECT_TRUE(fastdds::dds::ParameterList::updateCacheChangeFromInlineQos(change, &msg, qos_size));
-    };
+                EXPECT_TRUE(fastdds::dds::ParameterList::updateCacheChangeFromInlineQos(change, &msg, qos_size));
+            };
 
     /* Custom PID tests */
 

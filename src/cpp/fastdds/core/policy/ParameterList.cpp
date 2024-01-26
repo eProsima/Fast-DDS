@@ -71,7 +71,8 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                         if (pid == PID_RELATED_ENTITY_GUID)
                         {
                             // Ignore custom PID when coming from other vendors except RTI Connext
-                            if ((rtps::c_VendorId_eProsima != change.vendor_id) && (rtps::c_VendorId_rti_connext != change.vendor_id))
+                            if ((rtps::c_VendorId_eProsima != change.vendor_id) &&
+                                    (rtps::c_VendorId_rti_connext != change.vendor_id))
                             {
                                 return true;
                             }

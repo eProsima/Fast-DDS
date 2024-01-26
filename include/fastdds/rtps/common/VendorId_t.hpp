@@ -49,7 +49,8 @@ inline std::ostream& operator <<(
         std::ostream& output,
         eprosima::fastdds::rtps::VendorId_t vendor_id)
 {
-    output << "0x" << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(vendor_id[0]) << " 0x" << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(vendor_id[1]);
+    output << "0x" << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(vendor_id[0]) << " 0x" <<
+        std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(vendor_id[1]);
     return output;
 }
 

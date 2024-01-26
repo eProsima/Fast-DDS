@@ -1153,7 +1153,8 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
                 if (was_decoded || !reader->getAttributes().security_attributes().is_submessage_protected)
 #endif  // HAVE_SECURITY
                 {
-                    reader->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag, source_vendor_id_);
+                    reader->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag,
+                    source_vendor_id_);
                 }
             });
 
