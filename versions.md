@@ -3,6 +3,7 @@ Forthcoming
 Migrate communication tests in `dds/communication` folder
 
 * Added authentication handshake properties.
+* Added transports sanitizer timed event.
 
 Version 2.13.0
 --------------
