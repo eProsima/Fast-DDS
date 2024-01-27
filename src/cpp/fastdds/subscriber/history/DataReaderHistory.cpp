@@ -132,14 +132,14 @@ DataReaderHistory::DataReaderHistory(
         compute_key_for_change_fn_ =
                 [this](CacheChange_t* a_change)
                 {
-                    if (a_change->instanceHandle.isDefined())
-                    {
-                        return true;
-                    }
-
                     if (!a_change->is_fully_assembled())
                     {
                         return false;
+                    }
+
+                    if (a_change->instanceHandle.isDefined())
+                    {
+                        return true;
                     }
 
                     if (type_ != nullptr)
@@ -708,25 +708,22 @@ bool DataReaderHistory::completed_change(
         size_t unknown_missing_changes_up_to,
         SampleRejectedStatusKind& rejection_reason)
 {
-    bool ret_value = true;
-    rejection_reason = NOT_REJECTED;
+    bool ret_value = false;
+    rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
 
-    if (!change->instanceHandle.isDefined())
+    if (compute_key_for_change_fn_(change))
     {
-        ret_value = false;
-        if (compute_key_for_change_fn_(change))
+        InstanceCollection::iterator vit;
+        if (find_key(change->instanceHandle, vit))
         {
-            InstanceCollection::iterator vit;
-            if (find_key(change->instanceHandle, vit))
-            {
-                ret_value = !change->instanceHandle.isDefined() ||
-                        complete_fn_(change, *vit->second, unknown_missing_changes_up_to, rejection_reason);
-            }
-            else
-            {
-                rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
-            }
+            ret_value = !change->instanceHandle.isDefined() ||
+                    complete_fn_(change, *vit->second, unknown_missing_changes_up_to, rejection_reason);
         }
+    }
+
+    if (ret_value)
+    {
+        rejection_reason = NOT_REJECTED;
     }
 
     return ret_value;
