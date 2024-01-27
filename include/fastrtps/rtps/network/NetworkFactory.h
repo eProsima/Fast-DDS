@@ -17,4 +17,22 @@
 
 #include <fastdds/rtps/network/NetworkFactory.h>
 
+<<<<<<< HEAD:include/fastrtps/rtps/network/NetworkFactory.h
 #endif // ifndef NETWORK_FACTORY_HPP
+=======
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+namespace detail {
+
+struct LogResources;
+
+const std::shared_ptr<LogResources>& get_log_resources();
+
+}  // namespace detail
+}  // namespace dds
+}  // namespace fastdds
+}  // namespace eprosima
+
+#endif  // FASTDDS_LOG__LOGRESOURCES_HPP
+>>>>>>> 06c869535 (Return const reference in get_log_resources (#4271)):src/cpp/fastdds/log/LogResources.hpp

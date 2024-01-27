@@ -75,7 +75,15 @@ struct Resources
 
 };
 
+<<<<<<< HEAD
 static struct Resources resources_;
+=======
+const std::shared_ptr<LogResources>& get_log_resources()
+{
+    static std::shared_ptr<LogResources> instance = std::make_shared<LogResources>();
+    return instance;
+}
+>>>>>>> 06c869535 (Return const reference in get_log_resources (#4271))
 
 
 void Log::RegisterConsumer(
