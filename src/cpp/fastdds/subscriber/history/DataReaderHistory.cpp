@@ -139,14 +139,14 @@ DataReaderHistory::DataReaderHistory(
         compute_key_for_change_fn_ =
                 [this](CacheChange_t* a_change)
                 {
-                    if (a_change->instanceHandle.isDefined())
-                    {
-                        return true;
-                    }
-
                     if (!a_change->is_fully_assembled())
                     {
                         return false;
+                    }
+
+                    if (a_change->instanceHandle.isDefined())
+                    {
+                        return true;
                     }
 
                     if (type_ != nullptr)
@@ -635,11 +635,26 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
 bool DataReaderHistory::completed_change(
         CacheChange_t* change)
 {
+<<<<<<< HEAD
     bool ret_value = true;
+=======
+    SampleRejectedStatusKind reason;
+    return completed_change(change, 0, reason);
+}
 
-    if (!change->instanceHandle.isDefined())
+bool DataReaderHistory::completed_change(
+        CacheChange_t* change,
+        size_t unknown_missing_changes_up_to,
+        SampleRejectedStatusKind& rejection_reason)
+{
+    bool ret_value = false;
+    rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
+>>>>>>> 9558ce436 (Add a keyed fragmented change to the reader data instance only when its completed (#4261))
+
+    if (compute_key_for_change_fn_(change))
     {
         InstanceCollection::iterator vit;
+<<<<<<< HEAD
         ret_value = compute_key_for_change_fn_(change) && find_key(change->instanceHandle, vit);
         if (ret_value)
         {
@@ -658,7 +673,18 @@ bool DataReaderHistory::completed_change(
             {
                 logError(SUBSCRIBER, "Change should exist but didn't find it");
             }
+=======
+        if (find_key(change->instanceHandle, vit))
+        {
+            ret_value = !change->instanceHandle.isDefined() ||
+                    complete_fn_(change, *vit->second, unknown_missing_changes_up_to, rejection_reason);
+>>>>>>> 9558ce436 (Add a keyed fragmented change to the reader data instance only when its completed (#4261))
         }
+    }
+
+    if (ret_value)
+    {
+        rejection_reason = NOT_REJECTED;
     }
 
     return ret_value;
