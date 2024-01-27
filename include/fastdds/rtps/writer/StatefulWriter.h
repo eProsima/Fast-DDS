@@ -368,6 +368,7 @@ public:
      * @param[in] final_flag       Final flag field of the submessage.
      * @param[out] result          true if the writer could process the submessage.
      *                             Only valid when returned value is true.
+     * @param[in] origin_vendor_id VendorId of the source participant from which the message was received
      * @return true when the submessage was destinated to this writer, false otherwise.
      */
     bool process_acknack(
@@ -388,6 +389,7 @@ public:
      * @param[in] fragments_state  Sequence number field of the submessage.
      * @param[out] result          true if the writer could process the submessage.
      *                             Only valid when returned value is true.
+     * @param[in] origin_vendor_id VendorId of the source participant from which the message was received
      * @return true when the submessage was destinated to this writer, false otherwise.
      */
     virtual bool process_nack_frag(

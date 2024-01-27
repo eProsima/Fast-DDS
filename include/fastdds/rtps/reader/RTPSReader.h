@@ -152,6 +152,7 @@ public:
      * @param lastSN
      * @param finalFlag
      * @param livelinessFlag
+     * @param origin_vendor_id
      * @return true if the reader accepts messages from the.
      */
     RTPS_DllAPI virtual bool processHeartbeatMsg(
@@ -168,6 +169,7 @@ public:
      * @param writerGUID
      * @param gapStart
      * @param gapList
+     * @param origin_vendor_id
      * @return true if the reader accepts messages from the.
      */
     RTPS_DllAPI virtual bool processGapMsg(
