@@ -825,7 +825,7 @@ bool StatefulReader::processHeartbeatMsg(
         const SequenceNumber_t& lastSN,
         bool finalFlag,
         bool livelinessFlag,
-        fastdds::rtps::VendorId_t /*origin_vendor_id*/)
+        eprosima::fastdds::rtps::VendorId_t /*origin_vendor_id*/)
 {
     WriterProxy* writer = nullptr;
 
@@ -892,7 +892,7 @@ bool StatefulReader::processGapMsg(
         const GUID_t& writerGUID,
         const SequenceNumber_t& gapStart,
         const SequenceNumberSet_t& gapList,
-        fastdds::rtps::VendorId_t /*origin_vendor_id*/)
+        eprosima::fastdds::rtps::VendorId_t /*origin_vendor_id*/)
 {
     WriterProxy* pWP = nullptr;
 
