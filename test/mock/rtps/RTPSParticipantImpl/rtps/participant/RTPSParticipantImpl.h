@@ -46,6 +46,15 @@
 
 namespace eprosima {
 namespace fastdds {
+
+namespace dds {
+namespace builtin {
+
+class TypeLookupManager;
+
+} // namespace builtin
+} // namespace dds
+
 namespace rtps {
 
 class Endpoint;
@@ -350,6 +359,10 @@ public:
     MOCK_METHOD(bool, ignore_participant, (const GuidPrefix_t&));
 
     MOCK_METHOD(bool, update_removed_participant, (rtps::LocatorList_t&));
+
+    MOCK_METHOD0(has_shm_transport, bool());
+
+    MOCK_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager* ());
 
     uint32_t getRTPSParticipantID() const
     {

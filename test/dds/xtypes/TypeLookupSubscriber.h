@@ -24,7 +24,7 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 
 #include "TypeLookupTestsTypes.h"
 
@@ -112,7 +112,8 @@ public:
 
     void on_data_writer_discovery(
             eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-            eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info,
+            eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
+            const eprosima::fastdds::dds::PublicationBuiltinTopicData& info,
             bool& should_be_ignored) override;
 
 private:
@@ -124,7 +125,7 @@ private:
     unsigned int matched_ = 0;
     unsigned int expected_matches_ = 0;
 
-    std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> received_samples_;
+    std::map<eprosima::fastdds::rtps::GUID_t, uint32_t> received_samples_;
 
     std::mutex known_types_mutex_;
     std::map<std::string, SubKnownType> known_types_;

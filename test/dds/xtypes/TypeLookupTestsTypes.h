@@ -20,10 +20,10 @@
 #ifndef _TYPELOOKUPTEST_TYPES_H_
 #define _TYPELOOKUPTEST_TYPES_H_
 
-#include "idl/XtypesTestsType1PubSubTypes.h"
-#include "idl/XtypesTestsType2PubSubTypes.h"
-#include "idl/XtypesTestsType3PubSubTypes.h"
-#include "idl/XtypesTestsTypeBigPubSubTypes.h"
-#include "idl/XtypesTestsTypeDepPubSubTypes.h"
+#include "idl/XtypesTestsType1PubSubTypes.hpp"
+#include "idl/XtypesTestsType2PubSubTypes.hpp"
+#include "idl/XtypesTestsType3PubSubTypes.hpp"
+#include "idl/XtypesTestsTypeBigPubSubTypes.hpp"
+#include "idl/XtypesTestsTypeDepPubSubTypes.hpp"
 
 #endif /* _TYPELOOKUPTEST_TYPES_H_ */

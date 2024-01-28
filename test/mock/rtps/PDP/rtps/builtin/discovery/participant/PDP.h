@@ -21,6 +21,10 @@
 
 #include <gmock/gmock.h>
 
+#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
+#include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
+
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
@@ -103,6 +107,16 @@ public:
 
     MOCK_METHOD(RTPSParticipantImpl*, getRTPSParticipant, (), (const));
 
+    MOCK_METHOD1(removeReaderProxyData, bool(const GUID_t&));
+
+    MOCK_METHOD1(removeWriterProxyData, bool(const GUID_t&));
+
+    MOCK_CONST_METHOD0(builtin_attributes, const BuiltinAttributes&());
+
+    MOCK_CONST_METHOD0(create_builtin_reader_attributes, ReaderAttributes());
+
+    MOCK_CONST_METHOD0(create_builtin_writer_attributes, WriterAttributes());
+
     ProxyPool<ReaderProxyData>& get_temporary_reader_proxies_pool()
     {
         return temp_proxy_readers;
@@ -115,11 +129,18 @@ public:
 
     // *INDENT-ON*
 
+    ParticipantProxyData* getLocalParticipantProxyData() const
+    {
+        return participant_proxies_.empty() ? nullptr : participant_proxies_.front();
+    }
+
     std::recursive_mutex* mutex_;
 
     // temporary proxies pools
     ProxyPool<ReaderProxyData> temp_proxy_readers = {{4, 1}};
     ProxyPool<WriterProxyData> temp_proxy_writers = {{4, 1}};
+
+    ResourceLimitedVector<ParticipantProxyData*> participant_proxies_;
 };
 
 } //namespace rtps

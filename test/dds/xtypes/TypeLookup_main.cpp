@@ -25,8 +25,6 @@
 #include <vector>
 #include <algorithm>
 
-using namespace eprosima::fastrtps;
-
 struct CommandLineArgs
 {
     int kind;

@@ -31,9 +31,10 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/LibrarySettings.hpp>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 static int SUB_DOMAIN_ID_ = 10;
 
@@ -401,23 +402,27 @@ void TypeLookupSubscriber::on_data_available(
 }
 
 void TypeLookupSubscriber::on_data_writer_discovery(
-        eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info,
+        DomainParticipant* /*participant*/,
+        WriterDiscoveryStatus reason,
+        const PublicationBuiltinTopicData& info,
         bool& should_be_ignored)
 {
     should_be_ignored = false;
 
-    // Check if the type is already created
-    if (nullptr == participant_->find_type(info.info.typeName().to_string()))
+    if (eprosima::fastdds::rtps::WriterDiscoveryStatus::DISCOVERED_WRITER == reason)
     {
-        if (check_registered_type(info.info.type_information()))
+        // Check if the type is already created
+        if (nullptr == participant_->find_type(info.type_name.to_string()))
         {
-            create_known_types_threads.emplace_back(&TypeLookupSubscriber::create_known_type, this,
-                    info.info.typeName().to_string());
-        }
-        else
-        {
-            throw TypeLookupSubscriberTypeNotRegisteredException(info.info.typeName().to_string());
+            if (check_registered_type(info.type_information))
+            {
+                create_known_types_threads.emplace_back(&TypeLookupSubscriber::create_known_type, this,
+                        info.type_name.to_string());
+            }
+            else
+            {
+                throw TypeLookupSubscriberTypeNotRegisteredException(info.type_name.to_string());
+            }
         }
     }
 }
