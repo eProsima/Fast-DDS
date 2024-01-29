@@ -17,7 +17,7 @@
 
 #include <string>
 
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/dds/xtypes/Types.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -83,6 +83,9 @@ using eprosima::fastdds::dds::TKNAME_MAP;
 using eprosima::fastdds::dds::MAX_BITMASK_LENGTH;
 using eprosima::fastdds::dds::MAX_ELEMENTS_COUNT;
 using eprosima::fastdds::dds::MAX_STRING_LENGTH;
+
+using eprosima::fastdds::dds::MemberId;
+using eprosima::fastdds::dds::MEMBER_ID_INVALID;
 
 } // namespace types
 } // namespace fastrtps

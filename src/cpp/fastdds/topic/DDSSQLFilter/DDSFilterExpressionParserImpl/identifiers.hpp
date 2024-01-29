@@ -143,7 +143,7 @@ struct identifier_processor
             const TypeIdentifier& ti,
             const position& pos)
     {
-        DDSFilterValue::ValueKind res {eprosima::fastdds::dds::xtypes::TK_NONE};
+        DDSFilterValue::ValueKind res;
 
         switch (ti._d())
         {
@@ -182,6 +182,7 @@ struct identifier_processor
                 res = DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD;
                 break;
             case EK_COMPLETE:
+            {
                 TypeObject type_object;
                 DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(ti, type_object);
                 if (eprosima::fastdds::dds::xtypes::TK_ENUM == type_object.complete()._d())
@@ -195,10 +196,12 @@ struct identifier_processor
                             type_object.complete().alias_type().body().common().related_type();
                     res = get_value_kind(aliasedId, pos);
                 }
-                break;
+            }
+            break;
 
             default:
                 throw parse_error("type is not primitive", pos);
+                break;
         }
 
         return res;

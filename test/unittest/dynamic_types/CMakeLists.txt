@@ -20,7 +20,7 @@ if(WIN32)
 endif()
 
 file(GLOB DYNAMIC_TYPES_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/*.cpp

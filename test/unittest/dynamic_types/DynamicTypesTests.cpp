@@ -43,8 +43,6 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::dds;
 
-using eprosima::fastrtps::types::TypeKind;
-
 // Ancillary gtest formatters
 
 /*TODO(richiware)
