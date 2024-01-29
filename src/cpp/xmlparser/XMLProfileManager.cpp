@@ -30,7 +30,7 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastdds;
 using namespace ::xmlparser;
 
-LibrarySettingsAttributes XMLProfileManager::library_settings_;
+LibrarySettings XMLProfileManager::library_settings_;
 std::map<std::string, up_participantfactory_t> XMLProfileManager::participant_factory_profiles_;
 dds::DomainParticipantFactoryQos default_participant_factory_qos;
 std::map<std::string, up_participant_t> XMLProfileManager::participant_profiles_;
@@ -637,13 +637,13 @@ bool XMLProfileManager::insertTransportById(
     return false;
 }
 
-const LibrarySettingsAttributes& XMLProfileManager::library_settings()
+const LibrarySettings& XMLProfileManager::library_settings()
 {
     return library_settings_;
 }
 
 void XMLProfileManager::library_settings(
-        const LibrarySettingsAttributes& library_settings)
+        const LibrarySettings& library_settings)
 {
     library_settings_ = library_settings;
 }

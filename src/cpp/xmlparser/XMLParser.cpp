@@ -24,6 +24,7 @@
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
@@ -1310,7 +1311,7 @@ XMLP_ret XMLParser::parseXMLLibrarySettings(
     }
     else
     {
-        LibrarySettingsAttributes library_settings;
+        fastdds::LibrarySettings library_settings;
         if (XMLP_ret::XML_OK != getXMLEnum(p_aux0, &library_settings.intraprocess_delivery, ident))
         {
             return XMLP_ret::XML_ERROR;

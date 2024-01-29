@@ -3823,7 +3823,7 @@ XMLP_ret XMLParser::getXMLBool(
 
 XMLP_ret XMLParser::getXMLEnum(
         tinyxml2::XMLElement* elem,
-        IntraprocessDeliveryType* e,
+        fastdds::IntraprocessDeliveryType* e,
         uint8_t /*ident*/)
 {
     //<xs:simpleType name="IntraprocessDeliveryType">
@@ -3848,9 +3848,9 @@ XMLP_ret XMLParser::getXMLEnum(
     }
 
     if (!get_element_enum_value(text.c_str(), *e,
-            OFF, IntraprocessDeliveryType::INTRAPROCESS_OFF,
-            USER_DATA_ONLY, IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY,
-            FULL, IntraprocessDeliveryType::INTRAPROCESS_FULL))
+            OFF, fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF,
+            USER_DATA_ONLY, fastdds::IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY,
+            FULL, fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << INTRAPROCESS_DELIVERY << "' with bad content");
         return XMLP_ret::XML_ERROR;

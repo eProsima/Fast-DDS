@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file LibrarySettingsAttributes.h
+ * @file LibrarySettings.hpp
  *
  */
 

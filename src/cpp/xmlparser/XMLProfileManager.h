@@ -20,6 +20,7 @@
 #include <string>
 
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
@@ -115,13 +116,13 @@ public:
      * @param library_settings New value for library settings.
      */
     RTPS_DllAPI static void library_settings(
-            const LibrarySettingsAttributes& library_settings);
+            const fastdds::LibrarySettings& library_settings);
 
     /**
      * Library settings getter.
      * @return const ref to current library settings.
      */
-    RTPS_DllAPI static const LibrarySettingsAttributes& library_settings();
+    RTPS_DllAPI static const fastdds::LibrarySettings& library_settings();
 
     /**
      * Search for the profile specified and fill the structure.
@@ -322,7 +323,7 @@ private:
 
     static BaseNode* root;
 
-    static LibrarySettingsAttributes library_settings_;
+    static fastdds::LibrarySettings library_settings_;
 
     static participant_factory_map_t participant_factory_profiles_;
 

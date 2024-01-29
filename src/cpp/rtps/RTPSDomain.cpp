@@ -27,6 +27,7 @@
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
@@ -834,13 +835,13 @@ bool RTPSDomainImpl::should_intraprocess_between(
 
     switch (xmlparser::XMLProfileManager::library_settings().intraprocess_delivery)
     {
-        case IntraprocessDeliveryType::INTRAPROCESS_FULL:
+        case fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL:
             return true;
 
-        case IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY:
+        case fastdds::IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY:
             return !matched_guid.is_builtin();
 
-        case IntraprocessDeliveryType::INTRAPROCESS_OFF:
+        case fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF:
         default:
             break;
     }
@@ -883,7 +884,7 @@ bool RTPSDomain::get_library_settings(
 bool RTPSDomainImpl::get_library_settings(
         fastdds::LibrarySettings& library_settings)
 {
-//    library_settings = xmlparser::XMLProfileManager::library_settings();
+    library_settings = xmlparser::XMLProfileManager::library_settings();
     return true;
 }
 
@@ -900,7 +901,7 @@ bool RTPSDomainImpl::set_library_settings(
     {
         return false;
     }
-//    xmlparser::XMLProfileManager::library_settings(library_settings);
+    xmlparser::XMLProfileManager::library_settings(library_settings);
     return true;
 }
 

@@ -23,10 +23,10 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/ReplierAttributes.hpp>
@@ -347,7 +347,7 @@ protected:
 
     RTPS_DllAPI static XMLP_ret getXMLEnum(
             tinyxml2::XMLElement* elem,
-            fastrtps::IntraprocessDeliveryType* e,
+            fastdds::IntraprocessDeliveryType* e,
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLPropertiesPolicy(

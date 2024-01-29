@@ -18,6 +18,7 @@
 #include <memory>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
@@ -38,7 +39,7 @@ static bool is_intraprocess_only(
         const RTPSParticipantAttributes& att)
 {
     return
-        xmlparser::XMLProfileManager::library_settings().intraprocess_delivery == INTRAPROCESS_FULL &&
+        xmlparser::XMLProfileManager::library_settings().intraprocess_delivery == fastdds::INTRAPROCESS_FULL &&
         att.builtin.discovery_config.ignoreParticipantFlags ==
         (ParticipantFilteringFlags::FILTER_DIFFERENT_HOST | ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS);
 }
