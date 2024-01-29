@@ -18,6 +18,8 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
+#include "TypeValueConverter.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -26,132 +28,6 @@ template<>
 traits<MemberDescriptor>::ref_type traits<MemberDescriptor>::make_shared()
 {
     return std::make_shared<MemberDescriptorImpl>();
-}
-
-bool is_default_value_consistent(
-        TypeKind kind,
-        const std::string& default_value)
-{
-    if (default_value.length() > 0)
-    {
-        try
-        {
-            switch (kind)
-            {
-                default:
-                    return true;
-                case TK_INT32:
-                {
-                    int32_t value(0);
-                    value = stoi(default_value);
-                    (void)value;
-                }
-                break;
-                case TK_UINT32:
-                {
-                    uint32_t value(0);
-                    value = stoul(default_value);
-                    (void)value;
-                }
-                break;
-                case TK_INT16:
-                {
-                    int16_t value(0);
-                    value = static_cast<int16_t>(stoi(default_value));
-                    (void)value;
-                }
-                break;
-                case TK_UINT16:
-                {
-                    uint16_t value(0);
-                    value = static_cast<uint16_t>(stoul(default_value));
-                    (void)value;
-                }
-                break;
-                case TK_INT64:
-                {
-                    int64_t value(0);
-                    value = stoll(default_value);
-                    (void)value;
-                }
-                break;
-                case TK_UINT64:
-                {
-                    uint64_t value(0);
-                    value = stoul(default_value);
-                    (void)value;
-                }
-                break;
-                case TK_FLOAT32:
-                {
-                    float value(0.0f);
-                    value = stof(default_value);
-                    (void)value;
-                }
-                break;
-                case TK_FLOAT64:
-                {
-                    double value(0.0f);
-                    value = stod(default_value);
-                    (void)value;
-                }
-                break;
-                case TK_FLOAT128:
-                {
-                    long double value(0.0f);
-                    value = stold(default_value);
-                    (void)value;
-                }
-                break;
-                case TK_CHAR8:
-                case TK_BYTE:
-                    return default_value.length() >= 1;
-                case TK_CHAR16:
-                {
-                    std::wstring temp = std::wstring(default_value.begin(), default_value.end());
-                    (void)temp;
-                }
-                break;
-                case TK_BOOLEAN:
-                {
-                    if (default_value == CONST_TRUE || default_value == CONST_FALSE)
-                    {
-                        return true;
-                    }
-                    int value(0);
-                    value = stoi(default_value);
-                    (void)value;
-                }
-                break;
-                case TK_STRING16:
-                case TK_STRING8:
-                    return true;
-                case TK_ENUM:
-                {
-                    uint32_t value(0);
-                    value = stoul(default_value);
-                    (void)value;
-                }
-                break;
-                case TK_BITMASK:
-                {
-                    int value(0);
-                    value = stoi(default_value);
-                    (void)value;
-                }
-                break;
-                case TK_ARRAY:
-                case TK_SEQUENCE:
-                case TK_MAP:
-                    return true;
-            }
-        }
-        catch (...)
-        {
-            return false;
-        }
-    }
-    return true;
 }
 
 ReturnCode_t MemberDescriptorImpl::copy_from(
@@ -254,7 +130,7 @@ bool MemberDescriptorImpl::is_consistent() noexcept
         return false;
     }
 
-    if (!is_default_value_consistent(type_->get_kind(), default_value_))
+    if (!default_value_.empty() && !TypeValueConverter::is_string_consistent(type_->get_kind(), default_value_))
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Default value is not consistent");
         return false;
@@ -270,6 +146,25 @@ bool MemberDescriptorImpl::is_consistent() noexcept
             TK_UINT32 != type_->get_kind())
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is an ENUM and the enclosing type is not valid");
+        return false;
+    }
+
+    // Check bitmask enclosing type.
+    if (TK_BITMASK ==  parent_kind_ && TK_BOOLEAN != type_->get_kind())
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is an BITMASK and the enclosing type is not BOOLEAN");
+        return false;
+    }
+
+    // Check name consistency
+    if (0 == name_.size() && (TK_ANNOTATION == parent_kind_ ||
+            TK_BITMASK == parent_kind_ ||
+            TK_ENUM == parent_kind_ ||
+            TK_STRUCTURE == parent_kind_ ||
+            TK_UNION == parent_kind_))
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                "Parent type is an ANNOTATION|BITMASK|ENUM|STRUCTURE|UNION and the member has no name.");
         return false;
     }
 

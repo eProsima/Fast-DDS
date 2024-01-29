@@ -136,7 +136,13 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_strin
         TypeDescriptorImpl{TK_STRING8, ""});
     ret_val->type_descriptor_.element_type(char8_type_);
     ret_val->type_descriptor_.bound().push_back(bound);
-    return ret_val;
+
+    if (ret_val->type_descriptor_.is_consistent())
+    {
+        return ret_val;
+    }
+
+    return {};
 }
 
 traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_wstring_type(
@@ -146,7 +152,13 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_wstri
         TypeDescriptorImpl{TK_STRING16, ""});
     ret_val->type_descriptor_.element_type(char16_type_);
     ret_val->type_descriptor_.bound().push_back(bound);
-    return ret_val;
+
+    if (ret_val->type_descriptor_.is_consistent())
+    {
+        return ret_val;
+    }
+
+    return {};
 }
 
 traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_sequence_type(
@@ -155,14 +167,16 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_seque
 {
     traits<DynamicTypeBuilderImpl>::ref_type ret_val;
 
-    if (element_type)
+    ret_val = std::make_shared<DynamicTypeBuilderImpl>(
+        TypeDescriptorImpl{TK_SEQUENCE, ""});
+    ret_val->type_descriptor_.element_type(element_type);
+    ret_val->type_descriptor_.bound().push_back(bound);
+
+    if (ret_val->type_descriptor_.is_consistent())
     {
-        ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-            TypeDescriptorImpl{TK_SEQUENCE, ""});
-        ret_val->type_descriptor_.element_type(element_type);
-        ret_val->type_descriptor_.bound().push_back(bound);
+        return ret_val;
     }
-    return ret_val;
+    return {};
 }
 
 traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_array_type(
@@ -171,14 +185,16 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_array
 {
     traits<DynamicTypeBuilderImpl>::ref_type ret_val;
 
-    if (element_type && 0 < bound.size())
+    ret_val = std::make_shared<DynamicTypeBuilderImpl>(
+        TypeDescriptorImpl{TK_ARRAY, ""});
+    ret_val->type_descriptor_.element_type(element_type);
+    ret_val->type_descriptor_.bound() = bound;
+
+    if (ret_val->type_descriptor_.is_consistent())
     {
-        ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-            TypeDescriptorImpl{TK_ARRAY, ""});
-        ret_val->type_descriptor_.element_type(element_type);
-        ret_val->type_descriptor_.bound() = bound;
+        return ret_val;
     }
-    return ret_val;
+    return {};
 }
 
 traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_map_type(
@@ -188,15 +204,18 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_map_t
 {
     traits<DynamicTypeBuilderImpl>::ref_type ret_val;
 
-    if (key_element_type && element_type)
+    ret_val = std::make_shared<DynamicTypeBuilderImpl>(
+        TypeDescriptorImpl{TK_MAP, ""});
+    ret_val->type_descriptor_.key_element_type(key_element_type);
+    ret_val->type_descriptor_.element_type(element_type);
+    ret_val->type_descriptor_.bound().push_back(bound);
+
+    if (ret_val->type_descriptor_.is_consistent())
     {
-        ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-            TypeDescriptorImpl{TK_MAP, ""});
-        ret_val->type_descriptor_.key_element_type(key_element_type);
-        ret_val->type_descriptor_.element_type(element_type);
-        ret_val->type_descriptor_.bound().push_back(bound);
+        return ret_val;
     }
-    return ret_val;
+
+    return {};
 }
 
 traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_bitmask_type(
@@ -206,7 +225,13 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_bitma
         TypeDescriptorImpl{TK_BITMASK, ""});
     ret_val->type_descriptor_.element_type(bool_type_);
     ret_val->type_descriptor_.bound().push_back(bound);
-    return ret_val;
+
+    if (ret_val->type_descriptor_.is_consistent())
+    {
+        return ret_val;
+    }
+
+    return {};
 }
 
 traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_w_uri(
