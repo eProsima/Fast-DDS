@@ -44,6 +44,7 @@
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
 #include <fastrtps/utils/Semaphore.h>
