@@ -52,6 +52,7 @@ bool AllocTestPublisher::init(
     Domain::loadXMLProfilesFile("test_xml_profile.xml");
 
     ParticipantAttributes participant_att;
+    // TODO(jlbueno): migrate to DomainParticipantFactory::get_participant_qos_from_profile
     if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
             eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes("test_participant_profile",
             participant_att))

@@ -435,6 +435,7 @@ int main(
     // Load an XML file with predefined profiles for publisher and subscriber
     if (sXMLConfigFile.length() > 0)
     {
+        // TODO(jlbueno): Migrate DomainParticipantFactory::load_XML_profiles_file
         xmlparser::XMLProfileManager::loadXMLFile(sXMLConfigFile);
     }
 

@@ -17,6 +17,7 @@
 
 #include <memory>
 
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 
 namespace eprosima {
@@ -102,6 +103,18 @@ public:
             RTPSParticipantListener* listen)
     {
         return RTPSDomain::createParticipant(domain_id, enabled, att, listen);
+    }
+
+    static bool get_library_settings(
+            fastdds::LibrarySettings&)
+    {
+        return true;
+    }
+
+    static bool set_library_settings(
+            const fastdds::LibrarySettings&)
+    {
+        return true;
     }
 
 };

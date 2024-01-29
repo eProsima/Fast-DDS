@@ -20,6 +20,7 @@
 #include <string>
 #include <thread>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <gstreamer-1.0/gst/gst.h>
 #include <optionparser.hpp>
@@ -449,7 +450,6 @@ int main(
     // Load an XML file with predefined profiles for publisher and subscriber
     if (sXMLConfigFile.length() > 0)
     {
-        // xmlparser::XMLProfileManager::loadXMLFile(sXMLConfigFile);
         DomainParticipantFactory::get_instance()->load_XML_profiles_file(sXMLConfigFile);
     }
 

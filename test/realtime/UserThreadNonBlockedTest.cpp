@@ -12,6 +12,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/utils/TimeConversion.h>
@@ -132,9 +133,9 @@ protected:
         participant_qos_.transport().use_builtin_transports = false;
         datawriter_qos_.data_sharing().off();
         datareader_qos_.data_sharing().off();
-        eprosima::fastrtps::LibrarySettingsAttributes library_attributes;
-        library_attributes.intraprocess_delivery = eprosima::fastrtps::INTRAPROCESS_OFF;
-        eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(library_attributes);
+        eprosima::fastdds::LibrarySettings library_attributes;
+        library_attributes.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_attributes);
 
         datareader_qos_.reliable_reader_qos().times.initialAcknackDelay.seconds = 10;
         datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.seconds = 10;

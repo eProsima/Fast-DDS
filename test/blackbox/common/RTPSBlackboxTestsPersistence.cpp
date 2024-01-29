@@ -17,6 +17,8 @@
 #include <cstring>
 #include <thread>
 
+#include <fastdds/LibrarySettings.hpp>
+#include <fastdds/rtps/RTPSDomain.h>
 #include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"
@@ -113,12 +115,12 @@ protected:
 
     virtual void SetUp()
     {
-        LibrarySettingsAttributes library_settings;
+        eprosima::fastdds::LibrarySettings library_settings;
         switch (GetParam())
         {
             case INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
+                library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
+                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(att);
                 break;
             case TRANSPORT:
             default:
@@ -161,12 +163,12 @@ protected:
     virtual void TearDown()
     {
         std::remove(db_file_name_.c_str());
-        LibrarySettingsAttributes library_settings;
+        eprosima::fastdds::LibrarySettings library_settings;
         switch (GetParam())
         {
             case INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
+                library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
+                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(att);
                 break;
             case TRANSPORT:
             default:

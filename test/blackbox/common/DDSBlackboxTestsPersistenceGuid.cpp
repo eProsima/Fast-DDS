@@ -20,6 +20,8 @@
 #include <sstream>
 #include <thread>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"
@@ -42,13 +44,13 @@ protected:
 
     void SetUp() override
     {
-        eprosima::fastrtps::LibrarySettingsAttributes library_settings;
+        eprosima::fastdds::LibrarySettings library_settings;
         switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery =
-                        eprosima::fastrtps::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(library_settings);
+                        eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = true;
@@ -73,12 +75,12 @@ protected:
 
     void TearDown() override
     {
-        eprosima::fastrtps::LibrarySettingsAttributes library_settings;
+        eprosima::fastdds::LibrarySettings library_settings;
         switch (GetParam())
         {
             case INTRAPROCESS:
-                library_settings.intraprocess_delivery = eprosima::fastrtps::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(library_settings);
+                library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = false;

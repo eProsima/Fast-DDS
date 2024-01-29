@@ -1,5 +1,7 @@
 #include "fuzz_utils.h"
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 
@@ -29,7 +31,7 @@ extern "C" int LLVMFuzzerTestOneInput(
 
     // TODO change this to a func. taking buf + len (or C string)
     // to avoid using `buf_to_file`
-    xmlparser::XMLProfileManager::loadXMLFile(filename);
+    fastdds::DomainParticipantFactory::get_instance()->load_XML_profiles_file(filename);
 
     if (delete_file(filename) != 0)
     {

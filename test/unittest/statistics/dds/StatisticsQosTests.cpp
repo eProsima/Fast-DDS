@@ -32,7 +32,6 @@
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #endif // ifdef FASTDDS_STATISTICS
-#include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastdds {

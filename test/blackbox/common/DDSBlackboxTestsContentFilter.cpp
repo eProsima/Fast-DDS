@@ -15,12 +15,13 @@
 #include <atomic>
 #include <thread>
 
-#include <gtest/gtest.h>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
+#include <gtest/gtest.h>
 
 #include "../types/HelloWorldTypeObject.h"
 #include "../types/TestRegression3361PubSubTypes.h"
@@ -142,12 +143,12 @@ public:
 
         enable_datasharing = false;
 
-        LibrarySettingsAttributes library_settings;
+        eprosima::fastdds::LibrarySettings library_settings;
         switch (GetParam())
         {
             case communication_type::INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
+                library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
                 break;
             case communication_type::DATASHARING:
                 enable_datasharing = true;
@@ -165,12 +166,12 @@ public:
     {
         using namespace eprosima::fastrtps;
 
-        LibrarySettingsAttributes library_settings;
+        eprosima::fastdds::LibrarySettings library_settings;
         switch (GetParam())
         {
             case communication_type::INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
+                library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
                 break;
             case communication_type::DATASHARING:
                 break;

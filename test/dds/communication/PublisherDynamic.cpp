@@ -163,7 +163,6 @@ int main(
     int arg_count = 1;
     bool exit_on_lost_liveliness = false;
     uint32_t seed = 7800, wait = 0;
-    //char* xml_file = nullptr;
     uint32_t samples = 4;
     std::string magic;
 
@@ -222,20 +221,12 @@ int main(
                 return -1;
             }
 
-            //xml_file = argv[arg_count];
         }
 
         ++arg_count;
     }
 
-    /* TODO - XMLProfileManager doesn't support DDS yet
-       if (xml_file)
-       {
-        DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
-       }
-     */
-
-    xmlparser::XMLProfileManager::loadXMLFile("example_type_profile.xml");
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("example_type_profile.xml");
 
     DomainParticipantQos participant_qos;
     participant_qos.wire_protocol().builtin.typelookup_config.use_server = true;
@@ -250,7 +241,16 @@ int main(
         return 1;
     }
 
-    types::DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
+    types::DynamicTypeBuilder* dyn_type_builder = nullptr;
+    if (ReturnCode_t::RETCODE_OK !=
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("TypeLookup",
+            dyn_type_builder))
+    {
+        std::cout << "Error getting dynamic type from XML file" << std::endl;
+        return 1;
+    }
+
+    types::DynamicType_ptr dyn_type = dyn_type_builder->build();
     TypeSupport type(new types::DynamicPubSubType(dyn_type));
     type.register_type(participant);
 

@@ -27,6 +27,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
@@ -41,7 +42,6 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/TopicAttributes.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
@@ -466,9 +466,9 @@ public:
         using namespace fastrtps;
 
         // Intraprocess must be disable in order to receive DATA callbacks
-        LibrarySettingsAttributes att;
+        LibrarySettings att;
         att.intraprocess_delivery = INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(att);
+        fastrtps::rtps::RTPSDomain::set_library_settings(att);
 
         create_participant();
     }

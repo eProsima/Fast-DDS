@@ -40,15 +40,23 @@ TypeLookupPublisher::TypeLookupPublisher()
 
 bool TypeLookupPublisher::init()
 {
-    if (xmlparser::XMLP_ret::XML_OK !=
-            xmlparser::XMLProfileManager::loadXMLFile("example_type_profile.xml"))
+    if (ReturnCode_t::RETCODE_OK !=
+            DomainParticipantFactory::get_instance()->load_XML_profiles_file("example_type_profile.xml"))
     {
         std::cout << "Cannot open XML file \"example_type_profile.xml\". Please, run the publisher from the folder "
                   << "that contatins this XML file." << std::endl;
         return false;
     }
 
-    types::DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
+    eprosima::fastrtps::types::DynamicTypeBuilder* type;
+    if (ReturnCode_t::RETCODE_OK !=
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("TypeLookup", type))
+    {
+        std::cout <<
+            "Error getting dynamic type \"TypeLookup\"." << std::endl;
+        return false;
+    }
+    types::DynamicType_ptr dyn_type = type->build();
     TypeSupport m_type(new types::DynamicPubSubType(dyn_type));
     m_Hello = types::DynamicDataFactory::get_instance()->create_data(dyn_type);
 

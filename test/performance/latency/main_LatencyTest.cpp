@@ -20,6 +20,7 @@
 #include <iostream>
 #include <string>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Colors.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
@@ -479,7 +480,7 @@ int main(
     // Load an XML file with predefined profiles for publisher and subscriber
     if (xml_config_file.length() > 0)
     {
-        xmlparser::XMLProfileManager::loadXMLFile(xml_config_file);
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_config_file);
     }
 
     LatencyDataSizes data_sizes;

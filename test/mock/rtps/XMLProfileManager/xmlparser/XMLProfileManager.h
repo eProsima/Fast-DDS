@@ -15,8 +15,6 @@
 #ifndef XML_PROFILE_MANAGER_H_
 #define XML_PROFILE_MANAGER_H_
 
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
-
 #include <xmlparser/XMLParser.h>
 
 namespace eprosima {

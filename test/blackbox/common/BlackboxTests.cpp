@@ -21,7 +21,9 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 
 using namespace eprosima::fastrtps;
@@ -63,9 +65,9 @@ public:
         // conditions related to network packets being lost should not use intraprocess
         // nor datasharing. Setting it off here ensures that intraprocess and
         // datasharing are only tested when required.
-        LibrarySettingsAttributes att;
-        att.intraprocess_delivery = INTRAPROCESS_OFF;
-        eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(att);
+        eprosima::fastdds::LibrarySettings att;
+        att.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(att);
         enable_datasharing = false;
         use_pull_mode = false;
         use_udpv4 = true;
