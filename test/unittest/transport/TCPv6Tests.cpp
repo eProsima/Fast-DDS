@@ -243,6 +243,91 @@ TEST_F(TCPv6Tests, client_announced_local_port_uniqueness)
 
     ASSERT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2);
 }
+
+#ifndef _WIN32
+// The primary purpose of this test is to check the non-blocking behavior of a secure socket sending data to a
+// destination that does not read or does it so slowly.
+TEST_F(TCPv6Tests, non_blocking_send)
+{
+    uint16_t port = g_default_port;
+    uint32_t msg_size = eprosima::fastdds::rtps::s_minimumSocketBuffer;
+    // Create a TCP Server transport
+    TCPv6TransportDescriptor senderDescriptor;
+    senderDescriptor.add_listener_port(port);
+    senderDescriptor.sendBufferSize = msg_size;
+    MockTCPv6Transport senderTransportUnderTest(senderDescriptor);
+    eprosima::fastrtps::rtps::RTPSParticipantAttributes att;
+    att.properties.properties().emplace_back("fastdds.tcp_transport.non_blocking_send", "true");
+    senderTransportUnderTest.init(&att.properties);
+
+    // Create a TCP Client socket.
+    // The creation of a reception transport for testing this functionality is not
+    // feasible. For the saturation of the sending socket, it's necessary first to
+    // saturate the reception socket of the datareader. This saturation requires
+    // preventing the datareader from reading from the socket, what inevitably
+    // happens continuously if instantiating and connecting the receiver transport.
+    // Hence, a raw socket is opened and connected to the server. There won't be read
+    // calls on that socket.
+    Locator_t serverLoc;
+    serverLoc.kind = LOCATOR_KIND_TCPv6;
+    IPLocator::setIPv6(serverLoc, "::1");
+    serverLoc.port = g_default_port;
+    IPLocator::setLogicalPort(serverLoc, 7610);
+
+    // TCPChannelResourceBasic::connect() like connection
+    asio::io_service io_service;
+    asio::ip::tcp::resolver resolver(io_service);
+    auto endpoints = resolver.resolve(
+        IPLocator::ip_to_string(serverLoc),
+        std::to_string(IPLocator::getPhysicalPort(serverLoc)));
+
+    asio::ip::tcp::socket socket = asio::ip::tcp::socket (io_service);
+    asio::async_connect(
+        socket,
+        endpoints,
+        [](std::error_code ec
+#if ASIO_VERSION >= 101200
+        , asio::ip::tcp::endpoint
+#else
+        , asio::ip::tcp::resolver::iterator
+#endif // if ASIO_VERSION >= 101200
+        )
+        {
+            ASSERT_TRUE(!ec);
+        }
+        );
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    /*
+       Get server's accepted channel. This is retrieved from the unbound_channel_resources_,
+       which is a vector where client channels are pushed immediately after the server accepts
+       a connection. This channel will not be present in the server's channel_resources_ map
+       as communication lacks most of the discovery messages using a raw socket as participant.
+     */
+    auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
+    ASSERT_TRUE(sender_unbound_channel_resources.size() == 1);
+    auto sender_channel_resource =
+            std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
+
+    // Prepare the message
+    asio::error_code ec;
+    std::vector<octet> message(msg_size, 0);
+    const octet* data = message.data();
+    size_t size = message.size();
+
+    // Send the message with no header
+    for (int i = 0; i < 5; i++)
+    {
+        sender_channel_resource->send(nullptr, 0, data, size, ec);
+    }
+
+    socket.shutdown(asio::ip::tcp::socket::shutdown_both);
+    socket.cancel();
+    socket.close();
+}
+#endif // ifndef _WIN32
+
 /*
    TEST_F(TCPv6Tests, send_and_receive_between_both_secure_ports)
    {
