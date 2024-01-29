@@ -61,14 +61,14 @@ bool PublisherModule::init(
         uint32_t seed,
         const std::string& magic)
 {
-    std::cout << "Initializing Publisher" << std::endl;
+    std::cout <<  "Initializing Publisher" << std::endl;
 
     participant_ =
             DomainParticipantFactory::get_instance()->create_participant(seed % 230, PARTICIPANT_QOS_DEFAULT, this);
 
     if (participant_ == nullptr)
     {
-        std::cout << "Error creating publisher participant" << std::endl;
+        EPROSIMA_LOG_ERROR(PUBLISHER_MODULE, "Error creating publisher participant");
         return false;
     }
 
@@ -92,14 +92,14 @@ bool PublisherModule::init(
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, this);
     if (publisher_ == nullptr)
     {
-        std::cout << "Error creating publisher" << std::endl;
+        EPROSIMA_LOG_ERROR(PUBLISHER_MODULE, "Error creating publisher");
         return false;
     }
 
     topic_ = participant_->create_topic(topic_name.str(), type_.get_type_name(), TOPIC_QOS_DEFAULT);
     if (topic_ == nullptr)
     {
-        std::cout << "Error creating publisher topic" << std::endl;
+        EPROSIMA_LOG_ERROR(PUBLISHER_MODULE, "Error creating publisher topic");
         return false;
     }
 
@@ -111,7 +111,7 @@ bool PublisherModule::init(
     writer_ = publisher_->create_datawriter(topic_, wqos, this);
     if (writer_ == nullptr)
     {
-        std::cout << "Error creating publisher datawriter" << std::endl;
+        EPROSIMA_LOG_ERROR(PUBLISHER_MODULE, "Error creating publisher datawriter");
         return false;
     }
     std::cout << "Writer created correctly in topic " << topic_->get_name()
@@ -134,7 +134,8 @@ void PublisherModule::wait_discovery(
 
 void PublisherModule::run(
         uint32_t samples,
-        const uint32_t loops)
+        const uint32_t loops,
+        uint32_t interval)
 {
     uint32_t current_loop = 0;
     uint16_t index = 1;
@@ -166,7 +167,7 @@ void PublisherModule::run(
                 data->message("HelloWorld");
             }
         }
-        std::cout << "Publisher writting index " << index << std::endl;
+        EPROSIMA_LOG_INFO(PUBLISHER_MODULE, "Publisher writting index " << index);
         writer_->write(sample);
 
         if (index == samples)
@@ -184,7 +185,7 @@ void PublisherModule::run(
             type_.delete_data(sample);
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(interval));
     }
 }
 

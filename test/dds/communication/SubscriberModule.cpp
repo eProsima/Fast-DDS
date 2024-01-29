@@ -74,7 +74,7 @@ bool SubscriberModule::init(
 
     if (participant_ == nullptr)
     {
-        std::cout << "Error creating subscriber participant" << std::endl;
+        EPROSIMA_LOG_ERROR(SUBSCRIBER_MODULE, "Error creating subscriber participant");
         return false;
     }
 
@@ -97,7 +97,7 @@ bool SubscriberModule::init(
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
     if (subscriber_ == nullptr)
     {
-        std::cout << "Error creating subscriber" << std::endl;
+        EPROSIMA_LOG_ERROR(SUBSCRIBER_MODULE, "Error creating subscriber");
         return false;
     }
 
@@ -105,7 +105,7 @@ bool SubscriberModule::init(
     topic_ = participant_->create_topic(topic_name.str(), type_.get_type_name(), TOPIC_QOS_DEFAULT);
     if (topic_ == nullptr)
     {
-        std::cout << "Error creating subscriber topic" << std::endl;
+        EPROSIMA_LOG_ERROR(SUBSCRIBER_MODULE, "Error creating subscriber topic");
         return false;
     }
 
@@ -118,11 +118,12 @@ bool SubscriberModule::init(
     reader_ = subscriber_->create_datareader(topic_, rqos);
     if (reader_ == nullptr)
     {
-        std::cout << "Error creating subscriber datareader" << std::endl;
+        EPROSIMA_LOG_ERROR(SUBSCRIBER_MODULE, "Error creating subscriber datareader");
         return false;
     }
     std::cout << "Reader created correctly in topic " << topic_->get_name()
-              << " with type " << type_.get_type_name() << std::endl;
+              << " with type " <<
+        type_.get_type_name() << std::endl;
 
     std::cout << "Subscriber initialized correctly" << std::endl;
 
@@ -130,9 +131,10 @@ bool SubscriberModule::init(
 }
 
 bool SubscriberModule::run(
-        bool notexit)
+        bool notexit,
+        uint32_t timeout)
 {
-    return run_for(notexit, std::chrono::hours(24));
+    return run_for(notexit, std::chrono::milliseconds(timeout));
 }
 
 bool SubscriberModule::run_for(
@@ -146,11 +148,17 @@ bool SubscriberModule::run_for(
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 
-    if (run_)
+    if(run_)
     {
+        auto t0 = std::chrono::steady_clock::now();
         std::unique_lock<std::mutex> lock(mutex_);
         returned_value = cv_.wait_for(lock, timeout, [&]
                         {
+                            if (succeeed_on_timeout_ && (std::chrono::steady_clock::now() - t0) > timeout)
+                            {
+                                return true;
+                            }
+
                             if (publishers_ < number_samples_.size())
                             {
                                 // Will fail later.
@@ -180,7 +188,7 @@ bool SubscriberModule::run_for(
 
     if (publishers_ < number_samples_.size())
     {
-        std::cout << "ERROR: detected more than " << publishers_ << " publishers" << std::endl;
+        EPROSIMA_LOG_INFO(SUBSCRIBER_MODULE, "ERROR: detected more than " << publishers_ << " publishers");
         returned_value = false;
     }
 
@@ -254,7 +262,7 @@ void SubscriberModule::on_subscription_matched(
 void SubscriberModule::on_data_available(
         DataReader* reader)
 {
-    std::cout << "Subscriber on_data_available from :" << participant_->guid() << std::endl;
+    EPROSIMA_LOG_INFO(SUBSCRIBER_MODULE, "Subscriber on_data_available from :" << participant_->guid());
 
     if (zero_copy_)
     {
@@ -267,10 +275,11 @@ void SubscriberModule::on_data_available(
 
             if (info.valid_data && info.instance_state == ALIVE_INSTANCE_STATE)
             {
-                FixedSized& data = l_sample[0];
 
-                std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - " <<
-                    info.sample_identity.sequence_number() << "): index(" << data.index() << ")" << std::endl;
+                EPROSIMA_LOG_INFO(SUBSCRIBER_MODULE,
+                        "Received sample (" << info.sample_identity.writer_guid() << " - " <<
+                        info.sample_identity.sequence_number() << "): index(" << ((FixedSized&)l_sample[0]).index() <<
+                        ")");
 
 
                 if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
@@ -293,8 +302,8 @@ void SubscriberModule::on_data_available(
                 if (info.instance_state == ALIVE_INSTANCE_STATE)
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
-                    std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - " <<
-                        info.sample_identity.sequence_number() << "): index(" << sample.index() << ")" << std::endl;
+                    EPROSIMA_LOG_INFO(SUBSCRIBER_MODULE, "Received sample (" << info.sample_identity.writer_guid() << " - " <<
+                        info.sample_identity.sequence_number() << "): index(" << sample.index() << ")");
                     if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
                     {
                         cv_.notify_all();
@@ -310,9 +319,9 @@ void SubscriberModule::on_data_available(
                 if (info.instance_state == ALIVE_INSTANCE_STATE)
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
-                    std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - " <<
+                    EPROSIMA_LOG_INFO(SUBSCRIBER_MODULE, "Received sample (" << info.sample_identity.writer_guid() << " - " <<
                         info.sample_identity.sequence_number() << "): index(" << sample.index() << "), message("
-                              << sample.message() << ")" << std::endl;
+                              << sample.message() << ")");
                     if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
                     {
                         cv_.notify_all();

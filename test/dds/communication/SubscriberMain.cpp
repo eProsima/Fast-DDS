@@ -41,9 +41,11 @@ int main(
     bool notexit = false;
     bool fixed_type = false;
     bool zero_copy = false;
+    bool succeed_on_timeout = false;
     uint32_t seed = 7800;
     uint32_t samples = 4;
     uint32_t publishers = 1;
+    uint32_t timeout = 0;
     char* xml_file = nullptr;
     std::string magic;
 
@@ -60,6 +62,10 @@ int main(
         else if (strcmp(argv[arg_count], "--zero_copy") == 0)
         {
             zero_copy = true;
+        }
+        else if (strcmp(argv[arg_count], "--succeed_on_timeout") == 0)
+        {
+            succeed_on_timeout = true;
         }
         else if (strcmp(argv[arg_count], "--seed") == 0)
         {
@@ -90,6 +96,16 @@ int main(
             }
 
             magic = argv[arg_count];
+        }
+        else if (strcmp(argv[arg_count], "--timeout") == 0)
+        {
+            if (++arg_count >= argc)
+            {
+                std::cout << "--run-for expects a parameter" << std::endl;
+                return -1;
+            }
+
+            timeout = strtol(argv[arg_count], nullptr, 10);
         }
         else if (strcmp(argv[arg_count], "--xmlfile") == 0)
         {
@@ -125,11 +141,11 @@ int main(
         DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
     }
 
-    SubscriberModule subscriber(publishers, samples, fixed_type, zero_copy);
+    SubscriberModule subscriber(publishers, samples, fixed_type, zero_copy, succeed_on_timeout);
 
     if (subscriber.init(seed, magic))
     {
-        return subscriber.run(notexit) ? 0 : -1;
+        return subscriber.run(notexit, timeout) ? 0 : -1;
     }
 
     return -1;
