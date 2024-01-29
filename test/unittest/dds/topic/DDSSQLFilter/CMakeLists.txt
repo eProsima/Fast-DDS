@@ -22,6 +22,7 @@ file(GLOB DDSSQLFILTER_SOURCES
 file(GLOB DDSSQLFILTER_LIB_SOURCES
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/Exception.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cxx

@@ -125,11 +125,8 @@ void RTPSDomainImpl::stopAll()
 
     // TODO(richiware) Why this layer contains calls to dynamictypes
     // Deletes DynamicTypes and TypeObject factories
-    types::DynamicTypeBuilderFactory::delete_instance();
-    types::DynamicDataFactory::delete_instance();
-    fastdds::dds::DynamicTypeBuilderFactory::delete_instance();
     fastdds::dds::DynamicDataFactory::delete_instance();
-    types::TypeObjectFactory::delete_instance();
+    fastdds::dds::DynamicTypeBuilderFactory::delete_instance();
     xmlparser::XMLProfileManager::DeleteInstance();
 
     EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");

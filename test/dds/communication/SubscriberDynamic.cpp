@@ -35,17 +35,12 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::xtypes;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastdds::dds::xtypes;
-
-using eprosima::fastrtps::types::TypeInformation;
-using eprosima::fastrtps::types::TypeIdentifier;
-using eprosima::fastrtps::types::TypeObjectFactory;
-using eprosima::fastrtps::types::TypeObject;
 
 class ParListener : public DomainParticipantListener
 {

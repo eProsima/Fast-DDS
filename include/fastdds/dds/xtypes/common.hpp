@@ -20,6 +20,8 @@
 #ifndef _FASTDDS_DDS_XTYPES_COMMON_HPP_
 #define _FASTDDS_DDS_XTYPES_COMMON_HPP_
 
+#include <cinttypes>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {

@@ -97,7 +97,6 @@ if(QNX)
 endif()
 add_executable(ExternalLocatorsProcessorTests
     ExternalLocatorsProcessorTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicData.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicPubSubType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactory.cpp

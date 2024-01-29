@@ -105,8 +105,6 @@ bool DDSFilterField::set_value_using_member_id(
         traits<DynamicData>::ref_type data,
         MemberId member_id)
 {
-    using namespace eprosima::fastrtps::types;
-
     bool ret = false;
     switch (type_id_->_d())
     {

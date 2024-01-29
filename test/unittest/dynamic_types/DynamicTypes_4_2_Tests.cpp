@@ -33,10 +33,6 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastcdr::exception;
 using namespace eprosima::fastdds::dds;
 
-using eprosima::fastrtps::types::TypeObjectFactory;
-using eprosima::fastrtps::types::TypeIdentifier;
-using eprosima::fastrtps::types::TypeObject;
-
 class DynamicTypes_4_2_Tests : public ::testing::Test
 {
     const std::string config_file_ = "types_profile.xml";

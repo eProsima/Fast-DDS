@@ -23,9 +23,6 @@
 
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeMember.h>
 
 #include <xmlparser/XMLTree.h>
 
