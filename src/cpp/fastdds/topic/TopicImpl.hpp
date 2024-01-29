@@ -21,11 +21,11 @@
 #define _FASTDDS_TOPICIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
-#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastdds {

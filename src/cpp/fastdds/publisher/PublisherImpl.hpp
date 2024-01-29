@@ -25,13 +25,13 @@
 #include <map>
 #include <mutex>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastrtps/types/TypesBase.h>
 
 #ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusQueryable.hpp>

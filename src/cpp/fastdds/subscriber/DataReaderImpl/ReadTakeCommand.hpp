@@ -22,12 +22,11 @@
 #include <cassert>
 #include <cstdint>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableTypedCollection.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
-
-#include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl/DataReaderLoanManager.hpp>

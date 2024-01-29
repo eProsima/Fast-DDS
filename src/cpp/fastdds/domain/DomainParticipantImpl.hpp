@@ -21,10 +21,7 @@
 #define _FASTDDS_PARTICIPANTIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
@@ -35,10 +32,13 @@
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastrtps/types/TypesBase.h>
 
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/topic/TopicProxyFactory.hpp>
+
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
 
 namespace eprosima {
 namespace fastrtps {

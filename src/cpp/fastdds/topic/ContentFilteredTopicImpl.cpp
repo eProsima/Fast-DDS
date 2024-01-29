@@ -21,6 +21,7 @@
 #include <algorithm>
 
 #include <fastdds/core/policy/ParameterList.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
@@ -29,7 +30,6 @@
 #include <fastdds/topic/ContentFilterUtils.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
 
-#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/utils/md5.h>
 
 namespace eprosima {

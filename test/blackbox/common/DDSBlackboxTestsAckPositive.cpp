@@ -38,7 +38,6 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include <rtps/transport/test_UDPv4Transport.h>
 

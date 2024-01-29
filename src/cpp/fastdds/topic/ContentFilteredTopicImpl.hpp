@@ -24,6 +24,7 @@
 #include <string>
 
 #include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/Topic.hpp>

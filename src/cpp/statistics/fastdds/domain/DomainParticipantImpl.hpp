@@ -25,6 +25,7 @@
 
 #include <string>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -35,7 +36,6 @@
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
-#include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 

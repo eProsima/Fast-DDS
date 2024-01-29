@@ -21,9 +21,9 @@
 #include <condition_variable>
 #include <mutex>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/core/condition/ConditionNotifier.hpp>
 

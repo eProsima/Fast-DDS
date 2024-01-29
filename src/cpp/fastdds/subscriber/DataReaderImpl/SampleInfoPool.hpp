@@ -27,7 +27,6 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
-#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
