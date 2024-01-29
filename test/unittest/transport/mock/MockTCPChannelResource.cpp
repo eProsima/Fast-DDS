@@ -46,10 +46,9 @@ uint32_t MockTCPChannelResource::read(
 }
 
 size_t MockTCPChannelResource::send(
-        const octet*,
+        const fastrtps::rtps::octet*,
         size_t,
-        const octet*,
-        size_t,
+        const std::array<asio::const_buffer, max_required_buffers>&,
         asio::error_code&)
 {
     return 0;

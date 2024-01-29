@@ -49,10 +49,9 @@ public:
             asio::error_code& ec) override;
 
     size_t send(
-            const octet* header,
+            const fastrtps::rtps::octet* header,
             size_t header_size,
-            const octet* buffer,
-            size_t size,
+            const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
             asio::error_code& ec) override;
 
     asio::ip::tcp::endpoint remote_endpoint() const override;

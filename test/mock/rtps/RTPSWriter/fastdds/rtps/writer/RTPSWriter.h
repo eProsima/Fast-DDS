@@ -38,6 +38,8 @@ namespace rtps {
 class WriterHistory;
 class RTPSParticipantImpl;
 
+using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
+
 class RTPSWriter : public Endpoint
 {
 public:
@@ -148,8 +150,10 @@ public:
             LocatorSelectorSender&,
             const std::chrono::time_point<std::chrono::steady_clock>&));
 
-    MOCK_METHOD3(send_nts, bool(
-            CDRMessage_t*,
+    MOCK_METHOD5(send_nts, bool(
+            const NetworkBuffer*,
+            size_t num_buffers,
+            uint32_t total_bytes,
             const LocatorSelectorSender&,
             std::chrono::steady_clock::time_point&));
 
