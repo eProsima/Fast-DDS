@@ -20,7 +20,31 @@
 #ifndef VIDEOTESTTYPES_H_
 #define VIDEOTESTTYPES_H_
 
-#include "fastrtps/fastrtps_all.h"
+#include <fastdds/rtps/common/all_common.h>
+
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/TimeConversion.h>
+
+
 
 class VideoType
 {

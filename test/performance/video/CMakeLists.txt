@@ -72,9 +72,9 @@ if(GST_FOUND)
     set(
         VIDEOTEST_SOURCE
         VideoTestPublisher.cpp
-        VideoTestSubscriber.cpp
+        # VideoTestSubscriber.cpp TODO
         VideoTestTypes.cpp
-        main_VideoTest.cpp
+        # main_VideoTest.cpp TODO
     )
     add_executable(VideoTest ${VIDEOTEST_SOURCE})
 

@@ -448,7 +448,8 @@ int main(
     // Load an XML file with predefined profiles for publisher and subscriber
     if (sXMLConfigFile.length() > 0)
     {
-        xmlparser::XMLProfileManager::loadXMLFile(sXMLConfigFile);
+        // xmlparser::XMLProfileManager::loadXMLFile(sXMLConfigFile);
+        DomainParticipantFactory::get_instance()->load_XML_profiles_file(sXMLConfigFile);
     }
 
     int num_args = 0;
