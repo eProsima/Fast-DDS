@@ -63,7 +63,7 @@ public:
     /**
      * Load the default profiles XML file.
      */
-    RTPS_DllAPI static void loadDefaultXMLFile();
+    static void loadDefaultXMLFile();
 
     /**
      * Load a profiles XML file.
@@ -71,7 +71,7 @@ public:
      * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,
      *         XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadXMLFile(
+    static XMLP_ret loadXMLFile(
             const std::string& filename);
 
     /**
@@ -81,7 +81,7 @@ public:
      * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,
      *         XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadXMLString(
+    static XMLP_ret loadXMLString(
             const char* data,
             size_t length);
 
@@ -91,7 +91,7 @@ public:
      * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,
      *         XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadXMLNode(
+    static XMLP_ret loadXMLNode(
             tinyxml2::XMLDocument& doc);
 
     /**
@@ -100,7 +100,7 @@ public:
      * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,
      *         XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadXMLProfiles(
+    static XMLP_ret loadXMLProfiles(
             tinyxml2::XMLElement& profiles);
 
     /**
@@ -108,21 +108,21 @@ public:
      * @param types Node to be loaded.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadXMLDynamicTypes(
+    static XMLP_ret loadXMLDynamicTypes(
             tinyxml2::XMLElement& types);
 
     /**
      * Library settings setter.
      * @param library_settings New value for library settings.
      */
-    RTPS_DllAPI static void library_settings(
+    static void library_settings(
             const fastdds::LibrarySettings& library_settings);
 
     /**
      * Library settings getter.
      * @return const ref to current library settings.
      */
-    RTPS_DllAPI static const fastdds::LibrarySettings& library_settings();
+    static const fastdds::LibrarySettings& library_settings();
 
     /**
      * Search for the profile specified and fill the structure.
@@ -131,13 +131,13 @@ public:
      * @param log_error Flag to log an error if the profile_name is not found.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
      */
-    RTPS_DllAPI static XMLP_ret fillParticipantAttributes(
+    static XMLP_ret fillParticipantAttributes(
             const std::string& profile_name,
             ParticipantAttributes& atts,
             bool log_error = true);
 
     //!Fills participant_attributes with the default values.
-    RTPS_DllAPI static void getDefaultParticipantAttributes(
+    static void getDefaultParticipantAttributes(
             ParticipantAttributes& participant_attributes);
 
     /**
@@ -147,7 +147,7 @@ public:
      * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret fillDomainParticipantFactoryQos(
+    static XMLP_ret fillDomainParticipantFactoryQos(
             const std::string& profile_name,
             fastdds::dds::DomainParticipantFactoryQos& qos,
             bool log_error = true);
@@ -156,7 +156,7 @@ public:
      * Fills input domain participant factory qos with the default values.
      * @param qos Structure to be filled.
      */
-    RTPS_DllAPI static void getDefaultDomainParticipantFactoryQos(
+    static void getDefaultDomainParticipantFactoryQos(
             fastdds::dds::DomainParticipantFactoryQos& qos);
 
     /**
@@ -166,13 +166,13 @@ public:
      * @param log_error Flag to log an error if the profile_name is not found.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
      */
-    RTPS_DllAPI static XMLP_ret fillPublisherAttributes(
+    static XMLP_ret fillPublisherAttributes(
             const std::string& profile_name,
             PublisherAttributes& atts,
             bool log_error = true);
 
     //!Fills publisher_attributes with the default values.
-    RTPS_DllAPI static void getDefaultPublisherAttributes(
+    static void getDefaultPublisherAttributes(
             PublisherAttributes& publisher_attributes);
 
     /**
@@ -182,22 +182,22 @@ public:
      * @param log_error Flag to log an error if the profile_name is not found.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
      */
-    RTPS_DllAPI static XMLP_ret fillSubscriberAttributes(
+    static XMLP_ret fillSubscriberAttributes(
             const std::string& profile_name,
             SubscriberAttributes& atts,
             bool log_error = true);
 
     //!Fills subscriber_attributes with the default values.
-    RTPS_DllAPI static void getDefaultSubscriberAttributes(
+    static void getDefaultSubscriberAttributes(
             SubscriberAttributes& subscriber_attributes);
 
     //!Add a new transport instance along with its id.
-    RTPS_DllAPI static bool insertTransportById(
+    static bool insertTransportById(
             const std::string& transport_id,
             sp_transport_t transport);
 
     //!Retrieves a transport instance by its id.
-    RTPS_DllAPI static sp_transport_t getTransportById(
+    static sp_transport_t getTransportById(
             const std::string& transport_id);
 
     /**
@@ -206,21 +206,21 @@ public:
      * @param atts Structure to be filled.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret fillTopicAttributes(
+    static XMLP_ret fillTopicAttributes(
             const std::string& profile_name,
             TopicAttributes& atts);
 
     //!Fills topic_attributes with the default values.
-    RTPS_DllAPI static void getDefaultTopicAttributes(
+    static void getDefaultTopicAttributes(
             TopicAttributes& topic_attributes);
 
     //!Add a new dynamic type instance along with its name.
-    RTPS_DllAPI static bool insertDynamicTypeByName(
+    static bool insertDynamicTypeByName(
             const std::string& type_name,
             p_dynamictypebuilder_t type);
 
     //!Retrieves a transport instance by its name.
-    RTPS_DllAPI static p_dynamictypebuilder_t getDynamicTypeByName(
+    static p_dynamictypebuilder_t getDynamicTypeByName(
             const std::string& type_name);
 
 
@@ -230,7 +230,7 @@ public:
      * @param atts Structure to be filled.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret fillRequesterAttributes(
+    static XMLP_ret fillRequesterAttributes(
             const std::string& profile_name,
             RequesterAttributes& atts);
 
@@ -240,7 +240,7 @@ public:
      * @param atts Structure to be filled.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret fillReplierAttributes(
+    static XMLP_ret fillReplierAttributes(
             const std::string& profile_name,
             ReplierAttributes& atts);
 
@@ -249,7 +249,7 @@ public:
      * FastDDS's Domain calls this method automatically on its destructor, but
      * if using XMLProfileManager outside of FastDDS, it should be called manually.
      */
-    RTPS_DllAPI static void DeleteInstance()
+    static void DeleteInstance()
     {
         participant_factory_profiles_.clear();
         participant_profiles_.clear();
@@ -267,7 +267,7 @@ public:
      * Any instance retrieve by calling this method must be deleted calling the
      * XMLProfileManager::DeleteDynamicPubSubType method.
      */
-    RTPS_DllAPI static types::DynamicPubSubType* CreateDynamicPubSubType(
+    static types::DynamicPubSubType* CreateDynamicPubSubType(
             const std::string& type_name)
     {
         if (dynamic_types_.find(type_name) != dynamic_types_.end())
@@ -281,7 +281,7 @@ public:
      * Deletes the given DynamicPubSubType previously created by calling
      * XMLProfileManager::CreateDynamicPubSubType method.
      */
-    RTPS_DllAPI static void DeleteDynamicPubSubType(
+    static void DeleteDynamicPubSubType(
             types::DynamicPubSubType* type)
     {
         delete type;
@@ -289,35 +289,35 @@ public:
 
 private:
 
-    RTPS_DllAPI static XMLP_ret extractProfiles(
+    static XMLP_ret extractProfiles(
             up_base_node_t properties,
             const std::string& filename);
 
-    RTPS_DllAPI static XMLP_ret extractDomainParticipantFactoryProfile(
+    static XMLP_ret extractDomainParticipantFactoryProfile(
             up_base_node_t& profile,
             const std::string& filename);
 
-    RTPS_DllAPI static XMLP_ret extractParticipantProfile(
+    static XMLP_ret extractParticipantProfile(
             up_base_node_t& profile,
             const std::string& filename);
 
-    RTPS_DllAPI static XMLP_ret extractPublisherProfile(
+    static XMLP_ret extractPublisherProfile(
             up_base_node_t& profile,
             const std::string& filename);
 
-    RTPS_DllAPI static XMLP_ret extractSubscriberProfile(
+    static XMLP_ret extractSubscriberProfile(
             up_base_node_t& profile,
             const std::string& filename);
 
-    RTPS_DllAPI static XMLP_ret extractTopicProfile(
+    static XMLP_ret extractTopicProfile(
             up_base_node_t& profile,
             const std::string& filename);
 
-    RTPS_DllAPI static XMLP_ret extractRequesterProfile(
+    static XMLP_ret extractRequesterProfile(
             up_base_node_t& profile,
             const std::string& filename);
 
-    RTPS_DllAPI static XMLP_ret extractReplierProfile(
+    static XMLP_ret extractReplierProfile(
             up_base_node_t& profile,
             const std::string& filename);
 
