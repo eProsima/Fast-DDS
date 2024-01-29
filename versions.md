@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Added `non_blocking_send` to TCP Transport.
+
 Version 2.13.0
 --------------
 

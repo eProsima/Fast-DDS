@@ -24,6 +24,7 @@ namespace rtps {
 
 using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
 using TCPChannelResource = eprosima::fastdds::rtps::TCPChannelResource;
+using TCPChannelResourceBasic = eprosima::fastdds::rtps::TCPChannelResourceBasic;
 
 class MockTCPv4Transport : public TCPv4Transport
 {
@@ -38,6 +39,11 @@ public:
     const std::map<Locator_t, std::shared_ptr<TCPChannelResource>>& get_channel_resources() const
     {
         return channel_resources_;
+    }
+
+    const std::vector<std::shared_ptr<TCPChannelResource>> get_unbound_channel_resources() const
+    {
+        return unbound_channel_resources_;
     }
 
 };
