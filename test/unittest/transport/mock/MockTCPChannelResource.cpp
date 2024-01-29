@@ -67,6 +67,22 @@ asio::ip::tcp::endpoint MockTCPChannelResource::local_endpoint() const
     return ep;
 }
 
+asio::ip::tcp::endpoint MockTCPChannelResource::remote_endpoint(
+        asio::error_code& ec) const
+{
+    ec = asio::error_code();  // Indicate no error
+    asio::ip::tcp::endpoint ep;
+    return ep;
+}
+
+asio::ip::tcp::endpoint MockTCPChannelResource::local_endpoint(
+        asio::error_code& ec) const
+{
+    ec = asio::error_code();  // Indicate no error
+    asio::ip::tcp::endpoint ep;
+    return ep;
+}
+
 void MockTCPChannelResource::set_options(
         const TCPTransportDescriptor*)
 {

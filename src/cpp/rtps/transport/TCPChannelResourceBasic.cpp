@@ -181,7 +181,18 @@ asio::ip::tcp::endpoint TCPChannelResourceBasic::remote_endpoint() const
 
 asio::ip::tcp::endpoint TCPChannelResourceBasic::local_endpoint() const
 {
-    std::error_code ec;
+    return socket_->local_endpoint();
+}
+
+asio::ip::tcp::endpoint TCPChannelResourceBasic::remote_endpoint(
+    asio::error_code& ec) const
+{
+    return socket_->remote_endpoint(ec);
+}
+
+asio::ip::tcp::endpoint TCPChannelResourceBasic::local_endpoint(
+    asio::error_code& ec) const
+{
     return socket_->local_endpoint(ec);
 }
 

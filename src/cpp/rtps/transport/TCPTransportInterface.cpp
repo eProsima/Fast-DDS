@@ -898,7 +898,12 @@ void TCPTransportInterface::perform_listen_operation(
     if (rtcp_message_manager)
     {
         channel = channel_weak.lock();
-        endpoint_to_locator(channel->remote_endpoint(), remote_locator);
+        asio::error_code ec;
+        endpoint_to_locator(channel->remote_endpoint(ec), remote_locator);
+        if (ec)
+        {
+            remote_locator.kind = LOCATOR_KIND_INVALID;
+        }
 
         if (channel)
         {
@@ -1178,6 +1183,10 @@ bool TCPTransportInterface::Receive(
                     }
                     else
                     {
+                        if (!IsLocatorValid(remote_locator))
+                        {
+                            endpoint_to_locator(channel->remote_endpoint(), remote_locator);  
+                        }
                         IPLocator::setLogicalPort(remote_locator, tcp_header.logical_port);
                         EPROSIMA_LOG_INFO(RTCP_MSG_IN, "[RECEIVE] From: " << remote_locator \
                                                                           << " - " << receive_buffer_size << " bytes.");
