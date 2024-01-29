@@ -27,7 +27,7 @@ namespace types {
 DynamicType::DynamicType()
     : descriptor_(nullptr)
     , name_("")
-    , kind_(TK_NONE)
+    , kind_(eprosima::fastdds::dds::xtypes::TK_NONE)
     , is_key_defined_(false)
 {
 }
@@ -45,11 +45,11 @@ DynamicType::DynamicType(
     catch (...)
     {
         name_ = "";
-        kind_ = TK_NONE;
+        kind_ = eprosima::fastdds::dds::xtypes::TK_NONE;
     }
 
     // Alias types use the same members than it's base class.
-    if (kind_ == TK_ALIAS)
+    if (kind_ == eprosima::fastdds::dds::xtypes::TK_ALIAS)
     {
         for (auto it = descriptor_->get_base_type()->member_by_id_.begin();
                 it != descriptor_->get_base_type()->member_by_id_.end(); ++it)
@@ -63,7 +63,7 @@ DynamicType::DynamicType(
         const DynamicTypeBuilder* other)
     : descriptor_(nullptr)
     , name_("")
-    , kind_(TK_NONE)
+    , kind_(eprosima::fastdds::dds::xtypes::TK_NONE)
     , is_key_defined_(false)
 {
     copy_from_builder(other);
@@ -83,12 +83,12 @@ ReturnCode_t DynamicType::apply_annotation(
         pNewDescriptor->copy_from(&descriptor);
         descriptor_->annotation_.push_back(pNewDescriptor);
         is_key_defined_ = key_annotation();
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -111,7 +111,7 @@ ReturnCode_t DynamicType::apply_annotation(
         descriptor_->annotation_.push_back(pNewDescriptor);
         is_key_defined_ = key_annotation();
     }
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 ReturnCode_t DynamicType::apply_annotation_to_member(
@@ -124,18 +124,18 @@ ReturnCode_t DynamicType::apply_annotation_to_member(
         if (it != member_by_id_.end())
         {
             it->second->apply_annotation(descriptor);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-            return RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -149,12 +149,12 @@ ReturnCode_t DynamicType::apply_annotation_to_member(
     if (it != member_by_id_.end())
     {
         it->second->apply_annotation(annotation_name, key, value);
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -196,12 +196,12 @@ ReturnCode_t DynamicType::copy_from_builder(
             member_by_name_.insert(std::make_pair(newMember->get_name(), newMember));
         }
 
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying DynamicType, invalid input type");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -224,12 +224,12 @@ ReturnCode_t DynamicType::get_descriptor(
     if (descriptor != nullptr)
     {
         descriptor->copy_from(descriptor_);
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting TypeDescriptor, invalid input descriptor");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -334,12 +334,12 @@ ReturnCode_t DynamicType::get_member_by_name(
     if (it != member_by_name_.end())
     {
         member = it->second;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member by name, member not found.");
-        return RETCODE_ERROR;
+        return eprosima::fastdds::dds::RETCODE_ERROR;
     }
 }
 
@@ -347,7 +347,7 @@ ReturnCode_t DynamicType::get_all_members_by_name(
         std::map<std::string, DynamicTypeMember*>& members)
 {
     members = member_by_name_;
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 ReturnCode_t DynamicType::get_member(
@@ -358,12 +358,12 @@ ReturnCode_t DynamicType::get_member(
     if (it != member_by_id_.end())
     {
         member = it->second;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member, member not found.");
-        return RETCODE_ERROR;
+        return eprosima::fastdds::dds::RETCODE_ERROR;
     }
 }
 
@@ -371,7 +371,7 @@ ReturnCode_t DynamicType::get_all_members(
         std::map<MemberId, DynamicTypeMember*>& members)
 {
     members = member_by_id_;
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 uint32_t DynamicType::get_annotation_count()
@@ -386,12 +386,12 @@ ReturnCode_t DynamicType::get_annotation(
     if (idx < descriptor_->annotation_.size())
     {
         descriptor = *descriptor_->annotation_[idx];
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting annotation, annotation not found.");
-        return RETCODE_ERROR;
+        return eprosima::fastdds::dds::RETCODE_ERROR;
     }
 }
 
@@ -461,15 +461,25 @@ uint32_t DynamicType::get_total_bounds() const
 
 bool DynamicType::has_children() const
 {
-    return kind_ == TK_ANNOTATION || kind_ == TK_ARRAY || kind_ == TK_MAP || kind_ == TK_SEQUENCE
-           || kind_ == TK_STRUCTURE || kind_ == TK_UNION || kind_ == TK_BITSET;
+    return kind_ == eprosima::fastdds::dds::xtypes::TK_ANNOTATION ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_MAP ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_SEQUENCE
+           || kind_ == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_UNION ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_BITSET;
 }
 
 bool DynamicType::is_complex_kind() const
 {
-    return kind_ == TK_ANNOTATION || kind_ == TK_ARRAY || kind_ == TK_BITMASK || kind_ == TK_ENUM
-           || kind_ == TK_MAP || kind_ == TK_SEQUENCE || kind_ == TK_STRUCTURE || kind_ == TK_UNION ||
-           kind_ == TK_BITSET;
+    return kind_ == eprosima::fastdds::dds::xtypes::TK_ANNOTATION ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_ENUM
+           || kind_ == eprosima::fastdds::dds::xtypes::TK_MAP || kind_ == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_UNION ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_BITSET;
 }
 
 bool DynamicType::is_consistent() const
@@ -479,14 +489,24 @@ bool DynamicType::is_consistent() const
 
 bool DynamicType::is_discriminator_type() const
 {
-    if (kind_ == TK_ALIAS && descriptor_ != nullptr && descriptor_->get_base_type() != nullptr)
+    if (kind_ == eprosima::fastdds::dds::xtypes::TK_ALIAS && descriptor_ != nullptr &&
+            descriptor_->get_base_type() != nullptr)
     {
         return descriptor_->get_base_type()->is_discriminator_type();
     }
-    return kind_ == TK_BOOLEAN || kind_ == TK_BYTE || kind_ == TK_INT16 || kind_ == TK_INT32 ||
-           kind_ == TK_INT64 || kind_ == TK_UINT16 || kind_ == TK_UINT32 || kind_ == TK_UINT64 ||
-           kind_ == TK_FLOAT32 || kind_ == TK_FLOAT64 || kind_ == TK_FLOAT128 || kind_ == TK_CHAR8 ||
-           kind_ == TK_CHAR16 || kind_ == TK_STRING8 || kind_ == TK_STRING16 || kind_ == TK_ENUM || kind_ == TK_BITMASK;
+    return kind_ == eprosima::fastdds::dds::xtypes::TK_BOOLEAN || kind_ == eprosima::fastdds::dds::xtypes::TK_BYTE ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_INT16 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_INT32 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_INT64 || kind_ == eprosima::fastdds::dds::xtypes::TK_UINT16 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_UINT32 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT32 || kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT64 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT128 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_CHAR8 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_CHAR16 || kind_ == eprosima::fastdds::dds::xtypes::TK_STRING8 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_STRING16 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_ENUM ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK;
 }
 
 void DynamicType::set_name(
@@ -503,12 +523,16 @@ size_t DynamicType::get_size() const
 {
     switch (kind_)
     {
-        case TK_BOOLEAN: case TK_BYTE: case TK_CHAR8: return 1;
-        case TK_INT16: case TK_UINT16: case TK_CHAR16:  return 2;
-        case TK_INT32: case TK_UINT32: case TK_FLOAT32: return 4;
-        case TK_INT64: case TK_UINT64: case TK_FLOAT64: return 8;
-        case TK_FLOAT128: return 16;
-        case TK_BITMASK: case TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN: case eprosima::fastdds::dds::xtypes::TK_BYTE: case eprosima::
+                    fastdds::dds::xtypes::TK_CHAR8: return 1;
+        case eprosima::fastdds::dds::xtypes::TK_INT16: case eprosima::fastdds::dds::xtypes::TK_UINT16: case eprosima::
+                    fastdds::dds::xtypes::TK_CHAR16:  return 2;
+        case eprosima::fastdds::dds::xtypes::TK_INT32: case eprosima::fastdds::dds::xtypes::TK_UINT32: case eprosima::
+                    fastdds::dds::xtypes::TK_FLOAT32: return 4;
+        case eprosima::fastdds::dds::xtypes::TK_INT64: case eprosima::fastdds::dds::xtypes::TK_UINT64: case eprosima::
+                    fastdds::dds::xtypes::TK_FLOAT64: return 8;
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128: return 16;
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK: case eprosima::fastdds::dds::xtypes::TK_ENUM:
         {
             size_t bits = descriptor_->get_bounds(0);
 

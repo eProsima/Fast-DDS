@@ -55,14 +55,14 @@ public:
     {
     }
 
-    ReturnCode_t enable() override
+    efd::ReturnCode_t enable() override
     {
         if (nullptr != reader_)
         {
             return efd::RETCODE_OK;
         }
 
-        ReturnCode_t ret = BaseType::enable();
+        efd::ReturnCode_t ret = BaseType::enable();
 
         if (efd::RETCODE_OK == ret &&
                 !DomainParticipantImpl::is_statistics_topic_name(topic_->get_name()))

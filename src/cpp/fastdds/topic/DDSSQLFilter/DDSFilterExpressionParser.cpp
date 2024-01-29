@@ -20,11 +20,9 @@
 
 #include <memory>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
-
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypeObject.h>
-#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 
 #include "pegtl.hpp"
 #include "pegtl/contrib/parse_tree.hpp"
@@ -42,7 +40,7 @@ namespace DDSSQLFilter {
 namespace parser {
 
 using namespace tao::TAO_PEGTL_NAMESPACE;
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastdds::dds::xtypes;
 
 #include "DDSFilterExpressionParserImpl/rearrange.hpp"
 #include "DDSFilterExpressionParserImpl/literal_values.hpp"

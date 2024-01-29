@@ -50,9 +50,9 @@ ReturnCode_t DynamicDataFactory::delete_instance()
     {
         delete s_instance;
         s_instance = nullptr;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
-    return RETCODE_ERROR;
+    return eprosima::fastdds::dds::RETCODE_ERROR;
 }
 
 DynamicDataFactory::DynamicDataFactory()
@@ -111,12 +111,13 @@ DynamicData* DynamicDataFactory::create_data(
             // ALIAS types create a DynamicData based on the base type and renames it with the name of the ALIAS.
             if (pType->get_base_type() != nullptr)
             {
-                if (pType->get_kind() == TK_ALIAS)
+                if (pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_ALIAS)
                 {
                     newData = create_data(pType->get_base_type());
                     newData->set_type_name(pType->get_name());
                 }
-                else if (pType->get_kind() == TK_STRUCTURE || pType->get_kind() == TK_BITSET)
+                else if (pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+                        pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
                 {
                     newData = new DynamicData(pType);
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
@@ -139,7 +140,7 @@ DynamicData* DynamicDataFactory::create_data(
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 
                 // Arrays must have created every members for serialization.
-                if (pType->get_kind() == TK_ARRAY)
+                if (pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
                 {
                     DynamicData* defaultArrayData = new DynamicData(pType->get_element_type());
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
@@ -151,7 +152,7 @@ DynamicData* DynamicDataFactory::create_data(
                     newData->default_array_value_ = defaultArrayData;
                 }
                 // Unions need a discriminator data
-                else if (pType->get_kind() == TK_UNION)
+                else if (pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
                 {
                     DynamicData* discriminatorData = new DynamicData(pType->get_discriminator_type());
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
@@ -185,13 +186,15 @@ ReturnCode_t DynamicDataFactory::create_members(
     if (pType != nullptr && pData != nullptr)
     {
         pData->create_members(pType);
-        if ((pType->get_kind() == TK_STRUCTURE || pType->get_kind() == TK_BITSET) && pType->get_base_type() != nullptr)
+        if ((pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+                pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET) &&
+                pType->get_base_type() != nullptr)
         {
             create_members(pData, pType->get_base_type());
         }
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicDataFactory::delete_data(
@@ -209,12 +212,12 @@ ReturnCode_t DynamicDataFactory::delete_data(
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error deleting DynamicData. It isn't registered in the factory");
-            return RETCODE_ALREADY_DELETED;
+            return eprosima::fastdds::dds::RETCODE_ALREADY_DELETED;
         }
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
         delete pData;
     }
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 bool DynamicDataFactory::is_empty() const

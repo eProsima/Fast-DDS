@@ -33,8 +33,6 @@
 #include <fastcdr/exceptions/BadParamException.h>
 
 
-#include "TypesTypeObject.h"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -79,8 +77,6 @@ enum class MyBadEnum : uint32_t
     B1,
     C1
 };
-
-
 /*!
  * @brief This class represents the structure MyEnumStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -94,8 +90,6 @@ public:
      */
     eProsima_user_DllExport MyEnumStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -206,8 +200,6 @@ private:
     MyEnum m_my_enum{MyEnum::A};
 
 };
-
-
 /*!
  * @brief This class represents the structure MyBadEnumStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -221,8 +213,6 @@ public:
      */
     eProsima_user_DllExport MyBadEnumStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -335,8 +325,6 @@ private:
 };
 typedef MyEnum MyAliasEnum;
 
-
-
 /*!
  * @brief This class represents the structure MyAliasEnumStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -350,8 +338,6 @@ public:
      */
     eProsima_user_DllExport MyAliasEnumStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -462,8 +448,6 @@ private:
     MyAliasEnum m_my_enum{MyEnum::A};
 
 };
-
-
 /*!
  * @brief This class represents the structure BasicStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -477,8 +461,6 @@ public:
      */
     eProsima_user_DllExport BasicStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -673,8 +655,6 @@ private:
     std::string m_my_string;
 
 };
-
-
 /*!
  * @brief This class represents the structure BasicNamesStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -688,8 +668,6 @@ public:
      */
     eProsima_user_DllExport BasicNamesStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -884,8 +862,6 @@ private:
     std::string m_my_string_name;
 
 };
-
-
 /*!
  * @brief This class represents the structure BasicBadStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -899,8 +875,6 @@ public:
      */
     eProsima_user_DllExport BasicBadStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -1095,8 +1069,6 @@ private:
     std::string m_my_string;
 
 };
-
-
 /*!
  * @brief This class represents the structure BasicWideStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -1110,8 +1082,6 @@ public:
      */
     eProsima_user_DllExport BasicWideStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -1390,8 +1360,6 @@ private:
     std::string m_new_string;
 
 };
-
-
 /*!
  * @brief This class represents the structure BadBasicWideStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -1405,8 +1373,6 @@ public:
      */
     eProsima_user_DllExport BadBasicWideStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -1685,8 +1651,6 @@ private:
     std::string m_my_string;
 
 };
-
-
 /*!
  * @brief This class represents the structure StringStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -1700,8 +1664,6 @@ public:
      */
     eProsima_user_DllExport StringStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -1822,8 +1784,6 @@ private:
     std::string m_my_string;
 
 };
-
-
 /*!
  * @brief This class represents the structure LargeStringStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -1837,8 +1797,6 @@ public:
      */
     eProsima_user_DllExport LargeStringStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -1959,8 +1917,6 @@ private:
     eprosima::fastcdr::fixed_string<41925> m_my_large_string;
 
 };
-
-
 /*!
  * @brief This class represents the structure WStringStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -1974,8 +1930,6 @@ public:
      */
     eProsima_user_DllExport WStringStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -2096,8 +2050,6 @@ private:
     std::wstring m_my_wstring;
 
 };
-
-
 /*!
  * @brief This class represents the structure LargeWStringStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2111,8 +2063,6 @@ public:
      */
     eProsima_user_DllExport LargeWStringStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -2233,8 +2183,6 @@ private:
     std::wstring m_my_large_wstring;
 
 };
-
-
 /*!
  * @brief This class represents the structure ArrayStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2248,8 +2196,6 @@ public:
      */
     eProsima_user_DllExport ArrayStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -2370,8 +2316,6 @@ private:
     std::array<int32_t, 2> m_my_array{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure ArrayStructEqual defined by the user in the IDL file.
  * @ingroup Types
@@ -2385,8 +2329,6 @@ public:
      */
     eProsima_user_DllExport ArrayStructEqual()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -2507,8 +2449,6 @@ private:
     std::array<int32_t, 2> m_my_array_equal{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure ArrayBadStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2522,8 +2462,6 @@ public:
      */
     eProsima_user_DllExport ArrayBadStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -2644,8 +2582,6 @@ private:
     std::array<uint8_t, 2> m_my_array{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure ArrayDimensionsStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2659,8 +2595,6 @@ public:
      */
     eProsima_user_DllExport ArrayDimensionsStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -2781,8 +2715,6 @@ private:
     std::array<std::array<int32_t, 2>, 2> m_my_array{ {{0}} };
 
 };
-
-
 /*!
  * @brief This class represents the structure ArraySizeStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2796,8 +2728,6 @@ public:
      */
     eProsima_user_DllExport ArraySizeStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -2918,8 +2848,6 @@ private:
     std::array<int32_t, 5> m_my_array{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure SequenceStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -2933,8 +2861,6 @@ public:
      */
     eProsima_user_DllExport SequenceStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -3055,8 +2981,6 @@ private:
     std::vector<int32_t> m_my_sequence;
 
 };
-
-
 /*!
  * @brief This class represents the structure SequenceStructEqual defined by the user in the IDL file.
  * @ingroup Types
@@ -3070,8 +2994,6 @@ public:
      */
     eProsima_user_DllExport SequenceStructEqual()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -3192,8 +3114,6 @@ private:
     std::vector<int32_t> m_my_sequence_equal;
 
 };
-
-
 /*!
  * @brief This class represents the structure SequenceBadStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -3207,8 +3127,6 @@ public:
      */
     eProsima_user_DllExport SequenceBadStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -3329,8 +3247,6 @@ private:
     std::vector<uint8_t> m_my_sequence;
 
 };
-
-
 /*!
  * @brief This class represents the structure SequenceBoundsStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -3344,8 +3260,6 @@ public:
      */
     eProsima_user_DllExport SequenceBoundsStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -3466,8 +3380,6 @@ private:
     std::vector<int32_t> m_my_sequence;
 
 };
-
-
 /*!
  * @brief This class represents the structure SequenceSequenceStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -3481,8 +3393,6 @@ public:
      */
     eProsima_user_DllExport SequenceSequenceStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -3603,8 +3513,6 @@ private:
     std::vector<std::vector<int32_t>> m_my_sequence_sequence;
 
 };
-
-
 /*!
  * @brief This class represents the structure SequenceSequenceBoundsStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -3618,8 +3526,6 @@ public:
      */
     eProsima_user_DllExport SequenceSequenceBoundsStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -3740,10 +3646,6 @@ private:
     std::vector<std::vector<int32_t>> m_my_sequence_sequence;
 
 };
-
-
-
-
 /*!
  * @brief This class represents the structure MapStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -3757,8 +3659,6 @@ public:
      */
     eProsima_user_DllExport MapStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -3879,10 +3779,6 @@ private:
     std::map<int32_t, int32_t> m_my_map;
 
 };
-
-
-
-
 /*!
  * @brief This class represents the structure MapStructEqual defined by the user in the IDL file.
  * @ingroup Types
@@ -3896,8 +3792,6 @@ public:
      */
     eProsima_user_DllExport MapStructEqual()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -4018,10 +3912,6 @@ private:
     std::map<int32_t, int32_t> m_my_map_equal;
 
 };
-
-
-
-
 /*!
  * @brief This class represents the structure MapBadKeyStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -4035,8 +3925,6 @@ public:
      */
     eProsima_user_DllExport MapBadKeyStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -4157,10 +4045,6 @@ private:
     std::map<uint8_t, int32_t> m_my_map;
 
 };
-
-
-
-
 /*!
  * @brief This class represents the structure MapBadElemStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -4174,8 +4058,6 @@ public:
      */
     eProsima_user_DllExport MapBadElemStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -4296,10 +4178,6 @@ private:
     std::map<int32_t, int64_t> m_my_map;
 
 };
-
-
-
-
 /*!
  * @brief This class represents the structure MapBoundsStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -4313,8 +4191,6 @@ public:
      */
     eProsima_user_DllExport MapBoundsStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -4435,11 +4311,6 @@ private:
     std::map<int32_t, int32_t> m_my_map;
 
 };
-
-
-
-
-
 /*!
  * @brief This class represents the structure MapMapStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -4453,8 +4324,6 @@ public:
      */
     eProsima_user_DllExport MapMapStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -4575,11 +4444,6 @@ private:
     std::map<int32_t, std::map<int32_t, int32_t>> m_my_map_map;
 
 };
-
-
-
-
-
 /*!
  * @brief This class represents the structure MapMapBoundsStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -4593,8 +4457,6 @@ public:
      */
     eProsima_user_DllExport MapMapBoundsStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -4715,8 +4577,6 @@ private:
     std::map<int32_t, std::map<int32_t, int32_t>> m_my_map_map;
 
 };
-
-
 /*!
  * @brief This class represents the union SimpleUnion defined by the user in the IDL file.
  * @ingroup Types
@@ -5086,8 +4946,6 @@ private:
     int32_t m_first{0};
     int64_t m_second{0};
 };
-
-
 /*!
  * @brief This class represents the union SimpleUnionNames defined by the user in the IDL file.
  * @ingroup Types
@@ -5457,8 +5315,6 @@ private:
     int32_t m_first_case{0};
     int64_t m_second_case{0};
 };
-
-
 /*!
  * @brief This class represents the union SimpleTypeUnion defined by the user in the IDL file.
  * @ingroup Types
@@ -5828,8 +5684,6 @@ private:
     uint8_t m_first{0};
     int64_t m_second{0};
 };
-
-
 /*!
  * @brief This class represents the union SimpleBadUnion defined by the user in the IDL file.
  * @ingroup Types
@@ -6199,8 +6053,6 @@ private:
     int32_t m_first{0};
     int64_t m_second{0};
 };
-
-
 /*!
  * @brief This class represents the union SimpleBadDiscUnion defined by the user in the IDL file.
  * @ingroup Types
@@ -6570,8 +6422,6 @@ private:
     int32_t m_first{0};
     int64_t m_second{0};
 };
-
-
 /*!
  * @brief This class represents the structure SimpleUnionStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -6585,8 +6435,6 @@ public:
      */
     eProsima_user_DllExport SimpleUnionStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -6707,8 +6555,6 @@ private:
     SimpleUnion m_my_union;
 
 };
-
-
 /*!
  * @brief This class represents the structure SimpleUnionStructEqual defined by the user in the IDL file.
  * @ingroup Types
@@ -6722,8 +6568,6 @@ public:
      */
     eProsima_user_DllExport SimpleUnionStructEqual()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -6844,8 +6688,6 @@ private:
     SimpleUnion m_my_union_equal;
 
 };
-
-
 /*!
  * @brief This class represents the structure SimpleUnionNamesStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -6859,8 +6701,6 @@ public:
      */
     eProsima_user_DllExport SimpleUnionNamesStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -6981,8 +6821,6 @@ private:
     SimpleUnionNames m_my_union;
 
 };
-
-
 /*!
  * @brief This class represents the structure SimpleTypeUnionStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -6996,8 +6834,6 @@ public:
      */
     eProsima_user_DllExport SimpleTypeUnionStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -7118,8 +6954,6 @@ private:
     SimpleTypeUnion m_my_union;
 
 };
-
-
 /*!
  * @brief This class represents the structure SimpleBadUnionStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -7133,8 +6967,6 @@ public:
      */
     eProsima_user_DllExport SimpleBadUnionStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!
@@ -7255,8 +7087,6 @@ private:
     SimpleBadUnion m_my_union;
 
 };
-
-
 /*!
  * @brief This class represents the structure SimplBadDiscUnionStruct defined by the user in the IDL file.
  * @ingroup Types
@@ -7270,8 +7100,6 @@ public:
      */
     eProsima_user_DllExport SimplBadDiscUnionStruct()
     {
-        // Just to register all known types
-        registerTypesTypes();
     }
 
     /*!

@@ -15,7 +15,10 @@
 #ifndef TYPES_DYNAMIC_TYPE_PTR_H
 #define TYPES_DYNAMIC_TYPE_PTR_H
 
-#include <fastrtps/types/TypesBase.h>
+#include <memory>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastrtps {

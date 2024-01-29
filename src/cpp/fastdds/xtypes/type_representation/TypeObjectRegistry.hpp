@@ -163,7 +163,7 @@ public:
      */
     ReturnCode_t get_type_object(
             const TypeIdentifier& type_identifier,
-            TypeObject& type_object);
+            TypeObject& type_object) override;
 
     /**
      * @brief Get the TypeInformation related to a specific type_name.
@@ -586,6 +586,16 @@ protected:
      * @brief Register TypeIdentifiers corresponding to the primitive types.
      */
     void register_primitive_type_identifiers();
+
+    /**
+     * @brief Get Minimal TypeIdentifier from Complete TypeIdentifier.
+     *
+     * @param complete_type_id Direct hash complete TypeIdentifier
+     * @return TypeIdentifier Minimal TypeIdentifier related to the given Complete TypeIdentifier.
+     *         Same TypeIdentifier if the given TypeIdentifier is not a direct hash complete TypeIdentifier.
+     */
+    const TypeIdentifier minimal_from_complete_type_identifier(
+            const TypeIdentifier& complete_type_id);
 
     // Collection of local TypeIdentifiers hashed by type_name.
     // TypeIdentifierPair contains both the minimal and complete TypeObject TypeIdentifiers.

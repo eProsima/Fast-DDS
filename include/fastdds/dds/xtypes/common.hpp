@@ -25,20 +25,26 @@ namespace fastdds {
 namespace dds {
 namespace xtypes {
 
-/**
- * @brief EquivalenceKind values
- */
-enum EquivalenceKindValue
+enum class ExtensibilityKind : uint32_t
 {
-    MINIMAL,
-    COMPLETE,
-    BOTH
+    NOT_APPLIED,
+    FINAL,
+    APPENDABLE,
+    MUTABLE
+};
+
+enum class TryConstructKind : uint32_t
+{
+    NOT_APPLIED,
+    USE_DEFAULT,
+    DISCARD,
+    TRIM
 };
 
 /**
  * @brief PlacementKind values (@verbatim annotation)
  */
-enum PlacementKindValue
+enum class PlacementKind : uint32_t
 {
     BEGIN_FILE,
     BEFORE_DECLARATION,
@@ -59,7 +65,7 @@ constexpr const char* uint32_type_name = "_uint32_t";
 constexpr const char* uint64_type_name = "_uint64_t";
 constexpr const char* float32_type_name = "_float";
 constexpr const char* float64_type_name = "_double";
-constexpr const char* float128_type_name = "_long_double";
+constexpr const char* float128_type_name = "_longdouble";
 constexpr const char* int8_type_name = "_int8_t";
 constexpr const char* uint8_type_name = "_uint8_t";
 constexpr const char* char8_type_name = "_char";

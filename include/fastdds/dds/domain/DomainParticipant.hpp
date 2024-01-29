@@ -33,9 +33,9 @@
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
@@ -52,10 +52,6 @@ namespace fastrtps {
 namespace rtps {
 class ResourceEvent;
 } // namespace rtps
-
-namespace types {
-class TypeInformation;
-} // namespace types
 
 class ParticipantAttributes;
 class PublisherAttributes;

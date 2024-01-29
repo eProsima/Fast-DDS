@@ -67,8 +67,6 @@ namespace builtin {
 
 const uint32_t TypeLookup_getTypes_HashId = 0x018252d3;
 const uint32_t TypeLookup_getDependencies_HashId = 0x05aafb31;
-
-
 /*!
  * @brief This class represents the structure TypeLookup_getTypes_In defined by the user in the IDL file.
  * @ingroup TypeLookupTypes
@@ -202,8 +200,6 @@ private:
     std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier> m_type_ids;
 
 };
-
-
 /*!
  * @brief This class represents the structure TypeLookup_getTypes_Out defined by the user in the IDL file.
  * @ingroup TypeLookupTypes
@@ -384,8 +380,6 @@ private:
     std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierPair> m_complete_to_minimal;
 
 };
-
-
 /*!
  * @brief This class represents the union TypeLookup_getTypes_Result defined by the user in the IDL file.
  * @ingroup TypeLookupTypes
@@ -666,8 +660,6 @@ private:
 
     TypeLookup_getTypes_Out m_result;
 };
-
-
 /*!
  * @brief This class represents the structure TypeLookup_getTypeDependencies_In defined by the user in the IDL file.
  * @ingroup TypeLookupTypes
@@ -848,8 +840,6 @@ private:
     std::vector<uint8_t> m_continuation_point;
 
 };
-
-
 /*!
  * @brief This class represents the structure TypeLookup_getTypeDependencies_Out defined by the user in the IDL file.
  * @ingroup TypeLookupTypes
@@ -1030,8 +1020,6 @@ private:
     std::vector<uint8_t> m_continuation_point;
 
 };
-
-
 /*!
  * @brief This class represents the union TypeLookup_getTypeDependencies_Result defined by the user in the IDL file.
  * @ingroup TypeLookupTypes
@@ -1312,8 +1300,6 @@ private:
 
     TypeLookup_getTypeDependencies_Out m_result;
 };
-
-
 /*!
  * @brief This class represents the union TypeLookup_Call defined by the user in the IDL file.
  * @ingroup TypeLookupTypes
@@ -1711,8 +1697,6 @@ private:
     TypeLookup_getTypes_In m_getTypes;
     TypeLookup_getTypeDependencies_In m_getTypeDependencies;
 };
-
-
 /*!
  * @brief This class represents the structure TypeLookup_Request defined by the user in the IDL file.
  * @ingroup TypeLookupTypes
@@ -1893,8 +1877,6 @@ private:
     TypeLookup_Call m_data;
 
 };
-
-
 /*!
  * @brief This class represents the union TypeLookup_Return defined by the user in the IDL file.
  * @ingroup TypeLookupTypes
@@ -2292,8 +2274,6 @@ private:
     TypeLookup_getTypes_Result m_getType;
     TypeLookup_getTypeDependencies_Result m_getTypeDependencies;
 };
-
-
 /*!
  * @brief This class represents the structure TypeLookup_Reply defined by the user in the IDL file.
  * @ingroup TypeLookupTypes

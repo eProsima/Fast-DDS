@@ -33,8 +33,12 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
+using MockTCPv4Transport = eprosima::fastdds::rtps::MockTCPv4Transport;
+using SendResourceList = eprosima::fastdds::rtps::SendResourceList;
+using TCPChannelResourceBasic = eprosima::fastdds::rtps::TCPChannelResourceBasic;
 using TCPHeader = eprosima::fastdds::rtps::TCPHeader;
+using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
+using TCPv4TransportDescriptor = eprosima::fastdds::rtps::TCPv4TransportDescriptor;
 
 #if defined(_WIN32)
 #define GET_PID _getpid

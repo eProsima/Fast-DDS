@@ -49,8 +49,6 @@
 #define FILTERINGEXAMPLE_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure FilteringExample defined by the user in the IDL file.
  * @ingroup FilteringExample

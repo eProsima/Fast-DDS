@@ -51,8 +51,6 @@
 #define KEYEDDATA1MB_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure KeyedData1mb defined by the user in the IDL file.
  * @ingroup KeyedData1mb

@@ -50,8 +50,6 @@
 #define HELLOWORLD_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure HelloWorld defined by the user in the IDL file.
  * @ingroup HelloWorld

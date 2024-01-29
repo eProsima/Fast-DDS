@@ -23,10 +23,10 @@
 #include <unordered_set>
 #include <vector>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include "DDSFilterPredicate.hpp"
 #include "DDSFilterValue.hpp"
@@ -64,7 +64,7 @@ public:
      * @param[in]  data_kind     Kind of data the field represents.
      */
     DDSFilterField(
-            const eprosima::fastrtps::types::TypeIdentifier* type_id,
+            const eprosima::fastdds::dds::xtypes::TypeIdentifier* type_id,
             const std::vector<FieldAccessor>& access_path,
             ValueKind data_kind)
         : DDSFilterValue(data_kind)
@@ -140,7 +140,7 @@ private:
 
     bool has_value_ = false;
     std::vector<FieldAccessor> access_path_;
-    const eprosima::fastrtps::types::TypeIdentifier* type_id_ = nullptr;
+    const eprosima::fastdds::dds::xtypes::TypeIdentifier* type_id_ = nullptr;
     std::unordered_set<DDSFilterPredicate*> parents_;
 };
 

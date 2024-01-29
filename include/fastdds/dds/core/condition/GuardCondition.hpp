@@ -23,8 +23,8 @@
 #include <atomic>
 
 #include <fastdds/dds/core/condition/Condition.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/fastdds_dll.hpp>
-#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastdds {

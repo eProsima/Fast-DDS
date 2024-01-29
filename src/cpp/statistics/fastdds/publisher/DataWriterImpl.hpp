@@ -21,10 +21,11 @@
 
 #include <fastdds/statistics/IListeners.hpp>
 
-#include <fastdds/publisher/DataWriterImpl.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
+#include <fastdds/publisher/DataWriterImpl.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 
 namespace eprosima {
@@ -65,14 +66,14 @@ public:
     {
     }
 
-    ReturnCode_t enable() override
+    efd::ReturnCode_t enable() override
     {
         if (nullptr != writer_)
         {
             return efd::RETCODE_OK;
         }
 
-        ReturnCode_t ret = BaseType::enable();
+        efd::ReturnCode_t ret = BaseType::enable();
 
         if (efd::RETCODE_OK == ret && statistics_listener_)
         {

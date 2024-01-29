@@ -30,8 +30,6 @@
 #include <fastcdr/exceptions/BadParamException.h>
 
 
-#include "new_features_4_2TypeObject.h"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -56,8 +54,6 @@
 #define NEW_FEATURES_4_2_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure NewAliases defined by the user in the IDL file.
  * @ingroup new_features_4_2
@@ -71,8 +67,6 @@ public:
      */
     eProsima_user_DllExport NewAliases()
     {
-        // Just to register all known types
-        registernew_features_4_2Types();
     }
 
     /*!
@@ -489,8 +483,6 @@ private:
     std::string m_local_string;
 
 };
-
-
 /*!
  * @brief This class represents the union WCharUnion defined by the user in the IDL file.
  * @ingroup new_features_4_2
@@ -860,8 +852,6 @@ private:
     int32_t m_case_zero{0};
     int32_t m_case_one{0};
 };
-
-
 /*!
  * @brief This class represents the union OctetUnion defined by the user in the IDL file.
  * @ingroup new_features_4_2
@@ -1231,8 +1221,6 @@ private:
     int32_t m_case_five{0};
     int32_t m_case_seven{0};
 };
-
-
 /*!
  * @brief This class represents the union Int8Union defined by the user in the IDL file.
  * @ingroup new_features_4_2
@@ -1617,8 +1605,6 @@ public:
      */
     eProsima_user_DllExport ParentBitset()
     {
-        // Just to register all known types
-        registernew_features_4_2Types();
     }
 
     /*!
@@ -1769,8 +1755,6 @@ public:
     eProsima_user_DllExport MyBitset()
     : ParentBitset()
     {
-        // Just to register all known types
-        registernew_features_4_2Types();
     }
 
     /*!
@@ -1857,7 +1841,7 @@ public:
      * @param _a New value for member a
      */
     eProsima_user_DllExport void a(
-            char _a)
+            uint8_t _a)
     {
         int base = 0;
         int size = 3;
@@ -1873,7 +1857,7 @@ public:
      * @brief This function returns the value of member a
      * @return Value of member a
      */
-    eProsima_user_DllExport char a() const
+    eProsima_user_DllExport uint8_t a() const
     {
         int base = 0;
         int size = 3;
@@ -1882,7 +1866,7 @@ public:
         {
             aux.set(i, m_bitset.test(i + base));
         }
-        return static_cast<char>(aux.to_ullong());
+        return static_cast<uint8_t>(aux.to_ullong());
 
     }
 
@@ -1907,7 +1891,6 @@ public:
         int base = 3;
         return m_bitset.test(base);
     }
-
 
 
     /*!
@@ -2097,8 +2080,6 @@ enum MyBitMaskBits : uint8_t
     flag7 = 0x01ull << 7
 };
 typedef uint8_t MyBitMask;
-
-
 /*!
  * @brief This class represents the structure BitsetBitmask defined by the user in the IDL file.
  * @ingroup new_features_4_2
@@ -2112,8 +2093,6 @@ public:
      */
     eProsima_user_DllExport BitsetBitmask()
     {
-        // Just to register all known types
-        registernew_features_4_2Types();
     }
 
     /*!
@@ -2281,8 +2260,6 @@ private:
     MyBitMask m_mybitmask{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure BM2 defined by the user in the IDL file.
  * @ingroup new_features_4_2
@@ -2297,8 +2274,6 @@ public:
     eProsima_user_DllExport BM2()
         : BitsetBitmask()
     {
-        // Just to register all known types
-        registernew_features_4_2Types();
     }
 
     /*!
@@ -2467,8 +2442,6 @@ private:
 };
 
 } // namespace bitmodule
-
-
 /*!
  * @brief This class represents the structure StructTest defined by the user in the IDL file.
  * @ingroup new_features_4_2
@@ -2483,8 +2456,6 @@ public:
     eProsima_user_DllExport StructTest()
         : NewAliases()
     {
-        // Just to register all known types
-        registernew_features_4_2Types();
     }
 
     /*!

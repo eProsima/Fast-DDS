@@ -30,8 +30,6 @@
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include "ContentFilterTestTypeTypeObject.h"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -80,8 +78,6 @@ enum class Material : uint32_t
     CONCRETE,
     STONE
 };
-
-
 /*!
  * @brief This class represents the structure StructType defined by the user in the IDL file.
  * @ingroup ContentFilterTestType
@@ -95,8 +91,6 @@ public:
      */
     eProsima_user_DllExport StructType()
     {
-        // Just to register all known types
-        registerContentFilterTestTypeTypes();
     }
 
     /*!
@@ -737,8 +731,6 @@ private:
 };
 const uint32_t max_array_size = 3;
 const uint32_t max_seq_size = 5;
-
-
 /*!
  * @brief This class represents the structure ContentFilterTestType defined by the user in the IDL file.
  * @ingroup ContentFilterTestType
@@ -752,8 +744,6 @@ public:
      */
     eProsima_user_DllExport ContentFilterTestType()
     {
-        // Just to register all known types
-        registerContentFilterTestTypeTypes();
     }
 
     /*!

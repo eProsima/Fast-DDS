@@ -50,8 +50,6 @@
 #define FLOWCONTROLEXAMPLE_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure FlowControlExample defined by the user in the IDL file.
  * @ingroup FlowControlExample
@@ -215,7 +213,7 @@ public:
 
 private:
 
-    std::array<char, 600000> m_message;
+    std::array<char, 600000> m_message{0};
     char m_wasFast{0};
 
 };

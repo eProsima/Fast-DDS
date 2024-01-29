@@ -51,8 +51,6 @@
 #define DATA64KB_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure Data64kb defined by the user in the IDL file.
  * @ingroup Data64kb

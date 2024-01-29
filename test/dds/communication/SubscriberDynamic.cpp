@@ -23,6 +23,8 @@
 #include <utility>
 
 #include <asio.hpp>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -32,11 +34,11 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
+#include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds::xtypes;
 using namespace eprosima::fastrtps::rtps;
 
 class ParListener : public DomainParticipantListener
@@ -55,25 +57,25 @@ public:
      */
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            rtps::ParticipantDiscoveryInfo&& info,
+            ParticipantDiscoveryInfo&& info,
             bool& /*should_be_ignored*/) override
     {
-        if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+        if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " discovered participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+        else if (info.status == ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " detected changes on participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+        else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " removed participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+        else if (info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " dropped participant " << info.info.m_guid << std::endl;
@@ -83,9 +85,9 @@ public:
 #if HAVE_SECURITY
     void onParticipantAuthentication(
             DomainParticipant* /*participant*/,
-            rtps::ParticipantAuthenticationInfo&& info) override
+            ParticipantAuthenticationInfo&& info) override
     {
-        if (rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
+        if (ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
         {
             std::cout << "Subscriber participant " << //participant->guid() <<
                 " authorized participant " << info.guid << std::endl;
@@ -251,23 +253,20 @@ int main(
         auto& topic_name = remote_names.first;
         auto& type_name = remote_names.second;
 
-        types::DynamicType_ptr type;
+        eprosima::fastrtps::types::DynamicType_ptr type;
 
         {
-            const types::TypeIdentifier* ident =
-                    types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(type_name);
-
-            if (ident == nullptr)
+            TypeObjectPair type_objects;
+            if (RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
+                        type_name, type_objects))
             {
-                std::cout << "ERROR: TypeIdentifier cannot be retrieved for type: "
+                std::cout << "ERROR: TypeObject cannot be retrieved for type: "
                           << type_name << std::endl;
                 throw 1;
             }
 
-            const types::TypeObject* obj =
-                    types::TypeObjectFactory::get_instance()->get_type_object(ident);
-
-            type = types::TypeObjectFactory::get_instance()->build_dynamic_type(type_name, ident, obj);
+            // TODO(XTypes): PENDING DynamicTypeBuilderFactory::create_type_w_type_object
+            // type = types::TypeObjectFactory::get_instance()->build_dynamic_type(type_name, ident, obj);
 
             if (type == nullptr)
             {
@@ -308,8 +307,9 @@ int main(
         while ((notexit || number_samples < samples ) && listener.run_)
         {
             // loop taking samples
-            types::DynamicPubSubType pst(type);
-            types::DynamicData_ptr sample(static_cast<types::DynamicData*>(pst.createData()));
+            eprosima::fastrtps::types::DynamicPubSubType pst(type);
+            eprosima::fastrtps::types::DynamicData_ptr sample(static_cast<eprosima::fastrtps::types::DynamicData*>(pst.
+                            createData()));
             eprosima::fastdds::dds::SampleInfo info;
 
             if (RETCODE_OK == reader->take_next_sample(sample.get(), &info))
@@ -325,7 +325,7 @@ int main(
                     sample->get_string_value(message, 0);
                     sample->get_uint32_value(index, 1);
 
-                    types::DynamicData* inner = sample->loan_value(2);
+                    eprosima::fastrtps::types::DynamicData* inner = sample->loan_value(2);
                     inner->get_byte_value(count, 0);
                     sample->return_loaned_value(inner);
 

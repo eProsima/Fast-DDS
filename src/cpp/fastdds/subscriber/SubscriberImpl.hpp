@@ -24,12 +24,12 @@
 #include <map>
 #include <mutex>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusQueryable.hpp>
-#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastrtps {

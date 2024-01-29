@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/TypesBase.h>
 #include <gtest/gtest.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicTypePtr.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/TypeObjectFactory.h>
-#include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicDataPtr.h>
+#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeDescriptor.h>
+
 #include "idl/new_features_4_2PubSubTypes.h"
-#include "idl/new_features_4_2TypeObject.h"
+#include "idl/new_features_4_2TypeObjectSupport.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -53,7 +53,6 @@ public:
 
     virtual void TearDown() override
     {
-        TypeObjectFactory::delete_instance();
         DynamicDataFactory::delete_instance();
         DynamicTypeBuilderFactory::delete_instance();
     }
@@ -245,9 +244,10 @@ TEST_F(DynamicTypes_4_2_Tests, New_Union_Discriminators)
      */
 }
 
-TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
-{
-    registernew_features_4_2Types();
+/* TODO(jlbueno): XTypes v1.3 PENDING implementation DynamicTypeBuilderFactory::create_type_w_type_object
+   TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
+   {
+    register_new_features_4_2_type_objects();
 
     // TODO Bitset serialization isn't compatible.
     const TypeIdentifier* identifier = GetStructTestIdentifier(true);
@@ -291,27 +291,30 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     //dynamic_type in `build_dynamic_type()`.
 
     // DEBUG Printing payloads
-    /*
-       std::cout << "Payload: " << std::endl;
-       for (int i = 0; i < payload_size; ++i)
-       {
-        std::cout << std::hex << (uint32_t)(payload.data[i]) << " ";
-       }
-       std::cout << std::endl;
-       std::cout << "ST_Payload: " << std::endl;
-       for (int i = 0; i < st_payload.length; ++i)
-       {
-        std::cout << std::hex << (uint32_t)(st_payload.data[i]) << " ";
-       }
-       std::cout << "--------------------------" << std::endl;
-     */
+ */
+/*
+   std::cout << "Payload: " << std::endl;
+   for (int i = 0; i < payload_size; ++i)
+   {
+    std::cout << std::hex << (uint32_t)(payload.data[i]) << " ";
+   }
+   std::cout << std::endl;
+   std::cout << "ST_Payload: " << std::endl;
+   for (int i = 0; i < st_payload.length; ++i)
+   {
+    std::cout << std::hex << (uint32_t)(st_payload.data[i]) << " ";
+   }
+   std::cout << "--------------------------" << std::endl;
+ */
+/*
     ASSERT_TRUE(dyn_data_from_static->equals(dyn_data_from_dynamic.get()));
-}
+   }
+ */
 
 /* TODO(richiware) Bitsets are not serialized correctly currently by DynamicData.
    TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
    {
-   registernew_features_4_2Types();
+   register_new_features_4_2_type_objects();
 
    const TypeIdentifier* identifier = GetStructTestIdentifier(true);
    const TypeObject* object = GetCompleteStructTestObject();

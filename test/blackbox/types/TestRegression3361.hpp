@@ -26,8 +26,6 @@
 #include <utility>
 #include "TestIncludeRegression3361.hpp"
 
-#include "TestRegression3361TypeObject.h"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -52,8 +50,6 @@
 #define TESTREGRESSION3361_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure TestRegression3361 defined by the user in the IDL file.
  * @ingroup TestRegression3361
@@ -67,8 +63,6 @@ public:
      */
     eProsima_user_DllExport TestRegression3361()
     {
-        // Just to register all known types
-        registerTestRegression3361Types();
     }
 
     /*!

@@ -27,8 +27,6 @@
 #include <fastcdr/exceptions/BadParamException.h>
 
 
-#include "WideEnumTypeObject.h"
-
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #define eProsima_user_DllExport __declspec( dllexport )
@@ -64,8 +62,6 @@ enum class MyEnumWide : uint32_t
     C,
     D
 };
-
-
 /*!
  * @brief This class represents the structure MyEnumWideStruct defined by the user in the IDL file.
  * @ingroup WideEnum
@@ -79,8 +75,6 @@ public:
      */
     eProsima_user_DllExport MyEnumWideStruct()
     {
-        // Just to register all known types
-        registerWideEnumTypes();
     }
 
     /*!
@@ -191,8 +185,6 @@ private:
     MyEnumWide m_my_enum_wide{MyEnumWide::A};
 
 };
-
-
 /*!
  * @brief This class represents the union SimpleWideUnion defined by the user in the IDL file.
  * @ingroup WideEnum
@@ -665,8 +657,6 @@ private:
     int64_t m_second{0};
     uint8_t m_third{0};
 };
-
-
 /*!
  * @brief This class represents the structure SimpleWideUnionStruct defined by the user in the IDL file.
  * @ingroup WideEnum
@@ -680,8 +670,6 @@ public:
      */
     eProsima_user_DllExport SimpleWideUnionStruct()
     {
-        // Just to register all known types
-        registerWideEnumTypes();
     }
 
     /*!

@@ -23,9 +23,9 @@
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
 
-#include "../types/HelloWorldTypeObject.h"
+#include "../types/HelloWorldTypeObjectSupport.hpp"
 #include "../types/TestRegression3361PubSubTypes.h"
-#include "../types/TestRegression3361TypeObject.h"
+#include "../types/TestRegression3361TypeObjectSupport.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
@@ -159,7 +159,6 @@ public:
         }
 
         using_transport_communication_ = (communication_type::TRANSPORT == GetParam());
-        registerHelloWorldTypes();
     }
 
     void TearDown() override
@@ -578,8 +577,6 @@ TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
 //! Correctly resolve an alias defined in another header
 TEST(DDSContentFilter, CorrectlyHandleAliasOtherHeader)
 {
-    registerTestRegression3361Types();
-
     auto dpf = DomainParticipantFactory::get_instance();
 
     auto participant = dpf->create_participant(0, PARTICIPANT_QOS_DEFAULT);

@@ -15,7 +15,10 @@
 #ifndef TYPES_DYNAMIC_TYPE_BUILDER_H
 #define TYPES_DYNAMIC_TYPE_BUILDER_H
 
-#include <fastrtps/types/TypesBase.h>
+#include <map>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima {
@@ -27,6 +30,10 @@ class TypeDescriptor;
 class MemberDescriptor;
 class DynamicType;
 class DynamicTypeMember;
+
+using MemberId = eprosima::fastdds::dds::xtypes::MemberId;
+using TypeKind = eprosima::fastdds::dds::xtypes::TypeKind;
+using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
 class DynamicTypeBuilder
 {

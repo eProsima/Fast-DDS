@@ -22,10 +22,10 @@
 #include <unordered_set>
 #include <vector>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include "DDSFilterPredicate.hpp"
 #include "DDSFilterValue.hpp"
@@ -114,61 +114,66 @@ bool DDSFilterField::set_value(
     {
         switch (type_id_->_d())
         {
-            case TK_BOOLEAN:
+            case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
                 boolean_value = data->get_bool_value(member_id);
                 break;
 
-            case TK_CHAR8:
+            case eprosima::fastdds::dds::xtypes::TK_CHAR8:
                 char_value = data->get_char8_value(member_id);
                 break;
 
-            case TK_STRING8:
-            case TI_STRING8_SMALL:
-            case TI_STRING8_LARGE:
+            case eprosima::fastdds::dds::xtypes::TK_STRING8:
+            case eprosima::fastdds::dds::xtypes::TI_STRING8_SMALL:
+            case eprosima::fastdds::dds::xtypes::TI_STRING8_LARGE:
                 string_value = data->get_string_value(member_id);
                 break;
 
-            case TK_INT16:
+            case eprosima::fastdds::dds::xtypes::TK_INT8:
+                signed_integer_value = data->get_int8_value(member_id);
+                break;
+
+            case eprosima::fastdds::dds::xtypes::TK_INT16:
                 signed_integer_value = data->get_int16_value(member_id);
                 break;
 
-            case TK_INT32:
+            case eprosima::fastdds::dds::xtypes::TK_INT32:
                 signed_integer_value = data->get_int32_value(member_id);
                 break;
 
-            case TK_INT64:
+            case eprosima::fastdds::dds::xtypes::TK_INT64:
                 signed_integer_value = data->get_int64_value(member_id);
                 break;
 
-            case TK_BYTE:
+            case eprosima::fastdds::dds::xtypes::TK_BYTE:
+            case eprosima::fastdds::dds::xtypes::TK_UINT8:
                 unsigned_integer_value = data->get_uint8_value(member_id);
                 break;
 
-            case TK_UINT16:
+            case eprosima::fastdds::dds::xtypes::TK_UINT16:
                 unsigned_integer_value = data->get_uint16_value(member_id);
                 break;
 
-            case TK_UINT32:
+            case eprosima::fastdds::dds::xtypes::TK_UINT32:
                 unsigned_integer_value = data->get_uint32_value(member_id);
                 break;
 
-            case TK_UINT64:
+            case eprosima::fastdds::dds::xtypes::TK_UINT64:
                 unsigned_integer_value = data->get_uint64_value(member_id);
                 break;
 
-            case TK_FLOAT32:
+            case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
                 float_value = data->get_float32_value(member_id);
                 break;
 
-            case TK_FLOAT64:
+            case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
                 float_value = data->get_float64_value(member_id);
                 break;
 
-            case TK_FLOAT128:
+            case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
                 float_value = data->get_float128_value(member_id);
                 break;
 
-            case EK_COMPLETE:
+            case eprosima::fastdds::dds::xtypes::EK_COMPLETE:
             {
                 uint32_t enum_value;
                 ret = RETCODE_OK == data->get_enum_value(enum_value, member_id);

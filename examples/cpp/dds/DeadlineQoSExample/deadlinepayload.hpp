@@ -51,8 +51,6 @@
 #define DEADLINEPAYLOAD_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure HelloMsg defined by the user in the IDL file.
  * @ingroup deadlinepayload

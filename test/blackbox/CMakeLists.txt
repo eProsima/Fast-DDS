@@ -56,13 +56,19 @@ endif()
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorldPubSubTypes.cxx
-    types/HelloWorldTypeObject.cxx
+    types/HelloWorldTypeObjectSupport.cxx
     types/KeyedHelloWorldPubSubTypes.cxx
+    types/KeyedHelloWorldTypeObjectSupport.cxx
     types/StringTestPubSubTypes.cxx
+    types/StringTestTypeObjectSupport.cxx
     types/Data64kbPubSubTypes.cxx
+    types/Data64kbTypeObjectSupport.cxx
     types/Data1mbPubSubTypes.cxx
+    types/Data1mbTypeObjectSupport.cxx
     types/KeyedData1mbPubSubTypes.cxx
+    types/KeyedData1mbTypeObjectSupport.cxx
     types/FixedSizedPubSubTypes.cxx
+    types/FixedSizedTypeObjectSupport.cxx
     types/UnboundedHelloWorld.cxx
     types/UnboundedHelloWorldPubSubTypes.cxx
     types/UnboundedHelloWorldv1.cxx
@@ -92,16 +98,22 @@ gtest_discover_tests(BlackboxTests_RTPS
 file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
 set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorldPubSubTypes.cxx
-    types/HelloWorldTypeObject.cxx
+    types/HelloWorldTypeObjectSupport.cxx
     types/KeyedHelloWorldPubSubTypes.cxx
+    types/KeyedHelloWorldTypeObjectSupport.cxx
     types/StringTestPubSubTypes.cxx
+    types/StringTestTypeObjectSupport.cxx
     types/Data64kbPubSubTypes.cxx
+    types/Data64kbTypeObjectSupport.cxx
     types/Data1mbPubSubTypes.cxx
+    types/Data1mbTypeObjectSupport.cxx
     types/KeyedData1mbPubSubTypes.cxx
+    types/KeyedData1mbTypeObjectSupport.cxx
     types/FixedSizedPubSubTypes.cxx
-    types/TestIncludeRegression3361TypeObject.cxx
+    types/FixedSizedTypeObjectSupport.cxx
+    types/TestIncludeRegression3361TypeObjectSupport.cxx
     types/TestRegression3361PubSubTypes.cxx
-    types/TestRegression3361TypeObject.cxx
+    types/TestRegression3361TypeObjectSupport.cxx
     types/UnboundedHelloWorld.cxx
     types/UnboundedHelloWorldPubSubTypes.cxx
     types/UnboundedHelloWorldv1.cxx
@@ -169,7 +181,9 @@ if(FASTDDS_PIM_API_TESTS)
 
         set(statistics_sources
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesTypeObjectSupport.cxx
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
             )
 
         list(APPEND BLACKBOXTESTS_FASTDDS_PIM_SOURCE ${statistics_sources})

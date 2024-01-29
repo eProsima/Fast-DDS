@@ -51,8 +51,6 @@
 #define KEYEDHELLOWORLD_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure KeyedHelloWorld defined by the user in the IDL file.
  * @ingroup KeyedHelloWorld

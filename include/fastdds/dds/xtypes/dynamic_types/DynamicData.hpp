@@ -21,14 +21,14 @@
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
+#include <fastdds/fastdds_dll.h>
 #include <fastdds/rtps/common/Types.h>
-#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class RTPS_DllAPI DynamicData : public std::enable_shared_from_this<DynamicData>
+class FASTDDS_EXPORTED_API DynamicData : public std::enable_shared_from_this<DynamicData>
 {
 public:
 

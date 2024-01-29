@@ -62,8 +62,6 @@ namespace statistics {
 
 namespace detail {
 
-
-
 /*!
  * @brief This class represents the structure EntityId_s defined by the user in the IDL file.
  * @ingroup types
@@ -197,8 +195,6 @@ private:
     std::array<uint8_t, 4> m_value{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure GuidPrefix_s defined by the user in the IDL file.
  * @ingroup types
@@ -332,8 +328,6 @@ private:
     std::array<uint8_t, 12> m_value{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure GUID_s defined by the user in the IDL file.
  * @ingroup types
@@ -514,8 +508,6 @@ private:
     EntityId_s m_entityId;
 
 };
-
-
 /*!
  * @brief This class represents the structure SequenceNumber_s defined by the user in the IDL file.
  * @ingroup types
@@ -676,8 +668,6 @@ private:
     uint32_t m_low{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure SampleIdentity_s defined by the user in the IDL file.
  * @ingroup types
@@ -858,8 +848,6 @@ private:
     SequenceNumber_s m_sequence_number;
 
 };
-
-
 /*!
  * @brief This class represents the structure Locator_s defined by the user in the IDL file.
  * @ingroup types
@@ -1069,8 +1057,6 @@ private:
 };
 
 } // namespace detail
-
-
 /*!
  * @brief This class represents the structure DiscoveryTime defined by the user in the IDL file.
  * @ingroup types
@@ -1429,8 +1415,6 @@ private:
     std::string m_process;
 
 };
-
-
 /*!
  * @brief This class represents the structure EntityCount defined by the user in the IDL file.
  * @ingroup types
@@ -1601,8 +1585,6 @@ private:
     uint64_t m_count{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure SampleIdentityCount defined by the user in the IDL file.
  * @ingroup types
@@ -1773,8 +1755,6 @@ private:
     uint64_t m_count{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure Entity2LocatorTraffic defined by the user in the IDL file.
  * @ingroup types
@@ -2066,8 +2046,6 @@ private:
     int16_t m_byte_magnitude_order{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure WriterReaderData defined by the user in the IDL file.
  * @ingroup types
@@ -2285,8 +2263,6 @@ private:
     float m_data{0.0};
 
 };
-
-
 /*!
  * @brief This class represents the structure Locator2LocatorData defined by the user in the IDL file.
  * @ingroup types
@@ -2504,8 +2480,6 @@ private:
     float m_data{0.0};
 
 };
-
-
 /*!
  * @brief This class represents the structure EntityData defined by the user in the IDL file.
  * @ingroup types
@@ -2676,8 +2650,6 @@ private:
     float m_data{0.0};
 
 };
-
-
 /*!
  * @brief This class represents the structure PhysicalData defined by the user in the IDL file.
  * @ingroup types
@@ -2977,8 +2949,6 @@ enum EventKindBits : uint32_t
     PHYSICAL_DATA = 0x01ull << 16
 };
 typedef uint32_t EventKind;
-
-
 /*!
  * @brief This class represents the union Data defined by the user in the IDL file.
  * @ingroup types

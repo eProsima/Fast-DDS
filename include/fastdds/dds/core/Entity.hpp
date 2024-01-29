@@ -22,8 +22,8 @@
 
 #include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -56,10 +56,10 @@ public:
      *
      * @return RETCODE_OK
      */
-    virtual fastrtps::types::ReturnCode_t enable()
+    virtual ReturnCode_t enable()
     {
         enable_ = true;
-        return fastrtps::types::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     /**

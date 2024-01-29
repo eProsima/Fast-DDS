@@ -50,7 +50,7 @@ bool DDSFilterExpression::evaluate(
     static_cast<void>(sample_info);
     static_cast<void>(reader_guid);
 
-    using namespace eprosima::fastrtps::types;
+    using namespace eprosima::fastdds::dds::xtypes;
     using namespace eprosima::fastcdr;
 
     dyn_data_->clear_all_values();

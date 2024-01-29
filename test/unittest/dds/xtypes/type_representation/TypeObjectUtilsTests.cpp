@@ -17,6 +17,8 @@
  * This file contains negative tests related to the TypeObjectUtils API.
  */
 
+#include <string>
+
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -24,8 +26,6 @@
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
-
-#include <fastdds/xtypes/type_representation/BuiltinAnnotations.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -48,24 +48,13 @@ TEST(TypeObjectUtilsTests, build_type_object_hash_id_wrong_discriminator)
 // Build inconsistent StructMemberFlag
 TEST(TypeObjectUtilsTests, build_inconsistent_struct_member_flag)
 {
-    EXPECT_THROW(TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::TryConstructKind::DISCARD, true,
-            false, true, false),
-            InvalidArgumentError);
-    EXPECT_NO_THROW(TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::TryConstructKind::DISCARD, true,
-            false, false, false));
-    EXPECT_NO_THROW(TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::TryConstructKind::DISCARD, false,
-            false, true, false));
+    EXPECT_THROW(TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD,
+            true, false, true, false), InvalidArgumentError);
+    EXPECT_NO_THROW(TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD,
+            true, false, false, false));
+    EXPECT_NO_THROW(TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD,
+            false, false, true, false));
 }
-
-// Build StringSTypeDefn with bound equal 0 (INVALID_SBOUND).
-TEST(TypeObjectUtilsTests, build_string_s_type_defn_invalid_bound)
-{
-    SBound wrong_bound = 0;
-    EXPECT_THROW(StringSTypeDefn string_l_type_defn = TypeObjectUtils::build_string_s_type_defn(wrong_bound),
-            InvalidArgumentError);
-    EXPECT_NO_THROW(StringSTypeDefn string_l_type_defn = TypeObjectUtils::build_string_s_type_defn(1));
-}
-
 
 // Build StringLTypeDefn with bound smaller than 256.
 TEST(TypeObjectUtilsTests, build_string_l_type_defn_small_bound)
@@ -76,29 +65,25 @@ TEST(TypeObjectUtilsTests, build_string_l_type_defn_small_bound)
     EXPECT_NO_THROW(StringLTypeDefn string_l_type_defn = TypeObjectUtils::build_string_l_type_defn(256));
 }
 
-#if !defined(NDEBUG)
-// Build PlainCollectionHeader with inconsistent CollectionElementFlag.
-TEST(TypeObjectUtilsTests, build_plain_collection_header_inconsistent_element_flags)
+void register_empty_structure_type_object()
 {
-    CollectionElementFlag wrong_element_flag = 0;
-    CollectionElementFlag correct_element_flag = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::TRIM,
-        false);
-    EXPECT_THROW(PlainCollectionHeader plain_collection_header = TypeObjectUtils::build_plain_collection_header(
-                EquivalenceKindValue::BOTH, wrong_element_flag), InvalidArgumentError);
-    EXPECT_NO_THROW(PlainCollectionHeader plain_collection_header = TypeObjectUtils::build_plain_collection_header(
-                EquivalenceKindValue::BOTH, correct_element_flag));
+    std::string empty_struct_name = "empty_structure";
+    CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>(), empty_struct_name);
+    CompleteStructHeader header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
+    CompleteStructType struct_type = TypeObjectUtils::build_complete_struct_type(0, header, CompleteStructMemberSeq());
+    TypeObjectUtils::build_and_register_struct_type_object(struct_type, empty_struct_name);
 }
-#endif // !defined(NDEBUG)
 
 // Build PlainSequenceSElemDefn with inconsistent parameters.
 TEST(TypeObjectUtilsTests, build_plain_sequence_s_elem_defn_inconsistencies)
 {
     eprosima::fastcdr::external<TypeIdentifier> test_identifier{new TypeIdentifier()};
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::TRIM, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::TRIM, false);
     PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::COMPLETE, flags);
+        EK_COMPLETE, flags);
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
@@ -123,18 +108,27 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_s_elem_defn_inconsistencies)
     EXPECT_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
                 complete_header, 10, test_identifier), InvalidArgumentError);
     PlainCollectionHeader minimal_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::MINIMAL, flags);
+        EK_MINIMAL, flags);
     // TypeIdentifier inconsistent with minimal header
     EXPECT_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
                 minimal_header, 10, test_identifier), InvalidArgumentError);
     PlainCollectionHeader fully_descriptive_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::BOTH, flags);
+        EK_BOTH, flags);
     // TypeIdentifier consistent with fully-descriptive header
     EXPECT_NO_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
                 fully_descriptive_header, 10, test_identifier));
     // Change discriminator to EK_COMPLETE
-    EquivalenceHash hash = {0};
-    test_identifier->equivalence_hash(hash);
+    register_empty_structure_type_object();
+    TypeIdentifierPair type_ids;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("empty_structure", type_ids);
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+    }
+    else
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+    }
     // TypeIdentifier consistent with complete header
     EXPECT_NO_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
                 complete_header, 10, test_identifier));
@@ -145,7 +139,14 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_s_elem_defn_inconsistencies)
     EXPECT_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
                 fully_descriptive_header, 10, test_identifier), InvalidArgumentError);
     // Change discriminator to EK_MINIMAL
-    EXPECT_NO_THROW(test_identifier->_d(EK_MINIMAL));
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+    }
+    else
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+    }
     // TypeIdentifier inconsistent with complete header
     EXPECT_THROW(PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
                 complete_header, 10, test_identifier), InvalidArgumentError);
@@ -162,9 +163,9 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_l_elem_defn_inconsistencies)
 {
     eprosima::fastcdr::external<TypeIdentifier> test_identifier{new TypeIdentifier()};
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::TRIM, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::TRIM, false);
     PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::COMPLETE, flags);
+        EK_COMPLETE, flags);
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
@@ -192,18 +193,27 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_l_elem_defn_inconsistencies)
     EXPECT_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
                 complete_header, 256, test_identifier), InvalidArgumentError);
     PlainCollectionHeader minimal_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::MINIMAL, flags);
+        EK_MINIMAL, flags);
     // TypeIdentifier inconsistent with minimal header
     EXPECT_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
                 minimal_header, 256, test_identifier), InvalidArgumentError);
     PlainCollectionHeader fully_descriptive_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::BOTH, flags);
+        EK_BOTH, flags);
     // TypeIdentifier consistent with fully-descriptive header
     EXPECT_NO_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
                 fully_descriptive_header, 256, test_identifier));
     // Change discriminator to EK_COMPLETE
-    EquivalenceHash hash = {0};
-    test_identifier->equivalence_hash(hash);
+    register_empty_structure_type_object();
+    TypeIdentifierPair type_ids;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("empty_structure", type_ids);
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+    }
+    else
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+    }
     // TypeIdentifier consistent with complete header
     EXPECT_NO_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
                 complete_header, 256, test_identifier));
@@ -214,7 +224,14 @@ TEST(TypeObjectUtilsTests, build_plain_sequence_l_elem_defn_inconsistencies)
     EXPECT_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
                 fully_descriptive_header, 256, test_identifier), InvalidArgumentError);
     // Change discriminator to EK_MINIMAL
-    EXPECT_NO_THROW(test_identifier->_d(EK_MINIMAL));
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+    }
+    else
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+    }
     // TypeIdentifier inconsistent with complete header
     EXPECT_THROW(PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
                 complete_header, 256, test_identifier), InvalidArgumentError);
@@ -242,12 +259,12 @@ TEST(TypeObjectUtilsTests, build_plain_array_s_elem_defn_inconsistencies)
 {
     eprosima::fastcdr::external<TypeIdentifier> test_identifier{new TypeIdentifier()};
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::TRIM, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::TRIM, false);
     SBoundSeq bound_seq;
     SBound bound = 10;
     TypeObjectUtils::add_array_dimension(bound_seq, bound);
     PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::COMPLETE, flags);
+        EK_COMPLETE, flags);
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
@@ -269,7 +286,8 @@ TEST(TypeObjectUtilsTests, build_plain_array_s_elem_defn_inconsistencies)
     // Zero element
     TypeObjectUtils::add_array_dimension(wrong_bound_seq, bound);
     bound = 0;
-    TypeObjectUtils::add_array_dimension(wrong_bound_seq, bound);
+    EXPECT_THROW(TypeObjectUtils::add_array_dimension(wrong_bound_seq, bound), InvalidArgumentError);
+    wrong_bound_seq.push_back(0);
     EXPECT_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
                 complete_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
 
@@ -279,18 +297,27 @@ TEST(TypeObjectUtilsTests, build_plain_array_s_elem_defn_inconsistencies)
     EXPECT_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
                 complete_header, bound_seq, test_identifier), InvalidArgumentError);
     PlainCollectionHeader minimal_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::MINIMAL, flags);
+        EK_MINIMAL, flags);
     // TypeIdentifier inconsistent with minimal header
     EXPECT_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
                 minimal_header, bound_seq, test_identifier), InvalidArgumentError);
     PlainCollectionHeader fully_descriptive_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::BOTH, flags);
+        EK_BOTH, flags);
     // TypeIdentifier consistent with fully-descriptive header
     EXPECT_NO_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
                 fully_descriptive_header, bound_seq, test_identifier));
     // Change discriminator to EK_COMPLETE
-    EquivalenceHash hash = {0};
-    test_identifier->equivalence_hash(hash);
+    register_empty_structure_type_object();
+    TypeIdentifierPair type_ids;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("empty_structure", type_ids);
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+    }
+    else
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+    }
     // TypeIdentifier consistent with complete header
     EXPECT_NO_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
                 complete_header, bound_seq, test_identifier));
@@ -301,7 +328,14 @@ TEST(TypeObjectUtilsTests, build_plain_array_s_elem_defn_inconsistencies)
     EXPECT_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
                 fully_descriptive_header, bound_seq, test_identifier), InvalidArgumentError);
     // Change discriminator to EK_MINIMAL
-    EXPECT_NO_THROW(test_identifier->_d(EK_MINIMAL));
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+    }
+    else
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+    }
     // TypeIdentifier inconsistent with complete header
     EXPECT_THROW(PlainArraySElemDefn plain_array = TypeObjectUtils::build_plain_array_s_elem_defn(
                 complete_header, bound_seq, test_identifier), InvalidArgumentError);
@@ -318,12 +352,12 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
 {
     eprosima::fastcdr::external<TypeIdentifier> test_identifier{new TypeIdentifier()};
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::TRIM, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::TRIM, false);
     LBoundSeq bound_seq;
     LBound bound = 256;
     TypeObjectUtils::add_array_dimension(bound_seq, bound);
     PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::COMPLETE, flags);
+        EK_COMPLETE, flags);
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
@@ -354,12 +388,12 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 complete_header, bound_seq, test_identifier), InvalidArgumentError);
     PlainCollectionHeader minimal_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::MINIMAL, flags);
+        EK_MINIMAL, flags);
     // TypeIdentifier inconsistent with minimal header
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 minimal_header, bound_seq, test_identifier), InvalidArgumentError);
     PlainCollectionHeader fully_descriptive_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::BOTH, flags);
+        EK_BOTH, flags);
     // TypeIdentifier consistent with fully-descriptive header
     EXPECT_NO_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 fully_descriptive_header, bound_seq, test_identifier));
@@ -370,12 +404,22 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
                 fully_descriptive_header, wrong_bound_seq, test_identifier));
     // Zero element
     bound = 0;
-    TypeObjectUtils::add_array_dimension(wrong_bound_seq, bound);
+    EXPECT_THROW(TypeObjectUtils::add_array_dimension(wrong_bound_seq, bound), InvalidArgumentError);
+    wrong_bound_seq.push_back(0);
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 fully_descriptive_header, wrong_bound_seq, test_identifier), InvalidArgumentError);
     // Change discriminator to EK_COMPLETE
-    EquivalenceHash hash = {0};
-    test_identifier->equivalence_hash(hash);
+    register_empty_structure_type_object();
+    TypeIdentifierPair type_ids;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("empty_structure", type_ids);
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+    }
+    else
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+    }
     // TypeIdentifier consistent with complete header
     EXPECT_NO_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 complete_header, bound_seq, test_identifier));
@@ -386,7 +430,14 @@ TEST(TypeObjectUtilsTests, build_plain_array_l_elem_defn_inconsistencies)
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 fully_descriptive_header, bound_seq, test_identifier), InvalidArgumentError);
     // Change discriminator to EK_MINIMAL
-    EXPECT_NO_THROW(test_identifier->_d(EK_MINIMAL));
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+    }
+    else
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+    }
     // TypeIdentifier inconsistent with complete header
     EXPECT_THROW(PlainArrayLElemDefn plain_array = TypeObjectUtils::build_plain_array_l_elem_defn(
                 complete_header, bound_seq, test_identifier), InvalidArgumentError);
@@ -404,9 +455,9 @@ TEST(TypeObjectUtilsTests, build_plain_map_s_type_defn_inconsistencies)
     eprosima::fastcdr::external<TypeIdentifier> test_identifier{new TypeIdentifier()};
     eprosima::fastcdr::external<TypeIdentifier> key_identifier{new TypeIdentifier()};
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::TRIM, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::TRIM, false);
     PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::COMPLETE, flags);
+        EK_COMPLETE, flags);
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
@@ -431,12 +482,12 @@ TEST(TypeObjectUtilsTests, build_plain_map_s_type_defn_inconsistencies)
     EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
                 complete_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
     PlainCollectionHeader minimal_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::MINIMAL, flags);
+        EK_MINIMAL, flags);
     // TypeIdentifier inconsistent with minimal header
     EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
                 minimal_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
     PlainCollectionHeader fully_descriptive_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::BOTH, flags);
+        EK_BOTH, flags);
     // Wrong key_flags
     CollectionElementFlag wrong_flags = 0;
     EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
@@ -454,20 +505,22 @@ TEST(TypeObjectUtilsTests, build_plain_map_s_type_defn_inconsistencies)
     EXPECT_NO_THROW(key_identifier->_d(TK_INT64));
     EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
                 fully_descriptive_header, 10, test_identifier, flags, key_identifier));
-#if !defined(NDEBUG)
-    // Inconsistent string TypeIdentifier
-    StringSTypeDefn wrong_string_type_def;
-    EXPECT_NO_THROW(key_identifier->string_sdefn(wrong_string_type_def));
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
-                fully_descriptive_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
-#endif // !defined(NDEBUG)
     StringSTypeDefn string_type_def = TypeObjectUtils::build_string_s_type_defn(50);
     EXPECT_NO_THROW(key_identifier->string_sdefn(string_type_def));
     EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
                 fully_descriptive_header, 10, test_identifier, flags, key_identifier));
     // Change discriminator to EK_COMPLETE
-    EquivalenceHash hash = {0};
-    test_identifier->equivalence_hash(hash);
+    register_empty_structure_type_object();
+    TypeIdentifierPair type_ids;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("empty_structure", type_ids);
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+    }
+    else
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+    }
     // TypeIdentifier consistent with complete header
     EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
                 complete_header, 10, test_identifier, flags, key_identifier));
@@ -478,7 +531,14 @@ TEST(TypeObjectUtilsTests, build_plain_map_s_type_defn_inconsistencies)
     EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
                 fully_descriptive_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
     // Change discriminator to EK_MINIMAL
-    EXPECT_NO_THROW(test_identifier->_d(EK_MINIMAL));
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+    }
+    else
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+    }
     // TypeIdentifier inconsistent with complete header
     EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
                 complete_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
@@ -496,9 +556,9 @@ TEST(TypeObjectUtilsTests, build_plain_map_l_type_defn_inconsistencies)
     eprosima::fastcdr::external<TypeIdentifier> test_identifier{new TypeIdentifier()};
     eprosima::fastcdr::external<TypeIdentifier> key_identifier{new TypeIdentifier()};
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::TRIM, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::TRIM, false);
     PlainCollectionHeader complete_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::COMPLETE, flags);
+        EK_COMPLETE, flags);
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
@@ -526,12 +586,12 @@ TEST(TypeObjectUtilsTests, build_plain_map_l_type_defn_inconsistencies)
     EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
                 complete_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
     PlainCollectionHeader minimal_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::MINIMAL, flags);
+        EK_MINIMAL, flags);
     // TypeIdentifier inconsistent with minimal header
     EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
                 minimal_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
     PlainCollectionHeader fully_descriptive_header = TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue::BOTH, flags);
+        EK_BOTH, flags);
     // Wrong key_flags
     CollectionElementFlag wrong_flags = 0;
     EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
@@ -549,20 +609,22 @@ TEST(TypeObjectUtilsTests, build_plain_map_l_type_defn_inconsistencies)
     EXPECT_NO_THROW(key_identifier->_d(TK_INT64));
     EXPECT_NO_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
                 fully_descriptive_header, 1000, test_identifier, flags, key_identifier));
-#if !defined(NDEBUG)
-    // Inconsistent string TypeIdentifier
-    StringSTypeDefn wrong_string_type_def;
-    EXPECT_NO_THROW(key_identifier->string_sdefn(wrong_string_type_def));
-    EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
-                fully_descriptive_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
-#endif // !defined(NDEBUG)
     StringSTypeDefn string_type_def = TypeObjectUtils::build_string_s_type_defn(50);
     EXPECT_NO_THROW(key_identifier->string_sdefn(string_type_def));
     EXPECT_NO_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
                 fully_descriptive_header, 1000, test_identifier, flags, key_identifier));
     // Change discriminator to EK_COMPLETE
-    EquivalenceHash hash = {0};
-    test_identifier->equivalence_hash(hash);
+    register_empty_structure_type_object();
+    TypeIdentifierPair type_ids;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("empty_structure", type_ids);
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+    }
+    else
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+    }
     // TypeIdentifier consistent with complete header
     EXPECT_NO_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
                 complete_header, 1000, test_identifier, flags, key_identifier));
@@ -573,7 +635,14 @@ TEST(TypeObjectUtilsTests, build_plain_map_l_type_defn_inconsistencies)
     EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
                 fully_descriptive_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
     // Change discriminator to EK_MINIMAL
-    EXPECT_NO_THROW(test_identifier->_d(EK_MINIMAL));
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+    }
+    else
+    {
+        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+    }
     // TypeIdentifier inconsistent with complete header
     EXPECT_THROW(PlainMapLTypeDefn plain_seq = TypeObjectUtils::build_plain_map_l_type_defn(
                 complete_header, 1000, test_identifier, flags, key_identifier), InvalidArgumentError);
@@ -633,8 +702,8 @@ TEST(TypeObjectUtilsTests, register_l_string)
 TEST(TypeObjectUtilsTests, register_s_sequence)
 {
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, false);
-    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EquivalenceKindValue::BOTH, flags);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, false);
+    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EK_BOTH, flags);
     eprosima::fastcdr::external<TypeIdentifier> primitive_identifier{new TypeIdentifier()};
     primitive_identifier->_d(TK_FLOAT128);
     PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
@@ -662,8 +731,8 @@ TEST(TypeObjectUtilsTests, register_s_sequence)
 TEST(TypeObjectUtilsTests, register_l_sequence)
 {
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, false);
-    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EquivalenceKindValue::BOTH, flags);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, false);
+    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EK_BOTH, flags);
     eprosima::fastcdr::external<TypeIdentifier> primitive_identifier{new TypeIdentifier()};
     primitive_identifier->_d(TK_FLOAT128);
     PlainSequenceLElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_l_elem_defn(
@@ -690,8 +759,8 @@ TEST(TypeObjectUtilsTests, register_l_sequence)
 TEST(TypeObjectUtilsTests, register_s_array)
 {
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, false);
-    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EquivalenceKindValue::BOTH, flags);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, false);
+    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EK_BOTH, flags);
     eprosima::fastcdr::external<TypeIdentifier> primitive_identifier{new TypeIdentifier()};
     primitive_identifier->_d(TK_FLOAT128);
     SBoundSeq array_bounds;
@@ -722,8 +791,8 @@ TEST(TypeObjectUtilsTests, register_s_array)
 TEST(TypeObjectUtilsTests, register_l_array)
 {
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, false);
-    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EquivalenceKindValue::BOTH, flags);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, false);
+    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EK_BOTH, flags);
     eprosima::fastcdr::external<TypeIdentifier> primitive_identifier{new TypeIdentifier()};
     primitive_identifier->_d(TK_FLOAT128);
     LBoundSeq array_bounds;
@@ -754,8 +823,8 @@ TEST(TypeObjectUtilsTests, register_l_array)
 TEST(TypeObjectUtilsTests, register_s_map)
 {
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, false);
-    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EquivalenceKindValue::BOTH, flags);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, false);
+    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EK_BOTH, flags);
     eprosima::fastcdr::external<TypeIdentifier> primitive_identifier{new TypeIdentifier()};
     primitive_identifier->_d(TK_UINT32);
     PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(header, 10, primitive_identifier, flags,
@@ -780,8 +849,8 @@ TEST(TypeObjectUtilsTests, register_s_map)
 TEST(TypeObjectUtilsTests, register_l_map)
 {
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, false);
-    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EquivalenceKindValue::BOTH, flags);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, false);
+    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EK_BOTH, flags);
     eprosima::fastcdr::external<TypeIdentifier> primitive_identifier{new TypeIdentifier()};
     primitive_identifier->_d(TK_UINT32);
     PlainMapLTypeDefn plain_map = TypeObjectUtils::build_plain_map_l_type_defn(header, 500, primitive_identifier, flags,
@@ -839,7 +908,7 @@ TEST(TypeObjectUtilsTests, build_complete_member_detail_empty_member_name)
 TEST(TypeObjectUtilsTests, build_complete_struct_member_inconsistent_hashid_member_id)
 {
     StructMemberFlag basic_flags = TypeObjectUtils::build_struct_member_flag(
-        eprosima::fastdds::dds::TryConstructKind::DISCARD, false, false,
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false, false,
         false, false);
     TypeIdentifier type_id;
     type_id._d(TK_INT32);
@@ -890,9 +959,9 @@ TEST(TypeObjectUtilsTests, build_complete_type_detail_empty_type_name)
 TEST(TypeObjectUtilsTests, build_common_union_member_empty_case_labels)
 {
     UnionMemberFlag basic_flags = TypeObjectUtils::build_union_member_flag(
-        eprosima::fastdds::dds::TryConstructKind::DISCARD, false, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false, false);
     UnionMemberFlag default_flags = TypeObjectUtils::build_union_member_flag(
-        eprosima::fastdds::dds::TryConstructKind::DISCARD, true, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, true, false);
     TypeIdentifier type_id;
     type_id._d(TK_INT32);
     EXPECT_THROW(CommonUnionMember common = TypeObjectUtils::build_common_union_member(0, basic_flags, type_id,
@@ -905,7 +974,7 @@ TEST(TypeObjectUtilsTests, build_common_union_member_empty_case_labels)
 TEST(TypeObjectUtilsTests, build_complete_union_member_inconsistent_hashid_member_id)
 {
     UnionMemberFlag basic_flags = TypeObjectUtils::build_union_member_flag(
-        eprosima::fastdds::dds::TryConstructKind::DISCARD, false, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false, false);
     TypeIdentifier type_id;
     type_id._d(TK_INT32);
     CommonUnionMember common = TypeObjectUtils::build_common_union_member(0x047790DA, basic_flags, type_id,
@@ -961,8 +1030,8 @@ void large_string_type_identifier(
 const PlainCollectionHeader plain_collection_header()
 {
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::DISCARD, false);
-    return TypeObjectUtils::build_plain_collection_header(EquivalenceKindValue::BOTH, flags);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false);
+    return TypeObjectUtils::build_plain_collection_header(EK_BOTH, flags);
 }
 
 const eprosima::fastcdr::external<TypeIdentifier> primitive_type_identifier()
@@ -1018,7 +1087,7 @@ void small_map_type_identifier(
     PlainCollectionHeader collection_header = plain_collection_header();
     eprosima::fastcdr::external<TypeIdentifier> primitive_type_id = primitive_type_identifier();
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::DISCARD, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false);
     PlainMapSTypeDefn small_map = TypeObjectUtils::build_plain_map_s_type_defn(collection_header, 100,
                     primitive_type_id, flags, primitive_type_id);
     type_id.map_sdefn(small_map);
@@ -1030,7 +1099,7 @@ void large_map_type_identifier(
     PlainCollectionHeader collection_header = plain_collection_header();
     eprosima::fastcdr::external<TypeIdentifier> primitive_type_id = primitive_type_identifier();
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::DISCARD, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false);
     PlainMapLTypeDefn large_map = TypeObjectUtils::build_plain_map_l_type_defn(collection_header, 500,
                     primitive_type_id, flags, primitive_type_id);
     type_id.map_ldefn(large_map);
@@ -1066,11 +1135,50 @@ const CompleteAliasType float32_alias()
     return TypeObjectUtils::build_complete_alias_type(0, alias_header, float_body);
 }
 
+void register_basic_enum()
+{
+    std::string basic_enum_name = "basic_enum";
+    CommonEnumeratedHeader common = TypeObjectUtils::build_common_enumerated_header(32);
+    CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>(), basic_enum_name);
+    CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
+    CommonEnumeratedLiteral common_literal = TypeObjectUtils::build_common_enumerated_literal(1, 0);
+    CompleteMemberDetail detail_literal = TypeObjectUtils::build_complete_member_detail("literal",
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteEnumeratedLiteral literal = TypeObjectUtils::build_complete_enumerated_literal(common_literal,
+                    detail_literal);
+    CompleteEnumeratedLiteralSeq literal_seq;
+    TypeObjectUtils::add_complete_enumerated_literal(literal_seq, literal);
+    CompleteEnumeratedType enum_type = TypeObjectUtils::build_complete_enumerated_type(0, header, literal_seq);
+    TypeObjectUtils::build_and_register_enumerated_type_object(enum_type, basic_enum_name);
+}
+
+void register_basic_bitmask()
+{
+    std::string basic_bitmask_name = "basic_bitmask";
+    CommonEnumeratedHeader common = TypeObjectUtils::build_common_enumerated_header(32, true);
+    CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>(), basic_bitmask_name);
+    CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail, true);
+    CommonBitflag common_flag = TypeObjectUtils::build_common_bitflag(5, 0);
+    CompleteMemberDetail detail_flag = TypeObjectUtils::build_complete_member_detail("flag",
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteBitflag flag = TypeObjectUtils::build_complete_bitflag(common_flag, detail_flag);
+    CompleteBitflagSeq flag_seq;
+    TypeObjectUtils::add_complete_bitflag(flag_seq, flag);
+    CompleteBitmaskType bitmask_type = TypeObjectUtils::build_complete_bitmask_type(0, header, flag_seq);
+    TypeObjectUtils::build_and_register_bitmask_type_object(bitmask_type, basic_bitmask_name);
+}
+
 // Build CommonDiscriminatorMember with inconsistent TypeIdentifier
 TEST(TypeObjectUtilsTests, build_common_discriminator_member_inconsistent_type_identifier)
 {
     UnionDiscriminatorFlag flags = TypeObjectUtils::build_union_discriminator_flag(
-        eprosima::fastdds::dds::TryConstructKind::DISCARD, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false);
     TypeIdentifier type_id;
     EXPECT_THROW(CommonDiscriminatorMember member = TypeObjectUtils::build_common_discriminator_member(flags, type_id),
             InvalidArgumentError);
@@ -1149,18 +1257,17 @@ TEST(TypeObjectUtilsTests, build_common_discriminator_member_inconsistent_type_i
     large_map_type_identifier(type_id);
     EXPECT_THROW(CommonDiscriminatorMember member = TypeObjectUtils::build_common_discriminator_member(flags, type_id),
             InvalidArgumentError);
-    // Enum: use enumeration registered by builtin annotation
-    TypeIdentifierPair try_construct_enum_type_identifiers;
-    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    get_type_identifiers("TryConstructFailAction", try_construct_enum_type_identifiers));
+    // Enum
+    register_basic_enum();
+    TypeIdentifierPair type_ids;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("basic_enum", type_ids);
     EXPECT_NO_THROW(CommonDiscriminatorMember member = TypeObjectUtils::build_common_discriminator_member(flags,
-            try_construct_enum_type_identifiers.type_identifier1()));
-    // Bitmask: use bitmask registered by builtin annotation
-    TypeIdentifierPair data_representation_bitmask_type_identifiers;
-    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    get_type_identifiers("DataRepresentationMask", data_representation_bitmask_type_identifiers));
+            type_ids.type_identifier1()));
+    // Bitmask
+    register_basic_bitmask();
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("basic_bitmask", type_ids);
     EXPECT_THROW(CommonDiscriminatorMember member = TypeObjectUtils::build_common_discriminator_member(flags,
-            data_representation_bitmask_type_identifiers.type_identifier1()), InvalidArgumentError);
+            type_ids.type_identifier1()), InvalidArgumentError);
     // Alias: int16_t & float
     CompleteAliasType int16_alias = int_16_alias();
     CompleteAliasType float_alias = float32_alias();
@@ -1182,7 +1289,7 @@ TEST(TypeObjectUtilsTests, build_complete_union_member_invalid_name)
 {
     std::string invalid_name = "discriminator";
     UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(
-        eprosima::fastdds::dds::TryConstructKind::DISCARD, false, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false, false);
     TypeIdentifier type_id;
     type_id._d(TK_FLOAT128);
     UnionCaseLabelSeq case_labels;
@@ -1254,10 +1361,12 @@ TEST(TypeObjectUtilsTests, build_complete_annotation_parameter_inconsistent_data
         static_cast<long double>(16));
     AnnotationParameterValue char8_param = TypeObjectUtils::build_annotation_parameter_value('A');
     AnnotationParameterValue char16_param = TypeObjectUtils::build_annotation_parameter_value(L'A');
+    // TODO(jlbueno)
     AnnotationParameterValue enum_param = TypeObjectUtils::build_annotation_parameter_value_enum(
-        static_cast<int32_t>(TryConstructFailAction::DISCARD));
-    AnnotationParameterValue string8_param = TypeObjectUtils::build_annotation_parameter_value("Hello");
-    AnnotationParameterValue string16_param = TypeObjectUtils::build_annotation_parameter_value(L"Hello");
+        static_cast<int32_t>(0));
+    AnnotationParameterValue string8_param = TypeObjectUtils::build_annotation_parameter_value(
+        eprosima::fastcdr::fixed_string<128>("Hello"));
+    AnnotationParameterValue string16_param = TypeObjectUtils::build_annotation_parameter_value(std::wstring(L"Hello"));
     std::vector<AnnotationParameterValue> ann_param_seq;
     ann_param_seq.push_back(bool_param);
     ann_param_seq.push_back(byte_param);
@@ -1395,18 +1504,17 @@ TEST(TypeObjectUtilsTests, build_complete_annotation_parameter_inconsistent_data
     large_map_type_identifier(type_id);
     common = TypeObjectUtils::build_common_annotation_parameter(0, type_id);
     check_annotation_parameter_consistency(common, ann_param_seq, expected_results);
-    TypeIdentifierPair try_construct_enum_type_identifiers;
-    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    get_type_identifiers("TryConstructFailAction", try_construct_enum_type_identifiers));
+    register_basic_enum();
+    TypeIdentifierPair type_ids;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("basic_enum", type_ids);
     common = TypeObjectUtils::build_common_annotation_parameter(0,
-                    try_construct_enum_type_identifiers.type_identifier1());
+                    type_ids.type_identifier1());
     expected_results[15] = true;
     check_annotation_parameter_consistency(common, ann_param_seq, expected_results);
-    TypeIdentifierPair data_representation_bitmask_type_identifiers;
-    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    get_type_identifiers("DataRepresentationMask", data_representation_bitmask_type_identifiers));
+    register_basic_bitmask();
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("basic_bitmask", type_ids);
     common = TypeObjectUtils::build_common_annotation_parameter(0,
-                    data_representation_bitmask_type_identifiers.type_identifier1());
+                    type_ids.type_identifier1());
     expected_results[15] = false;
     check_annotation_parameter_consistency(common, ann_param_seq, expected_results);
 }
@@ -1504,16 +1612,6 @@ TEST(TypeObjectUtilsTests, build_complete_alias_type_non_empty_flags)
             header, body));
 }
 
-// Build CommonCollectionHeader with invalid bound
-TEST(TypeObjectUtilsTests, build_common_collection_header_invalid_bound)
-{
-    LBound bound = 0;
-    EXPECT_THROW(CommonCollectionHeader header = TypeObjectUtils::build_common_collection_header(bound),
-            InvalidArgumentError);
-    bound = 10;
-    EXPECT_NO_THROW(CommonCollectionHeader header = TypeObjectUtils::build_common_collection_header(bound));
-}
-
 // Build CompleteElementDetail with @hasid builtin annotation
 TEST(TypeObjectUtilsTests, build_complete_element_detail_inconsistent_hashid)
 {
@@ -1541,7 +1639,7 @@ TEST(TypeObjectUtilsTests, build_complete_sequence_type_non_empty_flags)
     CompleteCollectionHeader header = TypeObjectUtils::build_complete_collection_header(common_header,
                     eprosima::fastcdr::optional<CompleteTypeDetail>());
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, true);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, true);
     TypeIdentifier type_id;
     type_id._d(TK_FLOAT128);
     CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
@@ -1563,7 +1661,8 @@ TEST(TypeObjectUtilsTests, build_common_array_header_invalid_bound)
     TypeObjectUtils::add_array_dimension(array_bounds, bound);
     EXPECT_NO_THROW(CommonArrayHeader header = TypeObjectUtils::build_common_array_header(array_bounds));
     bound = 0;
-    TypeObjectUtils::add_array_dimension(array_bounds, bound);
+    EXPECT_THROW(TypeObjectUtils::add_array_dimension(array_bounds, bound), InvalidArgumentError);
+    array_bounds.push_back(bound);
     EXPECT_THROW(CommonArrayHeader header = TypeObjectUtils::build_common_array_header(array_bounds),
             InvalidArgumentError);
 }
@@ -1582,7 +1681,7 @@ TEST(TypeObjectUtilsTests, build_complete_array_type_non_empty_flags)
         eprosima::fastcdr::optional<AppliedAnnotationSeq>(), "array_type_name");
     CompleteArrayHeader header = TypeObjectUtils::build_complete_array_header(common_header, type_detail);
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, true);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, true);
     TypeIdentifier type_id;
     type_id._d(TK_FLOAT128);
     CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
@@ -1603,7 +1702,7 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_non_empty_flags)
     CompleteCollectionHeader header = TypeObjectUtils::build_complete_collection_header(common_header,
                     eprosima::fastcdr::optional<CompleteTypeDetail>());
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, true);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, true);
     TypeIdentifier type_id;
     type_id._d(TK_INT16);
     CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
@@ -1623,7 +1722,7 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     CompleteCollectionHeader header = TypeObjectUtils::build_complete_collection_header(common_header,
                     eprosima::fastcdr::optional<CompleteTypeDetail>());
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, true);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, true);
     TypeIdentifier type_id;
     type_id._d(TK_FLOAT32);
     CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
@@ -1672,7 +1771,7 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element));
-    type_id._d(TI_STRING16_SMALL);
+    key_type_id._d(TI_STRING16_SMALL);
     common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
@@ -1682,7 +1781,7 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element));
-    type_id._d(TI_STRING16_LARGE);
+    key_type_id._d(TI_STRING16_LARGE);
     common_key = TypeObjectUtils::build_common_collection_element(flags, key_type_id);
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_NO_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
@@ -1717,19 +1816,18 @@ TEST(TypeObjectUtilsTests, build_complete_map_type_inconsistent_key)
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element), InvalidArgumentError);
-    TypeIdentifierPair try_construct_enum_type_identifiers;
-    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    get_type_identifiers("TryConstructFailAction", try_construct_enum_type_identifiers));
+    register_basic_enum();
+    TypeIdentifierPair type_ids;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("basic_enum", type_ids);
     common_key = TypeObjectUtils::build_common_collection_element(flags,
-                    try_construct_enum_type_identifiers.type_identifier1());
+                    type_ids.type_identifier1());
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element), InvalidArgumentError);
-    TypeIdentifierPair data_representation_bitmask_type_identifiers;
-    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    get_type_identifiers("DataRepresentationMask", data_representation_bitmask_type_identifiers));
+    register_basic_bitmask();
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("basic_bitmask", type_ids);
     common_key = TypeObjectUtils::build_common_collection_element(flags,
-                    data_representation_bitmask_type_identifiers.type_identifier1());
+                    type_ids.type_identifier1());
     key = TypeObjectUtils::build_complete_collection_element(common_key, detail);
     EXPECT_THROW(CompleteMapType map = TypeObjectUtils::build_complete_map_type(empty_flags, header,
             key, element), InvalidArgumentError);
@@ -2016,7 +2114,7 @@ TEST(TypeObjectUtilsTests, register_annotation_type_object)
 TEST(TypeObjectUtilsTests, register_structure_type_object)
 {
     StructTypeFlag flags = TypeObjectUtils::build_struct_type_flag(
-        eprosima::fastdds::dds::ExtensibilityKind::APPENDABLE, false, false);
+        eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE, false, false);
     CompleteTypeDetail empty_type_detail = TypeObjectUtils::build_complete_type_detail(
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
         eprosima::fastcdr::optional<AppliedAnnotationSeq>(), "type_name");
@@ -2028,7 +2126,7 @@ TEST(TypeObjectUtilsTests, register_structure_type_object)
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_struct_type_object(structure,
             "structure"));
     StructTypeFlag other_flags = TypeObjectUtils::build_struct_type_flag(
-        eprosima::fastdds::dds::ExtensibilityKind::FINAL, false, false);
+        eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL, false, false);
     CompleteStructType other_structure = TypeObjectUtils::build_complete_struct_type(other_flags,
                     header, CompleteStructMemberSeq());
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_struct_type_object(
@@ -2042,10 +2140,10 @@ TEST(TypeObjectUtilsTests, register_structure_type_object)
 // Register union TypeObject
 TEST(TypeObjectUtilsTests, register_union_type_object)
 {
-    UnionTypeFlag flags = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::ExtensibilityKind::APPENDABLE,
-                    false, false);
+    UnionTypeFlag flags = TypeObjectUtils::build_union_type_flag(
+        eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE, false, false);
     UnionDiscriminatorFlag discr_flags = TypeObjectUtils::build_union_discriminator_flag(
-        eprosima::fastdds::dds::TryConstructKind::DISCARD,
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD,
         false);
     TypeIdentifier discriminator_type_id;
     discriminator_type_id._d(TK_BYTE);
@@ -2055,7 +2153,7 @@ TEST(TypeObjectUtilsTests, register_union_type_object)
                     eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
                     eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(
-        eprosima::fastdds::dds::TryConstructKind::DISCARD, false, false);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false, false);
     TypeIdentifier type_id;
     type_id._d(TK_FLOAT128);
     UnionCaseLabelSeq case_labels;
@@ -2078,7 +2176,7 @@ TEST(TypeObjectUtilsTests, register_union_type_object)
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             TypeObjectUtils::build_and_register_union_type_object(union_type, "union"));
     UnionTypeFlag other_flags = TypeObjectUtils::build_union_type_flag(
-        eprosima::fastdds::dds::ExtensibilityKind::MUTABLE, false, false);
+        eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE, false, false);
     CompleteUnionType other_union_type = TypeObjectUtils::build_complete_union_type(other_flags, header,
                     discriminator, member_seq);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_union_type_object(
@@ -2129,7 +2227,7 @@ TEST(TypeObjectUtilsTests, register_sequence_type_object)
     CompleteCollectionHeader header = TypeObjectUtils::build_complete_collection_header(common_header,
                     eprosima::fastcdr::optional<CompleteTypeDetail>());
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, true);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, true);
     TypeIdentifier type_id;
     type_id._d(TK_FLOAT128);
     CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
@@ -2166,7 +2264,7 @@ TEST(TypeObjectUtilsTests, register_array_type_object)
         eprosima::fastcdr::optional<AppliedAnnotationSeq>(), "type_name");
     CompleteArrayHeader header = TypeObjectUtils::build_complete_array_header(common_header, empty_type_detail);
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, true);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, true);
     TypeIdentifier type_id;
     type_id._d(TK_FLOAT128);
     CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
@@ -2198,7 +2296,7 @@ TEST(TypeObjectUtilsTests, register_map_type_object)
     CompleteCollectionHeader header = TypeObjectUtils::build_complete_collection_header(common_header,
                     eprosima::fastcdr::optional<CompleteTypeDetail>());
     CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT, true);
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, true);
     TypeIdentifier type_id;
     type_id._d(TK_INT16);
     CommonCollectionElement common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
@@ -2296,6 +2394,8 @@ TEST(TypeObjectUtilsTests, register_bitmask_type_object)
                 type_name));
 }
 
+// This tests only check that Complete TypeObjects sequences are correctly ordered. TypeObjectUtils API only generates
+// Complete TypeObjects. Minimal TypeObject sequence order is checked in Fast DDS-Gen.
 // Test add element to AppliedAnnotationParameterSeq
 TEST(TypeObjectUtilsTests, add_to_applied_annotation_parameter_seq)
 {
@@ -2322,6 +2422,8 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_parameter_seq)
     EXPECT_EQ(get_dependencies_param, param_seq[0]);
     EXPECT_EQ(color_param, param_seq[1]);
     EXPECT_EQ(shapesize_param, param_seq[2]);
+    EXPECT_TRUE(param_seq[0].paramname_hash() < param_seq[1].paramname_hash());
+    EXPECT_TRUE(param_seq[1].paramname_hash() < param_seq[2].paramname_hash());
 }
 
 // Test add element to AppliedAnnotationSeq
@@ -2354,15 +2456,47 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_seq)
     ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("third_custom",
             third_custom_annotation_ids));
-    AppliedAnnotation first_annotation = TypeObjectUtils::build_applied_annotation(
-        first_custom_annotation_ids.type_identifier1(),
-        eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
-    AppliedAnnotation second_annotation = TypeObjectUtils::build_applied_annotation(
-        second_custom_annotation_ids.type_identifier1(),
-        eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
-    AppliedAnnotation third_annotation = TypeObjectUtils::build_applied_annotation(
-        third_custom_annotation_ids.type_identifier1(),
-        eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    // Ensure to use Complete TypeIdentifier. The test uses annotations that differs on the name which is not included
+    // in the Minimal TypeObject.
+    AppliedAnnotation first_annotation;
+    AppliedAnnotation second_annotation;
+    AppliedAnnotation third_annotation;
+    if (EK_COMPLETE == first_custom_annotation_ids.type_identifier1()._d())
+    {
+        first_annotation = TypeObjectUtils::build_applied_annotation(
+            first_custom_annotation_ids.type_identifier1(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    }
+    else
+    {
+        first_annotation = TypeObjectUtils::build_applied_annotation(
+            first_custom_annotation_ids.type_identifier2(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    }
+    if (EK_COMPLETE == second_custom_annotation_ids.type_identifier1()._d())
+    {
+        second_annotation = TypeObjectUtils::build_applied_annotation(
+            second_custom_annotation_ids.type_identifier1(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    }
+    else
+    {
+        second_annotation = TypeObjectUtils::build_applied_annotation(
+            second_custom_annotation_ids.type_identifier2(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    }
+    if (EK_COMPLETE == third_custom_annotation_ids.type_identifier1()._d())
+    {
+        third_annotation = TypeObjectUtils::build_applied_annotation(
+            third_custom_annotation_ids.type_identifier1(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    }
+    else
+    {
+        third_annotation = TypeObjectUtils::build_applied_annotation(
+            third_custom_annotation_ids.type_identifier2(),
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>());
+    }
     AppliedAnnotationSeq applied_annotation_seq;
     EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, third_annotation));
     EXPECT_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, third_annotation),
@@ -2374,16 +2508,18 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_seq)
     EXPECT_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, second_annotation),
             InvalidArgumentError);
     EXPECT_EQ(3, applied_annotation_seq.size());
-    EXPECT_EQ(first_annotation, applied_annotation_seq[0]);
-    EXPECT_EQ(second_annotation, applied_annotation_seq[1]);
-    EXPECT_EQ(third_annotation, applied_annotation_seq[2]);
+    // Ordered by Annotation TypeIdentifier
+    EXPECT_TRUE(applied_annotation_seq[0].annotation_typeid().equivalence_hash() <
+            applied_annotation_seq[1].annotation_typeid().equivalence_hash());
+    EXPECT_TRUE(applied_annotation_seq[1].annotation_typeid().equivalence_hash() <
+            applied_annotation_seq[2].annotation_typeid().equivalence_hash());
 }
 
 // Test add element to CompleteStructMemberSeq
 TEST(TypeObjectUtilsTests, add_to_complete_struct_member_seq)
 {
     StructMemberFlag flags = TypeObjectUtils::build_struct_member_flag(
-        eprosima::fastdds::dds::TryConstructKind::DISCARD, false, false, false,
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false, false, false,
         false);
     TypeIdentifier type_id;
     type_id._d(TK_INT32);
@@ -2439,8 +2575,8 @@ TEST(TypeObjectUtilsTests, add_to_union_case_label_seq)
 // Test add element to CompleteUnionMemberSeq
 TEST(TypeObjectUtilsTests, add_to_complete_union_member_seq)
 {
-    UnionMemberFlag flags = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::TryConstructKind::DISCARD,
-                    false, false);
+    UnionMemberFlag flags = TypeObjectUtils::build_union_member_flag(
+        eprosima::fastdds::dds::xtypes::TryConstructKind::DISCARD, false, false);
     TypeIdentifier type_id;
     type_id._d(TK_UINT32);
     UnionCaseLabelSeq label_1;

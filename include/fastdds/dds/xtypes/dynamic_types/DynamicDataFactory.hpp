@@ -20,12 +20,13 @@
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/Types.hpp>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class RTPS_DllAPI DynamicDataFactory : public std::enable_shared_from_this<DynamicDataFactory>
+class FASTDDS_EXPORTED_API DynamicDataFactory : public std::enable_shared_from_this<DynamicDataFactory>
 {
 public:
 

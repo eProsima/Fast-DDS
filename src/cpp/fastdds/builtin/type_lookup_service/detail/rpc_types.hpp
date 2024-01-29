@@ -61,8 +61,6 @@ namespace dds {
 
 typedef std::array<uint8_t, 12> GuidPrefix_t;
 
-
-
 /*!
  * @brief This class represents the structure EntityId_t defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -233,8 +231,6 @@ private:
     uint8_t m_entityKind{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure GUID_t defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -415,8 +411,6 @@ private:
     EntityId_t m_entityId;
 
 };
-
-
 /*!
  * @brief This class represents the structure SequenceNumber_t defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -577,8 +571,6 @@ private:
     uint32_t m_low{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure SampleIdentity defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -782,8 +774,6 @@ enum class RemoteExceptionCode_t : uint32_t
 };
 typedef eprosima::fastcdr::fixed_string<255> InstanceName;
 
-
-
 /*!
  * @brief This class represents the structure RequestHeader defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -964,8 +954,6 @@ private:
     InstanceName m_instanceName;
 
 };
-
-
 /*!
  * @brief This class represents the structure ReplyHeader defined by the user in the IDL file.
  * @ingroup rpc_types

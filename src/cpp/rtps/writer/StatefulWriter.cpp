@@ -31,6 +31,7 @@
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
@@ -59,7 +60,6 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
 
 /**
  * Loops over all the readers in the vector, applying the given routine.

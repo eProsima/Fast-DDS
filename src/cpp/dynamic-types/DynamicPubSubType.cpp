@@ -66,12 +66,12 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
     {
         dynamic_type_ = pData->type_;
         UpdateDynamicTypeInfo();
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -82,12 +82,12 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
     {
         dynamic_type_ = pType;
         UpdateDynamicTypeInfo();
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
