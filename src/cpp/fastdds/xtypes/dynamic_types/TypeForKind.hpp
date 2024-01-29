@@ -148,7 +148,7 @@ template <TypeKind TK>
 using TypeForKind = typename TypeForKind_<TK>::type;
 
 template <TypeKind TK>
-using SequenceKind = typename TypeForKind_<TK>::sequence_type;
+using SequenceTypeForKind = typename TypeForKind_<TK>::sequence_type;
 
 template <TypeKind TK, TypeKind PromotedTK>
 struct TypePromotion : std::false_type {};

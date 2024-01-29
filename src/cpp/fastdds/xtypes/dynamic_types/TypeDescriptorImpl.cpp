@@ -189,6 +189,14 @@ bool TypeDescriptorImpl::is_consistent() noexcept
         return false;
     }
 
+    // Bitmask bound must be greater than zero and no greater than 64.
+    if (TK_BITMASK == kind_ && (0 == bound_.at(0) || 64 < bound_.at(0)))
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                "Descriptor describes an BITMASK but bound is not valid.");
+        return false;
+    }
+
     // Only union types need the discriminator of the union
     if (TK_UNION == kind_)
     {

@@ -193,17 +193,21 @@ bool DynamicTypeBuilderImpl::equals(
         }
 
         ret_value &= member_.size() == impl->member_.size();
-        assert(TK_STRUCTURE == type_descriptor_.kind() ||
+        assert(TK_ANNOTATION == type_descriptor_.kind() ||
+                TK_STRUCTURE == type_descriptor_.kind() ||
                 TK_UNION ==  type_descriptor_.kind() ||
                 0 == member_.size());
-        assert(TK_STRUCTURE == impl->type_descriptor_.kind() ||
+        assert(TK_ANNOTATION == type_descriptor_.kind() ||
+                TK_STRUCTURE == impl->type_descriptor_.kind() ||
                 TK_UNION ==  impl->type_descriptor_.kind() ||
                 0 == impl->member_.size());
-        assert((TK_STRUCTURE != type_descriptor_.kind() &&
-                TK_UNION &&  type_descriptor_.kind()) ||
+        assert((TK_ANNOTATION != type_descriptor_.kind() &&
+                TK_STRUCTURE != type_descriptor_.kind() &&
+                TK_UNION != type_descriptor_.kind()) ||
                 0 < member_.size());
-        assert((TK_STRUCTURE != impl->type_descriptor_.kind() &&
-                TK_UNION &&  impl->type_descriptor_.kind()) ||
+        assert((TK_ANNOTATION != type_descriptor_.kind() &&
+                TK_STRUCTURE != impl->type_descriptor_.kind() &&
+                TK_UNION != impl->type_descriptor_.kind()) ||
                 0 < member_.size());
 
         assert(member_by_name_.size() == members_.size());
@@ -229,6 +233,49 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         traits<MemberDescriptor>::ref_type descriptor) noexcept
 {
     auto type_descriptor_kind = type_descriptor_.kind();
+
+    // Auxiliary structtures to revert index/id increasing.
+    struct RevertIndexIncreasing
+    {
+        RevertIndexIncreasing(
+                uint32_t& index)
+            : index_{index}
+        {
+        }
+
+        ~RevertIndexIncreasing()
+        {
+            if (activate)
+            {
+                --index_;
+            }
+        }
+
+        bool activate {false};
+        uint32_t& index_;
+    }
+    index_reverter{next_index_};
+    struct RevertIdIncreasing
+    {
+        RevertIdIncreasing(
+                MemberId& id)
+            : id_{id}
+        {
+        }
+
+        ~RevertIdIncreasing()
+        {
+            if (activate)
+            {
+                --id_;
+            }
+        }
+
+        bool activate {false};
+        uint32_t& id_;
+    }
+    id_reverter{next_id_};
+
 
     if (TK_ANNOTATION != type_descriptor_kind &&
             TK_BITMASK != type_descriptor_kind &&
@@ -292,6 +339,15 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         }
     }
 
+
+    // Check bitmask doesn't exceed bound.
+    assert(TK_BITMASK != type_descriptor_kind || 1 == type_descriptor_.bound().size());
+    if (TK_BITMASK == type_descriptor_kind && members_.size() >= type_descriptor_.bound().at(0))
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Adding new member in this BITMASK exceeds the bound.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     const auto& member_name = descriptor_impl->name();
 
     // Bitsets allow multiple empty members.
@@ -315,11 +371,14 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     auto member_id = dyn_member->get_descriptor().id();
 
     // If member_id is MEMBER_ID_INVALID when aggregated type, find a new one.
-    if (TK_STRUCTURE == type_descriptor_kind || TK_UNION == type_descriptor_kind)
+    if (TK_ANNOTATION == type_descriptor_kind ||
+            TK_STRUCTURE == type_descriptor_kind ||
+            TK_UNION == type_descriptor_kind)
     {
         if (MEMBER_ID_INVALID == member_id)
         {
             dyn_member->get_descriptor().id(next_id_++);
+            id_reverter.activate = true;
         }
 
         // Check there is already a member with same id.
@@ -340,6 +399,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     if (dyn_member->get_descriptor().index() >= next_index_)
     {
         dyn_member->get_descriptor().index(next_index_++);
+        index_reverter.activate = true;
     }
 
     dyn_member->get_descriptor().parent_kind(type_descriptor_kind); // Set before calling is_consistent().
@@ -361,16 +421,6 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         }
     }
 
-    /*TODO(richiware) think
-       if (get_kind() == TK_BITMASK &&
-            descriptor.id() >= get_bounds(0))
-       {
-        // TODO(richiware) throw std::system_error(
-        // TODO(richiware)           RETCODE_BAD_PARAMETER,
-        // TODO(richiware)           "Error adding member, out of bounds.");
-       }
-     */
-
     assert(dyn_member->get_descriptor().index() <= members_.size());
     if (dyn_member->get_descriptor().index() < members_.size())
     {
@@ -390,11 +440,15 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         members_.push_back(dyn_member);
     }
     member_by_name_.emplace(std::make_pair(member_name, dyn_member));
-    if (TK_STRUCTURE == type_descriptor_kind || TK_UNION == type_descriptor_kind)
+    if (TK_ANNOTATION == type_descriptor_kind ||
+            TK_STRUCTURE == type_descriptor_kind ||
+            TK_UNION == type_descriptor_kind)
     {
         member_.emplace(std::make_pair(member_id, dyn_member));
     }
 
+    id_reverter.activate = false;
+    index_reverter.activate = false;
     return RETCODE_OK;
 }
 

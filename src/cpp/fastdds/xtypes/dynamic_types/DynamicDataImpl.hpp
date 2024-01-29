@@ -408,12 +408,6 @@ private:
             size_t& current_alignment) const noexcept;
 
     /*!
-     * Auxiliary function for checking if the string containing the map key is correct depending on the key_type.
-     */
-    bool check_key_map(
-            const ObjectName& key_map);
-
-    /*!
      * Auxiliary function for checking the new discriminator value set by the user is correct.
      */
     template<typename T, typename std::enable_if<std::is_integral<T>::value, bool>::type = true>
@@ -507,6 +501,11 @@ private:
             eprosima::fastcdr::Cdr& cdr,
             const traits<DynamicTypeImpl>::ref_type type);
 
+    template<TypeKind TK>
+    ReturnCode_t get_bitmask_bit(
+            TypeForKind<TK>& value,
+            MemberId id) noexcept;
+
     /*!
      * @brief Given a type, returns the enclosing type if exists.
      */
@@ -519,12 +518,6 @@ private:
     TypeKind get_enclosing_typekind(
             traits<DynamicTypeImpl>::ref_type type) const noexcept;
 
-    /*!
-     * @brief Auxiliary template to retrieve the length of a internal sequence.
-     * Only valid for TK_ARRAY and TK_SEQUENCE.
-     */
-    uint32_t get_sequence_length();
-
     template<TypeKind TK >
     ReturnCode_t get_primitive_value(
             TypeKind element_kind,
@@ -533,17 +526,31 @@ private:
             MemberId member_id) noexcept;
 
     /*!
+     * @brief Auxiliary template to retrieve the length of a internal sequence.
+     * Only valid for TK_ARRAY and TK_SEQUENCE.
+     */
+    uint32_t get_sequence_length();
+
+    /*!
      * Auxiliary template with the common code for getting the values of a sequence from a TK_ARRAY or TK_SEQUENCE.
      */
     template<TypeKind TK>
     ReturnCode_t get_sequence_values(
-            SequenceKind<TK>& value,
+            SequenceTypeForKind<TK>& value,
             MemberId id) noexcept;
 
     template<TypeKind TK >
     ReturnCode_t get_value(
             TypeForKind<TK>& value,
             MemberId id) noexcept;
+
+    /*!
+     * Auxiliary function for setting a bitmask bit.
+     */
+    template<TypeKind TK>
+    ReturnCode_t set_bitmask_bit(
+            MemberId id,
+            const TypeForKind<TK>& value) noexcept;
 
     /*!
      * Auxiliary function for setting the discriminator value to a label of the member specified by the MemberId.
@@ -574,7 +581,7 @@ private:
     template<TypeKind TK>
     ReturnCode_t set_sequence_values(
             MemberId id,
-            const SequenceKind<TK>& value) noexcept;
+            const SequenceTypeForKind<TK>& value) noexcept;
 
 
     /*!
