@@ -1185,7 +1185,7 @@ bool TCPTransportInterface::Receive(
                     {
                         if (!IsLocatorValid(remote_locator))
                         {
-                            endpoint_to_locator(channel->remote_endpoint(), remote_locator);  
+                            endpoint_to_locator(channel->remote_endpoint(), remote_locator);
                         }
                         IPLocator::setLogicalPort(remote_locator, tcp_header.logical_port);
                         EPROSIMA_LOG_INFO(RTCP_MSG_IN, "[RECEIVE] From: " << remote_locator \

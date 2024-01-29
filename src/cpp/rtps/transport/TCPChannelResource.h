@@ -133,7 +133,7 @@ public:
     virtual asio::ip::tcp::endpoint remote_endpoint() const = 0;
 
     virtual asio::ip::tcp::endpoint local_endpoint() const = 0;
-    
+
     virtual asio::ip::tcp::endpoint remote_endpoint(
             asio::error_code& ec) const = 0;
 
