@@ -72,9 +72,9 @@ public:
 
     // Throwing asio calls
     asio::ip::tcp::endpoint remote_endpoint(
-                asio::error_code& ec) const override;
+            asio::error_code& ec) const override;
     asio::ip::tcp::endpoint local_endpoint(
-                asio::error_code& ec) const override;
+            asio::error_code& ec) const override;
 
     void set_options(
             const TCPTransportDescriptor* options) override;
