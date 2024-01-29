@@ -469,7 +469,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         // TODO(eduponz): This is a workaround for the moment, as it is implicitly assuming
                         // that the vendor ID parameter came before this one. In the future, we should propagate
                         // the vendor ID from the RTPS message header using the CacheChange and check it here.
-                        FASTDDS_TODO_BEFORE(2, 14, "Add vendor ID to CacheChange");
+                        // FASTDDS_TODO_BEFORE(2, 14, "Add vendor ID to CacheChange");
                         if (c_VendorId_eProsima != m_VendorId)
                         {
                             return true;

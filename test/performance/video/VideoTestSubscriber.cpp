@@ -22,7 +22,7 @@
 #include <numeric>
 #include <thread>
 
-#include <fastdds/dds/log/Colors.h>
+#include <fastdds/dds/log/Colors.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 

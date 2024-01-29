@@ -303,11 +303,11 @@ TEST_F(TCPv6Tests, client_announced_local_port_uniqueness)
     outputLocator.port = g_default_port;
     IPLocator::setLogicalPort(outputLocator, 7610);
 
-    SendResourceList send_resource_list_1;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list_1;
     ASSERT_TRUE(sendTransportUnderTest_1.OpenOutputChannel(send_resource_list_1, outputLocator));
     ASSERT_FALSE(send_resource_list_1.empty());
 
-    SendResourceList send_resource_list_2;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list_2;
     ASSERT_TRUE(sendTransportUnderTest_2.OpenOutputChannel(send_resource_list_2, outputLocator));
     ASSERT_FALSE(send_resource_list_2.empty());
 
