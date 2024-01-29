@@ -248,7 +248,7 @@ bool test_UDPv4Transport::send(
     bool is_multicast_remote_address = fastrtps::rtps::IPLocator::IPLocator::isMulticast(remote_locator);
     if (is_multicast_remote_address == only_multicast_purpose || whitelisted)
     {
-        if (packet_should_drop(send_buffers, total_bytes))
+        if (packet_should_drop(send_buffers, total_bytes) || should_drop_locator(remote_locator))
         {
             log_drop(send_buffers);
             return true;
